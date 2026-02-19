@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cálculo de Diferencia Económica por Trabajo No Pagado</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744;
+    --slate: #2e4272;
+    --mid: #4a6fa5;
+    --light-blue: #c8d9f0;
+    --pale: #eef3fb;
+    --white: #ffffff;
+    --gray-700: #374151;
+    --gray-500: #6b7280;
+    --gray-200: #e5e9f0;
+    --red-deep: #8b1a1a;
+    --red-light: #fde8e8;
+    --red-mid: #c0392b;
+    --green-deep: #155724;
+    --green-light: #d4edda;
+    --amber: #b45309;
+    --amber-light: #fef3c7;
+    --gold: #c9a84c;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--pale);
+    color: var(--gray-700);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  .page-wrapper {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  /* ── HEADER ── */
+  .doc-header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 2.5rem 2.8rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .doc-header::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 260px; height: 100%;
+    background: linear-gradient(135deg, transparent 40%, rgba(74,111,165,0.25));
+    pointer-events: none;
+  }
+  .doc-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--gold), var(--mid), var(--gold));
+  }
+  .doc-type-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+  }
+  .doc-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    line-height: 1.25;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .doc-subtitle {
+    font-size: 0.88rem;
+    color: var(--light-blue);
+    font-weight: 300;
+    max-width: 540px;
+  }
+  .doc-meta {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1.5rem;
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.6);
+  }
+  .doc-meta span strong { color: rgba(255,255,255,0.9); font-weight: 600; }
+
+  /* ── LEGAL CONTEXT BOX ── */
+  .legal-context {
+    background: var(--slate);
+    color: var(--light-blue);
+    padding: 1.4rem 2.8rem;
+    font-size: 0.8rem;
+    line-height: 1.7;
+    border-left: 4px solid var(--gold);
+  }
+  .legal-context strong { color: var(--white); }
+
+  /* ── MAIN CARD ── */
+  .main-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-top: none;
+  }
+
+  .section {
+    padding: 2rem 2.8rem;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .section:last-child { border-bottom: none; }
+
+  .section-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--mid);
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gray-200);
+  }
+
+  /* ── FORM GRID ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem 2rem;
+  }
+  @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .field label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 0.02em;
+  }
+  .field .field-note {
+    font-size: 0.7rem;
+    color: var(--gray-500);
+    margin-top: -0.2rem;
+  }
+  .field input {
+    border: 1.5px solid var(--gray-200);
+    border-radius: 4px;
+    padding: 0.6rem 0.8rem;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.95rem;
+    color: var(--navy);
+    background: var(--pale);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+  .field input:focus {
+    outline: none;
+    border-color: var(--mid);
+    box-shadow: 0 0 0 3px rgba(74,111,165,0.12);
+    background: var(--white);
+  }
+  .field input::placeholder { color: #b0b8c9; }
+
+  .field select {
+    border: 1.5px solid var(--gray-200);
+    border-radius: 4px;
+    padding: 0.6rem 2rem 0.6rem 0.8rem;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.95rem;
+    color: var(--navy);
+    background: var(--pale) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a6fa5' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 0.75rem center;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field select:focus {
+    outline: none;
+    border-color: var(--mid);
+    box-shadow: 0 0 0 3px rgba(74,111,165,0.12);
+    background-color: var(--white);
+  }
+  .field select option[value=""] { color: #b0b8c9; }
+
+  .calc-btn {
+    display: block;
+    margin: 0.6rem 0 0;
+    padding: 0.85rem 2.5rem;
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .calc-btn:hover { background: var(--slate); }
+  .calc-btn:active { transform: translateY(1px); }
+
+  /* ── RESULTS ── */
+  #results { display: none; }
+
+  .verdict-banner {
+    padding: 1rem 2.8rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .verdict-banner.exploitation {
+    background: var(--red-light);
+    color: var(--red-deep);
+    border-left: 5px solid var(--red-mid);
+  }
+  .verdict-banner.underpay {
+    background: var(--amber-light);
+    color: var(--amber);
+    border-left: 5px solid var(--amber);
+  }
+  .verdict-banner.fair {
+    background: var(--green-light);
+    color: var(--green-deep);
+    border-left: 5px solid #28a745;
+  }
+  .verdict-icon { font-size: 1.2rem; }
+
+  /* ── COMPARISON TABLE ── */
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  .comparison-table thead tr {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .comparison-table thead th {
+    padding: 0.8rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .comparison-table tbody tr { border-bottom: 1px solid var(--gray-200); }
+  .comparison-table tbody tr:last-child { border-bottom: none; }
+  .comparison-table tbody tr:nth-child(even) { background: var(--pale); }
+  .comparison-table td {
+    padding: 0.9rem 1rem;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .comparison-table td:first-child { font-weight: 600; color: var(--navy); }
+  .comparison-table td:nth-child(2) {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .amount-legal { color: var(--navy); }
+  .amount-real { color: var(--gray-500); }
+  .amount-diff { color: var(--red-mid); }
+  .amount-positive-diff { font-weight: 700 !important; }
+
+  .highlight-row { background: #fff0f0 !important; }
+
+  /* ── EXTENDED ANALYSIS ── */
+  .analysis-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  @media (max-width: 620px) { .analysis-grid { grid-template-columns: 1fr; } }
+
+  .analysis-card {
+    border: 1px solid var(--gray-200);
+    border-radius: 4px;
+    padding: 1.1rem;
+  }
+  .analysis-card .card-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gray-500);
+    margin-bottom: 0.4rem;
+    font-weight: 700;
+  }
+  .analysis-card .card-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .analysis-card .card-desc { font-size: 0.75rem; color: var(--gray-500); line-height: 1.4; }
+  .analysis-card.red-card { border-color: #f5c6c6; background: #fff5f5; }
+  .analysis-card.red-card .card-value { color: var(--red-mid); }
+
+  /* ── NARRATIVE BLOCK ── */
+  .narrative-block {
+    background: var(--pale);
+    border-left: 3px solid var(--mid);
+    padding: 1.2rem 1.4rem;
+    font-size: 0.84rem;
+    line-height: 1.75;
+    color: var(--gray-700);
+    border-radius: 0 4px 4px 0;
+  }
+  .narrative-block strong { color: var(--navy); }
+
+  /* ── FOOTER ── */
+  .doc-footer {
+    background: var(--navy);
+    color: rgba(255,255,255,0.5);
+    padding: 1.2rem 2.8rem;
+    font-size: 0.72rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .doc-footer strong { color: rgba(255,255,255,0.85); }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: white; padding: 0; }
+    .calc-btn { display: none; }
+    #results { display: block !important; }
+    .field input { background: white; border: 1px solid #ccc; }
+    .doc-footer { background: #1a2744; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .doc-header, .legal-context, .comparison-table thead tr, .verdict-banner { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- HEADER -->
+  <div class="doc-header">
+    <div class="doc-type-label">Artefacto Probatorio · Visa T / Trata Laboral</div>
+    <div class="doc-title">Cálculo de Diferencia Económica<br>por Trabajo No Pagado</div>
+    <div class="doc-subtitle">Evidencia cuantificable de explotación económica conforme a los estándares del Fair Labor Standards Act (FLSA) y salario mínimo estatal aplicable.</div>
+    <div class="doc-meta">
+      <span><strong>Fecha de generación:</strong> <span id="gen-date"></span></span>
+      <span><strong>Propósito:</strong> Evidencia en expediente migratorio</span>
+      <span><strong>Marco legal:</strong> 29 U.S.C. § 206 · FLSA</span>
+    </div>
+  </div>
+
+  <!-- LEGAL CONTEXT -->
+  <div class="legal-context">
+    <strong>Fundamento legal:</strong> El salario mínimo estatal constituye un estándar legal de cumplimiento obligatorio bajo el Fair Labor Standards Act (FLSA), 29 U.S.C. § 206. El pago por debajo de dicho estándar no representa un incumplimiento contractual ordinario, sino una forma de <strong>explotación económica documentable</strong>. En el contexto de la Visa T para víctimas de trata de personas, la diferencia entre el salario mínimo legalmente exigible y el pago efectivamente realizado constituye <strong>evidencia cuantificable del beneficio económico obtenido por el empleador mediante coerción o abuso</strong>, conforme a 22 U.S.C. § 7102(11)(B) (Trafficking Victims Protection Act).
+  </div>
+
+  <div class="main-card">
+
+    <!-- DATOS DE ENTRADA -->
+    <div class="section">
+      <div class="section-label">Datos del caso</div>
+      <div class="form-grid">
+        <div class="field">
+          <label>Estado donde ocurrió el trabajo</label>
+          <span class="field-note">Jurisdicción laboral aplicable</span>
+          <select id="state">
+            <option value="">— Seleccione un estado —</option>
+            <option>Alabama</option><option>Alaska</option><option>Arizona</option>
+            <option>Arkansas</option><option>California</option><option>Colorado</option>
+            <option>Connecticut</option><option>Delaware</option><option>Florida</option>
+            <option>Georgia</option><option>Hawái</option><option>Idaho</option>
+            <option>Illinois</option><option>Indiana</option><option>Iowa</option>
+            <option>Kansas</option><option>Kentucky</option><option>Luisiana</option>
+            <option>Maine</option><option>Maryland</option><option>Massachusetts</option>
+            <option>Michigan</option><option>Minnesota</option><option>Misisipi</option>
+            <option>Misuri</option><option>Montana</option><option>Nebraska</option>
+            <option>Nevada</option><option>Nuevo Hampshire</option><option>Nueva Jersey</option>
+            <option>Nuevo México</option><option>Nueva York</option>
+            <option>Carolina del Norte</option><option>Dakota del Norte</option>
+            <option>Ohio</option><option>Oklahoma</option><option>Oregón</option>
+            <option>Pensilvania</option><option>Rhode Island</option>
+            <option>Carolina del Sur</option><option>Dakota del Sur</option>
+            <option>Tennessee</option><option>Texas</option><option>Utah</option>
+            <option>Vermont</option><option>Virginia</option>
+            <option>Virginia Occidental</option><option>Washington</option>
+            <option>Wisconsin</option><option>Wyoming</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Año de referencia del salario mínimo</label>
+          <span class="field-note">Período en que ocurrió la explotación laboral</span>
+          <input type="number" id="refYear" placeholder="Ej: 2022" min="1938" max="2100" step="1">
+        </div>
+        <div class="field">
+          <label>Salario mínimo estatal vigente (USD/hora)</label>
+          <span class="field-note">Verificar en el Department of Labor del estado</span>
+          <input type="number" id="minWage" placeholder="Ej: 16.00" step="0.01" min="0">
+        </div>
+        <div class="field">
+          <label>Horas trabajadas por semana</label>
+          <span class="field-note">Según declaración o registro del trabajador</span>
+          <input type="number" id="hoursWorked" placeholder="Ej: 60" step="0.5" min="0">
+        </div>
+        <div class="field">
+          <label>Pago real recibido por semana (USD)</label>
+          <span class="field-note">Monto efectivamente entregado por el empleador</span>
+          <input type="number" id="realPay" placeholder="Ej: 150.00" step="0.01" min="0">
+        </div>
+      </div>
+      <br>
+      <button class="calc-btn" onclick="calculate()">Generar análisis probatorio →</button>
+    </div>
+
+    <!-- RESULTADOS -->
+    <div id="results">
+
+      <!-- VEREDICTO -->
+      <div id="verdict-banner" class="verdict-banner"></div>
+
+      <!-- TABLA COMPARATIVA -->
+      <div class="section">
+        <div class="section-label">Tabla comparativa probatoria</div>
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th style="width:40%">Concepto</th>
+              <th style="width:22%">Monto (USD)</th>
+              <th>Fuente legal / Explicación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Monto que debió recibir conforme al salario mínimo estatal</td>
+              <td class="amount-legal" id="r-legal">—</td>
+              <td id="r-legal-src">—</td>
+            </tr>
+            <tr>
+              <td>Monto efectivamente pagado por el empleador</td>
+              <td class="amount-real" id="r-real">—</td>
+              <td>Pago reportado por la parte afectada. Puede corroborarse con recibos, transferencias, o declaración jurada.</td>
+            </tr>
+            <tr class="highlight-row">
+              <td><strong>Diferencia económica atribuible a explotación laboral</strong></td>
+              <td class="amount-diff amount-positive-diff" id="r-diff">—</td>
+              <td id="r-diff-src">—</td>
+            </tr>
+            <tr>
+              <td>Tasa horaria implícita (pago real ÷ horas trabajadas)</td>
+              <td id="r-rate">—</td>
+              <td>Pago por hora que recibió el trabajador de facto. Su comparación con el salario mínimo revela el grado de subpago.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ANÁLISIS EXTENDIDO -->
+      <div class="section">
+        <div class="section-label">Proyección del perjuicio económico</div>
+        <div class="analysis-grid">
+          <div class="analysis-card red-card">
+            <div class="card-label">Perjuicio mensual estimado</div>
+            <div class="card-value" id="a-monthly">—</div>
+            <div class="card-desc">Diferencia económica × 4 semanas. Proyección del daño acumulado mensual.</div>
+          </div>
+          <div class="analysis-card red-card">
+            <div class="card-label">Perjuicio anual estimado</div>
+            <div class="card-value" id="a-yearly">—</div>
+            <div class="card-desc">Diferencia económica × 52 semanas. Magnitud del beneficio indebido del empleador por año.</div>
+          </div>
+          <div class="analysis-card">
+            <div class="card-label">Porcentaje del salario legal no pagado</div>
+            <div class="card-value" id="a-pct">—</div>
+            <div class="card-desc">Proporción del salario legalmente correspondiente que fue retenida por el empleador.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NARRATIVA PROBATORIA -->
+      <div class="section">
+        <div class="section-label">Narrativa probatoria para el expediente</div>
+        <div class="narrative-block" id="narrative">—</div>
+      </div>
+
+    </div>
+    <!-- /results -->
+
+  </div><!-- /main-card -->
+
+  <!-- FOOTER -->
+  <div class="doc-footer">
+    <span>Este documento tiene carácter probatorio y debe integrarse al expediente migratorio de la parte afectada.</span>
+    <span><strong>Ref. legal:</strong> FLSA 29 U.S.C. § 206 · TVPA 22 U.S.C. § 7102</span>
+  </div>
+
+</div><!-- /page-wrapper -->
+
+<script>
+  // Fecha de generación
+  const d = new Date();
+  document.getElementById('gen-date').textContent = d.toLocaleDateString('es-MX', {year:'numeric', month:'long', day:'numeric'});
+
+  function fmt(n) {
+    return '$' + n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  }
+  function fmtPct(n) {
+    return n.toFixed(1) + '%';
+  }
+
+  function calculate() {
+    const state     = document.getElementById('state').value.trim();
+    const minWage   = parseFloat(document.getElementById('minWage').value);
+    const hours     = parseFloat(document.getElementById('hoursWorked').value);
+    const realPay   = parseFloat(document.getElementById('realPay').value);
+    const refYear   = parseInt(document.getElementById('refYear').value);
+
+    if (!state || isNaN(refYear) || isNaN(minWage) || isNaN(hours) || isNaN(realPay)) {
+      alert('Por favor complete todos los campos antes de generar el análisis.');
+      return;
+    }
+
+    const legalPay  = minWage * hours;
+    const diff      = legalPay - realPay;
+    const implRate  = realPay / hours;
+    const monthly   = diff * 4;
+    const yearly    = diff * 52;
+    const pct       = diff > 0 ? (diff / legalPay) * 100 : 0;
+
+    // Tabla
+    document.getElementById('r-legal').textContent = fmt(legalPay);
+    document.getElementById('r-legal-src').textContent =
+      `FLSA 29 U.S.C. § 206 y salario mínimo estatal de ${state} correspondiente al año ${refYear} (${fmt(minWage)}/hr × ${hours} hrs).`;
+
+    document.getElementById('r-real').textContent = fmt(realPay);
+
+    document.getElementById('r-diff').textContent = diff > 0 ? fmt(diff) : fmt(0);
+    document.getElementById('r-diff-src').textContent = diff > 0
+      ? `Monto retenido indebidamente. Constituye evidencia de explotación económica en el expediente de Visa T (22 U.S.C. § 7102(11)(B)).`
+      : `No se identificó diferencia negativa. El pago es igual o superior al mínimo legal.`;
+
+    document.getElementById('r-rate').textContent = fmt(implRate) + '/hr';
+
+    // Análisis extendido
+    document.getElementById('a-monthly').textContent = diff > 0 ? fmt(monthly) : fmt(0);
+    document.getElementById('a-yearly').textContent  = diff > 0 ? fmt(yearly)  : fmt(0);
+    document.getElementById('a-pct').textContent     = diff > 0 ? fmtPct(pct)  : '0.0%';
+
+    // Veredicto
+    const banner = document.getElementById('verdict-banner');
+    banner.className = 'verdict-banner';
+    if (diff > legalPay * 0.3) {
+      banner.classList.add('exploitation');
+      banner.innerHTML = '<span class="verdict-icon">⚠</span> <strong>EXPLOTACIÓN ECONÓMICA IDENTIFICADA:</strong> La diferencia entre el salario mínimo legal y el pago real supera el 30% del salario correspondiente. Esto constituye evidencia cuantificable de explotación laboral para fines del expediente de Visa T.';
+    } else if (diff > 0) {
+      banner.classList.add('underpay');
+      banner.innerHTML = '<span class="verdict-icon">▲</span> <strong>SUBPAGO DOCUMENTADO:</strong> El empleador pagó por debajo del salario mínimo estatal aplicable. Existe diferencia económica registrable como elemento probatorio.';
+    } else {
+      banner.classList.add('fair');
+      banner.innerHTML = '<span class="verdict-icon">✓</span> <strong>PAGO EN CONFORMIDAD:</strong> El monto pagado es igual o superior al salario mínimo estatal. No se identifica diferencia económica negativa en el período analizado.';
+    }
+
+    // Narrativa
+    const narr = document.getElementById('narrative');
+    if (diff > 0) {
+      narr.innerHTML = `Con base en los datos aportados al presente expediente, la persona afectada realizó <strong>${hours} horas de trabajo a la semana</strong> en el estado de <strong>${state}</strong>. Conforme al salario mínimo legal vigente en dicho estado para el año <strong>${refYear}</strong>, el monto por hora legalmente exigible era de <strong>${fmt(minWage)}</strong>. Conforme a dicho estándar, el monto semanal que debió recibir era de <strong>${fmt(legalPay)}</strong>. Sin embargo, el empleador efectuó únicamente un pago de <strong>${fmt(realPay)} por semana</strong>, lo que equivale a una tasa efectiva de <strong>${fmt(implRate)} por hora</strong>.<br><br>La diferencia económica resultante es de <strong>${fmt(diff)} por semana</strong>, equivalente a <strong>${fmt(monthly)} mensuales</strong> y <strong>${fmt(yearly)} anuales</strong>. Dicho monto representa el <strong>${fmtPct(pct)} del salario mínimo legal</strong> que fue retenido por el empleador. Esta diferencia configura un beneficio económico indebido obtenido a expensas del trabajador, susceptible de ser valorado como evidencia de explotación económica en el marco de una solicitud de Visa T (22 U.S.C. § 7102).`;
+    } else {
+      narr.innerHTML = `Los datos ingresados indican que el pago realizado por el empleador (<strong>${fmt(realPay)}/semana</strong>) es igual o superior al salario mínimo legal exigible en el estado de <strong>${state}</strong> para <strong>${hours} horas semanales</strong>. No se documenta diferencia económica negativa en el período analizado.`;
+    }
+
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({behavior: 'smooth', block: 'start'});
+  }
+</script>
+</body>
+</html>
