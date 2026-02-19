@@ -66,17 +66,13 @@
   .doc-header-text { flex: 1; }
   .firm-logo-wrap {
     flex-shrink: 0;
-    background: rgba(255,255,255,0.97);
-    border-radius: 10px;
-    padding: 16px 22px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.22), 0 0 0 1px rgba(201,168,76,0.35);
     display: flex;
     align-items: center;
     justify-content: center;
   }
   .firm-logo {
     display: block;
-    height: 130px;
+    height: 150px;
     width: auto;
   }
   .doc-header::after {
@@ -487,7 +483,17 @@
           </thead>
           <tbody>
             <tr>
-              <td>Monto que debió recibir conforme al salario mínimo estatal</td>
+              <td>Pago legal por horas regulares (primeras 40 hrs/semana)</td>
+              <td class="amount-legal" id="r-regular">—</td>
+              <td id="r-regular-src">—</td>
+            </tr>
+            <tr id="row-overtime" style="display:none;">
+              <td>Pago legal por horas extras (horas sobre 40 × 1.5× tarifa)</td>
+              <td class="amount-legal" id="r-overtime">—</td>
+              <td id="r-overtime-src">—</td>
+            </tr>
+            <tr>
+              <td><strong>Monto que debió recibir conforme al salario mínimo estatal</strong></td>
               <td class="amount-legal" id="r-legal">—</td>
               <td id="r-legal-src">—</td>
             </tr>
@@ -504,7 +510,7 @@
             <tr>
               <td>Tasa horaria implícita (pago real ÷ horas trabajadas)</td>
               <td id="r-rate">—</td>
-              <td>Pago por hora que recibió el trabajador de facto. Su comparación con el salario mínimo revela el grado de subpago.</td>
+              <td>Pago por hora que recibió el trabajador de facto. Su comparación con el salario mínimo y la tarifa de horas extras revela el grado de subpago.</td>
             </tr>
           </tbody>
         </table>
@@ -575,52 +581,84 @@
       return;
     }
 
-    const legalPay  = minWage * hours;
-    const diff      = legalPay - realPay;
-    const implRate  = realPay / hours;
-    const monthly   = diff * 4;
-    const yearly    = diff * 52;
-    const pct       = diff > 0 ? (diff / legalPay) * 100 : 0;
+    // ── Cálculo con horas extras (FLSA 29 U.S.C. § 207) ──
+    const regularHours  = Math.min(hours, 40);
+    const overtimeHours = Math.max(hours - 40, 0);
+    const overtimeRate  = minWage * 1.5;
 
-    // Tabla
+    const regularPay    = minWage * regularHours;
+    const overtimePay   = overtimeRate * overtimeHours;
+    const legalPay      = regularPay + overtimePay;
+
+    const diff          = legalPay - realPay;
+    const implRate      = realPay / hours;
+    const monthly       = diff * 4;
+    const yearly        = diff * 52;
+    const pct           = diff > 0 ? (diff / legalPay) * 100 : 0;
+    const hasOvertime   = overtimeHours > 0;
+
+    // ── Fila horas regulares ──
+    document.getElementById('r-regular').textContent = fmt(regularPay);
+    document.getElementById('r-regular-src').textContent =
+      `${fmt(minWage)}/hr × ${regularHours} hrs regulares. FLSA 29 U.S.C. § 206 y salario mínimo de ${state} (${refYear}).`;
+
+    // ── Fila horas extras (mostrar solo si aplica) ──
+    const rowOT = document.getElementById('row-overtime');
+    if (hasOvertime) {
+      rowOT.style.display = '';
+      document.getElementById('r-overtime').textContent = fmt(overtimePay);
+      document.getElementById('r-overtime-src').textContent =
+        `${fmt(overtimeRate)}/hr (1.5× tarifa base) × ${overtimeHours} hrs extras. FLSA 29 U.S.C. § 207 — obligatorio para horas sobre 40 en la semana laboral.`;
+    } else {
+      rowOT.style.display = 'none';
+    }
+
+    // ── Total legal ──
     document.getElementById('r-legal').textContent = fmt(legalPay);
-    document.getElementById('r-legal-src').textContent =
-      `FLSA 29 U.S.C. § 206 y salario mínimo estatal de ${state} correspondiente al año ${refYear} (${fmt(minWage)}/hr × ${hours} hrs).`;
+    document.getElementById('r-legal-src').textContent = hasOvertime
+      ? `Suma de pago regular (${fmt(regularPay)}) + horas extras (${fmt(overtimePay)}). FLSA 29 U.S.C. §§ 206–207, salario mínimo de ${state} año ${refYear}.`
+      : `FLSA 29 U.S.C. § 206 y salario mínimo estatal de ${state} correspondiente al año ${refYear} (${fmt(minWage)}/hr × ${hours} hrs).`;
 
+    // ── Pago real ──
     document.getElementById('r-real').textContent = fmt(realPay);
 
+    // ── Diferencia ──
     document.getElementById('r-diff').textContent = diff > 0 ? fmt(diff) : fmt(0);
     document.getElementById('r-diff-src').textContent = diff > 0
       ? `Monto retenido indebidamente. Constituye evidencia de explotación económica en el expediente de Visa T (22 U.S.C. § 7102(11)(B)).`
-      : `No se identificó diferencia negativa. El pago es igual o superior al mínimo legal.`;
+      : `No se identificó diferencia negativa. El pago es igual o superior al mínimo legal exigible.`;
 
+    // ── Tasa implícita ──
     document.getElementById('r-rate').textContent = fmt(implRate) + '/hr';
 
-    // Análisis extendido
+    // ── Análisis extendido ──
     document.getElementById('a-monthly').textContent = diff > 0 ? fmt(monthly) : fmt(0);
     document.getElementById('a-yearly').textContent  = diff > 0 ? fmt(yearly)  : fmt(0);
     document.getElementById('a-pct').textContent     = diff > 0 ? fmtPct(pct)  : '0.0%';
 
-    // Veredicto
+    // ── Veredicto ──
     const banner = document.getElementById('verdict-banner');
     banner.className = 'verdict-banner';
     if (diff > legalPay * 0.3) {
       banner.classList.add('exploitation');
-      banner.innerHTML = '<span class="verdict-icon">⚠</span> <strong>EXPLOTACIÓN ECONÓMICA IDENTIFICADA:</strong> La diferencia entre el salario mínimo legal y el pago real supera el 30% del salario correspondiente. Esto constituye evidencia cuantificable de explotación laboral para fines del expediente de Visa T.';
+      banner.innerHTML = '<span class="verdict-icon">⚠</span> <strong>EXPLOTACIÓN ECONÓMICA IDENTIFICADA:</strong> La diferencia entre el salario legalmente exigible y el pago real supera el 30% del total correspondiente. Esto constituye evidencia cuantificable de explotación laboral para fines del expediente de Visa T.';
     } else if (diff > 0) {
       banner.classList.add('underpay');
-      banner.innerHTML = '<span class="verdict-icon">▲</span> <strong>SUBPAGO DOCUMENTADO:</strong> El empleador pagó por debajo del salario mínimo estatal aplicable. Existe diferencia económica registrable como elemento probatorio.';
+      banner.innerHTML = '<span class="verdict-icon">▲</span> <strong>SUBPAGO DOCUMENTADO:</strong> El empleador pagó por debajo del salario mínimo y/o la tarifa de horas extras exigible por ley. Existe diferencia económica registrable como elemento probatorio.';
     } else {
       banner.classList.add('fair');
-      banner.innerHTML = '<span class="verdict-icon">✓</span> <strong>PAGO EN CONFORMIDAD:</strong> El monto pagado es igual o superior al salario mínimo estatal. No se identifica diferencia económica negativa en el período analizado.';
+      banner.innerHTML = '<span class="verdict-icon">✓</span> <strong>PAGO EN CONFORMIDAD:</strong> El monto pagado es igual o superior al salario mínimo estatal y a la tarifa de horas extras aplicable. No se identifica diferencia económica negativa en el período analizado.';
     }
 
-    // Narrativa
+    // ── Narrativa ──
     const narr = document.getElementById('narrative');
     if (diff > 0) {
-      narr.innerHTML = `Con base en los datos aportados al presente expediente, la persona afectada realizó <strong>${hours} horas de trabajo a la semana</strong> en el estado de <strong>${state}</strong>. Conforme al salario mínimo legal vigente en dicho estado para el año <strong>${refYear}</strong>, el monto por hora legalmente exigible era de <strong>${fmt(minWage)}</strong>. Conforme a dicho estándar, el monto semanal que debió recibir era de <strong>${fmt(legalPay)}</strong>. Sin embargo, el empleador efectuó únicamente un pago de <strong>${fmt(realPay)} por semana</strong>, lo que equivale a una tasa efectiva de <strong>${fmt(implRate)} por hora</strong>.<br><br>La diferencia económica resultante es de <strong>${fmt(diff)} por semana</strong>, equivalente a <strong>${fmt(monthly)} mensuales</strong> y <strong>${fmt(yearly)} anuales</strong>. Dicho monto representa el <strong>${fmtPct(pct)} del salario mínimo legal</strong> que fue retenido por el empleador. Esta diferencia configura un beneficio económico indebido obtenido a expensas del trabajador, susceptible de ser valorado como evidencia de explotación económica en el marco de una solicitud de Visa T (22 U.S.C. § 7102).`;
+      const overtimeNote = hasOvertime
+        ? ` De ese total, <strong>${regularHours} horas corresponden a tiempo regular</strong> y <strong>${overtimeHours} horas constituyen tiempo extraordinario</strong>, el cual debió compensarse a razón de <strong>${fmt(overtimeRate)}/hora</strong> (1.5 veces la tarifa base), conforme al mandato de la FLSA (29 U.S.C. § 207).`
+        : '';
+      narr.innerHTML = `Con base en los datos aportados al presente expediente, la persona afectada realizó <strong>${hours} horas de trabajo a la semana</strong> en el estado de <strong>${state}</strong>.${overtimeNote} Conforme al salario mínimo legal vigente en dicho estado para el año <strong>${refYear}</strong> (${fmt(minWage)}/hora), el monto semanal total que debió recibir ascendía a <strong>${fmt(legalPay)}</strong>. Sin embargo, el empleador efectuó únicamente un pago de <strong>${fmt(realPay)} por semana</strong>, lo que equivale a una tasa efectiva de <strong>${fmt(implRate)} por hora</strong>.<br><br>La diferencia económica resultante es de <strong>${fmt(diff)} por semana</strong>, equivalente a <strong>${fmt(monthly)} mensuales</strong> y <strong>${fmt(yearly)} anuales</strong>. Dicho monto representa el <strong>${fmtPct(pct)} del salario legalmente correspondiente</strong> que fue retenido por el empleador. Esta diferencia configura un beneficio económico indebido obtenido a expensas del trabajador, susceptible de ser valorado como evidencia de explotación económica en el marco de una solicitud de Visa T (22 U.S.C. § 7102).`;
     } else {
-      narr.innerHTML = `Los datos ingresados indican que el pago realizado por el empleador (<strong>${fmt(realPay)}/semana</strong>) es igual o superior al salario mínimo legal exigible en el estado de <strong>${state}</strong> para <strong>${hours} horas semanales</strong>. No se documenta diferencia económica negativa en el período analizado.`;
+      narr.innerHTML = `Los datos ingresados indican que el pago realizado por el empleador (<strong>${fmt(realPay)}/semana</strong>) es igual o superior al salario mínimo legal exigible en el estado de <strong>${state}</strong> para <strong>${hours} horas semanales</strong>${hours > 40 ? ', incluyendo la tarifa de horas extras aplicable (1.5×) sobre las ' + (hours-40) + ' horas que exceden el umbral de 40 horas semanales' : ''}. No se documenta diferencia económica negativa en el período analizado.`;
     }
 
     document.getElementById('results').style.display = 'block';
