@@ -57,6 +57,28 @@
     background: linear-gradient(135deg, transparent 40%, rgba(74,111,165,0.25));
     pointer-events: none;
   }
+  .doc-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+  .doc-header-text { flex: 1; }
+  .firm-logo-wrap {
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.97);
+    border-radius: 10px;
+    padding: 16px 22px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.22), 0 0 0 1px rgba(201,168,76,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .firm-logo {
+    display: block;
+    height: 130px;
+    width: auto;
+  }
   .doc-header::after {
     content: '';
     position: absolute;
@@ -348,13 +370,17 @@
   .doc-footer strong { color: rgba(255,255,255,0.85); }
 
   /* ── PRINT ── */
+  @media (max-width: 600px) {
+    .doc-header-inner { flex-direction: column; align-items: flex-start; }
+    .firm-logo-wrap { align-self: flex-start; }
+  }
   @media print {
     body { background: white; padding: 0; }
     .calc-btn { display: none; }
     #results { display: block !important; }
     .field input { background: white; border: 1px solid #ccc; }
     .doc-footer { background: #1a2744; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .doc-header, .legal-context, .comparison-table thead tr, .verdict-banner { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .doc-header, .legal-context, .comparison-table thead tr, .verdict-banner, .firm-logo-wrap { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
 </style>
 </head>
@@ -363,7 +389,9 @@
 
   <!-- HEADER -->
   <div class="doc-header">
-    <div class="doc-type-label">Artefacto Probatorio · Visa T / Trata Laboral</div>
+    <div class="doc-header-inner">
+      <div class="doc-header-text">
+        <div class="doc-type-label">Artefacto Probatorio · Visa T / Trata Laboral</div>
     <div class="doc-title">Cálculo de Diferencia Económica<br>por Trabajo No Pagado</div>
     <div class="doc-subtitle">Evidencia cuantificable de explotación económica conforme a los estándares del Fair Labor Standards Act (FLSA) y salario mínimo estatal aplicable.</div>
     <div class="doc-meta">
@@ -371,6 +399,11 @@
       <span><strong>Propósito:</strong> Evidencia en expediente migratorio</span>
       <span><strong>Marco legal:</strong> 29 U.S.C. § 206 · FLSA</span>
     </div>
+      </div><!-- /doc-header-text -->
+      <div class="firm-logo-wrap">
+        <img src="data:image/jpeg;base64,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CweCJuFSrIn+BhhrgWRkjT8FJVEQBILX4VBvkpl2L8Z0ol2dxMwNLZOFamTWXUcfgRJohZ5PVr6x+a+sfmvrH5r6x+aF3M4yFxzWUCEoYIufTFIDKLn/AADG9JjD6TBgnx7U/XcSYQlC2JLrX1j819Y/NfWPzX1j819Y/PlglzsIe4JhyqamUy54BzWA60SZWuaRhDDUks5GiAjFmoX+GCyl4nR507tx0mUOcAx06VDTTPgCwtdagX8WYCwX+FCA4TREXbNKHKAMk8FtzqfZZi+iB6K6DUSfzerAxChukgTwx6jg1NWvQ3hxOlT8FcNBdkTw4RUwsIeXwe68hrahPxPk2tz/AD3UFjpSDzlyZDdB/wB9KuBZJoOmiKk4Xzy3ErZFk89akmsx4yWiVdic3CicoX6cRr+jx+G1bknaAQ5yUrGmK1iQ3UaFvcKNaMwSlzhbZRWW+4Rxza3HcoaHaISkgxws9qwvDGEJmTDpgJ0sGrlmJe55AQSRbgoXS5CWJECWBHKp2uIayQCRBAdKNPZJrJWQU3C7wt2bnFrQOtOAhAK7C7TyGC6niRIiWutLmyzMRToxcpiS03AhiEUW/LKhrKCWq1Num74i7vsVPXYZseHJtXG2gvIM2daAU9MDgpYtbej/AIRMPFVzedNjhTIQECBKxGrTNMRA2JZBoBGlZU9KdOoeufIIqbHWKhypyIPqrAeAMSalXUCWLGozgoWTDRDWEhJK4SAd1JnY3TSVDg0fS8UcUIUsb6U7K0xspOaQY4uHg40A0sCcE+BbdJXzlYQDbna7RkSEiYalL9KBCM88VMTP0INqWjLh5CARJHStIkSI+CVYpRkcGixTgICkkii2AhC2Dh4gwCWR1rpadHhiC0iXfwlt5sUpwWjJgQAsVft03RTWBlBK5f8AU//aAAwDAQACAAMAAAAQ888888888888888888888888888888c8o0888888884AQko08888888wwUEIU8888888wUQ0Y8888888UM84cEc0888884wwIYwww88888AMkokckMU888oE8QcY8o8w88888cM8c88s88888888888888888888888888888//EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQMBAT8QKf/EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQIBAT8QKf/EACcQ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" alt="The Mendoza Law Firm" class="firm-logo">
+      </div>
+    </div><!-- /doc-header-inner -->
   </div>
 
   <!-- LEGAL CONTEXT -->
