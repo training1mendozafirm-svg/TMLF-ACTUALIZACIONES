@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cálculo de Diferencia Económica por Trabajo No Pagado</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744;
+    --slate: #2e4272;
+    --mid: #4a6fa5;
+    --light-blue: #c8d9f0;
+    --pale: #eef3fb;
+    --white: #ffffff;
+    --gray-700: #374151;
+    --gray-500: #6b7280;
+    --gray-200: #e5e9f0;
+    --red-deep: #8b1a1a;
+    --red-light: #fde8e8;
+    --red-mid: #c0392b;
+    --green-deep: #155724;
+    --green-light: #d4edda;
+    --amber: #b45309;
+    --amber-light: #fef3c7;
+    --gold: #c9a84c;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--pale);
+    color: var(--gray-700);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  .page-wrapper {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  /* ── HEADER ── */
+  .doc-header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 2.5rem 2.8rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .doc-header::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 260px; height: 100%;
+    background: linear-gradient(135deg, transparent 40%, rgba(74,111,165,0.25));
+    pointer-events: none;
+  }
+  .doc-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+  .doc-header-text { flex: 1; }
+  .firm-logo-wrap {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .firm-logo {
+    display: block;
+    height: 150px;
+    width: auto;
+  }
+  .doc-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--gold), var(--mid), var(--gold));
+  }
+  .doc-type-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+  }
+  .doc-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    line-height: 1.25;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .doc-subtitle {
+    font-size: 0.88rem;
+    color: var(--light-blue);
+    font-weight: 300;
+    max-width: 540px;
+  }
+  .doc-meta {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1.5rem;
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.6);
+  }
+  .doc-meta span strong { color: rgba(255,255,255,0.9); font-weight: 600; }
+
+  /* ── LEGAL CONTEXT BOX ── */
+  .legal-context {
+    background: var(--slate);
+    color: var(--light-blue);
+    padding: 1.4rem 2.8rem;
+    font-size: 0.8rem;
+    line-height: 1.7;
+    border-left: 4px solid var(--gold);
+  }
+  .legal-context strong { color: var(--white); }
+
+  /* ── MAIN CARD ── */
+  .main-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-top: none;
+  }
+
+  .section {
+    padding: 2rem 2.8rem;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .section:last-child { border-bottom: none; }
+
+  .section-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--mid);
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gray-200);
+  }
+
+  /* ── FORM GRID ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem 2rem;
+  }
+  @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+
+  /* ── SCHEDULE TABLE ── */
+  .schedule-wrap {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--gray-200);
+    padding-top: 1.1rem;
+    margin-top: 0.4rem;
+  }
+  .schedule-title {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mid);
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .schedule-note { font-size: 0.7rem; color: var(--gray-500); margin-bottom: 0.9rem; }
+  .schedule-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+  .schedule-table th {
+    background: var(--navy);
+    color: var(--white);
+    padding: 0.5rem 0.7rem;
+    text-align: left;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .schedule-table td { padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--gray-200); vertical-align: middle; }
+  .schedule-table tr:last-child td { border-bottom: none; }
+  .schedule-table tr:nth-child(even) td { background: var(--pale); }
+  .schedule-table input[type="time"] {
+    border: 1.5px solid var(--gray-200);
+    border-radius: 4px;
+    padding: 0.35rem 0.5rem;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.84rem;
+    color: var(--navy);
+    background: var(--white);
+    width: 120px;
+  }
+  .schedule-table input[type="time"]:focus {
+    outline: none;
+    border-color: var(--mid);
+    box-shadow: 0 0 0 2px rgba(74,111,165,0.12);
+  }
+  .schedule-table .day-check { width: 16px; height: 16px; accent-color: var(--navy); cursor: pointer; }
+  .schedule-table .day-name { font-weight: 600; color: var(--navy); min-width: 100px; }
+  .schedule-table .day-hours {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: var(--mid);
+    min-width: 70px;
+    text-align: right;
+  }
+  .schedule-table tr.day-off td { opacity: 0.4; }
+  .schedule-total-row td {
+    background: var(--navy) !important;
+    color: var(--white) !important;
+    font-weight: 700;
+    padding: 0.6rem 0.7rem;
+    border-bottom: none !important;
+  }
+  .schedule-total-row .day-hours { color: var(--gold) !important; font-size: 1rem; }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .field label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 0.02em;
+  }
+  .field .field-note {
+    font-size: 0.7rem;
+    color: var(--gray-500);
+    margin-top: -0.2rem;
+  }
+  .field input {
+    border: 1.5px solid var(--gray-200);
+    border-radius: 4px;
+    padding: 0.6rem 0.8rem;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.95rem;
+    color: var(--navy);
+    background: var(--pale);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+  .field input:focus {
+    outline: none;
+    border-color: var(--mid);
+    box-shadow: 0 0 0 3px rgba(74,111,165,0.12);
+    background: var(--white);
+  }
+  .field input::placeholder { color: #b0b8c9; }
+
+  .field select {
+    border: 1.5px solid var(--gray-200);
+    border-radius: 4px;
+    padding: 0.6rem 2rem 0.6rem 0.8rem;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.95rem;
+    color: var(--navy);
+    background: var(--pale) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a6fa5' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 0.75rem center;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field select:focus {
+    outline: none;
+    border-color: var(--mid);
+    box-shadow: 0 0 0 3px rgba(74,111,165,0.12);
+    background-color: var(--white);
+  }
+  .field select option[value=""] { color: #b0b8c9; }
+
+  .calc-btn {
+    display: block;
+    margin: 0.6rem 0 0;
+    padding: 0.85rem 2.5rem;
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .calc-btn:hover { background: var(--slate); }
+  .calc-btn:active { transform: translateY(1px); }
+
+  /* ── RESULTS ── */
+  #results { display: none; }
+
+  .verdict-banner {
+    padding: 1rem 2.8rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .verdict-banner.exploitation {
+    background: var(--red-light);
+    color: var(--red-deep);
+    border-left: 5px solid var(--red-mid);
+  }
+  .verdict-banner.underpay {
+    background: var(--amber-light);
+    color: var(--amber);
+    border-left: 5px solid var(--amber);
+  }
+  .verdict-banner.fair {
+    background: var(--green-light);
+    color: var(--green-deep);
+    border-left: 5px solid #28a745;
+  }
+  .verdict-icon { font-size: 1.2rem; }
+
+  /* ── COMPARISON TABLE ── */
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  .comparison-table thead tr {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .comparison-table thead th {
+    padding: 0.8rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .comparison-table tbody tr { border-bottom: 1px solid var(--gray-200); }
+  .comparison-table tbody tr:last-child { border-bottom: none; }
+  .comparison-table tbody tr:nth-child(even) { background: var(--pale); }
+  .comparison-table td {
+    padding: 0.9rem 1rem;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .comparison-table td:first-child { font-weight: 600; color: var(--navy); }
+  .comparison-table td:nth-child(2) {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .amount-legal { color: var(--navy); }
+  .amount-real { color: var(--gray-500); }
+  .amount-diff { color: var(--red-mid); }
+  .amount-positive-diff { font-weight: 700 !important; }
+
+  .highlight-row { background: #fff0f0 !important; }
+
+  /* ── EXTENDED ANALYSIS ── */
+  .analysis-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  @media (max-width: 620px) { .analysis-grid { grid-template-columns: 1fr; } }
+
+  .analysis-card {
+    border: 1px solid var(--gray-200);
+    border-radius: 4px;
+    padding: 1.1rem;
+  }
+  .analysis-card .card-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gray-500);
+    margin-bottom: 0.4rem;
+    font-weight: 700;
+  }
+  .analysis-card .card-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .analysis-card .card-desc { font-size: 0.75rem; color: var(--gray-500); line-height: 1.4; }
+  .analysis-card.red-card { border-color: #f5c6c6; background: #fff5f5; }
+  .analysis-card.red-card .card-value { color: var(--red-mid); }
+
+  /* ── NARRATIVE BLOCK ── */
+  .narrative-block {
+    background: var(--pale);
+    border-left: 3px solid var(--mid);
+    padding: 1.2rem 1.4rem;
+    font-size: 0.84rem;
+    line-height: 1.75;
+    color: var(--gray-700);
+    border-radius: 0 4px 4px 0;
+  }
+  .narrative-block strong { color: var(--navy); }
+
+  /* ── FOOTER ── */
+  .doc-footer {
+    background: var(--navy);
+    color: rgba(255,255,255,0.5);
+    padding: 1.2rem 2.8rem;
+    font-size: 0.72rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .doc-footer strong { color: rgba(255,255,255,0.85); }
+
+  /* ── PRINT ── */
+  @media (max-width: 600px) {
+    .doc-header-inner { flex-direction: column; align-items: flex-start; }
+    .firm-logo-wrap { align-self: flex-start; }
+  }
+  @media print {
+    body { background: white; padding: 0; }
+    .calc-btn { display: none; }
+    #results { display: block !important; }
+    .field input { background: white; border: 1px solid #ccc; }
+    .doc-footer { background: #1a2744; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .doc-header, .legal-context, .comparison-table thead tr, .verdict-banner, .firm-logo-wrap { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- HEADER -->
+  <div class="doc-header">
+    <div class="doc-header-inner">
+      <div class="doc-header-text">
+        <div class="doc-type-label">Artefacto Probatorio · Visa T / Trata Laboral</div>
+    <div class="doc-title">Cálculo de Diferencia Económica<br>por Trabajo No Pagado</div>
+    <div class="doc-subtitle">Evidencia cuantificable de explotación económica conforme a los estándares del Fair Labor Standards Act (FLSA) y salario mínimo estatal aplicable.</div>
+    <div class="doc-meta">
+      <span><strong>Fecha de generación:</strong> <span id="gen-date"></span></span>
+      <span><strong>Propósito:</strong> Evidencia en expediente migratorio</span>
+      <span><strong>Marco legal:</strong> 29 U.S.C. § 206 · FLSA</span>
+    </div>
+      </div><!-- /doc-header-text -->
+      <div class="firm-logo-wrap">
+        <img src="data:image/jpeg;base64,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CweCJuFSrIn+BhhrgWRkjT8FJVEQBILX4VBvkpl2L8Z0ol2dxMwNLZOFamTWXUcfgRJohZ5PVr6x+a+sfmvrH5r6x+aF3M4yFxzWUCEoYIufTFIDKLn/AADG9JjD6TBgnx7U/XcSYQlC2JLrX1j819Y/NfWPzX1j819Y/PlglzsIe4JhyqamUy54BzWA60SZWuaRhDDUks5GiAjFmoX+GCyl4nR507tx0mUOcAx06VDTTPgCwtdagX8WYCwX+FCA4TREXbNKHKAMk8FtzqfZZi+iB6K6DUSfzerAxChukgTwx6jg1NWvQ3hxOlT8FcNBdkTw4RUwsIeXwe68hrahPxPk2tz/AD3UFjpSDzlyZDdB/wB9KuBZJoOmiKk4Xzy3ErZFk89akmsx4yWiVdic3CicoX6cRr+jx+G1bknaAQ5yUrGmK1iQ3UaFvcKNaMwSlzhbZRWW+4Rxza3HcoaHaISkgxws9qwvDGEJmTDpgJ0sGrlmJe55AQSRbgoXS5CWJECWBHKp2uIayQCRBAdKNPZJrJWQU3C7wt2bnFrQOtOAhAK7C7TyGC6niRIiWutLmyzMRToxcpiS03AhiEUW/LKhrKCWq1Num74i7vsVPXYZseHJtXG2gvIM2daAU9MDgpYtbej/AIRMPFVzedNjhTIQECBKxGrTNMRA2JZBoBGlZU9KdOoeufIIqbHWKhypyIPqrAeAMSalXUCWLGozgoWTDRDWEhJK4SAd1JnY3TSVDg0fS8UcUIUsb6U7K0xspOaQY4uHg40A0sCcE+BbdJXzlYQDbna7RkSEiYalL9KBCM88VMTP0INqWjLh5CARJHStIkSI+CVYpRkcGixTgICkkii2AhC2Dh4gwCWR1rpadHhiC0iXfwlt5sUpwWjJgQAsVft03RTWBlBK5f8AU//aAAwDAQACAAMAAAAQ888888888888888888888888888888c8o0888888884AQko08888888wwUEIU8888888wUQ0Y8888888UM84cEc0888884wwIYwww88888AMkokckMU888oE8QcY8o8w88888cM8c88s88888888888888888888888888888//EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQMBAT8QKf/EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQIBAT8QKf/EACcQ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" alt="The Mendoza Law Firm" class="firm-logo">
+      </div>
+    </div><!-- /doc-header-inner -->
+  </div>
+
+  <!-- LEGAL CONTEXT -->
+  <div class="legal-context">
+    <strong>Fundamento legal:</strong> El salario mínimo estatal constituye un estándar legal de cumplimiento obligatorio bajo el Fair Labor Standards Act (FLSA), 29 U.S.C. § 206. El pago por debajo de dicho estándar no representa un incumplimiento contractual ordinario, sino una forma de <strong>explotación económica documentable</strong>. En el contexto de la Visa T para víctimas de trata de personas, la diferencia entre el salario mínimo legalmente exigible y el pago efectivamente realizado constituye <strong>evidencia cuantificable del beneficio económico obtenido por el empleador mediante coerción o abuso</strong>, conforme a 22 U.S.C. § 7102(11)(B) (Trafficking Victims Protection Act).
+  </div>
+
+  <div class="main-card">
+
+    <!-- DATOS DE ENTRADA -->
+    <div class="section">
+      <div class="section-label">Datos del caso</div>
+      <div class="form-grid">
+        <div class="field">
+          <label>Estado donde ocurrió el trabajo</label>
+          <span class="field-note">Jurisdicción laboral aplicable</span>
+          <select id="state">
+            <option value="">— Seleccione un estado —</option>
+            <option>Alabama</option><option>Alaska</option><option>Arizona</option>
+            <option>Arkansas</option><option>California</option><option>Colorado</option>
+            <option>Connecticut</option><option>Delaware</option><option>Florida</option>
+            <option>Georgia</option><option>Hawái</option><option>Idaho</option>
+            <option>Illinois</option><option>Indiana</option><option>Iowa</option>
+            <option>Kansas</option><option>Kentucky</option><option>Luisiana</option>
+            <option>Maine</option><option>Maryland</option><option>Massachusetts</option>
+            <option>Michigan</option><option>Minnesota</option><option>Misisipi</option>
+            <option>Misuri</option><option>Montana</option><option>Nebraska</option>
+            <option>Nevada</option><option>Nuevo Hampshire</option><option>Nueva Jersey</option>
+            <option>Nuevo México</option><option>Nueva York</option>
+            <option>Carolina del Norte</option><option>Dakota del Norte</option>
+            <option>Ohio</option><option>Oklahoma</option><option>Oregón</option>
+            <option>Pensilvania</option><option>Rhode Island</option>
+            <option>Carolina del Sur</option><option>Dakota del Sur</option>
+            <option>Tennessee</option><option>Texas</option><option>Utah</option>
+            <option>Vermont</option><option>Virginia</option>
+            <option>Virginia Occidental</option><option>Washington</option>
+            <option>Wisconsin</option><option>Wyoming</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Año de referencia del salario mínimo</label>
+          <span class="field-note">Período en que ocurrió la explotación laboral</span>
+          <input type="number" id="refYear" placeholder="Ej: 2022" min="1938" max="2100" step="1">
+        </div>
+        <div class="field">
+          <label>Salario mínimo estatal vigente (USD/hora)</label>
+          <span class="field-note">Verificar en el Department of Labor del estado</span>
+          <input type="number" id="minWage" placeholder="Ej: 16.00" step="0.01" min="0">
+        </div>
+        <div class="schedule-wrap">
+          <div class="schedule-title">Horario laboral declarado por día</div>
+          <div class="schedule-note">Marque los días trabajados e ingrese la hora de entrada y salida. El sistema calculará las horas reales por semana y aplicará la tarifa de horas extras (FLSA § 207) sobre las horas que excedan 40 por semana.</div>
+          <table class="schedule-table">
+            <thead>
+              <tr>
+                <th style="width:32px;">✓</th>
+                <th>Día</th>
+                <th>Entrada</th>
+                <th>Salida</th>
+                <th style="text-align:right;">Horas/día</th>
+              </tr>
+            </thead>
+            <tbody id="schedule-body">
+              <tr data-day="Lunes">
+                <td><input type="checkbox" class="day-check" checked onchange="toggleDay(this)"></td>
+                <td class="day-name">Lunes</td>
+                <td><input type="time" class="t-in" value="08:00" onchange="updateSchedule()"></td>
+                <td><input type="time" class="t-out" value="18:00" onchange="updateSchedule()"></td>
+                <td class="day-hours" id="dh-0">10.0 h</td>
+              </tr>
+              <tr data-day="Martes">
+                <td><input type="checkbox" class="day-check" checked onchange="toggleDay(this)"></td>
+                <td class="day-name">Martes</td>
+                <td><input type="time" class="t-in" value="08:00" onchange="updateSchedule()"></td>
+                <td><input type="time" class="t-out" value="18:00" onchange="updateSchedule()"></td>
+                <td class="day-hours" id="dh-1">10.0 h</td>
+              </tr>
+              <tr data-day="Miércoles">
+                <td><input type="checkbox" class="day-check" checked onchange="toggleDay(this)"></td>
+                <td class="day-name">Miércoles</td>
+                <td><input type="time" class="t-in" value="08:00" onchange="updateSchedule()"></td>
+                <td><input type="time" class="t-out" value="18:00" onchange="updateSchedule()"></td>
+                <td class="day-hours" id="dh-2">10.0 h</td>
+              </tr>
+              <tr data-day="Jueves">
+                <td><input type="checkbox" class="day-check" checked onchange="toggleDay(this)"></td>
+                <td class="day-name">Jueves</td>
+                <td><input type="time" class="t-in" value="08:00" onchange="updateSchedule()"></td>
+                <td><input type="time" class="t-out" value="18:00" onchange="updateSchedule()"></td>
+                <td class="day-hours" id="dh-3">10.0 h</td>
+              </tr>
+              <tr data-day="Viernes">
+                <td><input type="checkbox" class="day-check" checked onchange="toggleDay(this)"></td>
+                <td class="day-name">Viernes</td>
+                <td><input type="time" class="t-in" value="08:00" onchange="updateSchedule()"></td>
+                <td><input type="time" class="t-out" value="18:00" onchange="updateSchedule()"></td>
+                <td class="day-hours" id="dh-4">10.0 h</td>
+              </tr>
+              <tr data-day="Sábado">
+                <td><input type="checkbox" class="day-check" onchange="toggleDay(this)"></td>
+                <td class="day-name">Sábado</td>
+                <td><input type="time" class="t-in" value="08:00" onchange="updateSchedule()"></td>
+                <td><input type="time" class="t-out" value="14:00" onchange="updateSchedule()"></td>
+                <td class="day-hours" id="dh-5">—</td>
+              </tr>
+              <tr data-day="Domingo">
+                <td><input type="checkbox" class="day-check" onchange="toggleDay(this)"></td>
+                <td class="day-name">Domingo</td>
+                <td><input type="time" class="t-in" value="08:00" onchange="updateSchedule()"></td>
+                <td><input type="time" class="t-out" value="14:00" onchange="updateSchedule()"></td>
+                <td class="day-hours" id="dh-6">—</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr class="schedule-total-row">
+                <td colspan="4">Total de horas trabajadas por semana</td>
+                <td class="day-hours" id="dh-total">50.0 h</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <div class="field">
+          <label>Pago real recibido por semana (USD)</label>
+          <span class="field-note">Monto efectivamente entregado por el empleador</span>
+          <input type="number" id="realPay" placeholder="Ej: 150.00" step="0.01" min="0">
+        </div>
+        <div class="field" style="grid-column: 1 / -1; border-top: 1px solid var(--gray-200); padding-top: 1rem; margin-top: 0.4rem;">
+          <label style="color: var(--mid); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;">Período total de empleo</label>
+          <span class="field-note">Ingrese la duración del trabajo bajo explotación para calcular el perjuicio total acumulado</span>
+        </div>
+        <div class="field">
+          <label>Meses trabajados</label>
+          <span class="field-note">Duración total en meses (obligatorio)</span>
+          <input type="number" id="empMonths" placeholder="Ej: 8" min="0" max="600" step="1">
+        </div>
+        <div class="field">
+          <label>Semanas adicionales (opcional)</label>
+          <span class="field-note">Semanas extra fuera de los meses completos</span>
+          <input type="number" id="empWeeks" placeholder="Ej: 2" min="0" max="4" step="1">
+        </div>
+      </div>
+      <br>
+      <button class="calc-btn" onclick="calculate()">Generar análisis probatorio →</button>
+    </div>
+
+    <!-- RESULTADOS -->
+    <div id="results">
+
+      <!-- VEREDICTO -->
+      <div id="verdict-banner" class="verdict-banner"></div>
+
+      <!-- TABLA COMPARATIVA -->
+      <div class="section">
+        <div class="section-label">Tabla comparativa probatoria</div>
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th style="width:40%">Concepto</th>
+              <th style="width:22%">Monto (USD)</th>
+              <th>Fuente legal / Explicación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pago legal por horas regulares (primeras 40 hrs/semana)</td>
+              <td class="amount-legal" id="r-regular">—</td>
+              <td id="r-regular-src">—</td>
+            </tr>
+            <tr id="row-overtime" style="display:none;">
+              <td>Pago legal por horas extras (horas sobre 40 × 1.5× tarifa)</td>
+              <td class="amount-legal" id="r-overtime">—</td>
+              <td id="r-overtime-src">—</td>
+            </tr>
+            <tr>
+              <td><strong>Monto que debió recibir conforme al salario mínimo estatal</strong></td>
+              <td class="amount-legal" id="r-legal">—</td>
+              <td id="r-legal-src">—</td>
+            </tr>
+            <tr>
+              <td>Monto efectivamente pagado por el empleador</td>
+              <td class="amount-real" id="r-real">—</td>
+              <td>Pago reportado por la parte afectada. Puede corroborarse con recibos, transferencias, o declaración jurada.</td>
+            </tr>
+            <tr class="highlight-row">
+              <td><strong>Diferencia económica atribuible a explotación laboral</strong></td>
+              <td class="amount-diff amount-positive-diff" id="r-diff">—</td>
+              <td id="r-diff-src">—</td>
+            </tr>
+            <tr>
+              <td>Tasa horaria implícita (pago real ÷ horas trabajadas)</td>
+              <td id="r-rate">—</td>
+              <td>Pago por hora que recibió el trabajador de facto. Su comparación con el salario mínimo y la tarifa de horas extras revela el grado de subpago.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ANÁLISIS EXTENDIDO -->
+      <div class="section">
+        <div class="section-label">Proyección del perjuicio económico</div>
+        <div class="analysis-grid">
+          <div class="analysis-card red-card">
+            <div class="card-label">Perjuicio semanal</div>
+            <div class="card-value" id="a-weekly">—</div>
+            <div class="card-desc">Diferencia económica por semana de trabajo.</div>
+          </div>
+          <div class="analysis-card red-card">
+            <div class="card-label">Perjuicio mensual estimado</div>
+            <div class="card-value" id="a-monthly">—</div>
+            <div class="card-desc">Diferencia económica × 4.33 semanas promedio por mes.</div>
+          </div>
+          <div class="analysis-card">
+            <div class="card-label">Porcentaje del salario legal no pagado</div>
+            <div class="card-value" id="a-pct">—</div>
+            <div class="card-desc">Proporción del salario legalmente correspondiente que fue retenida por el empleador.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PERJUICIO TOTAL POR PERÍODO -->
+      <div class="section" id="section-period" style="display:none;">
+        <div class="section-label">Perjuicio total por período de empleo</div>
+        <div class="analysis-grid" style="grid-template-columns: repeat(2,1fr); margin-bottom:1rem;">
+          <div class="analysis-card red-card" style="border-width:2px;">
+            <div class="card-label">Período documentado</div>
+            <div class="card-value" id="a-period-label" style="font-size:1.1rem;">—</div>
+            <div class="card-desc">Duración total del empleo bajo condiciones de explotación.</div>
+          </div>
+          <div class="analysis-card red-card" style="border-width:2px;">
+            <div class="card-label">Total de semanas trabajadas</div>
+            <div class="card-value" id="a-period-weeks">—</div>
+            <div class="card-desc">Base de cálculo para el perjuicio económico total acumulado.</div>
+          </div>
+        </div>
+        <div style="background: #fff0f0; border: 2px solid var(--red-mid); border-radius:6px; padding: 1.2rem 1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--red-mid); font-weight:700; margin-bottom:0.3rem;">Perjuicio económico total acumulado durante el período de empleo</div>
+            <div style="font-size:0.78rem; color:var(--gray-500);">Monto total no pagado · Base para reclamación legal y documentación probatoria</div>
+          </div>
+          <div style="font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:var(--red-mid);" id="a-total">—</div>
+        </div>
+      </div>
+
+      <!-- NARRATIVA PROBATORIA -->
+      <div class="section">
+        <div class="section-label">Narrativa probatoria para el expediente</div>
+        <div class="narrative-block" id="narrative">—</div>
+      </div>
+
+    </div>
+    <!-- /results -->
+
+  </div><!-- /main-card -->
+
+  <!-- FOOTER -->
+  <div class="doc-footer">
+    <span>Este documento tiene carácter probatorio y debe integrarse al expediente migratorio de la parte afectada.</span>
+    <span><strong>Ref. legal:</strong> FLSA 29 U.S.C. § 206 · TVPA 22 U.S.C. § 7102</span>
+  </div>
+
+</div><!-- /page-wrapper -->
+
+<script>
+  // Fecha de generación
+  const d = new Date();
+  document.getElementById('gen-date').textContent = d.toLocaleDateString('es-MX', {year:'numeric', month:'long', day:'numeric'});
+
+  function fmt(n) {
+    return '$' + n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  }
+  function fmtPct(n) { return n.toFixed(1) + '%'; }
+  function fmtH(n)   { return n.toFixed(2) + ' h'; }
+
+  // ── Helpers para horario ──
+  function timeToMinutes(t) {
+    if (!t) return 0;
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m;
+  }
+  function getDayHours(row) {
+    const cb  = row.querySelector('.day-check');
+    if (!cb.checked) return 0;
+    const tin  = row.querySelector('.t-in').value;
+    const tout = row.querySelector('.t-out').value;
+    const mins = timeToMinutes(tout) - timeToMinutes(tin);
+    return Math.max(mins / 60, 0);
+  }
+  function getScheduleData() {
+    const rows = document.querySelectorAll('#schedule-body tr');
+    const days = [];
+    rows.forEach((row, i) => {
+      const cb   = row.querySelector('.day-check');
+      const name = row.dataset.day;
+      const h    = getDayHours(row);
+      const tin  = row.querySelector('.t-in').value;
+      const tout = row.querySelector('.t-out').value;
+      days.push({ name, active: cb.checked, hours: h, in: tin, out: tout });
+    });
+    return days;
+  }
+  function updateSchedule() {
+    const rows = document.querySelectorAll('#schedule-body tr');
+    let total = 0;
+    rows.forEach((row, i) => {
+      const h = getDayHours(row);
+      const el = document.getElementById('dh-' + i);
+      const active = row.querySelector('.day-check').checked;
+      if (active) {
+        el.textContent = h.toFixed(1) + ' h';
+        total += h;
+        row.classList.remove('day-off');
+      } else {
+        el.textContent = '—';
+        row.classList.add('day-off');
+      }
+    });
+    document.getElementById('dh-total').textContent = total.toFixed(2) + ' h';
+  }
+  function toggleDay(cb) {
+    const row = cb.closest('tr');
+    const inputs = row.querySelectorAll('input[type="time"]');
+    inputs.forEach(inp => inp.disabled = !cb.checked);
+    updateSchedule();
+  }
+
+  // Init schedule on load
+  window.addEventListener('DOMContentLoaded', () => { updateSchedule(); });
+
+  function calculate() {
+    const state     = document.getElementById('state').value.trim();
+    const minWage   = parseFloat(document.getElementById('minWage').value);
+    const realPay   = parseFloat(document.getElementById('realPay').value);
+    const refYear   = parseInt(document.getElementById('refYear').value);
+
+    // ── Leer horas desde el horario declarado ──
+    const days  = getScheduleData();
+    const hours = days.reduce((s, d) => s + d.hours, 0);
+    const activeDays = days.filter(d => d.active);
+
+    if (!state || isNaN(refYear) || isNaN(minWage) || isNaN(realPay) || hours === 0) {
+      alert('Por favor complete todos los campos y asegúrese de que al menos un día esté marcado.');
+      return;
+    }
+
+    // ── Cálculo con horas extras (FLSA 29 U.S.C. § 207) ──
+    const regularHours  = Math.min(hours, 40);
+    const overtimeHours = Math.max(hours - 40, 0);
+    const overtimeRate  = minWage * 1.5;
+
+    const regularPay    = minWage * regularHours;
+    const overtimePay   = overtimeRate * overtimeHours;
+    const legalPay      = regularPay + overtimePay;
+
+    const diff          = legalPay - realPay;
+    const implRate      = realPay / hours;
+    const monthly       = diff * (52 / 12);   // 4.33 semanas/mes
+    const yearly        = diff * 52;
+    const pct           = diff > 0 ? (diff / legalPay) * 100 : 0;
+    const hasOvertime   = overtimeHours > 0;
+
+    // ── Período de empleo ──
+    const empMonths     = parseFloat(document.getElementById('empMonths').value) || 0;
+    const empWeeks      = parseFloat(document.getElementById('empWeeks').value)  || 0;
+    const totalWeeks    = (empMonths * (52 / 12)) + empWeeks;
+    const totalPerjuicio = diff * totalWeeks;
+    const hasPeriod     = empMonths > 0 || empWeeks > 0;
+
+    // ── Fila horas regulares ──
+    document.getElementById('r-regular').textContent = fmt(regularPay);
+    document.getElementById('r-regular-src').textContent =
+      `${fmt(minWage)}/hr × ${regularHours} hrs regulares. FLSA 29 U.S.C. § 206 y salario mínimo de ${state} (${refYear}).`;
+
+    // ── Fila horas extras (mostrar solo si aplica) ──
+    const rowOT = document.getElementById('row-overtime');
+    if (hasOvertime) {
+      rowOT.style.display = '';
+      document.getElementById('r-overtime').textContent = fmt(overtimePay);
+      document.getElementById('r-overtime-src').textContent =
+        `${fmt(overtimeRate)}/hr (1.5× tarifa base) × ${overtimeHours} hrs extras. FLSA 29 U.S.C. § 207 — obligatorio para horas sobre 40 en la semana laboral.`;
+    } else {
+      rowOT.style.display = 'none';
+    }
+
+    // ── Total legal ──
+    document.getElementById('r-legal').textContent = fmt(legalPay);
+    document.getElementById('r-legal-src').textContent = hasOvertime
+      ? `Suma de pago regular (${fmt(regularPay)}) + horas extras (${fmt(overtimePay)}). FLSA 29 U.S.C. §§ 206–207, salario mínimo de ${state} año ${refYear}.`
+      : `FLSA 29 U.S.C. § 206 y salario mínimo estatal de ${state} correspondiente al año ${refYear} (${fmt(minWage)}/hr × ${hours} hrs).`;
+
+    // ── Pago real ──
+    document.getElementById('r-real').textContent = fmt(realPay);
+
+    // ── Diferencia ──
+    document.getElementById('r-diff').textContent = diff > 0 ? fmt(diff) : fmt(0);
+    document.getElementById('r-diff-src').textContent = diff > 0
+      ? `Monto retenido indebidamente. Constituye evidencia de explotación económica en el expediente de Visa T (22 U.S.C. § 7102(11)(B)).`
+      : `No se identificó diferencia negativa. El pago es igual o superior al mínimo legal exigible.`;
+
+    // ── Tasa implícita ──
+    document.getElementById('r-rate').textContent = fmt(implRate) + '/hr';
+
+    // ── Análisis extendido ──
+    document.getElementById('a-weekly').textContent  = diff > 0 ? fmt(diff)    : fmt(0);
+    document.getElementById('a-monthly').textContent = diff > 0 ? fmt(monthly) : fmt(0);
+    document.getElementById('a-pct').textContent     = diff > 0 ? fmtPct(pct)  : '0.0%';
+
+    // ── Período de empleo ──
+    const sectionPeriod = document.getElementById('section-period');
+    if (hasPeriod && diff > 0) {
+      sectionPeriod.style.display = '';
+      const mLabel = empMonths > 0 ? `${empMonths} mes${empMonths !== 1 ? 'es' : ''}` : '';
+      const wLabel = empWeeks  > 0 ? `${empWeeks} semana${empWeeks !== 1 ? 's' : ''}` : '';
+      document.getElementById('a-period-label').textContent = [mLabel, wLabel].filter(Boolean).join(' y ');
+      document.getElementById('a-period-weeks').textContent = totalWeeks.toFixed(1) + ' semanas';
+      document.getElementById('a-total').textContent = fmt(totalPerjuicio);
+    } else {
+      sectionPeriod.style.display = 'none';
+    }
+
+    // ── Veredicto ──
+    const banner = document.getElementById('verdict-banner');
+    banner.className = 'verdict-banner';
+    if (diff > legalPay * 0.3) {
+      banner.classList.add('exploitation');
+      banner.innerHTML = '<span class="verdict-icon">⚠</span> <strong>EXPLOTACIÓN ECONÓMICA IDENTIFICADA:</strong> La diferencia entre el salario legalmente exigible y el pago real supera el 30% del total correspondiente. Esto constituye evidencia cuantificable de explotación laboral para fines del expediente de Visa T.';
+    } else if (diff > 0) {
+      banner.classList.add('underpay');
+      banner.innerHTML = '<span class="verdict-icon">▲</span> <strong>SUBPAGO DOCUMENTADO:</strong> El empleador pagó por debajo del salario mínimo y/o la tarifa de horas extras exigible por ley. Existe diferencia económica registrable como elemento probatorio.';
+    } else {
+      banner.classList.add('fair');
+      banner.innerHTML = '<span class="verdict-icon">✓</span> <strong>PAGO EN CONFORMIDAD:</strong> El monto pagado es igual o superior al salario mínimo estatal y a la tarifa de horas extras aplicable. No se identifica diferencia económica negativa en el período analizado.';
+    }
+
+    // ── Narrativa ──
+    const narr = document.getElementById('narrative');
+
+    // Detalle de jornadas por día
+    const scheduleDetail = activeDays.map(d =>
+      `<strong>${d.name}</strong>: ${d.in} – ${d.out} (${d.hours.toFixed(2)} h)`
+    ).join(', ');
+
+    // Tabla HTML de jornadas embebida en narrativa
+    const scheduleRows = activeDays.map(d =>
+      `<tr><td style="padding:3px 10px;border-bottom:1px solid #dde4ef;">${d.name}</td>
+       <td style="padding:3px 10px;border-bottom:1px solid #dde4ef;">${d.in} – ${d.out}</td>
+       <td style="padding:3px 10px;border-bottom:1px solid #dde4ef;font-weight:700;">${d.hours.toFixed(2)} h</td></tr>`
+    ).join('');
+    const scheduleTable = `
+      <table style="margin:0.8rem 0 0.8rem 0;border-collapse:collapse;font-size:0.82rem;background:#f5f7fb;border:1px solid #dde4ef;border-radius:4px;overflow:hidden;">
+        <thead><tr style="background:#1a2a4a;color:#fff;">
+          <th style="padding:5px 10px;text-align:left;font-weight:600;">Día</th>
+          <th style="padding:5px 10px;text-align:left;font-weight:600;">Horario declarado</th>
+          <th style="padding:5px 10px;text-align:left;font-weight:600;">Horas efectivas</th>
+        </tr></thead>
+        <tbody>${scheduleRows}</tbody>
+        <tfoot><tr style="background:#1a2a4a;color:#c9a84c;">
+          <td colspan="2" style="padding:5px 10px;font-weight:700;">Total semanal</td>
+          <td style="padding:5px 10px;font-weight:700;">${hours.toFixed(2)} h</td>
+        </tr></tfoot>
+      </table>`;
+
+    if (diff > 0) {
+      const overtimeNote = hasOvertime
+        ? `<br>De ese total, <strong>${regularHours} horas corresponden a tiempo regular</strong> (tarifa: ${fmt(minWage)}/hr) y <strong>${overtimeHours.toFixed(2)} horas constituyen tiempo extraordinario</strong> que superan el umbral de 40 horas semanales establecido por la FLSA, las cuales debieron compensarse a la tarifa de <strong>${fmt(overtimeRate)}/hora</strong> (1.5× la tarifa base), conforme a 29 U.S.C. § 207. El empleador omitió aplicar esta tarifa diferenciada, lo que agrava la cuantía del perjuicio.`
+        : '';
+      narr.innerHTML = `Con base en el horario laboral declarado por la persona afectada, se documentaron <strong>${activeDays.length} días de trabajo por semana</strong> en el estado de <strong>${state}</strong>, con el siguiente registro de jornadas:${scheduleTable}La sumatoria de horas por jornada diaria arroja un total de <strong>${hours.toFixed(2)} horas de trabajo efectivo por semana</strong>.${overtimeNote}<br><br>Conforme al salario mínimo legal vigente en <strong>${state}</strong> para el año <strong>${refYear}</strong> (${fmt(minWage)}/hora), el monto semanal total que debió recibir la persona ascendía a <strong>${fmt(legalPay)}</strong>. Sin embargo, el empleador efectuó únicamente un pago de <strong>${fmt(realPay)} por semana</strong>, lo que equivale a una tasa efectiva de <strong>${fmt(implRate)}/hora</strong>, por debajo del estándar legal aplicable.<br><br>La diferencia económica resultante es de <strong>${fmt(diff)} por semana</strong>, equivalente a <strong>${fmt(monthly)} mensuales</strong>. Dicho monto representa el <strong>${fmtPct(pct)} del salario legalmente correspondiente</strong> que fue retenido por el empleador, configurando un beneficio económico indebido susceptible de valorarse como evidencia de explotación laboral en el marco de una solicitud de Visa T (22 U.S.C. § 7102).`;
+    } else {
+      narr.innerHTML = `Con base en el horario laboral declarado, la persona trabajó <strong>${hours.toFixed(2)} horas semanales</strong> (${activeDays.length} días) en el estado de <strong>${state}</strong>:${scheduleTable}El pago realizado por el empleador (<strong>${fmt(realPay)}/semana</strong>) es igual o superior al salario mínimo legal exigible${hasOvertime ? ', incluyendo la tarifa de horas extras (1.5×) sobre las ' + overtimeHours.toFixed(2) + ' horas que exceden el umbral de 40 semanales' : ''}. No se documenta diferencia económica negativa en el período analizado.`;
+    }
+
+    // ── Período total: agregar párrafo final a narrativa ──
+    if (hasPeriod && diff > 0) {
+      const mLabel = empMonths > 0 ? `${empMonths} mes${empMonths !== 1 ? 'es' : ''}` : '';
+      const wLabel = empWeeks  > 0 ? `${empWeeks} semana${empWeeks !== 1 ? 's' : ''}` : '';
+      const periodoStr = [mLabel, wLabel].filter(Boolean).join(' y ');
+      narr.innerHTML += `<br><br>Considerando que la persona afectada se mantuvo bajo las mismas condiciones laborales durante un período de <strong>${periodoStr}</strong> (aproximadamente <strong>${totalWeeks.toFixed(1)} semanas</strong>), el <strong>perjuicio económico total acumulado asciende a ${fmt(totalPerjuicio)}</strong>. Este monto constituye la base cuantificable del daño sufrido durante la totalidad del período de explotación laboral documentado, y es susceptible de reclamación bajo las disposiciones de la FLSA y de los mecanismos de compensación disponibles para víctimas de trata (22 U.S.C. § 7105).`;
+    }
+
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({behavior: 'smooth', block: 'start'});
+  }
+</script>
+</body>
+</html>
