@@ -3,10 +3,612 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cálculo de Diferencia Económica por Trabajo No Pagado</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<title>Guía de Uso · Calculadora de Explotación Económica · TMLF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
+    --navy:     #1a2a4a;
+    --mid:      #4a6fa5;
+    --gold:     #c9a84c;
+    --gold-lt:  #f5e9c6;
+    --red:      #c0392b;
+    --red-lt:   #fdf0ee;
+    --green:    #1a7a4a;
+    --green-lt: #edfaf3;
+    --blue-lt:  #eef3fb;
+    --white:    #ffffff;
+    --ink:      #1c2333;
+    --gray:     #64748b;
+    --border:   #dde4ef;
+    --bg:       #f4f6fb;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  /* ── PAGE WRAPPER ── */
+  .page { max-width: 860px; margin: 0 auto; }
+
+  /* ── HEADER CARD ── */
+  .header-card {
+    background: var(--navy);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 1.8rem;
+    position: relative;
+    box-shadow: 0 8px 40px rgba(26,42,74,0.22);
+  }
+  .header-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 320px; height: 100%;
+    background: linear-gradient(135deg, transparent 30%, rgba(74,111,165,0.18));
+    pointer-events: none;
+  }
+  .header-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), #e8d28a, var(--gold));
+  }
+  .header-inner {
+    padding: 2.2rem 2.6rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    position: relative;
+    z-index: 1;
+  }
+  .header-logo {
+    flex-shrink: 0;
+    height: 80px;
+    width: auto;
+  }
+  .header-divider {
+    width: 1px;
+    height: 70px;
+    background: rgba(201,168,76,0.4);
+    flex-shrink: 0;
+  }
+  .header-text { flex: 1; }
+  .header-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    border: 1px solid rgba(201,168,76,0.4);
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 0.7rem;
+  }
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.55rem;
+    color: var(--white);
+    line-height: 1.25;
+    margin-bottom: 0.4rem;
+  }
+  .header-sub {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.55);
+    font-weight: 300;
+    max-width: 480px;
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mid);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    padding-left: 0.8rem;
+    border-left: 3px solid var(--gold);
+  }
+
+  /* ── ALERT BOX ── */
+  .alert-box {
+    background: linear-gradient(135deg, #fff8e8 0%, #fef3cd 100%);
+    border: 1.5px solid var(--gold);
+    border-radius: 10px;
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 1.8rem;
+    display: flex;
+    gap: 1.1rem;
+    align-items: flex-start;
+    box-shadow: 0 2px 12px rgba(201,168,76,0.12);
+  }
+  .alert-icon {
+    font-size: 1.6rem;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-top: 2px;
+  }
+  .alert-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: #7a5500;
+    font-weight: 700;
+    margin-bottom: 0.45rem;
+  }
+  .alert-body {
+    font-size: 0.84rem;
+    color: #5a4000;
+    line-height: 1.7;
+  }
+  .alert-body strong { color: #4a3000; }
+  .alert-body a {
+    color: var(--mid);
+    font-weight: 700;
+    text-decoration: none;
+    border-bottom: 1px dotted var(--mid);
+  }
+  .alert-body a:hover { border-bottom-style: solid; }
+
+  /* ── STEPS GRID ── */
+  .steps-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+  }
+  @media (max-width: 600px) { .steps-grid { grid-template-columns: 1fr; } }
+
+  .step-card {
+    background: var(--white);
+    border-radius: 10px;
+    padding: 1.4rem 1.5rem;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(26,42,74,0.05);
+    position: relative;
+    transition: box-shadow 0.2s;
+  }
+  .step-card:hover { box-shadow: 0 6px 24px rgba(26,42,74,0.10); }
+
+  .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.9rem;
+  }
+  .step-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    color: var(--navy);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .step-body {
+    font-size: 0.81rem;
+    color: var(--gray);
+    line-height: 1.7;
+  }
+  .step-body strong { color: var(--ink); }
+  .step-body .tag {
+    display: inline-block;
+    background: var(--blue-lt);
+    color: var(--mid);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin: 2px 2px 0 0;
+  }
+  .step-card.wide { grid-column: 1 / -1; }
+  .step-card.overtime { border-left: 3px solid var(--mid); }
+  .step-card.period   { border-left: 3px solid var(--green); }
+  .step-card.wage     { border-left: 3px solid var(--gold); background: linear-gradient(135deg, #fffdf5 0%, var(--white) 100%); }
+
+  /* ── DO / DON'T ── */
+  .do-dont { display: flex; flex-direction: column; gap: 0.4rem; margin: 0.6rem 0 0.5rem; }
+  .do, .dont {
+    font-size: 0.78rem; line-height: 1.55;
+    padding: 0.4rem 0.7rem;
+    border-radius: 5px;
+  }
+  .do   { background: #edfaf3; color: #1a5a38; border-left: 3px solid var(--green); }
+  .dont { background: var(--red-lt); color: #7a1a10; border-left: 3px solid var(--red); }
+  .label { display: block; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
+  .do-label   { color: var(--green); }
+  .dont-label { color: var(--red); }
+
+  .inline-note {
+    font-size: 0.74rem; color: var(--mid); font-style: italic;
+    background: var(--blue-lt); border-radius: 4px;
+    padding: 0.35rem 0.7rem; margin-top: 0.5rem;
+  }
+
+  /* ── TAG SEARCH ── */
+  .tag-search {
+    display: inline-block;
+    background: var(--navy);
+    color: var(--gold);
+    font-size: 0.74rem;
+    font-family: monospace;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  /* ── SCHEDULE DEMO ── */
+  .schedule-demo {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 0.6rem 0 0.6rem;
+    font-size: 0.77rem;
+  }
+  .sd-row {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+  }
+  .sd-row:last-child { border-bottom: none; }
+  .sd-row.muted { opacity: 0.45; }
+  .sd-day  { font-weight: 700; color: var(--navy); min-width: 80px; }
+  .sd-time { color: var(--mid); flex: 1; }
+  .sd-hrs  { font-weight: 700; color: var(--green); font-size: 0.8rem; }
+
+  /* ── FORMULA BOX ── */
+  .formula-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 0.7rem;
+    font-size: 0.77rem;
+  }
+  .f-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .f-row:last-child { border-bottom: none; }
+  .f-row.highlight { background: #fff8e8; }
+  .f-row.total     { background: var(--navy); color: var(--white); }
+  .f-row.total .f-val { color: var(--gold); font-weight: 700; }
+  .f-label { min-width: 160px; font-weight: 600; color: var(--ink); }
+  .f-row.total .f-label { color: rgba(255,255,255,0.8); }
+  .f-op  { color: var(--gray); font-weight: 700; }
+  .f-val { color: var(--mid); }
+  .f-row.highlight .f-label { color: #7a5500; }
+  .f-row.highlight .f-val   { color: #7a5500; font-weight: 700; }
+
+  /* ── CONVERSION BOX ── */
+  .conversion-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 0.6rem;
+    font-size: 0.77rem;
+  }
+  .cv-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.38rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cv-row:last-child { border-bottom: none; }
+  .cv-frec   { min-width: 170px; color: var(--gray); font-weight: 600; }
+  .cv-op     { color: var(--border); font-weight: 700; }
+  .cv-result { color: var(--navy); font-weight: 700; }
+
+  /* ── PERIOD EXAMPLE ── */
+  .period-example {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 0.79rem;
+  }
+  .pe-title {
+    background: var(--navy);
+    color: var(--gold);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 0.4rem 0.8rem;
+  }
+  .pe-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.38rem 0.8rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--gray);
+  }
+  .pe-row.total {
+    background: var(--blue-lt);
+    color: var(--navy);
+    font-weight: 700;
+    border-bottom: none;
+  }
+  .pe-val { font-weight: 700; color: var(--navy); }
+  .pe-row.total .pe-val { color: var(--mid); }
+  .pe-note {
+    font-size: 0.7rem;
+    color: var(--gray);
+    font-style: italic;
+    text-align: center;
+    padding: 0.3rem;
+    background: var(--bg);
+  }
+
+  /* ── WAGE SEARCH BOX ── */
+  .wage-search {
+    background: linear-gradient(135deg, #1a2a4a 0%, #2c4070 100%);
+    border-radius: 12px;
+    padding: 1.8rem 2rem;
+    margin-bottom: 1.8rem;
+    box-shadow: 0 8px 32px rgba(26,42,74,0.20);
+    position: relative;
+    overflow: hidden;
+  }
+  .wage-search::before {
+    content: '⚖';
+    position: absolute;
+    right: 1.5rem; top: 50%;
+    transform: translateY(-50%);
+    font-size: 5rem;
+    opacity: 0.06;
+    color: var(--white);
+    pointer-events: none;
+  }
+  .wage-search-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    color: var(--gold);
+    margin-bottom: 0.3rem;
+  }
+  .wage-search-sub {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 1.2rem;
+    font-weight: 300;
+  }
+  .sources-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+  }
+  @media (max-width: 600px) { .sources-grid { grid-template-columns: 1fr; } }
+  .source-chip {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    transition: background 0.2s;
+  }
+  .source-chip:hover { background: rgba(255,255,255,0.12); }
+  .source-num {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .source-name {
+    font-size: 0.84rem;
+    color: var(--white);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+  .source-url {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.45);
+    word-break: break-all;
+    font-style: italic;
+  }
+  .source-desc {
+    font-size: 0.73rem;
+    color: rgba(255,255,255,0.55);
+    margin-top: 0.3rem;
+    line-height: 1.5;
+  }
+
+  /* ── EXAMPLE BLOCK ── */
+  .example-block {
+    background: var(--white);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 1.8rem;
+    box-shadow: 0 2px 8px rgba(26,42,74,0.05);
+  }
+  .example-header {
+    background: var(--navy);
+    padding: 0.8rem 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+  .example-header span {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .example-body { padding: 1.3rem 1.5rem; }
+  .example-row {
+    display: flex;
+    gap: 1rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.83rem;
+    align-items: baseline;
+  }
+  .example-row:last-child { border-bottom: none; }
+  .example-label { color: var(--gray); min-width: 200px; flex-shrink: 0; }
+  .example-value { color: var(--navy); font-weight: 700; }
+  .example-note  { color: var(--mid); font-size: 0.75rem; font-style: italic; margin-left: auto; }
+
+  /* ── RESULT PREVIEW ── */
+  .result-preview {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.8rem;
+    padding: 1rem 1.5rem 1.3rem;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+  }
+  @media (max-width: 600px) { .result-preview { grid-template-columns: 1fr; } }
+  .result-chip {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    text-align: center;
+  }
+  .result-chip.red { border-color: #e0b0aa; background: var(--red-lt); }
+  .result-chip .rc-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray); margin-bottom: 0.3rem; }
+  .result-chip.red .rc-label { color: var(--red); }
+  .result-chip .rc-val { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: var(--navy); }
+  .result-chip.red .rc-val { color: var(--red); }
+
+  /* ── TIPS ROW ── */
+  .tips-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+  }
+  @media (max-width: 600px) { .tips-row { grid-template-columns: 1fr; } }
+  .tip {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.1rem 1.2rem;
+    font-size: 0.8rem;
+    color: var(--gray);
+    line-height: 1.65;
+    box-shadow: 0 2px 6px rgba(26,42,74,0.04);
+  }
+  .tip-icon { font-size: 1.3rem; margin-bottom: 0.5rem; }
+  .tip strong { color: var(--ink); display: block; margin-bottom: 0.3rem; font-size: 0.83rem; }
+
+  /* ── FOOTER ── */
+  .guide-footer {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--gray);
+    margin-top: 2rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--border);
+  }
+  .guide-footer strong { color: var(--navy); }
+
+
+
+  /* ── CALC BUTTON ── */
+  .calc-trigger-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-top: 1.3rem;
+    padding: 0.85rem 2rem;
+    background: var(--navy);
+    color: var(--gold);
+    border: 2px solid var(--gold);
+    border-radius: 8px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(26,42,74,0.18);
+  }
+  .calc-trigger-btn:hover {
+    background: var(--gold);
+    color: var(--navy);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(201,168,76,0.35);
+  }
+
+
+  /* ── VIEW TOGGLE ── */
+  #guide-view { display: block; }
+  #calc-view  { display: none;  }
+  .calc-trigger-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-top: 1.3rem;
+    padding: 0.85rem 2rem;
+    background: var(--navy);
+    color: var(--gold);
+    border: 2px solid var(--gold);
+    border-radius: 8px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(26,42,74,0.18);
+  }
+  .calc-trigger-btn:hover {
+    background: var(--gold);
+    color: var(--navy);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(201,168,76,0.35);
+  }
+  /* back button inside calc */
+  #calc-view .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #fff;
+    padding: 0.4rem 1.1rem;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif;
+    letter-spacing: 0.06em;
+    transition: background 0.15s;
+  }
+  #calc-view .back-btn:hover { background: rgba(255,255,255,0.22); }
+
+
+/* ── CALCULATOR (scoped) ── */
+
+:root{
     --navy: #1a2744;
     --slate: #2e4272;
     --mid: #4a6fa5;
@@ -26,9 +628,9 @@
     --gold: #c9a84c;
   }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, #calc-view *::before, #calc-view *::after{ box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
+body{
     font-family: 'Source Sans 3', sans-serif;
     background: var(--pale);
     color: var(--gray-700);
@@ -36,20 +638,21 @@
     padding: 2rem 1rem;
   }
 
-  .page-wrapper {
+#calc-view .page-wrapper{
     max-width: 860px;
     margin: 0 auto;
   }
 
-  /* ── HEADER ── */
-  .doc-header {
+#calc-view /* ── HEADER ── */
+  .doc-header{
     background: var(--navy);
     color: var(--white);
     padding: 2.5rem 2.8rem 2rem;
     position: relative;
     overflow: hidden;
   }
-  .doc-header::before {
+
+#calc-view .doc-header::before{
     content: '';
     position: absolute;
     top: 0; right: 0;
@@ -57,32 +660,38 @@
     background: linear-gradient(135deg, transparent 40%, rgba(74,111,165,0.25));
     pointer-events: none;
   }
-  .doc-header-inner {
+
+#calc-view .doc-header-inner{
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 2rem;
   }
-  .doc-header-text { flex: 1; }
-  .firm-logo-wrap {
+
+#calc-view .doc-header-text{ flex: 1; }
+
+#calc-view .firm-logo-wrap{
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  .firm-logo {
+
+#calc-view .firm-logo{
     display: block;
     height: 150px;
     width: auto;
   }
-  .doc-header::after {
+
+#calc-view .doc-header::after{
     content: '';
     position: absolute;
     bottom: 0; left: 0; right: 0;
     height: 4px;
     background: linear-gradient(90deg, var(--gold), var(--mid), var(--gold));
   }
-  .doc-type-label {
+
+#calc-view .doc-type-label{
     font-size: 0.7rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -90,30 +699,34 @@
     font-weight: 600;
     margin-bottom: 0.6rem;
   }
-  .doc-title {
+
+#calc-view .doc-title{
     font-family: 'Playfair Display', serif;
     font-size: 1.8rem;
     line-height: 1.25;
     font-weight: 700;
     margin-bottom: 0.5rem;
   }
-  .doc-subtitle {
+
+#calc-view .doc-subtitle{
     font-size: 0.88rem;
     color: var(--light-blue);
     font-weight: 300;
     max-width: 540px;
   }
-  .doc-meta {
+
+#calc-view .doc-meta{
     display: flex;
     gap: 2rem;
     margin-top: 1.5rem;
     font-size: 0.78rem;
     color: rgba(255,255,255,0.6);
   }
-  .doc-meta span strong { color: rgba(255,255,255,0.9); font-weight: 600; }
 
-  /* ── LEGAL CONTEXT BOX ── */
-  .legal-context {
+#calc-view .doc-meta span strong{ color: rgba(255,255,255,0.9); font-weight: 600; }
+
+#calc-view /* ── LEGAL CONTEXT BOX ── */
+  .legal-context{
     background: var(--slate);
     color: var(--light-blue);
     padding: 1.4rem 2.8rem;
@@ -121,22 +734,24 @@
     line-height: 1.7;
     border-left: 4px solid var(--gold);
   }
-  .legal-context strong { color: var(--white); }
 
-  /* ── MAIN CARD ── */
-  .main-card {
+#calc-view .legal-context strong{ color: var(--white); }
+
+#calc-view /* ── MAIN CARD ── */
+  .main-card{
     background: var(--white);
     border: 1px solid var(--gray-200);
     border-top: none;
   }
 
-  .section {
+#calc-view .section{
     padding: 2rem 2.8rem;
     border-bottom: 1px solid var(--gray-200);
   }
-  .section:last-child { border-bottom: none; }
 
-  .section-label {
+#calc-view .section:last-child{ border-bottom: none; }
+
+#calc-view .section-label{
     font-size: 0.68rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
@@ -147,29 +762,34 @@
     align-items: center;
     gap: 0.6rem;
   }
-  .section-label::after {
+
+#calc-view .section-label::after{
     content: '';
     flex: 1;
     height: 1px;
     background: var(--gray-200);
   }
 
-  /* ── FORM GRID ── */
-  .form-grid {
+#calc-view /* ── FORM GRID ── */
+  .form-grid{
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.2rem 2rem;
   }
-  @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
 
-  /* ── SCHEDULE TABLE ── */
-  .schedule-wrap {
+@media (max-width: 600px) {
+#calc-view .form-grid{ grid-template-columns: 1fr; }
+ }
+
+#calc-view /* ── SCHEDULE TABLE ── */
+  .schedule-wrap{
     grid-column: 1 / -1;
     border-top: 1px solid var(--gray-200);
     padding-top: 1.1rem;
     margin-top: 0.4rem;
   }
-  .schedule-title {
+
+#calc-view .schedule-title{
     font-size: 0.72rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -177,9 +797,12 @@
     font-weight: 700;
     margin-bottom: 0.3rem;
   }
-  .schedule-note { font-size: 0.7rem; color: var(--gray-500); margin-bottom: 0.9rem; }
-  .schedule-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
-  .schedule-table th {
+
+#calc-view .schedule-note{ font-size: 0.7rem; color: var(--gray-500); margin-bottom: 0.9rem; }
+
+#calc-view .schedule-table{ width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+
+#calc-view .schedule-table th{
     background: var(--navy);
     color: var(--white);
     padding: 0.5rem 0.7rem;
@@ -189,10 +812,14 @@
     text-transform: uppercase;
     font-weight: 600;
   }
-  .schedule-table td { padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--gray-200); vertical-align: middle; }
-  .schedule-table tr:last-child td { border-bottom: none; }
-  .schedule-table tr:nth-child(even) td { background: var(--pale); }
-  .schedule-table input[type="time"] {
+
+#calc-view .schedule-table td{ padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--gray-200); vertical-align: middle; }
+
+#calc-view .schedule-table tr:last-child td{ border-bottom: none; }
+
+#calc-view .schedule-table tr:nth-child(even) td{ background: var(--pale); }
+
+#calc-view .schedule-table input[type="time"]{
     border: 1.5px solid var(--gray-200);
     border-radius: 4px;
     padding: 0.35rem 0.5rem;
@@ -202,47 +829,57 @@
     background: var(--white);
     width: 120px;
   }
-  .schedule-table input[type="time"]:focus {
+
+#calc-view .schedule-table input[type="time"]:focus{
     outline: none;
     border-color: var(--mid);
     box-shadow: 0 0 0 2px rgba(74,111,165,0.12);
   }
-  .schedule-table .day-check { width: 16px; height: 16px; accent-color: var(--navy); cursor: pointer; }
-  .schedule-table .day-name { font-weight: 600; color: var(--navy); min-width: 100px; }
-  .schedule-table .day-hours {
+
+#calc-view .schedule-table .day-check{ width: 16px; height: 16px; accent-color: var(--navy); cursor: pointer; }
+
+#calc-view .schedule-table .day-name{ font-weight: 600; color: var(--navy); min-width: 100px; }
+
+#calc-view .schedule-table .day-hours{
     font-family: 'Playfair Display', serif;
     font-weight: 700;
     color: var(--mid);
     min-width: 70px;
     text-align: right;
   }
-  .schedule-table tr.day-off td { opacity: 0.4; }
-  .schedule-total-row td {
+
+#calc-view .schedule-table tr.day-off td{ opacity: 0.4; }
+
+#calc-view .schedule-total-row td{
     background: var(--navy) !important;
     color: var(--white) !important;
     font-weight: 700;
     padding: 0.6rem 0.7rem;
     border-bottom: none !important;
   }
-  .schedule-total-row .day-hours { color: var(--gold) !important; font-size: 1rem; }
 
-  .field {
+#calc-view .schedule-total-row .day-hours{ color: var(--gold) !important; font-size: 1rem; }
+
+#calc-view .field{
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
   }
-  .field label {
+
+#calc-view .field label{
     font-size: 0.78rem;
     font-weight: 700;
     color: var(--navy);
     letter-spacing: 0.02em;
   }
-  .field .field-note {
+
+#calc-view .field .field-note{
     font-size: 0.7rem;
     color: var(--gray-500);
     margin-top: -0.2rem;
   }
-  .field input {
+
+#calc-view .field input{
     border: 1.5px solid var(--gray-200);
     border-radius: 4px;
     padding: 0.6rem 0.8rem;
@@ -253,15 +890,17 @@
     transition: border-color 0.2s, box-shadow 0.2s;
     -webkit-appearance: none;
   }
-  .field input:focus {
+
+#calc-view .field input:focus{
     outline: none;
     border-color: var(--mid);
     box-shadow: 0 0 0 3px rgba(74,111,165,0.12);
     background: var(--white);
   }
-  .field input::placeholder { color: #b0b8c9; }
 
-  .field select {
+#calc-view .field input::placeholder{ color: #b0b8c9; }
+
+#calc-view .field select{
     border: 1.5px solid var(--gray-200);
     border-radius: 4px;
     padding: 0.6rem 2rem 0.6rem 0.8rem;
@@ -274,15 +913,17 @@
     cursor: pointer;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
-  .field select:focus {
+
+#calc-view .field select:focus{
     outline: none;
     border-color: var(--mid);
     box-shadow: 0 0 0 3px rgba(74,111,165,0.12);
     background-color: var(--white);
   }
-  .field select option[value=""] { color: #b0b8c9; }
 
-  .calc-btn {
+#calc-view .field select option[value=""]{ color: #b0b8c9; }
+
+#calc-view .calc-btn{
     display: block;
     margin: 0.6rem 0 0;
     padding: 0.85rem 2.5rem;
@@ -298,13 +939,15 @@
     cursor: pointer;
     transition: background 0.2s, transform 0.1s;
   }
-  .calc-btn:hover { background: var(--slate); }
-  .calc-btn:active { transform: translateY(1px); }
 
-  /* ── RESULTS ── */
-  #results { display: none; }
+#calc-view .calc-btn:hover{ background: var(--slate); }
 
-  .verdict-banner {
+#calc-view .calc-btn:active{ transform: translateY(1px); }
+
+#calc-view /* ── RESULTS ── */
+  #results{ display: none; }
+
+#calc-view .verdict-banner{
     padding: 1rem 2.8rem;
     font-size: 0.92rem;
     font-weight: 600;
@@ -313,34 +956,40 @@
     gap: 0.7rem;
     border-bottom: 1px solid var(--gray-200);
   }
-  .verdict-banner.exploitation {
+
+#calc-view .verdict-banner.exploitation{
     background: var(--red-light);
     color: var(--red-deep);
     border-left: 5px solid var(--red-mid);
   }
-  .verdict-banner.underpay {
+
+#calc-view .verdict-banner.underpay{
     background: var(--amber-light);
     color: var(--amber);
     border-left: 5px solid var(--amber);
   }
-  .verdict-banner.fair {
+
+#calc-view .verdict-banner.fair{
     background: var(--green-light);
     color: var(--green-deep);
     border-left: 5px solid #28a745;
   }
-  .verdict-icon { font-size: 1.2rem; }
 
-  /* ── COMPARISON TABLE ── */
-  .comparison-table {
+#calc-view .verdict-icon{ font-size: 1.2rem; }
+
+#calc-view /* ── COMPARISON TABLE ── */
+  .comparison-table{
     width: 100%;
     border-collapse: collapse;
     font-size: 0.88rem;
   }
-  .comparison-table thead tr {
+
+#calc-view .comparison-table thead tr{
     background: var(--navy);
     color: var(--white);
   }
-  .comparison-table thead th {
+
+#calc-view .comparison-table thead th{
     padding: 0.8rem 1rem;
     text-align: left;
     font-weight: 600;
@@ -348,42 +997,56 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
-  .comparison-table tbody tr { border-bottom: 1px solid var(--gray-200); }
-  .comparison-table tbody tr:last-child { border-bottom: none; }
-  .comparison-table tbody tr:nth-child(even) { background: var(--pale); }
-  .comparison-table td {
+
+#calc-view .comparison-table tbody tr{ border-bottom: 1px solid var(--gray-200); }
+
+#calc-view .comparison-table tbody tr:last-child{ border-bottom: none; }
+
+#calc-view .comparison-table tbody tr:nth-child(even){ background: var(--pale); }
+
+#calc-view .comparison-table td{
     padding: 0.9rem 1rem;
     vertical-align: top;
     line-height: 1.5;
   }
-  .comparison-table td:first-child { font-weight: 600; color: var(--navy); }
-  .comparison-table td:nth-child(2) {
+
+#calc-view .comparison-table td:first-child{ font-weight: 600; color: var(--navy); }
+
+#calc-view .comparison-table td:nth-child(2){
     font-family: 'Playfair Display', serif;
     font-size: 1.05rem;
     font-weight: 600;
     white-space: nowrap;
   }
-  .amount-legal { color: var(--navy); }
-  .amount-real { color: var(--gray-500); }
-  .amount-diff { color: var(--red-mid); }
-  .amount-positive-diff { font-weight: 700 !important; }
 
-  .highlight-row { background: #fff0f0 !important; }
+#calc-view .amount-legal{ color: var(--navy); }
 
-  /* ── EXTENDED ANALYSIS ── */
-  .analysis-grid {
+#calc-view .amount-real{ color: var(--gray-500); }
+
+#calc-view .amount-diff{ color: var(--red-mid); }
+
+#calc-view .amount-positive-diff{ font-weight: 700 !important; }
+
+#calc-view .highlight-row{ background: #fff0f0 !important; }
+
+#calc-view /* ── EXTENDED ANALYSIS ── */
+  .analysis-grid{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
   }
-  @media (max-width: 620px) { .analysis-grid { grid-template-columns: 1fr; } }
 
-  .analysis-card {
+@media (max-width: 620px) {
+#calc-view .analysis-grid{ grid-template-columns: 1fr; }
+ }
+
+#calc-view .analysis-card{
     border: 1px solid var(--gray-200);
     border-radius: 4px;
     padding: 1.1rem;
   }
-  .analysis-card .card-label {
+
+#calc-view .analysis-card .card-label{
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -391,7 +1054,8 @@
     margin-bottom: 0.4rem;
     font-weight: 700;
   }
-  .analysis-card .card-value {
+
+#calc-view .analysis-card .card-value{
     font-family: 'Playfair Display', serif;
     font-size: 1.4rem;
     font-weight: 700;
@@ -399,12 +1063,15 @@
     line-height: 1;
     margin-bottom: 0.3rem;
   }
-  .analysis-card .card-desc { font-size: 0.75rem; color: var(--gray-500); line-height: 1.4; }
-  .analysis-card.red-card { border-color: #f5c6c6; background: #fff5f5; }
-  .analysis-card.red-card .card-value { color: var(--red-mid); }
 
-  /* ── NARRATIVE BLOCK ── */
-  .narrative-block {
+#calc-view .analysis-card .card-desc{ font-size: 0.75rem; color: var(--gray-500); line-height: 1.4; }
+
+#calc-view .analysis-card.red-card{ border-color: #f5c6c6; background: #fff5f5; }
+
+#calc-view .analysis-card.red-card .card-value{ color: var(--red-mid); }
+
+#calc-view /* ── NARRATIVE BLOCK ── */
+  .narrative-block{
     background: var(--pale);
     border-left: 3px solid var(--mid);
     padding: 1.2rem 1.4rem;
@@ -413,10 +1080,11 @@
     color: var(--gray-700);
     border-radius: 0 4px 4px 0;
   }
-  .narrative-block strong { color: var(--navy); }
 
-  /* ── FOOTER ── */
-  .doc-footer {
+#calc-view .narrative-block strong{ color: var(--navy); }
+
+#calc-view /* ── FOOTER ── */
+  .doc-footer{
     background: var(--navy);
     color: rgba(255,255,255,0.5);
     padding: 1.2rem 2.8rem;
@@ -427,25 +1095,438 @@
     flex-wrap: wrap;
     gap: 0.5rem;
   }
-  .doc-footer strong { color: rgba(255,255,255,0.85); }
 
-  /* ── PRINT ── */
-  @media (max-width: 600px) {
+#calc-view .doc-footer strong{ color: rgba(255,255,255,0.85); }
+
+#calc-view /* ── PRINT ── */
+  @media (max-width: 600px){
     .doc-header-inner { flex-direction: column; align-items: flex-start; }
     .firm-logo-wrap { align-self: flex-start; }
   }
-  @media print {
-    body { background: white; padding: 0; }
-    .calc-btn { display: none; }
-    #results { display: block !important; }
-    .field input { background: white; border: 1px solid #ccc; }
-    .doc-footer { background: #1a2744; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .doc-header, .legal-context, .comparison-table thead tr, .verdict-banner, .firm-logo-wrap { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+@media print {
+body{ background: white; padding: 0; }
+
+#calc-view .calc-btn{ display: none; }
+
+#calc-view #results{ display: block !important; }
+
+#calc-view .field input{ background: white; border: 1px solid #ccc; }
+
+#calc-view .doc-footer{ background: #1a2744; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+#calc-view .doc-header, #calc-view .legal-context, #calc-view .comparison-table thead tr, #calc-view .verdict-banner, #calc-view .firm-logo-wrap{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
   }
+
+
+
+  /* ── PDF DOWNLOAD BUTTON ── */
+  #calc-view .pdf-download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.9rem 2.4rem;
+    background: #1a2a4a;
+    color: #c9a84c;
+    border: 2px solid #c9a84c;
+    border-radius: 8px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(26,42,74,0.18);
+  }
+  #calc-view .pdf-download-btn:hover {
+    background: #c9a84c;
+    color: #1a2a4a;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(201,168,76,0.35);
+  }
+
+  /* ── PRINT / PDF STYLES ── */
+  @media print {
+    /* ── Show only the calculator results, hide everything else ── */
+    body                            { margin: 0 !important; padding: 0 !important; background: #fff !important; }
+    body > *                        { display: none !important; }
+    #guide-view                     { display: none !important; }
+    #calc-view                      { display: block !important; background: #fff !important; }
+
+    /* Show structural wrappers */
+    #calc-view .page-wrapper,
+    #calc-view .doc-header,
+    #calc-view .legal-context,
+    #calc-view .main-card,
+    #calc-view #results,
+    #calc-view .doc-footer          { display: block !important; }
+
+    /* Header tightening */
+    #calc-view .doc-header          { padding: 1rem 1.5rem !important; border-radius: 0 !important; }
+    #calc-view .doc-header-inner    { gap: 1rem !important; }
+    #calc-view .firm-logo           { height: 70px !important; }
+    #calc-view .doc-title           { font-size: 1.3rem !important; margin-bottom: 0.2rem !important; }
+    #calc-view .doc-subtitle        { font-size: 0.78rem !important; }
+
+    /* Legal context box */
+    #calc-view .legal-context       { padding: 0.8rem 1.5rem !important; font-size: 0.75rem !important; line-height: 1.5 !important; }
+
+    /* Main card */
+    #calc-view .main-card           { box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important; border-radius: 0 !important; }
+    #calc-view .section             { display: block !important; padding: 0.7rem 1.5rem !important; margin-bottom: 0 !important; }
+    #calc-view .section-label       { margin-bottom: 0.4rem !important; font-size: 0.65rem !important; }
+
+    /* HIDE: form, schedule, buttons */
+    #calc-view .section:has(.form-grid),
+    #calc-view .section:has(.schedule-wrap),
+    #calc-view .schedule-wrap,
+    #calc-view .calc-btn,
+    #calc-view .pdf-download-btn,
+    #calc-view .pdf-download-btn + div,
+    #calc-view .back-btn,
+    #calc-view .doc-meta            { display: none !important; }
+
+    /* Comparison table - compact */
+    #calc-view .comparison-table    { font-size: 0.74rem !important; width: 100% !important; }
+    #calc-view .comparison-table th,
+    #calc-view .comparison-table td { padding: 0.3rem 0.5rem !important; line-height: 1.4 !important; }
+
+    /* Analysis cards - compact grid */
+    #calc-view .analysis-grid       { gap: 0.5rem !important; }
+    #calc-view .analysis-card       { padding: 0.6rem 0.8rem !important; }
+    #calc-view .card-label          { font-size: 0.65rem !important; margin-bottom: 0.2rem !important; }
+    #calc-view .card-value          { font-size: 1.1rem !important; }
+    #calc-view .card-desc           { font-size: 0.65rem !important; }
+
+    /* Period section - compact */
+    #calc-view #section-period .analysis-grid { grid-template-columns: 1fr 1fr !important; }
+    #calc-view #a-period-label,
+    #calc-view #a-period-weeks      { font-size: 0.95rem !important; }
+
+    /* Verdict banner */
+    #calc-view .verdict-banner      { font-size: 0.78rem !important; padding: 0.6rem 1rem !important; margin: 0 !important; }
+
+    /* Narrative - no orphan pages */
+    #calc-view .narrative-block     {
+      font-size: 0.78rem !important;
+      line-height: 1.55 !important;
+      padding: 0.8rem 1rem !important;
+      margin-top: 0 !important;
+    }
+
+    /* Footer */
+    #calc-view .doc-footer          { padding: 0.6rem 1.5rem !important; font-size: 0.7rem !important; margin-top: 0.5rem !important; }
+
+    /* Colors preservation */
+    #calc-view .doc-header,
+    #calc-view .doc-header-inner,
+    #calc-view .legal-context,
+    #calc-view .comparison-table thead tr,
+    #calc-view .verdict-banner,
+    #calc-view .verdict-banner.exploitation,
+    #calc-view .verdict-banner.underpay,
+    #calc-view .schedule-total-row,
+    #calc-view .highlight-row,
+    #calc-view .firm-logo-wrap,
+    #calc-view .analysis-card,
+    #calc-view .analysis-card.red-card,
+    #calc-view #section-period > div:last-child,
+    #calc-view .doc-footer          { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+    /* Page setup */
+    @page { margin: 1cm 1.2cm; size: A4; }
+
+    /* Page break control - keep sections together, allow breaks between them */
+    #calc-view .doc-header          { page-break-after: avoid; }
+    #calc-view .legal-context       { page-break-after: avoid; page-break-inside: avoid; }
+    #calc-view .verdict-banner      { page-break-inside: avoid; page-break-after: avoid; }
+    #calc-view .comparison-table    { page-break-inside: auto; }
+    #calc-view .comparison-table tr { page-break-inside: avoid; }
+    #calc-view .analysis-grid       { page-break-inside: avoid; }
+    #calc-view #section-period      { page-break-inside: avoid; }
+    #calc-view .narrative-block     { page-break-inside: auto; orphans: 4; widows: 4; }
+    #calc-view .doc-footer          { page-break-before: avoid; }
+
+    /* Narrative inline table compact */
+    #calc-view .narrative-block table { font-size: 0.72rem !important; margin: 0.4rem 0 !important; }
+    #calc-view .narrative-block table th,
+    #calc-view .narrative-block table td { padding: 3px 6px !important; }
+  }
+
 </style>
 </head>
 <body>
-<div class="page-wrapper">
+<div id="guide-view">
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header-card">
+    <div class="header-inner">
+      <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wgARCADIAMgDASIAAhEBAxEB/8QAHQABAAEFAQEBAAAAAAAAAAAAAAYDBAUHCAIBCf/EABQBAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhADEAAAAeqQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfOebLSZ+gCAT8W9xzibC2Z+fXe5fAAAAAAAAGHON+vtbWRqns7mXow+cY7N2CQOTaA7fKqyvQAAAAAACl+enSmCN6cjZ3PnUTXGxynpbdfC5uzH7c5YMf3TylvcmwAAAAAFKroQ0z0TirohMJ6D1AQvt7QFwVOXZn12euS7zp0+c6dW8fHaLG5IAAAAAp/nj+hcSNK+t0DkTtuwkZ44A/QKKEE3N8+nL+P6piRpfX/VA1L0dHZEAAAAAEexpM0MEzQyqZKtbUCrmoJmCVIYJmhgmaGTMAAAAA1rO9NSUyljj8cbCjMli5Jb/Ru/iFZXEYAn2OhW6yL2UTtzYFWRa8JxkdNblAAAHn18IktpuQvH1JyRyhdREk+byY1/Jcxrwz1rMoeZDAz7T5Nkojhh57qXbQAAA+fRb3AUffsPPoAfPFQKVUKNYefNQUawAAAAAAAAAAAAAAAAAAAAAAAAAAAAf//EACsQAAEEAgECBQMFAQAAAAAAAAUCAwQGAQcAFRYQERIUMBMgQBchMTZgNf/aAAgBAQABBQL/AFmc+WG9oNyLv4yH0RWKVdWbc1+FtS7e0bNUSaArlHsGLJXfDcNm9nAH5Ja9MwZrRGJ+DdoXal+IQ49lB61KO1e2cnTWh0OsQ3dhXjdEmIgLqiFKh1P8B0tFZJ7XA9WreoT3UgGyKPOInYP1/ZblKyWh9AriavXJKnNk39ppLDTU1h+R8zrqWWzttkkLYGKR7KECOKoGxPBxtLqdrWTowDUVc6YGvuzkj+a/Mya9cfm25ZOmBqprxuXRdSH3BhjdQVP0qBYMWGt8UrCEzH1bGv8AZRr0ms6jhD5Z/cwPLbtNOYsNd+R1xLLcZK9k7A2JZcVmvaerH0I+xy7trtNWISNd3HGfPG2LN0gIsKSrESuHGrEHuMRyj3wxCYt1Z1AYUOL/ACbcsnSwuqa30YBdde4ts24GmaZVtO1zLjm2qr1QZrG4IJAY6Xdl30+AYPBNcm3qnZLJVYNpZgQGBcPY0Fyq3MbObJwPiccSy3YrG2ftad3RUJ/XCNw+ek7LsQwc0JHqThabuBep53V1Z6EB5uCrepAvdPth/wCuEbl12LEtwnTR73Qz4n2G5TPZYLnZYLnZYLkGuCxj/hYK1DsjeMeWOPsNyWeywXOywXOywXIFdGC3/wACQYZjSWybTkhJ2MuOw9h9r559fHFHuzQvOzQvOzQvOzQvGqkHZcnw3pE98Yt8w0ClNjFV+JOjdmhedmhedmhedmhedmhfjZtrrdrnzUDodRsEmyje4iSrKNnznp6Ll7Wy2QpKDD5cmbHFgzxU6HDWRsnMKnUwJZEoVERnzqHa7KKkx0CsFpRwVZTeK8GHTmycD4LGNcJNwC7VxVq/+outyXNmBGJkThAHGsRaSekwhRH/AJ2uf6VKR7nakdeWdtOen0aobW3Vn89/HUrR6yT702wa6kOQk/er90iATguULrbAMdWa32xE7Td65FCONk4gF2KYsdZiWWORiLnRA9VdCDxgeMJSar0Y5x0HKmx5odD4cXWHg0AaDUPUECLD5cq2c2P78/xVpqHBnLOSkMcYeRJZsjbyg8adJIkvBeMZTTvcPwOQHMqsnD016ObxnCsWLzyJjmJJIh9/88RHaazzLKM5SjCE89OMeOceeENpbTzDSEr59FHqxjCcLbS7jLKFZ/1H/8QAFBEBAAAAAAAAAAAAAAAAAAAAcP/aAAgBAwEBPwEp/8QAFBEBAAAAAAAAAAAAAAAAAAAAcP/aAAgBAgEBPwEp/8QARxAAAgECAgUGCggCCQUAAAAAAQIDBBEAEgUTITFBFCIyQlFhECMwNVJxcoGR0RVAYpOhweHwJLEGIDM0YHOSorJDRFNj8f/aAAgBAQAGPwL/ABZc4ioY2H0WfE6z0n9L1cP6kk0rZI41LMx4DFTZdVNC55n2OqfqZ0NQv/ESDx7r1R6PvxR6VlJEjt4yP/xejinqSfHr4uX2h4Y9Ewt42o50tuCfrjR9bNGVWaMPl9NDvHrxFUwNnhlXMrfUo67V6ynkkFSobbfbzhiSEnPT1UXNb17jio0PV8xZm1Rvwcbvj4JqmdskUSlmOJK+qF6ZG1sg7uquKWB0DVbSXiPojjiM1LnLK5kiQ9Vf3t+owaPeUCqmQuidoGDUot56M6wez1v33Yahka81GbD2DuxSaQ0TCXmk2SWNsrDc377MQcqy8pyDWZN2bjinoIYpNTMc0soGzuXCCUBaiXxs5PDu92Aik8jDWH2Yl4+/88JGi5UUWAHAYlgjlV5obaxAdq37fLtI5yoouSeGG0xCxUxSDU9yjdiKqSzRVCWZOztGGpZDlpmfVG/FG6J/l4crqHXsIxySJrVNZzB3J1j+WG0jKtp6zo34J+uH0fohhJVdF5xtCervwsddrI+V+Ll1u+52qf32+XXR8TWnrOlbgnHE6VCZayuGtRjvS3Q/ffibQk/QmJyccrjfij0qlg4Opfv4j88U8rNeoiGql9Y8BZjYDaThI81qUvkTbujXf8cVdJQOaeXVWj1ezdw/LEy1sWerjXPAH3d+ztxSaYhFv+lKR29U4pKu95cuST2hv8q0jnKii5J4YLtfkYa5+zEvz/PDLCctVP4qEDh2n3Yk0zUL4yXmQ39HicQaGouekL6sAcZOJ92JKCtNqdzq5Tw+y/g5DC1qms5uzqpx+WNFabHixMc8ZHVPC/rGKeui645y+i3EYi0jTC0Mja9AP96/vtxLEhDR1UWaNu/eDir0NUc3W7VU8HXeP32eVGj4mtPWbGtwTj8ccrlW1TWc89ydX54p6nljRGOymMi65b7bd+G5OAj5dTTp3/pibTlQLnakJbies2BpOnT+JpRz7dZP0w9PVy2noV5zNxj7cF2vyMG5+zEOHv8AzxNo5wFRlsh9AjccTaFr/FxSvkN+pJwPvxBHWhssT5xkNj6sRUtMmrgjFlXsxBpam5qzNrh7Y6Q/fbinq4TeOZA48mzucqKLknhhq+pRpaQSALEDbxY4YCjRMgA3DWj5Y81S/fD5YoaaniMEfQSMm9vSbEFHALRQqFGCrC6nYQcTx07NHSVKkxkcUO9cColW1VV89u5eqPAmm6Zeellnt+DYgiqqB6ioRcrSrJbN37seapfvh8sCl+jnhmRw6SmQG34Yn0ZI3Ppjnj9k/r/PybxSoJI3FmU7iMeaaX7sY800v3Yx5ppfuxjXUlBBTy2tnRLHw061aZtRKJF+Xv8AC8UqCSNxZlbcRjzTS/djHmml+7GPNNL92Ma6koYaeW1s0aWNvqIgZJdYzZVyxk5jlzbPdgQgPrDFrrZerilmXWMlScsVkO3YT+RwrqCAeDCx+oCWqpEnkAy5m7MebocebocebocebocLIlBErqbg9hxo6aPJkp5GZ8xsdqFdmzvxyllQw6jVjnkG9740TTWhY0j5n8awvzWGw278U6V9LFK0IyoLlso9fwx5uhx5uhx5uhx5uhx5uh8n9C1lMkOdbxTxyZgx35d3Ziapk6Ea32ce7HLZaWOliYlVUSZm2G23ZibRCUVNmSHXiVpzYre3o4qqaspEg1SI6SRSF1e9+4brY+h9JwJSu6gwzpJmR78NwscPV09PFUrH0leQod9tmw4aYQwtUopZo9Ycvxt+WINIRUNKqTAlY2qGvv8AYxUUM0L0Wkafa9PIb7O1TxGKeihi5VX1FzHCDawG9mPAYaqlo4aqnQZpFpnOsUdov0vww+lNHjlYMWeFfSPZ8cSVdXT0MEca5nvUMbf7MR1tVRii1u2OPPmJXt3YnrcmudBzI/SOKeriN45kDj3+R07U02ytoKmOaA96xKSPxOKBof7rGgqpx/7OqnuNz7hiH/Nl/wCZxUCmnSB/o5bs8efr+sYq10hULPLJUFo2Ay3XKu4cOONM0dULqYKezDejeMsRiu/o/ppv4+NV1FRwqUzD8cVX+U38saK9g/8AI4o2g/7eiblBHfewPxGKsT7NdQjk9+zZe3wbDZujbbfBJvqWqZDD7P8A9vjk67dA6PfxpG6pl9H1DGqBGZQDkHAYEcVE1dBRRnOA6qNY47/s3/1Y0hoKoUxS0Et40Y3OqbaPIGxse3FVMa+Wp5S+skSRF6VrcB3YnpdHsafWyNJrLAkXPy2YNNHVy1EFywWUDYT6sPpVdKzrVNHqv7NMuXstbArqiulq5FjMaK6qqpfedg7sT6Q+kZZGnCq8RRcthu4d+IkqBleJw8cq71xJAk7U+cWLqATb34Sig0tU8mTojJHce/LiTUKc8pzSSuczyHtJxC8meGpgOaGoiNnjODT1mk5JadhZxHGI2cdhPythtHU8jUMRTVhoN6r3Yjo6TScsUEe4amP5YrZTWy1NVVWvPKF5thsAA2Yqb1stXr5DK2tVekfVg6YSvlinKasoqLlKdh2eRhV6gyzu8vTkztYOf08FqLMz0oFVMqEdAHon1jN8MJLGweNxmVhxGJ3p2kWaEa1dW5XNl25dnbuwsDvKIKwrVwMhKZYhvGzt5n+s+Eg7B67Yp6mVpHV4B4xqkyZ2vt2Hd+vg0omtdlSOEhC5IW+a+z3DwVQSeaONI6Zi4lOWC7tmYrxFgMXBuMSKs7UzsyosqNlKksBjQ2tZqZRI8M0YOXWSqjX9YBA+PkbpGiH7I8DHIt22E234soCjsHgGzds8NjtGLIoUdgHgLBQGO828BbIuY7CbYsBYDhizqGHYRgEopI3G27/FP//EACkQAQABAwIEBgMBAQAAAAAAAAERACExQYFRYXGREDChsdHxQMHwIGD/2gAIAQEAAT8h/wCsBkgLq1c7TnuJcx3T/gemEQBK1BsavupfRs8/w3x4GXfRz1cutWRiwhDE+uZ4SVOKGHhmdyHfxsb59cGxu9qRKhnbKeT0YoL5BtR/CdQF7h+gZ7lBMkuQJDpZpEZYMJc/ZueBdF10CnkyUwG3pmw1DudMnn0bH1TzGuP/ACzu/B30DtH9ya0yiMrsPZpqgHN2R7LnakGOOQgzLi3srfIU2sOU0ExPDOHN1vHIoBz4qUWXR+6vlotx6m4ooR+OCwVlkwLRcmPPD21jgZahVIdMVvr1aJVKq8sPvJTWl3wutj9vFeuZnFSVzYm/9G6tU4ah47r9qX9tbvj9lYDyMjNM8089pbqS5/s270BIIP8Aky0UFUwWDexD0KV1heGV291WVGM30nch8D8HkYCsL9DqSjnBd6Mtr9Lk9Q7q4cCSo7wtG9OxTygX9w2Kd4SDwtd2d/NH21jgZaHNxrYH81UWYrYIx6L1Snyq6sl67bbnSeunY3pYbNRu31kcHfstACMjcSoK5Slcc9/2qbbUaJs7jpUfIZ+5WTemw4+Bm3qPZQn28PD1UVP1M8dXcPNZClIuf0d6gLAzF9J/Nayn80XuRSADk2kIHZelVzXZJ9Her4ltF9f9uk0Q6fVixtw7UaNrNr1e5VFLCjkrpU7kHOwW6GHalT5TIWhlwf1RA4rqw3o54KPAh3M7q7vBCY8s5qWOBlqUY4QraWk53ogfQEQeChxFtbt0Y4HpXW1y41ebmj8FcAlP8geDIejbtWJvzl/iGd/BIu4rx+rHahL5iQzg8FC5Bgh4SOIq/pFHV7m3ljliFyjI/wCBhhrylQUDknxgnERrGXywaAAICweCJuFSrIn+BhhrgWRkjT8FJVEQBILX4VBvkpl2L8Z0ol2dxMwNLZOFamTWXUcfgRJohZ5PVr6x+a+sfmvrH5r6x+aF3M4yFxzWUCEoYIufTFIDKLn/AADG9JjD6TBgnx7U/XcSYQlC2JLrX1j819Y/NfWPzX1j819Y/PlglzsIe4JhyqamUy54BzWA60SZWuaRhDDUks5GiAjFmoX+GCyl4nR507tx0mUOcAx06VDTTPgCwtdagX8WYCwX+FCA4TREXbNKHKAMk8FtzqfZZi+iB6K6DUSfzerAxChukgTwx6jg1NWvQ3hxOlT8FcNBdkTw4RUwsIeXwe68hrahPxPk2tz/AD3UFjpSDzlyZDdB/wB9KuBZJoOmiKk4Xzy3ErZFk89akmsx4yWiVdic3CicoX6cRr+jx+G1bknaAQ5yUrGmK1iQ3UaFvcKNaMwSlzhbZRWW+4Rxza3HcoaHaISkgxws9qwvDGEJmTDpgJ0sGrlmJe55AQSRbgoXS5CWJECWBHKp2uIayQCRBAdKNPZJrJWQU3C7wt2bnFrQOtOAhAK7C7TyGC6niRIiWutLmyzMRToxcpiS03AhiEUW/LKhrKCWq1Num74i7vsVPXYZseHJtXG2gvIM2daAU9MDgpYtbej/AIRMPFVzedNjhTIQECBKxGrTNMRA2JZBoBGlZU9KdOoeufIIqbHWKhypyIPqrAeAMSalXUCWLGozgoWTDRDWEhJK4SAd1JnY3TSVDg0fS8UcUIUsb6U7K0xspOaQY4uHg40A0sCcE+BbdJXzlYQDbna7RkSEiYalL9KBCM88VMTP0INqWjLh5CARJHStIkSI+CVYpRkcGixTgICkkii2AhC2Dh4gwCWR1rpadHhiC0iXfwlt5sUpwWjJgQAsVft03RTWBlBK5f8AU//aAAwDAQACAAMAAAAQ888888888888888888888888888888c8o0888888884AQko08888888wwUEIU8888888wUQ0Y8888888UM84cEc0888884wwIYwww88888AMkokckMU888oE8QcY8o8w88888cM8c88s88888888888888888888888888888//EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQMBAT8QKf/EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQIBAT8QKf/EACcQ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" alt="The Mendoza Law Firm" class="header-logo">
+      <div class="header-divider"></div>
+      <div class="header-text">
+        <div class="header-badge">Guía de uso · Artefacto probatorio</div>
+        <div class="header-title">Cómo llenar la Calculadora de<br>Explotación Económica</div>
+        <div class="header-sub">Instrucciones paso a paso para documentar correctamente el perjuicio laboral de su cliente en casos de Visa T.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALERTA SALARIO MÍNIMO -->
+  <div class="alert-box">
+    <div class="alert-icon">⚠️</div>
+    <div>
+      <div class="alert-title">Primero: consulte el salario mínimo vigente antes de llenar el artefacto</div>
+      <div class="alert-body">
+        El salario mínimo varía por <strong>estado y por año</strong>. No existe un único dato federal que aplique a todos los casos. Antes de iniciar el llenado, <strong>busque en internet el salario mínimo del estado específico donde trabajó su cliente, para el año en que ocurrió la explotación laboral</strong>. Un dato incorrecto invalida todo el análisis probatorio.
+        <br><br>
+        Búsqueda recomendada: <strong>"[Estado] minimum wage [año]"</strong> — por ejemplo: <em>"California minimum wage 2022"</em> o <em>"Texas minimum wage history"</em>.
+      </div>
+      <button class="calc-trigger-btn" onclick="showCalc()">🧮 &nbsp;Calculadora Visa T</button>
+    </div>
+  </div>
+
+  <!-- FUENTES PARA SALARIO MÍNIMO -->
+  <div class="section-title">Fuentes oficiales para consultar el salario mínimo estatal</div>
+  <div class="wage-search">
+    <div class="wage-search-title">¿Dónde buscar el salario mínimo correcto?</div>
+    <div class="wage-search-sub">Use estas fuentes oficiales para obtener el dato histórico exacto correspondiente al año y estado del caso</div>
+    <div class="sources-grid">
+      <div class="source-chip">
+        <div class="source-num">Fuente 01 · Federal</div>
+        <div class="source-name">U.S. Department of Labor</div>
+        <div class="source-url">dol.gov/agencies/whd/minimum-wage/state</div>
+        <div class="source-desc">Tabla oficial con el salario mínimo de todos los estados. Incluye historial por año.</div>
+      </div>
+      <div class="source-chip">
+        <div class="source-num">Fuente 02 · Histórico</div>
+        <div class="source-name">Ballotpedia – State Wage History</div>
+        <div class="source-url">ballotpedia.org/Minimum_wage_laws_by_state</div>
+        <div class="source-desc">Historial completo de salarios mínimos por estado y año. Útil para casos de años anteriores.</div>
+      </div>
+      <div class="source-chip">
+        <div class="source-num">Fuente 03 · Por estado</div>
+        <div class="source-name">Labor Dept. estatal oficial</div>
+        <div class="source-url">[estado].gov → Labor / Wages</div>
+        <div class="source-desc">Cada estado publica su propio historial salarial. Busque el sitio oficial del estado correspondiente.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASOS -->
+  <div class="section-title">Pasos para llenar el artefacto correctamente</div>
+  <div class="steps-grid">
+
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <div class="step-title">Estado donde ocurrió el trabajo</div>
+      <div class="step-body">
+        Seleccione del menú el estado donde <em>físicamente</em> trabajó el cliente.<br><br>
+        <div class="do-dont">
+          <div class="do"><span class="label do-label">✓ Correcto</span>El estado donde el cliente estuvo presente y laboró, aunque el empleador sea de otro estado.</div>
+          <div class="dont"><span class="label dont-label">✗ Incorrecto</span>El estado de residencia del cliente o donde vive el empleador.</div>
+        </div>
+        <div class="inline-note">Si trabajó en varios estados → genere un análisis por cada estado.</div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <div class="step-title">Año de referencia</div>
+      <div class="step-body">
+        Ingrese el año en que ocurrió el trabajo. El salario mínimo cambia cada año, por lo que <strong>el año equivocado produce un cálculo incorrecto</strong>.<br><br>
+        <div class="do-dont">
+          <div class="do"><span class="label do-label">✓ Correcto</span>El año en que el cliente estuvo trabajando bajo explotación: <span class="tag">2021</span> <span class="tag">2022</span> <span class="tag">2023</span></div>
+          <div class="dont"><span class="label dont-label">✗ Incorrecto</span>El año actual o el año en que se presenta el caso.</div>
+        </div>
+        <div class="inline-note">Si abarcó varios años → use el año de mayor duración o repita el análisis por año.</div>
+      </div>
+    </div>
+
+    <div class="step-card wage">
+      <div class="step-num">3</div>
+      <div class="step-title">Salario mínimo estatal (USD/hora)</div>
+      <div class="step-body">
+        <strong>Busque en internet el salario mínimo del estado en el año ingresado</strong> y escriba el monto en dólares por hora.<br><br>
+        Búsqueda recomendada: <span class="tag-search">"[Estado] minimum wage [año]"</span><br>
+        Ejemplo: <span class="tag-search">"Florida minimum wage 2022"</span><br><br>
+        <div class="do-dont">
+          <div class="do"><span class="label do-label">✓ Correcto</span>El salario mínimo del <strong>estado específico</strong> en el <strong>año exacto</strong>. Si el estado tiene un salario mayor al federal, use el estatal.</div>
+          <div class="dont"><span class="label dont-label">✗ Incorrecto</span>Usar siempre $7.25 (federal) sin verificar. Muchos estados superan ese mínimo.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">4</div>
+      <div class="step-title">Horario laboral día por día</div>
+      <div class="step-body">
+        Para cada día que el cliente trabajó: <strong>marque el checkbox ✓</strong> y escriba la hora de entrada y la hora de salida.<br><br>
+        <div class="schedule-demo">
+          <div class="sd-row"><span class="sd-day">✓ Lunes</span><span class="sd-time">07:00 → 19:00</span><span class="sd-hrs">= 12 h</span></div>
+          <div class="sd-row"><span class="sd-day">✓ Martes</span><span class="sd-time">07:00 → 19:00</span><span class="sd-hrs">= 12 h</span></div>
+          <div class="sd-row muted"><span class="sd-day">☐ Domingo</span><span class="sd-time">día libre</span><span class="sd-hrs">= 0 h</span></div>
+        </div>
+        El total semanal se suma automáticamente. Use la declaración del cliente como fuente principal.
+      </div>
+    </div>
+
+    <div class="step-card overtime">
+      <div class="step-num">5</div>
+      <div class="step-title">Horas extras — automático</div>
+      <div class="step-body">
+        <strong>No ingrese nada en este campo — el sistema lo calcula solo.</strong><br><br>
+        Si el total semanal supera 40 horas, la calculadora aplica automáticamente la tarifa de overtime (1.5× el salario base) sobre cada hora adicional, conforme a la FLSA § 207.<br><br>
+        <div class="formula-box">
+          <div class="f-row"><span class="f-label">Horas 1–40</span><span class="f-op">→</span><span class="f-val">Salario base × horas</span></div>
+          <div class="f-row highlight"><span class="f-label">Horas 41 en adelante</span><span class="f-op">→</span><span class="f-val">Salario base × 1.5 × horas extra</span></div>
+          <div class="f-row total"><span class="f-label">Total legal semana</span><span class="f-op">=</span><span class="f-val">Regular + Overtime</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">6</div>
+      <div class="step-title">Pago real recibido por semana</div>
+      <div class="step-body">
+        Escriba exactamente cuánto le pagó el empleador al cliente por semana.<br><br>
+        <div class="conversion-box">
+          <div class="cv-row"><span class="cv-frec">Si pagaban semanalmente</span><span class="cv-op">→</span><span class="cv-result">Escriba ese monto directo</span></div>
+          <div class="cv-row"><span class="cv-frec">Si pagaban mensualmente</span><span class="cv-op">→</span><span class="cv-result">Monto mensual ÷ 4.33</span></div>
+          <div class="cv-row"><span class="cv-frec">Si pagaban por día</span><span class="cv-op">→</span><span class="cv-result">Pago diario × días trabajados</span></div>
+          <div class="cv-row"><span class="cv-frec">Si pagaban en efectivo</span><span class="cv-op">→</span><span class="cv-result">Use la declaración del cliente</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card period wide">
+      <div class="step-num">7</div>
+      <div class="step-title">Período total de empleo</div>
+      <div class="step-body" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:start;">
+        <div>
+          <strong>Campo "Meses trabajados":</strong><br>
+          Ingrese cuántos meses completos duró el empleo bajo esas condiciones. Ejemplo: si trabajó de enero a agosto → escriba <span class="tag">8</span>.<br><br>
+          <strong>Campo "Semanas adicionales":</strong><br>
+          Si además de los meses hubo días o semanas sueltas, agréguelas aquí. Ejemplo: 8 meses y medio → escriba <span class="tag">8</span> meses y <span class="tag">2</span> semanas.<br><br>
+          <div class="inline-note">El sistema calcula el perjuicio total multiplicando la diferencia semanal por el número real de semanas (usando 4.33 sem/mes, no 4).</div>
+        </div>
+        <div>
+          <div class="period-example">
+            <div class="pe-title">Ejemplo de conversión</div>
+            <div class="pe-row"><span>Enero – Agosto 2022</span><span class="pe-val">8 meses</span></div>
+            <div class="pe-row"><span>+ última quincena</span><span class="pe-val">2 semanas</span></div>
+            <div class="pe-row total"><span>Total semanas</span><span class="pe-val">36.64 sem</span></div>
+            <div class="pe-note">= (8 × 4.33) + 2</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- EJEMPLO PRÁCTICO -->
+  <div class="section-title">Ejemplo práctico de llenado</div>
+  <div class="example-block">
+    <div class="example-header">
+      <span>📋 Caso ejemplo — Cliente trabajó en restaurante en Texas (2022)</span>
+    </div>
+    <div class="example-body">
+      <div class="example-row">
+        <span class="example-label">Estado</span>
+        <span class="example-value">Texas</span>
+        <span class="example-note">Seleccionar del menú desplegable</span>
+      </div>
+      <div class="example-row">
+        <span class="example-label">Año de referencia</span>
+        <span class="example-value">2022</span>
+        <span class="example-note">Año en que ocurrió el trabajo</span>
+      </div>
+      <div class="example-row">
+        <span class="example-label">Salario mínimo estatal</span>
+        <span class="example-value">$7.25/hora</span>
+        <span class="example-note">Texas mantuvo el mínimo federal en 2022 — verificar en dol.gov</span>
+      </div>
+      <div class="example-row">
+        <span class="example-label">Horario declarado</span>
+        <span class="example-value">Lun–Sáb: 07:00 – 19:00 (12 h/día)</span>
+        <span class="example-note">6 días × 12 h = 72 h/semana</span>
+      </div>
+      <div class="example-row">
+        <span class="example-label">Pago real recibido</span>
+        <span class="example-value">$300 / semana</span>
+        <span class="example-note">Según declaración del cliente</span>
+      </div>
+      <div class="example-row">
+        <span class="example-label">Período de empleo</span>
+        <span class="example-value">8 meses + 2 semanas</span>
+        <span class="example-note">≈ 36.64 semanas totales</span>
+      </div>
+    </div>
+    <div class="result-preview">
+      <div class="result-chip">
+        <div class="rc-label">Horas regulares/semana</div>
+        <div class="rc-val">40.00 h</div>
+      </div>
+      <div class="result-chip">
+        <div class="rc-label">Horas extras/semana</div>
+        <div class="rc-val">32.00 h</div>
+      </div>
+      <div class="result-chip">
+        <div class="rc-label">Salario legal semanal</div>
+        <div class="rc-val">$638.00</div>
+      </div>
+      <div class="result-chip red">
+        <div class="rc-label">Diferencia semanal</div>
+        <div class="rc-val">$338.00</div>
+      </div>
+      <div class="result-chip red">
+        <div class="rc-label">Perjuicio mensual</div>
+        <div class="rc-val">$1,463.54</div>
+      </div>
+      <div class="result-chip red">
+        <div class="rc-label">Perjuicio total (8 m + 2 sem)</div>
+        <div class="rc-val">$12,383.32</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIPS FINALES -->
+  <div class="section-title">Consideraciones importantes al documentar</div>
+  <div class="tips-row">
+    <div class="tip">
+      <div class="tip-icon">📌</div>
+      <strong>Un análisis por período distinto</strong>
+      Si el salario mínimo cambió durante el período de empleo (ej: el cliente trabajó entre 2021 y 2023), genere un análisis separado por cada año con su salario mínimo correspondiente.
+    </div>
+    <div class="tip">
+      <div class="tip-icon">🔍</div>
+      <strong>Verifique siempre el dato en internet</strong>
+      No asuma el salario mínimo de memoria. Estados como California, Washington o Nueva York actualizan su salario cada año. Un error de $1/hora puede representar miles de dólares de diferencia en el cálculo total.
+    </div>
+    <div class="tip">
+      <div class="tip-icon">📄</div>
+      <strong>La narrativa es para el expediente</strong>
+      El texto generado en la sección "Narrativa probatoria" puede copiarse directamente al expediente de Visa T. Cita los artículos legales relevantes (FLSA § 206, § 207 y TVPA 22 U.S.C. § 7102) de forma automática.
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="guide-footer">
+    <strong>The Mendoza Law Firm</strong> · Departamento de Entrenamiento · Uso interno exclusivo<br>
+    Este documento complementa el Artefacto Probatorio de Cálculo de Diferencia Económica para expedientes de Visa T.
+  </div>
+
+</div>
+
+
+
+</div><!-- /guide-view -->
+
+<div id="calc-view">
+  <!-- BACK BUTTON injected into calc header via JS -->
+  <div class="page-wrapper">
 
   <!-- HEADER -->
   <div class="doc-header">
@@ -464,6 +1545,9 @@
         <img src="data:image/jpeg;base64,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CweCJuFSrIn+BhhrgWRkjT8FJVEQBILX4VBvkpl2L8Z0ol2dxMwNLZOFamTWXUcfgRJohZ5PVr6x+a+sfmvrH5r6x+aF3M4yFxzWUCEoYIufTFIDKLn/AADG9JjD6TBgnx7U/XcSYQlC2JLrX1j819Y/NfWPzX1j819Y/PlglzsIe4JhyqamUy54BzWA60SZWuaRhDDUks5GiAjFmoX+GCyl4nR507tx0mUOcAx06VDTTPgCwtdagX8WYCwX+FCA4TREXbNKHKAMk8FtzqfZZi+iB6K6DUSfzerAxChukgTwx6jg1NWvQ3hxOlT8FcNBdkTw4RUwsIeXwe68hrahPxPk2tz/AD3UFjpSDzlyZDdB/wB9KuBZJoOmiKk4Xzy3ErZFk89akmsx4yWiVdic3CicoX6cRr+jx+G1bknaAQ5yUrGmK1iQ3UaFvcKNaMwSlzhbZRWW+4Rxza3HcoaHaISkgxws9qwvDGEJmTDpgJ0sGrlmJe55AQSRbgoXS5CWJECWBHKp2uIayQCRBAdKNPZJrJWQU3C7wt2bnFrQOtOAhAK7C7TyGC6niRIiWutLmyzMRToxcpiS03AhiEUW/LKhrKCWq1Num74i7vsVPXYZseHJtXG2gvIM2daAU9MDgpYtbej/AIRMPFVzedNjhTIQECBKxGrTNMRA2JZBoBGlZU9KdOoeufIIqbHWKhypyIPqrAeAMSalXUCWLGozgoWTDRDWEhJK4SAd1JnY3TSVDg0fS8UcUIUsb6U7K0xspOaQY4uHg40A0sCcE+BbdJXzlYQDbna7RkSEiYalL9KBCM88VMTP0INqWjLh5CARJHStIkSI+CVYpRkcGixTgICkkii2AhC2Dh4gwCWR1rpadHhiC0iXfwlt5sUpwWjJgQAsVft03RTWBlBK5f8AU//aAAwDAQACAAMAAAAQ888888888888888888888888888888c8o0888888884AQko08888888wwUEIU8888888wUQ0Y8888888UM84cEc0888884wwIYwww88888AMkokckMU888oE8QcY8o8w88888cM8c88s88888888888888888888888888888//EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQMBAT8QKf/EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQIBAT8QKf/EACcQ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" alt="The Mendoza Law Firm" class="firm-logo">
       </div>
     </div><!-- /doc-header-inner -->
+    <div style="position:absolute;top:1rem;left:1.5rem;z-index:10;">
+      <button class="back-btn" onclick="showGuide()">← Volver a la guía</button>
+    </div>
   </div>
 
   <!-- LEGAL CONTEXT -->
@@ -713,6 +1797,15 @@
         <div class="narrative-block" id="narrative">—</div>
       </div>
 
+      <!-- DESCARGAR PDF -->
+      <div class="section" style="text-align:center; padding-top:0.5rem;">
+        <button class="pdf-download-btn" onclick="downloadPDF()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar análisis en PDF
+        </button>
+        <div style="font-size:0.72rem;color:#94a3b8;margin-top:0.6rem;">Se abrirá el diálogo de impresión — seleccione “Guardar como PDF”</div>
+      </div>
+
     </div>
     <!-- /results -->
 
@@ -726,16 +1819,19 @@
 
 </div><!-- /page-wrapper -->
 
+
+</div>
+
 <script>
-  // Fecha de generación
+// Fecha de generación
   const d = new Date();
   document.getElementById('gen-date').textContent = d.toLocaleDateString('es-MX', {year:'numeric', month:'long', day:'numeric'});
 
-  function fmt(n) {
+  function calcFmt(n) {
     return '$' + n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
   }
-  function fmtPct(n) { return n.toFixed(1) + '%'; }
-  function fmtH(n)   { return n.toFixed(2) + ' h'; }
+  function calcFmtPct(n) { return n.toFixed(1) + '%'; }
+  function calcFmtH(n)   { return n.toFixed(2) + ' h'; }
 
   // ── Helpers para horario ──
   function timeToMinutes(t) {
@@ -790,7 +1886,7 @@
   }
 
   // Init schedule on load
-  window.addEventListener('DOMContentLoaded', () => { updateSchedule(); });
+  // init called by showCalc()
 
   function calculate() {
     const state     = document.getElementById('state').value.trim();
@@ -832,43 +1928,43 @@
     const hasPeriod     = empMonths > 0 || empWeeks > 0;
 
     // ── Fila horas regulares ──
-    document.getElementById('r-regular').textContent = fmt(regularPay);
+    document.getElementById('r-regular').textContent = calcFmt(regularPay);
     document.getElementById('r-regular-src').textContent =
-      `${fmt(minWage)}/hr × ${regularHours} hrs regulares. FLSA 29 U.S.C. § 206 y salario mínimo de ${state} (${refYear}).`;
+      `${calcFmt(minWage)}/hr × ${regularHours} hrs regulares. FLSA 29 U.S.C. § 206 y salario mínimo de ${state} (${refYear}).`;
 
     // ── Fila horas extras (mostrar solo si aplica) ──
     const rowOT = document.getElementById('row-overtime');
     if (hasOvertime) {
       rowOT.style.display = '';
-      document.getElementById('r-overtime').textContent = fmt(overtimePay);
+      document.getElementById('r-overtime').textContent = calcFmt(overtimePay);
       document.getElementById('r-overtime-src').textContent =
-        `${fmt(overtimeRate)}/hr (1.5× tarifa base) × ${overtimeHours} hrs extras. FLSA 29 U.S.C. § 207 — obligatorio para horas sobre 40 en la semana laboral.`;
+        `${calcFmt(overtimeRate)}/hr (1.5× tarifa base) × ${overtimeHours} hrs extras. FLSA 29 U.S.C. § 207 — obligatorio para horas sobre 40 en la semana laboral.`;
     } else {
       rowOT.style.display = 'none';
     }
 
     // ── Total legal ──
-    document.getElementById('r-legal').textContent = fmt(legalPay);
+    document.getElementById('r-legal').textContent = calcFmt(legalPay);
     document.getElementById('r-legal-src').textContent = hasOvertime
-      ? `Suma de pago regular (${fmt(regularPay)}) + horas extras (${fmt(overtimePay)}). FLSA 29 U.S.C. §§ 206–207, salario mínimo de ${state} año ${refYear}.`
-      : `FLSA 29 U.S.C. § 206 y salario mínimo estatal de ${state} correspondiente al año ${refYear} (${fmt(minWage)}/hr × ${hours} hrs).`;
+      ? `Suma de pago regular (${calcFmt(regularPay)}) + horas extras (${calcFmt(overtimePay)}). FLSA 29 U.S.C. §§ 206–207, salario mínimo de ${state} año ${refYear}.`
+      : `FLSA 29 U.S.C. § 206 y salario mínimo estatal de ${state} correspondiente al año ${refYear} (${calcFmt(minWage)}/hr × ${hours} hrs).`;
 
     // ── Pago real ──
-    document.getElementById('r-real').textContent = fmt(realPay);
+    document.getElementById('r-real').textContent = calcFmt(realPay);
 
     // ── Diferencia ──
-    document.getElementById('r-diff').textContent = diff > 0 ? fmt(diff) : fmt(0);
+    document.getElementById('r-diff').textContent = diff > 0 ? calcFmt(diff) : calcFmt(0);
     document.getElementById('r-diff-src').textContent = diff > 0
       ? `Monto retenido indebidamente. Constituye evidencia de explotación económica en el expediente de Visa T (22 U.S.C. § 7102(11)(B)).`
       : `No se identificó diferencia negativa. El pago es igual o superior al mínimo legal exigible.`;
 
     // ── Tasa implícita ──
-    document.getElementById('r-rate').textContent = fmt(implRate) + '/hr';
+    document.getElementById('r-rate').textContent = calcFmt(implRate) + '/hr';
 
     // ── Análisis extendido ──
-    document.getElementById('a-weekly').textContent  = diff > 0 ? fmt(diff)    : fmt(0);
-    document.getElementById('a-monthly').textContent = diff > 0 ? fmt(monthly) : fmt(0);
-    document.getElementById('a-pct').textContent     = diff > 0 ? fmtPct(pct)  : '0.0%';
+    document.getElementById('a-weekly').textContent  = diff > 0 ? calcFmt(diff)    : calcFmt(0);
+    document.getElementById('a-monthly').textContent = diff > 0 ? calcFmt(monthly) : calcFmt(0);
+    document.getElementById('a-pct').textContent     = diff > 0 ? calcFmtPct(pct)  : '0.0%';
 
     // ── Período de empleo ──
     const sectionPeriod = document.getElementById('section-period');
@@ -878,7 +1974,7 @@
       const wLabel = empWeeks  > 0 ? `${empWeeks} semana${empWeeks !== 1 ? 's' : ''}` : '';
       document.getElementById('a-period-label').textContent = [mLabel, wLabel].filter(Boolean).join(' y ');
       document.getElementById('a-period-weeks').textContent = totalWeeks.toFixed(1) + ' semanas';
-      document.getElementById('a-total').textContent = fmt(totalPerjuicio);
+      document.getElementById('a-total').textContent = calcFmt(totalPerjuicio);
     } else {
       sectionPeriod.style.display = 'none';
     }
@@ -927,11 +2023,11 @@
 
     if (diff > 0) {
       const overtimeNote = hasOvertime
-        ? `<br>De ese total, <strong>${regularHours} horas corresponden a tiempo regular</strong> (tarifa: ${fmt(minWage)}/hr) y <strong>${overtimeHours.toFixed(2)} horas constituyen tiempo extraordinario</strong> que superan el umbral de 40 horas semanales establecido por la FLSA, las cuales debieron compensarse a la tarifa de <strong>${fmt(overtimeRate)}/hora</strong> (1.5× la tarifa base), conforme a 29 U.S.C. § 207. El empleador omitió aplicar esta tarifa diferenciada, lo que agrava la cuantía del perjuicio.`
+        ? `<br>De ese total, <strong>${regularHours} horas corresponden a tiempo regular</strong> (tarifa: ${calcFmt(minWage)}/hr) y <strong>${overtimeHours.toFixed(2)} horas constituyen tiempo extraordinario</strong> que superan el umbral de 40 horas semanales establecido por la FLSA, las cuales debieron compensarse a la tarifa de <strong>${calcFmt(overtimeRate)}/hora</strong> (1.5× la tarifa base), conforme a 29 U.S.C. § 207. El empleador omitió aplicar esta tarifa diferenciada, lo que agrava la cuantía del perjuicio.`
         : '';
-      narr.innerHTML = `Con base en el horario laboral declarado por la persona afectada, se documentaron <strong>${activeDays.length} días de trabajo por semana</strong> en el estado de <strong>${state}</strong>, con el siguiente registro de jornadas:${scheduleTable}La sumatoria de horas por jornada diaria arroja un total de <strong>${hours.toFixed(2)} horas de trabajo efectivo por semana</strong>.${overtimeNote}<br><br>Conforme al salario mínimo legal vigente en <strong>${state}</strong> para el año <strong>${refYear}</strong> (${fmt(minWage)}/hora), el monto semanal total que debió recibir la persona ascendía a <strong>${fmt(legalPay)}</strong>. Sin embargo, el empleador efectuó únicamente un pago de <strong>${fmt(realPay)} por semana</strong>, lo que equivale a una tasa efectiva de <strong>${fmt(implRate)}/hora</strong>, por debajo del estándar legal aplicable.<br><br>La diferencia económica resultante es de <strong>${fmt(diff)} por semana</strong>, equivalente a <strong>${fmt(monthly)} mensuales</strong>. Dicho monto representa el <strong>${fmtPct(pct)} del salario legalmente correspondiente</strong> que fue retenido por el empleador, configurando un beneficio económico indebido susceptible de valorarse como evidencia de explotación laboral en el marco de una solicitud de Visa T (22 U.S.C. § 7102).`;
+      narr.innerHTML = `Con base en el horario laboral declarado por la persona afectada, se documentaron <strong>${activeDays.length} días de trabajo por semana</strong> en el estado de <strong>${state}</strong>, con el siguiente registro de jornadas:${scheduleTable}La sumatoria de horas por jornada diaria arroja un total de <strong>${hours.toFixed(2)} horas de trabajo efectivo por semana</strong>.${overtimeNote}<br><br>Conforme al salario mínimo legal vigente en <strong>${state}</strong> para el año <strong>${refYear}</strong> (${calcFmt(minWage)}/hora), el monto semanal total que debió recibir la persona ascendía a <strong>${calcFmt(legalPay)}</strong>. Sin embargo, el empleador efectuó únicamente un pago de <strong>${calcFmt(realPay)} por semana</strong>, lo que equivale a una tasa efectiva de <strong>${calcFmt(implRate)}/hora</strong>, por debajo del estándar legal aplicable.<br><br>La diferencia económica resultante es de <strong>${calcFmt(diff)} por semana</strong>, equivalente a <strong>${calcFmt(monthly)} mensuales</strong>. Dicho monto representa el <strong>${calcFmtPct(pct)} del salario legalmente correspondiente</strong> que fue retenido por el empleador, configurando un beneficio económico indebido susceptible de valorarse como evidencia de explotación laboral en el marco de una solicitud de Visa T (22 U.S.C. § 7102).`;
     } else {
-      narr.innerHTML = `Con base en el horario laboral declarado, la persona trabajó <strong>${hours.toFixed(2)} horas semanales</strong> (${activeDays.length} días) en el estado de <strong>${state}</strong>:${scheduleTable}El pago realizado por el empleador (<strong>${fmt(realPay)}/semana</strong>) es igual o superior al salario mínimo legal exigible${hasOvertime ? ', incluyendo la tarifa de horas extras (1.5×) sobre las ' + overtimeHours.toFixed(2) + ' horas que exceden el umbral de 40 semanales' : ''}. No se documenta diferencia económica negativa en el período analizado.`;
+      narr.innerHTML = `Con base en el horario laboral declarado, la persona trabajó <strong>${hours.toFixed(2)} horas semanales</strong> (${activeDays.length} días) en el estado de <strong>${state}</strong>:${scheduleTable}El pago realizado por el empleador (<strong>${calcFmt(realPay)}/semana</strong>) es igual o superior al salario mínimo legal exigible${hasOvertime ? ', incluyendo la tarifa de horas extras (1.5×) sobre las ' + overtimeHours.toFixed(2) + ' horas que exceden el umbral de 40 semanales' : ''}. No se documenta diferencia económica negativa en el período analizado.`;
     }
 
     // ── Período total: agregar párrafo final a narrativa ──
@@ -939,12 +2035,37 @@
       const mLabel = empMonths > 0 ? `${empMonths} mes${empMonths !== 1 ? 'es' : ''}` : '';
       const wLabel = empWeeks  > 0 ? `${empWeeks} semana${empWeeks !== 1 ? 's' : ''}` : '';
       const periodoStr = [mLabel, wLabel].filter(Boolean).join(' y ');
-      narr.innerHTML += `<br><br>Considerando que la persona afectada se mantuvo bajo las mismas condiciones laborales durante un período de <strong>${periodoStr}</strong> (aproximadamente <strong>${totalWeeks.toFixed(1)} semanas</strong>), el <strong>perjuicio económico total acumulado asciende a ${fmt(totalPerjuicio)}</strong>. Este monto constituye la base cuantificable del daño sufrido durante la totalidad del período de explotación laboral documentado, y es susceptible de reclamación bajo las disposiciones de la FLSA y de los mecanismos de compensación disponibles para víctimas de trata (22 U.S.C. § 7105).`;
+      narr.innerHTML += `<br><br>Considerando que la persona afectada se mantuvo bajo las mismas condiciones laborales durante un período de <strong>${periodoStr}</strong> (aproximadamente <strong>${totalWeeks.toFixed(1)} semanas</strong>), el <strong>perjuicio económico total acumulado asciende a ${calcFmt(totalPerjuicio)}</strong>. Este monto constituye la base cuantificable del daño sufrido durante la totalidad del período de explotación laboral documentado, y es susceptible de reclamación bajo las disposiciones de la FLSA y de los mecanismos de compensación disponibles para víctimas de trata (22 U.S.C. § 7105).`;
     }
 
     document.getElementById('results').style.display = 'block';
     document.getElementById('results').scrollIntoView({behavior: 'smooth', block: 'start'});
   }
+
+  function showCalc() {
+    document.getElementById('guide-view').style.display = 'none';
+    document.getElementById('calc-view').style.display  = 'block';
+    updateSchedule();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  function showGuide() {
+    document.getElementById('calc-view').style.display  = 'none';
+    document.getElementById('guide-view').style.display = 'block';
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function downloadPDF() {
+    // Show results section forcefully for print
+    const results = document.getElementById('results');
+    const wasHidden = results.style.display === 'none' || results.style.display === '';
+    if (wasHidden) {
+      alert('Por favor genera el análisis primero antes de descargar el PDF.');
+      return;
+    }
+    window.print();
+  }
+
 </script>
+
 </body>
 </html>
