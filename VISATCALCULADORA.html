@@ -1188,6 +1188,9 @@ body{ background: white; padding: 0; }
     #calc-view .back-btn,
     #calc-view .doc-meta            { display: none !important; }
 
+    /* Client badge - always show in print */
+    #calc-view .client-badge-wrap   { display: flex !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
     /* Comparison table - compact */
     #calc-view .comparison-table    { font-size: 0.74rem !important; width: 100% !important; }
     #calc-view .comparison-table th,
@@ -1561,6 +1564,11 @@ body{ background: white; padding: 0; }
     <div class="section">
       <div class="section-label">Datos del caso</div>
       <div class="form-grid">
+        <div class="field" style="grid-column: 1 / -1;">
+          <label>Nombre completo del cliente</label>
+          <span class="field-note">Se incluirá en la narrativa probatoria del expediente</span>
+          <input type="text" id="clientName" placeholder="Ej: María González Hernández" style="text-transform: capitalize;">
+        </div>
         <div class="field">
           <label>Estado donde ocurrió el trabajo</label>
           <span class="field-note">Jurisdicción laboral aplicable</span>
@@ -1695,6 +1703,12 @@ body{ background: white; padding: 0; }
 
     <!-- RESULTADOS -->
     <div id="results">
+
+      <!-- CLIENTE -->
+      <div class="client-badge-wrap" style="display:none; align-items:center; gap:0.7rem; padding:0.7rem 1.2rem; background:var(--pale); border-left:4px solid var(--gold); margin-bottom:0.5rem;">
+        <span style="font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--mid);font-weight:700;">Expediente:</span>
+        <span id="client-name-display" style="font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--navy);"></span>
+      </div>
 
       <!-- VEREDICTO -->
       <div id="verdict-banner" class="verdict-banner"></div>
@@ -1899,6 +1913,7 @@ body{ background: white; padding: 0; }
     const hours = days.reduce((s, d) => s + d.hours, 0);
     const activeDays = days.filter(d => d.active);
 
+    const clientName = document.getElementById('clientName').value.trim() || 'la persona afectada';
     if (!state || isNaN(refYear) || isNaN(minWage) || isNaN(realPay) || hours === 0) {
       alert('Por favor complete todos los campos y asegúrese de que al menos un día esté marcado.');
       return;
@@ -1973,6 +1988,13 @@ body{ background: white; padding: 0; }
       const mLabel = empMonths > 0 ? `${empMonths} mes${empMonths !== 1 ? 'es' : ''}` : '';
       const wLabel = empWeeks  > 0 ? `${empWeeks} semana${empWeeks !== 1 ? 's' : ''}` : '';
       document.getElementById('a-period-label').textContent = [mLabel, wLabel].filter(Boolean).join(' y ');
+      // Update period section title with client name if provided
+      const rawName = document.getElementById('clientName').value.trim();
+      if (rawName) {
+        const periodSection = document.getElementById('section-period');
+        const periodSectionLabel = periodSection ? periodSection.querySelector('.section-label') : null;
+        if (periodSectionLabel) periodSectionLabel.textContent = 'Perjuicio total · ' + rawName;
+      }
       document.getElementById('a-period-weeks').textContent = totalWeeks.toFixed(1) + ' semanas';
       document.getElementById('a-total').textContent = calcFmt(totalPerjuicio);
     } else {
@@ -2025,9 +2047,9 @@ body{ background: white; padding: 0; }
       const overtimeNote = hasOvertime
         ? `<br>De ese total, <strong>${regularHours} horas corresponden a tiempo regular</strong> (tarifa: ${calcFmt(minWage)}/hr) y <strong>${overtimeHours.toFixed(2)} horas constituyen tiempo extraordinario</strong> que superan el umbral de 40 horas semanales establecido por la FLSA, las cuales debieron compensarse a la tarifa de <strong>${calcFmt(overtimeRate)}/hora</strong> (1.5× la tarifa base), conforme a 29 U.S.C. § 207. El empleador omitió aplicar esta tarifa diferenciada, lo que agrava la cuantía del perjuicio.`
         : '';
-      narr.innerHTML = `Con base en el horario laboral declarado por la persona afectada, se documentaron <strong>${activeDays.length} días de trabajo por semana</strong> en el estado de <strong>${state}</strong>, con el siguiente registro de jornadas:${scheduleTable}La sumatoria de horas por jornada diaria arroja un total de <strong>${hours.toFixed(2)} horas de trabajo efectivo por semana</strong>.${overtimeNote}<br><br>Conforme al salario mínimo legal vigente en <strong>${state}</strong> para el año <strong>${refYear}</strong> (${calcFmt(minWage)}/hora), el monto semanal total que debió recibir la persona ascendía a <strong>${calcFmt(legalPay)}</strong>. Sin embargo, el empleador efectuó únicamente un pago de <strong>${calcFmt(realPay)} por semana</strong>, lo que equivale a una tasa efectiva de <strong>${calcFmt(implRate)}/hora</strong>, por debajo del estándar legal aplicable.<br><br>La diferencia económica resultante es de <strong>${calcFmt(diff)} por semana</strong>, equivalente a <strong>${calcFmt(monthly)} mensuales</strong>. Dicho monto representa el <strong>${calcFmtPct(pct)} del salario legalmente correspondiente</strong> que fue retenido por el empleador, configurando un beneficio económico indebido susceptible de valorarse como evidencia de explotación laboral en el marco de una solicitud de Visa T (22 U.S.C. § 7102).`;
+      narr.innerHTML = `Con base en el horario laboral declarado por <strong>${clientName}</strong>, se documentaron <strong>${activeDays.length} días de trabajo por semana</strong> en el estado de <strong>${state}</strong>, con el siguiente registro de jornadas:${scheduleTable}La sumatoria de horas por jornada diaria arroja un total de <strong>${hours.toFixed(2)} horas de trabajo efectivo por semana</strong>.${overtimeNote}<br><br>Conforme al salario mínimo legal vigente en <strong>${state}</strong> para el año <strong>${refYear}</strong> (${calcFmt(minWage)}/hora), el monto semanal total que debió recibir la persona ascendía a <strong>${calcFmt(legalPay)}</strong>. Sin embargo, el empleador efectuó únicamente un pago de <strong>${calcFmt(realPay)} por semana</strong>, lo que equivale a una tasa efectiva de <strong>${calcFmt(implRate)}/hora</strong>, por debajo del estándar legal aplicable.<br><br>La diferencia económica resultante es de <strong>${calcFmt(diff)} por semana</strong>, equivalente a <strong>${calcFmt(monthly)} mensuales</strong>. Dicho monto representa el <strong>${calcFmtPct(pct)} del salario legalmente correspondiente</strong> que fue retenido por el empleador, configurando un beneficio económico indebido susceptible de valorarse como evidencia de explotación laboral en el marco de una solicitud de Visa T (22 U.S.C. § 7102).`;
     } else {
-      narr.innerHTML = `Con base en el horario laboral declarado, la persona trabajó <strong>${hours.toFixed(2)} horas semanales</strong> (${activeDays.length} días) en el estado de <strong>${state}</strong>:${scheduleTable}El pago realizado por el empleador (<strong>${calcFmt(realPay)}/semana</strong>) es igual o superior al salario mínimo legal exigible${hasOvertime ? ', incluyendo la tarifa de horas extras (1.5×) sobre las ' + overtimeHours.toFixed(2) + ' horas que exceden el umbral de 40 semanales' : ''}. No se documenta diferencia económica negativa en el período analizado.`;
+      narr.innerHTML = `Con base en el horario laboral declarado, <strong>${clientName}</strong> trabajó <strong>${hours.toFixed(2)} horas semanales</strong> (${activeDays.length} días) en el estado de <strong>${state}</strong>:${scheduleTable}El pago realizado por el empleador (<strong>${calcFmt(realPay)}/semana</strong>) es igual o superior al salario mínimo legal exigible${hasOvertime ? ', incluyendo la tarifa de horas extras (1.5×) sobre las ' + overtimeHours.toFixed(2) + ' horas que exceden el umbral de 40 semanales' : ''}. No se documenta diferencia económica negativa en el período analizado.`;
     }
 
     // ── Período total: agregar párrafo final a narrativa ──
@@ -2035,9 +2057,20 @@ body{ background: white; padding: 0; }
       const mLabel = empMonths > 0 ? `${empMonths} mes${empMonths !== 1 ? 'es' : ''}` : '';
       const wLabel = empWeeks  > 0 ? `${empWeeks} semana${empWeeks !== 1 ? 's' : ''}` : '';
       const periodoStr = [mLabel, wLabel].filter(Boolean).join(' y ');
-      narr.innerHTML += `<br><br>Considerando que la persona afectada se mantuvo bajo las mismas condiciones laborales durante un período de <strong>${periodoStr}</strong> (aproximadamente <strong>${totalWeeks.toFixed(1)} semanas</strong>), el <strong>perjuicio económico total acumulado asciende a ${calcFmt(totalPerjuicio)}</strong>. Este monto constituye la base cuantificable del daño sufrido durante la totalidad del período de explotación laboral documentado, y es susceptible de reclamación bajo las disposiciones de la FLSA y de los mecanismos de compensación disponibles para víctimas de trata (22 U.S.C. § 7105).`;
+      narr.innerHTML += `<br><br>Considerando que <strong>${clientName}</strong> se mantuvo bajo las mismas condiciones laborales durante un período de <strong>${periodoStr}</strong> (aproximadamente <strong>${totalWeeks.toFixed(1)} semanas</strong>), el <strong>perjuicio económico total acumulado asciende a ${calcFmt(totalPerjuicio)}</strong>. Este monto constituye la base cuantificable del daño sufrido durante la totalidad del período de explotación laboral documentado, y es susceptible de reclamación bajo las disposiciones de la FLSA y de los mecanismos de compensación disponibles para víctimas de trata (22 U.S.C. § 7105).`;
     }
 
+    // Show client name badge in results
+    const nameDisplay = document.getElementById('client-name-display');
+    if (nameDisplay) {
+      const rawName = document.getElementById('clientName').value.trim();
+      if (rawName) {
+        nameDisplay.textContent = rawName;
+        nameDisplay.closest('.client-badge-wrap').style.display = 'flex';
+      } else {
+        nameDisplay.closest('.client-badge-wrap').style.display = 'none';
+      }
+    }
     document.getElementById('results').style.display = 'block';
     document.getElementById('results').scrollIntoView({behavior: 'smooth', block: 'start'});
   }
