@@ -1258,7 +1258,290 @@ body{ background: white; padding: 0; }
     #calc-view .narrative-block table td { padding: 3px 6px !important; }
   }
 
+
+  /* ════════════════════════════════════════
+     SELECTOR DE MODO — Modo A / Modo B
+  ════════════════════════════════════════ */
+
+  .mode-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+  }
+  @media (max-width: 600px) { .mode-selector { grid-template-columns: 1fr; } }
+
+  .mode-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: var(--white);
+    border: 2px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 0;
+    cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif;
+    transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+    position: relative;
+    overflow: hidden;
+  }
+  .mode-btn:hover {
+    border-color: var(--mid);
+    box-shadow: 0 4px 18px rgba(74,111,165,0.13);
+  }
+  .mode-btn.active {
+    border-color: var(--navy);
+    background: #f5f8ff;
+    box-shadow: 0 4px 20px rgba(26,42,74,0.12);
+  }
+  /* Gold accent bar on top when active */
+  .mode-btn::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: transparent;
+    transition: background 0.18s;
+  }
+  .mode-btn.active::after {
+    background: linear-gradient(90deg, var(--gold), #e8d28a, var(--gold));
+  }
+  .mode-btn-inner {
+    padding: 1.1rem 1.3rem 1.1rem 1.1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+  }
+  .mode-btn-radio {
+    flex-shrink: 0;
+    margin-top: 3px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--gray-200);
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.18s;
+  }
+  .mode-btn.active .mode-btn-radio {
+    border-color: var(--navy);
+    background: var(--navy);
+  }
+  .mode-btn.active .mode-btn-radio::after {
+    content: '';
+    display: block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+  .mode-btn-content { flex: 1; }
+  .mode-btn-tag {
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--mid);
+    background: var(--pale);
+    border: 1px solid var(--gray-200);
+    padding: 2px 8px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 0.45rem;
+  }
+  .mode-btn.active .mode-btn-tag {
+    background: var(--navy);
+    color: var(--gold);
+    border-color: transparent;
+  }
+  .mode-btn-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.93rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.3;
+    margin-bottom: 0.35rem;
+  }
+  .mode-btn-desc {
+    font-size: 0.74rem;
+    color: var(--gray);
+    line-height: 1.55;
+  }
+
+  .mode-divider {
+    grid-column: 1 / -1;
+    height: 1px;
+    background: var(--gray-200);
+    margin: 0.2rem 0 1.2rem;
+  }
+
+  /* ════════════════════════════════════════
+     PERÍODOS (Modo A)
+  ════════════════════════════════════════ */
+
+  #modoA-fields {
+    grid-column: 1 / -1;
+  }
+  .periods-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+  }
+  .periods-header .section-label { margin-bottom: 0; }
+
+  .period-rows-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .period-row {
+    background: var(--white);
+    border: 1.5px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 1.1rem 1.2rem 1rem;
+    position: relative;
+  }
+  .period-row-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.85rem;
+  }
+  .period-row-num {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+  .period-row-num::before {
+    content: '';
+    display: inline-block;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-align: center;
+    line-height: 20px;
+  }
+  .period-row-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 0.8rem 1rem;
+  }
+  @media (max-width: 750px) {
+    .period-row-fields { grid-template-columns: 1fr 1fr 1fr; }
+  }
+  @media (max-width: 500px) {
+    .period-row-fields { grid-template-columns: 1fr 1fr; }
+  }
+  .period-row-fields .field label {
+    font-size: 0.72rem;
+  }
+  .remove-period-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--red-lt);
+    border: 1px solid #e8b4b0;
+    color: var(--red);
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .remove-period-btn:hover {
+    background: #f5c6c2;
+    transform: scale(1.1);
+  }
+  .add-period-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1.3rem;
+    background: var(--white);
+    border: 1.5px solid var(--mid);
+    color: var(--mid);
+    border-radius: 7px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.04em;
+  }
+  .add-period-btn:hover {
+    background: var(--blue-lt);
+    color: var(--navy);
+    border-color: var(--navy);
+  }
+  .periods-note {
+    font-size: 0.78rem;
+    color: var(--gray);
+    line-height: 1.6;
+    background: var(--blue-lt);
+    border-left: 3px solid var(--mid);
+    padding: 0.65rem 0.9rem;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 0.9rem;
+  }
+
+  /* ════════════════════════════════════════
+     TABLA MULTI-PERÍODO (resultados)
+  ════════════════════════════════════════ */
+
+  .multi-results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1.5px solid var(--gray-200);
+  }
+  .multi-results-table th {
+    background: var(--navy);
+    color: var(--white);
+    padding: 0.55rem 0.8rem;
+    text-align: left;
+    font-size: 0.67rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .multi-results-table td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid var(--gray-200);
+    vertical-align: middle;
+  }
+  .multi-results-table tbody tr:last-child td { border-bottom: none; }
+  .multi-results-table tbody tr:nth-child(even) td { background: #f8faff; }
+  .multi-results-table tfoot td {
+    background: var(--navy);
+    color: var(--white);
+    font-weight: 700;
+    padding: 0.55rem 0.8rem;
+    font-size: 0.8rem;
+  }
+  .multi-results-table tfoot .gold { color: var(--gold); }
+  .td-diff { color: var(--red); font-weight: 700; }
+
 </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 <div id="guide-view">
@@ -1563,12 +1846,39 @@ body{ background: white; padding: 0; }
     <!-- DATOS DE ENTRADA -->
     <div class="section">
       <div class="section-label">Datos del caso</div>
+      <!-- ── SELECTOR DE MODO ── -->
+      <div class="section-label" style="margin-bottom:1rem;">Tipo de cálculo</div>
+      <div class="mode-selector">
+        <button type="button" class="mode-btn" id="modeBtn-A" onclick="setMode('A')">
+          <div class="mode-btn-inner">
+            <div class="mode-btn-radio"></div>
+            <div class="mode-btn-content">
+              <span class="mode-btn-tag">Modo A</span>
+              <div class="mode-btn-title">Cálculo por Años /&nbsp;Cambios de salario mínimo</div>
+              <div class="mode-btn-desc">El salario mínimo cambió en distintos años. Cada período se analiza por separado y se acumula el perjuicio total.</div>
+            </div>
+          </div>
+        </button>
+        <button type="button" class="mode-btn active" id="modeBtn-B" onclick="setMode('B')">
+          <div class="mode-btn-inner">
+            <div class="mode-btn-radio"></div>
+            <div class="mode-btn-content">
+              <span class="mode-btn-tag">Modo B</span>
+              <div class="mode-btn-title">Cálculo por Período Único (sin cambios)</div>
+              <div class="mode-btn-desc">El salario mínimo y el pago se mantuvieron iguales durante todo el período laboral.</div>
+            </div>
+          </div>
+        </button>
+      </div>
+      <div class="mode-divider"></div>
+
       <div class="form-grid">
         <div class="field" style="grid-column: 1 / -1;">
           <label>Nombre completo del cliente</label>
           <span class="field-note">Se incluirá en la narrativa probatoria del expediente</span>
           <input type="text" id="clientName" placeholder="Ej: María González Hernández" style="text-transform: capitalize;">
         </div>
+        <!-- ── SHARED: Estado (ambos modos) ── -->
         <div class="field">
           <label>Estado donde ocurrió el trabajo</label>
           <span class="field-note">Jurisdicción laboral aplicable</span>
@@ -1595,16 +1905,22 @@ body{ background: white; padding: 0; }
             <option>Wisconsin</option><option>Wyoming</option>
           </select>
         </div>
-        <div class="field">
-          <label>Año de referencia del salario mínimo</label>
-          <span class="field-note">Período en que ocurrió la explotación laboral</span>
-          <input type="number" id="refYear" placeholder="Ej: 2022" min="1938" max="2100" step="1">
+
+        <!-- ── MODO B: año y salario mínimo único ── -->
+        <div id="modoB-fields" style="display:contents;">
+          <div class="field">
+            <label>Año de referencia del salario mínimo</label>
+            <span class="field-note">Período en que ocurrió la explotación laboral</span>
+            <input type="number" id="refYear" placeholder="Ej: 2022" min="1938" max="2100" step="1">
+          </div>
+          <div class="field">
+            <label>Salario mínimo estatal vigente (USD/hora)</label>
+            <span class="field-note">Verificar en el Department of Labor del estado</span>
+            <input type="number" id="minWage" placeholder="Ej: 16.00" step="0.01" min="0">
+          </div>
         </div>
-        <div class="field">
-          <label>Salario mínimo estatal vigente (USD/hora)</label>
-          <span class="field-note">Verificar en el Department of Labor del estado</span>
-          <input type="number" id="minWage" placeholder="Ej: 16.00" step="0.01" min="0">
-        </div>
+
+        <!-- ── HORARIO (compartido) ── -->
         <div class="schedule-wrap">
           <div class="schedule-title">Horario laboral declarado por día</div>
           <div class="schedule-note">Marque los días trabajados e ingrese la hora de entrada y salida. El sistema calculará las horas reales por semana y aplicará la tarifa de horas extras (FLSA § 207) sobre las horas que excedan 40 por semana.</div>
@@ -1677,25 +1993,53 @@ body{ background: white; padding: 0; }
             </tfoot>
           </table>
         </div>
-        <div class="field">
-          <label>Pago real recibido por semana (USD)</label>
-          <span class="field-note">Monto efectivamente entregado por el empleador</span>
-          <input type="number" id="realPay" placeholder="Ej: 150.00" step="0.01" min="0">
+
+        <!-- ── PAGO REAL: solo Modo B (en Modo A va por período) ── -->
+        <div id="modoB-realpay" style="display:contents;">
+          <div class="field">
+            <label>Pago real recibido por semana (USD)</label>
+            <span class="field-note">Monto efectivamente entregado por el empleador</span>
+            <input type="number" id="realPay" placeholder="Ej: 150.00" step="0.01" min="0">
+          </div>
         </div>
-        <div class="field" style="grid-column: 1 / -1; border-top: 1px solid var(--gray-200); padding-top: 1rem; margin-top: 0.4rem;">
-          <label style="color: var(--mid); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;">Período total de empleo</label>
-          <span class="field-note">Ingrese la duración del trabajo bajo explotación para calcular el perjuicio total acumulado</span>
+
+        <!-- ── MODO B: período único ── -->
+        <div id="modoB-period" style="display:contents;">
+          <div class="field" style="grid-column: 1 / -1; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 0.4rem;">
+            <label style="color: var(--mid); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;">Período total de empleo</label>
+            <span class="field-note">Ingrese la duración del trabajo bajo explotación para calcular el perjuicio total acumulado</span>
+          </div>
+          <div class="field">
+            <label>Meses trabajados</label>
+            <span class="field-note">Duración total en meses (obligatorio)</span>
+            <input type="number" id="empMonths" placeholder="Ej: 8" min="0" max="600" step="1">
+          </div>
+          <div class="field">
+            <label>Semanas adicionales (opcional)</label>
+            <span class="field-note">Semanas extra fuera de los meses completos</span>
+            <input type="number" id="empWeeks" placeholder="Ej: 2" min="0" max="4" step="1">
+          </div>
         </div>
-        <div class="field">
-          <label>Meses trabajados</label>
-          <span class="field-note">Duración total en meses (obligatorio)</span>
-          <input type="number" id="empMonths" placeholder="Ej: 8" min="0" max="600" step="1">
+
+        <!-- ── MODO A: múltiples períodos ── -->
+        <div id="modoA-fields" style="display:none;">
+          <div style="border-top: 1px solid var(--gray-200); padding-top: 1.2rem; margin-top: 0.4rem;">
+            <div class="periods-header">
+              <div class="section-label">Períodos con cambios de salario mínimo</div>
+            </div>
+            <div class="periods-note">
+              Defina cada período con su <strong>año</strong>, <strong>salario mínimo vigente</strong>, <strong>pago real recibido</strong> ese año y la <strong>duración</strong>. El horario ingresado arriba aplica a todos los períodos.
+            </div>
+            <div class="period-rows-wrap" id="period-rows-container">
+              <!-- rows injected by JS -->
+            </div>
+            <button type="button" class="add-period-btn" onclick="addPeriodRow()">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
+              Agregar período
+            </button>
+          </div>
         </div>
-        <div class="field">
-          <label>Semanas adicionales (opcional)</label>
-          <span class="field-note">Semanas extra fuera de los meses completos</span>
-          <input type="number" id="empWeeks" placeholder="Ej: 2" min="0" max="4" step="1">
-        </div>
+
       </div>
       <br>
       <button class="calc-btn" onclick="calculate()">Generar análisis probatorio →</button>
@@ -1805,6 +2149,27 @@ body{ background: white; padding: 0; }
         </div>
       </div>
 
+      <!-- MODO A: tabla de resultados por período -->
+      <div id="section-multi" class="section" style="display:none;">
+        <div class="section-label">Desglose por períodos · Cambios de salario mínimo</div>
+        <table class="multi-results-table">
+          <thead>
+            <tr>
+              <th>Período</th>
+              <th>Año</th>
+              <th>Sal. mínimo</th>
+              <th>Pago legal/sem</th>
+              <th>Pago real/sem</th>
+              <th>Diferencia/sem</th>
+              <th>Semanas</th>
+              <th>Perjuicio total</th>
+            </tr>
+          </thead>
+          <tbody id="multi-results-body"></tbody>
+          <tfoot id="multi-results-foot"></tfoot>
+        </table>
+      </div>
+
       <!-- NARRATIVA PROBATORIA -->
       <div class="section">
         <div class="section-label">Narrativa probatoria para el expediente</div>
@@ -1858,8 +2223,10 @@ body{ background: white; padding: 0; }
     if (!cb.checked) return 0;
     const tin  = row.querySelector('.t-in').value;
     const tout = row.querySelector('.t-out').value;
-    const mins = timeToMinutes(tout) - timeToMinutes(tin);
-    return Math.max(mins / 60, 0);
+    let mins = timeToMinutes(tout) - timeToMinutes(tin);
+    // Turno nocturno: si la salida es antes o igual que la entrada, cruza medianoche (+24h)
+    if (mins <= 0) mins += 24 * 60;
+    return mins / 60;
   }
   function getScheduleData() {
     const rows = document.querySelectorAll('#schedule-body tr');
@@ -1873,6 +2240,9 @@ body{ background: white; padding: 0; }
       days.push({ name, active: cb.checked, hours: h, in: tin, out: tout });
     });
     return days;
+  }
+  function getActiveDays() {
+    return getScheduleData().filter(d => d.active && d.hours > 0);
   }
   function updateSchedule() {
     const rows = document.querySelectorAll('#schedule-body tr');
@@ -1902,98 +2272,175 @@ body{ background: white; padding: 0; }
   // Init schedule on load
   // init called by showCalc()
 
+  // ── MODO ──
+  let currentMode = 'B';
+
+  function setMode(mode) {
+    currentMode = mode;
+    document.getElementById('modeBtn-A').classList.toggle('active', mode === 'A');
+    document.getElementById('modeBtn-B').classList.toggle('active', mode === 'B');
+
+    // Modo B fields
+    const bFields = document.getElementById('modoB-fields');
+    const bPeriod = document.getElementById('modoB-period');
+    const aFields = document.getElementById('modoA-fields');
+
+    const bRealPay = document.getElementById('modoB-realpay');
+    if (mode === 'B') {
+      bFields.style.display = 'contents';
+      bPeriod.style.display = 'contents';
+      aFields.style.display = 'none';
+      if (bRealPay) bRealPay.style.display = 'contents';
+    } else {
+      bFields.style.display = 'none';
+      bPeriod.style.display = 'none';
+      aFields.style.display = 'block';
+      if (bRealPay) bRealPay.style.display = 'none';
+      // Seed 2 rows if empty
+      if (document.querySelectorAll('#period-rows-container .period-row').length === 0) {
+        addPeriodRow(); addPeriodRow();
+      }
+    }
+    // Hide results when switching mode
+    document.getElementById('results').style.display = 'none';
+  }
+
+  // ── MULTI-PERIOD ROWS ──
+  let periodRowCount = 0;
+  function addPeriodRow() {
+    periodRowCount++;
+    const n = periodRowCount;
+    const container = document.getElementById('period-rows-container');
+    const row = document.createElement('div');
+    row.className = 'period-row';
+    row.id = 'period-row-' + n;
+    const sugYear = new Date().getFullYear();
+    row.innerHTML = `
+      <div class="period-row-header">
+        <span class="period-row-num" style="
+          display:inline-flex;align-items:center;gap:0.5rem;
+          font-size:0.6rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mid);">
+          <span style="display:inline-flex;align-items:center;justify-content:center;
+            width:22px;height:22px;border-radius:50%;background:var(--navy);
+            color:var(--gold);font-family:'Playfair Display',serif;font-size:0.75rem;font-weight:700;
+            flex-shrink:0;">${n}</span>
+          Período ${n}
+        </span>
+        <button type="button" class="remove-period-btn" onclick="removePeriodRow(${n})" title="Eliminar período">✕</button>
+      </div>
+      <div class="period-row-fields">
+        <div class="field">
+          <label>Año</label>
+          <input type="number" id="pr-year-${n}" value="${sugYear}" min="1938" max="2100" step="1">
+        </div>
+        <div class="field">
+          <label>Salario mínimo (USD/hr)</label>
+          <input type="number" id="pr-wage-${n}" placeholder="Ej: 7.25" step="0.01" min="0">
+        </div>
+        <div class="field">
+          <label>Pago real/semana (USD)</label>
+          <input type="number" id="pr-pay-${n}" placeholder="Ej: 150.00" step="0.01" min="0">
+        </div>
+        <div class="field">
+          <label>Meses trabajados</label>
+          <input type="number" id="pr-months-${n}" placeholder="Ej: 12" min="1" max="600" step="1">
+        </div>
+        <div class="field">
+          <label>Semanas extra</label>
+          <input type="number" id="pr-weeks-${n}" placeholder="0" min="0" max="4" step="1" value="0">
+        </div>
+      </div>`;
+    container.appendChild(row);
+  }
+
+  function removePeriodRow(n) {
+    const row = document.getElementById('period-row-' + n);
+    if (row) row.remove();
+  }
+
+  function getPeriodRows() {
+    const rows = document.querySelectorAll('#period-rows-container .period-row');
+    const periods = [];
+    rows.forEach(row => {
+      const n      = row.id.replace('period-row-', '');
+      const year   = parseInt(document.getElementById('pr-year-' + n)?.value);
+      const wage   = parseFloat(document.getElementById('pr-wage-' + n)?.value);
+      const pay    = parseFloat(document.getElementById('pr-pay-' + n)?.value);
+      const months = parseFloat(document.getElementById('pr-months-' + n)?.value);
+      const weeks  = parseFloat(document.getElementById('pr-weeks-' + n)?.value) || 0;
+      if (!isNaN(year) && !isNaN(wage) && wage > 0 && !isNaN(pay) && !isNaN(months) && months > 0) {
+        periods.push({ n, year, wage, pay, months, weeks });
+      }
+    });
+    return periods;
+  }
+
+  // ── CALCULATE dispatcher ──
   function calculate() {
-    const state     = document.getElementById('state').value.trim();
-    const minWage   = parseFloat(document.getElementById('minWage').value);
-    const realPay   = parseFloat(document.getElementById('realPay').value);
-    const refYear   = parseInt(document.getElementById('refYear').value);
+    if (currentMode === 'A') {
+      calculateModoA();
+    } else {
+      calculateModoB();
+    }
+  }
 
-    // ── Leer horas desde el horario declarado ──
-    const days  = getScheduleData();
-    const hours = days.reduce((s, d) => s + d.hours, 0);
-    const activeDays = days.filter(d => d.active);
-
+  // ── MODO B: período único (lógica original) ──
+  function calculateModoB() {
+    const state    = document.getElementById('state').value;
+    const refYear  = parseInt(document.getElementById('refYear').value);
+    const minWage  = parseFloat(document.getElementById('minWage').value);
+    const realPay  = parseFloat(document.getElementById('realPay').value);
     const clientName = document.getElementById('clientName').value.trim() || 'la persona afectada';
+
+    const activeDays = getActiveDays();
+    const hours = activeDays.reduce((s, d) => s + d.hours, 0);
+
     if (!state || isNaN(refYear) || isNaN(minWage) || isNaN(realPay) || hours === 0) {
       alert('Por favor complete todos los campos y asegúrese de que al menos un día esté marcado.');
       return;
     }
 
-    // ── Cálculo con horas extras (FLSA 29 U.S.C. § 207) ──
-    const regularHours  = Math.min(hours, 40);
-    const overtimeHours = Math.max(hours - 40, 0);
-    const overtimeRate  = minWage * 1.5;
+    const regularHours   = Math.min(hours, 40);
+    const overtimeHours  = Math.max(hours - 40, 0);
+    const overtimeRate   = minWage * 1.5;
+    const regularPay     = minWage * regularHours;
+    const overtimePay    = overtimeRate * overtimeHours;
+    const legalPay       = regularPay + overtimePay;
+    const diff           = legalPay - realPay;
+    const implRate       = realPay / hours;
+    const monthly        = diff * (52 / 12);
+    const pct            = diff > 0 ? (diff / legalPay) * 100 : 0;
+    const hasOvertime    = overtimeHours > 0;
 
-    const regularPay    = minWage * regularHours;
-    const overtimePay   = overtimeRate * overtimeHours;
-    const legalPay      = regularPay + overtimePay;
-
-    const diff          = legalPay - realPay;
-    const implRate      = realPay / hours;
-    const monthly       = diff * (52 / 12);   // 4.33 semanas/mes
-    const yearly        = diff * 52;
-    const pct           = diff > 0 ? (diff / legalPay) * 100 : 0;
-    const hasOvertime   = overtimeHours > 0;
-
-    // ── Período de empleo ──
-    const empMonths     = parseFloat(document.getElementById('empMonths').value) || 0;
-    const empWeeks      = parseFloat(document.getElementById('empWeeks').value)  || 0;
-    const totalWeeks    = (empMonths * (52 / 12)) + empWeeks;
+    const empMonths  = parseFloat(document.getElementById('empMonths').value) || 0;
+    const empWeeks   = parseFloat(document.getElementById('empWeeks').value)  || 0;
+    const totalWeeks = (empMonths * (52 / 12)) + empWeeks;
     const totalPerjuicio = diff * totalWeeks;
-    const hasPeriod     = empMonths > 0 || empWeeks > 0;
+    const hasPeriod  = empMonths > 0 || empWeeks > 0;
 
-    // ── Fila horas regulares ──
-    document.getElementById('r-regular').textContent = calcFmt(regularPay);
-    document.getElementById('r-regular-src').textContent =
-      `${calcFmt(minWage)}/hr × ${regularHours} hrs regulares. FLSA 29 U.S.C. § 206 y salario mínimo de ${state} (${refYear}).`;
+    // Hide multi section
+    document.getElementById('section-multi').style.display = 'none';
 
-    // ── Fila horas extras (mostrar solo si aplica) ──
-    const rowOT = document.getElementById('row-overtime');
-    if (hasOvertime) {
-      rowOT.style.display = '';
-      document.getElementById('r-overtime').textContent = calcFmt(overtimePay);
-      document.getElementById('r-overtime-src').textContent =
-        `${calcFmt(overtimeRate)}/hr (1.5× tarifa base) × ${overtimeHours} hrs extras. FLSA 29 U.S.C. § 207 — obligatorio para horas sobre 40 en la semana laboral.`;
-    } else {
-      rowOT.style.display = 'none';
-    }
+    // Fill comparison table
+    fillComparisonTable({ state, refYear, minWage, realPay, regularHours, overtimeHours,
+      overtimeRate, regularPay, overtimePay, legalPay, diff, implRate, hasOvertime });
 
-    // ── Total legal ──
-    document.getElementById('r-legal').textContent = calcFmt(legalPay);
-    document.getElementById('r-legal-src').textContent = hasOvertime
-      ? `Suma de pago regular (${calcFmt(regularPay)}) + horas extras (${calcFmt(overtimePay)}). FLSA 29 U.S.C. §§ 206–207, salario mínimo de ${state} año ${refYear}.`
-      : `FLSA 29 U.S.C. § 206 y salario mínimo estatal de ${state} correspondiente al año ${refYear} (${calcFmt(minWage)}/hr × ${hours} hrs).`;
-
-    // ── Pago real ──
-    document.getElementById('r-real').textContent = calcFmt(realPay);
-
-    // ── Diferencia ──
-    document.getElementById('r-diff').textContent = diff > 0 ? calcFmt(diff) : calcFmt(0);
-    document.getElementById('r-diff-src').textContent = diff > 0
-      ? `Monto retenido indebidamente. Constituye evidencia de explotación económica en el expediente de Visa T (22 U.S.C. § 7102(11)(B)).`
-      : `No se identificó diferencia negativa. El pago es igual o superior al mínimo legal exigible.`;
-
-    // ── Tasa implícita ──
-    document.getElementById('r-rate').textContent = calcFmt(implRate) + '/hr';
-
-    // ── Análisis extendido ──
+    // Analysis cards
     document.getElementById('a-weekly').textContent  = diff > 0 ? calcFmt(diff)    : calcFmt(0);
     document.getElementById('a-monthly').textContent = diff > 0 ? calcFmt(monthly) : calcFmt(0);
     document.getElementById('a-pct').textContent     = diff > 0 ? calcFmtPct(pct)  : '0.0%';
 
-    // ── Período de empleo ──
+    // Period section
     const sectionPeriod = document.getElementById('section-period');
     if (hasPeriod && diff > 0) {
       sectionPeriod.style.display = '';
       const mLabel = empMonths > 0 ? `${empMonths} mes${empMonths !== 1 ? 'es' : ''}` : '';
       const wLabel = empWeeks  > 0 ? `${empWeeks} semana${empWeeks !== 1 ? 's' : ''}` : '';
       document.getElementById('a-period-label').textContent = [mLabel, wLabel].filter(Boolean).join(' y ');
-      // Update period section title with client name if provided
       const rawName = document.getElementById('clientName').value.trim();
       if (rawName) {
-        const periodSection = document.getElementById('section-period');
-        const periodSectionLabel = periodSection ? periodSection.querySelector('.section-label') : null;
-        if (periodSectionLabel) periodSectionLabel.textContent = 'Perjuicio total · ' + rawName;
+        const lbl = sectionPeriod.querySelector('.section-label');
+        if (lbl) lbl.textContent = 'Perjuicio total · ' + rawName;
       }
       document.getElementById('a-period-weeks').textContent = totalWeeks.toFixed(1) + ' semanas';
       document.getElementById('a-total').textContent = calcFmt(totalPerjuicio);
@@ -2001,7 +2448,208 @@ body{ background: white; padding: 0; }
       sectionPeriod.style.display = 'none';
     }
 
-    // ── Veredicto ──
+    // Verdict
+    showVerdict(diff, legalPay);
+
+    // Narrative
+    const scheduleTable = buildScheduleTable(activeDays, hours);
+    const narr = document.getElementById('narrative');
+    if (diff > 0) {
+      const overtimeNote = hasOvertime
+        ? `<br>De ese total, <strong>${regularHours} horas corresponden a tiempo regular</strong> (tarifa: ${calcFmt(minWage)}/hr) y <strong>${overtimeHours.toFixed(2)} horas constituyen tiempo extraordinario</strong> que superan el umbral de 40 horas semanales establecido por la FLSA, las cuales debieron compensarse a la tarifa de <strong>${calcFmt(overtimeRate)}/hora</strong> (1.5× la tarifa base), conforme a 29 U.S.C. § 207. El empleador omitió aplicar esta tarifa diferenciada, lo que agrava la cuantía del perjuicio.`
+        : '';
+      narr.innerHTML = `Con base en el horario laboral declarado por <strong>${clientName}</strong>, se documentaron <strong>${activeDays.length} días de trabajo por semana</strong> en el estado de <strong>${state}</strong>, con el siguiente registro de jornadas:${scheduleTable}La sumatoria de horas por jornada diaria arroja un total de <strong>${hours.toFixed(2)} horas de trabajo efectivo por semana</strong>.${overtimeNote}<br><br>Conforme al salario mínimo legal vigente en <strong>${state}</strong> para el año <strong>${refYear}</strong> (${calcFmt(minWage)}/hora), el monto semanal total que debió recibir la persona ascendía a <strong>${calcFmt(legalPay)}</strong>. Sin embargo, el empleador efectuó únicamente un pago de <strong>${calcFmt(realPay)} por semana</strong>, lo que equivale a una tasa efectiva de <strong>${calcFmt(implRate)}/hora</strong>, por debajo del estándar legal aplicable.<br><br>La diferencia económica resultante es de <strong>${calcFmt(diff)} por semana</strong>, equivalente a <strong>${calcFmt(monthly)} mensuales</strong>. Dicho monto representa el <strong>${calcFmtPct(pct)} del salario legalmente correspondiente</strong> que fue retenido por el empleador, configurando un beneficio económico indebido susceptible de valorarse como evidencia de explotación laboral en el marco de una solicitud de Visa T (22 U.S.C. § 7102).`;
+    } else {
+      narr.innerHTML = `Con base en el horario laboral declarado, <strong>${clientName}</strong> trabajó <strong>${hours.toFixed(2)} horas semanales</strong> (${activeDays.length} días) en el estado de <strong>${state}</strong>:${scheduleTable}El pago realizado por el empleador (<strong>${calcFmt(realPay)}/semana</strong>) es igual o superior al salario mínimo legal exigible${hasOvertime ? ', incluyendo la tarifa de horas extras (1.5×) sobre las ' + overtimeHours.toFixed(2) + ' horas que exceden el umbral de 40 semanales' : ''}. No se documenta diferencia económica negativa en el período analizado.`;
+    }
+    if (hasPeriod && diff > 0) {
+      const mLabel = empMonths > 0 ? `${empMonths} mes${empMonths !== 1 ? 'es' : ''}` : '';
+      const wLabel = empWeeks  > 0 ? `${empWeeks} semana${empWeeks !== 1 ? 's' : ''}` : '';
+      const periodoStr = [mLabel, wLabel].filter(Boolean).join(' y ');
+      narr.innerHTML += `<br><br>Considerando que <strong>${clientName}</strong> se mantuvo bajo las mismas condiciones laborales durante un período de <strong>${periodoStr}</strong> (aproximadamente <strong>${totalWeeks.toFixed(1)} semanas</strong>), el <strong>perjuicio económico total acumulado asciende a ${calcFmt(totalPerjuicio)}</strong>. Este monto constituye la base cuantificable del daño sufrido durante la totalidad del período de explotación laboral documentado, y es susceptible de reclamación bajo las disposiciones de la FLSA y de los mecanismos de compensación disponibles para víctimas de trata (22 U.S.C. § 7105).`;
+    }
+
+    showClientBadge();
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ── MODO A: múltiples períodos ──
+  function calculateModoA() {
+    const state      = document.getElementById('state').value;
+    const clientName = document.getElementById('clientName').value.trim() || 'la persona afectada';
+    const activeDays = getActiveDays();
+    const hours      = activeDays.reduce((s, d) => s + d.hours, 0);
+    const periods    = getPeriodRows();
+
+    if (!state || hours === 0) {
+      alert('Por favor complete el estado y el horario laboral.');
+      return;
+    }
+    if (periods.length === 0) {
+      alert('Por favor complete al menos un período con año, salario mínimo, pago real y meses trabajados.');
+      return;
+    }
+
+    const regularHoursBase  = Math.min(hours, 40);
+    const overtimeHoursBase = Math.max(hours - 40, 0);
+
+    let grandTotalLegal = 0, grandTotalReal = 0, grandTotalDiff = 0, grandWeeks = 0;
+    let tableBodyHTML = '';
+    let narrativePeriods = [];
+    let allYears = [];
+
+    periods.forEach((p, i) => {
+      const overtimeRate = p.wage * 1.5;
+      const regularPay  = p.wage * regularHoursBase;
+      const overtimePay = overtimeRate * overtimeHoursBase;
+      const legalPay    = regularPay + overtimePay;
+      const diff        = legalPay - p.pay;
+      const weeks       = (p.months * (52 / 12)) + p.weeks;
+      const perjuicio   = diff > 0 ? diff * weeks : 0;
+
+      grandTotalLegal += legalPay * weeks;
+      grandTotalReal  += p.pay    * weeks;
+      grandTotalDiff  += perjuicio;
+      grandWeeks      += weeks;
+      allYears.push(p.year);
+
+      const diffClass = diff > 0 ? ' class="td-diff"' : '';
+      tableBodyHTML += `
+        <tr>
+          <td><strong>Período ${i + 1}</strong></td>
+          <td>${p.year}</td>
+          <td>${calcFmt(p.wage)}/hr</td>
+          <td>${calcFmt(legalPay)}</td>
+          <td>${calcFmt(p.pay)}</td>
+          <td${diffClass}>${diff > 0 ? calcFmt(diff) : '—'}</td>
+          <td>${weeks.toFixed(1)}</td>
+          <td${diffClass}>${diff > 0 ? calcFmt(perjuicio) : '—'}</td>
+        </tr>`;
+
+      const hasOT = overtimeHoursBase > 0;
+      narrativePeriods.push(
+        `<strong>Período ${i + 1} (${p.year}):</strong> Con salario mínimo de ${calcFmt(p.wage)}/hr en ${state}, el pago legal semanal era ${calcFmt(legalPay)}${hasOT ? ` (${calcFmt(regularPay)} regulares + ${calcFmt(overtimePay)} en tiempo extra)` : ''}. Recibió ${calcFmt(p.pay)}/semana. Diferencia: <strong>${diff > 0 ? calcFmt(diff) + '/semana' : 'ninguna'}</strong>. Duración: ${p.months} mes${p.months !== 1 ? 'es' : ''}${p.weeks > 0 ? ' y ' + p.weeks + ' semana' + (p.weeks !== 1 ? 's' : '') : ''} (${weeks.toFixed(1)} semanas). Perjuicio acumulado: <strong>${diff > 0 ? calcFmt(perjuicio) : '$0.00'}</strong>.`
+      );
+    });
+
+    // Weighted averages for summary cards
+    const avgLegal = grandTotalLegal / grandWeeks;
+    const avgReal  = grandTotalReal  / grandWeeks;
+    const avgDiff  = avgLegal - avgReal;
+    const pct      = avgLegal > 0 ? (avgDiff / avgLegal) * 100 : 0;
+
+    // Multi results table
+    document.getElementById('multi-results-body').innerHTML = tableBodyHTML;
+    document.getElementById('multi-results-foot').innerHTML = `
+      <tr>
+        <td colspan="3" class="gold">Totales · ${periods.length} período${periods.length !== 1 ? 's' : ''} · ${grandWeeks.toFixed(1)} semanas</td>
+        <td class="gold">${calcFmt(avgLegal)}/sem prom.</td>
+        <td class="gold">${calcFmt(avgReal)}/sem prom.</td>
+        <td class="gold">${grandTotalDiff > 0 ? calcFmt(avgDiff) + '/sem prom.' : '—'}</td>
+        <td class="gold">${grandWeeks.toFixed(1)}</td>
+        <td class="gold">${calcFmt(grandTotalDiff)}</td>
+      </tr>`;
+    document.getElementById('section-multi').style.display = '';
+
+    // Period grand total card
+    const sectionPeriod = document.getElementById('section-period');
+    if (grandTotalDiff > 0) {
+      sectionPeriod.style.display = '';
+      const yearRange = allYears.length > 1
+        ? `${Math.min(...allYears)} – ${Math.max(...allYears)}`
+        : String(allYears[0]);
+      document.getElementById('a-period-label').textContent = `${periods.length} período${periods.length !== 1 ? 's' : ''} · ${yearRange}`;
+      const rawName = document.getElementById('clientName').value.trim();
+      if (rawName) {
+        const lbl = sectionPeriod.querySelector('.section-label');
+        if (lbl) lbl.textContent = 'Perjuicio total acumulado · ' + rawName;
+      }
+      document.getElementById('a-period-weeks').textContent = grandWeeks.toFixed(1) + ' semanas totales';
+      document.getElementById('a-total').textContent = calcFmt(grandTotalDiff);
+    } else {
+      sectionPeriod.style.display = 'none';
+    }
+
+    // Analysis cards
+    document.getElementById('a-weekly').textContent  = grandTotalDiff > 0 ? calcFmt(avgDiff)           : calcFmt(0);
+    document.getElementById('a-monthly').textContent = grandTotalDiff > 0 ? calcFmt(avgDiff * (52/12)) : calcFmt(0);
+    document.getElementById('a-pct').textContent     = grandTotalDiff > 0 ? calcFmtPct(pct)            : '0.0%';
+
+    // Comparison table (weighted averages)
+    const avgWage  = grandTotalLegal / grandWeeks;  // weighted avg legal/week ≈ using grandTotal
+    const firstWage = periods[0].wage;
+    const avgOTRate = (periods.reduce((s,p) => s + p.wage*1.5*((p.months*(52/12)+p.weeks)), 0) / grandWeeks);
+    const avgRegPay = periods.reduce((s,p) => s + p.wage*regularHoursBase*((p.months*(52/12)+p.weeks)), 0) / grandWeeks;
+    const avgOTPay  = periods.reduce((s,p) => s + p.wage*1.5*overtimeHoursBase*((p.months*(52/12)+p.weeks)), 0) / grandWeeks;
+    const yearRange = allYears.length > 1
+      ? `${Math.min(...allYears)}–${Math.max(...allYears)}`
+      : String(allYears[0]);
+
+    fillComparisonTable({
+      state, refYear: yearRange,
+      minWage: avgRegPay / regularHoursBase,
+      realPay: avgReal,
+      regularHours: regularHoursBase, overtimeHours: overtimeHoursBase,
+      overtimeRate: overtimeHoursBase > 0 ? avgOTPay / overtimeHoursBase : 0,
+      regularPay: avgRegPay, overtimePay: avgOTPay,
+      legalPay: avgLegal, diff: avgDiff, implRate: avgReal / hours,
+      hasOvertime: overtimeHoursBase > 0, isMulti: true, periods: periods.length
+    });
+
+    // Verdict
+    showVerdict(avgDiff, avgLegal);
+
+    // Narrative
+    const scheduleTable = buildScheduleTable(activeDays, hours);
+    const hasOT = overtimeHoursBase > 0;
+    const otNote = hasOT
+      ? ` De ese total, <strong>${regularHoursBase} horas corresponden a tiempo regular</strong> y <strong>${overtimeHoursBase.toFixed(2)} horas constituyen tiempo extraordinario</strong> sujetas a tarifa 1.5× según FLSA 29 U.S.C. § 207.`
+      : '';
+    const narr = document.getElementById('narrative');
+    narr.innerHTML = `Con base en el horario laboral declarado por <strong>${clientName}</strong>, se documentaron <strong>${activeDays.length} días de trabajo por semana</strong> en el estado de <strong>${state}</strong>:${scheduleTable}La sumatoria arroja un total de <strong>${hours.toFixed(2)} horas de trabajo efectivo por semana</strong>.${otNote}<br><br>A lo largo del empleo se identificaron <strong>${periods.length} período${periods.length !== 1 ? 's' : ''} con diferentes salarios mínimos y pagos vigentes</strong> (${yearRange}). A continuación se detalla la diferencia económica documentada en cada uno:<br><br>${narrativePeriods.join('<br><br>')}<br><br>El <strong>perjuicio económico total acumulado durante todos los períodos asciende a ${calcFmt(grandTotalDiff)}</strong> (${grandWeeks.toFixed(1)} semanas totales). Este monto constituye la base cuantificable del daño sufrido por <strong>${clientName}</strong> y es susceptible de reclamación bajo las disposiciones de la FLSA y de los mecanismos de compensación para víctimas de trata (22 U.S.C. § 7105).`;
+
+    showClientBadge();
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+
+  // ── HELPERS ──
+  function fillComparisonTable({ state, refYear, minWage, realPay, regularHours, overtimeHours,
+      overtimeRate, regularPay, overtimePay, legalPay, diff, implRate, hasOvertime,
+      isMulti = false, periods = 1 }) {
+
+    const note = isMulti ? ` (promedio de ${periods} períodos)` : '';
+
+    document.getElementById('r-regular').textContent = calcFmt(regularPay);
+    document.getElementById('r-regular-src').textContent =
+      `${calcFmt(minWage)}/hr × ${regularHours} hrs regulares${note}. FLSA 29 U.S.C. § 206 y salario mínimo de ${state} (${refYear}).`;
+
+    const rowOT = document.getElementById('row-overtime');
+    if (hasOvertime) {
+      rowOT.style.display = '';
+      document.getElementById('r-overtime').textContent = calcFmt(overtimePay);
+      document.getElementById('r-overtime-src').textContent =
+        `${calcFmt(overtimeRate)}/hr (1.5× tarifa base) × ${overtimeHours} hrs extras${note}. FLSA 29 U.S.C. § 207.`;
+    } else {
+      rowOT.style.display = 'none';
+    }
+
+    document.getElementById('r-legal').textContent = calcFmt(legalPay);
+    document.getElementById('r-legal-src').textContent = hasOvertime
+      ? `Suma de pago regular (${calcFmt(regularPay)}) + horas extras (${calcFmt(overtimePay)})${note}. FLSA 29 U.S.C. §§ 206–207.`
+      : `FLSA 29 U.S.C. § 206 y salario mínimo de ${state} (${refYear})${note}.`;
+
+    document.getElementById('r-real').textContent = calcFmt(realPay);
+    document.getElementById('r-diff').textContent = diff > 0 ? calcFmt(diff) : calcFmt(0);
+    document.getElementById('r-diff-src').textContent = diff > 0
+      ? `Monto retenido indebidamente${note}. Evidencia de explotación económica (22 U.S.C. § 7102(11)(B)).`
+      : `No se identificó diferencia negativa.`;
+    document.getElementById('r-rate').textContent = calcFmt(implRate) + '/hr';
+  }
+
+  function showVerdict(diff, legalPay) {
     const banner = document.getElementById('verdict-banner');
     banner.className = 'verdict-banner';
     if (diff > legalPay * 0.3) {
@@ -2014,53 +2662,9 @@ body{ background: white; padding: 0; }
       banner.classList.add('fair');
       banner.innerHTML = '<span class="verdict-icon">✓</span> <strong>PAGO EN CONFORMIDAD:</strong> El monto pagado es igual o superior al salario mínimo estatal y a la tarifa de horas extras aplicable. No se identifica diferencia económica negativa en el período analizado.';
     }
+  }
 
-    // ── Narrativa ──
-    const narr = document.getElementById('narrative');
-
-    // Detalle de jornadas por día
-    const scheduleDetail = activeDays.map(d =>
-      `<strong>${d.name}</strong>: ${d.in} – ${d.out} (${d.hours.toFixed(2)} h)`
-    ).join(', ');
-
-    // Tabla HTML de jornadas embebida en narrativa
-    const scheduleRows = activeDays.map(d =>
-      `<tr><td style="padding:3px 10px;border-bottom:1px solid #dde4ef;">${d.name}</td>
-       <td style="padding:3px 10px;border-bottom:1px solid #dde4ef;">${d.in} – ${d.out}</td>
-       <td style="padding:3px 10px;border-bottom:1px solid #dde4ef;font-weight:700;">${d.hours.toFixed(2)} h</td></tr>`
-    ).join('');
-    const scheduleTable = `
-      <table style="margin:0.8rem 0 0.8rem 0;border-collapse:collapse;font-size:0.82rem;background:#f5f7fb;border:1px solid #dde4ef;border-radius:4px;overflow:hidden;">
-        <thead><tr style="background:#1a2a4a;color:#fff;">
-          <th style="padding:5px 10px;text-align:left;font-weight:600;">Día</th>
-          <th style="padding:5px 10px;text-align:left;font-weight:600;">Horario declarado</th>
-          <th style="padding:5px 10px;text-align:left;font-weight:600;">Horas efectivas</th>
-        </tr></thead>
-        <tbody>${scheduleRows}</tbody>
-        <tfoot><tr style="background:#1a2a4a;color:#c9a84c;">
-          <td colspan="2" style="padding:5px 10px;font-weight:700;">Total semanal</td>
-          <td style="padding:5px 10px;font-weight:700;">${hours.toFixed(2)} h</td>
-        </tr></tfoot>
-      </table>`;
-
-    if (diff > 0) {
-      const overtimeNote = hasOvertime
-        ? `<br>De ese total, <strong>${regularHours} horas corresponden a tiempo regular</strong> (tarifa: ${calcFmt(minWage)}/hr) y <strong>${overtimeHours.toFixed(2)} horas constituyen tiempo extraordinario</strong> que superan el umbral de 40 horas semanales establecido por la FLSA, las cuales debieron compensarse a la tarifa de <strong>${calcFmt(overtimeRate)}/hora</strong> (1.5× la tarifa base), conforme a 29 U.S.C. § 207. El empleador omitió aplicar esta tarifa diferenciada, lo que agrava la cuantía del perjuicio.`
-        : '';
-      narr.innerHTML = `Con base en el horario laboral declarado por <strong>${clientName}</strong>, se documentaron <strong>${activeDays.length} días de trabajo por semana</strong> en el estado de <strong>${state}</strong>, con el siguiente registro de jornadas:${scheduleTable}La sumatoria de horas por jornada diaria arroja un total de <strong>${hours.toFixed(2)} horas de trabajo efectivo por semana</strong>.${overtimeNote}<br><br>Conforme al salario mínimo legal vigente en <strong>${state}</strong> para el año <strong>${refYear}</strong> (${calcFmt(minWage)}/hora), el monto semanal total que debió recibir la persona ascendía a <strong>${calcFmt(legalPay)}</strong>. Sin embargo, el empleador efectuó únicamente un pago de <strong>${calcFmt(realPay)} por semana</strong>, lo que equivale a una tasa efectiva de <strong>${calcFmt(implRate)}/hora</strong>, por debajo del estándar legal aplicable.<br><br>La diferencia económica resultante es de <strong>${calcFmt(diff)} por semana</strong>, equivalente a <strong>${calcFmt(monthly)} mensuales</strong>. Dicho monto representa el <strong>${calcFmtPct(pct)} del salario legalmente correspondiente</strong> que fue retenido por el empleador, configurando un beneficio económico indebido susceptible de valorarse como evidencia de explotación laboral en el marco de una solicitud de Visa T (22 U.S.C. § 7102).`;
-    } else {
-      narr.innerHTML = `Con base en el horario laboral declarado, <strong>${clientName}</strong> trabajó <strong>${hours.toFixed(2)} horas semanales</strong> (${activeDays.length} días) en el estado de <strong>${state}</strong>:${scheduleTable}El pago realizado por el empleador (<strong>${calcFmt(realPay)}/semana</strong>) es igual o superior al salario mínimo legal exigible${hasOvertime ? ', incluyendo la tarifa de horas extras (1.5×) sobre las ' + overtimeHours.toFixed(2) + ' horas que exceden el umbral de 40 semanales' : ''}. No se documenta diferencia económica negativa en el período analizado.`;
-    }
-
-    // ── Período total: agregar párrafo final a narrativa ──
-    if (hasPeriod && diff > 0) {
-      const mLabel = empMonths > 0 ? `${empMonths} mes${empMonths !== 1 ? 'es' : ''}` : '';
-      const wLabel = empWeeks  > 0 ? `${empWeeks} semana${empWeeks !== 1 ? 's' : ''}` : '';
-      const periodoStr = [mLabel, wLabel].filter(Boolean).join(' y ');
-      narr.innerHTML += `<br><br>Considerando que <strong>${clientName}</strong> se mantuvo bajo las mismas condiciones laborales durante un período de <strong>${periodoStr}</strong> (aproximadamente <strong>${totalWeeks.toFixed(1)} semanas</strong>), el <strong>perjuicio económico total acumulado asciende a ${calcFmt(totalPerjuicio)}</strong>. Este monto constituye la base cuantificable del daño sufrido durante la totalidad del período de explotación laboral documentado, y es susceptible de reclamación bajo las disposiciones de la FLSA y de los mecanismos de compensación disponibles para víctimas de trata (22 U.S.C. § 7105).`;
-    }
-
-    // Show client name badge in results
+  function showClientBadge() {
     const nameDisplay = document.getElementById('client-name-display');
     if (nameDisplay) {
       const rawName = document.getElementById('clientName').value.trim();
@@ -2071,8 +2675,27 @@ body{ background: white; padding: 0; }
         nameDisplay.closest('.client-badge-wrap').style.display = 'none';
       }
     }
-    document.getElementById('results').style.display = 'block';
-    document.getElementById('results').scrollIntoView({behavior: 'smooth', block: 'start'});
+  }
+
+  function buildScheduleTable(activeDays, hours) {
+    const rows = activeDays.map(d =>
+      `<tr><td style="padding:3px 10px;border-bottom:1px solid #dde4ef;">${d.name}</td>
+       <td style="padding:3px 10px;border-bottom:1px solid #dde4ef;">${d.in} – ${d.out}</td>
+       <td style="padding:3px 10px;border-bottom:1px solid #dde4ef;font-weight:700;">${d.hours.toFixed(2)} h</td></tr>`
+    ).join('');
+    return `
+      <table style="margin:0.8rem 0 0.8rem 0;border-collapse:collapse;font-size:0.82rem;background:#f5f7fb;border:1px solid #dde4ef;border-radius:4px;overflow:hidden;">
+        <thead><tr style="background:#1a2a4a;color:#fff;">
+          <th style="padding:5px 10px;text-align:left;font-weight:600;">Día</th>
+          <th style="padding:5px 10px;text-align:left;font-weight:600;">Horario declarado</th>
+          <th style="padding:5px 10px;text-align:left;font-weight:600;">Horas efectivas</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+        <tfoot><tr style="background:#1a2a4a;color:#c9a84c;">
+          <td colspan="2" style="padding:5px 10px;font-weight:700;">Total semanal</td>
+          <td style="padding:5px 10px;font-weight:700;">${hours.toFixed(2)} h</td>
+        </tr></tfoot>
+      </table>`;
   }
 
   function showCalc() {
@@ -2087,15 +2710,85 @@ body{ background: white; padding: 0; }
     window.scrollTo({top:0, behavior:'smooth'});
   }
 
-  function downloadPDF() {
-    // Show results section forcefully for print
+  async function downloadPDF() {
     const results = document.getElementById('results');
-    const wasHidden = results.style.display === 'none' || results.style.display === '';
-    if (wasHidden) {
+    if (results.style.display !== 'block') {
       alert('Por favor genera el análisis primero antes de descargar el PDF.');
       return;
     }
-    window.print();
+
+    const btn = document.querySelector('.pdf-download-btn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '⏳ Generando PDF...';
+    btn.disabled = true;
+
+    try {
+      const { jsPDF } = window.jspdf;
+
+      // Capture the full calc-view (header + results)
+      const target = document.getElementById('calc-view');
+
+      const canvas = await html2canvas(target, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#f4f6fb',
+        logging: false,
+        windowWidth: 900
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const pageW  = pdf.internal.pageSize.getWidth();
+      const pageH  = pdf.internal.pageSize.getHeight();
+      const margin = 10;
+      const imgW   = pageW - margin * 2;
+      const imgH   = (canvas.height * imgW) / canvas.width;
+
+      let posY = margin;
+      let remaining = imgH;
+
+      // Multi-page: slice the image across pages
+      while (remaining > 0) {
+        const sliceH = Math.min(remaining, pageH - margin * 2);
+        const srcY   = (imgH - remaining) * (canvas.height / imgH);
+        const srcH   = sliceH * (canvas.height / imgH);
+
+        // Create a slice canvas
+        const slice = document.createElement('canvas');
+        slice.width  = canvas.width;
+        slice.height = srcH;
+        const ctx = slice.getContext('2d');
+        ctx.drawImage(canvas, 0, srcY, canvas.width, srcH, 0, 0, canvas.width, srcH);
+
+        const sliceData = slice.toDataURL('image/jpeg', 0.92);
+        pdf.addImage(sliceData, 'JPEG', margin, posY, imgW, sliceH);
+
+        remaining -= sliceH;
+        if (remaining > 0) {
+          pdf.addPage();
+          posY = margin;
+        }
+      }
+
+      // Get client name for filename
+      const clientRaw = document.getElementById('clientName').value.trim();
+      const safeName  = clientRaw
+        ? clientRaw.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚüÜñÑ\s]/g, '').trim().replace(/\s+/g, '-')
+        : 'analisis';
+      pdf.save(`Analisis-Explotacion-Economica-${safeName}.pdf`);
+
+    } catch(err) {
+      console.error('PDF error:', err);
+      alert('Error al generar el PDF. Intenta de nuevo.');
+    } finally {
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }
   }
 
 </script>
