@@ -214,6 +214,23 @@ code{background:var(--bg2);padding:2px 6px;border-radius:4px;font-size:11px;font
 .ppill{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;color:var(--ink2);cursor:pointer;transition:all .15s;white-space:nowrap}
 .ppill:hover{border-color:var(--accent);color:var(--accent)}
 .ppill.active{color:#fff;border-color:transparent}
+
+/* ══ AREAS DE SERVICIO ══ */
+.areas-section{margin-bottom:16px}
+.areas-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.areas-card{background:var(--card);border-radius:12px;padding:16px 18px;box-shadow:var(--sh);border:1px solid var(--border)}
+.areas-card-title{font-family:'Playfair Display',serif;font-size:12px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:7px;color:var(--ink)}
+.areas-card-title .ac-icon{font-size:15px}
+.area-bar-item{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.area-bar-item:last-child{margin-bottom:0}
+.area-bar-name{font-size:11px;color:var(--ink2);min-width:0;flex:0 0 140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.area-bar-track{flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden}
+.area-bar-fill{height:100%;border-radius:3px;transition:width .4s ease}
+.area-bar-val{font-size:11px;font-weight:600;color:var(--ink);min-width:32px;text-align:right;font-family:'Playfair Display',serif}
+.visa-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.visa-tag{padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600;color:#fff;white-space:nowrap}
+.visa-count{background:rgba(255,255,255,.25);padding:1px 5px;border-radius:8px;font-size:10px;margin-left:3px}
+.areas-empty{font-size:12px;color:var(--ink3);text-align:center;padding:16px 0;font-style:italic}
 </style>
 </head>
 <body>
@@ -305,6 +322,9 @@ code{background:var(--bg2);padding:2px 6px;border-radius:4px;font-size:11px;font
 
   <!-- Mini bar chart -->
   <div class="week-bar-chart no-print" id="week-bar-chart"></div>
+
+  <!-- Areas de Servicio -->
+  <div class="areas-section" id="areas-section"></div>
 
   <!-- Week KPIs + donut -->
   <div class="g2 mb16">
@@ -869,6 +889,124 @@ function renderMiniChart() {
   }).join('');
 }
 
+
+// ══════════════════════════════════════════════
+// AREAS DE SERVICIO
+// ══════════════════════════════════════════════
+function renderAreasSection(weekData, col) {
+  const container = document.getElementById('areas-section');
+  if (!container) return;
+
+  // ── Collect VISA/Producto counts ──
+  const visaCount = {};
+  const deptCount = {};  // Departamento / Área by tab
+  const tabAreaMap = {}; // per-tab area breakdown
+
+  // Color palette for visa tags
+  const VISA_COLORS = ['#c8440a','#3a5fa8','#2a7a52','#8a3a9a','#c83060','#2a7a8a','#8a6a2a','#c8640a','#5a3aa8','#3a8a2a'];
+
+  for (const [tab, rows] of Object.entries(weekData)) {
+    if (!rows.length) continue;
+    tabAreaMap[tab] = {};
+
+    for (const r of rows) {
+      // VISA / Producto
+      const visa = (r.visa || '').trim();
+      if (visa && visa !== '#N/A') {
+        visaCount[visa] = (visaCount[visa]||0) + 1;
+      }
+
+      // Departamento / Área
+      const area = (r.dep || r.area || '').trim();
+      if (area && area !== '#N/A' && area !== '0') {
+        // Normalize duplicate labels like "TRAINING TRAINING" → "TRAINING"
+                const words = area.trim().split(/\s+/);
+        const mid = Math.floor(words.length / 2);
+        const normalized = (words.length >= 2 && words.slice(0,mid).join(' ') === words.slice(mid).join(' '))
+          ? words.slice(0,mid).join(' ')
+          : area.trim();        deptCount[normalized] = (deptCount[normalized]||0) + 1;
+        tabAreaMap[tab][normalized] = (tabAreaMap[tab][normalized]||0) + 1;
+      }
+    }
+  }
+
+  const topVisa = Object.entries(visaCount).sort((a,b)=>b[1]-a[1]).slice(0,12);
+  const topDept = Object.entries(deptCount).sort((a,b)=>b[1]-a[1])
+    .filter(([k]) => k.length > 0).slice(0,10);
+
+  if (!topVisa.length && !topDept.length) {
+    container.innerHTML = '';
+    return;
+  }
+
+  // ── Build per-concept area breakdown ──
+  const conceptEntries = Object.entries(tabAreaMap)
+    .filter(([,areas]) => Object.keys(areas).length > 0)
+    .sort((a,b) => Object.values(b[1]).reduce((x,y)=>x+y,0) - Object.values(a[1]).reduce((x,y)=>x+y,0));
+
+  const maxDept = topDept[0]?.[1] || 1;
+
+  // ── Visa/Product tags ──
+  const visaHTML = topVisa.length ? `
+    <div class="areas-card" style="grid-column:1/-1">
+      <div class="areas-card-title"><span class="ac-icon">🏷️</span> Productos & Visas atendidas</div>
+      <div class="visa-tags">
+        ${topVisa.map(([v,c],i) => `
+          <span class="visa-tag" style="background:${VISA_COLORS[i%VISA_COLORS.length]}">
+            ${v}<span class="visa-count">${c}</span>
+          </span>`).join('')}
+      </div>
+    </div>` : '';
+
+  // ── Dept bars ──
+  const deptHTML = topDept.length ? `
+    <div class="areas-card">
+      <div class="areas-card-title"><span class="ac-icon">🏢</span> Áreas / Departamentos atendidos</div>
+      ${topDept.map(([d,c]) => `
+        <div class="area-bar-item">
+          <div class="area-bar-name" title="${d}">${d}</div>
+          <div class="area-bar-track">
+            <div class="area-bar-fill" style="width:${Math.round(c/maxDept*100)}%;background:${col}"></div>
+          </div>
+          <div class="area-bar-val">${c}</div>
+        </div>`).join('')}
+    </div>` : '';
+
+  // ── Per-concept breakdown ──
+  const maxConceptRows = 6;
+  const conceptHTML = conceptEntries.length ? `
+    <div class="areas-card">
+      <div class="areas-card-title"><span class="ac-icon">📊</span> Áreas por tipo de actividad</div>
+      ${conceptEntries.slice(0,6).map(([tab, areas]) => {
+        const meta = TAB_META[tab] || {icon:'📌', color:'#888'};
+        const topAreas = Object.entries(areas).sort((a,b)=>b[1]-a[1]).slice(0,4);
+        const maxA = topAreas[0]?.[1] || 1;
+        return `
+        <div style="margin-bottom:10px">
+          <div style="font-size:11px;font-weight:700;color:var(--ink2);margin-bottom:5px;display:flex;align-items:center;gap:5px">
+            <span>${meta.icon}</span><span>${tab}</span>
+          </div>
+          ${topAreas.map(([a,c]) => `
+            <div class="area-bar-item" style="margin-bottom:4px">
+              <div class="area-bar-name" style="flex:0 0 120px;font-size:10px" title="${a}">${a}</div>
+              <div class="area-bar-track" style="height:5px">
+                <div class="area-bar-fill" style="width:${Math.round(c/maxA*100)}%;background:${meta.color}"></div>
+              </div>
+              <div class="area-bar-val" style="font-size:10px">${c}</div>
+            </div>`).join('')}
+        </div>`;
+      }).join('')}
+    </div>` : '';
+
+  container.innerHTML = `
+    <div class="stitle">Áreas de Servicio</div>
+    <div class="areas-grid">
+      ${visaHTML}
+      ${deptHTML}
+      ${conceptHTML}
+    </div>`;
+}
+
 // ══════════════════════════════════════════════
 // TRAINER DETAIL
 // ══════════════════════════════════════════════
@@ -952,6 +1090,9 @@ function renderWeekDetail() {
   ];
   document.getElementById('week-kpis').innerHTML = kpis.map(k=>`
     <div class="wkpi"><div class="wkpi-v">${k.v}</div><div class="wkpi-l">${k.l}</div></div>`).join('');
+
+  // ── Areas de Servicio ──
+  renderAreasSection(weekData, col);
 
   // Donut
   const donutItems = Object.entries(tabTots).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).map(([tab,val])=>({label:tab,val,color:TAB_META[tab]?.color||'#888'}));
