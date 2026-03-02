@@ -1,0 +1,1870 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PCM Monitoring Modules | TMLF Training</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#171a21;--slate:#617073;--steel:#7a93ac;--ice:#92bcea;--periwinkle:#afb3f7;
+  --white:#fff;--bg:#f5f7fa;--shadow:0 12px 30px rgba(23,26,33,.12);--radius:18px;
+  --nav-h:56px;--green:#2e7d32;--green-bg:rgba(46,125,50,.08);--red:#8b3a3a;--red-bg:rgba(180,60,60,.08);
+  --amber:#7a5c00;--amber-bg:rgba(180,140,0,.08);
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;padding-top:var(--nav-h)}
+
+/* ── NAV ── */
+.topnav{position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--nav-h);background:rgba(23,26,33,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(146,188,234,.12);display:flex;align-items:center;padding:0 14px;gap:6px}
+.topnav .brand{font-family:'Instrument Serif',Georgia,serif;font-size:17px;color:var(--white);white-space:nowrap;margin-right:8px;flex-shrink:0}
+.topnav .brand span{color:var(--ice)}
+.nav-divider{width:1px;height:22px;background:rgba(255,255,255,.15);flex-shrink:0;margin:0 4px}
+.nav-links{display:flex;align-items:center;gap:1px;overflow-x:auto;scrollbar-width:none;flex:1}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-links a{text-decoration:none;color:rgba(255,255,255,.55);font-size:11.5px;font-weight:500;padding:6px 10px;border-radius:9px;white-space:nowrap;transition:all .2s;position:relative}
+.nav-links a:hover,.nav-links a.active{color:var(--white);background:rgba(146,188,234,.18)}
+.nav-links a.active::after{content:'';position:absolute;bottom:1px;left:50%;transform:translateX(-50%);width:14px;height:2px;background:var(--ice);border-radius:2px}
+
+/* ── LANG TOGGLE ── */
+.lang-toggle{display:flex;align-items:center;gap:2px;flex-shrink:0;margin-left:6px;background:rgba(255,255,255,.08);border-radius:9px;padding:3px}
+.lang-btn{background:none;border:none;color:rgba(255,255,255,.5);font-size:11px;font-weight:700;padding:4px 9px;border-radius:7px;cursor:pointer;transition:all .2s;letter-spacing:.5px;font-family:inherit}
+.lang-btn.active{background:var(--ice);color:var(--ink)}
+.lang-btn:hover:not(.active){color:var(--white);background:rgba(255,255,255,.1)}
+
+.hamburger{display:none;background:none;border:none;color:var(--white);font-size:20px;cursor:pointer;padding:4px 8px;flex-shrink:0}
+.mobile-menu{display:none;position:fixed;top:var(--nav-h);left:0;right:0;background:rgba(23,26,33,.97);backdrop-filter:blur(14px);padding:10px 18px 18px;border-bottom:1px solid rgba(146,188,234,.12);z-index:999;max-height:calc(100vh - var(--nav-h));overflow-y:auto}
+.mobile-menu.open{display:block}
+.mobile-menu a{display:block;text-decoration:none;color:rgba(255,255,255,.65);font-size:13px;font-weight:500;padding:9px 14px;border-radius:10px;transition:all .2s}
+.mobile-menu a:hover{color:var(--white);background:rgba(146,188,234,.18)}
+@media(max-width:900px){.nav-links,.nav-divider{display:none}.hamburger{display:block}}
+
+/* ── LAYOUT ── */
+.wrap{max-width:960px;margin:auto;padding:24px 16px 60px}
+
+/* ── HEADER ── */
+.header{background:linear-gradient(135deg,var(--ink) 0%,#2a3444 50%,var(--slate) 100%);color:var(--white);border-radius:20px;padding:44px 34px 40px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:-50px;right:-30px;width:260px;height:260px;border:1.5px solid rgba(146,188,234,.1);border-radius:50%;animation:pulse 4s ease-in-out infinite}
+.header::after{content:'';position:absolute;bottom:-70px;right:80px;width:180px;height:180px;border:1.5px solid rgba(175,179,247,.08);border-radius:50%;animation:pulse 5s ease-in-out infinite .6s}
+.header-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(146,188,234,.15);border:1px solid rgba(146,188,234,.2);border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px;animation:fadeUp .5s ease both}
+h1{font-family:'Instrument Serif',Georgia,serif;font-size:36px;letter-spacing:.3px;position:relative;z-index:1;animation:slideR .6s ease both .1s}
+.subtitle{font-size:15px;opacity:.85;max-width:60ch;position:relative;z-index:1;animation:slideR .6s ease both .2s;margin-top:6px}
+
+/* ── VIEW SWITCHING ── */
+body.intro-view .content-blocks,body.intro-view .footer{display:none}
+body.detail-view .intro-only{display:none}
+body.detail-view .block{display:none}
+body.detail-view .block.visible{display:block;animation:fadeUp .35s ease both}
+body.detail-view .footer{display:none}
+body.detail-view .footer.visible{display:block;animation:fadeUp .35s ease both}
+
+/* ── LANG VISIBILITY ── */
+.en-text{display:block}.es-text{display:none}
+.en-inline{display:inline}.es-inline{display:none}
+body.lang-es .en-text{display:none}
+body.lang-es .es-text{display:block}
+body.lang-es .en-inline{display:none}
+body.lang-es .es-inline{display:inline}
+
+/* ── CONTENT ── */
+.content{margin-top:20px;display:flex;flex-direction:column;gap:16px}
+
+/* ── BLOCKS ── */
+.block{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(122,147,172,.2);overflow:hidden}
+.block .title{display:flex;align-items:center;gap:10px;padding:16px 18px;background:linear-gradient(180deg,rgba(146,188,234,.28),rgba(146,188,234,.04));border-bottom:1px solid rgba(122,147,172,.2)}
+.block .title .icon{width:34px;height:34px;border-radius:10px;background:var(--ink);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.block .title .icon svg{width:17px;height:17px;color:var(--white)}
+.block .title h3{font-size:16px;color:var(--ink)}
+.block .title .mod-badge{margin-left:auto;padding:3px 10px;border-radius:7px;font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:var(--ink);color:var(--white);flex-shrink:0}
+.block .body{padding:20px}
+.block .body p{margin:0 0 10px;font-size:14px}
+.block .body p:last-child{margin-bottom:0}
+
+/* ── BACK BTN ── */
+.back-btn{display:inline-flex;align-items:center;gap:6px;margin-bottom:14px;padding:8px 16px;background:rgba(146,188,234,.15);color:var(--ink);border:1px solid rgba(122,147,172,.25);border-radius:10px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.back-btn:hover{background:rgba(146,188,234,.3)}
+
+/* ── INTRO CARDS ── */
+.intro-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-top:16px}
+.intro-card{background:var(--white);border:1px solid rgba(122,147,172,.2);border-radius:14px;padding:18px 14px;text-align:center;cursor:pointer;transition:all .3s ease;text-decoration:none;color:var(--ink)}
+.intro-card:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(23,26,33,.12);border-color:var(--ice)}
+.intro-card .ic-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(146,188,234,.25),rgba(175,179,247,.25));display:flex;align-items:center;justify-content:center;margin:0 auto 8px;transition:transform .3s;font-size:20px}
+.intro-card:hover .ic-icon{transform:scale(1.1) rotate(-3deg)}
+.intro-card strong{display:block;font-size:12.5px;margin-bottom:3px;line-height:1.3}
+.intro-card small{font-size:11px;color:var(--slate)}
+.intro-card .ic-num{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;background:var(--ink);color:var(--white);font-size:14px;font-weight:800;margin-bottom:6px}
+
+/* ── SECTION DIVIDER ── */
+.sdiv{display:flex;align-items:center;gap:12px;margin:22px 0 14px}
+.sdiv .l{flex:1;height:1px;background:linear-gradient(90deg,rgba(122,147,172,.35),transparent)}
+.sdiv .l:last-child{background:linear-gradient(270deg,rgba(122,147,172,.35),transparent)}
+.sdiv .t{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--slate);white-space:nowrap}
+
+/* ── LEARNING OBJECTIVE ── */
+.lo-callout{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:12px;background:rgba(146,188,234,.1);border:1px solid rgba(122,147,172,.15);margin-bottom:14px}
+.lo-callout .lo-icon{font-size:18px;flex-shrink:0;margin-top:2px}
+.lo-callout .lo-text{font-size:12.5px;color:var(--slate);line-height:1.5}
+.lo-callout .lo-text strong{color:var(--ink);display:block;margin-bottom:2px;font-size:13px}
+
+/* ── DETAILS ── */
+details{margin-top:10px;background:rgba(122,147,172,.08);border-radius:13px;padding:13px 15px;border:1px solid rgba(122,147,172,.2);transition:all .25s}
+details+details{margin-top:8px}
+details:hover{border-color:var(--steel)}
+details[open]{background:rgba(122,147,172,.14)}
+summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--ink);list-style:none;display:flex;align-items:center;gap:7px}
+summary::-webkit-details-marker{display:none}
+summary::before{content:'▸';transition:transform .2s;font-size:12px;flex-shrink:0}
+details[open] summary::before{transform:rotate(90deg)}
+.ev-list{margin:10px 0 0;padding:0 0 0 16px;font-size:13.5px;line-height:1.65}
+.ev-list li{margin-bottom:5px}
+
+/* ── CHIPS ── */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{padding:5px 11px;border-radius:8px;font-size:12px;font-weight:600;background:rgba(146,188,234,.18);border:1px solid rgba(122,147,172,.2);color:var(--ink)}
+.chip.green{background:var(--green-bg);border-color:rgba(46,125,50,.2);color:var(--green)}
+.chip.red{background:var(--red-bg);border-color:rgba(180,60,60,.2);color:var(--red)}
+.chip.amber{background:var(--amber-bg);border-color:rgba(180,140,0,.2);color:var(--amber)}
+.chip.dark{background:rgba(23,26,33,.08);border-color:rgba(23,26,33,.15);color:var(--ink)}
+
+/* ── CHECKLIST ── */
+.checklist{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px}
+@media(min-width:600px){.checklist{grid-template-columns:1fr 1fr}}
+.check{display:flex;gap:9px;padding:9px 11px;background:rgba(146,188,234,.18);border:1px solid rgba(122,147,172,.25);border-radius:12px;font-size:13.5px;cursor:pointer;transition:all .25s;user-select:none}
+.check:hover{transform:translateX(3px);background:rgba(146,188,234,.3)}
+.box{width:17px;height:17px;border-radius:4px;border:2px solid var(--slate);background:var(--white);margin-top:1px;flex-shrink:0;transition:all .2s;position:relative}
+.check.checked .box{background:var(--ink);border-color:var(--ink)}
+.check.checked .box::after{content:'✓';position:absolute;color:var(--white);font-size:11px;font-weight:700;top:50%;left:50%;transform:translate(-50%,-50%)}
+
+/* ── ALERTS ── */
+.alert{margin-top:12px;padding:12px 14px;border-radius:12px;font-size:13.5px;display:flex;align-items:flex-start;gap:8px;font-weight:600}
+.alert.warn{background:var(--amber-bg);border:1px solid rgba(180,140,0,.2);color:var(--amber)}
+.alert.danger{background:var(--red-bg);border:1px solid rgba(180,60,60,.2);color:var(--red)}
+.alert.success{background:var(--green-bg);border:1px solid rgba(46,125,50,.2);color:var(--green)}
+.alert.info{background:rgba(122,147,172,.12);border:1px solid rgba(122,147,172,.25);color:var(--ink)}
+
+/* ── PRINCIPLE ── */
+.principle{margin-top:16px;padding:16px 18px;border-radius:13px;background:linear-gradient(135deg,rgba(23,26,33,.04),rgba(146,188,234,.08));border:1px solid rgba(122,147,172,.2);border-left:4px solid var(--ink)}
+.principle p{margin:0;font-size:14px;font-weight:700;font-style:italic;line-height:1.5}
+.principle .principle-sub{font-weight:500;color:var(--slate);margin-top:3px;font-style:normal}
+
+/* ── OB LIST ── */
+.ob-list{display:grid;grid-template-columns:1fr;gap:7px;margin-top:10px}
+@media(min-width:600px){.ob-list{grid-template-columns:1fr 1fr}}
+.ob-item{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:11px;background:rgba(146,188,234,.12);border:1px solid rgba(122,147,172,.2);transition:all .25s}
+.ob-item:hover{transform:translateX(3px);background:rgba(146,188,234,.22)}
+.ob-num{width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,var(--ink),var(--steel));color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;margin-top:1px}
+.ob-item span{font-size:13.5px;font-weight:600;line-height:1.4}
+
+/* ── TWO COL ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+@media(max-width:600px){.two-col{grid-template-columns:1fr}.compliance-grid{grid-template-columns:1fr!important}}
+.mini-card{padding:16px;border-radius:14px;border:1px solid rgba(122,147,172,.2);background:rgba(122,147,172,.06)}
+.mini-card h4{font-size:13.5px;margin-bottom:8px;display:flex;align-items:center;gap:7px;color:var(--ink)}
+
+/* ── FLOW ── */
+.flow{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
+@media(min-width:600px){.flow{grid-template-columns:repeat(4,1fr)}}
+.step{background:var(--white);border-radius:13px;padding:13px 10px;border:1px solid rgba(122,147,172,.25);text-align:center;position:relative;transition:all .3s}
+.step:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(23,26,33,.1)}
+.step-num{display:inline-block;background:linear-gradient(135deg,rgba(175,179,247,.35),rgba(146,188,234,.35));border-radius:999px;padding:3px 9px;font-size:11px;font-weight:700;margin-bottom:5px}
+.step p{margin:0;font-size:12.5px}
+@media(min-width:600px){.step+.step::before{content:'→';position:absolute;left:-14px;top:50%;transform:translateY(-50%);color:var(--slate);font-size:14px;font-weight:700}}
+
+/* ── FOOTER ── */
+.footer{margin-top:18px;padding:24px 22px;background:linear-gradient(135deg,var(--ink),var(--steel));color:var(--white);border-radius:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.footer::before{content:'';position:absolute;top:-40px;left:-20px;width:130px;height:130px;border:1.5px solid rgba(146,188,234,.12);border-radius:50%}
+.footer p{margin:0;position:relative;z-index:1;font-size:14.5px}
+
+/* ── BLOCK ACCORDIONS ── */
+.block-accordion{border:none;background:none;padding:0;margin:10px 0 0;border-radius:0}
+.block-accordion+.block-accordion{margin-top:8px}
+.block-accordion-header{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-radius:14px;background:linear-gradient(135deg,rgba(23,26,33,.06),rgba(122,147,172,.1));border:1px solid rgba(122,147,172,.2);transition:all .25s;user-select:none}
+.block-accordion-header::-webkit-details-marker{display:none}
+.block-accordion[open] .block-accordion-header{border-radius:14px 14px 0 0;background:linear-gradient(135deg,rgba(23,26,33,.09),rgba(122,147,172,.15));border-bottom-color:transparent}
+.block-accordion-header:hover{background:linear-gradient(135deg,rgba(23,26,33,.09),rgba(122,147,172,.16))}
+.bac-left{display:flex;align-items:center;gap:14px}
+.bac-num{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--ink),var(--steel));color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bac-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--slate);margin-bottom:2px}
+.bac-title{font-size:15px;font-weight:700;color:var(--ink)}
+.bac-arrow{font-size:13px;color:var(--slate);transition:transform .25s;flex-shrink:0}
+.block-accordion[open] .bac-arrow{transform:rotate(90deg)}
+.bac-body{padding:16px 18px 18px;border:1px solid rgba(122,147,172,.2);border-top:none;border-radius:0 0 14px 14px;background:rgba(245,247,250,.6)}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideR{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+.stagger>*{opacity:0;transform:translateY(12px);transition:opacity .4s ease,transform .4s ease}
+.stagger.in>*:nth-child(1){transition-delay:.04s}.stagger.in>*:nth-child(2){transition-delay:.08s}.stagger.in>*:nth-child(3){transition-delay:.12s}.stagger.in>*:nth-child(4){transition-delay:.16s}.stagger.in>*:nth-child(5){transition-delay:.2s}.stagger.in>*:nth-child(6){transition-delay:.24s}.stagger.in>*:nth-child(7){transition-delay:.28s}.stagger.in>*:nth-child(8){transition-delay:.32s}.stagger.in>*:nth-child(9){transition-delay:.36s}.stagger.in>*:nth-child(10){transition-delay:.4s}.stagger.in>*:nth-child(11){transition-delay:.44s}
+.stagger.in>*{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body class="intro-view">
+
+<nav class="topnav">
+  <div class="brand">PCM <span>Modules</span></div>
+  <div class="nav-divider"></div>
+  <div class="nav-links" id="nav-links">
+    <a href="#overview"><span class="en-inline">Overview</span><span class="es-inline">Inicio</span></a>
+    <a href="#pcm001"><span class="en-inline">Sales Calls Monitoring</span><span class="es-inline">Monitoreo de Llamadas de Ventas</span></a>
+    <a href="#pcm002"><span class="en-inline">Client Conflict Risk</span><span class="es-inline">Riesgo de Conflicto de Cliente</span></a>
+    <a href="#pcm003"><span class="en-inline">Case Review Calls</span><span class="es-inline">Llamadas de Revisión de Caso</span></a>
+    <a href="#pcm004"><span class="en-inline">Attorney Callbacks</span><span class="es-inline">Devoluciones de Llamada del Abogado</span></a>
+    <a href="#pcm005"><span class="en-inline">Customer Service</span><span class="es-inline">Servicio al Cliente</span></a>
+    <a href="#pcm006"><span class="en-inline">Case Exploration</span><span class="es-inline">Exploración de Caso</span></a>
+    <a href="#pcm007"><span class="en-inline">Case Integrity & Filing</span><span class="es-inline">Integridad del Caso y Presentación</span></a>
+    <a href="#pcm008"><span class="en-inline">Pre-WC Calls</span><span class="es-inline">Llamadas Pre-WC</span></a>
+    <a href="#pcm009"><span class="en-inline">Pre-CR Calls</span><span class="es-inline">Llamadas Pre-CR</span></a>
+    <a href="#pcm010"><span class="en-inline">Attorney Welcome Calls</span><span class="es-inline">Llamadas de Bienvenida del Abogado</span></a>
+    <a href="#pcm011"><span class="en-inline">Refunds & Financial Exposure</span><span class="es-inline">Reembolsos y Exposición Financiera</span></a>
+  </div>
+  <div class="nav-divider"></div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" id="btn-es" onclick="setLang('es')">ES</button>
+  </div>
+  <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')" aria-label="Menu">☰</button>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#overview" onclick="closeMobile()"><span class="en-inline">Overview</span><span class="es-inline">Inicio</span></a>
+  <a href="#pcm001" onclick="closeMobile()">PCM001</a>
+  <a href="#pcm002" onclick="closeMobile()">PCM002</a>
+  <a href="#pcm003" onclick="closeMobile()">PCM003</a>
+  <a href="#pcm004" onclick="closeMobile()">PCM004</a>
+  <a href="#pcm005" onclick="closeMobile()">PCM005</a>
+  <a href="#pcm006" onclick="closeMobile()">PCM006</a>
+  <a href="#pcm007" onclick="closeMobile()">PCM007</a>
+  <a href="#pcm008" onclick="closeMobile()">PCM008</a>
+  <a href="#pcm009" onclick="closeMobile()">PCM009</a>
+  <a href="#pcm010" onclick="closeMobile()">PCM010</a>
+  <a href="#pcm011" onclick="closeMobile()">PCM011</a>
+</div>
+
+<div class="wrap">
+  <header class="header">
+    <div class="header-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+      <span class="en-inline">Training Program</span><span class="es-inline">Programa de Capacitación</span>
+    </div>
+    <h1>PCM Monitoring Modules</h1>
+    <p class="subtitle">
+      <span class="en-inline">11 call monitoring frameworks — TMLF Training Department</span>
+      <span class="es-inline">11 marcos de monitoreo de llamadas — Departamento de Capacitación TMLF</span>
+    </p>
+  </header>
+
+  <main class="content">
+    <div class="intro-only">
+
+    <!-- OVERVIEW -->
+    <section class="block" id="overview">
+      <div class="title">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+        <h3><span class="en-inline">Program Overview</span><span class="es-inline">Descripción del Programa</span></h3>
+      </div>
+      <div class="body">
+        <p class="en-text">The PCM (Process Call Monitoring) program establishes standardized quality evaluation frameworks for each type of client interaction handled by TMLF. Select a module below to access its complete monitoring standards, evaluation criteria, and compliance guidelines.</p>
+        <p class="es-text">El programa PCM (Monitoreo de Llamadas de Proceso) establece marcos estandarizados de evaluación de calidad para cada tipo de interacción con clientes manejada por TMLF. Selecciona un módulo a continuación para acceder a sus estándares completos de monitoreo, criterios de evaluación y guías de cumplimiento.</p>
+        <div class="chips" style="margin-top:12px">
+          <span class="chip dark"><span class="en-inline">11 Modules</span><span class="es-inline">11 Módulos</span></span>
+          <span class="chip"><span class="en-inline">Quality Assurance</span><span class="es-inline">Aseguramiento de Calidad</span></span>
+          <span class="chip"><span class="en-inline">Compliance</span><span class="es-inline">Cumplimiento</span></span>
+          <span class="chip"><span class="en-inline">Call Monitoring</span><span class="es-inline">Monitoreo de Llamadas</span></span>
+          <span class="chip"><span class="en-inline">Agent Coaching</span><span class="es-inline">Coaching de Agentes</span></span>
+        </div>
+      </div>
+    </section>
+
+    <div class="intro-cards stagger">
+      <a class="intro-card" onclick="showBlock('#pcm001')">
+        <div class="ic-num">1</div>
+        <div class="ic-icon">📊</div>
+        <strong><span class="en-inline">Sales Calls Monitoring</span><span class="es-inline">Monitoreo de Llamadas de Ventas</span></strong>
+        <small><span class="en-inline">Sales protocols & compliance</span><span class="es-inline">Protocolos de ventas y cumplimiento</span></small>
+      </a>
+      <a class="intro-card" onclick="showBlock('#pcm002')">
+        <div class="ic-num">2</div>
+        <div class="ic-icon">⚖️</div>
+        <strong><span class="en-inline">Client Conflict Risk</span><span class="es-inline">Riesgo de Conflicto de Cliente</span></strong>
+        <small><span class="en-inline">Conflict identification</span><span class="es-inline">Identificación de conflictos</span></small>
+      </a>
+      <a class="intro-card" onclick="showBlock('#pcm003')">
+        <div class="ic-num">3</div>
+        <div class="ic-icon">📂</div>
+        <strong><span class="en-inline">Case Review Calls</span><span class="es-inline">Llamadas de Revisión de Caso</span></strong>
+        <small><span class="en-inline">Status update standards</span><span class="es-inline">Estándares de actualización de estado</span></small>
+      </a>
+      <a class="intro-card" onclick="showBlock('#pcm004')">
+        <div class="ic-num">4</div>
+        <div class="ic-icon">👨‍⚖️</div>
+        <strong><span class="en-inline">Attorney Callbacks</span><span class="es-inline">Devoluciones de Llamada del Abogado</span></strong>
+        <small><span class="en-inline">Callback quality standards</span><span class="es-inline">Estándares de calidad de callbacks</span></small>
+      </a>
+      <a class="intro-card" onclick="showBlock('#pcm005')">
+        <div class="ic-num">5</div>
+        <div class="ic-icon">🎧</div>
+        <strong><span class="en-inline">Customer Service</span><span class="es-inline">Servicio al Cliente</span></strong>
+        <small><span class="en-inline">CS interaction quality</span><span class="es-inline">Calidad de interacción CS</span></small>
+      </a>
+      <a class="intro-card" onclick="showBlock('#pcm006')">
+        <div class="ic-num">6</div>
+        <div class="ic-icon">🔍</div>
+        <strong><span class="en-inline">Case Exploration</span><span class="es-inline">Exploración de Caso</span></strong>
+        <small><span class="en-inline">Intake & screening</span><span class="es-inline">Intaje y selección</span></small>
+      </a>
+      <a class="intro-card" onclick="showBlock('#pcm007')">
+        <div class="ic-num">7</div>
+        <div class="ic-icon">🏛️</div>
+        <strong><span class="en-inline">Case Integrity & Filing</span><span class="es-inline">Integridad del Caso y Presentación</span></strong>
+        <small><span class="en-inline">Filing & documentation</span><span class="es-inline">Presentación y documentación</span></small>
+      </a>
+      <a class="intro-card" onclick="showBlock('#pcm008')">
+        <div class="ic-num">8</div>
+        <div class="ic-icon">🦺</div>
+        <strong><span class="en-inline">Pre-WC Calls</span><span class="es-inline">Llamadas Pre-WC</span></strong>
+        <small><span class="en-inline">Workers' comp intake</span><span class="es-inline">Intaje de comp. de trabajadores</span></small>
+      </a>
+      <a class="intro-card" onclick="showBlock('#pcm009')">
+        <div class="ic-num">9</div>
+        <div class="ic-icon">🏳️</div>
+        <strong><span class="en-inline">Pre-CR Calls</span><span class="es-inline">Llamadas Pre-CR</span></strong>
+        <small><span class="en-inline">Civil rights intake</span><span class="es-inline">Intaje de derechos civiles</span></small>
+      </a>
+      <a class="intro-card" onclick="showBlock('#pcm010')">
+        <div class="ic-num">10</div>
+        <div class="ic-icon">🤝</div>
+        <strong><span class="en-inline">Attorney Welcome Calls</span><span class="es-inline">Llamadas de Bienvenida del Abogado</span></strong>
+        <small><span class="en-inline">Onboarding call quality</span><span class="es-inline">Calidad de llamada de bienvenida</span></small>
+      </a>
+      <a class="intro-card" onclick="showBlock('#pcm011')">
+        <div class="ic-num">11</div>
+        <div class="ic-icon">💰</div>
+        <strong><span class="en-inline">Refunds & Financial Exposure</span><span class="es-inline">Reembolsos y Exposición Financiera</span></strong>
+        <small><span class="en-inline">Exposure risk monitoring</span><span class="es-inline">Monitoreo de riesgo financiero</span></small>
+      </a>
+    </div>
+
+    </div><!-- end intro-only -->
+
+    <div class="content-blocks">
+    <button class="back-btn" onclick="showIntro()">
+      ← <span class="en-inline">Back to Overview</span><span class="es-inline">Volver al Inicio</span>
+    </button>
+
+    <!-- ══ PCM001 ══ -->
+    <section class="block" id="pcm001">
+      <div class="title">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <h3><span class="en-inline">Sales Calls Monitoring</span><span class="es-inline">Monitoreo de Llamadas de Ventas</span></h3>
+        
+      </div>
+      <div class="body">
+        <div class="lo-callout">
+          <div class="lo-icon">🎯</div>
+          <div class="lo-text">
+            <strong><span class="en-inline">Learning Objective</span><span class="es-inline">Objetivo de Aprendizaje</span></strong>
+            <span class="en-text">Ensure agents follow approved sales protocols, maintain compliance, and deliver a professional client experience throughout the sales cycle.</span>
+            <span class="es-text">Asegurar que los agentes sigan los protocolos de ventas aprobados, mantengan el cumplimiento y brinden una experiencia profesional al cliente durante todo el ciclo de ventas.</span>
+          </div>
+        </div>
+
+        <div class="sdiv"><div class="l"></div><div class="t"><span class="en-inline">Module Objectives</span><span class="es-inline">Objetivos del Módulo</span></div><div class="l"></div></div>
+        <div class="ob-list stagger">
+          <div class="ob-item"><div class="ob-num">1</div><span><span class="en-inline">Follow approved sales scripts and protocols</span><span class="es-inline">Seguir guiones y protocolos de ventas aprobados</span></span></div>
+          <div class="ob-item"><div class="ob-num">2</div><span><span class="en-inline">Identify compliance risks during the sales process</span><span class="es-inline">Identificar riesgos de cumplimiento durante el proceso de ventas</span></span></div>
+          <div class="ob-item"><div class="ob-num">3</div><span><span class="en-inline">Evaluate accuracy of information provided to potential clients</span><span class="es-inline">Evaluar la exactitud de la información brindada a clientes potenciales</span></span></div>
+          <div class="ob-item"><div class="ob-num">4</div><span><span class="en-inline">Monitor proper fee disclosure and expectations setting</span><span class="es-inline">Monitorear la divulgación adecuada de honorarios y establecimiento de expectativas</span></span></div>
+          <div class="ob-item"><div class="ob-num">5</div><span><span class="en-inline">Track conversion quality and identify coaching opportunities</span><span class="es-inline">Rastrear la calidad de conversión e identificar oportunidades de coaching</span></span></div>
+        </div>
+
+        <div class="sdiv"><div class="l"></div><div class="t"><span class="en-inline">Evaluation Criteria</span><span class="es-inline">Criterios de Evaluación</span></div><div class="l"></div></div>
+        <details>
+          <summary>🟢 <span class="en-inline">Compliance Items</span><span class="es-inline">Elementos de Cumplimiento</span></summary>
+          <div class="checklist" style="margin-top:10px">
+            <div class="check"><div class="box"></div><span class="en-inline">Proper greeting and identification</span><span class="es-inline">Saludo e identificación correctos</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">Accurate case eligibility representation</span><span class="es-inline">Representación precisa de elegibilidad del caso</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">Fee and retainer disclosure</span><span class="es-inline">Divulgación de honorarios y anticipo</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">No guarantees or misleading promises</span><span class="es-inline">Sin garantías ni promesas engañosas</span></div>
+          </div>
+        </details>
+        <details>
+          <summary>🔵 <span class="en-inline">Quality Items</span><span class="es-inline">Elementos de Calidad</span></summary>
+          <div class="checklist" style="margin-top:10px">
+            <div class="check"><div class="box"></div><span class="en-inline">Active listening and empathy</span><span class="es-inline">Escucha activa y empatía</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">Clear explanation of process</span><span class="es-inline">Explicación clara del proceso</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">Proper objection handling</span><span class="es-inline">Manejo adecuado de objeciones</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">Appointment scheduling accuracy</span><span class="es-inline">Precisión en la programación de citas</span></div>
+          </div>
+        </details>
+        <details>
+          <summary>📅 <span class="en-inline">Monitoring Frequency</span><span class="es-inline">Frecuencia de Monitoreo</span></summary>
+          <ul class="ev-list">
+            <li><span class="en-inline">Minimum <strong>2 calls per agent per week</strong></span><span class="es-inline">Mínimo <strong>2 llamadas por agente por semana</strong></span></li>
+            <li><span class="en-inline">New agents: <strong>5 calls/week</strong> for the first 60 days</span><span class="es-inline">Agentes nuevos: <strong>5 llamadas/semana</strong> los primeros 60 días</span></li>
+            <li><span class="en-inline">Scores entered in QA platform within <strong>24 hours</strong></span><span class="es-inline">Puntajes ingresados en la plataforma QA dentro de <strong>24 horas</strong></span></li>
+            <li><span class="en-inline">Weekly feedback sessions with team leads</span><span class="es-inline">Sesiones de retroalimentación semanales con líderes de equipo</span></li>
+          </ul>
+        </details>
+        <div class="alert danger" style="margin-top:14px">
+          🛑 <span><span class="en-inline"><strong>Critical Failure</strong> — Any guarantee of outcomes, misrepresentation of fees, or failure to disclose attorney review = automatic fail.</span><span class="es-inline"><strong>Falla Crítica</strong> — Cualquier garantía de resultados, tergiversación de honorarios o no divulgación de revisión del abogado = falla automática.</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ PCM002 ══ -->
+    <section class="block" id="pcm002">
+      <div class="title">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3><span class="en-inline">Client Conflict Risk Monitoring</span><span class="es-inline">Monitoreo de Riesgo de Conflicto de Cliente</span></h3>
+        
+      </div>
+      <div class="body">
+
+        <!-- Objetivo -->
+        <div class="lo-callout">
+          <div class="lo-icon">🎯</div>
+          <div class="lo-text">
+            <strong><span class="en-inline">Learning Objective</span><span class="es-inline">Objetivo de Aprendizaje</span></strong>
+            <span class="en-text">Analyze monitored case processes to identify and categorize warning signals that could lead to a formal State Bar complaint — applying the firm's preventive and ethical guidelines.</span>
+            <span class="es-text">Analizar los procesos de casos monitoreados para identificar y categorizar señales de alerta que podrían derivar en una queja formal ante el State Bar (Bar Complaint), aplicando los lineamientos preventivos y éticos de la firma.</span>
+          </div>
+        </div>
+
+
+
+        <!-- BLOQUE 1 -->
+        <details open class="block-accordion">
+          <summary class="block-accordion-header">
+            <div class="bac-left">
+              <div class="bac-num">1</div>
+              <div>
+                <div class="bac-label"><span class="en-inline">Block 1</span><span class="es-inline">Bloque 1</span></div>
+                <div class="bac-title"><span class="en-inline">The Big Picture</span><span class="es-inline">El Panorama General</span></div>
+              </div>
+            </div>
+            <div class="bac-arrow">▸</div>
+          </summary>
+          <div class="bac-body">
+          <div style="display:flex;flex-direction:column;gap:14px">
+
+          <!-- SECTION 1: Compliance Principles -->
+          <div style="border-radius:16px;overflow:hidden;border:1px solid rgba(30,58,95,.2);box-shadow:0 6px 20px rgba(23,26,33,.07)">
+            <div style="background:linear-gradient(135deg,#1e3a5f 0%,#2d5a8a 100%);padding:18px 22px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden">
+              <div style="position:absolute;right:-15px;top:-25px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
+              <div style="position:absolute;right:50px;bottom:-35px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.04)"></div>
+              <div style="flex-shrink:0;width:58px;height:58px;background:rgba(255,255,255,.12);border-radius:14px;display:flex;align-items:center;justify-content:center">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </div>
+              <div style="flex:1;position:relative;z-index:1">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.55);margin-bottom:3px"><span class="en-inline">Compliance Foundation</span><span class="es-inline">Base del Compliance</span></div>
+                <div style="font-size:16px;font-weight:700;color:#fff"><span class="en-inline">⚖️ Governing Compliance Principles</span><span class="es-inline">⚖️ Principios Regidores de Compliance</span></div>
+              </div>
+            </div>
+            <div style="background:#fff;padding:18px 22px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+
+            <!-- Card 1 -->
+            <div style="border-radius:14px;overflow:hidden;border:1px solid rgba(122,147,172,.2);transition:transform .25s,box-shadow .25s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 24px rgba(23,26,33,.1)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+              <div style="background:linear-gradient(135deg,#1e3a5f,#2d5a8a);padding:14px 16px;display:flex;align-items:center;gap:10px">
+                <div style="width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0">1</div>
+                <span style="font-size:14px;font-weight:700;color:#fff"><span class="en-inline">Confidentiality</span><span class="es-inline">Confidencialidad</span></span>
+              </div>
+              <div style="padding:14px 16px;background:#fff">
+                <p style="font-size:12.5px;color:var(--slate);line-height:1.65;margin:0 0 10px">
+                  <span class="en-inline">No collaborator may disclose client representation information unless one of these conditions is met:</span>
+                  <span class="es-inline">Ningún colaborador debe revelar información relacionada con la representación de un cliente, a menos que se cumpla una de estas condiciones:</span>
+                </p>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px">
+                    <span style="flex-shrink:0;width:20px;height:20px;border-radius:6px;background:rgba(30,58,95,.1);color:#1e3a5f;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:10px;margin-top:1px">1</span>
+                    <span style="color:var(--ink);line-height:1.5"><span class="en-inline">Client grants informed consent</span><span class="es-inline">El cliente otorga su consentimiento informado</span></span>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px">
+                    <span style="flex-shrink:0;width:20px;height:20px;border-radius:6px;background:rgba(30,58,95,.1);color:#1e3a5f;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:10px;margin-top:1px">2</span>
+                    <span style="color:var(--ink);line-height:1.5"><span class="en-inline">Disclosure is implicitly authorized to carry out the representation</span><span class="es-inline">La divulgación está implícitamente autorizada para llevar a cabo la representación</span></span>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px">
+                    <span style="flex-shrink:0;width:20px;height:20px;border-radius:6px;background:rgba(30,58,95,.1);color:#1e3a5f;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:10px;margin-top:1px">3</span>
+                    <span style="color:var(--ink);line-height:1.5"><span class="en-inline">A specific exception applies</span><span class="es-inline">Se aplica una excepción específica</span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div style="border-radius:14px;overflow:hidden;border:1px solid rgba(122,147,172,.2);transition:transform .25s,box-shadow .25s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 24px rgba(23,26,33,.1)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+              <div style="background:linear-gradient(135deg,#1a5276,#2e86c1);padding:14px 16px;display:flex;align-items:center;gap:10px">
+                <div style="width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0">2</div>
+                <span style="font-size:14px;font-weight:700;color:#fff"><span class="en-inline">Communication</span><span class="es-inline">Comunicación</span></span>
+              </div>
+              <div style="padding:14px 16px;background:#fff">
+                <p style="font-size:12.5px;color:var(--slate);line-height:1.65;margin:0 0 10px">
+                  <span class="en-inline">All collaborators must:</span>
+                  <span class="es-inline">Todos los colaboradores deben:</span>
+                </p>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px">
+                    <span style="flex-shrink:0;font-weight:700;color:#2e86c1;font-size:11px;margin-top:2px">a)</span>
+                    <span style="color:var(--ink);line-height:1.5"><span class="en-inline">Promptly inform the client of decisions requiring consent</span><span class="es-inline">Informar prontamente al cliente sobre las decisiones que requieren consentimiento</span></span>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px">
+                    <span style="flex-shrink:0;font-weight:700;color:#2e86c1;font-size:11px;margin-top:2px">b)</span>
+                    <span style="color:var(--ink);line-height:1.5"><span class="en-inline">Consult on how to achieve the client's objectives</span><span class="es-inline">Consultar sobre los medios para lograr sus objetivos</span></span>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px">
+                    <span style="flex-shrink:0;font-weight:700;color:#2e86c1;font-size:11px;margin-top:2px">c)</span>
+                    <span style="color:var(--ink);line-height:1.5"><span class="en-inline">Keep the client reasonably informed about case status</span><span class="es-inline">Mantener al cliente razonablemente informado sobre el estado del asunto</span></span>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px">
+                    <span style="flex-shrink:0;font-weight:700;color:#2e86c1;font-size:11px;margin-top:2px">d)</span>
+                    <span style="color:var(--ink);line-height:1.5"><span class="en-inline">Comply promptly with reasonable information requests</span><span class="es-inline">Cumplir con prontitud con las solicitudes razonables de información</span></span>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px">
+                    <span style="flex-shrink:0;font-weight:700;color:#2e86c1;font-size:11px;margin-top:2px">e)</span>
+                    <span style="color:var(--ink);line-height:1.5"><span class="en-inline">Consult on any relevant limitations</span><span class="es-inline">Consultar sobre cualquier limitación relevante</span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div style="border-radius:14px;overflow:hidden;border:1px solid rgba(122,147,172,.2);transition:transform .25s,box-shadow .25s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 24px rgba(23,26,33,.1)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+              <div style="background:linear-gradient(135deg,#145a32,#1e8449);padding:14px 16px;display:flex;align-items:center;gap:10px">
+                <div style="width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0">3</div>
+                <span style="font-size:14px;font-weight:700;color:#fff"><span class="en-inline">Competence & Diligence</span><span class="es-inline">Competencia y Diligencia</span></span>
+              </div>
+              <div style="padding:14px 16px;background:#fff">
+                <p style="font-size:12.5px;color:var(--ink);line-height:1.65;margin:0 0 10px">
+                  <span class="en-inline">All collaborators must provide competent representation requiring:</span>
+                  <span class="es-inline">Todos los colaboradores deben proporcionar una representación competente que requiera:</span>
+                </p>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;gap:8px;align-items:center;font-size:12px;padding:6px 10px;background:rgba(30,132,73,.07);border-radius:8px;border-left:3px solid #1e8449">
+                    <span>📚</span><span style="color:var(--ink)"><span class="en-inline">Legal knowledge</span><span class="es-inline">Conocimientos jurídicos</span></span>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:center;font-size:12px;padding:6px 10px;background:rgba(30,132,73,.07);border-radius:8px;border-left:3px solid #1e8449">
+                    <span>🎯</span><span style="color:var(--ink)"><span class="en-inline">Skill and thoroughness</span><span class="es-inline">Habilidad y minuciosidad</span></span>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:center;font-size:12px;padding:6px 10px;background:rgba(30,132,73,.07);border-radius:8px;border-left:3px solid #1e8449">
+                    <span>📋</span><span style="color:var(--ink)"><span class="en-inline">Adequate preparation</span><span class="es-inline">Preparación adecuada</span></span>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:center;font-size:12px;padding:6px 10px;background:rgba(30,132,73,.07);border-radius:8px;border-left:3px solid #1e8449">
+                    <span>⚡</span><span style="color:var(--ink)"><span class="en-inline">Reasonable promptness and diligence</span><span class="es-inline">Prontitud y diligencia razonables</span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div style="border-radius:14px;overflow:hidden;border:1px solid rgba(180,60,60,.25);transition:transform .25s,box-shadow .25s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 24px rgba(23,26,33,.1)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+              <div style="background:linear-gradient(135deg,#7b241c,#a93226);padding:14px 16px;display:flex;align-items:center;gap:10px">
+                <div style="width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0">4</div>
+                <span style="font-size:14px;font-weight:700;color:#fff"><span class="en-inline">Professional Misconduct</span><span class="es-inline">Mala Conducta Profesional</span></span>
+              </div>
+              <div style="padding:14px 16px;background:#fff">
+                <p style="font-size:12.5px;color:var(--slate);line-height:1.65;margin:0 0 10px">
+                  <span class="en-inline">It constitutes professional misconduct to:</span>
+                  <span class="es-inline">Constituye mala conducta profesional:</span>
+                </p>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px">
+                    <span style="flex-shrink:0;font-weight:700;color:#a93226;font-size:11px;margin-top:2px">a)</span>
+                    <span style="color:var(--ink);line-height:1.5"><span class="en-inline">Violate Professional Conduct Rules</span><span class="es-inline">Infringir las Normas de Conducta Profesional</span></span>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px">
+                    <span style="flex-shrink:0;font-weight:700;color:#a93226;font-size:11px;margin-top:2px">b)</span>
+                    <span style="color:var(--ink);line-height:1.5"><span class="en-inline">Commit a criminal act affecting honesty or trustworthiness</span><span class="es-inline">Cometer un acto delictivo que afecte la honestidad o confiabilidad</span></span>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px">
+                    <span style="flex-shrink:0;font-weight:700;color:#a93226;font-size:11px;margin-top:2px">c)</span>
+                    <span style="color:var(--ink);line-height:1.5"><span class="en-inline">Engage in dishonesty, fraud, deceit, or misrepresentation</span><span class="es-inline">Participar en conducta que implique deshonestidad, fraude o tergiversación</span></span>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px">
+                    <span style="flex-shrink:0;font-weight:700;color:#a93226;font-size:11px;margin-top:2px">d)</span>
+                    <span style="color:var(--ink);line-height:1.5"><span class="en-inline">Engage in conduct prejudicial to the administration of justice</span><span class="es-inline">Participar en conducta perjudicial para la administración de justicia</span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- end 4-card grid -->
+            </div><!-- end principles card body -->
+          </div><!-- end principles card -->
+
+          <!-- SECTION 2: Dual Disciplinary System -->
+          <div style="border-radius:16px;overflow:hidden;border:1px solid rgba(74,20,114,.2);box-shadow:0 6px 20px rgba(23,26,33,.07)">
+            <div style="background:linear-gradient(135deg,#4a1472 0%,#7d3cbf 100%);padding:18px 22px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden">
+              <div style="position:absolute;right:-15px;top:-25px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
+              <div style="position:absolute;right:50px;bottom:-35px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.04)"></div>
+              <div style="flex-shrink:0;width:58px;height:58px;background:rgba(255,255,255,.12);border-radius:14px;display:flex;align-items:center;justify-content:center">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="2" y1="12" x2="22" y2="12"/>
+                  <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+                </svg>
+              </div>
+              <div style="flex:1;position:relative;z-index:1">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.55);margin-bottom:3px"><span class="en-inline">Two Authorities — One Attorney</span><span class="es-inline">Dos Autoridades — Un Abogado</span></div>
+                <div style="font-size:16px;font-weight:700;color:#fff"><span class="en-inline">🏛️ Dual Disciplinary System: State Bar vs. EOIR</span><span class="es-inline">🏛️ Sistema Disciplinario Dual: State Bar vs. EOIR</span></div>
+              </div>
+            </div>
+            <div style="background:#fff;padding:18px 22px">
+              <p style="font-size:13px;color:var(--slate);line-height:1.6;margin-bottom:16px;padding:10px 14px;background:rgba(74,20,114,.05);border-radius:10px;border-left:3px solid #7d3cbf">
+                <span class="en-inline">An immigration attorney is accountable to two separate authorities: the <strong>State Bar</strong> (general ethics) and the <strong>EOIR</strong> (practice before immigration courts).</span>
+                <span class="es-inline">Un abogado de migración responde ante dos autoridades: el <strong>State Bar</strong> (ética general) y la <strong>EOIR</strong> (práctica ante cortes migratorias).</span>
+              </p>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                <!-- State Bar -->
+                <div style="border-radius:14px;overflow:hidden;border:1px solid rgba(30,58,95,.2)">
+                  <div style="background:linear-gradient(135deg,#1e3a5f,#2d5a8a);padding:14px 16px;display:flex;align-items:center;gap:12px">
+                    <div style="width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2"/><path d="M8 7V5a2 2 0 00-4 0v2"/>
+                      </svg>
+                    </div>
+                    <span style="font-size:15px;font-weight:800;color:#fff">🏛️ State Bar</span>
+                  </div>
+                  <div style="padding:14px 16px;background:#fff;display:flex;flex-direction:column;gap:8px">
+                    <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(30,58,95,.05);border-radius:8px">
+                      <span style="flex-shrink:0;color:#1e3a5f;font-weight:700">→</span>
+                      <span><span class="en-inline">General professional ethics</span><span class="es-inline">Ética profesional general</span></span>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(30,58,95,.05);border-radius:8px">
+                      <span style="flex-shrink:0;color:#1e3a5f;font-weight:700">→</span>
+                      <span><span class="en-inline">License to practice law</span><span class="es-inline">Licencia para ejercer el derecho</span></span>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(30,58,95,.05);border-radius:8px">
+                      <span style="flex-shrink:0;color:#1e3a5f;font-weight:700">→</span>
+                      <span><span class="en-inline">Sanctions from private reprimand to disbarment</span><span class="es-inline">Sanciones desde amonestación privada hasta inhabilitación</span></span>
+                    </div>
+                  </div>
+                </div>
+                <!-- EOIR -->
+                <div style="border-radius:14px;overflow:hidden;border:1px solid rgba(74,20,114,.2)">
+                  <div style="background:linear-gradient(135deg,#4a1472,#7d3cbf);padding:14px 16px;display:flex;align-items:center;gap:12px">
+                    <div style="width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6l9-4 9 4v6c0 5.25-3.75 10.15-9 11.5C6.75 22.15 3 17.25 3 12V6z"/>
+                        <polyline points="9 12 11 14 15 10"/>
+                      </svg>
+                    </div>
+                    <span style="font-size:15px;font-weight:800;color:#fff">⚖️ EOIR</span>
+                  </div>
+                  <div style="padding:14px 16px;background:#fff;display:flex;flex-direction:column;gap:8px">
+                    <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(74,20,114,.05);border-radius:8px">
+                      <span style="flex-shrink:0;color:#7d3cbf;font-weight:700">→</span>
+                      <span><span class="en-inline">Practice before immigration courts</span><span class="es-inline">Práctica ante cortes migratorias</span></span>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(74,20,114,.05);border-radius:8px">
+                      <span style="flex-shrink:0;color:#7d3cbf;font-weight:700">→</span>
+                      <span><span class="en-inline">Conduct in immigration proceedings</span><span class="es-inline">Conducta en procedimientos migratorios</span></span>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(74,20,114,.05);border-radius:8px">
+                      <span style="flex-shrink:0;color:#7d3cbf;font-weight:700">→</span>
+                      <span><span class="en-inline">Independent sanctions process</span><span class="es-inline">Proceso de sanciones independiente</span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div><!-- end dual system card -->
+
+          <!-- SECTION 3: Complaint Process -->
+          <div style="border-radius:16px;overflow:hidden;border:1px solid rgba(122,147,172,.2);box-shadow:0 6px 20px rgba(23,26,33,.07)">
+            <div style="background:linear-gradient(135deg,#2c3e50 0%,#485563 100%);padding:18px 22px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden">
+              <div style="position:absolute;right:-15px;top:-25px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
+              <div style="position:absolute;right:50px;bottom:-35px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.04)"></div>
+              <div style="flex-shrink:0;width:58px;height:58px;background:rgba(255,255,255,.12);border-radius:14px;display:flex;align-items:center;justify-content:center">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                  <polyline points="10 9 9 9 8 9"/>
+                </svg>
+              </div>
+              <div style="flex:1;position:relative;z-index:1">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.55);margin-bottom:3px"><span class="en-inline">From Inquiry to Disbarment</span><span class="es-inline">De la Inquiry a la Inhabilitación</span></div>
+                <div style="font-size:16px;font-weight:700;color:#fff"><span class="en-inline">📋 Complaint Process</span><span class="es-inline">📋 Proceso de Queja</span></div>
+              </div>
+              <div style="flex-shrink:0;background:rgba(255,80,80,.25);border:1px solid rgba(255,80,80,.4);border-radius:999px;padding:4px 12px;font-size:11px;font-weight:700;color:#ffaaaa;position:relative;z-index:1">⚠️ REACTIVE</div>
+            </div>
+            <div style="background:#fff;padding:18px 22px">
+              <p style="font-size:13px;color:var(--slate);line-height:1.6;margin-bottom:16px;padding:10px 14px;background:rgba(180,60,60,.05);border-radius:10px;border-left:3px solid var(--red)">
+                <span class="en-inline">⚠️ Anyone — client, judge, or opposing attorney — can initiate a complaint. The process is <strong>reactive</strong>, but the compliance team must be <strong>proactive</strong>.</span>
+                <span class="es-inline">⚠️ Cualquier persona — cliente, juez o abogado contrario — puede iniciar una queja. El proceso es <strong>reactivo</strong>, pero el equipo de cumplimiento debe ser <strong>proactivo</strong>.</span>
+              </p>
+              <div style="text-align:center;margin-bottom:18px">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--slate)">
+                  <span class="en-inline">Attorney Disciplinary Process</span>
+                  <span class="es-inline">Proceso Disciplinario de Abogados</span>
+                </span>
+              </div>
+          <div style="position:relative;padding:0 4px;overflow-x:auto">
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;min-width:480px">
+
+              <!-- Stage 1 -->
+              <div style="display:flex;flex-direction:column;align-items:center;position:relative">
+                <!-- Arrow shape -->
+                <div style="width:100%;height:48px;background:linear-gradient(135deg,#1e3a5f,#2d5a8a);clip-path:polygon(0 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,0 100%);display:flex;align-items:center;justify-content:center;padding-left:8px;padding-right:20px">
+                  <span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.7);letter-spacing:.3px">0–30 <span class="en-inline">days</span><span class="es-inline">días</span></span>
+                </div>
+                <!-- Content -->
+                <div style="padding:14px 10px 0;text-align:center">
+                  <div style="font-size:13px;font-weight:700;color:#1e3a5f;margin-bottom:6px;line-height:1.3">
+                    <span class="en-inline">Filing & Initial Classification</span>
+                    <span class="es-inline">Presentación y Clasificación Inicial</span>
+                  </div>
+                  <p style="font-size:11.5px;color:var(--slate);line-height:1.5;margin:0">
+                    <span class="en-inline">Complaint submitted in writing and evaluated by the Bar</span>
+                    <span class="es-inline">Queja presentada por escrito y evaluada por el Bar</span>
+                  </p>
+                </div>
+              </div>
+
+              <!-- Stage 2 -->
+              <div style="display:flex;flex-direction:column;align-items:center;position:relative">
+                <div style="width:100%;height:48px;background:linear-gradient(135deg,#1a5276,#2e86c1);clip-path:polygon(0 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,0 100%,16px 50%);display:flex;align-items:center;justify-content:center;padding:0 20px">
+                  <span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.7);letter-spacing:.3px">6+ <span class="en-inline">months</span><span class="es-inline">meses</span></span>
+                </div>
+                <div style="padding:14px 10px 0;text-align:center">
+                  <div style="font-size:13px;font-weight:700;color:#1a5276;margin-bottom:6px;line-height:1.3">
+                    <span class="en-inline">Formal Investigation</span>
+                    <span class="es-inline">Investigación Formal</span>
+                  </div>
+                  <p style="font-size:11.5px;color:var(--slate);line-height:1.5;margin:0">
+                    <span class="en-inline">Attorney responds, evidence is gathered, interviews are conducted</span>
+                    <span class="es-inline">Abogado responde, se recopilan pruebas y se realizan entrevistas</span>
+                  </p>
+                </div>
+              </div>
+
+              <!-- Stage 3 -->
+              <div style="display:flex;flex-direction:column;align-items:center;position:relative">
+                <div style="width:100%;height:48px;background:linear-gradient(135deg,#6e2f8a,#8e44ad);clip-path:polygon(0 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,0 100%,16px 50%);display:flex;align-items:center;justify-content:center;padding:0 20px">
+                  <span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.7);letter-spacing:.3px">6+ <span class="en-inline">months</span><span class="es-inline">meses</span></span>
+                </div>
+                <div style="padding:14px 10px 0;text-align:center">
+                  <div style="font-size:13px;font-weight:700;color:#6e2f8a;margin-bottom:6px;line-height:1.3">
+                    <span class="en-inline">Grievance Committee Review</span>
+                    <span class="es-inline">Revisión por Grievance Committee</span>
+                  </div>
+                  <p style="font-size:11.5px;color:var(--slate);line-height:1.5;margin:0">
+                    <span class="en-inline">Panel of attorneys and citizens determines probable cause</span>
+                    <span class="es-inline">Panel de abogados y ciudadanos determina causa probable</span>
+                  </p>
+                </div>
+              </div>
+
+              <!-- Stage 4 -->
+              <div style="display:flex;flex-direction:column;align-items:center;position:relative">
+                <div style="width:100%;height:48px;background:linear-gradient(135deg,#7b241c,#a93226);clip-path:polygon(0 0,100% 0,100% 100%,0 100%,16px 50%);display:flex;align-items:center;justify-content:center;padding:0 16px 0 24px">
+                  <span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.7);letter-spacing:.3px">6+ <span class="en-inline">months</span><span class="es-inline">meses</span></span>
+                </div>
+                <div style="padding:14px 10px 0;text-align:center">
+                  <div style="font-size:13px;font-weight:700;color:#a93226;margin-bottom:6px;line-height:1.3">
+                    <span class="en-inline">Disciplinary Measures</span>
+                    <span class="es-inline">Medidas Disciplinarias</span>
+                  </div>
+                  <p style="font-size:11.5px;color:var(--slate);line-height:1.5;margin:0">
+                    <span class="en-inline">Confidential or public measures applied based on severity</span>
+                    <span class="es-inline">Se aplican medidas confidenciales o públicas según la gravedad</span>
+                  </p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Measures -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px">
+            <!-- Confidential -->
+            <div style="border-radius:12px;overflow:hidden;border:1px solid rgba(122,147,172,.2)">
+              <div style="background:rgba(122,147,172,.12);padding:10px 14px;border-bottom:1px solid rgba(122,147,172,.2);display:flex;align-items:center;gap:8px">
+                <span style="font-size:14px">🔒</span>
+                <span style="font-size:12px;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:.5px">
+                  <span class="en-inline">Confidential Measures</span>
+                  <span class="es-inline">Medidas Confidenciales</span>
+                </span>
+              </div>
+              <div style="padding:12px 14px;background:#fff;display:flex;flex-direction:column;gap:7px">
+                <div style="display:flex;gap:8px;align-items:center;font-size:12px;padding:7px 10px;background:rgba(122,147,172,.08);border-radius:8px">
+                  <span>📄</span><span style="color:var(--ink);font-weight:600"><span class="en-inline">Letter of Admonition</span><span class="es-inline">Carta de Admonición</span></span>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;font-size:12px;padding:7px 10px;background:rgba(122,147,172,.08);border-radius:8px">
+                  <span>📄</span><span style="color:var(--ink);font-weight:600"><span class="en-inline">Private Reprimand</span><span class="es-inline">Amonestación Privada</span></span>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;font-size:12px;padding:7px 10px;background:rgba(122,147,172,.08);border-radius:8px">
+                  <span>📄</span><span style="color:var(--ink);font-weight:600"><span class="en-inline">Warning / Instruction Letter</span><span class="es-inline">Carta de Advertencia o Instrucción</span></span>
+                </div>
+                <p style="font-size:11px;color:var(--slate);margin:4px 0 0;font-style:italic">
+                  <span class="en-inline">Remain in the attorney's file — not public.</span>
+                  <span class="es-inline">Permanecen en el expediente del abogado — no son públicas.</span>
+                </p>
+              </div>
+            </div>
+            <!-- Public -->
+            <div style="border-radius:12px;overflow:hidden;border:1px solid rgba(180,60,60,.2)">
+              <div style="background:rgba(180,60,60,.07);padding:10px 14px;border-bottom:1px solid rgba(180,60,60,.15);display:flex;align-items:center;gap:8px">
+                <span style="font-size:14px">📢</span>
+                <span style="font-size:12px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.5px">
+                  <span class="en-inline">Public Measures</span>
+                  <span class="es-inline">Medidas Públicas</span>
+                </span>
+              </div>
+              <div style="padding:12px 14px;background:#fff;display:flex;flex-direction:column;gap:7px">
+                <div style="display:flex;gap:8px;align-items:center;font-size:12px;padding:7px 10px;background:rgba(180,140,0,.07);border-radius:8px;border-left:3px solid var(--amber)">
+                  <span>⚠️</span><span style="color:var(--amber);font-weight:600"><span class="en-inline">Public Reprimand / Reproval</span><span class="es-inline">Amonestación Pública</span></span>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;font-size:12px;padding:7px 10px;background:rgba(180,140,0,.07);border-radius:8px;border-left:3px solid var(--amber)">
+                  <span>⚠️</span><span style="color:var(--amber);font-weight:600"><span class="en-inline">Probation (with specific conditions)</span><span class="es-inline">Período de Prueba (con condiciones)</span></span>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;font-size:12px;padding:7px 10px;background:rgba(180,60,60,.07);border-radius:8px;border-left:3px solid var(--red)">
+                  <span>🚫</span><span style="color:var(--red);font-weight:600"><span class="en-inline">License Suspension</span><span class="es-inline">Suspensión de Licencia</span></span>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;font-size:12px;padding:7px 10px;background:rgba(180,60,60,.07);border-radius:8px;border-left:3px solid var(--red)">
+                  <span>⛔</span><span style="color:var(--red);font-weight:600"><span class="en-inline">Disbarment / Revocation</span><span class="es-inline">Inhabilitación Permanente</span></span>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;font-size:12px;padding:7px 10px;background:rgba(180,60,60,.07);border-radius:8px;border-left:3px solid var(--red)">
+                  <span>💸</span><span style="color:var(--red);font-weight:600"><span class="en-inline">Monetary Restitution</span><span class="es-inline">Restitución Monetaria</span></span>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;font-size:12px;padding:7px 10px;background:rgba(180,140,0,.07);border-radius:8px;border-left:3px solid var(--amber)">
+                  <span>🏫</span><span style="color:var(--amber);font-weight:600"><span class="en-inline">Mandatory Ethics School</span><span class="es-inline">Escuela de Ética Obligatoria</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert info" style="margin-top:14px">
+            💡 <span><span class="en-inline"><strong>Key distinction:</strong> Confidential measures already exist in the attorney's file but are not public. Public measures affect reputation and career permanently.</span><span class="es-inline"><strong>Concepto importante:</strong> Las medidas confidenciales ya existen en el expediente del abogado pero no son públicas. Las medidas públicas afectan la reputación y la carrera de forma permanente.</span></span>
+          </div>
+            </div><!-- end complaint card body -->
+          </div><!-- end complaint card -->
+
+          </div><!-- end block 1 flex -->
+
+          </div><!-- end bac-body block 1 -->
+        </details><!-- end block-accordion 1 -->
+
+        <!-- BLOQUE 2 -->
+        <details class="block-accordion">
+          <summary class="block-accordion-header">
+            <div class="bac-left">
+              <div class="bac-num" style="background:linear-gradient(135deg,#7b241c,#a93226)">2</div>
+              <div>
+                <div class="bac-label"><span class="en-inline">Block 2</span><span class="es-inline">Bloque 2</span></div>
+                <div class="bac-title"><span class="en-inline">5 High-Risk Areas at TMLF</span><span class="es-inline">Las 5 Áreas de Alto Riesgo en TMLF</span></div>
+              </div>
+            </div>
+            <div class="bac-arrow">▸</div>
+          </summary>
+          <div class="bac-body">
+
+        <p style="font-size:13.5px;margin-bottom:12px">
+          <span class="en-inline">The main risk pillars currently present at TMLF:</span>
+          <span class="es-inline">Los pilares de riesgos que presenta actualmente TMLF:</span>
+        </p>
+        <div class="ob-list stagger">
+          <div class="ob-item"><div class="ob-num">1</div><span><span class="en-inline">Misaligned expectations at Intake</span><span class="es-inline">Expectativas desalineadas al momento del Intake</span></span></div>
+          <div class="ob-item"><div class="ob-num">2</div><span><span class="en-inline">Invisible progress in cases older than 6 months</span><span class="es-inline">Invisibilidad del progreso en casos de más de 6 meses</span></span></div>
+          <div class="ob-item"><div class="ob-num">3</div><span><span class="en-inline">Lack of proactive communication</span><span class="es-inline">Comunicación poco proactiva</span></span></div>
+          <div class="ob-item"><div class="ob-num">4</div><span><span class="en-inline">Poor documentation of explanations</span><span class="es-inline">Documentación deficiente de las explicaciones</span></span></div>
+          <div class="ob-item"><div class="ob-num">5</div><span><span class="en-inline">Rejections or delays perceived as negligence</span><span class="es-inline">Rechazos o retrasos percibidos como negligencia</span></span></div>
+        </div>
+
+        <!-- ═══ RISK CARDS ═══ -->
+        <div style="display:flex;flex-direction:column;gap:16px;margin-top:16px">
+
+        <!-- RISK 1 -->
+        <div style="border-radius:16px;overflow:hidden;border:1px solid rgba(30,58,95,.2);box-shadow:0 6px 20px rgba(23,26,33,.08)">
+          <!-- Header -->
+          <div style="background:linear-gradient(135deg,#1e3a5f 0%,#2d5a8a 100%);padding:20px 24px;display:flex;align-items:center;gap:18px;position:relative;overflow:hidden">
+            <!-- BG circle deco -->
+            <div style="position:absolute;right:-20px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
+            <div style="position:absolute;right:40px;bottom:-40px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.04)"></div>
+            <!-- SVG illustration -->
+            <div style="flex-shrink:0;width:64px;height:64px;background:rgba(255,255,255,.12);border-radius:14px;display:flex;align-items:center;justify-content:center">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91A16 16 0 0016.09 17.91l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.574 2.81.7A2 2 0 0122 16.92z"/>
+                <line x1="1" y1="1" x2="23" y2="23" stroke="rgba(255,120,120,.8)" stroke-width="2"/>
+              </svg>
+            </div>
+            <div style="flex:1;position:relative;z-index:1">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.55);margin-bottom:4px"><span class="en-inline">Risk #1 — Most common complaint</span><span class="es-inline">Riesgo #1 — Queja más frecuente</span></div>
+              <div style="font-size:17px;font-weight:700;color:#fff;line-height:1.3"><span class="en-inline">Communication Failures & Client Abandonment</span><span class="es-inline">Fallas en la Comunicación y Abandono del Cliente</span></div>
+            </div>
+            <div style="flex-shrink:0;background:rgba(255,80,80,.25);border:1px solid rgba(255,80,80,.4);border-radius:999px;padding:4px 12px;font-size:11px;font-weight:700;color:#ffaaaa;position:relative;z-index:1">🔴 HIGH</div>
+          </div>
+          <!-- Body -->
+          <div style="background:#fff;padding:20px 24px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <!-- Left: intro + checklist -->
+              <div>
+                <p style="font-size:13px;color:var(--slate);line-height:1.6;margin-bottom:12px;padding:10px 12px;background:rgba(30,58,95,.05);border-radius:10px;border-left:3px solid #2d5a8a">
+                  <span class="en-inline">In humanitarian cases, the client lives in constant anxiety. Firm silence is interpreted as abandonment.</span>
+                  <span class="es-inline">En casos humanitarios, el cliente vive en un estado de ansiedad constante. El silencio de la firma se interpreta como abandono.</span>
+                </p>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(30,58,95,.04);border-radius:8px"><span style="flex-shrink:0;color:#2d5a8a;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Not responding to calls or emails in reasonable time</span><span class="es-inline">No responder llamadas o correos en tiempo razonable</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(30,58,95,.04);border-radius:8px"><span style="flex-shrink:0;color:#2d5a8a;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Not keeping the client informed of case progress</span><span class="es-inline">No mantener al cliente informado sobre el progreso del caso</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(30,58,95,.04);border-radius:8px"><span style="flex-shrink:0;color:#2d5a8a;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Not promptly notifying USCIS/ICE/Court communications</span><span class="es-inline">No notificar prontamente comunicaciones de USCIS/ICE/Corte</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(30,58,95,.04);border-radius:8px"><span style="flex-shrink:0;color:#2d5a8a;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Language barriers not adequately addressed</span><span class="es-inline">Barreras lingüísticas no atendidas adecuadamente</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(30,58,95,.04);border-radius:8px"><span style="flex-shrink:0;color:#2d5a8a;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Not explaining case status in understandable terms</span><span class="es-inline">No explicar el estatus del caso en términos comprensibles</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(30,58,95,.04);border-radius:8px"><span style="flex-shrink:0;color:#2d5a8a;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Withdrawing without properly notifying client and court</span><span class="es-inline">Retirarse sin notificar apropiadamente al cliente y a la corte</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(30,58,95,.04);border-radius:8px"><span style="flex-shrink:0;color:#2d5a8a;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Not returning client documents after representation ends</span><span class="es-inline">No devolver documentos del cliente tras terminar representación</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(30,58,95,.04);border-radius:8px"><span style="flex-shrink:0;color:#2d5a8a;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Leaving pending cases unattended, causing harm (deportation, loss of status)</span><span class="es-inline">Dejar casos pendientes sin atención, causando daño (deportación, pérdida de estatus)</span></span></div>
+                </div>
+              </div>
+              <!-- Right: triggers + example -->
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div style="background:rgba(30,58,95,.05);border-radius:12px;padding:14px">
+                  <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#1e3a5f;margin-bottom:10px"><span class="en-inline">📌 Mandatory Contact Triggers</span><span class="es-inline">📌 Desencadenantes de Contacto Obligatorio</span></div>
+                  <div style="display:flex;flex-wrap:wrap;gap:5px">
+                    <span style="padding:4px 9px;background:rgba(30,58,95,.1);border-radius:7px;font-size:11px;font-weight:600;color:#1e3a5f"><span class="en-inline">Case Received</span><span class="es-inline">Recepción del caso</span></span>
+                    <span style="padding:4px 9px;background:rgba(30,58,95,.1);border-radius:7px;font-size:11px;font-weight:600;color:#1e3a5f"><span class="en-inline">Filing</span><span class="es-inline">Presentación</span></span>
+                    <span style="padding:4px 9px;background:rgba(30,58,95,.1);border-radius:7px;font-size:11px;font-weight:600;color:#1e3a5f">RFE</span>
+                    <span style="padding:4px 9px;background:rgba(30,58,95,.1);border-radius:7px;font-size:11px;font-weight:600;color:#1e3a5f"><span class="en-inline">Regulatory Change</span><span class="es-inline">Cambio normativo</span></span>
+                    <span style="padding:4px 9px;background:rgba(30,58,95,.1);border-radius:7px;font-size:11px;font-weight:600;color:#1e3a5f"><span class="en-inline">Attorney Change</span><span class="es-inline">Cambio de abogado</span></span>
+                    <span style="padding:4px 9px;background:rgba(30,58,95,.1);border-radius:7px;font-size:11px;font-weight:600;color:#1e3a5f"><span class="en-inline">CAD Reclassification</span><span class="es-inline">Reclasificación CAD</span></span>
+                    <span style="padding:4px 9px;background:rgba(180,140,0,.12);border:1px solid rgba(180,140,0,.25);border-radius:7px;font-size:11px;font-weight:600;color:var(--amber)"><span class="en-inline">+180 days</span><span class="es-inline">+180 días sin resolución</span></span>
+                  </div>
+                </div>
+                <!-- Cadence table compact -->
+                <div style="background:rgba(30,58,95,.05);border-radius:12px;padding:14px">
+                  <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#1e3a5f;margin-bottom:10px"><span class="en-inline">📅 Communication Cadence</span><span class="es-inline">📅 Cuadro de Tiempos y Acciones</span></div>
+                  <div style="overflow-x:auto">
+                    <table style="width:100%;border-collapse:collapse;font-size:11.5px">
+                      <thead><tr style="background:rgba(30,58,95,.08)">
+                        <th style="padding:6px 8px;text-align:left;font-weight:700;border-bottom:1px solid rgba(30,58,95,.15)"><span class="en-inline">Trigger</span><span class="es-inline">Trigger</span></th>
+                        <th style="padding:6px 8px;text-align:left;font-weight:700;border-bottom:1px solid rgba(30,58,95,.15)"><span class="en-inline">Frequency</span><span class="es-inline">Periodicidad</span></th>
+                        <th style="padding:6px 8px;text-align:left;font-weight:700;border-bottom:1px solid rgba(30,58,95,.15)"><span class="en-inline">Channel</span><span class="es-inline">Canal</span></th>
+                      </tr></thead>
+                      <tbody>
+                        <tr style="border-bottom:1px solid rgba(30,58,95,.08)"><td style="padding:6px 8px"><span class="en-inline">No USCIS movement</span><span class="es-inline">Sin movimiento en USCIS</span></td><td style="padding:6px 8px;white-space:nowrap"><span class="en-inline">2x/month</span><span class="es-inline">2x/mes</span></td><td style="padding:6px 8px">📱✉️</td></tr>
+                        <tr style="border-bottom:1px solid rgba(30,58,95,.08);background:rgba(146,188,234,.06)"><td style="padding:6px 8px"><span class="en-inline">Extended processing</span><span class="es-inline">Procesamiento extendido</span></td><td style="padding:6px 8px"><span class="en-inline">Every comm.</span><span class="es-inline">Cada comunicación</span></td><td style="padding:6px 8px">📱✉️</td></tr>
+                        <tr style="border-bottom:1px solid rgba(30,58,95,.08)"><td style="padding:6px 8px"><span class="en-inline">Client silent</span><span class="es-inline">Cliente sin contacto</span></td><td style="padding:6px 8px"><span class="en-inline">2x/month</span><span class="es-inline">2x/mes</span></td><td style="padding:6px 8px">📱✉️</td></tr>
+                        <tr style="background:rgba(180,60,60,.05)"><td style="padding:6px 8px"><span class="en-inline">Bar risk indicators</span><span class="es-inline">Indicadores de riesgo Bar</span></td><td style="padding:6px 8px;color:var(--red);font-weight:700"><span class="en-inline">2x/month min.</span><span class="es-inline">2x/mes mínimo</span></td><td style="padding:6px 8px">📱✉️</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <!-- Example -->
+                <div style="background:rgba(180,140,0,.07);border:1px solid rgba(180,140,0,.2);border-radius:12px;padding:12px">
+                  <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">💡 <span class="en-inline">Practical Example — Visa U</span><span class="es-inline">Ejemplo práctico — Visa U</span></div>
+                  <p style="font-size:12px;color:var(--ink);line-height:1.55;margin:0"><span class="en-inline">Crime victim client receives no updates for 3 months. Assumes their case was forgotten and files an abandonment complaint — even though the firm was simply waiting for a USCIS response that can take years.</span><span class="es-inline">Cliente víctima de crimen no recibe actualizaciones en 3 meses. Asume que su caso fue olvidado y presenta una queja por abandono, aunque la firma solo estaba esperando una respuesta de USCIS que puede tardar años.</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RISK 2 -->
+        <div style="border-radius:16px;overflow:hidden;border:1px solid rgba(90,40,10,.2);box-shadow:0 6px 20px rgba(23,26,33,.08)">
+          <div style="background:linear-gradient(135deg,#5a2d0c 0%,#8b4513 100%);padding:20px 24px;display:flex;align-items:center;gap:18px;position:relative;overflow:hidden">
+            <div style="position:absolute;right:-20px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
+            <div style="flex-shrink:0;width:64px;height:64px;background:rgba(255,255,255,.12);border-radius:14px;display:flex;align-items:center;justify-content:center">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+                <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" stroke="rgba(255,120,80,.8)" stroke-width="2"/>
+              </svg>
+            </div>
+            <div style="flex:1;position:relative;z-index:1">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.55);margin-bottom:4px"><span class="en-inline">Risk #2</span><span class="es-inline">Riesgo #2</span></div>
+              <div style="font-size:17px;font-weight:700;color:#fff;line-height:1.3"><span class="en-inline">Incompetence & Lack of Diligence</span><span class="es-inline">Incompetencia y Falta de Diligencia</span></div>
+            </div>
+            <div style="flex-shrink:0;background:rgba(255,80,80,.25);border:1px solid rgba(255,80,80,.4);border-radius:999px;padding:4px 12px;font-size:11px;font-weight:700;color:#ffaaaa;position:relative;z-index:1">🔴 HIGH</div>
+          </div>
+          <div style="background:#fff;padding:20px 24px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <div>
+                <p style="font-size:13px;color:var(--slate);line-height:1.6;margin-bottom:12px;padding:10px 12px;background:rgba(90,45,12,.05);border-radius:10px;border-left:3px solid #8b4513">
+                  <span class="en-inline">This is not just about bad faith — it's about failing to do the work with the required expertise.</span>
+                  <span class="es-inline">No se trata solo de mala fe, sino de no hacer el trabajo con la pericia requerida.</span>
+                </p>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(90,45,12,.04);border-radius:8px"><span style="flex-shrink:0;color:#8b4513;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Failure to adequately investigate case facts or verify document authenticity</span><span class="es-inline">No investigar adecuadamente los hechos del caso o verificar autenticidad de documentos</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(90,45,12,.04);border-radius:8px"><span style="flex-shrink:0;color:#8b4513;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Missing critical deadlines (filing, RFE response, court dates)</span><span class="es-inline">Pérdida de deadlines críticos (filing, respuesta a RFE, fechas de corte)</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(90,45,12,.04);border-radius:8px"><span style="flex-shrink:0;color:#8b4513;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Accepting cases outside area of competence without consulting experts</span><span class="es-inline">Aceptar casos fuera del área de competencia sin consultar expertos</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(90,45,12,.04);border-radius:8px"><span style="flex-shrink:0;color:#8b4513;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Filing 18+ appeals without follow-up</span><span class="es-inline">Presentar 18+ apelaciones sin seguimiento</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(90,45,12,.04);border-radius:8px"><span style="flex-shrink:0;color:#8b4513;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Failing to stay updated on changes in immigration law and regulations</span><span class="es-inline">No mantenerse actualizado en cambios de ley y regulaciones migratorias</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(90,45,12,.04);border-radius:8px"><span style="flex-shrink:0;color:#8b4513;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Failing to advise on immigration consequences in criminal cases</span><span class="es-inline">Fallar en asesorar sobre consecuencias migratorias en casos criminales</span></span></div>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div style="background:rgba(180,60,60,.06);border:1px solid rgba(180,60,60,.18);border-radius:12px;padding:14px">
+                  <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">💡 <span class="en-inline">Practical Example — Asylum</span><span class="es-inline">Ejemplo práctico — Asilo</span></div>
+                  <p style="font-size:12px;color:var(--ink);line-height:1.55;margin:0"><span class="en-inline">Missing the one-year asylum deadline by not correctly calculating it from the client's last entry. The damage is irreversible.</span><span class="es-inline">Perder el deadline de un año para solicitar asilo por no haberlo calculado correctamente desde la última entrada del cliente. El daño es irreversible.</span></p>
+                </div>
+                <div style="background:rgba(46,125,50,.07);border:1px solid rgba(46,125,50,.18);border-radius:12px;padding:14px">
+                  <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">🛡️ <span class="en-inline">Key Point</span><span class="es-inline">Punto Clave</span></div>
+                  <p style="font-size:12px;color:var(--ink);line-height:1.55;margin:0"><span class="en-inline">The Deadline Management System is the primary shield against this risk — multiple alerts + backup rules are essential.</span><span class="es-inline">El Sistema de Gestión de Deadlines es el principal escudo contra este riesgo — alertas múltiples y reglas de "backup" son esenciales.</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RISK 3 -->
+        <div style="border-radius:16px;overflow:hidden;border:1px solid rgba(100,60,0,.2);box-shadow:0 6px 20px rgba(23,26,33,.08)">
+          <div style="background:linear-gradient(135deg,#7a5c00 0%,#b8860b 100%);padding:20px 24px;display:flex;align-items:center;gap:18px;position:relative;overflow:hidden">
+            <div style="position:absolute;right:-20px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
+            <div style="flex-shrink:0;width:64px;height:64px;background:rgba(255,255,255,.12);border-radius:14px;display:flex;align-items:center;justify-content:center">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+              </svg>
+            </div>
+            <div style="flex:1;position:relative;z-index:1">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.55);margin-bottom:4px"><span class="en-inline">Risk #3 — Flat Fee Abuse</span><span class="es-inline">Riesgo #3 — Flat Fee Abuse</span></div>
+              <div style="font-size:17px;font-weight:700;color:#fff;line-height:1.3"><span class="en-inline">Fee Issues & Misaligned Expectations</span><span class="es-inline">Problemas con Honorarios y Expectativas</span></div>
+            </div>
+            <div style="flex-shrink:0;background:rgba(255,80,80,.25);border:1px solid rgba(255,80,80,.4);border-radius:999px;padding:4px 12px;font-size:11px;font-weight:700;color:#ffaaaa;position:relative;z-index:1">🔴 HIGH</div>
+          </div>
+          <div style="background:#fff;padding:20px 24px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <div>
+                <p style="font-size:13px;color:var(--slate);line-height:1.6;margin-bottom:12px;padding:10px 12px;background:rgba(122,92,0,.05);border-radius:10px;border-left:3px solid #b8860b">
+                  <span class="en-inline">Focus: Flat Fee Abuse — charging everything upfront and delivering nothing.</span>
+                  <span class="es-inline">Enfoque: Flat Fee Abuse — cobrar todo por adelantado y no hacer nada.</span>
+                </p>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(122,92,0,.04);border-radius:8px"><span style="flex-shrink:0;color:#b8860b;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Charging excessive fees not justified by case complexity</span><span class="es-inline">Cobrar honorarios excesivos no justificados por la complejidad del caso</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(122,92,0,.04);border-radius:8px"><span style="flex-shrink:0;color:#b8860b;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Charging full fee upfront without performing work (flat fee abuse)</span><span class="es-inline">Cobrar el honorario completo por adelantado sin realizar trabajo (flat fee abuse)</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(122,92,0,.04);border-radius:8px"><span style="flex-shrink:0;color:#b8860b;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Not having clear written fee agreements</span><span class="es-inline">No tener acuerdos de honorarios por escrito claros</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(122,92,0,.04);border-radius:8px"><span style="flex-shrink:0;color:#b8860b;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Not returning unearned fees upon termination of representation</span><span class="es-inline">No devolver honorarios no ganados al terminar la representación</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(122,92,0,.04);border-radius:8px"><span style="flex-shrink:0;color:#b8860b;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Lack of clarity on when fee is "earned" vs. "retainer"</span><span class="es-inline">Falta de claridad sobre cuándo el honorario es "earned" vs. "retainer"</span></span></div>
+                </div>
+              </div>
+              <div>
+                <div style="background:rgba(180,140,0,.07);border:1px solid rgba(180,140,0,.2);border-radius:12px;padding:14px">
+                  <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">💡 <span class="en-inline">Practical Example — VAWA</span><span class="es-inline">Ejemplo práctico — VAWA</span></div>
+                  <p style="font-size:12px;color:var(--ink);line-height:1.55;margin:0"><span class="en-inline">Client pays a flat fee. Attorney files the case and waits. One year later, the client asks for an update, receives none, and feels the money was lost. The retainer agreement didn't clearly explain that the fee was "earned" upon filing, not upon approval.</span><span class="es-inline">Cliente paga un flat fee para una VAWA. El abogado presenta el caso y espera. Un año después, el cliente pide una actualización, no la recibe y siente que el dinero se perdió. El retainer agreement no explicaba claramente que el honorario se "ganaba" al presentar el caso, no al obtener la aprobación.</span></p>
+                </div>
+                <!-- Visual earned vs retainer -->
+                <div style="margin-top:12px;background:rgba(122,92,0,.06);border-radius:12px;padding:14px">
+                  <div style="font-size:11px;font-weight:700;color:#7a5c00;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px">⚖️ Earned vs. Retainer</div>
+                  <div style="display:flex;gap:8px">
+                    <div style="flex:1;padding:10px;background:#fff;border-radius:9px;border:1px solid rgba(46,125,50,.2);text-align:center">
+                      <div style="font-size:18px;margin-bottom:4px">✅</div>
+                      <div style="font-size:11px;font-weight:700;color:var(--green)">Earned</div>
+                      <div style="font-size:10.5px;color:var(--slate);margin-top:3px"><span class="en-inline">Work completed = fee kept</span><span class="es-inline">Trabajo realizado = honorario retenido</span></div>
+                    </div>
+                    <div style="flex:1;padding:10px;background:#fff;border-radius:9px;border:1px solid rgba(180,60,60,.2);text-align:center">
+                      <div style="font-size:18px;margin-bottom:4px">↩️</div>
+                      <div style="font-size:11px;font-weight:700;color:var(--red)">Retainer</div>
+                      <div style="font-size:10.5px;color:var(--slate);margin-top:3px"><span class="en-inline">Unearned portion = must be returned</span><span class="es-inline">Porción no ganada = debe devolverse</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RISK 4 -->
+        <div style="border-radius:16px;overflow:hidden;border:1px solid rgba(70,20,110,.2);box-shadow:0 6px 20px rgba(23,26,33,.08)">
+          <div style="background:linear-gradient(135deg,#4a1472 0%,#7d3cbf 100%);padding:20px 24px;display:flex;align-items:center;gap:18px;position:relative;overflow:hidden">
+            <div style="position:absolute;right:-20px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
+            <div style="flex-shrink:0;width:64px;height:64px;background:rgba(255,255,255,.12);border-radius:14px;display:flex;align-items:center;justify-content:center">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+                <line x1="12" y1="14" x2="19" y2="21" stroke="rgba(255,120,80,.8)" stroke-width="2"/>
+              </svg>
+            </div>
+            <div style="flex:1;position:relative;z-index:1">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.55);margin-bottom:4px"><span class="en-inline">Risk #4 — Family Contexts</span><span class="es-inline">Riesgo #4 — Contextos Familiares</span></div>
+              <div style="font-size:17px;font-weight:700;color:#fff;line-height:1.3"><span class="en-inline">Conflicts of Interest in Family Contexts</span><span class="es-inline">Conflictos de Interés en Contextos Familiares</span></div>
+            </div>
+            <div style="flex-shrink:0;background:rgba(255,80,80,.25);border:1px solid rgba(255,80,80,.4);border-radius:999px;padding:4px 12px;font-size:11px;font-weight:700;color:#ffaaaa;position:relative;z-index:1">🔴 HIGH</div>
+          </div>
+          <div style="background:#fff;padding:20px 24px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <div>
+                <p style="font-size:13px;color:var(--slate);line-height:1.6;margin-bottom:12px;padding:10px 12px;background:rgba(74,20,114,.05);border-radius:10px;border-left:3px solid #7d3cbf">
+                  <span class="en-inline">Beyond the obvious conflict — these situations require extra attention.</span>
+                  <span class="es-inline">Ir más allá del conflicto obvio — estas situaciones requieren atención especial.</span>
+                </p>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(74,20,114,.04);border-radius:8px"><span style="flex-shrink:0;color:#7d3cbf;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Simultaneous representation of petitioner and beneficiary with adverse interests</span><span class="es-inline">Representación simultánea de peticionario y beneficiario con intereses adversos</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(74,20,114,.04);border-radius:8px"><span style="flex-shrink:0;color:#7d3cbf;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Representing husband and wife in divorce affecting green card</span><span class="es-inline">Representación de esposo y esposa en casos de divorcio que afectan green card</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(74,20,114,.04);border-radius:8px"><span style="flex-shrink:0;color:#7d3cbf;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Not obtaining written informed consent when there is a potential conflict</span><span class="es-inline">No obtener consentimiento informado por escrito cuando hay conflicto potencial</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(74,20,114,.04);border-radius:8px"><span style="flex-shrink:0;color:#7d3cbf;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Representing employer and employee interests in the same petition</span><span class="es-inline">Representación de intereses del empleador vs. empleado en misma petición</span></span></div>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div style="background:rgba(180,140,0,.07);border:1px solid rgba(180,140,0,.2);border-radius:12px;padding:14px">
+                  <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">💡 <span class="en-inline">Practical Example — Green Card</span><span class="es-inline">Ejemplo práctico — Green Card</span></div>
+                  <p style="font-size:12px;color:var(--ink);line-height:1.55;margin:0 0 8px"><span class="en-inline">Representing Mother (petitioner) and Daughter (beneficiary) in a green card case. If the mother threatens to withdraw the petition to control the daughter, interests become adverse.</span><span class="es-inline">Representar a Madre (peticionaria) e Hija (beneficiaria) en una green card. Si la madre amenaza con retirar la petición para controlar a la hija, los intereses se vuelven adversos.</span></p>
+                </div>
+                <div style="background:rgba(74,20,114,.07);border:1px solid rgba(74,20,114,.18);border-radius:12px;padding:14px;text-align:center">
+                  <div style="font-size:28px;margin-bottom:6px">✍️</div>
+                  <div style="font-size:12px;font-weight:700;color:#4a1472;margin-bottom:4px"><span class="en-inline">Written Informed Consent</span><span class="es-inline">Consentimiento Informado POR ESCRITO</span></div>
+                  <div style="font-size:11.5px;color:var(--slate)"><span class="en-inline">From day one — non-negotiable when there is potential conflict.</span><span class="es-inline">Desde el inicio — innegociable cuando hay conflicto potencial.</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RISK 5 -->
+        <div style="border-radius:16px;overflow:hidden;border:1px solid rgba(139,58,58,.25);box-shadow:0 6px 20px rgba(23,26,33,.08)">
+          <div style="background:linear-gradient(135deg,#7b241c 0%,#a93226 100%);padding:20px 24px;display:flex;align-items:center;gap:18px;position:relative;overflow:hidden">
+            <div style="position:absolute;right:-20px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
+            <div style="flex-shrink:0;width:64px;height:64px;background:rgba(255,255,255,.12);border-radius:14px;display:flex;align-items:center;justify-content:center">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                <line x1="9" y1="15" x2="15" y2="9" stroke="rgba(255,120,80,.9)" stroke-width="2"/>
+                <line x1="9" y1="9" x2="15" y2="15" stroke="rgba(255,120,80,.9)" stroke-width="2"/>
+              </svg>
+            </div>
+            <div style="flex:1;position:relative;z-index:1">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.55);margin-bottom:4px"><span class="en-inline">Risk #5 — Sensitive topic</span><span class="es-inline">Riesgo #5 — Tema sensible</span></div>
+              <div style="font-size:17px;font-weight:700;color:#fff;line-height:1.3"><span class="en-inline">Fraud, Misrepresentation & the Duty of Confidentiality</span><span class="es-inline">Fraude, Tergiversación y el Límite con el Deber de Confidencialidad</span></div>
+            </div>
+            <div style="flex-shrink:0;background:rgba(255,80,80,.25);border:1px solid rgba(255,80,80,.4);border-radius:999px;padding:4px 12px;font-size:11px;font-weight:700;color:#ffaaaa;position:relative;z-index:1">🔴 HIGH</div>
+          </div>
+          <div style="background:#fff;padding:20px 24px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <div>
+                <p style="font-size:13px;color:var(--slate);line-height:1.6;margin-bottom:12px;padding:10px 12px;background:rgba(139,58,58,.05);border-radius:10px;border-left:3px solid #a93226">
+                  <span class="en-inline">A sensitive topic — a client may confess a fraudulent marriage. The line must be clear.</span>
+                  <span class="es-inline">Un tema sensible — un cliente puede confesar un matrimonio fraudulento. El límite debe ser claro.</span>
+                </p>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(139,58,58,.04);border-radius:8px"><span style="flex-shrink:0;color:#a93226;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Submitting fraudulent documents or false statements to USCIS</span><span class="es-inline">Presentar documentos fraudulentos o declaraciones falsas a USCIS</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(139,58,58,.04);border-radius:8px"><span style="flex-shrink:0;color:#a93226;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Assisting client in fraudulent marriage to obtain immigration benefits</span><span class="es-inline">Asistir al cliente en matrimonio fraudulento para obtener beneficios migratorios</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(139,58,58,.04);border-radius:8px"><span style="flex-shrink:0;color:#a93226;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Misrepresenting case status to the client</span><span class="es-inline">Tergiversar el estatus del caso al cliente</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(139,58,58,.04);border-radius:8px"><span style="flex-shrink:0;color:#a93226;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Falsifying signatures or notarizations</span><span class="es-inline">Falsificar firmas o notarizaciones</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:7px 10px;background:rgba(139,58,58,.04);border-radius:8px"><span style="flex-shrink:0;color:#a93226;font-weight:700;margin-top:1px">✗</span><span><span class="en-inline">Failing to disclose material errors to client or authorities</span><span class="es-inline">No divulgar errores materiales al cliente o a las autoridades</span></span></div>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div style="background:rgba(139,58,58,.07);border:1px solid rgba(139,58,58,.2);border-radius:12px;padding:14px">
+                  <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">🛑 <span class="en-inline">Key Message</span><span class="es-inline">Mensaje Clave</span></div>
+                  <p style="font-size:12px;color:var(--ink);line-height:1.55;margin:0"><span class="en-inline">We must advise on the consequences, but NOT help perpetuate the fraud. If the client insists, the attorney must withdraw.</span><span class="es-inline">Debemos aconsejar sobre las consecuencias, pero NO ayudar a perpetuar el fraude. Si el cliente insiste, el abogado debe retirarse.</span></p>
+                </div>
+                <div style="background:rgba(122,147,172,.08);border:1px solid rgba(122,147,172,.2);border-radius:12px;padding:14px">
+                  <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">🧩 <span class="en-inline">Quick Exercise</span><span class="es-inline">Ejercicio Rápido</span></div>
+                  <p style="font-size:12px;color:var(--slate);line-height:1.55;margin:0 0 8px;font-style:italic">"<span class="en-inline">The client brings a false birth certificate to appear underage. What does the attorney do?</span><span class="es-inline">El cliente trae un certificado de nacimiento falso para hacer ver que es menor de edad. ¿Qué hace el abogado?</span>"</p>
+                  <div style="background:#fff;border-radius:8px;padding:8px 10px;font-size:11.5px;color:var(--green);font-weight:700;border:1px solid rgba(46,125,50,.2)">→ <span class="en-inline">Do NOT submit it. Advise on consequences. Withdraw if client persists.</span><span class="es-inline">No presentarlo. Asesorar sobre las consecuencias. Retirarse si el cliente persiste.</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        </div><!-- end risk cards -->
+
+          </div><!-- end bac-body block 2 -->
+        </details><!-- end block-accordion 2 -->
+
+        <!-- BLOQUE 3 -->
+        <details class="block-accordion">
+          <summary class="block-accordion-header">
+            <div class="bac-left">
+              <div class="bac-num" style="background:linear-gradient(135deg,#145a32,#1e8449)">3</div>
+              <div>
+                <div class="bac-label"><span class="en-inline">Block 3</span><span class="es-inline">Bloque 3</span></div>
+                <div class="bac-title"><span class="en-inline">Preventive Tools</span><span class="es-inline">Herramientas Preventivas</span></div>
+              </div>
+            </div>
+            <div class="bac-arrow">▸</div>
+          </summary>
+          <div class="bac-body">
+          <div style="display:flex;flex-direction:column;gap:14px">
+
+          <!-- TOOL 1: Firm Protection Guarantees -->
+          <div style="border-radius:16px;overflow:hidden;border:1px solid rgba(21,90,50,.2);box-shadow:0 6px 20px rgba(23,26,33,.07)">
+            <div style="background:linear-gradient(135deg,#145a32 0%,#1e8449 100%);padding:18px 22px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden">
+              <div style="position:absolute;right:-15px;top:-25px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
+              <div style="position:absolute;right:50px;bottom:-35px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.04)"></div>
+              <div style="flex-shrink:0;width:58px;height:58px;background:rgba(255,255,255,.12);border-radius:14px;display:flex;align-items:center;justify-content:center">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <polyline points="9 12 11 14 15 10"/>
+                </svg>
+              </div>
+              <div style="flex:1;position:relative;z-index:1">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.6);margin-bottom:3px"><span class="en-inline">Preventive Tool 1</span><span class="es-inline">Herramienta Preventiva 1</span></div>
+                <div style="font-size:16px;font-weight:700;color:#fff"><span class="en-inline">Firm Protection Guarantees</span><span class="es-inline">Garantías para Proteger a la Firma</span></div>
+              </div>
+              <div style="flex-shrink:0;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:4px 12px;font-size:11px;font-weight:700;color:#fff;position:relative;z-index:1">🛡️ SHIELD</div>
+            </div>
+            <div style="background:#fff;padding:18px 22px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                <div>
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:rgba(21,90,50,.05);border-radius:10px;border-left:3px solid #1e8449">
+                      <span style="font-size:18px;flex-shrink:0">📋</span>
+                      <span style="font-size:13px;color:var(--ink)"><strong><span class="en-inline">Documented diligence</span><span class="es-inline">Diligencia documentada</span></strong><br><span style="font-weight:400;color:var(--slate)"><span class="en-inline">In cases older than 6 months</span><span class="es-inline">En casos de más de 6 meses</span></span></span>
+                    </div>
+                    <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:rgba(21,90,50,.05);border-radius:10px;border-left:3px solid #1e8449">
+                      <span style="font-size:18px;flex-shrink:0">🤝</span>
+                      <span style="font-size:13px;color:var(--ink)"><strong><span class="en-inline">Confirmed alignment</span><span class="es-inline">Alineación confirmada</span></strong><br><span style="font-weight:400;color:var(--slate)"><span class="en-inline">With client expectations</span><span class="es-inline">Con las expectativas del cliente</span></span></span>
+                    </div>
+                    <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:rgba(21,90,50,.05);border-radius:10px;border-left:3px solid #1e8449">
+                      <span style="font-size:18px;flex-shrink:0">💬</span>
+                      <span style="font-size:13px;color:var(--ink)"><strong><span class="en-inline">Structured communication</span><span class="es-inline">Comunicación estructurada</span></strong><br><span style="font-weight:400;color:var(--slate)"><span class="en-inline">Discipline maintained at all times</span><span class="es-inline">Disciplina mantenida en todo momento</span></span></span>
+                    </div>
+                    <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:rgba(21,90,50,.05);border-radius:10px;border-left:3px solid #1e8449">
+                      <span style="font-size:18px;flex-shrink:0">🔍</span>
+                      <span style="font-size:13px;color:var(--ink)"><strong><span class="en-inline">Traceable intervention records</span><span class="es-inline">Registros de intervención rastreables</span></strong><br><span style="font-weight:400;color:var(--slate)"><span class="en-inline">Every action logged and verifiable</span><span class="es-inline">Cada acción registrada y verificable</span></span></span>
+                    </div>
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;justify-content:center;gap:12px">
+                  <div style="background:linear-gradient(135deg,rgba(21,90,50,.08),rgba(30,132,73,.12));border-radius:14px;padding:20px;text-align:center;border:1px solid rgba(21,90,50,.15)">
+                    <div style="font-size:38px;margin-bottom:8px">📝</div>
+                    <div style="font-size:15px;font-weight:700;color:#145a32;font-style:italic;line-height:1.4;margin-bottom:6px">"<span class="en-inline">If it's not documented, it didn't happen.</span><span class="es-inline">Si no está documentado, no sucedió.</span>"</div>
+                    <div style="font-size:12px;color:var(--slate)"><span class="en-inline">Comprehensive documentation is the primary defense. Use TramCase notes consistently.</span><span class="es-inline">La documentación exhaustiva es la principal defensa. Usar las notas de TramCase de manera consistente.</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOOL 2: Client Risk Classification -->
+          <div style="border-radius:16px;overflow:hidden;border:1px solid rgba(23,26,33,.15);box-shadow:0 6px 20px rgba(23,26,33,.07)">
+            <div style="background:linear-gradient(135deg,#1e2a38 0%,#2d3f55 100%);padding:18px 22px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden">
+              <div style="position:absolute;right:-15px;top:-25px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
+              <div style="flex-shrink:0;width:58px;height:58px;background:rgba(255,255,255,.12);border-radius:14px;display:flex;align-items:center;justify-content:center">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+              </div>
+              <div style="flex:1;position:relative;z-index:1">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.6);margin-bottom:3px"><span class="en-inline">Preventive Tool 2</span><span class="es-inline">Herramienta Preventiva 2</span></div>
+                <div style="font-size:16px;font-weight:700;color:#fff"><span class="en-inline">Client Risk Classification</span><span class="es-inline">Clasificación de Riesgo del Cliente</span></div>
+              </div>
+              <div style="flex-shrink:0;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:4px 12px;font-size:11px;font-weight:700;color:#fff;position:relative;z-index:1">🚦 TRIAGE</div>
+            </div>
+            <div style="background:#fff;padding:18px 22px">
+              <p style="font-size:13px;color:var(--slate);margin-bottom:14px"><span class="en-inline">Based on checklist score, clients are classified as follows:</span><span class="es-inline">Según la puntuación de la lista de verificación, los clientes se clasifican de la siguiente manera:</span></p>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+                <!-- Low -->
+                <div style="border-radius:14px;overflow:hidden;border:1px solid rgba(46,125,50,.25)">
+                  <div style="background:linear-gradient(135deg,#1b5e20,#2e7d32);padding:14px;text-align:center">
+                    <div style="font-size:28px;margin-bottom:4px">🟢</div>
+                    <div style="font-size:13px;font-weight:800;color:#fff"><span class="en-inline">Low Risk</span><span class="es-inline">Riesgo Bajo</span></div>
+                  </div>
+                  <div style="padding:12px;background:rgba(46,125,50,.04)">
+                    <p style="font-size:12px;color:var(--ink);line-height:1.5;margin:0 0 8px"><span class="en-inline">Collaborative profile, aligned expectations, stable communication.</span><span class="es-inline">Perfil colaborativo, expectativas alineadas, comunicación estable.</span></p>
+                    <div style="padding:6px 10px;background:rgba(46,125,50,.1);border-radius:8px;font-size:11.5px;font-weight:700;color:var(--green);text-align:center">→ <span class="en-inline">Standard follow-up</span><span class="es-inline">Seguimiento estándar</span></div>
+                  </div>
+                </div>
+                <!-- Medium -->
+                <div style="border-radius:14px;overflow:hidden;border:1px solid rgba(180,140,0,.25)">
+                  <div style="background:linear-gradient(135deg,#7a5c00,#b8860b);padding:14px;text-align:center">
+                    <div style="font-size:28px;margin-bottom:4px">🟡</div>
+                    <div style="font-size:13px;font-weight:800;color:#fff"><span class="en-inline">Medium Risk</span><span class="es-inline">Riesgo Medio</span></div>
+                  </div>
+                  <div style="padding:12px;background:rgba(180,140,0,.04)">
+                    <p style="font-size:12px;color:var(--ink);line-height:1.5;margin:0 0 8px"><span class="en-inline">Recurring questions, partially misaligned expectations.</span><span class="es-inline">Preguntas recurrentes, expectativas parcialmente desalineadas.</span></p>
+                    <div style="padding:6px 10px;background:rgba(180,140,0,.1);border-radius:8px;font-size:11.5px;font-weight:700;color:var(--amber);text-align:center">→ <span class="en-inline">Enhanced follow-up + docs</span><span class="es-inline">Seguimiento mejorado + docs</span></div>
+                  </div>
+                </div>
+                <!-- High -->
+                <div style="border-radius:14px;overflow:hidden;border:1px solid rgba(180,60,60,.25)">
+                  <div style="background:linear-gradient(135deg,#7b241c,#a93226);padding:14px;text-align:center">
+                    <div style="font-size:28px;margin-bottom:4px">🔴</div>
+                    <div style="font-size:13px;font-weight:800;color:#fff"><span class="en-inline">High Risk</span><span class="es-inline">Riesgo Alto</span></div>
+                  </div>
+                  <div style="padding:12px;background:rgba(180,60,60,.04)">
+                    <p style="font-size:12px;color:var(--ink);line-height:1.5;margin:0 0 8px"><span class="en-inline">Conflict signals, undue pressure, or history of dissatisfaction.</span><span class="es-inline">Señales de conflicto, presión indebida o antecedentes de insatisfacción.</span></p>
+                    <div style="padding:6px 10px;background:rgba(180,60,60,.1);border-radius:8px;font-size:11.5px;font-weight:700;color:var(--red);text-align:center">→ <span class="en-inline">Direct supervision + controls</span><span class="es-inline">Supervisión directa + controles</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOOL 3 + 4: Staff Supervision & Expectation Management (side by side) -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+
+            <!-- TOOL 3: Staff Supervision -->
+            <div style="border-radius:16px;overflow:hidden;border:1px solid rgba(30,58,95,.2);box-shadow:0 6px 20px rgba(23,26,33,.07)">
+              <div style="background:linear-gradient(135deg,#1e3a5f 0%,#2d5a8a 100%);padding:16px 18px;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden">
+                <div style="position:absolute;right:-10px;top:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
+                <div style="flex-shrink:0;width:50px;height:50px;background:rgba(255,255,255,.12);border-radius:12px;display:flex;align-items:center;justify-content:center">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+                  </svg>
+                </div>
+                <div style="position:relative;z-index:1">
+                  <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.55);margin-bottom:2px"><span class="en-inline">Preventive Tool 3</span><span class="es-inline">Herramienta Preventiva 3</span></div>
+                  <div style="font-size:14px;font-weight:700;color:#fff;line-height:1.3"><span class="en-inline">Non-Attorney Staff Supervision</span><span class="es-inline">Supervisión del Personal No Abogado</span></div>
+                </div>
+              </div>
+              <div style="background:#fff;padding:16px 18px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:rgba(30,58,95,.05);border-radius:10px">
+                  <span style="font-size:20px;flex-shrink:0">⚖️</span>
+                  <p style="font-size:12.5px;color:var(--ink);line-height:1.55;margin:0"><span class="en-inline">All our actions generate ethical liability for the supervising attorney.</span><span class="es-inline">Todas nuestras acciones generan responsabilidad ética para el abogado supervisor.</span></p>
+                </div>
+                <div style="border-radius:12px;overflow:hidden;border:1px solid rgba(30,58,95,.18)">
+                  <div style="background:rgba(30,58,95,.08);padding:8px 12px;display:flex;align-items:center;gap:6px">
+                    <span style="font-size:14px">🔑</span>
+                    <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#1e3a5f"><span class="en-inline">Golden Rule</span><span class="es-inline">Regla de Oro</span></span>
+                  </div>
+                  <div style="padding:10px 12px;background:#fff">
+                    <p style="font-size:12.5px;color:var(--ink);line-height:1.55;margin:0"><span class="en-inline">Staff is <strong>prohibited</strong> from giving legal advice. All information must be reviewed by an attorney before being communicated to the client or any authority.</span><span class="es-inline">Está <strong>prohibido</strong> que el staff dé consejo legal. Todo debe ser revisado por un abogado antes de ser comunicado al cliente o a una autoridad.</span></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TOOL 4: Expectation Management -->
+            <div style="border-radius:16px;overflow:hidden;border:1px solid rgba(74,20,114,.2);box-shadow:0 6px 20px rgba(23,26,33,.07)">
+              <div style="background:linear-gradient(135deg,#4a1472 0%,#7d3cbf 100%);padding:16px 18px;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden">
+                <div style="position:absolute;right:-10px;top:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
+                <div style="flex-shrink:0;width:50px;height:50px;background:rgba(255,255,255,.12);border-radius:12px;display:flex;align-items:center;justify-content:center">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                  </svg>
+                </div>
+                <div style="position:relative;z-index:1">
+                  <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.55);margin-bottom:2px"><span class="en-inline">Preventive Tool 4</span><span class="es-inline">Herramienta Preventiva 4</span></div>
+                  <div style="font-size:14px;font-weight:700;color:#fff;line-height:1.3"><span class="en-inline">Expectation Management</span><span class="es-inline">Manejo de Expectativas</span></div>
+                </div>
+              </div>
+              <div style="background:#fff;padding:16px 18px">
+                <div style="display:flex;flex-direction:column;gap:7px">
+                  <div style="display:flex;gap:8px;align-items:center;padding:8px 11px;background:rgba(74,20,114,.05);border-radius:9px;font-size:12.5px"><span>🏛️</span><span><span class="en-inline">USCIS adjudicates — not the firm</span><span class="es-inline">El USCIS adjudica, no la firma</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:center;padding:8px 11px;background:rgba(74,20,114,.05);border-radius:9px;font-size:12.5px"><span>⏳</span><span><span class="en-inline">Timelines are not guaranteed</span><span class="es-inline">Los plazos no están garantizados</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:center;padding:8px 11px;background:rgba(74,20,114,.05);border-radius:9px;font-size:12.5px"><span>📜</span><span><span class="en-inline">Legal viability depends on current regulations</span><span class="es-inline">La viabilidad legal depende de la regulación vigente</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:center;padding:8px 11px;background:rgba(74,20,114,.05);border-radius:9px;font-size:12.5px"><span>🔎</span><span><span class="en-inline">Omission of facts alters the strategy</span><span class="es-inline">La omisión de hechos altera la estrategia</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:center;padding:8px 11px;background:rgba(74,20,114,.05);border-radius:9px;font-size:12.5px"><span>🏢</span><span><span class="en-inline">Representation is institutional (TMLF), not personal</span><span class="es-inline">La representación es institucional (TMLF), no personal</span></span></div>
+                  <div style="display:flex;gap:8px;align-items:center;padding:8px 11px;background:rgba(74,20,114,.05);border-radius:9px;font-size:12.5px"><span>💰</span><span><span class="en-inline">Costs and procedural variables are disclosed</span><span class="es-inline">Se divulgan los costos y las variables procesales</span></span></div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- end grid 3+4 -->
+
+          <!-- Closing principle -->
+          <div style="border-radius:14px;background:linear-gradient(135deg,var(--ink),#2d3f55);padding:22px 26px;position:relative;overflow:hidden">
+            <div style="position:absolute;right:-20px;top:-30px;width:140px;height:140px;border-radius:50%;background:rgba(146,188,234,.07)"></div>
+            <div style="position:absolute;left:20px;bottom:-40px;width:90px;height:90px;border-radius:50%;background:rgba(175,179,247,.05)"></div>
+            <div style="display:flex;align-items:center;gap:16px;position:relative;z-index:1">
+              <div style="font-size:36px;flex-shrink:0">🎯</div>
+              <div>
+                <p style="font-size:15px;font-weight:700;font-style:italic;color:#fff;line-height:1.45;margin:0 0 6px">"<span class="en-inline">We are not solving conflict. We are designing it out of the system.</span><span class="es-inline">No estamos resolviendo conflictos. Los estamos eliminando del sistema.</span>"</p>
+                <p style="font-size:12.5px;color:rgba(255,255,255,.65);margin:0"><span class="en-inline">Prevention is always more effective — and less costly — than reaction.</span><span class="es-inline">La prevención siempre es más efectiva — y menos costosa — que la reacción.</span></p>
+              </div>
+            </div>
+          </div>
+
+          </div><!-- end tools flex -->
+
+          </div><!-- end bac-body block 3 -->
+        </details><!-- end block-accordion 3 -->
+
+      </div>
+    </section>
+
+    <!-- ══ PCM003 ══ -->
+    <section class="block" id="pcm003">
+      <div class="title">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <h3><span class="en-inline">Case Review Calls Monitoring</span><span class="es-inline">Monitoreo de Llamadas de Revisión de Caso</span></h3>
+        
+      </div>
+      <div class="body">
+        <div class="lo-callout">
+          <div class="lo-icon">🎯</div>
+          <div class="lo-text">
+            <strong><span class="en-inline">Learning Objective</span><span class="es-inline">Objetivo de Aprendizaje</span></strong>
+            <span class="en-text">Ensure agents communicate accurate, complete, and compliant information during case status update calls while managing client expectations appropriately.</span>
+            <span class="es-text">Asegurar que los agentes comuniquen información precisa, completa y conforme durante las llamadas de actualización de estado del caso, gestionando adecuadamente las expectativas del cliente.</span>
+          </div>
+        </div>
+        <div class="sdiv"><div class="l"></div><div class="t"><span class="en-inline">Communication Standards</span><span class="es-inline">Estándares de Comunicación</span></div><div class="l"></div></div>
+        <div class="checklist stagger">
+          <div class="check"><div class="box"></div><span class="en-inline">Verify client identity before discussing case details</span><span class="es-inline">Verificar identidad del cliente antes de discutir detalles del caso</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Access the correct case file before providing updates</span><span class="es-inline">Acceder al expediente correcto antes de brindar actualizaciones</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Relay accurate status without speculation</span><span class="es-inline">Transmitir estado preciso sin especulación</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Set realistic timelines based on attorney guidance</span><span class="es-inline">Establecer plazos realistas basados en la guía del abogado</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Document all client concerns raised during the call</span><span class="es-inline">Documentar todas las inquietudes del cliente expresadas durante la llamada</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Confirm client understanding before ending call</span><span class="es-inline">Confirmar comprensión del cliente antes de terminar la llamada</span></div>
+        </div>
+        <div class="sdiv"><div class="l"></div><div class="t"><span class="en-inline">Evaluation Focus</span><span class="es-inline">Enfoque de Evaluación</span></div><div class="l"></div></div>
+        <div class="two-col">
+          <div class="mini-card">
+            <h4>📐 <span class="en-inline">Accuracy</span><span class="es-inline">Precisión</span></h4>
+            <ul class="ev-list" style="padding-left:14px">
+              <li><span class="en-inline">Case status matches CRM data</span><span class="es-inline">El estado del caso coincide con los datos del CRM</span></li>
+              <li><span class="en-inline">Correct documents referenced</span><span class="es-inline">Documentos correctos referenciados</span></li>
+              <li><span class="en-inline">Deadlines communicated correctly</span><span class="es-inline">Plazos comunicados correctamente</span></li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>💬 <span class="en-inline">Client Experience</span><span class="es-inline">Experiencia del Cliente</span></h4>
+            <ul class="ev-list" style="padding-left:14px">
+              <li><span class="en-inline">Empathy and active listening</span><span class="es-inline">Empatía y escucha activa</span></li>
+              <li><span class="en-inline">Frustration de-escalation</span><span class="es-inline">Desescalada de frustración</span></li>
+              <li><span class="en-inline">Clear next steps provided</span><span class="es-inline">Próximos pasos claros proporcionados</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="alert warn" style="margin-top:14px">
+          ⚠️ <span><span class="en-inline">Agents must <strong>never</strong> speculate on legal outcomes, provide legal advice, or promise specific timelines without attorney confirmation.</span><span class="es-inline">Los agentes <strong>nunca</strong> deben especular sobre resultados legales, brindar asesoramiento legal ni prometer plazos específicos sin confirmación del abogado.</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ PCM004 ══ -->
+    <section class="block" id="pcm004">
+      <div class="title">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91A16 16 0 0016.09 17.91l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.574 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+        <h3><span class="en-inline">Attorney Callbacks Monitoring</span><span class="es-inline">Monitoreo de Devoluciones de Llamada del Abogado</span></h3>
+        
+      </div>
+      <div class="body">
+        <div class="lo-callout">
+          <div class="lo-icon">🎯</div>
+          <div class="lo-text">
+            <strong><span class="en-inline">Learning Objective</span><span class="es-inline">Objetivo de Aprendizaje</span></strong>
+            <span class="en-text">Ensure attorney return calls meet professional standards, deliver accurate legal guidance, and are properly documented.</span>
+            <span class="es-text">Asegurar que las llamadas de retorno del abogado cumplan con estándares profesionales, proporcionen orientación legal precisa y estén correctamente documentadas.</span>
+          </div>
+        </div>
+        <details open>
+          <summary>📋 <span class="en-inline">Pre-Call Preparation</span><span class="es-inline">Preparación Previa a la Llamada</span></summary>
+          <div class="checklist" style="margin-top:10px">
+            <div class="check"><div class="box"></div><span class="en-inline">Attorney reviews case file and notes before calling</span><span class="es-inline">El abogado revisa el expediente y notas antes de llamar</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">Previous client interactions are documented and accessible</span><span class="es-inline">Las interacciones anteriores con el cliente están documentadas y accesibles</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">Pending client questions from prior contacts are addressed</span><span class="es-inline">Las preguntas pendientes del cliente de contactos anteriores son atendidas</span></div>
+          </div>
+        </details>
+        <details>
+          <summary>🎙️ <span class="en-inline">During the Call</span><span class="es-inline">Durante la Llamada</span></summary>
+          <div class="checklist" style="margin-top:10px">
+            <div class="check"><div class="box"></div><span class="en-inline">Attorney identifies self fully and confirms client identity</span><span class="es-inline">El abogado se identifica completamente y confirma la identidad del cliente</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">Clear and accessible legal explanations (no excessive jargon)</span><span class="es-inline">Explicaciones legales claras y accesibles (sin jerga excesiva)</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">Client questions are answered thoroughly</span><span class="es-inline">Las preguntas del cliente se responden exhaustivamente</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">Next steps and timelines are clearly stated</span><span class="es-inline">Los próximos pasos y plazos se establecen claramente</span></div>
+          </div>
+        </details>
+        <details>
+          <summary>📁 <span class="en-inline">Post-Call Documentation</span><span class="es-inline">Documentación Post-Llamada</span></summary>
+          <div class="checklist" style="margin-top:10px">
+            <div class="check"><div class="box"></div><span class="en-inline">Summary entered in CRM within 2 hours</span><span class="es-inline">Resumen ingresado en CRM dentro de 2 horas</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">Commitments made are flagged for follow-up</span><span class="es-inline">Los compromisos adquiridos están marcados para seguimiento</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">Escalation notes added if needed</span><span class="es-inline">Notas de escalación agregadas si es necesario</span></div>
+          </div>
+        </details>
+        <div class="alert info" style="margin-top:14px">
+          📊 <span><span class="en-inline"><strong>Target:</strong> 100% of attorney callbacks completed within promised timeframe. Delays require proactive client notification.</span><span class="es-inline"><strong>Meta:</strong> 100% de callbacks del abogado completados dentro del plazo prometido. Los retrasos requieren notificación proactiva al cliente.</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ PCM005 ══ -->
+    <section class="block" id="pcm005">
+      <div class="title">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <h3><span class="en-inline">Customer Service Calls Monitoring</span><span class="es-inline">Monitoreo de Llamadas de Servicio al Cliente</span></h3>
+        
+      </div>
+      <div class="body">
+        <div class="lo-callout">
+          <div class="lo-icon">🎯</div>
+          <div class="lo-text">
+            <strong><span class="en-inline">Learning Objective</span><span class="es-inline">Objetivo de Aprendizaje</span></strong>
+            <span class="en-text">Ensure consistency, professionalism, and resolution efficiency across all CS touchpoints — billing inquiries, general questions, complaints, and administrative requests.</span>
+            <span class="es-text">Asegurar consistencia, profesionalismo y eficiencia en la resolución en todos los puntos de contacto de CS — consultas de facturación, preguntas generales, quejas y solicitudes administrativas.</span>
+          </div>
+        </div>
+        <details open>
+          <summary>👋 <span class="en-inline">Greeting & Verification</span><span class="es-inline">Saludo y Verificación</span></summary>
+          <ul class="ev-list">
+            <li><span class="en-inline">Professional greeting with full firm name and agent's first name</span><span class="es-inline">Saludo profesional con nombre completo del despacho y nombre del agente</span></li>
+            <li><span class="en-inline">Client identity verified before accessing account data</span><span class="es-inline">Identidad del cliente verificada antes de acceder a datos de la cuenta</span></li>
+          </ul>
+        </details>
+        <details>
+          <summary>✅ <span class="en-inline">Issue Resolution</span><span class="es-inline">Resolución de Problemas</span></summary>
+          <div class="checklist" style="margin-top:10px">
+            <div class="check"><div class="box"></div><span class="en-inline">First-contact resolution attempted on every call</span><span class="es-inline">Resolución en primer contacto intentada en cada llamada</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">Escalation used only when issue exceeds agent authority</span><span class="es-inline">Escalación usada solo cuando el problema excede la autoridad del agente</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">Client informed of resolution timeline if not immediately resolved</span><span class="es-inline">Cliente informado del plazo de resolución si no se resuelve de inmediato</span></div>
+          </div>
+        </details>
+        <details>
+          <summary>🔥 <span class="en-inline">Complaint Handling</span><span class="es-inline">Manejo de Quejas</span></summary>
+          <ul class="ev-list">
+            <li><span class="en-inline">Acknowledge frustration without becoming defensive</span><span class="es-inline">Reconocer la frustración sin ponerse a la defensiva</span></li>
+            <li><span class="en-inline">Use empathetic language: <em>"I understand this is frustrating…"</em></span><span class="es-inline">Usar lenguaje empático: <em>"Entiendo que esto es frustrante…"</em></span></li>
+            <li><span class="en-inline">Focus on what CAN be done</span><span class="es-inline">Enfocarse en lo que SÍ se puede hacer</span></li>
+            <li><span class="en-inline">Offer concrete resolution options when available</span><span class="es-inline">Ofrecer opciones concretas de resolución cuando estén disponibles</span></li>
+          </ul>
+        </details>
+        <div class="principle">
+          <p><span class="en-inline">"A complaint is an opportunity. Handle it well and you strengthen the relationship."</span><span class="es-inline">"Una queja es una oportunidad. Manéjala bien y fortaleces la relación."</span></p>
+          <p class="principle-sub"><span class="en-inline">De-escalation is a skill — practice it every call.</span><span class="es-inline">La desescalada es una habilidad — practícala en cada llamada.</span></p>
+        </div>
+        <div class="alert danger" style="margin-top:14px">
+          🛑 <span><span class="en-inline">Threats of legal action, media contact mentions, or requests to speak with ownership must be escalated to management <strong>immediately</strong>.</span><span class="es-inline">Las amenazas de acción legal, menciones de contacto con medios o solicitudes de hablar con la dirección deben escalarse a la gerencia <strong>de inmediato</strong>.</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ PCM006 ══ -->
+    <section class="block" id="pcm006">
+      <div class="title">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <h3><span class="en-inline">Case Exploration Calls Monitoring</span><span class="es-inline">Monitoreo de Llamadas de Exploración de Caso</span></h3>
+        
+      </div>
+      <div class="body">
+        <div class="lo-callout">
+          <div class="lo-icon">🎯</div>
+          <div class="lo-text">
+            <strong><span class="en-inline">Learning Objective</span><span class="es-inline">Objetivo de Aprendizaje</span></strong>
+            <span class="en-text">Monitor for thorough fact-gathering, proper legal screening, and accurate expectation-setting during initial case exploration calls.</span>
+            <span class="es-text">Monitorear la recopilación exhaustiva de hechos, la selección legal adecuada y el establecimiento preciso de expectativas durante las llamadas iniciales de exploración de caso.</span>
+          </div>
+        </div>
+        <div class="sdiv"><div class="l"></div><div class="t"><span class="en-inline">Required Information</span><span class="es-inline">Información Requerida</span></div><div class="l"></div></div>
+        <div class="checklist stagger">
+          <div class="check"><div class="box"></div><span class="en-inline">Nature and date of incident or qualifying event</span><span class="es-inline">Naturaleza y fecha del incidente o evento calificador</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Potential case type and applicable practice area</span><span class="es-inline">Tipo de caso potencial y área de práctica aplicable</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Client's current legal status and documentation</span><span class="es-inline">Estado legal actual del cliente y documentación</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Prior legal representation history</span><span class="es-inline">Historial de representación legal previa</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Statute of limitations considerations documented</span><span class="es-inline">Consideraciones de estatuto de limitaciones documentadas</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Preliminary viability assessment completed</span><span class="es-inline">Evaluación preliminar de viabilidad completada</span></div>
+        </div>
+        <div class="sdiv"><div class="l"></div><div class="t"><span class="en-inline">Quality Evaluation</span><span class="es-inline">Evaluación de Calidad</span></div><div class="l"></div></div>
+        <div class="two-col">
+          <div class="mini-card">
+            <h4>✅ <span class="en-inline">Strong Performance</span><span class="es-inline">Buen Desempeño</span></h4>
+            <div class="chips">
+              <span class="chip green"><span class="en-inline">All fields captured</span><span class="es-inline">Todos los campos capturados</span></span>
+              <span class="chip green"><span class="en-inline">Open-ended questions used</span><span class="es-inline">Preguntas abiertas utilizadas</span></span>
+              <span class="chip green"><span class="en-inline">Clear next steps given</span><span class="es-inline">Próximos pasos claros dados</span></span>
+            </div>
+          </div>
+          <div class="mini-card">
+            <h4>❌ <span class="en-inline">Needs Improvement</span><span class="es-inline">Necesita Mejorar</span></h4>
+            <div class="chips">
+              <span class="chip red"><span class="en-inline">Missing critical fields</span><span class="es-inline">Campos críticos faltantes</span></span>
+              <span class="chip red"><span class="en-inline">Premature case decision</span><span class="es-inline">Decisión prematura del caso</span></span>
+              <span class="chip red"><span class="en-inline">Inaccurate documentation</span><span class="es-inline">Documentación inexacta</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ PCM007 ══ -->
+    <section class="block" id="pcm007">
+      <div class="title">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg></div>
+        <h3><span class="en-inline">Case Integrity & Filing Monitoring</span><span class="es-inline">Monitoreo de Integridad del Caso y Presentación</span></h3>
+        
+      </div>
+      <div class="body">
+        <div class="lo-callout">
+          <div class="lo-icon">🎯</div>
+          <div class="lo-text">
+            <strong><span class="en-inline">Learning Objective</span><span class="es-inline">Objetivo de Aprendizaje</span></strong>
+            <span class="en-text">Monitor calls where case integrity, document verification, and filing procedures are discussed to ensure all documentation is accurate, complete, and properly handled.</span>
+            <span class="es-text">Monitorear llamadas donde se discuten la integridad del caso, verificación de documentos y procedimientos de presentación para asegurar que toda la documentación sea precisa, completa y manejada correctamente.</span>
+          </div>
+        </div>
+        <div class="sdiv"><div class="l"></div><div class="t"><span class="en-inline">Document Accuracy</span><span class="es-inline">Precisión de Documentos</span></div><div class="l"></div></div>
+        <div class="checklist stagger">
+          <div class="check"><div class="box"></div><span class="en-inline">All information verified with client before filing</span><span class="es-inline">Toda la información verificada con el cliente antes de presentar</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Client approves final documents in writing</span><span class="es-inline">El cliente aprueba los documentos finales por escrito</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Corrections made only through approved revision process</span><span class="es-inline">Correcciones realizadas solo a través del proceso de revisión aprobado</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Version control maintained on all case documents</span><span class="es-inline">Control de versiones mantenido en todos los documentos del caso</span></div>
+        </div>
+        <details style="margin-top:14px">
+          <summary>📋 <span class="en-inline">Pre-Filing Checklist</span><span class="es-inline">Lista Pre-Presentación</span></summary>
+          <div class="checklist" style="margin-top:10px">
+            <div class="check"><div class="box"></div><span class="en-inline">Attorney review and sign-off obtained</span><span class="es-inline">Revisión y aprobación del abogado obtenidas</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">All required supporting documents attached</span><span class="es-inline">Todos los documentos de apoyo requeridos adjuntos</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">Filing deadlines confirmed and tracked</span><span class="es-inline">Plazos de presentación confirmados y rastreados</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">Client notification of filing date sent</span><span class="es-inline">Notificación al cliente de la fecha de presentación enviada</span></div>
+          </div>
+        </details>
+        <details>
+          <summary>📁 <span class="en-inline">Post-Filing Requirements</span><span class="es-inline">Requisitos Post-Presentación</span></summary>
+          <div class="checklist" style="margin-top:10px">
+            <div class="check"><div class="box"></div><span class="en-inline">Filing confirmation saved to case file</span><span class="es-inline">Confirmación de presentación guardada en el expediente</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">Client notified of successful filing</span><span class="es-inline">Cliente notificado de la presentación exitosa</span></div>
+            <div class="check"><div class="box"></div><span class="en-inline">Next steps and expected response timelines communicated</span><span class="es-inline">Próximos pasos y plazos de respuesta esperados comunicados</span></div>
+          </div>
+        </details>
+        <div class="alert danger" style="margin-top:14px">
+          🛑 <span><span class="en-inline">Any alteration of client-approved documents without documented re-authorization = critical violation. Escalate to managing attorney immediately.</span><span class="es-inline">Cualquier alteración de documentos aprobados por el cliente sin re-autorización documentada = violación crítica. Escalar al abogado gerente de inmediato.</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ PCM008 ══ -->
+    <section class="block" id="pcm008">
+      <div class="title">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+        <h3><span class="en-inline">Pre-WC Calls Monitoring</span><span class="es-inline">Monitoreo de Llamadas Pre-WC</span></h3>
+        
+      </div>
+      <div class="body">
+        <div class="lo-callout">
+          <div class="lo-icon">🎯</div>
+          <div class="lo-text">
+            <strong><span class="en-inline">Learning Objective</span><span class="es-inline">Objetivo de Aprendizaje</span></strong>
+            <span class="en-text">Ensure agents correctly explain the WC process, gather necessary injury and employment information, and set accurate expectations before attorney assignment.</span>
+            <span class="es-text">Asegurar que los agentes expliquen correctamente el proceso de WC, recopilen la información necesaria sobre lesiones y empleo, y establezcan expectativas precisas antes de la asignación del abogado.</span>
+          </div>
+        </div>
+        <div class="sdiv"><div class="l"></div><div class="t"><span class="en-inline">Required Information</span><span class="es-inline">Información Requerida</span></div><div class="l"></div></div>
+        <div class="checklist stagger">
+          <div class="check"><div class="box"></div><span class="en-inline">Date, location, and description of workplace injury</span><span class="es-inline">Fecha, lugar y descripción de la lesión laboral</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Employer name, address, and HR contact</span><span class="es-inline">Nombre del empleador, dirección y contacto de RRHH</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Whether injury was reported to employer and when</span><span class="es-inline">Si la lesión fue reportada al empleador y cuándo</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Medical treatment received and treating physician</span><span class="es-inline">Tratamiento médico recibido y médico tratante</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Current work status (full / light duty / off work)</span><span class="es-inline">Estado laboral actual (completo / trabajo ligero / incapacidad)</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Existing WC claim number if already filed</span><span class="es-inline">Número de reclamo WC existente si ya fue presentado</span></div>
+        </div>
+        <details style="margin-top:14px">
+          <summary>💬 <span class="en-inline">What Agents Must Explain</span><span class="es-inline">Lo que los Agentes Deben Explicar</span></summary>
+          <ul class="ev-list">
+            <li><span class="en-inline">General WC claim process and expected timeline</span><span class="es-inline">Proceso general del reclamo WC y cronograma esperado</span></li>
+            <li><span class="en-inline">Role of the attorney vs. the agent in the case</span><span class="es-inline">Rol del abogado vs. el agente en el caso</span></li>
+            <li><span class="en-inline">What documents the client needs to gather</span><span class="es-inline">Qué documentos necesita recopilar el cliente</span></li>
+            <li><span class="en-inline">What to do if employer retaliates or disputes the claim</span><span class="es-inline">Qué hacer si el empleador toma represalias o disputa el reclamo</span></li>
+          </ul>
+        </details>
+        <div class="alert warn" style="margin-top:14px">
+          ⏱️ <span><span class="en-inline">Document the injury date and confirm filing deadline. Calls with injuries approaching deadline must be flagged as <strong>URGENT</strong>.</span><span class="es-inline">Documentar la fecha de lesión y confirmar el plazo de presentación. Las llamadas con lesiones que se acercan al plazo deben marcarse como <strong>URGENTE</strong>.</span></span>
+        </div>
+        <div class="alert success" style="margin-top:8px">
+          ✅ <span><span class="en-inline">Agents must NOT provide specific settlement estimates. Explain that outcomes vary based on injury severity, medical evidence, and case specifics.</span><span class="es-inline">Los agentes NO deben proporcionar estimaciones específicas de liquidación. Explicar que los resultados varían según la gravedad de la lesión, evidencia médica y especificidades del caso.</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ PCM009 ══ -->
+    <section class="block" id="pcm009">
+      <div class="title">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+        <h3><span class="en-inline">Pre-CR Calls Monitoring</span><span class="es-inline">Monitoreo de Llamadas Pre-CR</span></h3>
+        
+      </div>
+      <div class="body">
+        <div class="lo-callout">
+          <div class="lo-icon">🎯</div>
+          <div class="lo-text">
+            <strong><span class="en-inline">Learning Objective</span><span class="es-inline">Objetivo de Aprendizaje</span></strong>
+            <span class="en-text">Ensure agents properly gather facts related to civil rights violations and accurately explain the legal process without providing unauthorized legal advice.</span>
+            <span class="es-text">Asegurar que los agentes recopilen adecuadamente los hechos relacionados con violaciones de derechos civiles y expliquen con precisión el proceso legal sin proporcionar asesoramiento legal no autorizado.</span>
+          </div>
+        </div>
+        <div class="sdiv"><div class="l"></div><div class="t"><span class="en-inline">Civil Rights Intake Requirements</span><span class="es-inline">Requisitos de Intaje de Derechos Civiles</span></div><div class="l"></div></div>
+        <div class="checklist stagger">
+          <div class="check"><div class="box"></div><span class="en-inline">Nature of civil rights violation (discrimination, harassment, retaliation)</span><span class="es-inline">Naturaleza de la violación de derechos civiles (discriminación, acoso, represalia)</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Protected class at issue (race, gender, religion, disability, etc.)</span><span class="es-inline">Clase protegida en cuestión (raza, género, religión, discapacidad, etc.)</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Timeline of events with specific dates</span><span class="es-inline">Cronología de eventos con fechas específicas</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Witnesses identified, if any</span><span class="es-inline">Testigos identificados, si los hay</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Prior complaints filed with employer, EEOC, or other agencies</span><span class="es-inline">Quejas previas presentadas ante el empleador, EEOC u otras agencias</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Documentation or evidence the client possesses</span><span class="es-inline">Documentación o evidencia que posee el cliente</span></div>
+        </div>
+        <details style="margin-top:14px">
+          <summary>📋 <span class="en-inline">EEOC & Filing Process Explanations</span><span class="es-inline">Explicaciones del Proceso EEOC y Presentación</span></summary>
+          <ul class="ev-list">
+            <li><span class="en-inline">EEOC charge process overview</span><span class="es-inline">Descripción general del proceso de cargo EEOC</span></li>
+            <li><span class="en-inline">180/300-day filing window explained</span><span class="es-inline">Ventana de presentación de 180/300 días explicada</span></li>
+            <li><span class="en-inline">Requirement to exhaust administrative remedies before federal suit</span><span class="es-inline">Requisito de agotar remedios administrativos antes de demanda federal</span></li>
+            <li><span class="en-inline">What to expect after the charge is filed</span><span class="es-inline">Qué esperar después de que se presenta el cargo</span></li>
+          </ul>
+        </details>
+        <div class="alert warn" style="margin-top:14px">
+          ⚠️ <span><span class="en-inline">Civil rights calls often involve emotionally charged situations. Agents must remain professional, empathetic, and non-judgmental throughout.</span><span class="es-inline">Las llamadas de derechos civiles frecuentemente involucran situaciones emocionalmente cargadas. Los agentes deben mantenerse profesionales, empáticos y sin prejuicios en todo momento.</span></span>
+        </div>
+        <div class="alert danger" style="margin-top:8px">
+          🛑 <span><span class="en-inline">Never assess the strength of the civil rights claim on the call. Route to attorney review for all case viability determinations.</span><span class="es-inline">Nunca evaluar la solidez del reclamo de derechos civiles en la llamada. Dirigir al abogado para todas las determinaciones de viabilidad del caso.</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ PCM010 ══ -->
+    <section class="block" id="pcm010">
+      <div class="title">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+        <h3><span class="en-inline">Attorney Welcome Calls Monitoring</span><span class="es-inline">Monitoreo de Llamadas de Bienvenida del Abogado</span></h3>
+        
+      </div>
+      <div class="body">
+        <div class="lo-callout">
+          <div class="lo-icon">🎯</div>
+          <div class="lo-text">
+            <strong><span class="en-inline">Learning Objective</span><span class="es-inline">Objetivo de Aprendizaje</span></strong>
+            <span class="en-text">Ensure the introductory attorney-client call is warm, informative, and compliant — establishing the relationship, setting expectations, and building trust from day one.</span>
+            <span class="es-text">Asegurar que la llamada introductoria entre abogado y cliente sea cálida, informativa y conforme — estableciendo la relación, definiendo expectativas y generando confianza desde el primer día.</span>
+          </div>
+        </div>
+        <div class="sdiv"><div class="l"></div><div class="t"><span class="en-inline">Required Call Elements</span><span class="es-inline">Elementos Requeridos de la Llamada</span></div><div class="l"></div></div>
+        <div class="checklist stagger">
+          <div class="check"><div class="box"></div><span class="en-inline">Attorney introduces self by name and title</span><span class="es-inline">El abogado se presenta con nombre y título</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Confirms client's name and case type</span><span class="es-inline">Confirma el nombre del cliente y tipo de caso</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Reviews the retainer agreement and fee structure</span><span class="es-inline">Revisa el contrato de representación y estructura de honorarios</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Explains what the legal process will look like</span><span class="es-inline">Explica cómo será el proceso legal</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Identifies immediate action items for the client</span><span class="es-inline">Identifica acciones inmediatas para el cliente</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Provides direct contact information</span><span class="es-inline">Proporciona información de contacto directo</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Invites and answers all client questions</span><span class="es-inline">Invita y responde todas las preguntas del cliente</span></div>
+        </div>
+        <div class="sdiv"><div class="l"></div><div class="t"><span class="en-inline">Quality Benchmarks</span><span class="es-inline">Criterios de Calidad</span></div><div class="l"></div></div>
+        <div class="two-col">
+          <div class="mini-card">
+            <h4>✅ <span class="en-inline">Must Achieve</span><span class="es-inline">Debe Lograr</span></h4>
+            <div class="chips">
+              <span class="chip green"><span class="en-inline">Client confirms fee understanding</span><span class="es-inline">Cliente confirma comprensión de honorarios</span></span>
+              <span class="chip green"><span class="en-inline">Client knows next steps</span><span class="es-inline">Cliente conoce próximos pasos</span></span>
+              <span class="chip green"><span class="en-inline">Client feels heard</span><span class="es-inline">Cliente se siente escuchado</span></span>
+            </div>
+          </div>
+          <div class="mini-card">
+            <h4>🛑 <span class="en-inline">Critical Fails</span><span class="es-inline">Fallas Críticas</span></h4>
+            <div class="chips">
+              <span class="chip red"><span class="en-inline">Fee structure not explained</span><span class="es-inline">Estructura de honorarios no explicada</span></span>
+              <span class="chip red"><span class="en-inline">No attorney introduction</span><span class="es-inline">Sin presentación del abogado</span></span>
+              <span class="chip red"><span class="en-inline">Unanswered client questions</span><span class="es-inline">Preguntas del cliente sin responder</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="principle">
+          <p><span class="en-inline">"The welcome call sets the tone for the entire client relationship — first impressions matter deeply."</span><span class="es-inline">"La llamada de bienvenida define el tono de toda la relación con el cliente — las primeras impresiones importan profundamente."</span></p>
+          <p class="principle-sub"><span class="en-inline">Warmth + accuracy + clarity = a client who trusts the process.</span><span class="es-inline">Calidez + precisión + claridad = un cliente que confía en el proceso.</span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ PCM011 ══ -->
+    <section class="block" id="pcm011">
+      <div class="title">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+        <h3><span class="en-inline">Refunds & Financial Exposure Monitoring</span><span class="es-inline">Monitoreo de Reembolsos y Exposición Financiera</span></h3>
+        
+      </div>
+      <div class="body">
+        <div class="lo-callout">
+          <div class="lo-icon">🎯</div>
+          <div class="lo-text">
+            <strong><span class="en-inline">Learning Objective</span><span class="es-inline">Objetivo de Aprendizaje</span></strong>
+            <span class="en-text">Handle calls involving refund requests, billing disputes, and financial exposure indicators with precision — protecting both the client and the firm through careful documentation and timely escalation.</span>
+            <span class="es-text">Manejar llamadas que involucren solicitudes de reembolso, disputas de facturación e indicadores de exposición financiera con precisión — protegiendo tanto al cliente como al despacho mediante documentación cuidadosa y escalación oportuna.</span>
+          </div>
+        </div>
+        <div class="sdiv"><div class="l"></div><div class="t"><span class="en-inline">Refund Request Handling</span><span class="es-inline">Manejo de Solicitudes de Reembolso</span></div><div class="l"></div></div>
+        <div class="checklist stagger">
+          <div class="check"><div class="box"></div><span class="en-inline">Listen fully to client's concern before responding</span><span class="es-inline">Escuchar completamente la inquietud del cliente antes de responder</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Document the specific reason for refund request</span><span class="es-inline">Documentar la razón específica de la solicitud de reembolso</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Review client's account and payment history in CRM</span><span class="es-inline">Revisar la cuenta del cliente e historial de pagos en CRM</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Do NOT approve or deny refund on the call — escalate</span><span class="es-inline">NO aprobar ni negar el reembolso en la llamada — escalar</span></div>
+          <div class="check"><div class="box"></div><span class="en-inline">Inform client of review timeline (typically 5–7 business days)</span><span class="es-inline">Informar al cliente del plazo de revisión (normalmente 5–7 días hábiles)</span></div>
+        </div>
+        <div class="alert warn" style="margin-top:12px">
+          ⚠️ <span><span class="en-inline">Agents are <strong>NOT authorized</strong> to approve any refund on the call. Only billing supervisors or managing attorneys can authorize refunds.</span><span class="es-inline">Los agentes <strong>NO están autorizados</strong> a aprobar ningún reembolso en la llamada. Solo los supervisores de facturación o abogados gerentes pueden autorizar reembolsos.</span></span>
+        </div>
+        <div class="sdiv"><div class="l"></div><div class="t"><span class="en-inline">Financial Exposure Indicators</span><span class="es-inline">Indicadores de Exposición Financiera</span></div><div class="l"></div></div>
+        <details open>
+          <summary>🚨 <span class="en-inline">High-Risk Call Indicators</span><span class="es-inline">Indicadores de Llamada de Alto Riesgo</span></summary>
+          <div class="chips" style="margin-top:10px">
+            <span class="chip red"><span class="en-inline">Chargeback / CC dispute threat</span><span class="es-inline">Amenaza de contracargo / disputa de tarjeta</span></span>
+            <span class="chip red"><span class="en-inline">State bar mention</span><span class="es-inline">Mención del colegio de abogados</span></span>
+            <span class="chip red"><span class="en-inline">Misrepresentation allegation</span><span class="es-inline">Alegación de tergiversación</span></span>
+            <span class="chip red"><span class="en-inline">Requesting full case file</span><span class="es-inline">Solicitud del expediente completo</span></span>
+            <span class="chip red"><span class="en-inline">Consulting another attorney</span><span class="es-inline">Consultar a otro abogado</span></span>
+          </div>
+        </details>
+        <details>
+          <summary>📝 <span class="en-inline">Documentation Requirements</span><span class="es-inline">Requisitos de Documentación</span></summary>
+          <ul class="ev-list">
+            <li><span class="en-inline">Exact words used by client regarding any threats or allegations</span><span class="es-inline">Palabras exactas del cliente respecto a amenazas o alegaciones</span></li>
+            <li><span class="en-inline">Timestamp of when indicator was identified</span><span class="es-inline">Marca de tiempo de cuándo se identificó el indicador</span></li>
+            <li><span class="en-inline">Agent's response and any commitments made</span><span class="es-inline">Respuesta del agente y cualquier compromiso adquirido</span></li>
+            <li><span class="en-inline">Escalation path and time of notification</span><span class="es-inline">Ruta de escalación y hora de notificación</span></li>
+          </ul>
+        </details>
+        <div class="alert danger" style="margin-top:14px">
+          🛑 <span><span class="en-inline">All financial exposure indicators must be escalated to billing supervisor <strong>AND</strong> managing attorney within <strong>30 minutes</strong> of call completion.</span><span class="es-inline">Todos los indicadores de exposición financiera deben escalarse al supervisor de facturación <strong>Y</strong> al abogado gerente dentro de <strong>30 minutos</strong> de completada la llamada.</span></span>
+        </div>
+        <div class="principle" style="margin-top:14px">
+          <p><span class="en-inline">"Proactive communication prevents most financial disputes before they escalate."</span><span class="es-inline">"La comunicación proactiva previene la mayoría de las disputas financieras antes de que escalen."</span></p>
+          <p class="principle-sub"><span class="en-inline">Set clear billing expectations at intake → fewer surprises → fewer disputes.</span><span class="es-inline">Establecer expectativas de facturación claras desde el intaje → menos sorpresas → menos disputas.</span></p>
+        </div>
+      </div>
+    </section>
+
+    </div><!-- end content-blocks -->
+  </main>
+
+  <footer class="footer" id="footer-main">
+    <p>
+      <span class="en-inline"><strong>PCM Monitoring Program</strong> — Quality is not an act, it is a habit.<br>Every call is an opportunity to deliver excellence.</span>
+      <span class="es-inline"><strong>Programa de Monitoreo PCM</strong> — La calidad no es un acto, es un hábito.<br>Cada llamada es una oportunidad para brindar excelencia.</span>
+    </p>
+  </footer>
+</div>
+
+<script>
+let currentLang = 'en';
+
+function setLang(lang) {
+  currentLang = lang;
+  document.body.classList.toggle('lang-es', lang === 'es');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+}
+
+function closeMobile(){document.querySelector('.mobile-menu').classList.remove('open')}
+
+function showBlock(id){
+  document.body.classList.remove('intro-view');
+  document.body.classList.add('detail-view');
+  document.querySelectorAll('.content-blocks .block, .footer').forEach(el=>el.classList.remove('visible'));
+  const t=document.querySelector(id);
+  if(t)t.classList.add('visible');
+  document.querySelectorAll('.topnav .nav-links a').forEach(a=>a.classList.toggle('active',a.getAttribute('href')===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(()=>{if(t)t.querySelectorAll('.stagger').forEach(s=>s.classList.add('in'))},120);
+}
+
+function showIntro(){
+  document.body.classList.remove('detail-view');
+  document.body.classList.add('intro-view');
+  document.querySelectorAll('.topnav .nav-links a').forEach(a=>a.classList.remove('active'));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.querySelectorAll('.topnav .nav-links a, .mobile-menu a').forEach(a=>{
+  a.addEventListener('click',function(e){
+    e.preventDefault();closeMobile();
+    const href=this.getAttribute('href');
+    href==='#overview'?showIntro():showBlock(href);
+  });
+});
+
+document.addEventListener('click',e=>{
+  const chk=e.target.closest('.check');
+  if(chk)chk.classList.toggle('checked');
+});
+
+setTimeout(()=>{document.querySelectorAll('.intro-cards.stagger').forEach(s=>s.classList.add('in'))},300);
+
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')})},{threshold:.1,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.stagger').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
