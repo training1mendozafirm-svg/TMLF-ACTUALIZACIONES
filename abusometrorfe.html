@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abusómetro RFE</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;0,900;1,400&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   VARIABLES & RESET
+═══════════════════════════════════════════ */
+:root {
+  --red:#B8202F; --red-mid:#D42A3C; --red-light:#FDE8EA; --red-border:#F0B3BA; --red-deep:#8A0D1A;
+  --amber:#8A4E00; --amber-mid:#C06A00; --amber-light:#FEF3E0; --amber-border:#EEC97A;
+  --green:#165C30; --green-mid:#1E8044; --green-light:#E6F4EC; --green-border:#8ECFA8;
+  --bg:#F4F2ED; --surface:#FFFFFF; --card-alt:#F9F8F5;
+  --border:#DDD9D2; --border2:#C8C3BA;
+  --text:#18140F; --text2:#3E3A34; --muted:#807A72; --muted2:#AAA49C;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.07),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 14px rgba(0,0,0,0.09),0 2px 4px rgba(0,0,0,0.05);
+  --shadow-lg:0 8px 28px rgba(0,0,0,0.11),0 3px 8px rgba(0,0,0,0.06);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* ═══════════════════════════════════════════
+   GLOBAL TOPBAR (shared)
+═══════════════════════════════════════════ */
+.global-topbar {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.gtb-inner {
+  max-width: 1160px; margin: 0 auto;
+  padding: 0 48px;
+  display: flex; align-items: stretch;
+  height: 62px; gap: 0;
+}
+
+/* Brand */
+.gtb-brand {
+  display: flex; align-items: center; gap: 10px;
+  padding-right: 28px;
+  border-right: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.gtb-logo {
+  width: 22px; height: 54px;
+  background: var(--text); border-radius: 11px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: space-evenly;
+  padding: 5px; flex-shrink: 0;
+}
+.gl-dot { width: 10px; height: 10px; border-radius: 50%; }
+.gl-dot.r { background: var(--red-mid); }
+.gl-dot.a { background: var(--amber-mid); opacity: .5; }
+.gl-dot.g { background: var(--green-mid); opacity: .35; }
+
+.gtb-title-wrap {}
+.gtb-name {
+  font-family: 'Source Serif 4', serif;
+  font-size: 16px; font-weight: 700; line-height: 1.1;
+}
+.gtb-name b { color: var(--red); }
+.gtb-sub {
+  font-size: 10px; color: var(--muted); font-weight: 500;
+  letter-spacing: .02em;
+}
+
+/* TAB NAV */
+.gtb-tabs {
+  display: flex; align-items: stretch;
+  gap: 0; padding-left: 8px; flex: 1;
+}
+
+.tab-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 22px;
+  background: transparent; border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 600;
+  color: var(--muted); cursor: pointer;
+  position: relative;
+  transition: color .2s;
+  white-space: nowrap;
+  border-right: 1px solid var(--border);
+}
+.tab-btn:last-child { border-right: none; }
+.tab-btn:hover { color: var(--text2); }
+
+.tab-btn::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: transparent;
+  transition: background .2s;
+}
+
+.tab-btn.active { color: var(--text); }
+.tab-btn.active::after { background: var(--red); }
+
+.tab-icon { font-size: 15px; }
+
+.tab-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 9.5px; font-weight: 500;
+  padding: 2px 6px; border-radius: 4px;
+  background: var(--red-light); color: var(--red);
+  border: 1px solid var(--red-border);
+  transition: all .2s;
+  display: none;
+}
+.tab-badge.visible { display: inline-block; }
+
+/* Right side of topbar (eval controls) */
+.gtb-right {
+  display: flex; align-items: center; gap: 10px;
+  padding-left: 16px; border-left: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.prog-wrap {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 12px; background: var(--card-alt);
+  border: 1px solid var(--border); border-radius: 8px;
+}
+.prog-ring { transform: rotate(-90deg); }
+.ring-track { stroke: var(--border); }
+.ring-fill {
+  stroke: var(--red); stroke-dasharray: 94.2; stroke-dashoffset: 94.2;
+  transition: stroke-dashoffset .5s ease, stroke .4s;
+}
+.prog-label { font-family: 'DM Mono', monospace; font-size: 11.5px; color: var(--muted); }
+.prog-label strong { color: var(--text); font-size: 13px; }
+
+.btn {
+  padding: 7px 16px; border-radius: 7px; border: 1px solid;
+  font-family: 'DM Sans', sans-serif; font-size: 12px;
+  font-weight: 600; letter-spacing: .02em; cursor: pointer; transition: all .18s;
+}
+.btn-outline { background: transparent; border-color: var(--border2); color: var(--text2); }
+.btn-outline:hover { background: var(--card-alt); }
+.btn-primary { background: var(--red); border-color: var(--red); color: #fff; }
+.btn-primary:hover { background: var(--red-mid); }
+.btn-primary:disabled { background: var(--muted2); border-color: var(--muted2); cursor: not-allowed; }
+
+/* ═══════════════════════════════════════════
+   TAB PANELS
+═══════════════════════════════════════════ */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ═══════════════════════════════════════════
+   ── TAB 1: SEMÁFORO (Infografía) ──
+═══════════════════════════════════════════ */
+
+/* HERO */
+.hero { background: var(--surface); border-bottom: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+.hero-inner { max-width: 1100px; margin: 0 auto; padding: 48px 48px 40px; display: grid; grid-template-columns: 1fr auto; gap: 48px; align-items: center; }
+.hero-eyebrow { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--red); margin-bottom: 12px; }
+.hero-title { font-family: 'Source Serif 4', serif; font-size: clamp(36px, 4.5vw, 60px); font-weight: 900; line-height: .95; letter-spacing: -.03em; color: var(--text); }
+.hero-title span { color: var(--red); }
+.hero-sub { margin-top: 14px; font-size: 14px; color: var(--text2); line-height: 1.7; max-width: 520px; }
+
+.sema-graphic { display: flex; flex-direction: column; align-items: center; gap: 6px; flex-shrink: 0; }
+.sema-pole { width: 52px; background: var(--text); border-radius: 26px; padding: 10px; display: flex; flex-direction: column; gap: 8px; align-items: center; box-shadow: var(--shadow-md); }
+.sema-circle { width: 28px; height: 28px; border-radius: 50%; position: relative; }
+.sema-circle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.3); }
+.sema-circle.r { background: radial-gradient(circle at 35% 35%,#FF5566,var(--red-mid)); box-shadow: 0 0 12px 4px rgba(212,42,60,.4); }
+.sema-circle.a { background: radial-gradient(circle at 35% 35%,#FFB84D,var(--amber-mid)); opacity: .45; }
+.sema-circle.g { background: radial-gradient(circle at 35% 35%,#3DBB70,var(--green-mid)); opacity: .3; }
+.sema-lbl { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-top: 4px; text-align: center; }
+
+/* LEVEL CARDS */
+.level-cards { max-width: 1100px; margin: 24px auto 0; padding: 0 48px; }
+.lc-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.lc { border-radius: 12px; border: 1px solid; overflow: hidden; box-shadow: var(--shadow-sm); }
+.lc.r { border-color: var(--red-border); background: var(--red-light); }
+.lc.a { border-color: var(--amber-border); background: var(--amber-light); }
+.lc.g { border-color: var(--green-border); background: var(--green-light); }
+.lc-head { padding: 14px 18px 10px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid; }
+.lc.r .lc-head { border-color: var(--red-border); }
+.lc.a .lc-head { border-color: var(--amber-border); }
+.lc.g .lc-head { border-color: var(--green-border); }
+.lc-dot-big { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+.lc.r .lc-dot-big { background: var(--red-mid); }
+.lc.a .lc-dot-big { background: var(--amber-mid); }
+.lc.g .lc-dot-big { background: var(--green-mid); }
+.lc-tag { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: .16em; text-transform: uppercase; }
+.lc.r .lc-tag { color: var(--red); }
+.lc.a .lc-tag { color: var(--amber); }
+.lc.g .lc-tag { color: var(--green); }
+.lc-body { padding: 12px 18px 16px; }
+.lc-name { font-family: 'Source Serif 4', serif; font-size: 16px; font-weight: 700; }
+.lc.r .lc-name { color: var(--red-deep); }
+.lc.a .lc-name { color: var(--amber); }
+.lc.g .lc-name { color: var(--green); }
+.lc-desc { font-size: 12px; color: var(--text2); margin-top: 4px; line-height: 1.55; }
+.lc-action { margin-top: 10px; display: inline-block; font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 5px; }
+.lc.r .lc-action { background: var(--red-mid); color: #fff; }
+.lc.a .lc-action { background: var(--amber-mid); color: #fff; }
+.lc.g .lc-action { background: var(--green-mid); color: #fff; }
+
+/* SECTION DIVIDER */
+.section-div { max-width: 1100px; margin: 32px auto 0; padding: 0 48px; }
+.sd-inner { display: flex; align-items: center; gap: 16px; }
+.sd-line { flex: 1; height: 1px; background: var(--border2); }
+.sd-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+
+/* TABLE */
+.tbl-header { max-width: 1100px; margin: 14px auto 0; padding: 0 48px; }
+.th-inner { display: grid; grid-template-columns: 44px 200px 1fr 1fr 1fr; background: var(--text); border-radius: 10px; overflow: hidden; }
+.th-cell { padding: 10px 16px; font-family: 'DM Mono', monospace; font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.6); border-right: 1px solid rgba(255,255,255,.1); }
+.th-cell:last-child { border-right: none; }
+.th-cell.cat { color: rgba(255,255,255,.9); }
+.th-cell.r { color: #F5A0A8; } .th-cell.a { color: #F5CFA0; } .th-cell.g { color: #A0F0C0; }
+
+.tbl-body { max-width: 1100px; margin: 6px auto 0; padding: 0 48px 60px; display: flex; flex-direction: column; gap: 6px; }
+.trow { display: grid; grid-template-columns: 44px 200px 1fr 1fr 1fr; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; box-shadow: var(--shadow-sm); transition: box-shadow .2s; animation: slideIn .4s both; }
+.trow:hover { box-shadow: var(--shadow-md); }
+@keyframes slideIn { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
+.tr-num { background: var(--card-alt); display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted2); border-right: 1px solid var(--border); }
+.tr-cat { padding: 14px 16px; border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; background: var(--card-alt); }
+.tr-cat-icon-row { display: flex; align-items: center; gap: 7px; }
+.tr-cat-icon { font-size: 15px; }
+.tr-cat-name { font-family: 'Source Serif 4', serif; font-size: 13px; font-weight: 700; }
+.tr-cat-desc { font-size: 10.5px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+.tr-cell { padding: 12px 14px; border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px; }
+.tr-cell:last-child { border-right: none; }
+.tr-cell.r-cell { background: var(--red-light); }
+.tr-cell.a-cell { background: var(--amber-light); }
+.tr-cell.g-cell { background: var(--green-light); }
+.tr-cell-head { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; }
+.tr-cell-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.tr-cell-dot.r { background: var(--red-mid); } .tr-cell-dot.a { background: var(--amber-mid); } .tr-cell-dot.g { background: var(--green-mid); }
+.tr-cell-title { font-family: 'DM Mono', monospace; font-size: 8.5px; letter-spacing: .12em; text-transform: uppercase; }
+.tr-cell-title.r { color: var(--red); } .tr-cell-title.a { color: var(--amber); } .tr-cell-title.g { color: var(--green); }
+.chip-list { display: flex; flex-wrap: wrap; gap: 4px; }
+.chip { font-size: 10.5px; padding: 3px 8px; border-radius: 20px; border: 1px solid; line-height: 1.4; }
+.chip.r { background: rgba(184,32,47,.07); color: var(--red-deep); border-color: var(--red-border); }
+.chip.a { background: rgba(138,78,0,.07); color: var(--amber); border-color: var(--amber-border); }
+.chip.g { background: rgba(22,92,48,.07); color: var(--green); border-color: var(--green-border); }
+
+/* ═══════════════════════════════════════════
+   ── TAB 2: EVALUACIÓN ──
+═══════════════════════════════════════════ */
+
+/* PAGE HEADER */
+.page-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 36px 48px 32px; box-shadow: var(--shadow-sm); }
+.ph-inner { max-width: 1160px; margin: 0 auto; display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: end; }
+.ph-kicker { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--red); margin-bottom: 10px; }
+.ph-title { font-family: 'Source Serif 4', serif; font-size: clamp(26px, 3.5vw, 40px); font-weight: 700; line-height: 1.1; letter-spacing: -.02em; }
+.ph-desc { margin-top: 10px; font-size: 13.5px; color: var(--text2); line-height: 1.65; max-width: 560px; }
+.ph-stats { display: flex; gap: 10px; align-items: flex-end; }
+.stat-card { padding: 12px 16px; background: var(--card-alt); border: 1px solid var(--border); border-radius: 10px; text-align: center; min-width: 74px; }
+.sc-num { font-family: 'DM Mono', monospace; font-size: 26px; font-weight: 500; line-height: 1; }
+.sc-num.r { color: var(--red); } .sc-num.a { color: var(--amber-mid); } .sc-num.g { color: var(--green-mid); }
+.sc-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-top: 4px; font-weight: 600; }
+
+/* LEGEND STRIP */
+.legend-strip { max-width: 1160px; margin: 20px auto 0; padding: 0 48px; }
+.ls-inner { display: flex; align-items: stretch; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); overflow: hidden; box-shadow: var(--shadow-sm); }
+.ls-seg { flex: 1; padding: 11px 16px; display: flex; align-items: flex-start; gap: 9px; border-right: 1px solid var(--border); }
+.ls-seg:last-child { border-right: none; }
+.ls-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+.ls-dot.r { background: var(--red-mid); } .ls-dot.a { background: var(--amber-mid); } .ls-dot.g { background: var(--green-mid); }
+.ls-title { font-size: 11.5px; font-weight: 700; }
+.ls-title.r { color: var(--red); } .ls-title.a { color: var(--amber); } .ls-title.g { color: var(--green); }
+.ls-desc { font-size: 11px; color: var(--muted); margin-top: 1px; line-height: 1.4; }
+
+/* FILTER BAR */
+.filter-bar { max-width: 1160px; margin: 16px auto 0; padding: 0 48px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.fl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-right: 4px; }
+.fc { padding: 5px 13px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; cursor: pointer; transition: all .18s; }
+.fc:hover { border-color: var(--border2); color: var(--text2); }
+.fc.on-all   { background: var(--text); border-color: var(--text); color: #fff; }
+.fc.on-none  { background: var(--card-alt); border-color: var(--border2); color: var(--text); }
+.fc.on-red   { background: var(--red-light); border-color: var(--red-border); color: var(--red); }
+.fc.on-amber { background: var(--amber-light); border-color: var(--amber-border); color: var(--amber); }
+.fc.on-green { background: var(--green-light); border-color: var(--green-border); color: var(--green); }
+.fsep { width: 1px; height: 16px; background: var(--border); margin: 0 4px; }
+
+/* EVAL GRID */
+.grid-wrap { max-width: 1160px; margin: 16px auto 130px; padding: 0 48px; }
+.eval-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; }
+
+/* EVAL CARD */
+.ecard { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color .25s, box-shadow .25s, opacity .25s; box-shadow: var(--shadow-sm); position: relative; animation: fadeUp .4s both; }
+.ecard:hover { box-shadow: var(--shadow-md); }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.ecard:nth-child(1){animation-delay:.02s}.ecard:nth-child(2){animation-delay:.04s}.ecard:nth-child(3){animation-delay:.06s}.ecard:nth-child(4){animation-delay:.08s}.ecard:nth-child(5){animation-delay:.10s}.ecard:nth-child(6){animation-delay:.12s}.ecard:nth-child(7){animation-delay:.14s}.ecard:nth-child(8){animation-delay:.16s}.ecard:nth-child(9){animation-delay:.18s}.ecard:nth-child(10){animation-delay:.20s}.ecard:nth-child(11){animation-delay:.22s}.ecard:nth-child(12){animation-delay:.24s}.ecard:nth-child(13){animation-delay:.26s}.ecard:nth-child(14){animation-delay:.28s}.ecard:nth-child(15){animation-delay:.30s}.ecard:nth-child(16){animation-delay:.32s}.ecard:nth-child(17){animation-delay:.34s}.ecard:nth-child(18){animation-delay:.36s}.ecard:nth-child(19){animation-delay:.38s}.ecard:nth-child(20){animation-delay:.40s}.ecard:nth-child(21){animation-delay:.42s}.ecard:nth-child(22){animation-delay:.44s}
+.ecard.dimmed { opacity: .3; pointer-events: none; }
+.ecard::before { content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px; background: var(--border); transition: background .25s; }
+.ecard.sel-red   { border-color: var(--red-border);   box-shadow: 0 0 0 1px var(--red-border),   var(--shadow-md); background: #FFFBFC; }
+.ecard.sel-amber { border-color: var(--amber-border); box-shadow: 0 0 0 1px var(--amber-border), var(--shadow-md); background: #FFFEFC; }
+.ecard.sel-green { border-color: var(--green-border); box-shadow: 0 0 0 1px var(--green-border), var(--shadow-md); background: #FBFEFB; }
+.ecard.sel-red::before   { background: var(--red-mid); }
+.ecard.sel-amber::before { background: var(--amber-mid); }
+.ecard.sel-green::before { background: var(--green-mid); }
+.ecard-top { padding: 15px 18px 11px 22px; display: flex; align-items: flex-start; gap: 12px; }
+.ecard-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; background: var(--bg); flex-shrink: 0; border: 1px solid var(--border); }
+.ecard-meta { flex: 1; }
+.ecard-title { font-family: 'Source Serif 4', serif; font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+.ecard-desc { font-size: 11px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+.ecard-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted2); }
+.sev-row { display: grid; grid-template-columns: 1fr 1fr 1fr; margin: 0 12px 12px 20px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); background: var(--card-alt); }
+.sev { padding: 10px 4px; border: none; background: transparent; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; transition: all .18s; display: flex; flex-direction: column; align-items: center; gap: 4px; border-right: 1px solid var(--border); }
+.sev:last-child { border-right: none; }
+.sev:hover { background: rgba(0,0,0,.03); color: var(--text2); }
+.sev-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted2); transition: all .18s; }
+.sev.act-r { background: var(--red-light); color: var(--red); }
+.sev.act-a { background: var(--amber-light); color: var(--amber); }
+.sev.act-g { background: var(--green-light); color: var(--green); }
+.sev.act-r .sev-dot { background: var(--red-mid); }
+.sev.act-a .sev-dot { background: var(--amber-mid); }
+.sev.act-g .sev-dot { background: var(--green-mid); }
+.ex-toggle { display: flex; align-items: center; justify-content: space-between; padding: 8px 18px 8px 22px; border-top: 1px solid var(--border); cursor: pointer; font-size: 11px; color: var(--muted); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; transition: color .18s, background .18s; user-select: none; }
+.ex-toggle:hover { background: var(--bg); color: var(--text2); }
+.ex-arrow { transition: transform .3s; font-size: 10px; }
+.ex-body { max-height: 0; overflow: hidden; transition: max-height .4s ease; }
+.ex-body.open { max-height: 600px; }
+.ex-content { padding: 8px 18px 14px 22px; }
+.ex-lvl-head { font-family: 'DM Mono', monospace; font-size: 9.5px; letter-spacing: .15em; text-transform: uppercase; margin: 10px 0 4px; display: flex; align-items: center; gap: 6px; }
+.ex-lvl-head::before { content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.ex-lvl-head.r { color: var(--red); } .ex-lvl-head.a { color: var(--amber); } .ex-lvl-head.g { color: var(--green); }
+.ex-item { font-size: 12px; color: var(--text2); line-height: 1.5; padding: 3px 0 3px 14px; border-left: 2px solid var(--border); margin-bottom: 2px; }
+.ecard.sel-red   .ex-item { border-left-color: var(--red-border); }
+.ecard.sel-amber .ex-item { border-left-color: var(--amber-border); }
+.ecard.sel-green .ex-item { border-left-color: var(--green-border); }
+.ex-div { height: 1px; background: var(--border); margin: 5px 0; }
+
+/* BOTTOM BAR */
+.bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 150; background: rgba(255,255,255,.97); backdrop-filter: blur(12px); border-top: 1px solid var(--border); padding: 12px 48px 16px; box-shadow: 0 -4px 20px rgba(0,0,0,.08); transform: translateY(100%); opacity: 0; transition: transform .35s ease, opacity .35s; pointer-events: none; }
+.bottom-bar.visible { transform: translateY(0); opacity: 1; pointer-events: all; }
+.bb-inner { max-width: 1160px; margin: 0 auto; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.bb-seg { flex: 1; min-width: 100px; display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--card-alt); border: 1px solid var(--border); border-radius: 8px; }
+.bb-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.bb-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+.bb-val { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; line-height: 1; margin-top: 1px; }
+.bb-val.r { color: var(--red); } .bb-val.a { color: var(--amber-mid); } .bb-val.g { color: var(--green-mid); }
+
+/* ═══════════════════════════════════════════
+   MODAL (shared)
+═══════════════════════════════════════════ */
+.modal-bg { position: fixed; inset: 0; z-index: 300; background: rgba(20,16,10,.45); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .3s; }
+.modal-bg.open { opacity: 1; pointer-events: all; }
+.modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; max-width: 680px; width: 100%; max-height: 88vh; overflow-y: auto; box-shadow: var(--shadow-lg); transform: translateY(8px) scale(.98); transition: transform .3s ease; }
+.modal-bg.open .modal { transform: translateY(0) scale(1); }
+.modal-head { padding: 26px 32px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; position: sticky; top: 0; background: var(--surface); z-index: 1; border-radius: 16px 16px 0 0; }
+.mh-kicker { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.mh-title { font-family: 'Source Serif 4', serif; font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+.modal-close { width: 30px; height: 30px; background: var(--bg); border: 1px solid var(--border); border-radius: 7px; color: var(--muted); font-size: 13px; cursor: pointer; transition: all .18s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.modal-close:hover { background: var(--border); color: var(--text); }
+.modal-body { padding: 22px 32px 30px; }
+.alert-badge { display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px; border-radius: 10px; border: 1px solid; margin-bottom: 20px; }
+.alert-badge.r { background: var(--red-light); border-color: var(--red-border); }
+.alert-badge.a { background: var(--amber-light); border-color: var(--amber-border); }
+.alert-badge.g { background: var(--green-light); border-color: var(--green-border); }
+.ab-icon { font-size: 24px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
+.ab-title { font-size: 14px; font-weight: 700; }
+.ab-title.r { color: var(--red); } .ab-title.a { color: var(--amber); } .ab-title.g { color: var(--green); }
+.ab-sub { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.5; }
+.gauge-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.gc { padding: 14px; border-radius: 9px; border: 1px solid; text-align: center; }
+.gc.r { background: var(--red-light); border-color: var(--red-border); }
+.gc.a { background: var(--amber-light); border-color: var(--amber-border); }
+.gc.g { background: var(--green-light); border-color: var(--green-border); }
+.gc-num { font-family: 'DM Mono', monospace; font-size: 38px; font-weight: 500; line-height: 1; }
+.gc-num.r { color: var(--red); } .gc-num.a { color: var(--amber-mid); } .gc-num.g { color: var(--green-mid); }
+.gc-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-top: 3px; font-weight: 600; }
+.ms-title { font-family: 'DM Mono', monospace; font-size: 9.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+.cat-list { display: flex; flex-direction: column; gap: 5px; margin-bottom: 18px; }
+.cli { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--card-alt); border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-weight: 500; }
+.cli-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.cli-name { flex: 1; }
+.cli-tag { font-family: 'DM Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: .1em; padding: 3px 7px; border-radius: 4px; }
+.cli-tag.r { background: var(--red-light); color: var(--red); border: 1px solid var(--red-border); }
+.cli-tag.a { background: var(--amber-light); color: var(--amber); border: 1px solid var(--amber-border); }
+.cli-tag.g { background: var(--green-light); color: var(--green); border: 1px solid var(--green-border); }
+.reco-box { border-radius: 10px; border: 1px solid; padding: 14px 18px; margin-bottom: 14px; }
+.reco-box.r { background: var(--red-light); border-color: var(--red-border); }
+.reco-box.a { background: var(--amber-light); border-color: var(--amber-border); }
+.reco-box.g { background: var(--green-light); border-color: var(--green-border); }
+.reco-head { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 5px; }
+.reco-box.r .reco-head { color: var(--red); } .reco-box.a .reco-head { color: var(--amber); } .reco-box.g .reco-head { color: var(--green); }
+.reco-box p { font-size: 13px; line-height: 1.7; color: var(--text2); }
+.legal-box { padding: 12px 16px; background: var(--card-alt); border: 1px solid var(--border); border-radius: 9px; }
+.legal-title { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.legal-box p { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+.site-footer { background: var(--surface); border-top: 1px solid var(--border); }
+.footer-inner { max-width: 1100px; margin: 0 auto; padding: 24px 48px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.footer-brand { font-family: 'Source Serif 4', serif; font-size: 16px; font-weight: 700; }
+.footer-brand b { color: var(--red); }
+.footer-note { font-size: 11.5px; color: var(--muted); max-width: 460px; line-height: 1.6; }
+.footer-badge { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted2); border: 1px solid var(--border); border-radius: 5px; padding: 4px 10px; }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .gtb-inner { padding: 0 16px; }
+  .gtb-right { display: none; }
+  .hero-inner { grid-template-columns: 1fr; padding: 32px 16px 28px; }
+  .sema-graphic { display: none; }
+  .level-cards, .section-div, .tbl-header, .legend-strip, .filter-bar, .grid-wrap, .footer-inner { padding-left: 16px; padding-right: 16px; }
+  .tbl-body { padding-left: 16px; padding-right: 16px; }
+  .lc-grid { grid-template-columns: 1fr; }
+  .trow, .th-inner { grid-template-columns: 1fr; }
+  .tr-num, .th-cell:first-child { display: none; }
+  .tr-cell, .tr-cat { border-right: none; border-bottom: 1px solid var(--border); }
+  .page-header { padding: 28px 16px 24px; }
+  .ph-inner { grid-template-columns: 1fr; }
+  .eval-grid { grid-template-columns: 1fr; }
+  .bottom-bar { padding: 10px 16px 14px; }
+  .modal-head, .modal-body { padding-left: 20px; padding-right: 20px; }
+  .tab-btn { padding: 0 14px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ GLOBAL TOPBAR ═══════════════════ -->
+<div class="global-topbar">
+  <div class="gtb-inner">
+
+    <!-- Brand -->
+    <div class="gtb-brand">
+      <div class="gtb-logo">
+        <div class="gl-dot r"></div>
+        <div class="gl-dot a"></div>
+        <div class="gl-dot g"></div>
+      </div>
+      <div class="gtb-title-wrap">
+        <div class="gtb-name">Abus<b>ó</b>metro RFE</div>
+        <div class="gtb-sub">Herramienta de Identificación</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="gtb-tabs">
+      <button class="tab-btn active" id="tabBtn-semaforo" onclick="switchTab('semaforo')">
+        <span class="tab-icon">🚦</span> Semáforo de Abuso
+      </button>
+      <button class="tab-btn" id="tabBtn-evaluacion" onclick="switchTab('evaluacion')">
+        <span class="tab-icon">📋</span> Evaluación
+        <span class="tab-badge" id="evalBadge"></span>
+      </button>
+    </div>
+
+    <!-- Eval controls (only visible on evaluacion tab) -->
+    <div class="gtb-right" id="gtbRight" style="display:none">
+      <div class="prog-wrap">
+        <svg class="prog-ring" width="30" height="30" viewBox="0 0 36 36">
+          <circle class="ring-track" cx="18" cy="18" r="15" fill="none" stroke-width="3"/>
+          <circle class="ring-fill" id="ringFill" cx="18" cy="18" r="15" fill="none" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <div class="prog-label"><strong id="progNum">0</strong>&thinsp;/ 22</div>
+      </div>
+      <button class="btn btn-outline" onclick="resetAll()">↺ Reiniciar</button>
+      <button class="btn btn-primary" id="btnReport" onclick="openModal()" disabled>Ver Evaluación</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════ PANEL 1: SEMÁFORO ═══════════════════ -->
+<div class="tab-panel active" id="panel-semaforo">
+
+  <div class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-eyebrow">Semáforo de Abuso · Material de Capacitación · RFE</div>
+        <h1 class="hero-title">Abus<span>ó</span>metro<br>Semáforo</h1>
+        <p class="hero-sub">Guía visual para la <strong>identificación y clasificación de tipos de abuso</strong> por nivel de severidad. Referencia para trainings, capacitaciones y sesiones de equipo. Para evaluar un caso activo, usa la pestaña <strong>Evaluación</strong>.</p>
+      </div>
+      <div class="sema-graphic">
+        <div class="sema-pole">
+          <div class="sema-circle r"></div>
+          <div class="sema-circle a"></div>
+          <div class="sema-circle g"></div>
+        </div>
+        <div class="sema-lbl">Semáforo<br>de Abuso</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="level-cards">
+    <div class="lc-grid">
+      <div class="lc r">
+        <div class="lc-head"><div class="lc-dot-big"></div><div class="lc-tag">Nivel Rojo</div></div>
+        <div class="lc-body">
+          <div class="lc-name">Peligro Inmediato</div>
+          <div class="lc-desc">Riesgo actual de daño físico severo o de vida. El abuso es grave, frecuente y puede existir una escalada activa en curso.</div>
+          <div class="lc-action">→ Activar protocolo de crisis</div>
+        </div>
+      </div>
+      <div class="lc a">
+        <div class="lc-head"><div class="lc-dot-big"></div><div class="lc-tag">Nivel Ámbar</div></div>
+        <div class="lc-body">
+          <div class="lc-name">Riesgo Elevado</div>
+          <div class="lc-desc">Patrón de abuso activo y sostenido. El daño es continuo y sistemático y puede escalar en cualquier momento.</div>
+          <div class="lc-action">→ Intervención especializada urgente</div>
+        </div>
+      </div>
+      <div class="lc g">
+        <div class="lc-head"><div class="lc-dot-big"></div><div class="lc-tag">Nivel Verde</div></div>
+        <div class="lc-body">
+          <div class="lc-name">Indicadores Presentes</div>
+          <div class="lc-desc">Señales de alerta identificadas. Requiere seguimiento cercano, evaluación profunda y plan preventivo.</div>
+          <div class="lc-action">→ Seguimiento y plan preventivo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-div">
+    <div class="sd-inner">
+      <div class="sd-line"></div>
+      <div class="sd-label">22 Categorías · Indicadores por Nivel de Severidad</div>
+      <div class="sd-line"></div>
+    </div>
+  </div>
+
+  <div class="tbl-header">
+    <div class="th-inner">
+      <div class="th-cell">#</div>
+      <div class="th-cell cat">Categoría</div>
+      <div class="th-cell r">● Rojo — Peligro Inmediato</div>
+      <div class="th-cell a">● Ámbar — Riesgo Elevado</div>
+      <div class="th-cell g">● Verde — A Vigilar</div>
+    </div>
+  </div>
+
+  <div class="tbl-body" id="tblBody"></div>
+
+  <div class="site-footer">
+    <div class="footer-inner">
+      <div><div class="footer-brand">Abus<b>ó</b>metro RFE</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Material de Capacitación Interna</div></div>
+      <div class="footer-note">Esta herramienta es de apoyo para la identificación inicial de indicadores de violencia. No sustituye la evaluación clínica especializada ni los protocolos institucionales. Todo resultado debe documentarse y revisarse con supervisión.</div>
+      <div class="footer-badge">Uso Interno · RFE</div>
+    </div>
+  </div>
+
+</div><!-- /panel-semaforo -->
+
+
+<!-- ═══════════════════ PANEL 2: EVALUACIÓN ═══════════════════ -->
+<div class="tab-panel" id="panel-evaluacion">
+
+  <div class="page-header">
+    <div class="ph-inner">
+      <div>
+        <div class="ph-kicker">Evaluación en Entrevista · Uso Interno RFE</div>
+        <h1 class="ph-title">Evaluación de Indicadores<br>de Violencia y Abuso</h1>
+        <p class="ph-desc">Selecciona el nivel de severidad identificado en cada categoría. Expande las tarjetas para consultar conductas específicas por nivel.</p>
+      </div>
+      <div class="ph-stats">
+        <div class="stat-card"><div class="sc-num r" id="statR">0</div><div class="sc-lbl">Rojo</div></div>
+        <div class="stat-card"><div class="sc-num a" id="statA">0</div><div class="sc-lbl">Ámbar</div></div>
+        <div class="stat-card"><div class="sc-num g" id="statG">0</div><div class="sc-lbl">Verde</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend-strip">
+    <div class="ls-inner">
+      <div class="ls-seg"><div class="ls-dot r"></div><div><div class="ls-title r">Rojo — Peligro Inmediato</div><div class="ls-desc">Riesgo actual de daño severo o de vida. Activar protocolo de crisis.</div></div></div>
+      <div class="ls-seg"><div class="ls-dot a"></div><div><div class="ls-title a">Ámbar — Riesgo Elevado</div><div class="ls-desc">Patrón activo y sostenido. Intervención especializada urgente.</div></div></div>
+      <div class="ls-seg"><div class="ls-dot g"></div><div><div class="ls-title g">Verde — Indicadores Presentes</div><div class="ls-desc">Señales de alerta. Seguimiento cercano y plan preventivo.</div></div></div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <span class="fl">Filtrar:</span>
+    <button class="fc on-all" id="fc-all"   onclick="setFilter('all')" id="fcAll">Todas (22)</button>
+    <div class="fsep"></div>
+    <button class="fc" id="fc-none"  onclick="setFilter('none')">Sin evaluar</button>
+    <button class="fc" id="fc-red"   onclick="setFilter('red')">● Rojo</button>
+    <button class="fc" id="fc-amber" onclick="setFilter('amber')">● Ámbar</button>
+    <button class="fc" id="fc-green" onclick="setFilter('green')">● Verde</button>
+  </div>
+
+  <div class="grid-wrap">
+    <div class="eval-grid" id="evalGrid"></div>
+  </div>
+
+</div><!-- /panel-evaluacion -->
+
+
+<!-- BOTTOM BAR (eval) -->
+<div class="bottom-bar" id="bottomBar">
+  <div class="bb-inner">
+    <div class="bb-seg"><div class="bb-dot" style="background:var(--red-mid)"></div><div><div class="bb-lbl">Rojo · Peligro</div><div class="bb-val r" id="bbR">0</div></div></div>
+    <div class="bb-seg"><div class="bb-dot" style="background:var(--amber-mid)"></div><div><div class="bb-lbl">Ámbar · Riesgo</div><div class="bb-val a" id="bbA">0</div></div></div>
+    <div class="bb-seg"><div class="bb-dot" style="background:var(--green-mid)"></div><div><div class="bb-lbl">Verde · Vigilar</div><div class="bb-val g" id="bbG">0</div></div></div>
+    <button class="btn btn-outline" onclick="resetAll()">↺ Reiniciar</button>
+    <button class="btn btn-primary" onclick="openModal()">Ver Evaluación →</button>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg" onclick="closeOut(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <div><div class="mh-kicker" id="mKicker"></div><div class="mh-title">Resumen de Indicadores</div></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+
+<script>
+/* ═══════════════ TAB LOGIC ═══════════════ */
+function switchTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.getElementById('tabBtn-' + name).classList.add('active');
+
+  const right = document.getElementById('gtbRight');
+  right.style.display = name === 'evaluacion' ? 'flex' : 'none';
+
+  // Show/hide bottom bar based on tab
+  const bar = document.getElementById('bottomBar');
+  if (name !== 'evaluacion') {
+    bar.classList.remove('visible');
+  } else {
+    const c = counts();
+    bar.classList.toggle('visible', c.total > 0);
+  }
+
+  // scroll to top smoothly
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ═══════════════ DATA ═══════════════ */
+const allData = [
+  {id:'fisico', icon:'🤛', name:'Físico',
+   desc:'Uso de fuerza corporal para causar daño, dolor o sometimiento.',
+   r:['Estrangular / presionar el cuello','Quemar con cigarrillos u objetos calientes','Ahogar en agua','Sujetar contra la pared con fuerza / amarrar manos o pies','Lanzar objetos directamente al cuerpo','Empujar por escaleras','Arrastrar por el suelo'],
+   a:['Golpear, empujar, abofetear, patear','Tirar del cabello','Morder / pellizcar con fuerza','Aventar contra muebles o paredes','Sacudir violentamente'],
+   g:['Forzar a permanecer en posiciones incómodas','Empujones o contacto físico intimidante sin lesión']},
+
+  {id:'psicologico', icon:'🧠', name:'Psicológico',
+   desc:'Conductas destinadas a dominar mentalmente, generar confusión o dependencia emocional.',
+   r:['Gaslighting: negar hechos evidentes de forma sostenida','Amenazar con internarla psiquiátricamente','Crear escenarios ficticios para confundirla sistemáticamente','Culparla por las reacciones violentas del agresor'],
+   a:['Decir que está "loca" o que exagera','Alternar afecto extremo y rechazo total','Interrogar por horas sin descanso','Fingir abandono para manipular','Crear competencia imaginaria con otras mujeres'],
+   g:['Promesas falsas repetidas sin cumplimiento','Cambiar reglas constantemente para generar inseguridad']},
+
+  {id:'emocional', icon:'💔', name:'Emocional',
+   desc:'Ataques a la autoestima, dignidad e identidad personal.',
+   r:['Decir repetidamente que nadie la querrá','Decir que es mala madre de forma sistemática','Burlarse de traumas pasados'],
+   a:['Minimizar logros personales','Invalidar sus sentimientos','Comparar negativamente con ex parejas','Reírse cuando llora','Ignorarla deliberadamente por periodos largos'],
+   g:['Criticar su personalidad de forma recurrente','Ridiculizar sus metas personales']},
+
+  {id:'sexual', icon:'🚫', name:'Sexual',
+   desc:'Conductas sexuales sin consentimiento o mediante coerción.',
+   r:['Violación conyugal / forzar relaciones sexuales','Forzar embarazo / sabotear anticonceptivos','Forzar aborto','Grabar actos íntimos sin consentimiento','Forzar contacto sexual cuando está dormida o medicada'],
+   a:['Obligar a prácticas sexuales no deseadas','Castigar o represaliar si se niega','Retirar preservativo sin consentimiento (stealthing)','Tocar partes íntimas sin permiso'],
+   g:['Obligar a enviar fotos íntimas bajo presión','Exigir sexo como condición de apoyo económico o afecto']},
+
+  {id:'economico', icon:'💰', name:'Económico / Financiero',
+   desc:'Control o explotación de recursos económicos para generar dependencia.',
+   r:['Crear deudas a su nombre sin consentimiento','Usar su información para préstamos fraudulentos','Declarar impuestos a su nombre sin consentimiento','Retener documentos fiscales como control'],
+   a:['Retener dinero / quitarle el salario','Prohibir trabajar o buscar empleo','Sabotear su empleo activamente','Cancelar tarjetas / negar acceso a cuentas bancarias'],
+   g:['Controlar todos los gastos con rendición forzada','Ocultar deudas o situación financiera real','Retener manutención de los hijos']},
+
+  {id:'coercitivo', icon:'⛓️', name:'Control Coercitivo',
+   desc:'Patrón continuo de dominación que restringe autonomía y libertad personal.',
+   r:['Exigir reportes constantes de ubicación con consecuencias','Imponer reglas estrictas con castigos por incumplimiento','Supervisar todos los movimientos de forma permanente'],
+   a:['Decidir cómo debe vestirse / prohibir maquillaje','Controlar alimentación y horarios diarios','Revisar recibos y controlar todos los gastos','Exigir permiso para actividades básicas del día a día'],
+   g:['Prohibir hobbies o actividades personales','Controlar publicaciones en redes sociales']},
+
+  {id:'amenazas', icon:'⚠️', name:'Amenazas',
+   desc:'Expresiones directas o indirectas de daño para intimidar o controlar.',
+   r:['Amenazas directas de muerte','Amenazar con matar a familiares o seres queridos','Amenazar con incendiar la casa','Decir "te voy a arruinar la vida"','Amenazas explícitas relacionadas con los hijos'],
+   a:['Amenazar con deportación / reportarla a inmigración','Amenazar con quitarle la custodia de los hijos','Amenazar con suicidarse para manipular sus decisiones'],
+   g:['Amenazar con destruir su reputación','Amenazar con revelar información privada o comprometedora']},
+
+  {id:'tecno', icon:'📱', name:'Tecnológico / Digital',
+   desc:'Uso de tecnología para vigilar, acosar o controlar.',
+   r:['Instalar spyware en dispositivos sin consentimiento','Activar GPS o rastreo sin consentimiento','Acceder a cámara o micrófono del dispositivo','Publicar fotos íntimas sin consentimiento','Suplantar identidad digital'],
+   a:['Hackear correo electrónico o cuentas personales','Crear cuentas falsas para vigilarla o acosarla','Monitorear historial de navegación y mensajes'],
+   g:['Cambiar contraseñas para bloquear su acceso','Revisar redes sociales sin permiso','Enviar mensajes intimidantes desde dispositivos o cuentas propias']},
+
+  {id:'legal', icon:'⚖️', name:'Legal / Migratorio',
+   desc:'Uso del sistema legal o estatus migratorio como herramienta de control.',
+   r:['Amenazar activamente con llamar a inmigración / ICE','Retener pasaporte y documentos de identidad','Presentar denuncias falsas ante autoridades','Acusaciones falsas de fraude migratorio'],
+   a:['Retirar peticiones migratorias en trámite','Manipular o ignorar órdenes judiciales de protección','Negarse a firmar documentos legales necesarios'],
+   g:['Mentir sobre el estatus de trámites migratorios o legales','Esconder actas de nacimiento de los hijos']},
+
+  {id:'elder', icon:'👴', name:'Elder Abuse',
+   desc:'Abuso dirigido hacia persona adulta mayor dentro del entorno familiar.',
+   r:['Negar atención médica urgente al adulto mayor','Intimidar para obtener bienes, herencia o poder notarial'],
+   a:['Controlar o apropiarse de las finanzas del adulto mayor','Manipular sus recursos económicos sin autorización','Aislarlo de familiares y red de apoyo'],
+   g:['Descuidar necesidades básicas de alimentación, higiene o salud del adulto mayor']},
+
+  {id:'aislamiento', icon:'🚪', name:'Aislamiento',
+   desc:'Separación intencional de redes de apoyo.',
+   r:['Mudarse únicamente para alejarla de su red de apoyo','Interceptar o bloquear correspondencia','Negar acceso a teléfono propio'],
+   a:['Prohibir hablar con familia o amigos','Impedir asistir a reuniones sociales o comunitarias','Supervisar y controlar todas las llamadas','Controlar acceso a internet'],
+   g:['Limitar o quitar acceso a transporte independiente','Impedir que aprenda inglés u otro idioma','Impedir asistir a iglesia, grupos de apoyo o espacios comunitarios']},
+
+  {id:'intimidacion', icon:'😨', name:'Intimidación / Manipulación',
+   desc:'Conductas diseñadas para generar sumisión mediante presión emocional o conductual.',
+   r:['Manipulación religiosa intensa para justificar el control o el abuso','Fingir arrepentimiento de forma cíclica para reiniciar el ciclo de abuso'],
+   a:['Silencio prolongado intencional como castigo','Usar la culpa de forma sistemática para controlar','Presión constante y vigilancia intimidante sin tregua'],
+   g:['Manipular a través de terceros para ejercer presión indirecta']},
+
+  {id:'celos', icon:'👁️', name:'Celos',
+   desc:'Conductas motivadas por posesividad obsesiva.',
+   r:['Instalar rastreadores GPS en vehículo o dispositivos','Seguir físicamente / vigilar en el trabajo de forma constante'],
+   a:['Acusaciones constantes de infidelidad sin fundamento','Revisar teléfono / exigir contraseñas de todas las cuentas','Borrar contactos sin permiso','Provocar escenas públicas por celos'],
+   g:['Interrogar intensamente tras cualquier interacción social']},
+
+  {id:'degradacion', icon:'🗑️', name:'Degradación',
+   desc:'Conductas destinadas a disminuir el valor personal o la dignidad.',
+   r:['Desacreditarla ante autoridades, empleadores o terceros','Comentarios sexuales degradantes de forma sistemática'],
+   a:['Burlas sobre apariencia física, acento o nivel educativo','Ridiculizar sus capacidades intelectuales o profesionales','Comparaciones humillantes y constantes'],
+   g:['Decir que "no sirve para nada" de forma recurrente']},
+
+  {id:'humillacion', icon:'😳', name:'Humillación',
+   desc:'Actos destinados a avergonzar pública o privadamente.',
+   r:['Exponer secretos íntimos en público de forma deliberada','Difundir información privada o comprometedora','Humillar gravemente frente a los hijos'],
+   a:['Ridiculizar frente a hijos, familia o amigos','Gritarle o insultarla en lugares públicos','Provocar escenas públicas para avergonzarla'],
+   g:['Publicar indirectas humillantes o comentarios degradantes en redes sociales']},
+
+  {id:'verbal', icon:'🗣️', name:'Verbal',
+   desc:'Agresión expresada exclusivamente mediante palabras.',
+   r:['Insultos degradantes y sistemáticos','Lenguaje deshumanizante de forma habitual','Amenazas verbales directas de daño físico'],
+   a:['Gritos constantes en el hogar','Apodos degradantes de uso habitual','Comentarios ofensivos y hirientes repetitivos'],
+   g:['Burlas verbales frecuentes','Lenguaje intimidante o despectivo en el tono']},
+
+  {id:'miedo', icon:'🔪', name:'Actos para Crear Miedo',
+   desc:'Conductas destinadas a mantener terror constante sin necesariamente causar contacto físico.',
+   r:['Manipular armas de fuego frente a ella','Limpiar la pistola mientras la mira fijamente','Disparar al aire o en su presencia','Destruir objetos personales significativos frente a ella'],
+   a:['Mostrar cuchillos / dejar armas blancas visibles como advertencia','Romper botellas / golpear paredes / lanzar objetos cerca de ella','Conducir de manera peligrosa y temeraria para generar terror'],
+   g:['Bloquear puertas durante discusiones','Miradas prolongadas e intimidantes','Susurrar amenazas al oído','Aparecer inesperadamente en lugares que frecuenta']},
+
+  {id:'actividades', icon:'🎭', name:'Control de Actividades y Relaciones',
+   desc:'Restricción directa de interacciones sociales y decisiones personales.',
+   r:['Prohibir amistades específicas y controlar con quién puede relacionarse','Decidir con quién puede hablar o pasar tiempo','Controlar y limitar todas las llamadas telefónicas'],
+   a:['Vigilar activamente en su lugar de trabajo','Impedir que aprenda a conducir para mantener dependencia','Revisar conversaciones y mensajes privados'],
+   g:['Controlar el acceso a internet','Decidir qué puede vestir o qué puede publicar en redes']},
+
+  {id:'privacion', icon:'🍽️', name:'Privación de Necesidades Básicas',
+   desc:'Negación de recursos esenciales para sobrevivencia o bienestar.',
+   r:['Negar atención médica necesaria','Apagar servicios básicos: cortar electricidad, agua o calefacción','Impedir dormir como castigo'],
+   a:['Negar comida o limitar severamente la alimentación','Negar acceso a medicinas o tratamientos','Restringir el uso del baño'],
+   g:['Negar productos de higiene personal','Impedir acceso a transporte para movilizarse']},
+
+  {id:'detencion', icon:'🔒', name:'Detención Forzada',
+   desc:'Retención física o confinamiento contra su voluntad.',
+   r:['Encerrar con llave dentro del hogar','Retener físicamente con violencia para impedir la salida','Quitar llaves del auto como mecanismo de control'],
+   a:['Bloquear salidas físicamente con el propio cuerpo','Sentarse frente a la puerta principal para impedir que salga','Encerrarla dentro o fuera del hogar'],
+   g:['Retener teléfono o documentos temporalmente para limitar su autonomía']},
+
+  {id:'terceros', icon:'👥', name:'Abuso a Través de Terceros',
+   desc:'Uso de otras personas para intimidar, manipular o controlar.',
+   r:['Usar abogados o líderes comunitarios o religiosos para intimidarla legalmente','Difundir rumores falsos de forma sistemática para dañar su reputación'],
+   a:['Manipular a los hijos para que actúen en su contra','Involucrar a familiares del agresor para ejercer presión colectiva'],
+   g:['Usar amigos o conocidos para espiarla o vigilarla','Enviar mensajes intimidantes a través de terceros']},
+
+  {id:'hijos', icon:'👶', name:'Abuso hacia los Hijos',
+   desc:'Conductas dirigidas a los hijos para causar daño o ejercer control sobre la víctima.',
+   r:['Golpear a los hijos frente a la madre','Amenazar con llevárselos o con quitarle la custodia permanentemente'],
+   a:['Manipular a los hijos emocionalmente para que rechacen a la madre','Exponerlos deliberadamente a episodios de violencia doméstica'],
+   g:['Usar las visitas o la custodia compartida para hostigar a la madre','Dañarlos emocionalmente para afectar a la madre','Gritarles violentamente como forma de presión hacia ella']},
+];
+
+/* ═══════════════ BUILD INFOGRAPHIC TABLE ═══════════════ */
+function buildTable() {
+  const body = document.getElementById('tblBody');
+  allData.forEach((row, i) => {
+    const tr = document.createElement('div');
+    tr.className = 'trow';
+    tr.style.animationDelay = (i * .04) + 's';
+    const rc = row.r.map(e => `<span class="chip r">${e}</span>`).join('');
+    const ac = row.a.map(e => `<span class="chip a">${e}</span>`).join('');
+    const gc = row.g.map(e => `<span class="chip g">${e}</span>`).join('');
+    tr.innerHTML = `
+      <div class="tr-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="tr-cat">
+        <div class="tr-cat-icon-row"><span class="tr-cat-icon">${row.icon}</span><span class="tr-cat-name">${row.name}</span></div>
+        <div class="tr-cat-desc">${row.desc}</div>
+      </div>
+      <div class="tr-cell r-cell"><div class="tr-cell-head"><div class="tr-cell-dot r"></div><div class="tr-cell-title r">Peligro</div></div><div class="chip-list">${rc}</div></div>
+      <div class="tr-cell a-cell"><div class="tr-cell-head"><div class="tr-cell-dot a"></div><div class="tr-cell-title a">Riesgo</div></div><div class="chip-list">${ac}</div></div>
+      <div class="tr-cell g-cell"><div class="tr-cell-head"><div class="tr-cell-dot g"></div><div class="tr-cell-title g">Vigilar</div></div><div class="chip-list">${gc}</div></div>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+/* ═══════════════ BUILD EVAL GRID ═══════════════ */
+const state = {}; const openEx = {}; let filter = 'all';
+allData.forEach(c => { state[c.id] = null; openEx[c.id] = false; });
+
+function buildGrid() {
+  const grid = document.getElementById('evalGrid');
+  grid.innerHTML = '';
+  allData.forEach((cat, i) => {
+    const card = document.createElement('div');
+    card.className = 'ecard'; card.id = 'card-' + cat.id;
+    const ex = [
+      `<div class="ex-lvl-head r">Peligro Inmediato — Nivel Rojo</div>`,
+      ...cat.r.map(e => `<div class="ex-item">${e}</div>`),
+      `<div class="ex-div"></div>`,
+      `<div class="ex-lvl-head a">Riesgo Elevado — Nivel Ámbar</div>`,
+      ...cat.a.map(e => `<div class="ex-item">${e}</div>`),
+      `<div class="ex-div"></div>`,
+      `<div class="ex-lvl-head g">A Vigilar — Nivel Verde</div>`,
+      ...cat.g.map(e => `<div class="ex-item">${e}</div>`),
+    ].join('');
+    card.innerHTML = `
+      <div class="ecard-top">
+        <div class="ecard-icon">${cat.icon}</div>
+        <div class="ecard-meta"><div class="ecard-title">${cat.name}</div><div class="ecard-desc">${cat.desc}</div></div>
+        <div class="ecard-num">${String(i+1).padStart(2,'0')}</div>
+      </div>
+      <div class="sev-row">
+        <button class="sev" data-level="red"   onclick="pick('${cat.id}','red',this)"><span class="sev-dot"></span>Rojo</button>
+        <button class="sev" data-level="amber" onclick="pick('${cat.id}','amber',this)"><span class="sev-dot"></span>Ámbar</button>
+        <button class="sev" data-level="green" onclick="pick('${cat.id}','green',this)"><span class="sev-dot"></span>Verde</button>
+      </div>
+      <div class="ex-toggle" onclick="toggleEx('${cat.id}')">
+        <span>Ver conductas específicas</span>
+        <span class="ex-arrow" id="arr-${cat.id}">▾</span>
+      </div>
+      <div class="ex-body" id="exb-${cat.id}"><div class="ex-content">${ex}</div></div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function pick(id, level) {
+  const card = document.getElementById('card-' + id);
+  if (state[id] === level) {
+    state[id] = null; card.className = 'ecard';
+    card.querySelectorAll('.sev').forEach(b => b.className = 'sev');
+  } else {
+    state[id] = level; card.className = `ecard sel-${level}`;
+    card.querySelectorAll('.sev').forEach(b => {
+      b.className = 'sev';
+      if (b.dataset.level === level) b.className = `sev act-${level[0]}`;
+    });
+  }
+  updateUI(); applyFilter();
+}
+
+function toggleEx(id) {
+  openEx[id] = !openEx[id];
+  document.getElementById('exb-' + id).classList.toggle('open', openEx[id]);
+  document.getElementById('arr-' + id).style.transform = openEx[id] ? 'rotate(180deg)' : '';
+}
+
+function counts() {
+  const c = {red:0,amber:0,green:0,total:0};
+  Object.values(state).forEach(v => { if(v) { c[v]++; c.total++; }});
+  return c;
+}
+
+function updateUI() {
+  const c = counts();
+  ['statR','statA','statG'].forEach((id,i) => {
+    document.getElementById(id).textContent = [c.red, c.amber, c.green][i];
+  });
+  ['bbR','bbA','bbG'].forEach((id,i) => {
+    document.getElementById(id).textContent = [c.red, c.amber, c.green][i];
+  });
+  document.getElementById('progNum').textContent = c.total;
+
+  const ring = document.getElementById('ringFill');
+  ring.style.strokeDashoffset = 94.2 - (c.total / 22) * 94.2;
+  ring.style.stroke = c.red > 0 ? 'var(--red)' : c.amber > 0 ? 'var(--amber-mid)' : 'var(--green-mid)';
+
+  // bottom bar only visible on eval tab
+  const isEval = document.getElementById('panel-evaluacion').classList.contains('active');
+  document.getElementById('bottomBar').classList.toggle('visible', isEval && c.total > 0);
+  document.getElementById('btnReport').disabled = c.total === 0;
+
+  // badge on tab
+  const badge = document.getElementById('evalBadge');
+  if (c.total > 0) {
+    badge.textContent = c.total;
+    badge.classList.add('visible');
+  } else {
+    badge.classList.remove('visible');
+  }
+}
+
+function setFilter(f) {
+  filter = f;
+  document.querySelectorAll('.fc').forEach(b => {
+    b.className = 'fc';
+    if (b.id === 'fc-' + f) b.className = `fc on-${f}`;
+  });
+  applyFilter();
+}
+
+function applyFilter() {
+  allData.forEach(cat => {
+    const card = document.getElementById('card-' + cat.id);
+    let show = true;
+    if (filter === 'none') show = !state[cat.id];
+    else if (filter !== 'all') show = state[cat.id] === filter;
+    card.classList.toggle('dimmed', !show);
+  });
+}
+
+function resetAll() {
+  allData.forEach(c => {
+    state[c.id] = null;
+    const card = document.getElementById('card-' + c.id);
+    card.className = 'ecard';
+    card.querySelectorAll('.sev').forEach(b => b.className = 'sev');
+  });
+  updateUI(); setFilter('all');
+}
+
+function openModal() {
+  const c = counts(); if (!c.total) return;
+  const red   = allData.filter(x => state[x.id] === 'red');
+  const amber = allData.filter(x => state[x.id] === 'amber');
+  const green = allData.filter(x => state[x.id] === 'green');
+  let aClass, aIcon, aTitle, aDesc, reco;
+  if (c.red >= 3)           { aClass='r'; aIcon='🚨'; aTitle='Alerta Máxima — Riesgo Crítico de Vida'; aDesc=`Se identificaron ${c.red} indicadores de peligro inmediato en múltiples categorías.`; reco='La seguridad de la cliente es una emergencia activa. Activar protocolo de crisis de forma inmediata. Contactar a supervisión, documentar exhaustivamente todos los indicadores y garantizar acceso a recursos de emergencia: líneas de crisis 24 horas, refugios y órdenes de protección.'; }
+  else if (c.red>=1||c.amber>=4) { aClass='r'; aIcon='🔴'; aTitle='Alerta Alta — Intervención Urgente Requerida'; aDesc=`Presencia de indicadores de alto riesgo (${c.red} rojo · ${c.amber} ámbar).`; reco='Se requiere intervención especializada urgente. Derivar al equipo de manejo de casos avanzado. Elaborar plan de seguridad individualizado con la cliente. Documentar exhaustivamente y programar seguimiento en menos de una semana.'; }
+  else if (c.amber >= 2)    { aClass='a'; aIcon='🟡'; aTitle='Alerta Media — Patrón de Abuso Activo'; aDesc=`Se identificó un patrón de abuso activo en ${c.amber} categorías de riesgo elevado.`; reco='Se identifica un patrón de abuso activo y sostenido. Continuar con evaluación profunda en esta sesión. Ofrecer plan de seguridad básico, conectar con recursos especializados y programar seguimiento en 1 a 2 semanas. Documentar la evolución de cada indicador.'; }
+  else                      { aClass='g'; aIcon='🟢'; aTitle='Nivel Vigilancia — Seguimiento Cercano Requerido'; aDesc='Se detectan indicadores presentes que requieren atención y monitoreo continuo.'; reco='Se detectan indicadores presentes sin patrón de crisis aguda documentado. Mantener seguimiento cercano, proporcionar información sobre derechos y recursos, y reevaluar en la próxima sesión. La educación preventiva es fundamental en este momento.'; }
+
+  const renderList = (arr, cls) => arr.map(cat => `
+    <div class="cli">
+      <div class="cli-dot" style="background:var(--${cls==='r'?'red-mid':cls==='a'?'amber-mid':'green-mid'})"></div>
+      <div class="cli-name">${cat.icon} ${cat.name}</div>
+      <div class="cli-tag ${cls}">${cls==='r'?'Peligro':cls==='a'?'Riesgo':'Vigilar'}</div>
+    </div>`).join('');
+
+  document.getElementById('mKicker').textContent = `${c.total} categorías evaluadas · ${new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'})}`;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="alert-badge ${aClass}"><div class="ab-icon">${aIcon}</div><div><div class="ab-title ${aClass}">${aTitle}</div><div class="ab-sub">${aDesc}</div></div></div>
+    <div class="gauge-row">
+      <div class="gc r"><div class="gc-num r">${c.red}</div><div class="gc-lbl">Rojo · Peligro</div></div>
+      <div class="gc a"><div class="gc-num a">${c.amber}</div><div class="gc-lbl">Ámbar · Riesgo</div></div>
+      <div class="gc g"><div class="gc-num g">${c.green}</div><div class="gc-lbl">Verde · Vigilar</div></div>
+    </div>
+    ${red.length   ? `<div class="ms-title">Indicadores de peligro inmediato (${red.length})</div><div class="cat-list">${renderList(red,'r')}</div>` : ''}
+    ${amber.length ? `<div class="ms-title">Indicadores de riesgo elevado (${amber.length})</div><div class="cat-list">${renderList(amber,'a')}</div>` : ''}
+    ${green.length ? `<div class="ms-title">Indicadores a vigilar (${green.length})</div><div class="cat-list">${renderList(green,'g')}</div>` : ''}
+    <div class="ms-title" style="margin-top:18px">Recomendación de acción</div>
+    <div class="reco-box ${aClass}"><div class="reco-head">Acción recomendada</div><p>${reco}</p></div>
+    <div class="legal-box"><div class="legal-title">Aviso de uso</div><p>Esta herramienta es de apoyo para la identificación inicial de indicadores de violencia y no sustituye la evaluación clínica especializada ni los protocolos institucionales. Los resultados deben documentarse en el sistema de casos y revisarse con supervisión.</p></div>
+  `;
+  document.getElementById('modalBg').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modalBg').classList.remove('open'); }
+function closeOut(e)  { if (e.target === document.getElementById('modalBg')) closeModal(); }
+
+/* ═══════════════ INIT ═══════════════ */
+buildTable();
+buildGrid();
+setFilter('all');
+updateUI();
+</script>
+</body>
+</html>
