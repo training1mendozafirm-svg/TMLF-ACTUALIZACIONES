@@ -314,6 +314,27 @@ main{padding:20px 32px 80px;max-width:1600px;margin:0 auto}
 .tr-bar-num{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;min-width:32px;text-align:right}
 @media(max-width:900px){.tr-kpi-row{grid-template-columns:repeat(2,1fr)}}
 
+
+/* ── TOP PRODUCTOS / TRAININGS ───────────────────────────── */
+.top-wrap{background:var(--card);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--sh);overflow:hidden;margin-bottom:14px}
+.top-head{padding:13px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.top-title{font-family:'DM Serif Display',serif;font-size:14px}
+.top-tabs{display:flex;background:var(--bg2);border-radius:20px;padding:2px;gap:1px}
+.top-tab{padding:5px 13px;border-radius:18px;border:none;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--ink2);background:transparent;cursor:pointer;white-space:nowrap;transition:all .15s}
+.top-tab.active{background:var(--card);color:var(--ink);font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.top-body{padding:16px 20px}
+.top-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.top-col-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3);margin-bottom:10px}
+.top-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.top-rank{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--ink3);min-width:16px;text-align:right;flex-shrink:0}
+.top-name{font-size:11px;color:var(--ink);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-track{width:90px;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;flex-shrink:0}
+.top-fill{height:100%;border-radius:3px}
+.top-val{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;min-width:36px;text-align:right;flex-shrink:0}
+.top-pill{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:10px;font-size:10px;font-weight:700;color:#fff;margin-right:4px;margin-bottom:4px}
+.top-pills-wrap{display:flex;flex-wrap:wrap;gap:4px}
+@media(max-width:900px){.top-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -370,6 +391,24 @@ main{padding:20px 32px 80px;max-width:1600px;margin:0 auto}
         <div class="comp-months" id="COMP_MON_LBL"></div>
         <div id="COMP_CONTENT"></div>
       </div>
+    </div>
+
+
+    <!-- TOP PRODUCTOS / TRAININGS -->
+    <div class="top-wrap" id="TOP_BLOCK">
+      <div class="top-head">
+        <div>
+          <div class="top-title">🏆 Productos &amp; Trainings con más servicio</div>
+          <div style="font-size:10px;color:var(--ink3);margin-top:2px" id="TOP_SUB">Top por horas totales</div>
+        </div>
+        <div class="top-tabs">
+          <button class="top-tab active" onclick="setTopV(0)">Visa / Producto</button>
+          <button class="top-tab" onclick="setTopV(1)">Sesiones</button>
+          <button class="top-tab" onclick="setTopV(2)">Proyectos</button>
+          <button class="top-tab" onclick="setTopV(3)">Trainings dev.</button>
+        </div>
+      </div>
+      <div class="top-body" id="TOP_BODY"></div>
     </div>
 
     <div class="g2">
@@ -896,7 +935,7 @@ function doSync() {
       var now=new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
       setConn('ok','Conectado &middot; '+tc+' trainers &middot; '+Math.round(th)+'h');
       document.getElementById('CS').textContent='Sync: '+now;
-      renderOv(); renderComp(); if(cTr) renderDet();
+      renderOv(); renderComp(); renderTop(); if(cTr) renderDet();
     })
     .catch(function(e){
       console.warn('[sync]',e.message);
@@ -1151,6 +1190,92 @@ function renderTrComp(col) {
     '</div>';
 }
 
+
+// ── TOP PRODUCTOS / TRAININGS ────────────────────────────
+var topV = 0;
+var TOP_PALETTE = ['#c8440a','#3a5fa8','#2a7a52','#7c3aed','#db2777','#d97706','#0891b2','#92400e','#4c1d95','#065f46'];
+
+function setTopV(v) {
+  topV = v;
+  document.querySelectorAll('.top-tab').forEach(function(b,i){ b.classList.toggle('active', i===v); });
+  renderTop();
+}
+
+function buildTopData(data) {
+  var visas={}, sessions={}, projects={}, trainings={};
+  Object.keys(data).forEach(function(tr){
+    Object.keys(data[tr]).forEach(function(wk){
+      Object.keys(data[tr][wk]).forEach(function(tab){
+        data[tr][wk][tab].forEach(function(r){
+          var h=r.t||0;
+          var v=(r.visa||'').trim(); if(v){visas[v]=(visas[v]||{h:0,rows:0}); visas[v].h+=h; visas[v].rows++;}
+          var s=(r.ses||'').trim();  if(s){sessions[s]=(sessions[s]||{h:0,rows:0}); sessions[s].h+=h; sessions[s].rows++;}
+          var p=(r.proy||'').trim(); if(p){projects[p]=(projects[p]||{h:0,rows:0}); projects[p].h+=h; projects[p].rows++;}
+          var n=(r.nom||'').trim();  if(n){trainings[n]=(trainings[n]||{h:0,rows:0}); trainings[n].h+=h; trainings[n].rows++;}
+        });
+      });
+    });
+  });
+  return {visas:visas, sessions:sessions, projects:projects, trainings:trainings};
+}
+
+function renderTop() {
+  var data = D();
+  if(!data||!Object.keys(data).length) return;
+  var td = buildTopData(data);
+  var sets = [td.visas, td.sessions, td.projects, td.trainings];
+  var labels = ['Visa / Producto','Sesiones impartidas','Proyectos de desarrollo','Trainings desarrollados'];
+  var subs = ['Horas totales por visa o producto','Horas por sesión impartida','Horas invertidas por proyecto','Horas en desarrollo de trainings'];
+
+  document.getElementById('TOP_SUB').textContent = subs[topV];
+
+  var src = sets[topV];
+  var sorted = Object.keys(src).sort(function(a,b){ return src[b].h - src[a].h; });
+
+  // Split: left = top 1-8, right = top 9-16 or trainers breakdown
+  var top16 = sorted.slice(0,16);
+  var half = Math.ceil(top16.length/2);
+  var leftItems = top16.slice(0,half);
+  var rightItems = top16.slice(half);
+  var maxH = src[sorted[0]] ? src[sorted[0]].h : 1;
+
+  function renderCol(items, offset) {
+    return items.map(function(k, i){
+      var d = src[k];
+      var rank = offset + i + 1;
+      var c = TOP_PALETTE[(rank-1) % TOP_PALETTE.length];
+      var pct = Math.round(d.h/maxH*100);
+      var hLabel = d.h>=100?Math.round(d.h)+'h':(Math.round(d.h*10)/10)+'h';
+      return '<div class="top-row">'+
+        '<div class="top-rank">'+(rank<=3?['🥇','🥈','🥉'][rank-1]:rank)+'</div>'+
+        '<div class="top-name" title="'+k+'">'+k+'</div>'+
+        '<div class="top-track"><div class="top-fill" style="width:'+pct+'%;background:'+c+'"></div></div>'+
+        '<div class="top-val" style="color:'+c+'">'+hLabel+'</div>'+
+      '</div>';
+    }).join('');
+  }
+
+  // If visa view: also show pills
+  var extra = '';
+  if(topV===0 && sorted.length > 0) {
+    extra = '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">'+
+      '<div class="top-col-title" style="margin-bottom:8px">Todos los productos</div>'+
+      '<div class="top-pills-wrap">'+
+      sorted.map(function(k,i){
+        var c = TOP_PALETTE[i%TOP_PALETTE.length];
+        var h = src[k].h; var hl = h>=100?Math.round(h)+'h':(Math.round(h*10)/10)+'h';
+        return '<span class="top-pill" style="background:'+c+'">'+k+' <span style="opacity:.75;font-size:9px">'+hl+'</span></span>';
+      }).join('')+
+      '</div></div>';
+  }
+
+  document.getElementById('TOP_BODY').innerHTML =
+    '<div class="top-grid">'+
+      '<div><div class="top-col-title">Top '+leftItems.length+' — '+labels[topV]+'</div>'+renderCol(leftItems,0)+'</div>'+
+      (rightItems.length?'<div><div class="top-col-title">&nbsp;</div>'+renderCol(rightItems,leftItems.length)+'</div>':'<div></div>')+
+    '</div>'+extra;
+}
+
 // ── COMPARATIVA ───────────────────────────────────────────
 var cView = 0;
 var MES_ORDER = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
@@ -1340,6 +1465,7 @@ console.log('[init] DETAIL:', DETAIL?Object.keys(DETAIL).length:0, 'trainers');
 setConn('off','Datos locales · Conectando…');
 renderOv();
 renderComp();
+renderTop();
 setTimeout(doSync, 500);
 </script>
 </body>
