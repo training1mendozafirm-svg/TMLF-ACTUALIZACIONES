@@ -233,14 +233,67 @@ main{padding:20px 32px 80px;max-width:1600px;margin:0 auto}
 
 @media print{
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
-  header,.sbar,.nav,.back-btn,.noprint{display:none!important}
-  .print-hdr{display:block!important;background:var(--ink);color:#fff;padding:10px 16px;border-radius:8px;margin-bottom:12px}
-  .print-hdr h1{font-family:'DM Serif Display',serif;font-size:14px}
+
+  /* Ocultar controles de UI */
+  header,.sbar,.nav,.back-btn,.noprint,
+  .impact-head,.impact-btn,
+  .reac-head .period-wrap,.reac-tabs,
+  .back-btn,.pdf-btn,
+  .period-wrap,.seg,.period-pills { display:none!important }
+
+  /* Mostrar header de impresión */
+  .print-hdr{display:block!important;background:var(--ink);color:#fff;padding:10px 16px;border-radius:8px;margin-bottom:14px}
+  .print-hdr h1{font-family:'DM Serif Display',serif;font-size:15px;margin:0}
   .print-hdr em{color:var(--acc2);font-style:italic}
-  .print-hdr p{font-size:9px;color:rgba(255,255,255,.45);margin-top:1px}
-  .tab-body{display:block!important}.tab-chev{display:none}
-  .card,.tab-sec{box-shadow:none!important;break-inside:avoid}
-  @page{margin:1cm;size:A4 landscape}
+  .print-hdr p{font-size:9px;color:rgba(255,255,255,.5);margin:3px 0 0}
+
+  /* Tabs abiertas */
+  .tab-body{display:block!important}
+  .tab-chev{display:none!important}
+
+  /* Cards sin sombra */
+  .card,.tab-sec{box-shadow:none!important}
+
+  /* Evitar cortes en secciones clave */
+  .tab-sec, .imp-sec, .reac-wrap, .reac-scorecard,
+  .sum-grid > *, .g2 > *, .tr-comp { break-inside:avoid }
+
+  /* Reporte de impacto — visible y bien formateado */
+  .impact-wrap{display:block!important;border:1px solid #ddd;border-radius:8px;margin-bottom:12px;break-inside:avoid}
+  .impact-body{padding:12px 16px;font-size:10px;line-height:1.7}
+  .impact-body p{margin:0 0 6px}
+  .imp-sec{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #eee;break-inside:avoid}
+  .imp-sec-title{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+  .imp-stats{background:#f8f8f8!important;border-radius:5px;padding:6px 8px}
+  .imp-stat-row{font-size:9px}
+  .imp-tag{font-size:9px;padding:2px 6px}
+  .imp-comment{font-size:9px;padding:4px 8px}
+  .imp-bar-row{margin-bottom:3px}
+  .imp-bar-lbl{font-size:9px;width:130px}
+  .imp-bar-val{font-size:9px}
+  .imp-kpi{padding:6px 10px}
+  .imp-kpi-v{font-size:13px}
+  .imp-kpi-l{font-size:8px}
+
+  /* Evaluaciones de reacción */
+  .reac-wrap{display:block!important;border:1px solid #ddd;border-radius:8px;margin-bottom:12px}
+  .reac-kpis{display:flex!important;flex-wrap:wrap;gap:6px}
+  .reac-scores{display:flex!important;flex-direction:column;gap:3px}
+  .reac-score-row{break-inside:avoid}
+  .reac-tipo-pill{font-size:9px}
+  .rol-row{break-inside:avoid}
+
+  /* Comparativa trainer */
+  .tr-comp{display:block!important}
+
+  /* Sumario y gráficas */
+  .sum-grid{display:grid!important}
+  .g2{display:grid!important}
+
+  /* Página */
+  @page{margin:1.2cm;size:A4 portrait}
+  body{font-size:10px}
+  main{padding:0!important}
 }
 @media(max-width:900px){
   .g2,.sum-grid{grid-template-columns:1fr}
@@ -388,6 +441,55 @@ main{padding:20px 32px 80px;max-width:1600px;margin:0 auto}
 .reac-ov-total-n{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700}
 @media(max-width:900px){.reac-ov-grid{grid-template-columns:1fr}}
 
+
+/* ── IMPACTO IA ─────────────────────────────────────────── */
+.impact-wrap{background:var(--card);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--sh);margin-bottom:12px;overflow:hidden}
+.impact-head{padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.impact-title{font-family:'DM Serif Display',serif;font-size:13px;display:flex;align-items:center;gap:8px}
+.impact-badge{font-size:9px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:2px 8px;border-radius:10px;font-weight:700;letter-spacing:.4px}
+.impact-body{padding:14px 16px;font-size:11px;line-height:1.75;color:var(--ink2)}
+.impact-body p{margin:0 0 8px}
+.impact-body p:last-child{margin:0}
+.impact-body strong{color:var(--ink1);font-weight:700}
+.impact-btn{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);font-size:10px;font-weight:600;cursor:pointer;transition:.15s;color:var(--ink2)}
+.impact-btn:hover{background:var(--card);border-color:var(--acc)}
+.impact-btn:disabled{opacity:.5;cursor:default}
+.impact-loading{display:flex;align-items:center;gap:8px;padding:14px 16px;color:var(--ink3);font-size:11px}
+.impact-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:idot .9s ease-in-out infinite}
+.impact-dot:nth-child(2){animation-delay:.2s}
+.impact-dot:nth-child(3){animation-delay:.4s}
+@keyframes idot{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+.impact-error{padding:14px 16px;color:#c8440a;font-size:11px}
+/* Impact report content styles */
+.imp-header{padding:0 0 12px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.imp-trainer-name{font-family:'DM Serif Display',serif;font-size:17px;font-weight:700}
+.imp-period{font-size:10px;color:var(--ink3);margin-top:2px;text-transform:uppercase;letter-spacing:.6px}
+.imp-kpis{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.imp-kpi{background:var(--bg2);border-radius:8px;padding:9px 13px;text-align:center;min-width:64px}
+.imp-kpi-v{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--ink1)}
+.imp-kpi-l{font-size:9px;color:var(--ink3);margin-top:2px;text-transform:uppercase;letter-spacing:.4px;max-width:80px}
+.imp-sec{margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:12px}
+.imp-sec:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.imp-sec-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.imp-sec-body{display:flex;flex-direction:column;gap:6px}
+.imp-stats{display:flex;flex-direction:column;gap:3px;background:var(--bg2);border-radius:7px;padding:8px 10px;margin-bottom:4px}
+.imp-stat-row{display:flex;align-items:center;gap:6px;font-size:10px}
+.imp-stat-lbl{color:var(--ink3);flex:1}
+.imp-stat-val{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink1);min-width:30px;text-align:right}
+.imp-stat-note{font-size:9px;color:var(--ink3);margin-left:4px}
+.imp-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink3);margin:6px 0 3px}
+.imp-tags{display:flex;flex-wrap:wrap;gap:4px}
+.imp-tag{font-size:10px;color:var(--ink2);background:var(--bg2);border:1px solid var(--border);padding:3px 8px;border-radius:5px}
+.imp-bars{display:flex;flex-direction:column;gap:5px}
+.imp-bar-row{display:flex;align-items:center;gap:8px}
+.imp-bar-lbl{font-size:10px;color:var(--ink2);width:160px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.imp-bar-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.imp-bar-fill{height:100%;border-radius:3px;transition:width .5s ease}
+.imp-bar-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink2);min-width:48px;text-align:right}
+.imp-comments{display:flex;flex-direction:column;gap:6px}
+.imp-comment{font-size:10px;color:var(--ink2);background:var(--bg2);border-left:3px solid var(--acc);padding:6px 10px;border-radius:0 6px 6px 0;font-style:italic;line-height:1.6}
+.imp-pill{font-size:10px;padding:4px 10px;border-radius:10px;font-weight:500}
+
 </style>
 </head>
 <body>
@@ -516,6 +618,7 @@ main{padding:20px 32px 80px;max-width:1600px;margin:0 auto}
 
     <div id="TR_COMP"></div>
     <div id="TR_REAC"></div>
+    <div id="TR_IMPACT"></div>
     <div class="sum-grid" id="SUMM"></div>
 
     <div class="g2">
@@ -793,6 +896,7 @@ function renderDet() {
   renderPDonut(tots);
   renderTabs(pd, tots);
   renderReac();
+  renderImpact();
 }
 
 function renderPills(td, col) {
@@ -1082,15 +1186,38 @@ function buildLive(loaded) {
 
 // ── PDF ───────────────────────────────────────────────────
 function doPDF() {
-  var lbl=cPer===2?'Año 2026':cPer===1?(cSel||'').charAt(0).toUpperCase()+(cSel||'').slice(1):'Semana '+cSel;
-  document.getElementById('PHDR').innerHTML=
+  var lbl = cPer===2 ? 'Año 2026'
+    : cPer===1 ? (cSel||'').charAt(0).toUpperCase()+(cSel||'').slice(1)
+    : 'Semana '+cSel+(WR[cSel]?' ('+WR[cSel]+')':'');
+
+  // Header de impresión
+  document.getElementById('PHDR').innerHTML =
     '<h1>Training Report <em>2026</em> — '+cTr+'</h1>'+
     '<p>'+lbl+' &middot; '+new Date().toLocaleDateString('es-MX',{year:'numeric',month:'long',day:'numeric'})+'</p>';
-  document.querySelectorAll('.tab-body').forEach(function(b){b.classList.add('open');});
-  var ot=document.title;
-  document.title='Reporte_'+cTr.replace(/ /g,'_')+'_2026';
-  window.print(); document.title=ot;
-  setTimeout(function(){document.querySelectorAll('.tab-body').forEach(function(b){b.classList.remove('open');});},1500);
+
+  // Abrir todas las tabs
+  document.querySelectorAll('.tab-body').forEach(function(b){ b.classList.add('open'); });
+
+  // Generar impacto si no está en cache
+  var perKey = cTr+'|'+cPer+'|'+(cSel||'');
+  if (!impactCache[perKey]) generateImpact();
+
+  // Asegurarse que el reporte de impacto esté visible
+  var impactEl = document.getElementById('IMPACT_CONTENT');
+  if (impactEl && impactCache[perKey]) {
+    impactEl.innerHTML = '<div class="impact-body">'+impactCache[perKey]+'</div>';
+  }
+
+  var ot = document.title;
+  document.title = 'Reporte_'+cTr.replace(/ /g,'_')+'_'+lbl.replace(/ /g,'_')+'_2026';
+
+  setTimeout(function(){
+    window.print();
+    document.title = ot;
+    setTimeout(function(){
+      document.querySelectorAll('.tab-body').forEach(function(b){ b.classList.remove('open'); });
+    }, 1500);
+  }, 300);
 }
 
 
@@ -1236,6 +1363,563 @@ function renderReacOv() {
   gridEl.innerHTML =
     renderSection(princEntries, 'Trainer Principal',  '#3a5fa8') +
     renderSection(secEntries,   'Trainer Secundario', '#7c3aed');
+}
+
+
+// ── REPORTE DE IMPACTO IA ────────────────────────────────────
+var impactCache = {};  // cache por trainer+periodo
+
+function renderImpact() {
+  var cont = document.getElementById('TR_IMPACT');
+  if (!cont || !cTr) return;
+
+  var perKey = cTr + '|' + cPer + '|' + (cSel||'');
+
+  cont.innerHTML =
+    '<div class="impact-wrap">'+
+      '<div class="impact-head">'+
+        '<div class="impact-title">✨ Reporte de Impacto <span class="impact-badge">IA</span></div>'+
+        '<button class="impact-btn" id="IMPACT_BTN" onclick="generateImpact()">&#9654; Generar análisis</button>'+
+      '</div>'+
+      '<div id="IMPACT_CONTENT"></div>'+
+    '</div>';
+
+  // Si ya existe en cache, mostrarlo de inmediato
+  if (impactCache[perKey]) showImpactResult(impactCache[perKey]);
+}
+
+function generateImpact() {
+  var btn = document.getElementById('IMPACT_BTN');
+  var contentEl = document.getElementById('IMPACT_CONTENT');
+  if (!btn || !contentEl || !cTr) return;
+  btn.disabled = true;
+
+  var td = D()[cTr]; if (!td) { btn.disabled=false; return; }
+  var pd   = getPD(td);
+  var tots = tabTots(pd);
+  var col  = trCol(cTr);
+
+  var tH = Object.keys(tots).reduce(function(a,k){return a+tots[k];},0);
+  var tR = Object.keys(pd).reduce(function(a,k){return a+pd[k].length;},0);
+
+  var perLabel = cPer===2 ? 'Año 2026'
+    : cPer===1 ? (cSel||'').charAt(0).toUpperCase()+(cSel||'').slice(1)
+    : 'Semana '+cSel+(WR[cSel]?' · '+WR[cSel]:'');
+
+  // ── helpers ──────────────────────────────────────────────
+  function uniq(arr) {
+    var seen={}, out=[];
+    arr.forEach(function(v){ if(v&&!seen[v]){seen[v]=1;out.push(v);} });
+    return out;
+  }
+  function countBy(rows, fn) {
+    var out={};
+    rows.forEach(function(r){ var k=fn(r); if(k){out[k]=(out[k]||0)+1;} });
+    return out;
+  }
+  function topN(obj, n) {
+    return Object.keys(obj).sort(function(a,b){return obj[b]-obj[a];}).slice(0,n);
+  }
+  function pill(txt, bg, fg) {
+    return '<span class="imp-pill" style="background:'+bg+';color:'+fg+'">'+txt+'</span>';
+  }
+  function tag(txt) {
+    return '<span class="imp-tag">'+txt+'</span>';
+  }
+  function sec(title, icon, content, accent) {
+    if (!content) return '';
+    return '<div class="imp-sec">'+
+      '<div class="imp-sec-title" style="color:'+(accent||'var(--ink3)')+'">'+
+        (icon?'<span>'+icon+'</span> ':'')+title+
+      '</div>'+
+      '<div class="imp-sec-body">'+content+'</div>'+
+    '</div>';
+  }
+  function statRow(label, value, note) {
+    return '<div class="imp-stat-row">'+
+      '<span class="imp-stat-lbl">'+label+'</span>'+
+      '<span class="imp-stat-val">'+value+'</span>'+
+      (note?'<span class="imp-stat-note">'+note+'</span>':'')+
+    '</div>';
+  }
+  function barRow(label, val, max, clr, note) {
+    var pct = max>0 ? Math.min(100,Math.round((val/max)*100)) : 0;
+    return '<div class="imp-bar-row">'+
+      '<span class="imp-bar-lbl">'+label+'</span>'+
+      '<div class="imp-bar-track">'+
+        '<div class="imp-bar-fill" style="width:'+pct+'%;background:'+(clr||col)+'"></div>'+
+      '</div>'+
+      '<span class="imp-bar-val">'+(note||val)+'</span>'+
+    '</div>';
+  }
+
+  // ── ACTIVIDADES ──────────────────────────────────────────
+  var acts = pd['Actividades']||[];
+  var actCompletadas = acts.filter(function(r){return (r.est||'').toLowerCase().indexOf('complet')>=0;});
+  var actEnProceso   = acts.filter(function(r){return (r.est||'').toLowerCase().indexOf('proceso')>=0;});
+  var actNames = uniq(acts.map(function(r){return r.act;})).slice(0,6);
+  var actHoras = tots['Actividades']||0;
+
+  // ── TRAININGS ────────────────────────────────────────────
+  var tTeo = pd['Trainings teórico']||[];
+  var tPra = pd['Trainings práctico']||[];
+  var allTrainings = tTeo.concat(tPra);
+
+  var trainSessions = uniq(allTrainings.map(function(r){return r.ses;})).slice(0,8);
+  var trainVisas    = uniq(allTrainings.map(function(r){return r.visa;}));
+  var trainDeps     = uniq(allTrainings.map(function(r){return r.dep;})).slice(0,6);
+  var trainMods     = countBy(allTrainings, function(r){return r.mod;});
+  var trainTopMod   = topN(trainMods,3);
+  var totalPar      = allTrainings.reduce(function(a,r){return a+(parseInt(r.par)||0);},0);
+  var tTeoH = tots['Trainings teórico']||0;
+  var tPraH = tots['Trainings práctico']||0;
+  var tFacH = allTrainings.reduce(function(a,r){return a+(parseFloat(r.tfac)||0);},0);
+
+  // Diagnóstico y transferencia (solo teórico)
+  var conDiag  = tTeo.filter(function(r){return r.diag&&r.diag.toLowerCase()!=='no'&&r.diag!==''&&r.diag!=='0';}).length;
+  var conTransf= tTeo.filter(function(r){return r.transf&&r.transf.toLowerCase()!=='no'&&r.transf!==''&&r.transf!=='0';}).length;
+
+  // ── HABILITACIÓN ─────────────────────────────────────────
+  var hab = pd['Habilitación']||[];
+  var habCols    = uniq(hab.map(function(r){return r.col;}));
+  var habVisas   = uniq(hab.map(function(r){return r.visa;}));
+  var habSessions= uniq(hab.map(function(r){return r.ses;})).slice(0,5);
+  var habCargos  = countBy(hab, function(r){return r.cargo;});
+  var habAreas   = uniq(hab.map(function(r){return r.area;})).slice(0,4);
+  var habH = tots['Habilitación']||0;
+
+  // ── LLAMADAS ─────────────────────────────────────────────
+  var calls = pd['Llamadas']||[];
+  var callColabs = uniq(calls.map(function(r){return r.col;}));
+  var callVisas  = uniq(calls.map(function(r){return r.visa;}));
+  var callTipos  = countBy(calls, function(r){return r.tipo;});
+  var callAreas  = countBy(calls, function(r){return r.area;});
+  var callTopAreas = topN(callAreas,3);
+  var callH = tots['Llamadas']||0;
+  // Feedback
+  var callConFB  = calls.filter(function(r){return r.fb&&r.fb.length>2;}).length;
+  var callFBMods = countBy(calls.filter(function(r){return r.mod_fb;}), function(r){return r.mod_fb;});
+
+  // ── ACOMPAÑAMIENTOS ──────────────────────────────────────
+  var acoms = pd['Acompañamientos']||[];
+  var acomColabs = uniq(acoms.map(function(r){return r.col;}));
+  var acomVisas  = uniq(acoms.map(function(r){return r.visa;}));
+  var acomTipos  = countBy(acoms, function(r){return r.tipo;});
+  var acomTopTipos = topN(acomTipos,4);
+  var acomAreas  = countBy(acoms, function(r){return r.area||r.dep;});
+  var acomH = tots['Acompañamientos']||0;
+  // Con hallazgos/incidencias
+  var acomConInc = acoms.filter(function(r){return r.inc&&r.inc.length>2;}).length;
+
+  // ── ENTREGABLES ──────────────────────────────────────────
+  var entreg = pd['Entregables']||[];
+  var entregTipos   = countBy(entreg, function(r){return r.tipo;});
+  var entregVisas   = uniq(entreg.map(function(r){return r.visa;}));
+  var entregAreas   = uniq(entreg.map(function(r){return r.area;})).slice(0,4);
+  var entregCompl   = entreg.filter(function(r){return (r.est||'').toLowerCase().indexOf('complet')>=0;}).length;
+  var entregH = tots['Entregables']||0;
+
+  // ── DESARROLLO PROYECTOS ─────────────────────────────────
+  var devP = pd['Desarrollo proyectos']||[];
+  var devPProys   = uniq(devP.map(function(r){return r.proy;})).slice(0,5);
+  var devPTipos   = countBy(devP, function(r){return r.tipo;});
+  var devPVisas   = uniq(devP.map(function(r){return r.visa;}));
+  var devPAreas   = uniq(devP.map(function(r){return r.area;})).slice(0,4);
+  var devPCompl   = devP.filter(function(r){return (r.est||'').toLowerCase().indexOf('complet')>=0;}).length;
+  var devPEnProc  = devP.filter(function(r){return (r.est||'').toLowerCase().indexOf('proceso')>=0;}).length;
+  var devPH = tots['Desarrollo proyectos']||0;
+
+  // ── DESARROLLO TRAININGS ─────────────────────────────────
+  var devT = pd['Desarrollo trainings']||[];
+  var devTNoms  = uniq(devT.map(function(r){return r.nom;})).slice(0,6);
+  var devTTipos = countBy(devT, function(r){return r.tipo;});
+  var devTVisas = uniq(devT.map(function(r){return r.visa;}));
+  var devTDeps  = uniq(devT.map(function(r){return r.dep;})).slice(0,4);
+  var devTCompl = devT.filter(function(r){return (r.est||'').toLowerCase().indexOf('complet')>=0;}).length;
+  var devTH = tots['Desarrollo trainings']||0;
+
+  // ── REACCIÓN ─────────────────────────────────────────────
+  var reacPrinc=0, reacSec=0, reacScore=null, reacTipos={};
+  var reacScoreMap={}, reacCursos={}, reacComments=[], reacSuggestions=[];
+  if (REAC_DATA) {
+    var trKey = Object.keys(REAC_DATA).filter(function(k){
+      return k.toLowerCase().split(' ')[0]===cTr.toLowerCase().split(' ')[0];
+    })[0];
+    if (trKey) {
+      var rd = REAC_DATA[trKey];
+      var reacRows = (rd.rows||[]).filter(function(r){
+        if (cPer===2) return true;
+        if (cPer===1) return (r.mes||'').toLowerCase()===(cSel||'').toLowerCase();
+        return String(r.semana||'')=== String(cSel||'');
+      });
+      var princRows = reacRows.filter(function(r){return r.principal;});
+      var secRows   = reacRows.filter(function(r){return !r.principal;});
+      reacPrinc = princRows.length;
+      reacSec   = secRows.length;
+      // Global score
+      var tScore=0, nScore=0;
+      princRows.forEach(function(r){ if(r.scores&&r.scores.calif){tScore+=r.scores.calif;nScore++;} });
+      if (nScore) reacScore = Math.round((tScore/nScore)*10)/10;
+      // Score by metric
+      var scoreSums={}, scoreCounts={};
+      princRows.forEach(function(r){
+        if (!r.scores) return;
+        Object.keys(r.scores).forEach(function(k){
+          scoreSums[k]=(scoreSums[k]||0)+r.scores[k];
+          scoreCounts[k]=(scoreCounts[k]||0)+1;
+        });
+      });
+      Object.keys(scoreSums).forEach(function(k){
+        reacScoreMap[k]=Math.round((scoreSums[k]/scoreCounts[k])*10)/10;
+      });
+      // Tipos y cursos
+      reacRows.forEach(function(r){
+        if (r.tipo) reacTipos[r.tipo]=(reacTipos[r.tipo]||0)+1;
+        if (r.curso) reacCursos[r.curso]=(reacCursos[r.curso]||0)+1;
+      });
+      // Comentarios
+      reacComments = princRows.filter(function(r){return r.coment&&r.coment.length>5;})
+        .map(function(r){return r.coment;}).slice(0,4);
+      reacSuggestions = princRows.filter(function(r){return r.temas&&r.temas.length>3;})
+        .map(function(r){return r.temas;}).slice(0,3);
+    }
+  }
+
+  // ── ALCANCE GLOBAL ───────────────────────────────────────
+  var allColabs={}, allVisas={}, allAreas={};
+  ['Llamadas','Acompañamientos','Habilitación','Trainings teórico','Trainings práctico'].forEach(function(tab){
+    (pd[tab]||[]).forEach(function(r){
+      if(r.col)  allColabs[r.col]=1;
+      if(r.visa) allVisas[r.visa]=1;
+      if(r.area||r.dep) allAreas[r.area||r.dep]=1;
+    });
+  });
+
+  // ── CONSTRUIR HTML ───────────────────────────────────────
+
+  // 1. HEADER + KPIs globales
+  var headerHtml =
+    '<div class="imp-header">'+
+      '<div class="imp-trainer-name" style="color:'+col+'">'+cTr+'</div>'+
+      '<div class="imp-period">'+perLabel+'</div>'+
+    '</div>';
+
+  var kpiItems = [];
+  kpiItems.push({ v: Math.round(tH*10)/10+'h', l:'Horas totales', c:col });
+  kpiItems.push({ v: tR, l:'Registros' });
+  if (totalPar)                   kpiItems.push({ v:totalPar, l:'Participantes formados', c:'#3a5fa8' });
+  if (Object.keys(allColabs).length) kpiItems.push({ v:Object.keys(allColabs).length, l:'Colaboradores impactados' });
+  if (Object.keys(allVisas).length)  kpiItems.push({ v:Object.keys(allVisas).length,  l:'Visa / Productos' });
+  if (reacPrinc+reacSec>0)        kpiItems.push({ v:reacPrinc+reacSec, l:'Eval. recibidas' });
+  if (reacScore)                  kpiItems.push({ v:reacScore+'/10', l:'Score reacción', c:reacScore>=9?'#2a7a52':col });
+
+  var kpisHtml = '<div class="imp-kpis">'+
+    kpiItems.map(function(k){
+      return '<div class="imp-kpi">'+
+        '<div class="imp-kpi-v" style="color:'+(k.c||'var(--ink1)')+'">'+k.v+'</div>'+
+        '<div class="imp-kpi-l">'+k.l+'</div>'+
+      '</div>';
+    }).join('')+'</div>';
+
+  // 2. Distribución de horas
+  var tabsSorted = Object.keys(tots).map(function(k){return{tab:k,h:tots[k]};})
+    .filter(function(x){return x.h>0;}).sort(function(a,b){return b.h-a.h;});
+  var maxH2 = tabsSorted.length ? tabsSorted[0].h : 1;
+  var distHtml = '<div class="imp-bars">'+
+    tabsSorted.map(function(x){
+      var n = (pd[x.tab]||[]).length;
+      return barRow(x.tab, x.h, maxH2, col, Math.round(x.h*10)/10+'h · '+n+' reg');
+    }).join('')+'</div>';
+
+  // 3. Trainings impartidos
+  var trainContent = '';
+  if (allTrainings.length) {
+    trainContent +=
+      '<div class="imp-stats">'+
+        statRow('Sesiones teóricas', tTeo.length, tTeoH>0?Math.round(tTeoH*10)/10+'h':'')+
+        statRow('Sesiones prácticas', tPra.length, tPraH>0?Math.round(tPraH*10)/10+'h':'')+
+        statRow('Participantes totales', totalPar)+
+        (tFacH>0?statRow('Horas como facilitador', Math.round(tFacH*10)/10+'h'):'')+
+        (conDiag>0?statRow('Con diagnóstico inicial', conDiag):'')+
+        (conTransf>0?statRow('Con evaluación de transferencia', conTransf):'')+
+      '</div>';
+    if (trainSessions.length) {
+      trainContent += '<div class="imp-label">Sesiones</div><div class="imp-tags">'+
+        trainSessions.map(tag).join('')+'</div>';
+    }
+    if (trainVisas.length) {
+      trainContent += '<div class="imp-label">Visa / Producto</div><div class="imp-tags">'+
+        trainVisas.map(tag).join('')+'</div>';
+    }
+    if (trainDeps.length) {
+      trainContent += '<div class="imp-label">Departamentos</div><div class="imp-tags">'+
+        trainDeps.map(tag).join('')+'</div>';
+    }
+    if (trainTopMod.length) {
+      trainContent += '<div class="imp-label">Modalidades</div><div class="imp-tags">'+
+        trainTopMod.map(function(m){return tag(m+' ('+trainMods[m]+')');}).join('')+'</div>';
+    }
+  }
+
+  // 4. Habilitación
+  var habContent = '';
+  if (hab.length) {
+    habContent +=
+      '<div class="imp-stats">'+
+        statRow('Colaboradores habilitados', habCols.length)+
+        statRow('Sesiones', uniq(hab.map(function(r){return r.ses;})).length)+
+        (habH>0?statRow('Horas invertidas', Math.round(habH*10)/10+'h'):'')+
+      '</div>';
+    if (habSessions.length) {
+      habContent += '<div class="imp-label">Programas</div><div class="imp-tags">'+
+        habSessions.map(tag).join('')+'</div>';
+    }
+    if (habVisas.length) {
+      habContent += '<div class="imp-label">Visa / Producto</div><div class="imp-tags">'+
+        habVisas.map(tag).join('')+'</div>';
+    }
+    if (habAreas.length) {
+      habContent += '<div class="imp-label">Áreas</div><div class="imp-tags">'+
+        habAreas.map(tag).join('')+'</div>';
+    }
+    var topCargos = topN(habCargos,4);
+    if (topCargos.length) {
+      habContent += '<div class="imp-label">Cargos habilitados</div><div class="imp-tags">'+
+        topCargos.map(function(c){return tag(c+' ('+habCargos[c]+')');}).join('')+'</div>';
+    }
+  }
+
+  // 5. Llamadas
+  var callContent = '';
+  if (calls.length) {
+    callContent +=
+      '<div class="imp-stats">'+
+        statRow('Llamadas realizadas', calls.length)+
+        statRow('Colaboradores evaluados', callColabs.length)+
+        (callH>0?statRow('Tiempo total', Math.round(callH*10)/10+'h'):'')+
+        (callConFB>0?statRow('Con feedback registrado', callConFB):'')+
+      '</div>';
+    if (callVisas.length) {
+      callContent += '<div class="imp-label">Visa / Producto</div><div class="imp-tags">'+
+        callVisas.map(tag).join('')+'</div>';
+    }
+    if (callTopAreas.length) {
+      callContent += '<div class="imp-label">Áreas principales</div><div class="imp-tags">'+
+        callTopAreas.map(function(a){return tag(a+' ('+callAreas[a]+')');}).join('')+'</div>';
+    }
+    var callTopTipos = topN(callTipos,4);
+    if (callTopTipos.length) {
+      callContent += '<div class="imp-label">Tipos de llamada</div><div class="imp-tags">'+
+        callTopTipos.map(function(t){return tag(t+' ('+callTipos[t]+')');}).join('')+'</div>';
+    }
+    var fbMods = topN(callFBMods,3);
+    if (fbMods.length) {
+      callContent += '<div class="imp-label">Modalidad de feedback</div><div class="imp-tags">'+
+        fbMods.map(function(m){return tag(m);}).join('')+'</div>';
+    }
+  }
+
+  // 6. Acompañamientos
+  var acomContent = '';
+  if (acoms.length) {
+    acomContent +=
+      '<div class="imp-stats">'+
+        statRow('Acompañamientos realizados', acoms.length)+
+        statRow('Colaboradores acompañados', acomColabs.length)+
+        (acomH>0?statRow('Tiempo total', Math.round(acomH*10)/10+'h'):'')+
+        (acomConInc>0?statRow('Con hallazgos / incidencias', acomConInc):'')+
+      '</div>';
+    if (acomVisas.length) {
+      acomContent += '<div class="imp-label">Visa / Producto</div><div class="imp-tags">'+
+        acomVisas.map(tag).join('')+'</div>';
+    }
+    if (acomTopTipos.length) {
+      acomContent += '<div class="imp-label">Tipos de acompañamiento</div><div class="imp-tags">'+
+        acomTopTipos.map(function(t){return tag(t+' ('+acomTipos[t]+')');}).join('')+'</div>';
+    }
+    var topAcomAreas = topN(acomAreas,4);
+    if (topAcomAreas.length) {
+      acomContent += '<div class="imp-label">Áreas</div><div class="imp-tags">'+
+        topAcomAreas.map(function(a){return tag(a+' ('+acomAreas[a]+')');}).join('')+'</div>';
+    }
+  }
+
+  // 7. Entregables
+  var entregContent = '';
+  if (entreg.length) {
+    entregContent +=
+      '<div class="imp-stats">'+
+        statRow('Entregables totales', entreg.length)+
+        statRow('Completados', entregCompl)+
+        (entregH>0?statRow('Horas invertidas', Math.round(entregH*10)/10+'h'):'')+
+      '</div>';
+    var topEntregTipos = topN(entregTipos,5);
+    if (topEntregTipos.length) {
+      entregContent += '<div class="imp-label">Tipos</div><div class="imp-tags">'+
+        topEntregTipos.map(function(t){return tag(t+' ('+entregTipos[t]+')');}).join('')+'</div>';
+    }
+    if (entregVisas.length) {
+      entregContent += '<div class="imp-label">Visa / Producto</div><div class="imp-tags">'+
+        entregVisas.map(tag).join('')+'</div>';
+    }
+    if (entregAreas.length) {
+      entregContent += '<div class="imp-label">Áreas</div><div class="imp-tags">'+
+        entregAreas.map(tag).join('')+'</div>';
+    }
+  }
+
+  // 8. Desarrollo proyectos
+  var devPContent = '';
+  if (devP.length) {
+    devPContent +=
+      '<div class="imp-stats">'+
+        statRow('Actividades de proyecto', devP.length)+
+        statRow('Completadas', devPCompl)+
+        (devPEnProc>0?statRow('En proceso', devPEnProc):'')+
+        (devPH>0?statRow('Horas invertidas', Math.round(devPH*10)/10+'h'):'')+
+      '</div>';
+    if (devPProys.length) {
+      devPContent += '<div class="imp-label">Proyectos</div><div class="imp-tags">'+
+        devPProys.map(tag).join('')+'</div>';
+    }
+    var topDevPTipos = topN(devPTipos,4);
+    if (topDevPTipos.length) {
+      devPContent += '<div class="imp-label">Tipos de actividad</div><div class="imp-tags">'+
+        topDevPTipos.map(function(t){return tag(t+' ('+devPTipos[t]+')');}).join('')+'</div>';
+    }
+    if (devPVisas.length) {
+      devPContent += '<div class="imp-label">Visa / Producto</div><div class="imp-tags">'+
+        devPVisas.map(tag).join('')+'</div>';
+    }
+    if (devPAreas.length) {
+      devPContent += '<div class="imp-label">Áreas involucradas</div><div class="imp-tags">'+
+        devPAreas.map(tag).join('')+'</div>';
+    }
+  }
+
+  // 9. Desarrollo trainings
+  var devTContent = '';
+  if (devT.length) {
+    devTContent +=
+      '<div class="imp-stats">'+
+        statRow('Trainings en desarrollo', devT.length)+
+        statRow('Completados', devTCompl)+
+        (devTH>0?statRow('Horas invertidas', Math.round(devTH*10)/10+'h'):'')+
+      '</div>';
+    if (devTNoms.length) {
+      devTContent += '<div class="imp-label">Trainings</div><div class="imp-tags">'+
+        devTNoms.map(tag).join('')+'</div>';
+    }
+    var topDevTTipos = topN(devTTipos,4);
+    if (topDevTTipos.length) {
+      devTContent += '<div class="imp-label">Actividades</div><div class="imp-tags">'+
+        topDevTTipos.map(function(t){return tag(t+' ('+devTTipos[t]+')');}).join('')+'</div>';
+    }
+    if (devTVisas.length) {
+      devTContent += '<div class="imp-label">Visa / Producto</div><div class="imp-tags">'+
+        devTVisas.map(tag).join('')+'</div>';
+    }
+    if (devTDeps.length) {
+      devTContent += '<div class="imp-label">Departamentos</div><div class="imp-tags">'+
+        devTDeps.map(tag).join('')+'</div>';
+    }
+  }
+
+  // 10. Actividades generales
+  var actContent = '';
+  if (acts.length) {
+    actContent +=
+      '<div class="imp-stats">'+
+        statRow('Total actividades', acts.length)+
+        (actCompletadas.length?statRow('Completadas', actCompletadas.length):'')+
+        (actEnProceso.length?statRow('En proceso', actEnProceso.length):'')+
+        (actHoras>0?statRow('Horas', Math.round(actHoras*10)/10+'h'):'')+
+      '</div>';
+    if (actNames.length) {
+      actContent += '<div class="imp-label">Actividades destacadas</div><div class="imp-tags">'+
+        actNames.map(tag).join('')+'</div>';
+    }
+  }
+
+  // 11. Evaluaciones de reacción
+  var reacContent = '';
+  if (reacPrinc+reacSec > 0) {
+    reacContent +=
+      '<div class="imp-stats">'+
+        statRow('Como trainer principal', reacPrinc)+
+        statRow('Como trainer secundario', reacSec)+
+        (reacScore?statRow('Score promedio (principal)', reacScore+'/10',
+          reacScore>=9?'⭐ Excelente':reacScore>=7?'Bueno':'Área de mejora'):'')+
+      '</div>';
+
+    // Score por métrica
+    var SCORE_KEYS_IMP = ['conocimiento','transmitir','dudas','actitud','calif',
+                          'expectativas','materiales','comprension','utilidad','habilidades'];
+    var scoreKeys = SCORE_KEYS_IMP.filter(function(k){return reacScoreMap[k]!=null;});
+    if (scoreKeys.length) {
+      var maxScore = 10;
+      reacContent += '<div class="imp-label">Calificaciones por criterio</div>'+
+        '<div class="imp-bars">'+
+        scoreKeys.map(function(k){
+          var v = reacScoreMap[k];
+          var c = v>=9?'#2a7a52':v>=7?col:'#c8440a';
+          var lbl = SCORE_LABELS[k]||k;
+          return barRow(lbl, v, maxScore, c, v+'/10');
+        }).join('')+'</div>';
+    }
+
+    // Tipos y cursos
+    var tipoKeys = Object.keys(reacTipos);
+    if (tipoKeys.length) {
+      reacContent += '<div class="imp-label">Modalidad evaluada</div><div class="imp-tags">'+
+        tipoKeys.map(function(t){return tag(t+' ('+reacTipos[t]+')');}).join('')+'</div>';
+    }
+    var cursoKeys = topN(reacCursos,5);
+    if (cursoKeys.length) {
+      reacContent += '<div class="imp-label">Cursos evaluados</div><div class="imp-tags">'+
+        cursoKeys.map(function(c){return tag(c+' ('+reacCursos[c]+')');}).join('')+'</div>';
+    }
+
+    // Comentarios
+    if (reacComments.length) {
+      reacContent += '<div class="imp-label">Comentarios recibidos</div>'+
+        '<div class="imp-comments">'+
+        reacComments.map(function(c){
+          return '<div class="imp-comment">&#8220;'+c+'&#8221;</div>';
+        }).join('')+'</div>';
+    }
+    if (reacSuggestions.length) {
+      reacContent += '<div class="imp-label">Sugerencias de temas</div><div class="imp-tags">'+
+        reacSuggestions.map(tag).join('')+'</div>';
+    }
+  }
+
+  // ── Armar reporte completo ────────────────────────────────
+  var report = headerHtml + kpisHtml +
+    sec('Distribución de tiempo', '⏱', distHtml) +
+    sec('Trainings impartidos', '📚', trainContent, '#3a5fa8') +
+    sec('Habilitación', '✅', habContent, '#2a7a52') +
+    sec('Llamadas de seguimiento', '📞', callContent, '#7c3aed') +
+    sec('Acompañamientos', '👥', acomContent, '#0369a1') +
+    sec('Entregables', '📄', entregContent, '#92400e') +
+    sec('Desarrollo de proyectos', '🔧', devPContent, '#b45309') +
+    sec('Desarrollo de trainings', '🛠', devTContent, '#065f46') +
+    sec('Actividades generales', '📋', actContent) +
+    sec('Evaluaciones de Reacción', '⭐', reacContent, '#d97706');
+
+  var perKey = cTr+'|'+cPer+'|'+(cSel||'');
+  impactCache[perKey] = report;
+  showImpactResult(report);
+  btn.disabled = false;
+  btn.textContent = '↺ Actualizar';
+}
+
+function showImpactResult(htmlContent) {
+  var contentEl = document.getElementById('IMPACT_CONTENT');
+  var btn = document.getElementById('IMPACT_BTN');
+  if (!contentEl) return;
+  contentEl.innerHTML = '<div class="impact-body">'+htmlContent+'</div>';
+  if (btn) { btn.disabled = false; btn.textContent = '↺ Regenerar'; }
 }
 
 // EVALUACIONES DE REACCION
@@ -1415,7 +2099,7 @@ function renderReac(){
       validComments.map(function(c){return '<div class="reac-comment">&#128172; '+c+'</div>';}).join('')+'</div>';
   }
 
-  cont.innerHTML='<div class="reac-wrap noprint">'+
+  cont.innerHTML='<div class="reac-wrap">'+
     '<div class="reac-head">'+
       '<div class="reac-title">&#11088; Evaluaciones de Reaccion '+
         '<span style="font-size:10px;font-weight:400;color:var(--ink3)">'+filtered.length+' resp. &middot; '+perLabel+'</span>'+
