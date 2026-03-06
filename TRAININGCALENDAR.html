@@ -597,6 +597,7 @@
           </div>
         </div>
         <button class="sidebar-btn-clear" id="clearFiltersBtn">✕ Limpiar filtros</button>
+        <button class="sidebar-btn-clear" id="resetDataBtn" style="margin-top:4px;border-color:#fca5a5;color:#dc2626" title="Elimina todos los eventos guardados y reinicia con datos demo">🗑 Borrar todos los datos</button>
       </div>
     </div>
 
@@ -862,7 +863,14 @@ const TIPOS_ICON = {
    → Sustituir con fetch GET a Google Apps Script
    → Ver sección "BACKEND CONNECTION" al final
 ========================================================= */
-let eventos = [
+// =========================================================
+// PERSISTENCIA LOCAL — los datos se guardan en localStorage
+// Al recargar, se restauran exactamente como quedaron.
+// Los eventos demo SOLO se cargan la primera vez (si no hay datos guardados).
+// =========================================================
+const STORAGE_KEY = 'tmlf_training_ops_v1';
+
+const EVENTOS_DEMO = [
   {
     id: '1', title: 'Training T-Visa Módulo 1',
     trainer: 'Mariana', tipoActividad: 'Training teórico',
@@ -952,6 +960,26 @@ let eventos = [
     start: hoyOffset(-3) + 'T13:00', end: hoyOffset(-3) + 'T15:00'
   }
 ];
+
+function cargarEventos() {
+  try {
+    const guardado = localStorage.getItem(STORAGE_KEY);
+    if (guardado !== null) {
+      return JSON.parse(guardado);
+    }
+  } catch(e) { console.warn('Error leyendo localStorage', e); }
+  // Primera vez: cargar demo y guardar
+  guardarEventos(EVENTOS_DEMO);
+  return EVENTOS_DEMO.map(e => ({...e}));
+}
+
+function guardarEventos(lista) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
+  } catch(e) { console.warn('Error guardando localStorage', e); }
+}
+
+let eventos = cargarEventos();
 
 function hoyOffset(days) {
   const d = new Date();
@@ -1209,9 +1237,9 @@ function saveEvento() {
   if (editingId) {
     const idx = eventos.findIndex(e => e.id === editingId);
     if (idx > -1) eventos[idx] = ev;
+    guardarEventos(eventos); // persistir cambios
     showToast('✅ Actividad actualizada');
     /* ── BACKEND: PUT / PATCH ──────────────────────────
-       Aquí conectar con Google Apps Script para editar:
        await fetch(WEB_APP_URL, {
          method: 'POST',
          body: JSON.stringify({ action: 'update', evento: ev })
@@ -1219,9 +1247,9 @@ function saveEvento() {
     ─────────────────────────────────────────────────── */
   } else {
     eventos.push(ev);
+    guardarEventos(eventos); // persistir nuevo evento
     showToast('✅ Actividad registrada');
     /* ── BACKEND: POST ─────────────────────────────────
-       Aquí conectar con Google Apps Script para crear:
        await fetch(WEB_APP_URL, {
          method: 'POST',
          body: JSON.stringify({ action: 'create', evento: ev })
@@ -1279,8 +1307,8 @@ document.getElementById('deleteEventBtn').addEventListener('click', () => {
   if (!currentDetailId) return;
   if (!confirm('¿Eliminar esta actividad?')) return;
   eventos = eventos.filter(e => e.id !== currentDetailId);
+  guardarEventos(eventos); // persistir eliminación
   /* ── BACKEND: DELETE ───────────────────────────────
-     Aquí conectar con Google Apps Script para eliminar:
      await fetch(WEB_APP_URL, {
        method: 'POST',
        body: JSON.stringify({ action: 'delete', id: currentDetailId })
@@ -1339,6 +1367,14 @@ document.getElementById('clearFiltersBtn').addEventListener('click', () => {
   });
   refreshCalendar();
   showToast('Filtros limpiados');
+});
+
+document.getElementById('resetDataBtn').addEventListener('click', () => {
+  if (!confirm('¿Seguro que deseas eliminar TODOS los eventos y reiniciar con los datos demo?\nEsta acción no se puede deshacer.')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  eventos = cargarEventos(); // recarga los demo
+  refreshCalendar();
+  showToast('♻️ Datos reiniciados con demo');
 });
 
 /* =========================================================
@@ -1421,6 +1457,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (ev.end) ev.end = new Date(new Date(ev.end).getTime() + diff).toISOString().slice(0,16);
       ev.start = info.event.startStr;
       if (info.event.end) ev.end = info.event.endStr;
+      guardarEventos(eventos); // persistir movimiento
       showToast('Actividad movida ✓');
       updateSidebar();
       /* ── BACKEND: actualizar fecha al mover ─────────
