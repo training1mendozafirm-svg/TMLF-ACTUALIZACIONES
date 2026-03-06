@@ -597,7 +597,7 @@
           </div>
         </div>
         <button class="sidebar-btn-clear" id="clearFiltersBtn">✕ Limpiar filtros</button>
-        <button class="sidebar-btn-clear" id="resetDataBtn" style="margin-top:4px;border-color:#fca5a5;color:#dc2626" title="Elimina todos los eventos guardados y reinicia con datos demo">🗑 Borrar todos los datos</button>
+        <button class="sidebar-btn-clear" id="resetDataBtn" style="margin-top:4px" title="Recargar eventos desde la base de datos">🔄 Recargar datos</button>
       </div>
     </div>
 
@@ -864,12 +864,14 @@ const TIPOS_ICON = {
    → Ver sección "BACKEND CONNECTION" al final
 ========================================================= */
 // =========================================================
-// PERSISTENCIA LOCAL — los datos se guardan en localStorage
-// Al recargar, se restauran exactamente como quedaron.
-// Los eventos demo SOLO se cargan la primera vez (si no hay datos guardados).
+// BACKEND — Google Apps Script + Google Sheets
+// Reemplaza WEB_APP_URL con la URL de tu Apps Script desplegado.
+// Mientras no haya URL configurada, usa datos demo locales.
 // =========================================================
-const STORAGE_KEY = 'tmlf_training_ops_v1';
 
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwG68cc5l2MTX9r_I9MVlD1TgSXr6BKFOSHG3n2ep1MhuUeS69f-fvtiR31lqo0_Nk6_A/exec';
+
+// Datos demo — solo se usan si WEB_APP_URL está vacío
 const EVENTOS_DEMO = [
   {
     id: '1', title: 'Training T-Visa Módulo 1',
@@ -944,14 +946,6 @@ const EVENTOS_DEMO = [
     start: hoyOffset(8) + 'T09:00', end: hoyOffset(8) + 'T11:00'
   },
   {
-    id: '11', title: 'Training Sombreo Inducción',
-    trainer: 'Sofia', tipoActividad: 'Sombreo',
-    modalidad: 'Presencial', sala: 'VAWA', area: 'Inmigración',
-    descripcion: 'Sombreo de inducción para nuevos colaboradores.',
-    prioridad: 'Media', estatus: 'Planeado',
-    start: hoyOffset(7) + 'T10:00', end: hoyOffset(7) + 'T12:00'
-  },
-  {
     id: '10', title: 'Apoyo Operativo Cierre Casos',
     trainer: 'Andrea', tipoActividad: 'Apoyo operativo',
     modalidad: 'Presencial', sala: 'VISA T', area: 'Operaciones',
@@ -961,25 +955,47 @@ const EVENTOS_DEMO = [
   }
 ];
 
-function cargarEventos() {
+let eventos = [];
+let backendActivo = false;
+
+// ── Cargar eventos desde Apps Script ──────────────────────
+async function cargarEventos() {
+  if (!WEB_APP_URL) {
+    eventos = EVENTOS_DEMO.map(e => ({...e}));
+    refreshCalendar();
+    return;
+  }
+  backendActivo = true;
   try {
-    const guardado = localStorage.getItem(STORAGE_KEY);
-    if (guardado !== null) {
-      return JSON.parse(guardado);
+    const res = await fetch(WEB_APP_URL + '?action=getAll');
+    const data = await res.json();
+    if (data.ok) {
+      eventos = data.eventos;
+      refreshCalendar();
+    } else {
+      throw new Error('Respuesta inválida');
     }
-  } catch(e) { console.warn('Error leyendo localStorage', e); }
-  // Primera vez: cargar demo y guardar
-  guardarEventos(EVENTOS_DEMO);
-  return EVENTOS_DEMO.map(e => ({...e}));
+  } catch(err) {
+    console.error('Error cargando desde backend:', err);
+    showToast('⚠️ Error al conectar con la base de datos', 'warn');
+    eventos = EVENTOS_DEMO.map(e => ({...e}));
+    refreshCalendar();
+  }
 }
 
-function guardarEventos(lista) {
+// ── Guardar / editar / eliminar ────────────────────────────
+async function apiPost(body) {
+  if (!WEB_APP_URL) return; // sin backend, no hace nada
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
-  } catch(e) { console.warn('Error guardando localStorage', e); }
+    await fetch(WEB_APP_URL, {
+      method: 'POST',
+      body: JSON.stringify(body)
+    });
+  } catch(err) {
+    console.error('Error en apiPost:', err);
+    showToast('⚠️ No se pudo sincronizar con la base de datos', 'warn');
+  }
 }
-
-let eventos = cargarEventos();
 
 function hoyOffset(days) {
   const d = new Date();
@@ -1237,24 +1253,12 @@ function saveEvento() {
   if (editingId) {
     const idx = eventos.findIndex(e => e.id === editingId);
     if (idx > -1) eventos[idx] = ev;
-    guardarEventos(eventos); // persistir cambios
+    apiPost({ action: 'update', evento: ev }); // ← sincroniza con Google Sheets
     showToast('✅ Actividad actualizada');
-    /* ── BACKEND: PUT / PATCH ──────────────────────────
-       await fetch(WEB_APP_URL, {
-         method: 'POST',
-         body: JSON.stringify({ action: 'update', evento: ev })
-       });
-    ─────────────────────────────────────────────────── */
   } else {
     eventos.push(ev);
-    guardarEventos(eventos); // persistir nuevo evento
+    apiPost({ action: 'create', evento: ev }); // ← sincroniza con Google Sheets
     showToast('✅ Actividad registrada');
-    /* ── BACKEND: POST ─────────────────────────────────
-       await fetch(WEB_APP_URL, {
-         method: 'POST',
-         body: JSON.stringify({ action: 'create', evento: ev })
-       });
-    ─────────────────────────────────────────────────── */
   }
 
   closeModal('formModal');
@@ -1306,14 +1310,9 @@ function openDetailById(id) {
 document.getElementById('deleteEventBtn').addEventListener('click', () => {
   if (!currentDetailId) return;
   if (!confirm('¿Eliminar esta actividad?')) return;
-  eventos = eventos.filter(e => e.id !== currentDetailId);
-  guardarEventos(eventos); // persistir eliminación
-  /* ── BACKEND: DELETE ───────────────────────────────
-     await fetch(WEB_APP_URL, {
-       method: 'POST',
-       body: JSON.stringify({ action: 'delete', id: currentDetailId })
-     });
-  ─────────────────────────────────────────────────── */
+  const idToDelete = currentDetailId;
+  eventos = eventos.filter(e => e.id !== idToDelete);
+  apiPost({ action: 'delete', id: idToDelete }); // ← sincroniza con Google Sheets
   closeModal('detailModal');
   refreshCalendar();
   showToast('🗑️ Actividad eliminada');
@@ -1370,11 +1369,13 @@ document.getElementById('clearFiltersBtn').addEventListener('click', () => {
 });
 
 document.getElementById('resetDataBtn').addEventListener('click', () => {
-  if (!confirm('¿Seguro que deseas eliminar TODOS los eventos y reiniciar con los datos demo?\nEsta acción no se puede deshacer.')) return;
-  localStorage.removeItem(STORAGE_KEY);
-  eventos = cargarEventos(); // recarga los demo
-  refreshCalendar();
-  showToast('♻️ Datos reiniciados con demo');
+  if (!backendActivo) {
+    showToast('ℹ️ Modo demo — conecta el backend para persistencia compartida', 'warn');
+    return;
+  }
+  if (!confirm('¿Seguro que deseas recargar los eventos desde la base de datos?')) return;
+  cargarEventos();
+  showToast('🔄 Recargando datos...');
 });
 
 /* =========================================================
@@ -1457,7 +1458,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (ev.end) ev.end = new Date(new Date(ev.end).getTime() + diff).toISOString().slice(0,16);
       ev.start = info.event.startStr;
       if (info.event.end) ev.end = info.event.endStr;
-      guardarEventos(eventos); // persistir movimiento
+      apiPost({ action: 'update', evento: ev }); // ← sincroniza con Google Sheets
       showToast('Actividad movida ✓');
       updateSidebar();
       /* ── BACKEND: actualizar fecha al mover ─────────
@@ -1468,8 +1469,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  calendar.addEventSource(buildFCEvents(eventosFiltrados()));
   calendar.render();
+  cargarEventos(); // carga desde backend o demo
   updateSidebar();
 
   /* ──────────────────────────────────────────────────────
