@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medidor de Probabilidad de Caso</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #7a9b5f 0%, #4a7030 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-container img {
+            max-width: 400px;
+            height: auto;
+        }
+
+        .visa-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            transition: all 0.5s ease;
+            opacity: 1;
+            max-height: 200px;
+            overflow: hidden;
+        }
+
+        .visa-buttons.hidden {
+            opacity: 0;
+            max-height: 0;
+            margin-bottom: 0;
+            pointer-events: none;
+        }
+
+        .visa-btn {
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border: 3px solid #2c3e50;
+            background: white;
+            color: #2c3e50;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .visa-btn:hover {
+            background: #2c3e50;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .visa-btn.active {
+            background: linear-gradient(135deg, #3d8f00 0%, #2d6f00 100%);
+            color: white;
+            border-color: #3d8f00;
+            box-shadow: 0 4px 15px rgba(61, 143, 0, 0.4);
+        }
+
+        .visa-btn.active:hover {
+            background: linear-gradient(135deg, #2d6f00 0%, #1d5f00 100%);
+        }
+
+        .meter-container {
+            position: relative;
+            margin: 40px 0 120px 0;
+            padding: 0 60px;
+        }
+
+        .meter-bar {
+            height: 60px;
+            background: linear-gradient(to right, #e63946 0%, #f4a520 50%, #3d8f00 100%);
+            border-radius: 30px;
+            position: relative;
+            cursor: pointer;
+            border: 5px solid #000;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .meter-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding: 0 10px;
+        }
+
+        .label {
+            font-weight: bold;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .label-left {
+            color: #e63946;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .label-right {
+            color: #3d8f00;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            border: 6px solid #2c3e50;
+            cursor: grab;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            user-select: none;
+            line-height: 1.2;
+            text-align: center;
+            padding: 5px;
+        }
+
+        .indicator .visa-type {
+            font-size: 14px;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .indicator .percentage {
+            font-size: 20px;
+        }
+
+        .indicator:active {
+            cursor: grabbing;
+        }
+
+        .scale {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding: 0 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .trump-bubble {
+            position: absolute;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 160px;
+            background: linear-gradient(135deg, #4a4a4a 0%, #1a1a1a 100%);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            z-index: 15;
+            transition: left 0.1s ease-out;
+        }
+
+        .trump-bubble::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-bottom: 15px solid #4a4a4a;
+        }
+
+        .trump-bubble .percentage {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .trump-bubble .text {
+            font-size: 12px;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .success-icon {
+            position: absolute;
+            top: 50%;
+            right: -60px;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #5ca800 0%, #3d8f00 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(61, 143, 0, 0.4);
+            z-index: 1;
+        }
+
+        .success-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: white;
+        }
+
+        .description {
+            margin-top: 50px;
+            text-align: center;
+            color: #2c3e50;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .message-box {
+            background: linear-gradient(135deg, #e63946 0%, #c92a35 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+            text-align: center;
+            font-weight: 500;
+            line-height: 1.6;
+            box-shadow: 0 6px 20px rgba(230, 57, 70, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            .logo-container img {
+                max-width: 280px;
+            }
+
+            .visa-buttons {
+                gap: 10px;
+            }
+
+            .visa-btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+
+            .meter-container {
+                padding: 0 40px;
+            }
+
+            .meter-bar {
+                height: 50px;
+            }
+
+            .indicator {
+                width: 85px;
+                height: 85px;
+                font-size: 16px;
+            }
+
+            .indicator .visa-type {
+                font-size: 12px;
+            }
+
+            .indicator .percentage {
+                font-size: 18px;
+            }
+
+            .trump-bubble {
+                width: 130px;
+                height: 130px;
+                bottom: -85px;
+            }
+
+            .trump-bubble .percentage {
+                font-size: 30px;
+            }
+
+            .trump-bubble .text {
+                font-size: 10px;
+            }
+
+            .success-icon {
+                width: 40px;
+                height: 40px;
+                right: -45px;
+            }
+
+            .success-icon svg {
+                width: 22px;
+                height: 22px;
+            }
+
+            .label {
+                font-size: 14px;
+            }
+
+            .description {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <img src="data:image/png;base64,UklGRgQgAABXRUJQVlA4WAoAAAAwAAAAjAMA2QAASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADZBTFBIehwAAAF3oLaRpDb4PvOQ8kREQPXecov9rylIBtK26erf9fZriIgJAEWt/mR6dv7/bRzd2n4kS9WUtAJXDiU3OF2AIXDlTNQaxoKANRd8BMZ9BA2unAmtOCS0chbkO84IyyuOCPgEOkilAiXSv3No9/f/5Z9/NWzWaEX0H4LbtoEkenrdnn6CpI0k1b+al/U+/tGghRH9FxIkGnmC6/n/t43s/ERZS5P2WTC9jGMoPdkiKL0Luk4xdJum9OTugKd3QXkDgtI7ofROaNKr4Jlzlab0ngzWoj2UKM3nPeyeP/+NWmPmLqL/Dty2DSPqll2Wn8j/A7ZbpfNFEoV9IInCxiKyV7YXFotOIt9Q/Qj+fF31I/wTn4nWi4sfEVloKSL/9AX4+QFIVEPj8Zl+BI+/J3hR8ZWPxCRNAP9WvcJ/q44M289h37+4mDJ7U9DDv7VfWHzArK4cuH5hkV0x2bUDize9sGQw1sejZ4NX/yuOOv/ikq846j7lOL3wnfurL4lkz1F3dyk/XfeYo27dPkqn0Lnz9Zfk5rjbXMov1z3luIuO0TN94lqi6ftLnL5dxMfooLlra628L8dX3UfLN4iHR74ERyhqtfIcO6hOviTXVxx1fj/mONzn6n3FUfcpx/heq6rrcFbN5Z061+7talX9NrdiVdWrd7pej2+9u92qqi7dWqmqPn1fid/dXqmqlm7tVVXL9xX5+Xtbo6qqI6dOqqo6fl/5mfvaSmFTtwUs30fe6Tu+5TpkqAoeFZIWbVx6rbgfflT4GzUWOFQbiveWeXgfO5km7kStGrt+X9kE97Bnai51Wcyl7yu/cx+/D8hteEmU3vtJOrmHRY2S+c4clWz8LvUVrZhI9aqHcnAPWynb2JmGyd+lVqo+kah+ABLV0PCZlr6IyF8R38Nqau7KQumCd6ha9eeIr6t+BL6mmqPkrOZO71+J0hWubLnZO/T328FP+A37QBKFjUVkr2zt+9eOcRWg0G3kcbBzh9CRs/KFjwKZduyJG4l27O5R4N7wryh3Y43+vUGV/wgQt6iQE6g8Jw7o+m+Ma/oIsDXuGzk4C6RUXtKi4hHghCpf1ujbXIjxzkXujWs0+C2M+04kQUsXVmgmkhl+YfD7T0MoImdQurBHoYg0aOMNfNEZlSJihpEDJ+SJyCvjGg98K+N+KiKyRVNnpRARSQzPB74HQyAicussZGguIiK18QWDXmKcXGCNq/AajcHacDPovTBM0BGvoLca+SBq0WbQO6PKe4uFSV9RaxTcwbjCAS8z7lRwC5Q6KqnhmSEd8A6Ga0PUgk1fL9FEjJ1Q5Q12UYsKMVe7CUcUmF4Y12Swe2bcN8QOjXtqwEbMJe2gf7JSBUSG5v0szEJ2fCRYGoeFop8tmjKroS9BU2E74eW7KCMmQh/KYF8DPqT2LsIZlMJ2i8bD3QPIqRWa9ZHgvaTWKBjudqCkYpT3sTYL2x5sZLhvhWFkESqvhwO6pmqwHPASNKEOeIW9S+Ux0RvwbTLgdwYpte4dYrxzei+whEPeERRUgpb2VmhGbZH/njP6wAH4YHgc5uvWsXkJKo9+Z1Da26OQOoDiEmdOrQs7I2r1arrY1qnboBYazNEU1txh6kMfCF11/5RaH2nZ6WNXZu2G8NhkGK5twsjaCX1e2E7g7jL3D1SKiZ2FIuvox0/aCc2ujKNbAny0pR3p3vhh9QEnwwpNWduj16yVnB2bGE2pLZr2LAU9Mb6nF3qnirWdQtExXT9uR3f9TfXXNv6SCvKW4TrHXB46Ph8MRN5dAllgY2TpxNqewdEdTuCOWvQMGZpTGbq+VCmVX8dKBTAxfh4B9HSfP/AJ2vuPK141f/4XeGD8rL4++Bki8gN/qv75TOvrDvKXROkngImNFPhQW/d56raPIDs6B7ARuqZfeI3G1EvkXcpCcWajq7wvjRKVrjlEou0WIG8ZzSE0KoFcaqWV8rP9ewtPOlLrV4FX7Lwi2gqAB9YWQHBstvj0qSNegaUa+dQRFJc5mnVsY66Ixdheoa006SuvyCiFtlGhqNdXfnlgZQq8Ipq2sG6bzcn0T7J32wsgPDbPUGgTJnai1ih0DUgvpq/IbWwUkVllttCrv2ZGfQiMbhSahgeAgZUKctGVAldmCyKN+j4T67bA+bGJWvDEJqS9Skol+J5cTBeltoVScWq2M+sTG6TKq2NBjF0rdP2Y8qlj4ZeBzxZtJdCxEOjdApxZSwDGR3c4gSUVtWBj5yWaUCs0kotNFZslB0VoS9/+TYZ2AAOTLmuzpUJbCTC2ez8J9OZWr2Vu2A8AbWspQH50DqAUurpPOKKA+gxUlzqKAzAwS1lbemphe2ZSAKwDg4SVByPldWI0B65EX7IHjOc3JnpzgIn9vgSgfWzWGAJqh8ZWGrDhpQb5RW2BXzJbMrFUWri1w2ebXh7UX68ZbYFIDN0BD0xuBnolQGzvDuBJdGwWaExlaG5jYRa6BswvagMQGN3xjd7cnNvJmjAFyE2GAG/uhhZAZrI51+oegHVgr1LGxdGtDZjbhMLGFk2pBZbxRc0BIqOKL/Jm8bKZ0qknhiqA0OAhkImpPkBoUERaC8e9DwdgcnRqkPNwwsu3LyNqjYKL6j8DLkz6rD/XiUOKA8C4CRuAnsEO6ImxPXBhcBea98je/FleAqujswcVt7cPZ1Dy9wGUFzsKqYCJyYKs26CfU17tBqQAmV4XIDYrLdb3tHX6AE8c9hveeQPQPjYrDCNqhWbdEryX3Ak8v7ACWLcMCnpNiiqA1xqQHADaWguAjtkGIBDrlgBXYl/J+RwgOjYJmlIxyrutbUrUgtmFLQBCgy1Ro/4AIG95YaoEiLQ2AC2zBUBkb6vu9u0J+wC9o1sbkNqEyut0QNfUMyzjCxsBnOl1od2ovrJGDbgBuNTaArmYm6IcrKrvq5a9EbSkAiZH5wgK7oBXaFkqj9qi4MJkD4z1UnLxZDS28SSSW4BZA+YAE60DMLMwBBhbewgwcHgvyETugNXR2eHTo9aWIcY75+UebC53au6Ald4jBr6kZsqQVHl1/PtegFxnCHBlIQHIrO0ATh0U9ESuAU6OzQqFVIKWXVZoxp3B8uIeAbS1Ss58mdoO2QEM/EsAaGlMAXpiUQXQsjRUdnFoSyySAsTHJkZT/jyDsssehVSM72+7uBQg1trT8WVhO2QBsA48MFYBnGgsAM5t7ABOLD123ZNnnIh0AXpHt57B0ioEHR4QLxkKLy45AAOdESvxZWM9kj3AA/+2AKcaNwCxjRIgtFQBhA5SViIiO2B2dI5gw21BZfen4O/XyL842QGZzpKJN6X1kI8D5P6VALHGLUBk4ylAZCcFyF32JRMRkQJYt47NFp8BdQtyu3/PuSMoLnjqNgCBRsGFL92D9ZAhAKfeFQBnGqW1W4AzOxuA113cciEisgToNC++4jI05lejqoUvXfs7VdUx14C0w/VFzAEijYrQlz/EfkgJMPFuA/CyxhYgtFEAvOy0O1RxKiKSAsTNW91wMZpxR9XN5717X1NVn0rwPeXi5UV0AXp1fQj86P4MFupD5sqr7dsNQE9jZ20DcGllCpC5PH0IRESSAzBo3j7veJ7A847wxbHZN7rKCl1z6/IipAImdXMycaHPhmZIBfCab28ADDQqgI61npUC4DUX82eZKG2BrHmnyuMOoOSiv7oSu/3193F7UHncQUcXUQDrVs2GXoM0Qx4CrFqeXfvyBsDARrIHOHHxiIFqA9Bq/KI65rb4vBL3q0HRURqdXsQCIKzZEh/F6B8AYs+WTZuru0slsWoBEDZ+UZ1zCzS5gBak3K2q06DxvQDnquRA24X2c/837YdSATB7e7kFeOBkz0uqIcBZ4xfVDRe1YO7eAsuEe6HqNGjIHhirUnJxVu9frYdSCkB4pIvl5+QA0HYxZC219sBV4xdVDfh3Arl7WzTialWnQacEVqprxv70D7ZDbQsw8OsNgJ5J6Et9nzm9F0zqSiBv/qI64fbgY8+5A6j4iVpVp0HnEUBHcceZO02l7VBbAKwDr24ALjX+29oNwMsWSoAzJwWXdTcAQeMX1SW3xjBy7gRybqXqNuikALFiT8ejwm0ke4AHXm0AzjW2AJGNDcCZWbe2u7QlqpsDnDZ+US25BZq6FuF7zu1V3Qad5AAMRESGrFseXduOWo8Bcq8KgFijtFYAxGYLgInTkzwjqOsDXDR/UQ3514DUtQyNubOq26BS2gG5iMiCiXg0tx21+gCc+lQCRBoFQGzt1HKPnaTkoqkCxg1fwIyrQeHaFgVU8va4DVobgLaIFFz4NLUd9UqAiU87gFDjBuAdNu4AQqM+wDpwssRY3vAF5Nwen75jR1Dye/2W26A1B55EIrIj8im1HfWmyuvEowqgrbEAuLRRArSNluru1C3m2s1ecD61QqFjZ7Dkjm+5DVp9gJ5IFwIPHKoNTTuAb/QnAViLpinAwMYOWJn3LUDkprIQNXvBjakEfZtbCb5nXPMFp0GlVgGZyJzsradB6tD0ywCrljcjgJnOEGBiowJmRkOAJy0nXdYt3ecuwGWjF2MpfzZg6dYKjakMjtOgVwDrljxi0Czj6D4DiL1ZAAx0kmdAZiEBGBg9BLhye8/JRFsFTBqUmTbcEZRu7ZBP7YDToLcECKUkPoahqwDIvNkAxKJrBzyxMAQ4M9p52B/R07sFVg3aqbkRtcOn79QD2PB3DZwGvRHARXKgfQxD1wiA0JcS4CWtAuDEbArQsdpXb+5OlcR6S4CT5tTElFqhsVMNWFKxcVwGVa09MB6x+sTT+NC2BbjyJDkAK9G2AIjMFsC6ZfIYYGB60tBgz4leChA3JmqJ51SMPnTpFt9TamVwGQxKYLVk3ID5xDy0zQHWnkwBxnp9gAuzAhgb9wrg1GQZ6w1Zib4EoNfghazy6HcGuUtrFFIHg8tg8Aig4qwBm0unkVSf+ORJoV70VcDYbGtzSQFy47ci0lswEUM7YNbghS2k7kHp0h751NngMhikKIUNqCLz0PcHHu2BdWCwAVZGyQFom2yU3XjfGpYNFyYFsG41d2GbU1t8jhyqQUHPghyHwSBRrFv+DemYh76+P3OAiRhKATomKTCz20OT5HCityUyWQB0mruwFVSGJu5Eb0BKbQmHQVVvBzBRHr8erlvmYejWmxLgVK+2PjDZALHJ1G4fEWglBwKTFCBu7MIXMBGau7PA95R64AaN2AD0GrDNRN/tW8NQ6ksKkIuxh8DMpIJVy6QAeN1ouda/R6zEVAIwaOzCN6HXCRTubNGIiVoub8QcIKrrW9qZKPuVwd1bw9TOky1AbNY/ACd6U+AbTU+yV3dTZa635J1irAKyxi58d9QBVJ4zB1B5TKYda/uSQFDXBwgMTn34OBdGsdHCzrXRjwFkYtFj4DW9EtZtkzlAZny6h5neHT2zEiBo8lL+PiqpLT6vnTmBgr736E/+D8W+9KGteVWQS70RQORBd09kUHJm1N1buTEZPgMIjWqvVaCTAq+KqVuAC6NfZqK359ysAIiavKRyxu+auUVTV2J8z6kTCjPHYQgnGgUMNFKAM7MKuDK9OTHY8bIYK6wUBv0K4BvEql8BvklnB3lg3A8AJ8Z3xUArhdjsBuCbmrxM5IBmTNSCO1cyNGESPKUXtW7DFE41lhBrLAAujRKATOvHYC2GnjEwG1op9dL/AZiIZTsgrPsjINK/7ff/hEutx/byJi+BrFBOnzUoXHmJRswaLUVqt+ExXGiMoKNRAEyMUoAnX1c3+hlgZjCCXxJzpYVkD8AHv1pE3vWbKE/L1vAAq9rv14BvFWMlwAODd2+BWKvC5vMdjaysbETiFlQ+s8en78gRlPR9j6YiO6chqSBvaX77lebp7gE4MSlRfugbGBRAaDa3sMDch8W+HwX4UFvkB7bAzPx039xti3R+BVgFJv2DIg8avIjUeI2ZNQodaUBONSgQcRq6/wnw0aCuHNf1tyhlHf23P8WqM72fBMgtfpXRu958m5qF9o/y0zVpmS2wLqxLfgaA7Gv00i1qWdjcRWSHUuYWPXEjeQPmzDM8GxFxGOZoilSPLlQLtPVquth2qrOn3sDkocGd8cvkAx1xLN3VfbtYtLR3UldQK9cp0BU3dhFZoA0NDVi6scIyZnYoFaHhPqn/V9J07/kNIP+Rtrzt6ygi0uAXMDUo3fgMBUyNxiI0PJdGCzigKfMZPgMnalCyE7eg8kVoeC6NFrBGS2aFxk40YMms8M5FeHgujRaQoMojEjR3YYHvGXNAs7d4eA6NF9wJv5BdDchdWKMxc0ajtwZu4AW3R0+Ze1C5sEc+keApvzgDN/CCy1DB7PA5cuAENuzeovQLAzfwgota/HwiQ9P+ohYsmSOagEEbeDH3gCZEjOb9PcP3lIhaFIBBG3gxt0Upe57Bpr8dCokMT4Fn0AZezN2iDXOP11VvNfKIHZqjQRt4IWvwYz5FN30leEpWDig0DNhgVewcUd7XWnF+t7FhwAZeyBYWj0Zxfk9Hw5h4iVLDgA28kO1QSizU2KSfqDHMiQXaGAZssCw1GhNb010/mRorWGjwC4ZusCxxCyqfeDCV/ezVXEDco+nQDZZlhXdOTtSqubCXMzEh1mg5dINlOaAZkSnZ0z5ulSwlElR6AzewcsWc0YjYMUUfL5gNCyf8wmEbWCnZSfCUQlYrW9BDbeoIezQbtoGVJbNFd0T8eWGb2otbakpkqBi2gZUpc0QTYqV0ub2V0i2JqMXPH7SBlRERNSgg9lzlWTtwJQsPaDJkg2XJ8BSsnJRvbK1RvhGxRanb0Eep7cXy1M0IIJMK4ExkDkyacUe9MwcAZPYKlGZf7GYEzDQKIGruskNzVrRjqa1MOzYjblHpOtzB13kaxbnLUH+ZSLeCSEQkJWtqTKEjIun+3GX8EbziMlL4aDDc8Vluv+6OdatuRxY0eDmhkFij5V+g0tYrlP82ytnzjN+V4zBl5Wupxq5LyaWILKGlLLuosWWnkMcvuxhCy2nZ0RFJWQVuvyWENV24aPAS46k84oAmcYvftaUTmkYtqDzigG4chxGZJ11yVzeKEaifd0FjSlXqpEvu9rmkIyI7YjdTOKuZQtzgZY2es3JGgdRoZicx3oHUeIXECuXMxvng1RQCRwuuREQOtBW/29Cjk/QadKfYMHaTrhnXPDr4YlkOaEokeAqRF6iws0WFyLY7xKjyiLnzwatHcOooZSYisiMUEelPGievNG5B5mhCXlOWvliWBl0RWzQXuVVcYOUBzUUWqGChxi8kum9xO3h1t+PcUcJaROSWWEQkvWyWW/7MWTkaVLRVf1/4Yldu8WzY+x6NReSMJjaiFoUi0uDnEzs0Z8+d60HxS57sf5mx62FHW0SuuRQRWcT3oKfEitE7N55YlhcoZRrki8gBLW2s8JSeiBzRmMhQ4TD4HP1sRO7qKZGITJmIiGw694Hc1TU9xfLSF8tSozGxIEUkQ5Vn4YDuREiYs2eDX+Au+BzzQXIgcPSIc0UuIlK2mvaeI7Bk5iolUxTR5okfdiVqkd9dZiIi0Rv8QgsNmoiIJBbhiCbugs+xiWXLqaM5V8pCICK/0NSj8d4jUNBzlRzWLRGRKvA17EqGJ2fvGoUiIvKA0m63igtEROSMX0Cs0dJd8DnKl6Tg3NGQTESKA6FI/6pxH25esid0JTtCEeln4oll2aMZEbWg8sAWbbq9RrnADmhCJKh0FzyO5O9FFly5Hg7rlsi2JBaZnzftxybN+1UmLo9qw7mIzAe+WJYTCokM71xgieJGnWr0BK1Ryp4n/EJnweMYTURG5K62nIj834KByHXUKIDm/RR5292CsYhsYl/sSoKnZO+dWXAndNMlMd7Xb7GwYfZo5ix4HIueSHIgcFQQSX+WMhO5bTc95k0DspbTo+qzEpFtxxe7skZLizIyvEJ5lzUqxdgJvxGRodxZ8DiKSES2hI6WfI7MBwkrkb9p7NF8/lDTIyV3e1RS0Zbkr8QTy3JEEyLGU4qxzHj6HY4oNe3RlIje4Oe7Ch7Hri0iBeeOUsZyfSYV7WTWvPc0vuw49eEpsaRjjxYWpUEBsUJLMdegCRe1aGxaoSV71mjsKvgbyUpEZMGVoz6Z3J7KHafpoHnvbtxDBs6uRJYM5PrCo213eYanYO89mhL36I7L8FS+KW5BybxAqavgb6So5eJYRWvXlke8Y3HWNLd8GbJyOtRGSiZ3oUfH7rJAc+aErog1Kj1qj3Ihq/G6JhZo7ir4G9cXIiLJgcBRSfh7InOuNuHbn2yJPEgOBPuWR013iVFIJHg2QhYbIaTO6IbZoRm7GjA1OB/8jbtTERHZEjq64ZsnIkOyMrgHLLnyQHZ8TSae8ML2NVXVjz1ijVJhq9GcuVXcFZOhnDmoqm58g/PBMB64qAJFwbmjBVlPRA7r323uOSZ91oEHG36/5wsvdLWq5ux9QBPqNSqYF2gjbBGGyiPWqlpdmcf5oB+j2EE/F6UFV45GEIvIlsl9QEpiD+YQ+cILXXxWvWHOKKAWxjMgapQK3QNeIRGr6g+y43rQj2XoYDpQjcgdJQdCESm4vBcsmHnQh7YvtHRs0eqouxTC16CpKTbeIbdFT9nzpD9Pj+tBP8rAQXGuSqDt+NvREpElccNCd31XJaGIdA903FyJiFS5eMJL137zZ9i9RfMOB5Sb1uhjj1uggvmlP+BHd+jZmpKre+50iUVtzwNHt7mIyJROo3ZE7oas3eyIRERumTiZz0REno5FRG658HrpsyMad1ihyjfco+fSsQY/X2ynO2S27uBERNLdxMGvMmspppCfuLkei4j0aTUphZm7P4Svd5HCWERkDh9uOSifnIjI8kxE+nuyls9LnzXI7xC3+I0NDZp2OaKxPd0hsNJH08DeAliJiMwBCJzML0VE5OebfO4AnM8AZPYKANoiyR4yayOAnkjaEXkDgMjfpc8WeHLpWo1SlBkl6LJGqT3dIZLnuHjpsxfoSactKtErVEjXErSxpz88x+Wq1CjsdKu4a3BCT6VzZ/wCJ+E5LkclakHlSefOaCYikhjvsNsBTdyE57cclcws3dujQkRki0qv22oIB1dlh24sZMYzEJEa3Un3YlQO2uCqnNDIQvQGTUWiFk3EYif8roZscFRiPKXY7Iiei6yMEtjYo+mQDY7KCi2tbFHlyQHl3YeF5YANrsoeTa0kRgilQU+sRO3gDY5LIFY7ofSZ8b4Wq9V4hcM1OCoJno3Y7ZV2rBS77dBsuAZHZY1SS1mX1FKG8sEaXJUDmojlmg5jGyxU3lANrsrZLJa75ypfLHccuMFRucVTiO3WXC6226L5UA2OyhbNrcXcjbUFKgZqYKXo5YjGYr2auhLrNfj5fZzhAAruJ3/cfr/RIt/ea2Yj9jugX/3xHrvDARRny8V+C2bewxq90b4bDaA420x6rCHCHhJ1tM3gE3cL+ziYPvakx86ObAafOFvl9bEyLe0PBDfbDFp5Ln0Wt4ZpLytXz8mglan0Wm0IeomHa4hl1M8WFdJvp8EaWiml3xL0tKf9YA2tLKXnziDsKRusoZVJX3tV1VJ6LnozUEMsQV+Zquqd9F09UEMrG+m7qFXVSW+74Rp+6w+c7ael946q6vd2+wfuZvfXqrk8BpeoPpFH4U46ehzalfI4XJbKI3HXIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAC1ZQOCCUAQAAEC4AnQEqjQPaAD5RKJJHI6KhoSAIAHAKCWlu4XdhG0AJ7APfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ3gA/v/xP4AAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" alt="The Mendoza Law Firm">
+        </div>
+        
+        <div class="visa-buttons">
+            <button class="visa-btn active" data-visa="vawa">VAWA</button>
+            <button class="visa-btn" data-visa="visa-t">Visa T</button>
+            <button class="visa-btn" data-visa="visa-u">Visa U</button>
+        </div>
+        
+        <div class="meter-container">
+            <div class="trump-bubble">
+                <div class="percentage" id="trumpPercentage">51%</div>
+                <div class="text">EN LA ERA<br>DE TRUMP</div>
+            </div>
+            
+            <div class="meter-bar" id="meterBar">
+                <div class="indicator" id="indicator">
+                    <div class="visa-type" id="visaTypeDisplay">VAWA</div>
+                    <div class="percentage" id="percentageDisplay">51%</div>
+                </div>
+                <div class="success-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                        <path d="M4.93 4.93l1.41 1.41C8.48 4.2 10.14 3.5 12 3.5s3.52.7 5.66 2.84l1.41-1.41C16.64 2.5 14.42 1.5 12 1.5S7.36 2.5 4.93 4.93z"/>
+                        <path d="M12 7c-2.76 0-5 2.24-5 5h2c0-1.66 1.34-3 3-3s3 1.34 3 3h2c0-2.76-2.24-5-5-5z"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="meter-labels">
+                <span class="label label-left">CASO NEGADO</span>
+                <span class="label label-right">CASO GANADO</span>
+            </div>
+            
+            <div class="scale">
+                <span>0%</span>
+                <span>25%</span>
+                <span>50%</span>
+                <span>75%</span>
+                <span>100%</span>
+            </div>
+        </div>
+
+        <div class="message-box">
+            Un caso bien documentado con evidencia sólida, testimonios consistentes y documentación completa tendrá mayor probabilidad de aprobación. La preparación meticulosa es clave para el éxito.
+        </div>
+    </div>
+
+    <script>
+        const indicator = document.getElementById('indicator');
+        const meterBar = document.getElementById('meterBar');
+        const percentageDisplay = document.getElementById('percentageDisplay');
+        const visaTypeDisplay = document.getElementById('visaTypeDisplay');
+        const trumpPercentage = document.getElementById('trumpPercentage');
+        const trumpBubble = document.querySelector('.trump-bubble');
+        const visaButtons = document.querySelectorAll('.visa-btn');
+        const visaButtonsContainer = document.querySelector('.visa-buttons');
+        
+        let isDragging = false;
+        let currentPercentage = 51;
+        let currentVisa = 'VAWA';
+
+        // Nombres de visas para mostrar
+        const visaNames = {
+            'vawa': 'VAWA',
+            'visa-t': 'VISA T',
+            'visa-u': 'VISA U'
+        };
+
+        // Manejar cambio de tipo de visa
+        visaButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remover clase active de todos los botones
+                visaButtons.forEach(btn => btn.classList.remove('active'));
+                // Agregar clase active al botón clickeado
+                this.classList.add('active');
+                // Actualizar tipo de visa actual
+                const visaKey = this.dataset.visa;
+                currentVisa = visaNames[visaKey];
+                visaTypeDisplay.textContent = currentVisa;
+                
+                // Ocultar los botones con animación
+                setTimeout(() => {
+                    visaButtonsContainer.classList.add('hidden');
+                }, 100);
+            });
+        });
+
+        // Click en el indicador para volver a mostrar botones
+        indicator.addEventListener('dblclick', function(e) {
+            e.stopPropagation();
+            visaButtonsContainer.classList.remove('hidden');
+        });
+
+        function updatePosition(clientX) {
+            const rect = meterBar.getBoundingClientRect();
+            const x = clientX - rect.left;
+            const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+            
+            currentPercentage = Math.round(percentage);
+            indicator.style.left = `${percentage}%`;
+            trumpBubble.style.left = `${percentage}%`;
+            percentageDisplay.textContent = `${currentPercentage}%`;
+            trumpPercentage.textContent = `${currentPercentage}%`;
+        }
+
+        // Mouse events
+        indicator.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                updatePosition(e.clientX);
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Touch events
+        indicator.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            e.preventDefault();
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (isDragging) {
+                updatePosition(e.touches[0].clientX);
+            }
+        });
+
+        document.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        // Click on bar to position
+        meterBar.addEventListener('click', (e) => {
+            if (e.target === meterBar) {
+                updatePosition(e.clientX);
+            }
+        });
+
+        // Initialize position
+        indicator.style.left = '51%';
+        trumpBubble.style.left = '51%';
+    </script>
+</body>
+</html>
