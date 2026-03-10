@@ -1378,7 +1378,7 @@ function eventosFiltrados() {
 let calendar;
 
 function buildFCEvents(list) {
-  return list.map(ev => {
+  return list.filter(ev => !TIPOS_ESPECIALES.includes(ev.tipoActividad)).map(ev => {
     // Detectar si es evento de día completo (sin hora 'T') o multi-día
     const isAllDay = !ev.start.includes('T');
     let endDate = ev.end || null;
@@ -1471,9 +1471,9 @@ function saveSpecial() {
     ev = {
       id: genId(), title: '🏖️ Vacaciones – ' + trainer,
       trainer, tipoActividad: 'Vacaciones',
-      modalidad: '—', sala: '—', area: '—',
+      modalidad: '', sala: '', area: '',
       descripcion: nota || '',
-      prioridad: 'Baja', estatus: 'Confirmado',
+      prioridad: '', estatus: '',
       start: s, end: e
     };
   } else {
@@ -1482,9 +1482,9 @@ function saveSpecial() {
     ev = {
       id: genId(), title: '🎂 Cumpleaños – ' + trainer,
       trainer, tipoActividad: 'Cumpleaños',
-      modalidad: '—', sala: '—', area: '—',
+      modalidad: '', sala: '', area: '',
       descripcion: '',
-      prioridad: 'Baja', estatus: 'Confirmado',
+      prioridad: '', estatus: '',
       start: fecha, end: fecha
     };
   }
@@ -1502,11 +1502,13 @@ function updateVacaciones() {
   hoy.setHours(0,0,0,0);
   const en30 = new Date(hoy.getTime() + 30 * 86400000);
 
+  const hace7 = new Date(hoy.getTime() - 7 * 86400000);
   const vacs = eventos
     .filter(ev => ev.tipoActividad === 'Vacaciones')
     .filter(ev => {
       const fin = new Date((ev.end || ev.start) + 'T23:59:59');
-      return fin >= hoy; // solo futuras o en curso
+      const ini = new Date(ev.start + 'T00:00:00');
+      return fin >= hace7; // futuras, en curso, o terminadas hace menos de 7 días
     })
     .sort((a,b) => new Date(a.start) - new Date(b.start))
     .slice(0, 6);
@@ -1524,7 +1526,7 @@ function updateVacaciones() {
     const fmtD = d => d.toLocaleDateString('es-MX', { day:'numeric', month:'short' });
     const rango = ev.start === ev.end ? fmtD(ini) : fmtD(ini) + ' – ' + fmtD(fin);
     const color = trainerColor(ev.trainer);
-    return `<div class="vac-item${enCurso ? ' hoy' : ''}">
+    return `<div class="vac-item${enCurso ? ' hoy' : ''}" style="cursor:pointer" onclick="openDetailById('${ev.id}')">
       <div class="vac-icon">🏖️</div>
       <div style="flex:1;min-width:0">
         <div class="vac-name" style="color:${color}">${ev.trainer}</div>
@@ -1588,22 +1590,10 @@ function buildBannerEvents() {
     d.setDate(d.getDate() + 1);
     endFC = d.toISOString().slice(0,10);
 
-    banners.push({
-      id: 'banner-vac-' + ev.id,
-      title: '🏖️ ' + ev.trainer + ' – Vacaciones',
-      start: ev.start,
-      end: endFC,
-      allDay: true,
-      display: 'background',
-      backgroundColor: 'rgba(245,158,11,0.18)',
-      borderColor: 'transparent',
-      classNames: [],
-      extendedProps: { esBanner: true, tipoEspecial: 'Vacaciones', trainer: ev.trainer }
-    });
-    // También evento visible pequeño en la parte superior
+    // Un solo banner visible por vacaciones
     banners.push({
       id: 'vis-vac-' + ev.id,
-      title: '🏖️ ' + ev.trainer,
+      title: '🏖️ ' + ev.trainer + ' – Vacaciones',
       start: ev.start,
       end: endFC,
       allDay: true,
@@ -2264,7 +2254,17 @@ document.addEventListener('DOMContentLoaded', () => {
     },
 
     eventClick: function(info) {
-      openDetailById(info.event.id);
+      const id = info.event.id;
+      // Banners de vacaciones/cumpleaños tienen id con prefijo vis-vac- o vis-bday-
+      if (id.startsWith('vis-vac-')) {
+        const realId = id.replace('vis-vac-', '').replace(/-\d+$/, '');
+        openDetailById(realId);
+      } else if (id.startsWith('vis-bday-')) {
+        const realId = id.replace('vis-bday-', '').replace(/-\d+$/, '');
+        openDetailById(realId);
+      } else {
+        openDetailById(id);
+      }
     },
 
     dateClick: handleDateClick,
