@@ -612,6 +612,66 @@
     .allday-toggle-wrap input[type=checkbox] { cursor: pointer; }
     .allday-toggle-wrap label { font-size: 13px; color: var(--text-2); cursor: pointer; font-weight: 500; }
 
+    /* =========================================================
+       VACACIONES & CUMPLEAÑOS — sidebar + calendario
+    ========================================================= */
+    .vac-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 10px; border-radius: 8px;
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      border: 1px solid #f59e0b;
+      margin-bottom: 5px; cursor: default;
+    }
+    .vac-item.hoy { background: linear-gradient(135deg, #fde68a, #fbbf24); border-color: #d97706; }
+    .vac-icon { font-size: 15px; flex-shrink: 0; }
+    .vac-name { font-size: 12.5px; font-weight: 700; color: #92400e; flex: 1; }
+    .vac-dates { font-size: 11px; color: #b45309; }
+
+    .bday-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 10px; border-radius: 8px;
+      background: linear-gradient(135deg, #fce7f3, #fbcfe8);
+      border: 1px solid #ec4899;
+      margin-bottom: 5px;
+    }
+    .bday-item.pronto { background: linear-gradient(135deg, #fbcfe8, #f9a8d4); border-color: #db2777; }
+    .bday-days {
+      font-size: 11px; font-weight: 800; color: #9d174d;
+      background: #fdf2f8; border-radius: 6px;
+      padding: 2px 6px; white-space: nowrap;
+    }
+    .bday-name { font-size: 12.5px; font-weight: 700; color: #9d174d; flex: 1; }
+    .bday-fecha { font-size: 11px; color: #be185d; }
+
+    /* Banner en el calendario */
+    .fc-banner-vac {
+      background: linear-gradient(90deg, #f59e0b, #fbbf24) !important;
+      border: none !important; border-radius: 4px !important;
+      color: #78350f !important; font-weight: 700 !important;
+      font-size: 11px !important;
+    }
+    .fc-banner-bday {
+      background: linear-gradient(90deg, #ec4899, #f472b6) !important;
+      border: none !important; border-radius: 4px !important;
+      color: #fff !important; font-weight: 700 !important;
+      font-size: 11px !important;
+    }
+
+    /* Modal especial vacaciones/cumpleaños */
+    #specialModal .modal { max-width: 480px; }
+    .special-form-tabs {
+      display: flex; gap: 8px; margin-bottom: 18px;
+    }
+    .special-tab {
+      flex: 1; padding: 10px; border-radius: 8px; border: 2px solid var(--border-md);
+      background: var(--surface2); cursor: pointer; font-family: inherit;
+      font-size: 13px; font-weight: 600; color: var(--text-2);
+      transition: all .15s; text-align: center;
+    }
+    .special-tab.active-vac  { border-color: #f59e0b; background: #fef3c7; color: #92400e; }
+    .special-tab.active-bday { border-color: #ec4899; background: #fce7f3; color: #9d174d; }
+
+
   </style>
 </head>
 <body>
@@ -722,6 +782,24 @@
       <div id="upcomingList"></div>
     </div>
 
+    <!-- Vacaciones próximas -->
+    <div>
+      <div class="sidebar-section-title" style="display:flex;align-items:center;justify-content:space-between">
+        🏖️ Vacaciones
+        <button onclick="openSpecialModal('vac')" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--text-3)" title="Agregar vacaciones">＋</button>
+      </div>
+      <div id="vacList"><div style="font-size:12px;color:var(--text-3);padding:4px">Sin vacaciones registradas.</div></div>
+    </div>
+
+    <!-- Cumpleaños próximos -->
+    <div>
+      <div class="sidebar-section-title" style="display:flex;align-items:center;justify-content:space-between">
+        🎂 Cumpleaños
+        <button onclick="openSpecialModal('bday')" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--text-3)" title="Agregar cumpleaños">＋</button>
+      </div>
+      <div id="bdayList"><div style="font-size:12px;color:var(--text-3);padding:4px">Sin cumpleaños registrados.</div></div>
+    </div>
+
   </aside>
 
   <!-- MAIN CONTENT -->
@@ -779,6 +857,8 @@
             <option>Llamadas</option>
             <option>Entregable</option>
             <option>Apoyo operativo</option>
+            <option>Vacaciones</option>
+            <option>Cumpleaños</option>
             <option>Otro</option>
           </select>
         </div>
@@ -969,6 +1049,74 @@
   </div>
 </div>
 
+
+<!-- =========================================================
+     MODAL: VACACIONES / CUMPLEAÑOS
+========================================================= -->
+<div class="modal-overlay" id="specialModal">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <div class="modal-header-icon" id="specialModalIcon" style="background:#fef3c7">🏖️</div>
+      <div>
+        <div class="modal-title" id="specialModalTitle">Nueva Vacación / Cumpleaños</div>
+        <div class="modal-subtitle">Se registrará en la hoja Eventos</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('specialModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <!-- Tabs -->
+      <div class="special-form-tabs">
+        <button class="special-tab active-vac" id="tab-vac" onclick="switchSpecialTab('vac')">🏖️ Vacaciones</button>
+        <button class="special-tab" id="tab-bday" onclick="switchSpecialTab('bday')">🎂 Cumpleaños</button>
+      </div>
+
+      <!-- Trainer -->
+      <div class="form-group" style="margin-bottom:14px">
+        <label class="form-label">Trainer *</label>
+        <select class="form-control" id="sp-trainer">
+          <option value="">Seleccionar</option>
+          <option>Mariana</option><option>Andrea</option><option>Joham</option>
+          <option>Diego</option><option>Nidia</option><option>Karen</option>
+          <option>Sofia</option><option>Brenda</option>
+        </select>
+      </div>
+
+      <!-- Panel Vacaciones -->
+      <div id="panel-vac">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Fecha inicio *</label>
+            <input class="form-control" type="date" id="sp-vac-start">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fecha fin *</label>
+            <input class="form-control" type="date" id="sp-vac-end">
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:4px">
+          <label class="form-label">Nota (opcional)</label>
+          <input class="form-control" type="text" id="sp-vac-nota" placeholder="Ej. Semana Santa, viaje...">
+        </div>
+      </div>
+
+      <!-- Panel Cumpleaños -->
+      <div id="panel-bday" style="display:none">
+        <div class="form-group">
+          <label class="form-label">Fecha de cumpleaños *</label>
+          <input class="form-control" type="date" id="sp-bday-fecha">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('specialModal')">Cancelar</button>
+      <button class="btn btn-primary" id="saveSpecialBtn" onclick="saveSpecial()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Guardar
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast container -->
 <div class="toast-container" id="toastContainer"></div>
 
@@ -1009,7 +1157,8 @@ const TIPOS_ICON = {
   'Training teórico':'📚','Training práctico':'🔬','Habilitación':'✅',
   'Sombreo':'👁️','Reunión':'💬','Seguimiento':'🔁',
   'Desarrollo de material':'🛠️','Planeación':'📋','Llamadas':'📞',
-  'Entregable':'📦','Apoyo operativo':'⚙️','Otro':'📌'
+  'Entregable':'📦','Apoyo operativo':'⚙️','Otro':'📌',
+  'Vacaciones':'🏖️','Cumpleaños':'🎂'
 };
 
 /* =========================================================
@@ -1131,13 +1280,14 @@ let backendActivo = false;
 // ── Cargar eventos desde Apps Script ──────────────────────
 async function cargarEventos() {
   if (!WEB_APP_URL) {
-    eventos = EVENTOS_DEMO.map(e => ({...e}));
+    showToast('⚠️ No hay URL configurada para el backend', 'warn');
+    eventos = [];
     refreshCalendar();
     updateSidebar();
     return;
   }
   backendActivo = true;
-  showToast('🔄 Conectando con la base de datos...', 'info');
+  showToast('🔄 Cargando datos...', 'info');
   try {
     const url = WEB_APP_URL + '?action=getAll&t=' + Date.now();
     const res = await fetch(url, {
@@ -1152,7 +1302,6 @@ async function cargarEventos() {
     try {
       data = JSON.parse(text);
     } catch(e) {
-      // A veces Apps Script manda JSONP o texto con prefijo, intentar limpiar
       const match = text.match(/\{[\s\S]*\}/);
       if (match) data = JSON.parse(match[0]);
       else throw new Error('Respuesta no es JSON válido');
@@ -1161,15 +1310,15 @@ async function cargarEventos() {
       eventos = data.eventos || [];
       refreshCalendar();
       updateSidebar();
-      showToast('✓ Datos cargados desde Google Sheets (' + eventos.length + ' actividades)', 'success');
+      showToast('✓ ' + eventos.length + ' actividades cargadas', 'success');
     } else {
-      throw new Error(data.error || 'Respuesta inválida del servidor');
+      throw new Error(data.error || 'Respuesta inválida');
     }
   } catch(err) {
     console.error('Error cargando desde backend:', err);
-    showToast('⚠️ Sin conexión al backend — mostrando datos locales', 'warn');
+    showToast('⚠️ Error al cargar datos: ' + err.message, 'warn');
     backendActivo = false;
-    eventos = EVENTOS_DEMO.map(e => ({...e}));
+    eventos = [];
     refreshCalendar();
     updateSidebar();
   }
@@ -1277,9 +1426,225 @@ function calcDuracion(ev) {
   }
 }
 
+/* =========================================================
+   VACACIONES & CUMPLEAÑOS
+========================================================= */
+
+// Tipos especiales que se manejan como banners en el calendario
+const TIPOS_ESPECIALES = ['Vacaciones', 'Cumpleaños'];
+
+// ── Modal helpers ─────────────────────────────────────────────
+let specialTabActivo = 'vac';
+
+function openSpecialModal(tab) {
+  switchSpecialTab(tab || 'vac');
+  document.getElementById('sp-trainer').value = '';
+  document.getElementById('sp-vac-start').value = '';
+  document.getElementById('sp-vac-end').value = '';
+  document.getElementById('sp-vac-nota').value = '';
+  document.getElementById('sp-bday-fecha').value = '';
+  openModal('specialModal');
+}
+
+function switchSpecialTab(tab) {
+  specialTabActivo = tab;
+  document.getElementById('panel-vac').style.display  = tab === 'vac'  ? '' : 'none';
+  document.getElementById('panel-bday').style.display = tab === 'bday' ? '' : 'none';
+  document.getElementById('tab-vac').className  = 'special-tab' + (tab === 'vac'  ? ' active-vac'  : '');
+  document.getElementById('tab-bday').className = 'special-tab' + (tab === 'bday' ? ' active-bday' : '');
+  document.getElementById('specialModalIcon').textContent  = tab === 'vac' ? '🏖️' : '🎂';
+  document.getElementById('specialModalTitle').textContent = tab === 'vac' ? 'Nueva Vacación' : 'Nuevo Cumpleaños';
+  document.getElementById('specialModalIcon').style.background = tab === 'vac' ? '#fef3c7' : '#fce7f3';
+}
+
+function saveSpecial() {
+  const trainer = document.getElementById('sp-trainer').value;
+  if (!trainer) { showToast('⚠️ Selecciona un trainer', 'warn'); return; }
+
+  let ev;
+  if (specialTabActivo === 'vac') {
+    const s = document.getElementById('sp-vac-start').value;
+    const e = document.getElementById('sp-vac-end').value;
+    const nota = document.getElementById('sp-vac-nota').value.trim();
+    if (!s || !e) { showToast('⚠️ Ingresa fechas de inicio y fin', 'warn'); return; }
+    if (e < s)    { showToast('⚠️ La fecha fin debe ser después del inicio', 'warn'); return; }
+    ev = {
+      id: genId(), title: '🏖️ Vacaciones – ' + trainer,
+      trainer, tipoActividad: 'Vacaciones',
+      modalidad: '—', sala: '—', area: '—',
+      descripcion: nota || '',
+      prioridad: 'Baja', estatus: 'Confirmado',
+      start: s, end: e
+    };
+  } else {
+    const fecha = document.getElementById('sp-bday-fecha').value;
+    if (!fecha) { showToast('⚠️ Ingresa la fecha de cumpleaños', 'warn'); return; }
+    ev = {
+      id: genId(), title: '🎂 Cumpleaños – ' + trainer,
+      trainer, tipoActividad: 'Cumpleaños',
+      modalidad: '—', sala: '—', area: '—',
+      descripcion: '',
+      prioridad: 'Baja', estatus: 'Confirmado',
+      start: fecha, end: fecha
+    };
+  }
+
+  eventos.push(ev);
+  apiPost({ action: 'create', evento: ev });
+  closeModal('specialModal');
+  refreshCalendar();
+  showToast('✅ Registrado correctamente', 'success');
+}
+
+// ── Sidebar: vacaciones & cumpleaños ─────────────────────────
+function updateVacaciones() {
+  const hoy = new Date();
+  hoy.setHours(0,0,0,0);
+  const en30 = new Date(hoy.getTime() + 30 * 86400000);
+
+  const vacs = eventos
+    .filter(ev => ev.tipoActividad === 'Vacaciones')
+    .filter(ev => {
+      const fin = new Date((ev.end || ev.start) + 'T23:59:59');
+      return fin >= hoy; // solo futuras o en curso
+    })
+    .sort((a,b) => new Date(a.start) - new Date(b.start))
+    .slice(0, 6);
+
+  const list = document.getElementById('vacList');
+  if (!vacs.length) {
+    list.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:4px">Sin vacaciones próximas.</div>';
+    return;
+  }
+
+  list.innerHTML = vacs.map(ev => {
+    const ini = new Date(ev.start + 'T00:00:00');
+    const fin = new Date((ev.end || ev.start) + 'T00:00:00');
+    const enCurso = ini <= hoy && fin >= hoy;
+    const fmtD = d => d.toLocaleDateString('es-MX', { day:'numeric', month:'short' });
+    const rango = ev.start === ev.end ? fmtD(ini) : fmtD(ini) + ' – ' + fmtD(fin);
+    const color = trainerColor(ev.trainer);
+    return `<div class="vac-item${enCurso ? ' hoy' : ''}">
+      <div class="vac-icon">🏖️</div>
+      <div style="flex:1;min-width:0">
+        <div class="vac-name" style="color:${color}">${ev.trainer}</div>
+        <div class="vac-dates">${rango}${ev.descripcion ? ' · ' + ev.descripcion : ''}</div>
+      </div>
+      ${enCurso ? '<span style="font-size:10px;background:#f59e0b;color:#fff;padding:2px 6px;border-radius:10px;font-weight:700">HOY</span>' : ''}
+    </div>`;
+  }).join('');
+}
+
+function updateCumpleanos() {
+  const hoy = new Date();
+  hoy.setHours(0,0,0,0);
+
+  // Obtener cumpleaños y calcular próxima ocurrencia este año
+  const bdays = eventos
+    .filter(ev => ev.tipoActividad === 'Cumpleaños')
+    .map(ev => {
+      const orig = new Date(ev.start + 'T00:00:00');
+      // Próxima ocurrencia: este año o el siguiente
+      let proxima = new Date(hoy.getFullYear(), orig.getMonth(), orig.getDate());
+      if (proxima < hoy) proxima.setFullYear(proxima.getFullYear() + 1);
+      const diasFaltan = Math.round((proxima - hoy) / 86400000);
+      return { ...ev, proxima, diasFaltan };
+    })
+    .sort((a,b) => a.diasFaltan - b.diasFaltan)
+    .slice(0, 6);
+
+  const list = document.getElementById('bdayList');
+  if (!bdays.length) {
+    list.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:4px">Sin cumpleaños registrados.</div>';
+    return;
+  }
+
+  list.innerHTML = bdays.map(ev => {
+    const pronto = ev.diasFaltan <= 7;
+    const hoyBday = ev.diasFaltan === 0;
+    const label = hoyBday ? '🎉 HOY' : (ev.diasFaltan === 1 ? 'mañana' : 'en ' + ev.diasFaltan + ' días');
+    const color = trainerColor(ev.trainer);
+    const fmtFecha = ev.proxima.toLocaleDateString('es-MX', { day:'numeric', month:'long' });
+    return `<div class="bday-item${pronto ? ' pronto' : ''}">
+      <div class="bday-days" style="background:${hoyBday?'#ec4899':'#fdf2f8'};color:${hoyBday?'#fff':'#9d174d'}">${label}</div>
+      <div style="flex:1;min-width:0">
+        <div class="bday-name" style="color:${color}">${ev.trainer}</div>
+        <div class="bday-fecha">${fmtFecha}</div>
+      </div>
+      <div style="font-size:18px">🎂</div>
+    </div>`;
+  }).join('');
+}
+
+// ── Banners en calendario ─────────────────────────────────────
+function buildBannerEvents() {
+  const hoy = new Date();
+  const banners = [];
+
+  eventos.filter(ev => ev.tipoActividad === 'Vacaciones').forEach(ev => {
+    // Calcular end exclusivo para FC
+    let endFC = ev.end || ev.start;
+    const d = new Date(endFC + 'T00:00:00');
+    d.setDate(d.getDate() + 1);
+    endFC = d.toISOString().slice(0,10);
+
+    banners.push({
+      id: 'banner-vac-' + ev.id,
+      title: '🏖️ ' + ev.trainer + ' – Vacaciones',
+      start: ev.start,
+      end: endFC,
+      allDay: true,
+      display: 'background',
+      backgroundColor: 'rgba(245,158,11,0.18)',
+      borderColor: 'transparent',
+      classNames: [],
+      extendedProps: { esBanner: true, tipoEspecial: 'Vacaciones', trainer: ev.trainer }
+    });
+    // También evento visible pequeño en la parte superior
+    banners.push({
+      id: 'vis-vac-' + ev.id,
+      title: '🏖️ ' + ev.trainer,
+      start: ev.start,
+      end: endFC,
+      allDay: true,
+      backgroundColor: '#f59e0b',
+      borderColor: '#d97706',
+      textColor: '#78350f',
+      classNames: ['fc-banner-vac'],
+      extendedProps: { esBanner: true, tipoEspecial: 'Vacaciones', trainer: ev.trainer }
+    });
+  });
+
+  // Cumpleaños — mostrar solo este año y el próximo
+  eventos.filter(ev => ev.tipoActividad === 'Cumpleaños').forEach(ev => {
+    const orig = new Date(ev.start + 'T00:00:00');
+    [0, 1].forEach(offset => {
+      const fecha = new Date(hoy.getFullYear() + offset, orig.getMonth(), orig.getDate());
+      const fechaStr = fecha.toISOString().slice(0,10);
+      const endStr = new Date(fecha.getTime() + 86400000).toISOString().slice(0,10);
+      banners.push({
+        id: 'vis-bday-' + ev.id + '-' + offset,
+        title: '🎂 ' + ev.trainer,
+        start: fechaStr,
+        end: endStr,
+        allDay: true,
+        backgroundColor: '#ec4899',
+        borderColor: '#db2777',
+        textColor: '#fff',
+        classNames: ['fc-banner-bday'],
+        extendedProps: { esBanner: true, tipoEspecial: 'Cumpleaños', trainer: ev.trainer }
+      });
+    });
+  });
+
+  return banners;
+}
+
+
 function refreshCalendar() {
   calendar.removeAllEvents();
   calendar.addEventSource(buildFCEvents(eventosFiltrados()));
+  calendar.addEventSource(buildBannerEvents());
   updateSidebar();
 }
 
@@ -1290,6 +1655,8 @@ function updateSidebar() {
   updateKPIs();
   updateWorkload();
   updateUpcoming();
+  updateVacaciones();
+  updateCumpleanos();
   updateFilterDropdowns();
 }
 
@@ -1304,7 +1671,8 @@ function updateKPIs() {
     return d.getMonth() === mesAct && d.getFullYear() === anio;
   });
   const trainings = delMes.filter(ev =>
-    ev.tipoActividad === 'Training teórico' || ev.tipoActividad === 'Training práctico'
+    (ev.tipoActividad === 'Training teórico' || ev.tipoActividad === 'Training práctico')
+    && !TIPOS_ESPECIALES.includes(ev.tipoActividad)
   );
   const pendientes = eventosFiltrados().filter(ev =>
     ev.estatus === 'Planeado' || ev.estatus === 'Confirmado'
@@ -1322,8 +1690,9 @@ function updateKPIs() {
 
 function updateWorkload() {
   const counts = {};
-  const total = eventosFiltrados().length || 1;
-  eventosFiltrados().forEach(ev => {
+  const evs = eventosFiltrados().filter(ev => !TIPOS_ESPECIALES.includes(ev.tipoActividad));
+  const total = evs.length || 1;
+  evs.forEach(ev => {
     counts[ev.trainer] = (counts[ev.trainer] || 0) + 1;
   });
   const list = document.getElementById('workloadList');
@@ -1951,6 +2320,7 @@ document.addEventListener('DOMContentLoaded', () => {
       updateSidebar();
     }
   });
+
 
   calendar.render();
   cargarEventos(); // carga desde backend o demo
