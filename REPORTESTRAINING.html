@@ -7,11 +7,16 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f7f4ef;--bg2:#ede9e1;--bg3:#e4dfd4;
-  --card:#ffffff;--ink:#18160f;--ink2:#5c5648;--ink3:#9c9182;
-  --acc:#c8440a;--acc2:#e8a020;--acc3:#2a5ea8;
-  --border:#ddd7cc;--sh:0 2px 12px rgba(0,0,0,.06);--shm:0 8px 32px rgba(0,0,0,.12);
+  --bg:#f0ede8;--bg2:#e6e1d9;--bg3:#dbd4ca;
+  --card:#ffffff;--ink:#1a1814;--ink2:#4a4540;--ink3:#8a8278;
+  --acc:#c8440a;--acc2:#e8a020;--acc3:#1e4fa8;
+  --green:#1a6b3a;--red:#b91c1c;--amber:#b45309;
+  --border:#d8d2c8;--sh:0 1px 8px rgba(0,0,0,.07);--shm:0 6px 24px rgba(0,0,0,.13);
   --r:10px;
+  /* Severity colors */
+  --alert-r:#fef2f2;--alert-r-b:#fca5a5;
+  --alert-a:#fffbeb;--alert-a-b:#fcd34d;
+  --alert-g:#f0fdf4;--alert-g-b:#86efac;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);font-size:13px;min-height:100vh}
@@ -448,47 +453,355 @@ main{padding:20px 32px 80px;max-width:1600px;margin:0 auto}
 .impact-title{font-family:'DM Serif Display',serif;font-size:13px;display:flex;align-items:center;gap:8px}
 .impact-badge{font-size:9px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:2px 8px;border-radius:10px;font-weight:700;letter-spacing:.4px}
 .impact-body{padding:14px 16px;font-size:11px;line-height:1.75;color:var(--ink2)}
-.impact-body p{margin:0 0 8px}
-.impact-body p:last-child{margin:0}
-.impact-body strong{color:var(--ink1);font-weight:700}
 .impact-btn{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);font-size:10px;font-weight:600;cursor:pointer;transition:.15s;color:var(--ink2)}
 .impact-btn:hover{background:var(--card);border-color:var(--acc)}
 .impact-btn:disabled{opacity:.5;cursor:default}
 .impact-loading{display:flex;align-items:center;gap:8px;padding:14px 16px;color:var(--ink3);font-size:11px}
 .impact-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:idot .9s ease-in-out infinite}
-.impact-dot:nth-child(2){animation-delay:.2s}
-.impact-dot:nth-child(3){animation-delay:.4s}
+.impact-dot:nth-child(2){animation-delay:.2s}.impact-dot:nth-child(3){animation-delay:.4s}
 @keyframes idot{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
 .impact-error{padding:14px 16px;color:#c8440a;font-size:11px}
-/* Impact report content styles */
-.imp-header{padding:0 0 12px;border-bottom:1px solid var(--border);margin-bottom:14px}
-.imp-trainer-name{font-family:'DM Serif Display',serif;font-size:17px;font-weight:700}
-.imp-period{font-size:10px;color:var(--ink3);margin-top:2px;text-transform:uppercase;letter-spacing:.6px}
-.imp-kpis{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
-.imp-kpi{background:var(--bg2);border-radius:8px;padding:9px 13px;text-align:center;min-width:64px}
-.imp-kpi-v{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--ink1)}
-.imp-kpi-l{font-size:9px;color:var(--ink3);margin-top:2px;text-transform:uppercase;letter-spacing:.4px;max-width:80px}
-.imp-sec{margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:12px}
-.imp-sec:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
-.imp-sec-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;display:flex;align-items:center;gap:5px}
-.imp-sec-body{display:flex;flex-direction:column;gap:6px}
-.imp-stats{display:flex;flex-direction:column;gap:3px;background:var(--bg2);border-radius:7px;padding:8px 10px;margin-bottom:4px}
-.imp-stat-row{display:flex;align-items:center;gap:6px;font-size:10px}
+
+/* ── IMPACT REPORT — EXECUTIVE REDESIGN ─────────────────── */
+.imp-report{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:100%}
+
+/* Cover header */
+.imp-cover{
+  background:var(--ink);color:#fff;
+  border-radius:10px 10px 0 0;
+  padding:24px 28px 20px;
+  position:relative;overflow:hidden;
+  margin-bottom:0;
+}
+.imp-cover::before{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(200,68,10,.35),transparent 70%);
+}
+.imp-cover-eyebrow{font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px}
+.imp-cover-name{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;line-height:1.2;color:#fff}
+.imp-cover-period{font-size:11px;color:rgba(255,255,255,.55);margin-top:5px;display:flex;align-items:center;gap:8px}
+.imp-cover-dot{width:4px;height:4px;border-radius:50%;background:var(--acc2);display:inline-block}
+.imp-cover-accent{width:40px;height:3px;background:var(--acc);border-radius:2px;margin-top:14px}
+
+/* KPI strip */
+.imp-kpi-strip{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));
+  gap:0;border:1px solid var(--border);border-top:none;
+  border-radius:0 0 10px 10px;margin-bottom:16px;overflow:hidden;
+  background:var(--card);
+}
+.imp-kpi-card{
+  padding:14px 12px;text-align:center;
+  border-right:1px solid var(--border);
+  position:relative;
+}
+.imp-kpi-card:last-child{border-right:none}
+.imp-kpi-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--imp-accent,var(--acc));opacity:.6;
+}
+.imp-kpi-v{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--ink);line-height:1}
+.imp-kpi-l{font-size:8px;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-top:4px;line-height:1.3}
+
+/* 2-column grid for sections */
+.imp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.imp-grid-full{grid-column:1/-1}
+@media(max-width:640px){.imp-grid{grid-template-columns:1fr}}
+
+/* Section card */
+.imp-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:10px;overflow:hidden;
+}
+.imp-card-head{
+  padding:10px 14px;display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid var(--border);
+  background:var(--bg2);
+}
+.imp-card-icon{font-size:14px;line-height:1}
+.imp-card-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+.imp-card-body{padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+
+/* Stats table inside card */
+.imp-stat-grid{display:flex;flex-direction:column;gap:4px}
+.imp-stat-row{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:10px;padding:3px 0;border-bottom:1px solid var(--bg2)}
+.imp-stat-row:last-child{border-bottom:none}
 .imp-stat-lbl{color:var(--ink3);flex:1}
-.imp-stat-val{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink1);min-width:30px;text-align:right}
+.imp-stat-val{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink);background:var(--bg2);padding:1px 6px;border-radius:4px;font-size:10px}
 .imp-stat-note{font-size:9px;color:var(--ink3);margin-left:4px}
-.imp-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink3);margin:6px 0 3px}
-.imp-tags{display:flex;flex-wrap:wrap;gap:4px}
-.imp-tag{font-size:10px;color:var(--ink2);background:var(--bg2);border:1px solid var(--border);padding:3px 8px;border-radius:5px}
-.imp-bars{display:flex;flex-direction:column;gap:5px}
+
+/* Horizontal bar rows */
+.imp-bars{display:flex;flex-direction:column;gap:6px}
 .imp-bar-row{display:flex;align-items:center;gap:8px}
-.imp-bar-lbl{font-size:10px;color:var(--ink2);width:160px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.imp-bar-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.imp-bar-lbl{font-size:10px;color:var(--ink2);width:130px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.imp-bar-track{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
 .imp-bar-fill{height:100%;border-radius:3px;transition:width .5s ease}
-.imp-bar-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink2);min-width:48px;text-align:right}
+.imp-bar-val{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink3);min-width:36px;text-align:right}
+
+/* Tags / pills */
+.imp-tags{display:flex;flex-wrap:wrap;gap:4px}
+.imp-tag{font-size:10px;color:var(--ink2);background:var(--bg2);border:1px solid var(--border);padding:3px 8px;border-radius:5px;line-height:1.3}
+.imp-pill{font-size:10px;padding:3px 9px;border-radius:10px;font-weight:600}
+
+/* Section label */
+.imp-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink3);margin:4px 0 2px}
+
+/* Comments */
 .imp-comments{display:flex;flex-direction:column;gap:6px}
-.imp-comment{font-size:10px;color:var(--ink2);background:var(--bg2);border-left:3px solid var(--acc);padding:6px 10px;border-radius:0 6px 6px 0;font-style:italic;line-height:1.6}
-.imp-pill{font-size:10px;padding:4px 10px;border-radius:10px;font-weight:500}
+.imp-comment{
+  font-size:10px;line-height:1.6;color:var(--ink2);
+  background:linear-gradient(135deg,var(--bg2),var(--bg));
+  border-left:3px solid var(--acc2);
+  padding:8px 12px;border-radius:0 6px 6px 0;
+  font-style:italic;
+}
+
+/* Score donut — simple radial */
+.imp-score-row{display:flex;align-items:center;gap:12px}
+.imp-score-big{font-family:'DM Serif Display',serif;font-size:36px;color:var(--ink);line-height:1}
+.imp-score-sub{font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+
+/* Distribution ring chart (CSS only) */
+.imp-dist-row{display:flex;flex-direction:column;gap:5px}
+.imp-dist-item{display:flex;align-items:center;gap:8px}
+.imp-dist-bar{flex:1;height:8px;border-radius:4px;overflow:hidden;background:var(--border)}
+.imp-dist-fill{height:100%;border-radius:4px}
+.imp-dist-lbl{font-size:10px;color:var(--ink2);min-width:120px;display:flex;align-items:center;gap:4px}
+.imp-dist-val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink3);min-width:50px;text-align:right}
+
+/* Reac score gauge */
+.imp-gauge-wrap{display:flex;align-items:flex-end;gap:6px;padding:4px 0}
+.imp-gauge-bar{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1}
+.imp-gauge-fill{width:100%;border-radius:3px 3px 0 0;transition:height .4s ease;min-height:2px}
+.imp-gauge-num{font-size:8px;font-family:'JetBrains Mono',monospace;color:var(--ink3)}
+.imp-gauge-lbl{font-size:8px;color:var(--ink3);text-align:center;writing-mode:horizontal-tb;max-width:50px;line-height:1.2;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+
+/* Print */
+@media print{
+  .imp-cover{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .imp-kpi-card::before{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+
+/* ── TAB SUMMARY ─────────────────────────────────────────── */
+.tab-summary{padding:10px 14px 8px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:6px;background:var(--bg2)}
+.tab-stats-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tab-stat-chip{display:inline-flex;flex-direction:column;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 10px;min-width:54px}
+.tab-stat-v{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;line-height:1.2}
+.tab-stat-l{font-size:8px;color:var(--ink3);text-transform:uppercase;letter-spacing:.4px;text-align:center;margin-top:1px}
+.tab-pills-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.tab-pills-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink3);margin-right:2px;white-space:nowrap}
+.tab-mini-pill{font-size:9px;padding:2px 7px;border-radius:10px;border:1px solid;background:transparent;white-space:nowrap}
+.tab-bars-block{display:flex;flex-direction:column;gap:4px;padding:2px 0}
+.tab-mbar{display:flex;align-items:center;gap:7px}
+.tab-mbar-l{font-size:9px;color:var(--ink2);width:200px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tab-mbar-t{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.tab-mbar-f{height:100%;border-radius:3px;transition:width .35s ease}
+.tab-mbar-v{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink3);min-width:22px;text-align:right}
+
+
+/* ── OV PERIOD BAR ───────────────────────────────────────── */
+.ov-period-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 0 14px}
+.ov-period-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--ink3);white-space:nowrap}
+.ov-period-pills{display:flex;gap:4px;flex-wrap:wrap}
+.ov-ppill{padding:4px 11px;border-radius:14px;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;color:var(--ink2);cursor:pointer;white-space:nowrap;transition:all .15s}
+.ov-ppill:hover{border-color:var(--acc);color:var(--acc)}
+.ov-ppill.on{color:#fff;border-color:transparent;background:var(--acc)}
+
+/* ── TC TAB BREAKDOWN ─────────────────────────────────────── */
+.tc-tabs-breakdown{margin-top:8px;display:flex;flex-direction:column;gap:3px}
+.tc-tab-row{display:flex;align-items:center;gap:5px}
+.tc-tab-icon{font-size:9px;width:14px;text-align:center;flex-shrink:0}
+.tc-tab-name{font-size:9px;color:var(--ink3);width:130px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tc-tab-bar-wrap{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.tc-tab-bar-fill{height:100%;border-radius:2px;transition:width .4s ease}
+.tc-tab-cnt{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;min-width:22px;text-align:right;flex-shrink:0}
+
+
+/* ── ACCORDION ───────────────────────────────────────────── */
+.acc-block { overflow: hidden }
+.acc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 16px;
+  cursor: pointer;
+  user-select: none;
+  transition: background .15s;
+}
+.acc-head:hover { background: var(--bg2) }
+.acc-head-left  { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0 }
+.acc-head-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0 }
+.acc-sub { font-size: 10px; color: var(--ink3) }
+.acc-chev {
+  font-size: 10px;
+  color: var(--ink3);
+  transition: transform .3s ease;
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+.acc-body {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height .35s ease, opacity .25s ease;
+}
+/* Remove the border-bottom from old heads since acc-head handles it */
+.comp-head, .top-head, .reac-ov-head { display: none !important }
+
+
+/* ══════════════════════════════════════════════════════════
+   EXECUTIVE DASHBOARD — Manager CSS
+══════════════════════════════════════════════════════════ */
+
+/* Section label */
+.section-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;
+  color:var(--ink3);margin:18px 0 8px;display:flex;align-items:center;gap:6px}
+
+/* ── Executive KPIs row ────────────────────────────────── */
+.exec-kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:16px}
+.exec-kpi{background:var(--card);border-radius:var(--r);border:1px solid var(--border);
+  box-shadow:var(--sh);padding:14px 16px;display:flex;flex-direction:column;gap:4px;position:relative;overflow:hidden}
+.exec-kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--kpi-color,var(--acc))}
+.exec-kpi-v{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--ink);line-height:1}
+.exec-kpi-l{font-size:9px;text-transform:uppercase;letter-spacing:.6px;color:var(--ink3);font-weight:600}
+.exec-kpi-sub{font-size:10px;color:var(--ink3);margin-top:2px}
+.exec-kpi-delta{font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px;align-self:flex-start;margin-top:2px}
+.delta-up{background:#dcfce7;color:var(--green)}
+.delta-dn{background:#fee2e2;color:var(--red)}
+.delta-nt{background:var(--bg2);color:var(--ink3)}
+
+/* ── Alerts / Insights ─────────────────────────────────── */
+.alerts-wrap{background:var(--card);border-radius:var(--r);border:1px solid var(--border);
+  box-shadow:var(--sh);padding:14px 16px;margin-bottom:14px}
+.alerts-title{font-size:11px;font-weight:700;color:var(--ink2);margin-bottom:10px;
+  display:flex;align-items:center;gap:6px}
+.alerts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px}
+.alert-card{border-radius:8px;padding:10px 12px;border-left:4px solid;display:flex;flex-direction:column;gap:3px}
+.alert-card.red  {background:var(--alert-r);border-color:var(--alert-r-b)}
+.alert-card.amber{background:var(--alert-a);border-color:var(--alert-a-b)}
+.alert-card.green{background:var(--alert-g);border-color:var(--alert-g-b)}
+.alert-card.info {background:var(--bg2);border-color:var(--border)}
+.alert-icon{font-size:13px}
+.alert-title{font-size:10px;font-weight:700;color:var(--ink);line-height:1.3}
+.alert-body{font-size:10px;color:var(--ink2);line-height:1.5}
+
+/* ── Trainer card redesign ─────────────────────────────── */
+.tc{background:var(--card);border-radius:var(--r);border:1px solid var(--border);
+  box-shadow:var(--sh);padding:14px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.tc:hover{box-shadow:var(--shm);border-color:var(--acc);transform:translateY(-1px)}
+.tc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--tc-color,var(--acc))}
+.tc-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:'DM Serif Display',serif;font-size:12px;color:#fff;flex-shrink:0;font-weight:700}
+.tc-name{font-size:12px;font-weight:700;color:var(--ink);line-height:1.2}
+.tc-sub{font-size:9px;color:var(--ink3);margin-top:1px}
+.tc-bar{height:3px;background:var(--bg2);border-radius:2px;margin-bottom:8px;overflow:hidden}
+.tc-fill{height:100%;border-radius:2px;transition:width .5s ease}
+.tc-tabs-breakdown{display:flex;flex-direction:column;gap:3px;margin-top:6px}
+.tc-tab-row{display:flex;align-items:center;gap:5px}
+.tc-tab-icon{font-size:9px;width:14px;text-align:center;flex-shrink:0}
+.tc-tab-name{font-size:9px;color:var(--ink3);width:115px;flex-shrink:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tc-tab-bar-wrap{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.tc-tab-bar-fill{height:100%;border-radius:2px;transition:width .4s ease}
+.tc-tab-cnt{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  min-width:22px;text-align:right;flex-shrink:0}
+
+/* ── Area report bar ───────────────────────────────────── */
+.area-report-bar{background:linear-gradient(135deg,var(--ink) 0%,#2d2820 100%);
+  border-radius:var(--r);padding:16px 20px;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;margin-top:16px;margin-bottom:8px}
+.area-report-title{font-family:'DM Serif Display',serif;font-size:14px;color:#fff}
+.area-report-sub{font-size:10px;color:rgba(255,255,255,.5);margin-top:2px}
+.area-report-btn{background:var(--acc);color:#fff;border:none;padding:9px 18px;
+  border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:.15s;white-space:nowrap}
+.area-report-btn:hover{background:#a83208}
+
+/* ── Area report output ────────────────────────────────── */
+.area-report-out{background:var(--card);border-radius:var(--r);border:1px solid var(--border);
+  box-shadow:var(--sh);padding:20px;margin-bottom:14px}
+.area-rep-header{border-bottom:2px solid var(--border);padding-bottom:12px;margin-bottom:16px}
+.area-rep-title{font-family:'DM Serif Display',serif;font-size:18px;color:var(--ink)}
+.area-rep-period{font-size:11px;color:var(--ink3);margin-top:3px}
+.area-rep-kpis{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.area-rep-kpi{background:var(--bg2);border-radius:8px;padding:10px 14px;text-align:center;min-width:80px}
+.area-rep-kpi-v{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--ink)}
+.area-rep-kpi-l{font-size:8px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink3);margin-top:2px}
+.area-rep-section{margin-bottom:14px}
+.area-rep-section-title{font-size:10px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.7px;color:var(--acc);margin-bottom:8px;padding-bottom:4px;
+  border-bottom:1px solid var(--border)}
+.area-rep-table{width:100%;border-collapse:collapse;font-size:11px}
+.area-rep-table th{background:var(--bg2);padding:6px 10px;text-align:left;
+  font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink3)}
+.area-rep-table td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.area-rep-table tr:last-child td{border-bottom:none}
+.area-rep-table tr:hover td{background:var(--bg2)}
+.rank-badge{display:inline-block;width:20px;height:20px;border-radius:50%;
+  background:var(--bg3);text-align:center;line-height:20px;font-size:9px;font-weight:700}
+.area-rep-insights{display:flex;flex-direction:column;gap:6px}
+.area-rep-insight{background:var(--bg2);border-radius:6px;padding:8px 12px;
+  font-size:11px;color:var(--ink2);border-left:3px solid var(--acc3)}
+.area-rep-print-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;
+  border-radius:8px;background:var(--ink);color:#fff;border:none;font-size:11px;
+  font-weight:600;cursor:pointer;transition:.15s;margin-top:8px}
+.area-rep-print-btn:hover{background:var(--acc)}
+
+/* ── Trainer detail header upgrade ────────────────────── */
+.mgr-tr-header{background:var(--card);border-radius:var(--r);border:1px solid var(--border);
+  box-shadow:var(--sh);padding:16px 20px;margin-bottom:12px;
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mgr-tr-avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-family:'DM Serif Display',serif;font-size:18px;
+  color:#fff;flex-shrink:0}
+.mgr-tr-info{flex:1;min-width:0}
+.mgr-tr-name{font-family:'DM Serif Display',serif;font-size:18px;color:var(--ink)}
+.mgr-tr-meta{font-size:10px;color:var(--ink3);margin-top:2px}
+.mgr-tr-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.mgr-badge{font-size:9px;padding:3px 8px;border-radius:10px;font-weight:700;border:1px solid}
+
+/* ── vs Area comparison bars ───────────────────────────── */
+.vs-area-wrap{display:flex;flex-direction:column;gap:5px}
+.vs-area-row{display:flex;align-items:center;gap:8px;font-size:10px}
+.vs-area-lbl{width:90px;color:var(--ink3);flex-shrink:0}
+.vs-area-bars{flex:1;display:flex;flex-direction:column;gap:2px}
+.vs-bar-line{display:flex;align-items:center;gap:4px}
+.vs-bar-name{font-size:8px;color:var(--ink3);width:28px;text-align:right;flex-shrink:0}
+.vs-bar-track{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.vs-bar-fill{height:100%;border-radius:3px}
+.vs-bar-val{font-size:9px;color:var(--ink2);min-width:30px}
+
+
+/* mgr-tr-header uses existing .tr-header wrapper + new inner classes */
+.tr-header { position: relative }
+.tr-header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--tc-color, var(--acc));
+  border-radius: var(--r) var(--r) 0 0;
+}
+.mgr-tr-avatar {
+  width: 52px; height: 52px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Serif Display', serif; font-size: 18px;
+  color: #fff; flex-shrink: 0; font-weight: 700;
+}
+.mgr-tr-info { flex: 1; min-width: 0 }
+.mgr-tr-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px; color: var(--ink); line-height: 1.1;
+}
+.mgr-tr-meta { font-size: 10px; color: var(--ink3); margin-top: 3px }
+.mgr-tr-badges { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 7px }
+.mgr-badge {
+  font-size: 9px; padding: 3px 8px; border-radius: 10px;
+  font-weight: 700; border: 1px solid; white-space: nowrap;
+}
 
 </style>
 </head>
@@ -524,61 +837,100 @@ main{padding:20px 32px 80px;max-width:1600px;margin:0 auto}
 <main>
   <!-- OVERVIEW -->
   <div id="VIEW_OV">
+
+    <!-- ══ A. EXECUTIVE KPIs ══════════════════════════════════ -->
+    <div class="exec-kpis" id="EXEC_KPIS_ROW"></div>
+
+    <!-- ══ B. PERIOD SELECTOR ════════════════════════════════ -->
+    <div class="ov-period-bar" id="OV_PER_BAR">
+      <span class="ov-period-lbl">Periodo:</span>
+      <div class="ov-period-pills">
+        <button class="ov-ppill" id="OVP_W" onclick="setOvPer(0)">Semana</button>
+        <button class="ov-ppill" id="OVP_M" onclick="setOvPer(1)">Mes</button>
+        <button class="ov-ppill on" id="OVP_Y" onclick="setOvPer(2)">Año</button>
+      </div>
+      <div class="ov-period-pills" id="OV_SEL_PILLS" style="margin-left:6px"></div>
+    </div>
+
+    <!-- ══ C. ALERTS / INSIGHTS ══════════════════════════════ -->
+    <div class="alerts-wrap" id="ALERTS_WRAP">
+      <div class="alerts-title">⚡ Hallazgos del periodo</div>
+      <div class="alerts-grid" id="ALERTS_GRID"></div>
+    </div>
+
+    <!-- ══ D. TRAINER CARDS ══════════════════════════════════ -->
+    <div class="section-label">👥 Trainers — actividad por categoría</div>
     <div class="tgrid" id="TGRID"></div>
-    
-    <!-- COMPARATIVA -->
-    <div class="comp-wrap" id="COMP_BLOCK">
-      <div class="comp-head">
-        <div>
+
+    <!-- ══ E. ACCORDION SECTIONS ═════════════════════════════ -->
+
+    <!-- Comparativa mensual -->
+    <div class="comp-wrap acc-block" id="COMP_BLOCK">
+      <div class="acc-head" onclick="togAcc('COMP_BLOCK')">
+        <div class="acc-head-left">
           <div class="comp-title">📊 Comparativa mensual</div>
-          <div style="font-size:10px;color:var(--ink3);margin-top:2px" id="COMP_SUB">Enero vs Febrero</div>
+          <div class="acc-sub" id="COMP_SUB">Enero vs Febrero</div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-          <div class="comp-tabs">
+        <div class="acc-head-right">
+          <div class="comp-tabs" onclick="event.stopPropagation()">
             <button class="comp-tab active" onclick="setCV(0)">Horas</button>
             <button class="comp-tab" onclick="setCV(1)">Registros</button>
             <button class="comp-tab" onclick="setCV(2)">Por pestaña</button>
           </div>
+          <span class="acc-chev" id="COMP_BLOCK_chev">&#9654;</span>
         </div>
       </div>
-      <div class="comp-body">
-        <div class="comp-kpis" id="COMP_KPIS"></div>
-        <div class="comp-months" id="COMP_MON_LBL"></div>
-        <div id="COMP_CONTENT"></div>
+      <div class="acc-body" id="COMP_BLOCK_body">
+        <div class="comp-body">
+          <div class="comp-kpis" id="COMP_KPIS"></div>
+          <div class="comp-months" id="COMP_MON_LBL"></div>
+          <div id="COMP_CONTENT"></div>
+        </div>
       </div>
     </div>
 
-
-    <!-- TOP PRODUCTOS / TRAININGS -->
-    <div class="top-wrap" id="TOP_BLOCK">
-      <div class="top-head">
-        <div>
+    <!-- Productos & Trainings -->
+    <div class="top-wrap acc-block" id="TOP_BLOCK">
+      <div class="acc-head" onclick="togAcc('TOP_BLOCK')">
+        <div class="acc-head-left">
           <div class="top-title">🏆 Productos &amp; Trainings con más servicio</div>
-          <div style="font-size:10px;color:var(--ink3);margin-top:2px" id="TOP_SUB">Top por horas totales</div>
+          <div class="acc-sub" id="TOP_SUB">Top por horas totales</div>
         </div>
-        <div class="top-tabs">
-          <button class="top-tab active" onclick="setTopV(0)">Visa / Producto</button>
-          <button class="top-tab" onclick="setTopV(1)">Sesiones</button>
-          <button class="top-tab" onclick="setTopV(2)">Proyectos</button>
-          <button class="top-tab" onclick="setTopV(3)">Trainings dev.</button>
+        <div class="acc-head-right">
+          <div class="top-tabs" onclick="event.stopPropagation()">
+            <button class="top-tab active" onclick="setTopV(0)">Visa / Producto</button>
+            <button class="top-tab" onclick="setTopV(1)">Sesiones</button>
+            <button class="top-tab" onclick="setTopV(2)">Proyectos</button>
+            <button class="top-tab" onclick="setTopV(3)">Trainings dev.</button>
+          </div>
+          <span class="acc-chev" id="TOP_BLOCK_chev">&#9654;</span>
         </div>
       </div>
-
-      <div class="top-body" id="TOP_BODY"></div>
-    </div>
-
-    <!-- EVALUACIONES DE REACCIÓN OVERVIEW -->
-    <div class="reac-ov-wrap" id="REAC_OV_BLOCK">
-      <div class="reac-ov-head">
-        <div class="reac-ov-title">⭐ Evaluaciones de Reacción</div>
-        <div class="reac-ov-total-pills" id="REAC_OV_TOTALS"></div>
-      </div>
-      <div class="reac-ov-body">
-        <div class="reac-ov-tipo-tabs" id="REAC_OV_TABS"></div>
-        <div class="reac-ov-grid" id="REAC_OV_GRID"></div>
+      <div class="acc-body" id="TOP_BLOCK_body">
+        <div class="top-body" id="TOP_BODY"></div>
       </div>
     </div>
 
+    <!-- Evaluaciones de Reacción -->
+    <div class="reac-ov-wrap acc-block" id="REAC_OV_BLOCK">
+      <div class="acc-head" onclick="togAcc('REAC_OV_BLOCK')">
+        <div class="acc-head-left">
+          <div class="reac-ov-title">⭐ Evaluaciones de Reacción</div>
+          <div class="reac-ov-total-pills" id="REAC_OV_TOTALS"></div>
+        </div>
+        <div class="acc-head-right">
+          <span class="acc-chev" id="REAC_OV_BLOCK_chev">&#9654;</span>
+        </div>
+      </div>
+      <div class="acc-body" id="REAC_OV_BLOCK_body">
+        <div class="reac-ov-body">
+          <div class="reac-ov-tipo-tabs" id="REAC_OV_TABS"></div>
+          <div class="reac-ov-grid" id="REAC_OV_GRID"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ F. AREA DISTRIBUTION ══════════════════════════════ -->
     <div class="g2">
       <div class="card"><div class="card-title">Horas por colaborador</div><div id="OV_BARS"></div></div>
       <div class="card">
@@ -592,9 +944,20 @@ main{padding:20px 32px 80px;max-width:1600px;margin:0 auto}
         </div>
       </div>
     </div>
+
+    <!-- ══ G. CONSOLIDATED REPORT BTN ════════════════════════ -->
+    <div class="area-report-bar noprint">
+      <div>
+        <div class="area-report-title">📋 Reporte consolidado del área</div>
+        <div class="area-report-sub">Genera un resumen ejecutivo del periodo seleccionado</div>
+      </div>
+      <button class="area-report-btn" onclick="generateAreaReport()">Generar reporte del área</button>
+    </div>
+    <div id="AREA_REPORT_WRAP"></div>
+
   </div>
 
-  <!-- DETAIL -->
+<!-- DETAIL -->
   <div id="VIEW_TR" style="display:none">
     <div class="print-hdr" id="PHDR"></div>
     <div class="noprint" style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
@@ -659,7 +1022,8 @@ var LIVE = null;
 function D() { return (LIVE && Object.keys(LIVE).length > 0) ? LIVE : DETAIL; }
 
 // ── CONFIG ───────────────────────────────────────────────
-var AU = 'https://script.google.com/macros/s/AKfycbz7hUuD4QiwP4SH5n0p0iCxbntyAikb7OIeMzVA4YNxOIPGnCQtrzmzxANoHapn9O774g/exec';
+// AU v4 (activo)
+var AU = 'https://script.google.com/macros/s/AKfycbykfv_84rqXSR4qHFcgF_2zEMxuNopYXpmd1l2BPVDhDFL6X8fqAdfaDs4iZAz-X96Wtw/exec';
 var REAC_URL = 'https://script.google.com/macros/s/AKfycbysKJCh2bwxSf79-GpZZ7jqQ_AKJXGiD8yf2HEIqzukoRXNUdHdfmXoVUAvx1yHqNNr/exec';
 var REAC_DATA = null;
 var AKEYS = ["actividades", "trainings_teorico", "trainings_practico", "habilitacion", "entregables", "llamadas", "acompanamientos", "desarrollo_proyectos", "desarrollo_trainings"];
@@ -747,79 +1111,974 @@ function drawDonut(svgId, cvId, items) {
 }
 
 // ── OVERVIEW ──────────────────────────────────────────────
-function renderOv() {
-  var data=D();
-  if(!data||!Object.keys(data).length) { console.warn('no data'); return; }
 
-  var tots={}, allW={};
-  Object.keys(data).forEach(function(tr) {
-    var h=0;
-    Object.keys(data[tr]).forEach(function(w) {
-      allW[w]=1;
-      Object.keys(data[tr][w]).forEach(function(t) {
-        data[tr][w][t].forEach(function(r) { h+=r.t||0; });
+// ── OVERVIEW PERIOD FILTER ───────────────────────────────────
+var ovPer  = 2;   // 0=semana, 1=mes, 2=año
+var ovSel  = null; // selected week/month value
+
+function setOvPer(mode) {
+  ovPer = mode;
+  ['OVP_W','OVP_M','OVP_Y'].forEach(function(id,i){
+    var el = document.getElementById(id);
+    if (el) el.classList.toggle('on', i===mode);
+  });
+  // Auto-select latest available period across all trainers
+  var data = D();
+  if (!data) return;
+  if (mode === 0) {
+    var allWks = {};
+    Object.keys(data).forEach(function(tr){ Object.keys(data[tr]).forEach(function(w){ allWks[w]=1; }); });
+    var sorted = Object.keys(allWks).map(Number).sort(function(a,b){return a-b;});
+    ovSel = sorted.length ? String(sorted[sorted.length-1]) : null;
+  } else if (mode === 1) {
+    var allMs = {};
+    Object.keys(data).forEach(function(tr){
+      Object.keys(data[tr]).forEach(function(w){
+        Object.keys(data[tr][w]).forEach(function(tab){
+          data[tr][w][tab].forEach(function(r){ if(r.m) allMs[r.m]=1; });
+        });
       });
     });
-    tots[tr]=Math.round(h*10)/10;
+    var MES_ORD = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    var sorted2 = Object.keys(allMs).sort(function(a,b){ return MES_ORD.indexOf(a)-MES_ORD.indexOf(b); });
+    ovSel = sorted2.length ? sorted2[sorted2.length-1] : null;
+  } else {
+    ovSel = null;
+  }
+  renderOvSelPills();
+  renderOv();
+}
+
+function renderOvSelPills() {
+  var el = document.getElementById('OV_SEL_PILLS');
+  if (!el) return;
+  var data = D();
+  if (!data || ovPer === 2) { el.innerHTML=''; return; }
+
+  if (ovPer === 0) {
+    var allWks = {};
+    Object.keys(data).forEach(function(tr){ Object.keys(data[tr]).forEach(function(w){ allWks[w]=1; }); });
+    var sorted = Object.keys(allWks).map(Number).sort(function(a,b){return a-b;});
+    el.innerHTML = sorted.map(function(w){
+      var active = String(w) === String(ovSel);
+      return '<button class="ov-ppill'+(active?' on':'')+'" onclick="ovSel=\''+w+'\';renderOvSelPills();renderOv()">S'+w+'</button>';
+    }).join('');
+  } else {
+    var MES_ORD = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    var allMs = {};
+    Object.keys(data).forEach(function(tr){
+      Object.keys(data[tr]).forEach(function(w){
+        Object.keys(data[tr][w]).forEach(function(tab){
+          data[tr][w][tab].forEach(function(r){ if(r.m) allMs[r.m]=1; });
+        });
+      });
+    });
+    var sorted2 = Object.keys(allMs).sort(function(a,b){ return MES_ORD.indexOf(a)-MES_ORD.indexOf(b); });
+    el.innerHTML = sorted2.map(function(mes){
+      var active = mes === ovSel;
+      var lbl = mes.charAt(0).toUpperCase()+mes.slice(1);
+      return '<button class="ov-ppill'+(active?' on':'')+'" onclick="ovSel=\''+mes+'\';renderOvSelPills();renderOv()">'+lbl+'</button>';
+    }).join('');
+  }
+}
+
+
+
+function getFilteredPD(td) {
+    var out = {};
+    if (ovPer === 2) {
+      // Año completo
+      Object.keys(td).forEach(function(w){
+        Object.keys(td[w]).forEach(function(tab){
+          if(!out[tab]) out[tab]=[];
+          td[w][tab].forEach(function(r){ out[tab].push(r); });
+        });
+      });
+    } else if (ovPer === 0 && ovSel) {
+      // Semana específica
+      var wk = String(ovSel);
+      Object.keys(td).forEach(function(w){
+        if (String(w) !== wk) return;
+        Object.keys(td[w]).forEach(function(tab){
+          if(!out[tab]) out[tab]=[];
+          td[w][tab].forEach(function(r){ out[tab].push(r); });
+        });
+      });
+    } else if (ovPer === 1 && ovSel) {
+      // Mes específico
+      Object.keys(td).forEach(function(w){
+        Object.keys(td[w]).forEach(function(tab){
+          td[w][tab].forEach(function(r){
+            if ((r.m||'').toLowerCase() === ovSel.toLowerCase()) {
+              if(!out[tab]) out[tab]=[];
+              out[tab].push(r);
+            }
+          });
+        });
+      });
+    }
+    return out;
+  }
+
+// ── ACCORDION ────────────────────────────────────────────────
+var accState = { 'COMP_BLOCK': false, 'TOP_BLOCK': false, 'REAC_OV_BLOCK': false };
+
+function togAcc(id) {
+  var isOpen = accState[id];
+  accState[id] = !isOpen;
+
+  var body = document.getElementById(id+'_body');
+  var chev = document.getElementById(id+'_chev');
+
+  if (accState[id]) {
+    // Open
+    body.style.maxHeight = body.scrollHeight + 'px';
+    body.style.opacity   = '1';
+    if (chev) chev.style.transform = 'rotate(90deg)';
+    // After transition, set maxHeight to 'none' so dynamic content can expand
+    setTimeout(function(){ if(accState[id]) body.style.maxHeight = 'none'; }, 350);
+  } else {
+    // Close: first set explicit height then animate to 0
+    body.style.maxHeight = body.scrollHeight + 'px';
+    body.style.opacity   = '1';
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        body.style.maxHeight = '0';
+        body.style.opacity   = '0';
+        if (chev) chev.style.transform = 'rotate(0deg)';
+      });
+    });
+  }
+}
+
+function openAcc(id) {
+  if (!accState[id]) togAcc(id);
+}
+
+function renderOv() {
+  var data = D();
+  if (!data || !Object.keys(data).length) { console.warn('no data'); return; }
+  renderExecKPIs();
+  renderAlerts();
+
+  // ── Filter rows per trainer per period ────────────────────
+
+
+  // ── Compute totals per trainer ────────────────────────────
+  var tots = {}, tabCounts = {}, allW = {};
+  Object.keys(data).forEach(function(tr) {
+    var pd = getFilteredPD(data[tr]);
+    var h = 0;
+    tabCounts[tr] = {};
+    Object.keys(pd).forEach(function(tab){
+      var rows = pd[tab];
+      tabCounts[tr][tab] = rows.length;
+      rows.forEach(function(r){ h += r.t||0; });
+    });
+    tots[tr] = Math.round(h*10)/10;
+    // allW for header badge
+    Object.keys(data[tr]).forEach(function(w){ allW[w]=1; });
   });
 
-  var sorted=Object.keys(tots).sort(function(a,b){return tots[b]-tots[a];});
-  var grand=sorted.reduce(function(a,tr){return a+tots[tr];},0);
+  var sorted = Object.keys(tots).sort(function(a,b){ return tots[b]-tots[a]; });
+  var grand  = sorted.reduce(function(a,tr){ return a+tots[tr]; }, 0);
 
-  document.getElementById('HP_T').innerHTML='<strong>'+sorted.length+'</strong> Trainers';
-  document.getElementById('HP_W').innerHTML='<strong>'+Object.keys(allW).length+'</strong> Semanas';
-  document.getElementById('HP_H').innerHTML='<strong>'+Math.round(grand)+'</strong> h totales';
+  // Period label for header
+  var perLbl = ovPer===2 ? 'Año 2026'
+    : ovPer===1 && ovSel ? ovSel.charAt(0).toUpperCase()+ovSel.slice(1)
+    : ovPer===0 && ovSel ? 'S'+ovSel+(WR[ovSel]?' · '+WR[ovSel]:'')
+    : 'Año 2026';
 
-  var maxH=tots[sorted[0]]||1;
+  document.getElementById('HP_T').innerHTML = '<strong>'+sorted.length+'</strong> Trainers';
+  document.getElementById('HP_W').innerHTML = '<strong>'+Object.keys(allW).length+'</strong> Semanas';
+  document.getElementById('HP_H').innerHTML = '<strong>'+Math.round(grand)+'</strong> h · <span style="font-weight:400;font-size:10px">'+perLbl+'</span>';
 
-  // Trainer cards
-  document.getElementById('TGRID').innerHTML=sorted.map(function(tr) {
-    var h=tots[tr], col=trCol(tr), wks=gWks(data[tr]);
-    var types={};
-    Object.keys(data[tr]).forEach(function(w){Object.keys(data[tr][w]).forEach(function(t){types[t]=1;});});
-    var ntypes=Object.keys(types).length;
-    var dots=wks.slice(0,15).map(function(w){return '<div class="tc-dot" style="background:'+col+'" title="S'+w+(WR[w]?': '+WR[w]:'')+'">'+'</div>';}).join('');
-    var esc=tr.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    return '<div class="tc" onclick="openTr(\''+esc+'\')">'+
-      '<div class="tc-top"><div class="av" style="background:'+col+'">'+ini(tr)+'</div>'+
-      '<div class="tc-name">'+tr+'</div></div>'+
-      '<div class="tc-h">'+fH(h)+'</div>'+
-      '<div class="tc-sub">'+wks.length+' semanas &middot; '+ntypes+' tipos</div>'+
-      '<div class="tc-bar"><div class="tc-fill" style="width:'+Math.round(h/maxH*100)+'%;background:'+col+'"></div></div>'+
-      '<div class="tc-dots">'+dots+'</div>'+
+  var maxH = tots[sorted[0]] || 1;
+
+  // ── Trainer cards with tab breakdown ─────────────────────
+  document.getElementById('TGRID').innerHTML = sorted.map(function(tr) {
+    var h = tots[tr], col = trCol(tr);
+    var esc = tr.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    var tc  = tabCounts[tr];
+
+    // Tab breakdown rows — only tabs with activity
+    var activeTabs = TORDER.filter(function(t){ return tc[t] > 0; });
+    var maxCount   = activeTabs.reduce(function(a,t){ return Math.max(a, tc[t]); }, 1);
+
+    var tabRows = activeTabs.map(function(t){
+      var def  = TDEFS[t];
+      var tCol = def[1];
+      var cnt  = tc[t];
+      var pct  = Math.round((cnt/maxCount)*100);
+      return '<div class="tc-tab-row">'+
+        '<span class="tc-tab-icon">'+def[0]+'</span>'+
+        '<span class="tc-tab-name">'+t+'</span>'+
+        '<div class="tc-tab-bar-wrap">'+
+          '<div class="tc-tab-bar-fill" style="width:'+pct+'%;background:'+tCol+'40"></div>'+
+        '</div>'+
+        '<span class="tc-tab-cnt" style="color:'+tCol+'">'+cnt+'</span>'+
       '</div>';
+    }).join('');
+
+    var wks = gWks(data[tr]);
+    return '<div class="tc" style="--tc-color:'+col+'" onclick="openTr(\''+esc+'\')">'+
+      '<div class="tc-top">'+
+        '<div class="av" style="background:'+col+'">'+ini(tr)+'</div>'+
+        '<div>'+
+          '<div class="tc-name">'+tr+'</div>'+
+          '<div class="tc-sub">'+fH(h)+' · '+activeTabs.length+' categorías</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="tc-bar"><div class="tc-fill" style="width:'+Math.round(h/maxH*100)+'%;background:'+col+'"></div></div>'+
+      (tabRows ? '<div class="tc-tabs-breakdown">'+tabRows+'</div>' : '')+
+    '</div>';
   }).join('');
 
-  // Bar chart
-  document.getElementById('OV_BARS').innerHTML=sorted.map(function(tr) {
-    var h=tots[tr], col=trCol(tr);
-    var esc=tr.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  // ── Bar chart (horas) ─────────────────────────────────────
+  document.getElementById('OV_BARS').innerHTML = sorted.map(function(tr) {
+    var h = tots[tr], col = trCol(tr);
+    var esc = tr.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     return '<div class="ov-row" onclick="openTr(\''+esc+'\')">'+
       '<div class="ov-name" title="'+tr+'">'+tr+'</div>'+
       '<div class="ov-track"><div class="ov-fill" style="width:'+Math.round(h/maxH*100)+'%;background:'+col+'"></div></div>'+
       '<div class="ov-val">'+fH(h)+'</div>'+
-      '</div>';
+    '</div>';
   }).join('');
 
-  // Global donut
-  var tg={};
+  // ── Global donut ──────────────────────────────────────────
+  var tg = {};
   Object.keys(data).forEach(function(tr){
-    Object.keys(data[tr]).forEach(function(w){
-      Object.keys(data[tr][w]).forEach(function(t){
-        tg[t]=(tg[t]||0)+data[tr][w][t].reduce(function(a,r){return a+(r.t||0);},0);
-      });
+    var pd = getFilteredPD(data[tr]);
+    Object.keys(pd).forEach(function(t){
+      pd[t].forEach(function(r){ tg[t]=(tg[t]||0)+(r.t||0); });
     });
   });
-  var di=TORDER.filter(function(t){return tg[t]>0;})
-    .map(function(t){return {v:tg[t],c:TDEFS[t][1],label:t};});
+  var di = TORDER.filter(function(t){return tg[t]>0;})
+    .map(function(t){return {v:tg[t], c:TDEFS[t][1], label:t};});
   drawDonut('OV_SVG','OV_DV',di);
-  document.getElementById('OV_BADGE').textContent=fH(grand)+' totales';
-  document.getElementById('OV_LEG').innerHTML=di.map(function(d){
-    return '<div class="dleg-row"><div class="dleg-dot" style="background:'+d.c+'"></div>'+
+  document.getElementById('OV_BADGE').textContent = fH(grand)+' totales';
+  document.getElementById('OV_LEG').innerHTML = di.map(function(d){
+    return '<div class="dleg-row">'+
+      '<div class="dleg-dot" style="background:'+d.c+'"></div>'+
       '<span class="dleg-name">'+d.label+'</span>'+
-      '<span class="dleg-val">'+fH(d.v)+'</span></div>';
+      '<span class="dleg-val">'+fH(d.v)+'</span>'+
+    '</div>';
   }).join('');
 }
+
+// ════════════════════════════════════════════════════════════
+// EXECUTIVE KPIs + ALERTS — renderExecKPIs()
+// ════════════════════════════════════════════════════════════
+function renderExecKPIs() {
+  var data = D();
+  if (!data) return;
+
+  // Gather filtered data for all trainers
+  var totalH = 0, totalR = 0, activeTrainers = 0;
+  var tabTotals = {}, trainerH = {}, trainerR = {};
+
+  Object.keys(data).forEach(function(tr) {
+    var pd = getFilteredPD(data[tr]);
+    var h = 0, r = 0;
+    Object.keys(pd).forEach(function(tab) {
+      var rows = pd[tab];
+      r += rows.length;
+      rows.forEach(function(row) { h += (row.t || 0); });
+      tabTotals[tab] = (tabTotals[tab] || 0) + rows.length;
+    });
+    if (h > 0 || r > 0) activeTrainers++;
+    totalH += h;
+    totalR += r;
+    trainerH[tr] = Math.round(h * 10) / 10;
+    trainerR[tr] = r;
+  });
+
+  // Previous period for delta (only for week/month)
+  function getPrevPD(td) {
+    var out = {};
+    if (ovPer === 0 && ovSel) {
+      var prevW = String(parseInt(ovSel) - 1);
+      if (td[prevW]) {
+        Object.keys(td[prevW]).forEach(function(tab) {
+          if (!out[tab]) out[tab] = [];
+          td[prevW][tab].forEach(function(r) { out[tab].push(r); });
+        });
+      }
+    } else if (ovPer === 1 && ovSel) {
+      var MES_ORD = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+      var idx = MES_ORD.indexOf(ovSel);
+      var prevMes = idx > 0 ? MES_ORD[idx - 1] : null;
+      if (prevMes) {
+        Object.keys(td).forEach(function(w) {
+          Object.keys(td[w]).forEach(function(tab) {
+            td[w][tab].forEach(function(r) {
+              if ((r.m || '').toLowerCase() === prevMes) {
+                if (!out[tab]) out[tab] = [];
+                out[tab].push(r);
+              }
+            });
+          });
+        });
+      }
+    }
+    return out;
+  }
+
+  var prevH = 0, prevR = 0;
+  Object.keys(data).forEach(function(tr) {
+    var pd = getPrevPD(data[tr]);
+    Object.keys(pd).forEach(function(tab) {
+      pd[tab].forEach(function(r) { prevH += (r.t || 0); prevR += pd[tab].length; });
+    });
+  });
+
+  function deltaHtml(curr, prev) {
+    if (!prev) return '<span class="exec-kpi-delta delta-nt">sin periodo prev.</span>';
+    var pct = Math.round(((curr - prev) / prev) * 100);
+    var cls = pct >= 0 ? 'delta-up' : 'delta-dn';
+    var sign = pct >= 0 ? '▲' : '▼';
+    return '<span class="exec-kpi-delta ' + cls + '">' + sign + ' ' + Math.abs(pct) + '% vs anterior</span>';
+  }
+
+  // Top tab by hours
+  var tabH = {};
+  Object.keys(data).forEach(function(tr) {
+    var pd = getFilteredPD(data[tr]);
+    Object.keys(pd).forEach(function(tab) {
+      pd[tab].forEach(function(r) { tabH[tab] = (tabH[tab] || 0) + (r.t || 0); });
+    });
+  });
+  var topTab = Object.keys(tabH).sort(function(a,b){return tabH[b]-tabH[a];})[0] || '—';
+  var topTabPct = totalH > 0 ? Math.round((tabH[topTab] / totalH) * 100) : 0;
+
+  // Avg hours per trainer
+  var avgH = activeTrainers > 0 ? Math.round((totalH / activeTrainers) * 10) / 10 : 0;
+
+  var perLbl = ovPer === 2 ? 'Año 2026'
+    : ovPer === 1 && ovSel ? ovSel.charAt(0).toUpperCase() + ovSel.slice(1)
+    : ovPer === 0 && ovSel ? 'Semana ' + ovSel
+    : 'Año 2026';
+
+  var kpis = [
+    { v: Math.round(totalH) + 'h', l: 'Horas totales', sub: perLbl, delta: deltaHtml(totalH, prevH), color: 'var(--acc)' },
+    { v: totalR, l: 'Registros totales', sub: 'actividades log', delta: deltaHtml(totalR, prevR), color: 'var(--acc3)' },
+    { v: activeTrainers, l: 'Trainers activos', sub: 'con actividad en periodo', color: 'var(--green)' },
+    { v: avgH + 'h', l: 'Promedio por trainer', sub: 'horas en periodo', color: '#7c3aed' },
+    { v: topTabPct + '%', l: topTab, sub: 'categoría con mayor tiempo', color: TDEFS[topTab] ? TDEFS[topTab][1] : 'var(--acc2)' },
+    { v: Object.keys(tabTotals).filter(function(t){return tabTotals[t]>0;}).length, l: 'Categorías activas', sub: 'de ' + TORDER.length + ' posibles', color: 'var(--acc2)' }
+  ];
+
+  document.getElementById('EXEC_KPIS_ROW').innerHTML = kpis.map(function(k) {
+    return '<div class="exec-kpi" style="--kpi-color:' + k.color + '">' +
+      '<div class="exec-kpi-v">' + k.v + '</div>' +
+      '<div class="exec-kpi-l">' + k.l + '</div>' +
+      '<div class="exec-kpi-sub">' + k.sub + '</div>' +
+      (k.delta || '') +
+    '</div>';
+  }).join('');
+}
+
+// ════════════════════════════════════════════════════════════
+// ALERTS / INSIGHTS — renderAlerts()
+// ════════════════════════════════════════════════════════════
+function renderAlerts() {
+  var data = D();
+  if (!data) return;
+
+  var alerts = [];
+  var trainerH = {}, trainerR = {}, trainerTabs = {};
+
+  Object.keys(data).forEach(function(tr) {
+    var pd = getFilteredPD(data[tr]);
+    var h = 0, r = 0, tabs = {};
+    Object.keys(pd).forEach(function(tab) {
+      tabs[tab] = pd[tab].length;
+      r += pd[tab].length;
+      pd[tab].forEach(function(row) { h += (row.t || 0); });
+    });
+    trainerH[tr] = Math.round(h * 10) / 10;
+    trainerR[tr] = r;
+    trainerTabs[tr] = tabs;
+  });
+
+  var trainers = Object.keys(trainerH).filter(function(t) { return trainerH[t] > 0; });
+  if (!trainers.length) {
+    document.getElementById('ALERTS_WRAP').style.display = 'none';
+    return;
+  }
+  document.getElementById('ALERTS_WRAP').style.display = '';
+
+  var totalH = trainers.reduce(function(a, t) { return a + trainerH[t]; }, 0);
+  var avgH = totalH / trainers.length;
+
+  var sorted = trainers.slice().sort(function(a, b) { return trainerH[b] - trainerH[a]; });
+  var top = sorted[0], bottom = sorted[sorted.length - 1];
+
+  // Alert: trainer with very low load
+  if (trainerH[bottom] < avgH * 0.6) {
+    alerts.push({ type: 'amber', icon: '⚠️',
+      title: 'Carga baja detectada',
+      body: top && bottom ? bottom + ' tiene ' + trainerH[bottom] + 'h vs promedio de ' + Math.round(avgH) + 'h del área.' : ''
+    });
+  }
+
+  // Alert: top trainer overloaded
+  if (trainerH[top] > avgH * 1.5) {
+    alerts.push({ type: 'red', icon: '🔴',
+      title: 'Concentración de carga',
+      body: top + ' acumula ' + trainerH[top] + 'h (' + Math.round((trainerH[top]/totalH)*100) + '% del total del área).'
+    });
+  }
+
+  // Alert: good balance
+  var maxH = trainerH[top], minH = trainerH[bottom];
+  if (maxH > 0 && (maxH - minH) / avgH < 0.4) {
+    alerts.push({ type: 'green', icon: '✅',
+      title: 'Carga bien distribuida',
+      body: 'La diferencia entre el trainer con mayor y menor carga es menor al 40% del promedio.'
+    });
+  }
+
+  // Alert: tab concentration
+  var tabH = {};
+  trainers.forEach(function(tr) {
+    Object.keys(trainerTabs[tr]).forEach(function(tab) {
+      tabH[tab] = (tabH[tab] || 0) + (trainerTabs[tr][tab] || 0);
+    });
+  });
+  var totalRec = Object.values ? Object.values(tabH).reduce(function(a,b){return a+b;},0)
+    : Object.keys(tabH).reduce(function(a,k){return a+tabH[k];},0);
+  var topTabName = Object.keys(tabH).sort(function(a,b){return tabH[b]-tabH[a];})[0];
+  if (topTabName && totalRec > 0) {
+    var topPct = Math.round((tabH[topTabName] / totalRec) * 100);
+    if (topPct > 45) {
+      alerts.push({ type: 'amber', icon: '📊',
+        title: 'Alta concentración en ' + topTabName,
+        body: topPct + '% de los registros son de esta categoría. Considera revisar si hay oportunidad de diversificación.'
+      });
+    }
+  }
+
+  // Insight: most diverse trainer
+  var diversity = trainers.map(function(tr) {
+    return { tr: tr, n: Object.keys(trainerTabs[tr]).filter(function(t){return trainerTabs[tr][t]>0;}).length };
+  });
+  diversity.sort(function(a,b){return b.n-a.n;});
+  if (diversity[0]) {
+    alerts.push({ type: 'info', icon: '🌐',
+      title: 'Mayor diversidad: ' + diversity[0].tr,
+      body: 'Activo en ' + diversity[0].n + ' categorías diferentes en el periodo.'
+    });
+  }
+
+  // Insight: trainer with most records
+  var topVol = sorted.slice().sort(function(a,b){return trainerR[b]-trainerR[a];})[0];
+  alerts.push({ type: 'info', icon: '📝',
+    title: 'Mayor volumen de actividades: ' + topVol,
+    body: trainerR[topVol] + ' registros — ' + trainerH[topVol] + 'h en el periodo.'
+  });
+
+  // Render
+  var el = document.getElementById('ALERTS_GRID');
+  if (!alerts.length) {
+    el.innerHTML = '<div class="alert-card info"><span class="alert-title">Sin alertas activas para este periodo</span></div>';
+  } else {
+    el.innerHTML = alerts.map(function(a) {
+      return '<div class="alert-card ' + a.type + '">' +
+        '<div style="display:flex;align-items:center;gap:6px">' +
+          '<span class="alert-icon">' + a.icon + '</span>' +
+          '<span class="alert-title">' + a.title + '</span>' +
+        '</div>' +
+        '<div class="alert-body">' + a.body + '</div>' +
+      '</div>';
+    }).join('');
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// AREA REPORT — generateAreaReport()
+// ════════════════════════════════════════════════════════════
+function generateAreaReport() {
+  var data = D();
+  if (!data) return;
+
+  var perLbl = ovPer === 2 ? 'Año 2026'
+    : ovPer === 1 && ovSel ? ovSel.charAt(0).toUpperCase() + ovSel.slice(1)
+    : ovPer === 0 && ovSel ? 'Semana ' + ovSel + (WR[ovSel] ? ' · ' + WR[ovSel] : '')
+    : 'Año 2026';
+
+  // Gather all data
+  var trainerStats = {};
+  var tabH = {}, tabR = {};
+  var visaCount = {}, sessionCount = {}, proyCount = {};
+  var totalH = 0, totalR = 0;
+
+  Object.keys(data).forEach(function(tr) {
+    var pd = getFilteredPD(data[tr]);
+    var h = 0, r = 0, tabBreak = {};
+    Object.keys(pd).forEach(function(tab) {
+      var rows = pd[tab];
+      var th = rows.reduce(function(a, row) { return a + (row.t || 0); }, 0);
+      h += th; r += rows.length;
+      tabBreak[tab] = { h: Math.round(th * 10) / 10, r: rows.length };
+      tabH[tab] = (tabH[tab] || 0) + th;
+      tabR[tab] = (tabR[tab] || 0) + rows.length;
+
+      // Collect visa/producto
+      rows.forEach(function(row) {
+        if (row.visa) visaCount[row.visa] = (visaCount[row.visa] || 0) + 1;
+        if (row.ses) sessionCount[row.ses] = (sessionCount[row.ses] || 0) + 1;
+        if (row.proy) proyCount[row.proy] = (proyCount[row.proy] || 0) + 1;
+      });
+    });
+    trainerStats[tr] = { h: Math.round(h * 10) / 10, r: r, tabs: tabBreak };
+    totalH += h; totalR += r;
+  });
+
+  var sortedTr = Object.keys(trainerStats).sort(function(a, b) {
+    return trainerStats[b].h - trainerStats[a].h;
+  });
+  var avgH = sortedTr.length ? Math.round((totalH / sortedTr.length) * 10) / 10 : 0;
+  var activeTr = sortedTr.filter(function(t) { return trainerStats[t].h > 0; });
+
+  // Top tabs by hours
+  var sortedTabs = TORDER.filter(function(t) { return tabH[t] > 0; })
+    .sort(function(a, b) { return tabH[b] - tabH[a]; });
+
+  // Top visas
+  var topVisas = Object.keys(visaCount).sort(function(a,b){return visaCount[b]-visaCount[a];}).slice(0,5);
+  var topProys = Object.keys(proyCount).sort(function(a,b){return proyCount[b]-proyCount[a];}).slice(0,5);
+
+  // Insights
+  var insights = [];
+  var topTr = activeTr[0], botTr = activeTr[activeTr.length - 1];
+  if (topTr) insights.push('El trainer con mayor carga es <strong>' + topTr + '</strong> con ' + trainerStats[topTr].h + 'h.');
+  if (botTr && botTr !== topTr) insights.push('<strong>' + botTr + '</strong> registró la menor carga con ' + trainerStats[botTr].h + 'h.');
+  if (sortedTabs[0]) {
+    var topTabPct = Math.round((tabH[sortedTabs[0]] / totalH) * 100);
+    insights.push('La categoría que más tiempo consume es <strong>' + sortedTabs[0] + '</strong> (' + topTabPct + '% del total de horas).');
+  }
+  if (topTr && botTr && trainerStats[topTr].h > avgH * 1.5) {
+    insights.push('⚠️ Se detecta <strong>desbalance de carga</strong>: ' + topTr + ' tiene más del 150% del promedio del área.');
+  }
+  if (topVisas[0]) insights.push('El producto/visa con más actividad es <strong>' + topVisas[0] + '</strong> (' + visaCount[topVisas[0]] + ' registros).');
+
+  // Build HTML
+  var now = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
+  var html = '<div class="area-report-out" id="AREA_REPORT_OUT">' +
+
+    // Header
+    '<div class="area-rep-header">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">' +
+        '<div>' +
+          '<div class="area-rep-title">📋 Reporte Ejecutivo del Área de Training</div>' +
+          '<div class="area-rep-period">Periodo: ' + perLbl + ' · Generado: ' + now + '</div>' +
+        '</div>' +
+        '<button class="area-rep-print-btn" onclick="printAreaReport()">🖨 Exportar PDF</button>' +
+      '</div>' +
+    '</div>' +
+
+    // KPIs
+    '<div class="area-rep-kpis">' +
+      mkRepKPI(Math.round(totalH) + 'h', 'Horas totales') +
+      mkRepKPI(totalR, 'Registros') +
+      mkRepKPI(activeTr.length, 'Trainers activos') +
+      mkRepKPI(avgH + 'h', 'Promedio trainer') +
+      mkRepKPI(sortedTabs.length, 'Categorías activas') +
+    '</div>' +
+
+    // Trainer ranking
+    '<div class="area-rep-section">' +
+      '<div class="area-rep-section-title">Desempeño por trainer</div>' +
+      '<table class="area-rep-table">' +
+        '<thead><tr><th>#</th><th>Trainer</th><th>Horas</th><th>Registros</th><th>vs Promedio</th><th>Categorías activas</th></tr></thead>' +
+        '<tbody>' + sortedTr.map(function(tr, i) {
+          var s = trainerStats[tr];
+          var diff = s.h - avgH;
+          var diffCls = diff > 0 ? 'color:var(--green)' : 'color:var(--red)';
+          var diffStr = (diff >= 0 ? '+' : '') + Math.round(diff * 10) / 10 + 'h';
+          var cats = Object.keys(s.tabs).filter(function(t){return s.tabs[t].r>0;}).length;
+          var col = trCol(tr);
+          return '<tr>' +
+            '<td><span class="rank-badge">' + (i+1) + '</span></td>' +
+            '<td><span style="display:flex;align-items:center;gap:7px">' +
+              '<span style="width:24px;height:24px;border-radius:50%;background:'+col+';display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:700">' + ini(tr) + '</span>' +
+              tr + '</span></td>' +
+            '<td><strong>' + s.h + 'h</strong></td>' +
+            '<td>' + s.r + '</td>' +
+            '<td style="' + diffCls + ';font-weight:700">' + diffStr + '</td>' +
+            '<td>' + cats + '</td>' +
+          '</tr>';
+        }).join('') +
+        '</tbody>' +
+      '</table>' +
+    '</div>' +
+
+    // Tab distribution
+    '<div class="area-rep-section">' +
+      '<div class="area-rep-section-title">Distribución del tiempo por categoría</div>' +
+      '<table class="area-rep-table">' +
+        '<thead><tr><th>Categoría</th><th>Horas</th><th>Registros</th><th>% del tiempo</th></tr></thead>' +
+        '<tbody>' + sortedTabs.map(function(tab) {
+          var def = TDEFS[tab] || ['','#888',[]];
+          var pct = totalH > 0 ? Math.round((tabH[tab] / totalH) * 100) : 0;
+          return '<tr>' +
+            '<td>' + def[0] + ' ' + tab + '</td>' +
+            '<td><strong>' + Math.round(tabH[tab] * 10) / 10 + 'h</strong></td>' +
+            '<td>' + tabR[tab] + '</td>' +
+            '<td>' +
+              '<div style="display:flex;align-items:center;gap:6px">' +
+                '<div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden">' +
+                  '<div style="width:' + pct + '%;height:100%;background:' + def[1] + ';border-radius:3px"></div>' +
+                '</div>' +
+                '<span style="font-size:10px;font-weight:700;min-width:28px">' + pct + '%</span>' +
+              '</div>' +
+            '</td>' +
+          '</tr>';
+        }).join('') +
+        '</tbody>' +
+      '</table>' +
+    '</div>' +
+
+    // Top visas
+    (topVisas.length ? '<div class="area-rep-section">' +
+      '<div class="area-rep-section-title">Principales Productos / Visas</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
+        topVisas.map(function(v) {
+          return '<span style="background:var(--bg2);padding:5px 10px;border-radius:6px;font-size:11px">' +
+            '<strong>' + v + '</strong> <span style="color:var(--ink3)">· ' + visaCount[v] + ' registros</span></span>';
+        }).join('') +
+      '</div></div>' : '') +
+
+    // Top proyects
+    (topProys.length ? '<div class="area-rep-section">' +
+      '<div class="area-rep-section-title">Principales Proyectos</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
+        topProys.map(function(p) {
+          return '<span style="background:var(--bg2);padding:5px 10px;border-radius:6px;font-size:11px">' +
+            '<strong>' + p.substring(0,45) + (p.length>45?'…':'') + '</strong> <span style="color:var(--ink3)">· ' + proyCount[p] + '</span></span>';
+        }).join('') +
+      '</div></div>' : '') +
+
+    // Insights
+    '<div class="area-rep-section">' +
+      '<div class="area-rep-section-title">Hallazgos y observaciones</div>' +
+      '<div class="area-rep-insights">' +
+        insights.map(function(i) {
+          return '<div class="area-rep-insight">' + i + '</div>';
+        }).join('') +
+      '</div>' +
+    '</div>' +
+
+  '</div>';
+
+  document.getElementById('AREA_REPORT_WRAP').innerHTML = html;
+  document.getElementById('AREA_REPORT_WRAP').scrollIntoView({ behavior: 'smooth' });
+}
+
+function mkRepKPI(v, l) {
+  return '<div class="area-rep-kpi"><div class="area-rep-kpi-v">' + v + '</div><div class="area-rep-kpi-l">' + l + '</div></div>';
+}
+
+function printAreaReport() {
+  var data = D();
+  if (!data) return;
+
+  // ── Gather data (same as generateAreaReport) ────────────
+  var perLbl = ovPer === 2 ? 'Año 2026'
+    : ovPer === 1 && ovSel ? ovSel.charAt(0).toUpperCase() + ovSel.slice(1)
+    : ovPer === 0 && ovSel ? 'Semana ' + ovSel + (WR[ovSel] ? ' · ' + WR[ovSel] : '')
+    : 'Año 2026';
+
+  var trainerStats = {}, tabH = {}, tabR = {};
+  var visaCount = {}, proyCount = {};
+  var totalH = 0, totalR = 0;
+
+  Object.keys(data).forEach(function(tr) {
+    var pd = getFilteredPD(data[tr]);
+    var h = 0, r = 0, tabBreak = {};
+    Object.keys(pd).forEach(function(tab) {
+      var rows = pd[tab];
+      var th = rows.reduce(function(a, row) { return a + (row.t || 0); }, 0);
+      h += th; r += rows.length;
+      tabBreak[tab] = { h: Math.round(th*10)/10, r: rows.length };
+      tabH[tab] = (tabH[tab]||0) + th;
+      tabR[tab] = (tabR[tab]||0) + rows.length;
+      rows.forEach(function(row) {
+        if (row.visa) visaCount[row.visa] = (visaCount[row.visa]||0)+1;
+        if (row.proy) proyCount[row.proy] = (proyCount[row.proy]||0)+1;
+      });
+    });
+    trainerStats[tr] = { h: Math.round(h*10)/10, r: r, tabs: tabBreak };
+    totalH += h; totalR += r;
+  });
+
+  var sortedTr = Object.keys(trainerStats).sort(function(a,b){return trainerStats[b].h-trainerStats[a].h;});
+  var avgH = sortedTr.length ? Math.round((totalH/sortedTr.length)*10)/10 : 0;
+  var activeTr = sortedTr.filter(function(t){return trainerStats[t].h>0;});
+  var sortedTabs = TORDER.filter(function(t){return tabH[t]>0;}).sort(function(a,b){return tabH[b]-tabH[a];});
+  var topVisas = Object.keys(visaCount).sort(function(a,b){return visaCount[b]-visaCount[a];}).slice(0,6);
+  var topProys = Object.keys(proyCount).sort(function(a,b){return proyCount[b]-proyCount[a];}).slice(0,5);
+
+  var insights = [];
+  var topTr = activeTr[0], botTr = activeTr[activeTr.length-1];
+  if (topTr) insights.push('El trainer con mayor carga es <strong>'+topTr+'</strong> con '+trainerStats[topTr].h+'h.');
+  if (botTr && botTr!==topTr) insights.push('<strong>'+botTr+'</strong> registró la menor carga con '+trainerStats[botTr].h+'h.');
+  if (sortedTabs[0]) {
+    var pct0 = Math.round((tabH[sortedTabs[0]]/totalH)*100);
+    insights.push('Categoría con más tiempo: <strong>'+sortedTabs[0]+'</strong> ('+pct0+'% del total).');
+  }
+  if (topTr && trainerStats[topTr].h > avgH*1.5)
+    insights.push('⚠️ <strong>Desbalance de carga</strong>: '+topTr+' supera el 150% del promedio del área.');
+  if (topVisas[0]) insights.push('Producto más activo: <strong>'+topVisas[0]+'</strong> ('+visaCount[topVisas[0]]+' registros).');
+
+  var now = new Date().toLocaleDateString('es-MX',{year:'numeric',month:'long',day:'numeric'});
+  var nowShort = new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'});
+
+  // Tab colors map
+  var TAB_CLR = {
+    'Actividades':'#6366f1','Trainings teórico':'#3a5fa8','Trainings práctico':'#0369a1',
+    'Habilitación':'#2a7a52','Llamadas':'#7c3aed','Acompañamientos':'#0891b2',
+    'Entregables':'#92400e','Desarrollo proyectos':'#b45309','Desarrollo trainings':'#065f46'
+  };
+
+  // ── Build print-optimized HTML ──────────────────────────
+  var doc = '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">'+
+    '<title>Reporte Área Training · '+perLbl+'</title>'+
+    '<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">'+
+    '<style>'+
+    ':root{--ink:#1a1814;--ink2:#4a4540;--ink3:#8a8278;--bg:#f5f2ee;--bg2:#ece8e1;--card:#fff;--acc:#c8440a;--acc2:#e8a020;--border:#ddd8d0;--green:#1a6b3a;--red:#b91c1c;}'+
+    '*{box-sizing:border-box;margin:0;padding:0}'+
+    'body{font-family:"DM Sans",sans-serif;background:#fff;color:var(--ink);font-size:11px;line-height:1.55}'+
+
+    // Cover
+    '.cover{background:var(--ink);color:#fff;width:100%;min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:56px 60px;position:relative;overflow:hidden;page-break-after:always;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+    '.cover-orb1{position:absolute;top:-100px;right:-80px;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(200,68,10,.45) 0%,transparent 70%)}'+
+    '.cover-orb2{position:absolute;bottom:60px;left:-60px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(232,160,32,.18) 0%,transparent 70%)}'+
+    '.cover-line{width:50px;height:4px;background:var(--acc);border-radius:2px;margin-bottom:28px}'+
+    '.cover-eyebrow{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--acc2);margin-bottom:14px}'+
+    '.cover-h1{font-family:"DM Serif Display",serif;font-size:56px;line-height:1.05;font-weight:400;margin-bottom:12px}'+
+    '.cover-h1 em{color:var(--acc2);font-style:italic}'+
+    '.cover-sub{font-size:13px;color:rgba(255,255,255,.5);font-weight:300;margin-bottom:52px}'+
+    '.cover-meta{display:flex;gap:40px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.12);padding-top:24px}'+
+    '.cover-meta-item{display:flex;flex-direction:column;gap:3px}'+
+    '.cover-meta-lbl{font-size:8px;letter-spacing:1.3px;text-transform:uppercase;color:rgba(255,255,255,.3)}'+
+    '.cover-meta-val{font-size:15px;font-weight:600;color:#fff}'+
+
+    // Page wrapper
+    '.page{padding:36px 48px;max-width:960px;margin:0 auto}'+
+
+    // Page header band
+    '.pg-hdr{display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;border-bottom:2px solid var(--ink);margin-bottom:24px}'+
+    '.pg-hdr-logo{font-family:"DM Serif Display",serif;font-size:15px}'+
+    '.pg-hdr-logo em{color:var(--acc);font-style:italic}'+
+    '.pg-hdr-right{font-size:9px;color:var(--ink3);text-align:right;line-height:1.6}'+
+
+    // KPI strip
+    '.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:28px;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+    '.kpi-cell{background:#fff;padding:16px 12px;text-align:center;position:relative}'+
+    '.kpi-cell::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--kc,#c8440a);-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+    '.kpi-v{font-family:"JetBrains Mono",monospace;font-size:20px;font-weight:700;line-height:1;color:var(--ink)}'+
+    '.kpi-l{font-size:8px;text-transform:uppercase;letter-spacing:.6px;color:var(--ink3);margin-top:5px}'+
+
+    // Section
+    '.sec{margin-bottom:28px}'+
+    '.sec-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--ink3);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);padding-bottom:7px;margin-bottom:14px}'+
+    '.sec-title-bar{width:16px;height:3px;background:var(--acc);border-radius:2px;flex-shrink:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+
+    // Trainer table
+    'table{width:100%;border-collapse:collapse}'+
+    'thead{background:var(--bg);-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+    'th{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--ink3);padding:9px 10px;text-align:left;border-bottom:1px solid var(--border)}'+
+    'td{padding:10px 10px;border-bottom:1px solid var(--bg2);font-size:11px;vertical-align:middle}'+
+    'tr:last-child td{border-bottom:none}'+
+    '.avatar{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+    '.tr-cell{display:flex;align-items:center;gap:9px}'+
+    '.rank{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink3);font-weight:700}'+
+    '.hval{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:13px}'+
+    '.up{color:var(--green);font-weight:700;font-family:"JetBrains Mono",monospace}'+
+    '.dn{color:var(--red);font-weight:700;font-family:"JetBrains Mono",monospace}'+
+    '.badge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:var(--bg2);font-size:10px;font-weight:700;font-family:"JetBrains Mono",monospace;color:var(--ink3)}'+
+
+    // Category bars
+    '.bar-wrap{display:flex;align-items:center;gap:8px}'+
+    '.bar-track{flex:1;height:7px;background:var(--bg2);border-radius:4px;overflow:hidden}'+
+    '.bar-fill{height:100%;border-radius:4px;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+    '.bar-pct{font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:700;min-width:34px;text-align:right}'+
+    '.cat-icon{font-size:14px}'+
+
+    // Two-column
+    '.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px}'+
+    '.two-col .sec{margin-bottom:0}'+
+
+    // Tags
+    '.tags{display:flex;flex-wrap:wrap;gap:5px}'+
+    '.tag{font-size:10px;background:var(--bg);border:1px solid var(--border);padding:4px 10px;border-radius:5px;display:flex;align-items:center;gap:5px;line-height:1.3}'+
+    '.tag b{color:var(--ink)}.tag span{color:var(--ink3)}'+
+
+    // Insights
+    '.insights{display:flex;flex-direction:column;gap:7px}'+
+    '.insight{background:var(--bg);border-left:3px solid var(--acc);padding:10px 14px;border-radius:0 6px 6px 0;font-size:11px;color:var(--ink2);line-height:1.6;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+
+    // Footer
+    '.pg-footer{border-top:1px solid var(--border);padding-top:8px;margin-top:28px;display:flex;justify-content:space-between;font-size:9px;color:var(--ink3)}'+
+
+    '@media print{body,*{-webkit-print-color-adjust:exact;print-color-adjust:exact}.cover{page-break-after:always}}'+
+    '</style></head><body>';
+
+  // ── COVER PAGE ──────────────────────────────────────────
+  doc += '<div class="cover">'+
+    '<div class="cover-orb1"></div>'+
+    '<div class="cover-orb2"></div>'+
+    '<div class="cover-line"></div>'+
+    '<div class="cover-eyebrow">Training Report 2026</div>'+
+    '<div class="cover-h1">Reporte<br>Ejecutivo del<br>Área de <em>Training</em></div>'+
+    '<div class="cover-sub">Análisis de desempeño y actividad del equipo de formación</div>'+
+    '<div class="cover-meta">'+
+      '<div class="cover-meta-item"><div class="cover-meta-lbl">Periodo</div><div class="cover-meta-val">'+perLbl+'</div></div>'+
+      '<div class="cover-meta-item"><div class="cover-meta-lbl">Trainers activos</div><div class="cover-meta-val">'+activeTr.length+'</div></div>'+
+      '<div class="cover-meta-item"><div class="cover-meta-lbl">Horas totales</div><div class="cover-meta-val">'+Math.round(totalH)+'h</div></div>'+
+      '<div class="cover-meta-item"><div class="cover-meta-lbl">Generado</div><div class="cover-meta-val">'+now+'</div></div>'+
+    '</div>'+
+  '</div>';
+
+  // ── PAGE 1 ──────────────────────────────────────────────
+  doc += '<div class="page">';
+
+  // Page header
+  doc += '<div class="pg-hdr">'+
+    '<div class="pg-hdr-logo">Training Report <em>2026</em></div>'+
+    '<div class="pg-hdr-right">Reporte Ejecutivo del Área · '+perLbl+'<br>Generado: '+nowShort+'</div>'+
+  '</div>';
+
+  // KPI strip
+  var KPI_COLORS = ['#c8440a','#3a5fa8','#2a7a52','#e8a020','#7c3aed'];
+  var kpiData = [
+    [Math.round(totalH)+'h', 'Horas totales'],
+    [totalR, 'Registros'],
+    [activeTr.length, 'Trainers activos'],
+    [avgH+'h', 'Promedio trainer'],
+    [sortedTabs.length, 'Categorías']
+  ];
+  doc += '<div class="kpi-strip">'+
+    kpiData.map(function(k,i){
+      return '<div class="kpi-cell" style="--kc:'+KPI_COLORS[i]+'">'+
+        '<div class="kpi-v">'+k[0]+'</div>'+
+        '<div class="kpi-l">'+k[1]+'</div>'+
+      '</div>';
+    }).join('')+
+  '</div>';
+
+  // Trainer ranking table
+  doc += '<div class="sec">'+
+    '<div class="sec-title"><span class="sec-title-bar"></span>Desempeño por trainer</div>'+
+    '<table>'+
+      '<thead><tr>'+
+        '<th style="width:36px">#</th>'+
+        '<th>Trainer</th>'+
+        '<th>Horas</th>'+
+        '<th>Registros</th>'+
+        '<th>vs Promedio</th>'+
+        '<th>Categorías</th>'+
+      '</tr></thead><tbody>'+
+      sortedTr.map(function(tr, idx) {
+        var s = trainerStats[tr];
+        var diff = Math.round((s.h - avgH)*10)/10;
+        var diffStr = (diff>=0?'+':'')+diff+'h';
+        var diffCls = diff>=0?'up':'dn';
+        var cats = Object.keys(s.tabs).filter(function(t){return s.tabs[t].r>0;}).length;
+        var clr = trCol(tr);
+        var initials = tr.split(' ').slice(0,2).map(function(p){return p[0]||'';}).join('').toUpperCase();
+        return '<tr>'+
+          '<td><span class="rank">'+(idx+1)+'</span></td>'+
+          '<td><div class="tr-cell">'+
+            '<span class="avatar" style="background:'+clr+'">'+initials+'</span>'+
+            '<strong>'+tr+'</strong>'+
+          '</div></td>'+
+          '<td><span class="hval">'+s.h+'h</span></td>'+
+          '<td>'+s.r+'</td>'+
+          '<td><span class="'+diffCls+'">'+diffStr+'</span></td>'+
+          '<td><span class="badge">'+cats+'</span></td>'+
+        '</tr>';
+      }).join('')+
+    '</tbody></table>'+
+  '</div>';
+
+  // Category distribution
+  doc += '<div class="sec">'+
+    '<div class="sec-title"><span class="sec-title-bar"></span>Distribución del tiempo por categoría</div>'+
+    '<table>'+
+      '<thead><tr><th>Categoría</th><th>Horas</th><th>Registros</th><th style="width:220px">% del tiempo</th></tr></thead>'+
+      '<tbody>'+
+      sortedTabs.map(function(tab){
+        var def = TDEFS[tab]||['📌','#888'];
+        var pct = totalH>0 ? Math.round((tabH[tab]/totalH)*100) : 0;
+        var clr = TAB_CLR[tab] || def[1] || '#888';
+        return '<tr>'+
+          '<td><span style="display:inline-flex;align-items:center;gap:8px">'+
+            '<span class="cat-icon">'+def[0]+'</span>'+tab+
+          '</span></td>'+
+          '<td><strong>'+Math.round(tabH[tab]*10)/10+'h</strong></td>'+
+          '<td>'+tabR[tab]+'</td>'+
+          '<td><div class="bar-wrap">'+
+            '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+clr+'"></div></div>'+
+            '<span class="bar-pct">'+pct+'%</span>'+
+          '</div></td>'+
+        '</tr>';
+      }).join('')+
+    '</tbody></table>'+
+  '</div>';
+
+  // Two column: Visas + Projects
+  if (topVisas.length || topProys.length) {
+    doc += '<div class="two-col">';
+    if (topVisas.length) {
+      doc += '<div class="sec">'+
+        '<div class="sec-title"><span class="sec-title-bar"></span>Principales Productos / Visas</div>'+
+        '<div class="tags">'+
+        topVisas.map(function(v){
+          return '<div class="tag"><b>'+v+'</b><span>· '+visaCount[v]+'</span></div>';
+        }).join('')+
+        '</div></div>';
+    }
+    if (topProys.length) {
+      doc += '<div class="sec">'+
+        '<div class="sec-title"><span class="sec-title-bar"></span>Principales Proyectos</div>'+
+        '<div class="tags">'+
+        topProys.map(function(p){
+          return '<div class="tag"><b>'+(p.length>40?p.substring(0,40)+'…':p)+'</b><span>· '+proyCount[p]+'</span></div>';
+        }).join('')+
+        '</div></div>';
+    }
+    doc += '</div>';
+  }
+
+  // Insights
+  doc += '<div class="sec">'+
+    '<div class="sec-title"><span class="sec-title-bar"></span>Hallazgos y observaciones</div>'+
+    '<div class="insights">'+
+    insights.map(function(ins){
+      return '<div class="insight">'+ins+'</div>';
+    }).join('')+
+    '</div></div>';
+
+  // Footer
+  doc += '<div class="pg-footer">'+
+    '<span>Training Report 2026 · Área de Formación</span>'+
+    '<span>Generado: '+now+'</span>'+
+  '</div>';
+
+  doc += '</div></body></html>';
+
+  var win = window.open('', '_blank');
+  win.document.write(doc);
+  win.document.close();
+  setTimeout(function(){ win.print(); }, 1000);
+}
+
+
+
+
 
 // ── NAV ───────────────────────────────────────────────────
 function openTr(tr) {
@@ -878,14 +2137,37 @@ function renderDet() {
       td[w][t].forEach(function(r){trH+=r.t||0; trR++;});
     });
   });
+  // ── Area comparison data ─────────────────────────────────
+  var allData2 = D();
+  var areaH2 = 0, areaTrActive = 0;
+  Object.keys(allData2).forEach(function(tr2) {
+    var pd2 = getPD(allData2[tr2]);
+    var h2 = Object.keys(pd2).reduce(function(a,t){return a+pd2[t].reduce(function(b,r){return b+(r.t||0);},0);},0);
+    if (h2 > 0) { areaH2 += h2; areaTrActive++; }
+  });
+  var avgAreaH2   = areaTrActive > 0 ? areaH2 / areaTrActive : 0;
+  var vsAvg2      = Math.round((trH - avgAreaH2) * 10) / 10;
+  var vsAvgStr2   = (vsAvg2 >= 0 ? '+' : '') + vsAvg2 + 'h vs promedio área';
+  var vsAvgStyle2 = vsAvg2 >= 0 ? 'background:#dcfce7;color:var(--green)' : 'background:#fee2e2;color:var(--red)';
+  var pctArea2    = areaH2 > 0 ? Math.round((trH / areaH2) * 100) : 0;
+  var diversidad  = Object.keys(trT).length;
+  var diversityLbl = diversidad >= 6 ? '🌐 Muy diverso' : diversidad >= 4 ? '📊 Diverso' : '📌 Concentrado';
+
   document.getElementById('TR_HDR').innerHTML=
-    '<div class="av" style="background:'+col+';width:44px;height:44px;font-size:15px;flex-shrink:0">'+ini(cTr)+'</div>'+
-    '<div class="tr-info"><h2>'+cTr+'</h2>'+
-    '<p>'+trWks.length+' semanas activas &middot; '+Object.keys(trT).length+' tipos de actividad</p></div>'+
+    '<div class="mgr-tr-avatar" style="background:'+col+';--tc-color:'+col+'">'+ini(cTr)+'</div>'+
+    '<div class="mgr-tr-info">'+
+      '<div class="mgr-tr-name">'+cTr+'</div>'+
+      '<div class="mgr-tr-meta">'+trWks.length+' semanas activas · '+diversidad+' categorías · '+trR+' registros</div>'+
+      '<div class="mgr-tr-badges">'+
+        '<span class="mgr-badge" style="'+vsAvgStyle2+'">'+vsAvgStr2+'</span>'+
+        '<span class="mgr-badge" style="background:var(--bg2);color:var(--ink2);border-color:var(--border)">'+pctArea2+'% del área</span>'+
+        '<span class="mgr-badge" style="background:var(--bg2);color:var(--ink2);border-color:var(--border)">'+diversityLbl+'</span>'+
+      '</div>'+
+    '</div>'+
     '<div class="tr-kpis">'+
-    '<div class="kpi-box"><div class="kpi-v">'+fH(trH)+'</div><div class="kpi-l">Total horas</div></div>'+
-    '<div class="kpi-box"><div class="kpi-v">'+trWks.length+'</div><div class="kpi-l">Semanas</div></div>'+
-    '<div class="kpi-box"><div class="kpi-v">'+trR+'</div><div class="kpi-l">Registros</div></div>'+
+      '<div class="kpi-box"><div class="kpi-v">'+fH(trH)+'</div><div class="kpi-l">Total horas</div></div>'+
+      '<div class="kpi-box"><div class="kpi-v">'+trR+'</div><div class="kpi-l">Registros</div></div>'+
+      '<div class="kpi-box"><div class="kpi-v">'+fH(avgAreaH2)+'</div><div class="kpi-l">Prom. área</div></div>'+
     '</div>';
 
   trCView=0; renderTrComp(col);
@@ -1016,23 +2298,262 @@ function renderPDonut(tots) {
 
 // ── RENDER TABLES (all tabs, all columns) ─────────────────
 function renderTabs(pd, tots) {
-  var order=TORDER.filter(function(t){return pd[t]&&pd[t].length;});
-  document.getElementById('TABS_AREA').innerHTML=order.map(function(tab){
-    var rows=pd[tab], def=TDEFS[tab], h=tots[tab]||0;
-    var icon=def[0], color=def[1], cols=def[2];
+  var order = TORDER.filter(function(t){ return pd[t] && pd[t].length; });
 
-    var thead='<thead><tr>'+cols.map(function(c){return '<th>'+c[1]+'</th>';}).join('')+'</tr></thead>';
+  document.getElementById('TABS_AREA').innerHTML = order.map(function(tab) {
+    var rows = pd[tab], def = TDEFS[tab], h = tots[tab]||0;
+    var icon = def[0], color = def[1], cols = def[2];
+    var n = rows.length;
 
-    var tbody='<tbody>'+rows.map(function(r){
+    // ── Conteos por tipo según pestaña ──────────────────────
+    function countField(field) {
+      var out = {};
+      rows.forEach(function(r){ var v=r[field]; if(v&&v!=='N/A'&&v!=='') out[v]=(out[v]||0)+1; });
+      return out;
+    }
+    function topEntries(obj, max) {
+      return Object.keys(obj).sort(function(a,b){return obj[b]-obj[a];}).slice(0,max||6);
+    }
+    function miniPills(obj, max, clr) {
+      var keys = topEntries(obj, max||8);
+      if (!keys.length) return '';
+      return keys.map(function(k){
+        return '<span class="tab-mini-pill" style="border-color:'+(clr||color)+';color:'+(clr||color)+'">'
+          +k+' <strong>'+obj[k]+'</strong></span>';
+      }).join('');
+    }
+    function miniBar(label, val, max, clr) {
+      var pct = max>0 ? Math.min(100,Math.round((val/max)*100)) : 0;
+      return '<div class="tab-mbar">'+
+        '<span class="tab-mbar-l">'+label+'</span>'+
+        '<div class="tab-mbar-t"><div class="tab-mbar-f" style="width:'+pct+'%;background:'+(clr||color)+'"></div></div>'+
+        '<span class="tab-mbar-v">'+val+'</span>'+
+      '</div>';
+    }
+    function statChip(label, val, clr) {
+      if (!val && val!==0) return '';
+      return '<span class="tab-stat-chip"><span class="tab-stat-v" style="color:'+(clr||color)+'">'+val+'</span><span class="tab-stat-l">'+label+'</span></span>';
+    }
+
+    // Build summary block per tab
+    var summaryHtml = '<div class="tab-summary">';
+
+    if (tab === 'Trainings teórico' || tab === 'Trainings práctico') {
+      var totalPar  = rows.reduce(function(a,r){return a+(parseInt(r.par)||0);},0);
+      var totalFac  = rows.reduce(function(a,r){return a+(parseFloat(r.tfac)||0);},0);
+      var visas     = countField('visa');
+      var deps      = countField('dep');
+      var mods      = countField('mod');
+      var sessions  = countField('ses');
+      var conRep    = rows.filter(function(r){return r.rep==='Sí'||r.rep==='Si';}).length;
+      summaryHtml +=
+        '<div class="tab-stats-row">'+
+          statChip('sesiones', n, color)+
+          statChip('participantes', totalPar, '#3a5fa8')+
+          (totalFac>0 ? statChip('h como facilitador', Math.round(totalFac*10)/10, '#2a7a52') : '')+
+          (conRep>0   ? statChip('con rep.', conRep, '#c8440a') : '')+
+          (tab==='Trainings teórico' ? statChip('h totales', Math.round(h*10)/10+'h', color) : '')+
+        '</div>';
+      if (Object.keys(visas).length)    summaryHtml += '<div class="tab-pills-row"><span class="tab-pills-lbl">Visa/Producto</span>'+miniPills(visas)+'</div>';
+      if (Object.keys(deps).length)     summaryHtml += '<div class="tab-pills-row"><span class="tab-pills-lbl">Depto.</span>'+miniPills(deps,6)+'</div>';
+      if (Object.keys(mods).length)     summaryHtml += '<div class="tab-pills-row"><span class="tab-pills-lbl">Modalidad</span>'+miniPills(mods)+'</div>';
+      if (Object.keys(sessions).length) summaryHtml += '<div class="tab-pills-row"><span class="tab-pills-lbl">Sesiones</span>'+miniPills(sessions,6)+'</div>';
+      if (tab==='Trainings teórico') {
+        var efin = rows.filter(function(r){return parseFloat(r.efin)>0;});
+        if (efin.length) {
+          var avgEfin = efin.reduce(function(a,r){return a+parseFloat(r.efin);},0)/efin.length;
+          summaryHtml += '<div class="tab-stats-row">'+statChip('prom. eval. final', Math.round(avgEfin*10)/10+'%', '#2a7a52')+'</div>';
+        }
+      }
+    }
+
+    else if (tab === 'Habilitación') {
+      var colabs  = {};  rows.forEach(function(r){if(r.col) colabs[r.col]=1;});
+      var sessions2 = countField('ses');
+      var visas2    = countField('visa');
+      var cargos    = countField('cargo');
+      var areas     = countField('area');
+      summaryHtml +=
+        '<div class="tab-stats-row">'+
+          statChip('sesiones', n, color)+
+          statChip('colaboradores habilitados', Object.keys(colabs).length, '#3a5fa8')+
+          statChip('horas', Math.round(h*10)/10+'h', color)+
+        '</div>';
+      if (Object.keys(sessions2).length) summaryHtml += '<div class="tab-pills-row"><span class="tab-pills-lbl">Programa</span>'+miniPills(sessions2)+'</div>';
+      if (Object.keys(visas2).length)    summaryHtml += '<div class="tab-pills-row"><span class="tab-pills-lbl">Visa/Producto</span>'+miniPills(visas2)+'</div>';
+      if (Object.keys(areas).length)     summaryHtml += '<div class="tab-pills-row"><span class="tab-pills-lbl">Área</span>'+miniPills(areas)+'</div>';
+      // Barras por cargo
+      var topCargos = topEntries(cargos,5);
+      if (topCargos.length) {
+        var maxC = cargos[topCargos[0]];
+        summaryHtml += '<div class="tab-bars-block">';
+        topCargos.forEach(function(c){ summaryHtml += miniBar(c, cargos[c], maxC); });
+        summaryHtml += '</div>';
+      }
+    }
+
+    else if (tab === 'Llamadas') {
+      var visas3   = countField('visa');
+      var tipos3   = countField('tipo');
+      var areas3   = countField('area');
+      var cargos3  = countField('cargo');
+      var fbs      = countField('fb');
+      var modfbs   = countField('mod_fb');
+      var colabs3  = {}; rows.forEach(function(r){if(r.col) colabs3[r.col]=1;});
+      var conFB    = rows.filter(function(r){return r.fb&&r.fb.length>1;}).length;
+      summaryHtml +=
+        '<div class="tab-stats-row">'+
+          statChip('llamadas', n, color)+
+          statChip('colaboradores', Object.keys(colabs3).length, '#3a5fa8')+
+          statChip('con feedback', conFB, '#2a7a52')+
+          statChip('horas', Math.round(h*10)/10+'h', color)+
+        '</div>';
+      // Barras por tipo
+      var topTipos3 = topEntries(tipos3);
+      if (topTipos3.length) {
+        var maxT3 = tipos3[topTipos3[0]];
+        summaryHtml += '<div class="tab-bars-block">';
+        topTipos3.forEach(function(t){ summaryHtml += miniBar(t, tipos3[t], maxT3); });
+        summaryHtml += '</div>';
+      }
+      if (Object.keys(visas3).length)  summaryHtml += '<div class="tab-pills-row"><span class="tab-pills-lbl">Visa/Producto</span>'+miniPills(visas3)+'</div>';
+      if (Object.keys(areas3).length)  summaryHtml += '<div class="tab-pills-row"><span class="tab-pills-lbl">Área</span>'+miniPills(areas3)+'</div>';
+      if (Object.keys(fbs).length)     summaryHtml += '<div class="tab-pills-row"><span class="tab-pills-lbl">Tipo feedback</span>'+miniPills(fbs, 4, '#7c3aed')+'</div>';
+      if (Object.keys(modfbs).length)  summaryHtml += '<div class="tab-pills-row"><span class="tab-pills-lbl">Modalidad feedback</span>'+miniPills(modfbs, 4, '#7c3aed')+'</div>';
+    }
+
+    else if (tab === 'Acompañamientos') {
+      var visas4   = countField('visa');
+      var tipos4   = countField('tipo');
+      var colabs4  = {}; rows.forEach(function(r){if(r.col) colabs4[r.col]=1;});
+      var conInc   = rows.filter(function(r){return r.inc&&r.inc.length>2&&r.inc!=='N/A';}).length;
+      summaryHtml +=
+        '<div class="tab-stats-row">'+
+          statChip('acompañamientos', n, color)+
+          statChip('colaboradores', Object.keys(colabs4).length, '#3a5fa8')+
+          (conInc>0?statChip('con incidencias', conInc, '#c8440a'):'')+
+          statChip('horas', Math.round(h*10)/10+'h', color)+
+        '</div>';
+      // Barras por tipo
+      var topTipos4 = topEntries(tipos4);
+      if (topTipos4.length) {
+        var maxT4 = tipos4[topTipos4[0]];
+        summaryHtml += '<div class="tab-bars-block">';
+        topTipos4.forEach(function(t){ summaryHtml += miniBar(t, tipos4[t], maxT4); });
+        summaryHtml += '</div>';
+      }
+      if (Object.keys(visas4).length) summaryHtml += '<div class="tab-pills-row"><span class="tab-pills-lbl">Visa/Producto</span>'+miniPills(visas4)+'</div>';
+    }
+
+    else if (tab === 'Entregables') {
+      var tipos5   = countField('tipo');
+      var visas5   = countField('visa');
+      var areas5   = countField('area');
+      var compl5   = rows.filter(function(r){return (r.est||'').toLowerCase().indexOf('complet')>=0;}).length;
+      var proc5    = rows.filter(function(r){return (r.est||'').toLowerCase().indexOf('proceso')>=0;}).length;
+      summaryHtml +=
+        '<div class="tab-stats-row">'+
+          statChip('entregables', n, color)+
+          statChip('completados', compl5, '#2a7a52')+
+          (proc5>0?statChip('en proceso', proc5, '#c8440a'):'')+
+          statChip('horas', Math.round(h*10)/10+'h', color)+
+        '</div>';
+      // Barras por tipo
+      var topTipos5 = topEntries(tipos5, 8);
+      if (topTipos5.length) {
+        var maxT5 = tipos5[topTipos5[0]];
+        summaryHtml += '<div class="tab-bars-block">';
+        topTipos5.forEach(function(t){ summaryHtml += miniBar(t, tipos5[t], maxT5); });
+        summaryHtml += '</div>';
+      }
+      if (Object.keys(visas5).length) summaryHtml += '<div class="tab-pills-row"><span class="tab-pills-lbl">Visa/Producto</span>'+miniPills(visas5)+'</div>';
+      if (Object.keys(areas5).length) summaryHtml += '<div class="tab-pills-row"><span class="tab-pills-lbl">Área</span>'+miniPills(areas5)+'</div>';
+    }
+
+    else if (tab === 'Desarrollo proyectos') {
+      var tipos6   = countField('tipo');
+      var actos6   = countField('actproy');
+      var visas6   = countField('visa');
+      var compl6   = rows.filter(function(r){return (r.est||'').toLowerCase().indexOf('complet')>=0;}).length;
+      var proc6    = rows.filter(function(r){return (r.est||'').toLowerCase().indexOf('proceso')>=0;}).length;
+      var proyects = {}; rows.forEach(function(r){if(r.proy) proyects[r.proy]=1;});
+      var totalNPar= rows.reduce(function(a,r){return a+(parseInt(r.npar)||0);},0);
+      summaryHtml +=
+        '<div class="tab-stats-row">'+
+          statChip('actividades', n, color)+
+          statChip('proyectos únicos', Object.keys(proyects).length, '#3a5fa8')+
+          statChip('completadas', compl6, '#2a7a52')+
+          (proc6>0?statChip('en proceso', proc6, '#c8440a'):'')+
+          statChip('horas', Math.round(h*10)/10+'h', color)+
+        '</div>';
+      // Barras por tipo de proyecto
+      var topTipos6 = topEntries(tipos6);
+      if (topTipos6.length) {
+        var maxT6 = tipos6[topTipos6[0]];
+        summaryHtml += '<div class="tab-bars-block">';
+        topTipos6.forEach(function(t){ summaryHtml += miniBar(t, tipos6[t], maxT6); });
+        summaryHtml += '</div>';
+      }
+      // Barras por tipo de actividad
+      var topActos6 = topEntries(actos6);
+      if (topActos6.length) {
+        var maxA6 = actos6[topActos6[0]];
+        summaryHtml += '<div class="tab-pills-row"><span class="tab-pills-lbl">Actividad</span>';
+        topActos6.forEach(function(a){ summaryHtml += miniBar(a, actos6[a], maxA6, '#7c3aed'); });
+        summaryHtml += '</div>';
+      }
+      if (Object.keys(visas6).length) summaryHtml += '<div class="tab-pills-row"><span class="tab-pills-lbl">Visa/Producto</span>'+miniPills(visas6)+'</div>';
+    }
+
+    else if (tab === 'Desarrollo trainings') {
+      var tipos7   = countField('tipo');
+      var visas7   = countField('visa');
+      var compl7   = rows.filter(function(r){return (r.est||'').toLowerCase().indexOf('complet')>=0;}).length;
+      var proc7    = rows.filter(function(r){return (r.est||'').toLowerCase().indexOf('proceso')>=0;}).length;
+      var noms7    = {}; rows.forEach(function(r){if(r.nom) noms7[r.nom]=1;});
+      summaryHtml +=
+        '<div class="tab-stats-row">'+
+          statChip('actividades', n, color)+
+          statChip('trainings únicos', Object.keys(noms7).length, '#3a5fa8')+
+          statChip('completadas', compl7, '#2a7a52')+
+          (proc7>0?statChip('en proceso', proc7, '#c8440a'):'')+
+          statChip('horas', Math.round(h*10)/10+'h', color)+
+        '</div>';
+      var topTipos7 = topEntries(tipos7);
+      if (topTipos7.length) {
+        var maxT7 = tipos7[topTipos7[0]];
+        summaryHtml += '<div class="tab-bars-block">';
+        topTipos7.forEach(function(t){ summaryHtml += miniBar(t, tipos7[t], maxT7); });
+        summaryHtml += '</div>';
+      }
+      if (Object.keys(visas7).length) summaryHtml += '<div class="tab-pills-row"><span class="tab-pills-lbl">Visa/Producto</span>'+miniPills(visas7)+'</div>';
+    }
+
+    else if (tab === 'Actividades') {
+      var compl8 = rows.filter(function(r){return (r.est||'').toLowerCase().indexOf('complet')>=0;}).length;
+      var proc8  = rows.filter(function(r){return (r.est||'').toLowerCase().indexOf('proceso')>=0;}).length;
+      summaryHtml +=
+        '<div class="tab-stats-row">'+
+          statChip('actividades', n, color)+
+          statChip('completadas', compl8, '#2a7a52')+
+          (proc8>0?statChip('en proceso', proc8, '#c8440a'):'')+
+          (h>0?statChip('horas', Math.round(h*10)/10+'h', color):'')+
+        '</div>';
+    }
+
+    summaryHtml += '</div>'; // end tab-summary
+
+    // ── Table ────────────────────────────────────────────────
+    var thead = '<thead><tr>'+cols.map(function(c){return '<th>'+c[1]+'</th>';}).join('')+'</tr></thead>';
+    var tbody = '<tbody>'+rows.map(function(r){
       return '<tr>'+cols.map(function(c){
-        var k=c[0], lbl=c[1], fmt=c[2];
-        var v=r[k];
+        var k=c[0], fmt=c[2], v=r[k];
         if(v===undefined||v===null||v==='') return '<td></td>';
         v=String(v);
-        if(fmt==='h') return '<td><span class="t-h">'+(parseFloat(v)?fH(parseFloat(v)):'—')+'</span></td>';
+        if(fmt==='h')    return '<td><span class="t-h">'+(parseFloat(v)?fH(parseFloat(v)):'—')+'</span></td>';
         if(fmt==='date') return '<td class="fw">'+v+'</td>';
-        if(fmt==='vt') return '<td><span class="vt">'+v+'</span></td>';
-        if(fmt==='pct') return v?'<td><span class="pct">'+v+'</span></td>':'<td></td>';
+        if(fmt==='vt')   return '<td><span class="vt">'+v+'</span></td>';
+        if(fmt==='pct')  return v?'<td><span class="pct">'+v+'</span></td>':'<td></td>';
         if(fmt==='chip') {
           var s=v.toLowerCase();
           var cls=s.indexOf('complet')>=0||v==='Sí'||v==='Si'?'chip-g':
@@ -1047,14 +2568,15 @@ function renderTabs(pd, tots) {
 
     return '<div class="tab-sec">'+
       '<div class="tab-hdr" onclick="togTab(this)">'+
-      '<span class="tab-icon">'+icon+'</span>'+
-      '<span class="tab-name">'+tab+'</span>'+
-      '<span class="tab-cnt">'+rows.length+' registros</span>'+
-      '<span class="tab-hrs">'+fH(h)+'</span>'+
-      '<span class="tab-chev">&#9654;</span>'+
+        '<span class="tab-icon">'+icon+'</span>'+
+        '<span class="tab-name">'+tab+'</span>'+
+        '<span class="tab-cnt">'+n+' registros</span>'+
+        '<span class="tab-hrs">'+fH(h)+'</span>'+
+        '<span class="tab-chev">&#9654;</span>'+
       '</div>'+
+      summaryHtml+
       '<div class="tab-body"><table class="dt">'+thead+tbody+'</table></div>'+
-      '</div>';
+    '</div>';
   }).join('');
 }
 
@@ -1077,44 +2599,107 @@ function setProgress(n, tot) {
 }
 
 function doSync() {
-  var loaded=0, total=AKEYS.length, allData={};
-  setConn('loading','Sincronizando (0/'+total+')...');
-  setProgress(0,total);
+  setConn('loading', 'Sincronizando...');
+  setProgress(0, 1);
 
-  function fetchOne(i) {
-    return fetch(AU+'?tab='+AKEYS[i], {redirect:'follow'})
-      .then(function(r){ if(!r.ok) throw new Error(AKEYS[i]+' HTTP '+r.status); return r.json(); })
-      .then(function(j){
-        if(!Array.isArray(j)) throw new Error('Bad response for '+AKEYS[i]);
-        allData[ANAMES[i]]=j; loaded++;
-        setConn('loading','Sincronizando ('+loaded+'/'+total+')...');
-        setProgress(loaded,total);
-        console.log('[sync]',AKEYS[i],j.length,'rows');
+  fetch(AU + '?tab=all', { redirect: 'follow' })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(j) {
+      if (!j || typeof j !== 'object' || Array.isArray(j)) throw new Error('Respuesta inesperada');
+      var allData = {};
+      var totalRows = 0;
+      AKEYS.forEach(function(key, i) {
+        var rows = Array.isArray(j[key]) ? j[key] : [];
+        allData[ANAMES[i]] = rows;
+        totalRows += rows.length;
+        console.log('[sync]', key, rows.length, 'filas');
       });
+      setProgress(1, 1);
+      if (totalRows === 0) throw new Error('Servidor devolvió 0 filas');
+      finalizaSync(buildLive(allData));
+    })
+    .catch(function(e) {
+      console.warn('[sync?tab=all falló]', e.message, '— intentando secuencial...');
+      doSyncSequential();
+    });
+}
+
+function doSyncSequential() {
+  var total = AKEYS.length, allData = {}, loaded = 0;
+  setConn('loading', 'Cargando (0/' + total + ')...');
+  setProgress(0, total);
+
+  function fetchTab(i) {
+    var attempts = 0;
+    function attempt() {
+      attempts++;
+      return fetch(AU + '?tab=' + AKEYS[i], { redirect: 'follow' })
+        .then(function(r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        })
+        .then(function(j) {
+          allData[ANAMES[i]] = Array.isArray(j) ? j : [];
+          loaded++;
+          setConn('loading', ANAMES[i] + ' (' + loaded + '/' + total + ')');
+          setProgress(loaded, total);
+        })
+        .catch(function(e) {
+          if (attempts < 2) return new Promise(function(res) { setTimeout(res, 2000); }).then(attempt);
+          allData[ANAMES[i]] = [];
+          loaded++;
+          setProgress(loaded, total);
+        });
+    }
+    return attempt();
   }
 
-  Promise.all(AKEYS.map(function(_,i){return fetchOne(i);}))
-    .then(function(){
-      var lv=buildLive(allData);
-      var tc=Object.keys(lv).length, th=0;
-      Object.keys(lv).forEach(function(tr){
-        Object.keys(lv[tr]).forEach(function(w){
-          Object.keys(lv[tr][w]).forEach(function(t){
-            lv[tr][w][t].forEach(function(r){th+=r.t||0;});
-          });
-        });
+  function next(idx) {
+    if (idx >= total) {
+      finalizaSync(buildLive(allData));
+      return;
+    }
+    fetchTab(idx).then(function() { next(idx + 1); });
+  }
+  next(0);
+}
+
+function finalizaSync(lv) {
+  var tc = Object.keys(lv).length, th = 0;
+  Object.keys(lv).forEach(function(tr) {
+    Object.keys(lv[tr]).forEach(function(w) {
+      Object.keys(lv[tr][w]).forEach(function(t) {
+        lv[tr][w][t].forEach(function(r) { th += r.t || 0; });
       });
-      if(tc===0||th===0) throw new Error('Datos vacíos del servidor');
-      LIVE=lv;
-      var now=new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
-      setConn('ok','Conectado &middot; '+tc+' trainers &middot; '+Math.round(th)+'h');
-      document.getElementById('CS').textContent='Sync: '+now;
-      renderOv(); renderComp(); renderTop(); if(cTr) renderDet();
-    })
-    .catch(function(e){
-      console.warn('[sync]',e.message);
-      setConn('err','Sin conexión &mdash; datos locales');
     });
+  });
+  if (!tc || !th) {
+    setConn('err', 'Sin datos — mostrando datos locales');
+    return;
+  }
+  LIVE = lv;
+  var now = new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+  setConn('ok', 'Conectado &middot; ' + tc + ' trainers &middot; ' + Math.round(th) + 'h');
+  document.getElementById('CS').textContent = 'Sync: ' + now;
+  renderOv(); renderComp(); renderTop();
+  if (cTr) renderDet();
+}
+
+
+// Fix: if Mes field looks like a date (DD/MM/YYYY), extract month name
+function mesFromVal(v) {
+  var MES_ORD = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  var s = String(v||'').trim().toLowerCase();
+  if (!s) return '';
+  // Already a month name
+  if (MES_ORD.indexOf(s) >= 0) return s;
+  // Date format DD/MM/YYYY → extract month
+  var dm = s.match(/^\d{1,2}\/(\d{1,2})\/\d{4}$/);
+  if (dm) return MES_ORD[parseInt(dm[1])-1] || '';
+  return s;
 }
 
 function buildLive(loaded) {
@@ -1126,7 +2711,10 @@ function buildLive(loaded) {
       var rw=String(row.Trainer||'').trim(); if(!rw) return;
       var p=rw.split(' ');
       var tr=p.slice(0,2).map(function(x){return x.charAt(0).toUpperCase()+x.slice(1).toLowerCase();}).join(' ');
-      var wi=parseInt(String(row.Semana||''));
+      var _semStr = String(row.Semana||'').trim();
+      // If Semana looks like a date "DD/MM/YYYY", try date→week lookup
+      var _semDate = _semStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      var wi = _semDate ? NaN : parseInt(_semStr);
       if(isNaN(wi)||wi<=0) {
         // Infer semana using exact date ranges from the official week table
         var fstr=String(row.Fecha||'').trim();
@@ -1166,12 +2754,20 @@ function buildLive(loaded) {
         if(!wi||wi<=0) return;
       }
       var wk=String(wi);
-      var h=parseFloat(row.Tiempo)||0;
+      var _tv=row.Tiempo;
+      var h=0;
+      if(typeof _tv==='number'){ h=_tv; }
+      else if(_tv){
+        var _ts=String(_tv).trim().replace(/\s*[ap]\.?m\.?$/i,'');
+        var _tp=_ts.match(/^(\d+):(\d{2})(?::(\d{2}))?$/);
+        if(_tp) h=parseInt(_tp[1])+parseInt(_tp[2])/60+(_tp[3]?parseInt(_tp[3])/3600:0);
+        else h=parseFloat(_ts)||0;
+      }
       if(EXCL.some(function(e){return tr.toLowerCase().indexOf(e)>=0;})) return;
       if(!res[tr])res[tr]={};
       if(!res[tr][wk])res[tr][wk]={};
       if(!res[tr][wk][tabName])res[tr][wk][tabName]=[];
-      var r={f:row.Fecha||'',d:row['Día nombre']||'',m:row.Mes||'',t:h};
+      var r={f:row.Fecha||'',d:row['Día nombre']||'',m:mesFromVal(row.Mes),t:h};
       Object.keys(FMAP).forEach(function(src){
         var v=row[src];
         if(v!==undefined&&v!==null&&String(v).trim()&&
@@ -1393,6 +2989,7 @@ function generateImpact() {
   var contentEl = document.getElementById('IMPACT_CONTENT');
   if (!btn || !contentEl || !cTr) return;
   btn.disabled = true;
+  try {
 
   var td = D()[cTr]; if (!td) { btn.disabled=false; return; }
   var pd   = getPD(td);
@@ -1482,6 +3079,7 @@ function generateImpact() {
   // ── HABILITACIÓN ─────────────────────────────────────────
   var hab = pd['Habilitación']||[];
   var habCols    = uniq(hab.map(function(r){return r.col;}));
+  var habColabs  = habCols;
   var habVisas   = uniq(hab.map(function(r){return r.visa;}));
   var habSessions= uniq(hab.map(function(r){return r.ses;})).slice(0,5);
   var habCargos  = countBy(hab, function(r){return r.cargo;});
@@ -1496,12 +3094,15 @@ function generateImpact() {
   var callAreas  = countBy(calls, function(r){return r.area;});
   var callTopAreas = topN(callAreas,3);
   var callH = tots['Llamadas']||0;
+  var callTypes = callTipos;
   // Feedback
   var callConFB  = calls.filter(function(r){return r.fb&&r.fb.length>2;}).length;
+  var callsFB = callConFB;
   var callFBMods = countBy(calls.filter(function(r){return r.mod_fb;}), function(r){return r.mod_fb;});
 
   // ── ACOMPAÑAMIENTOS ──────────────────────────────────────
   var acoms = pd['Acompañamientos']||[];
+  var acom = acoms;
   var acomColabs = uniq(acoms.map(function(r){return r.col;}));
   var acomVisas  = uniq(acoms.map(function(r){return r.visa;}));
   var acomTipos  = countBy(acoms, function(r){return r.tipo;});
@@ -1517,6 +3118,8 @@ function generateImpact() {
   var entregVisas   = uniq(entreg.map(function(r){return r.visa;}));
   var entregAreas   = uniq(entreg.map(function(r){return r.area;})).slice(0,4);
   var entregCompl   = entreg.filter(function(r){return (r.est||'').toLowerCase().indexOf('complet')>=0;}).length;
+  var entregComp = entregCompl;
+  var entregProc = entreg.filter(function(r){return (r.est||'').toLowerCase().indexOf('proces')>=0;}).length;
   var entregH = tots['Entregables']||0;
 
   // ── DESARROLLO PROYECTOS ─────────────────────────────────
@@ -1526,6 +3129,8 @@ function generateImpact() {
   var devPVisas   = uniq(devP.map(function(r){return r.visa;}));
   var devPAreas   = uniq(devP.map(function(r){return r.area;})).slice(0,4);
   var devPCompl   = devP.filter(function(r){return (r.est||'').toLowerCase().indexOf('complet')>=0;}).length;
+  var devPComp = devPCompl;
+  var devPProc = devP.filter(function(r){return (r.est||'').toLowerCase().indexOf('proces')>=0;}).length;
   var devPEnProc  = devP.filter(function(r){return (r.est||'').toLowerCase().indexOf('proceso')>=0;}).length;
   var devPH = tots['Desarrollo proyectos']||0;
 
@@ -1536,6 +3141,8 @@ function generateImpact() {
   var devTVisas = uniq(devT.map(function(r){return r.visa;}));
   var devTDeps  = uniq(devT.map(function(r){return r.dep;})).slice(0,4);
   var devTCompl = devT.filter(function(r){return (r.est||'').toLowerCase().indexOf('complet')>=0;}).length;
+  var devTComp = devTCompl;
+  var devTProc = devT.filter(function(r){return (r.est||'').toLowerCase().indexOf('proces')>=0;}).length;
   var devTH = tots['Desarrollo trainings']||0;
 
   // ── REACCIÓN ─────────────────────────────────────────────
@@ -1894,25 +3501,305 @@ function generateImpact() {
     }
   }
 
-  // ── Armar reporte completo ────────────────────────────────
-  var report = headerHtml + kpisHtml +
-    sec('Distribución de tiempo', '⏱', distHtml) +
-    sec('Trainings impartidos', '📚', trainContent, '#3a5fa8') +
-    sec('Habilitación', '✅', habContent, '#2a7a52') +
-    sec('Llamadas de seguimiento', '📞', callContent, '#7c3aed') +
-    sec('Acompañamientos', '👥', acomContent, '#0369a1') +
-    sec('Entregables', '📄', entregContent, '#92400e') +
-    sec('Desarrollo de proyectos', '🔧', devPContent, '#b45309') +
-    sec('Desarrollo de trainings', '🛠', devTContent, '#065f46') +
-    sec('Actividades generales', '📋', actContent) +
-    sec('Evaluaciones de Reacción', '⭐', reacContent, '#d97706');
+    // ── Armar reporte completo — Executive Design ──────────────
+  var DIST_COLORS = {
+    'Actividades':         '#6366f1',
+    'Trainings teórico':   '#3a5fa8',
+    'Trainings práctico':  '#0369a1',
+    'Habilitación':        '#2a7a52',
+    'Llamadas':            '#7c3aed',
+    'Acompañamientos':     '#0891b2',
+    'Entregables':         '#92400e',
+    'Desarrollo proyectos':'#b45309',
+    'Desarrollo trainings':'#065f46'
+  };
+
+  // ── Cover ────────────────────────────────────────────────
+  var coverHtml =
+    '<div class="imp-cover">'+
+      '<div class="imp-cover-eyebrow">Reporte de Impacto · Training Report 2026</div>'+
+      '<div class="imp-cover-name">'+cTr+'</div>'+
+      '<div class="imp-cover-period">'+
+        '<span class="imp-cover-dot"></span>'+perLabel+
+        '<span class="imp-cover-dot"></span>'+new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'})+
+      '</div>'+
+      '<div class="imp-cover-accent"></div>'+
+    '</div>';
+
+  // ── KPI Strip ─────────────────────────────────────────────
+  var kpiStrip =
+    '<div class="imp-kpi-strip">'+
+      kpiCard(fH(tH),     'Horas totales',    '#c8440a')+
+      kpiCard(tR,         'Registros',         '#3a5fa8')+
+      kpiCard(allTrainings.length, 'Trainings', '#2a7a52')+
+      kpiCard(totalPar||'-', 'Participantes',  '#7c3aed')+
+      kpiCard(fH(tFacH||0), 'H. Facilitación','#0369a1')+
+      kpiCard((hab.length||0), 'Habilitados',   '#b45309')+
+    '</div>';
+
+  function kpiCard(v,l,acc) {
+    return '<div class="imp-kpi-card" style="--imp-accent:'+acc+'">'+
+      '<div class="imp-kpi-v">'+v+'</div>'+
+      '<div class="imp-kpi-l">'+l+'</div>'+
+    '</div>';
+  }
+
+  // ── Distribución de tiempo (full width) ───────────────────
+  var distRows = TORDER.map(function(tab) {
+    var h = tots[tab] || 0;
+    if (!h) return '';
+    var pct = tH > 0 ? Math.round(h/tH*100) : 0;
+    var clr = DIST_COLORS[tab] || col;
+    return '<div class="imp-dist-item">'+
+      '<div class="imp-dist-lbl">'+
+        '<span style="width:8px;height:8px;border-radius:2px;background:'+clr+';display:inline-block;flex-shrink:0"></span>'+
+        (TDEFS[tab]||['',''])[0]+' '+tab+
+      '</div>'+
+      '<div class="imp-dist-bar"><div class="imp-dist-fill" style="width:'+pct+'%;background:'+clr+'"></div></div>'+
+      '<div class="imp-dist-val">'+fH(h)+' · '+pct+'%</div>'+
+    '</div>';
+  }).filter(Boolean).join('');
+
+  var distCard = impCard('⏱', 'Distribución de tiempo', 'imp-grid-full',
+    '<div class="imp-dist-row">'+distRows+'</div>');
+
+  // ── Trainings card ────────────────────────────────────────
+  var trainCard = '';
+  if (allTrainings.length) {
+    var tBody = '';
+    tBody += '<div class="imp-stat-grid">'+
+      statR('Sesiones teóricas', tTeo.length)+
+      statR('Sesiones prácticas', tPra.length)+
+      statR('Total participantes', totalPar)+
+      (tFacH?statR('H. de facilitación', fH(tFacH)):'')+
+      (conDiag?statR('Con eval. diagnóstica', conDiag):'')+
+      (conTransf?statR('Factor transferencia', conTransf):'')+
+    '</div>';
+    if (trainVisas.length) {
+      tBody += '<div class="imp-label">VISAs / Productos</div>'+
+        '<div class="imp-tags">'+trainVisas.slice(0,8).map(tag).join('')+'</div>';
+    }
+    if (trainTopMod.length) {
+      tBody += '<div class="imp-label">Modalidad</div>'+
+        '<div class="imp-tags">'+trainTopMod.map(function(m){return tag(m+' ('+trainMods[m]+')');}).join('')+'</div>';
+    }
+    trainCard = impCard('📚', 'Trainings impartidos', '', tBody, '#3a5fa8');
+  }
+
+  // ── Habilitación card ─────────────────────────────────────
+  var habCard = '';
+  if (hab.length) {
+    var hBody = '<div class="imp-stat-grid">'+
+      statR('Colaboradores', habColabs.length)+
+      (habCargos.length?statR('Cargos distintos', habCargos.length):'')+
+      (habAreas.length?statR('Áreas', habAreas.length):'')+
+    '</div>';
+    if (habColabs.length) {
+      hBody += '<div class="imp-label">Colaboradores habilitados</div>'+
+        '<div class="imp-tags">'+habColabs.slice(0,8).map(tag).join('')+'</div>';
+    }
+    habCard = impCard('✅', 'Habilitación', '', hBody, '#2a7a52');
+  }
+
+  // ── Llamadas card ─────────────────────────────────────────
+  var callCard = '';
+  if (calls.length) {
+    var maxC = Math.max.apply(null, Object.values(callTypes).concat([1]));
+    var cBody = '<div class="imp-stat-grid">'+
+      statR('Total llamadas', calls.length)+
+      statR('Con feedback', callsFB)+
+      (callH?statR('Tiempo total', fH(callH)):'')+
+    '</div>';
+    if (Object.keys(callTypes).length) {
+      cBody += '<div class="imp-label">Por tipo</div>'+
+        '<div class="imp-bars">'+
+        Object.keys(callTypes).map(function(t){
+          return barR(t, callTypes[t], maxC, '#7c3aed');
+        }).join('')+'</div>';
+    }
+    callCard = impCard('📞', 'Llamadas de seguimiento', '', cBody, '#7c3aed');
+  }
+
+  // ── Acompañamientos card ──────────────────────────────────
+  var acomCard = '';
+  if (acom.length) {
+    var maxA = Math.max.apply(null, Object.values(acomTipos).concat([1]));
+    var aBody = '<div class="imp-stat-grid">'+
+      statR('Total sesiones', acom.length)+
+      (acomH?statR('Tiempo total', fH(acomH)):'')+
+      (acomColabs.length?statR('Colaboradores', acomColabs.length):'')+
+    '</div>';
+    if (Object.keys(acomTipos).length) {
+      aBody += '<div class="imp-label">Por tipo</div>'+
+        '<div class="imp-bars">'+
+        Object.keys(acomTipos).map(function(t){
+          return barR(t, acomTipos[t], maxA, '#0891b2');
+        }).join('')+'</div>';
+    }
+    acomCard = impCard('👥', 'Acompañamientos', '', aBody, '#0891b2');
+  }
+
+  // ── Entregables card ──────────────────────────────────────
+  var entregCard = '';
+  if (entreg.length) {
+    var maxE = Math.max.apply(null, Object.values(entregTipos).concat([1]));
+    var eBody = '<div class="imp-stat-grid">'+
+      statR('Total entregables', entreg.length)+
+      statR('Completados', entregComp)+
+      statR('En proceso', entregProc)+
+    '</div>';
+    if (Object.keys(entregTipos).length) {
+      eBody += '<div class="imp-label">Por tipo</div>'+
+        '<div class="imp-bars">'+
+        Object.keys(entregTipos).map(function(t){
+          return barR(t, entregTipos[t], maxE, '#92400e');
+        }).join('')+'</div>';
+    }
+    entregCard = impCard('📄', 'Entregables', '', eBody, '#92400e');
+  }
+
+  // ── Desarrollo Proyectos card ─────────────────────────────
+  var devPCard = '';
+  if (devP.length) {
+    var dBody = '<div class="imp-stat-grid">'+
+      statR('Proyectos únicos', devPProys.length)+
+      statR('Completados', devPComp)+
+      statR('En proceso', devPProc)+
+    '</div>';
+    if (devPProys.length) {
+      dBody += '<div class="imp-label">Proyectos</div>'+
+        '<div class="imp-tags">'+devPProys.slice(0,6).map(tag).join('')+'</div>';
+    }
+    devPCard = impCard('🔧', 'Desarrollo de proyectos', '', dBody, '#b45309');
+  }
+
+  // ── Desarrollo Trainings card ─────────────────────────────
+  var devTCard = '';
+  if (devT.length) {
+    var dtBody = '<div class="imp-stat-grid">'+
+      statR('Trainings únicos', devTNoms.length)+
+      statR('Completados', devTComp)+
+      statR('En proceso', devTProc)+
+    '</div>';
+    if (devTNoms.length) {
+      dtBody += '<div class="imp-label">Trainings en desarrollo</div>'+
+        '<div class="imp-tags">'+devTNoms.slice(0,6).map(tag).join('')+'</div>';
+    }
+    devTCard = impCard('🛠', 'Desarrollo de trainings', '', dtBody, '#065f46');
+  }
+
+  // ── Evaluaciones de Reacción card ─────────────────────────
+  var reacCard = '';
+  if (reacPrinc+reacSec > 0) {
+    var rBody = '<div class="imp-stat-grid">'+
+      statR('Como trainer principal', reacPrinc)+
+      statR('Como trainer secundario', reacSec)+
+      (reacScore?statR('Score promedio', reacScore+'/10',
+        reacScore>=9?'⭐ Excelente':reacScore>=7?'Bueno':'↑ Área de mejora'):'')+
+    '</div>';
+
+    // Bar chart per criterion
+    var SCORE_KEYS_IMP = ['conocimiento','transmitir','dudas','actitud','calif',
+                          'expectativas','materiales','comprension','utilidad','habilidades'];
+    var scoreKeys = SCORE_KEYS_IMP.filter(function(k){return reacScoreMap[k]!=null;});
+    if (scoreKeys.length) {
+      rBody += '<div class="imp-label">Criterios de evaluación</div>'+
+        '<div class="imp-bars">'+
+        scoreKeys.map(function(k){
+          var v = reacScoreMap[k];
+          var c = v>=9?'#2a7a52':v>=7?col:'#c8440a';
+          return barR(SCORE_LABELS[k]||k, v, 10, c, v+'/10');
+        }).join('')+'</div>';
+    }
+    if (Object.keys(reacTipos).length) {
+      rBody += '<div class="imp-label">Modalidad</div>'+
+        '<div class="imp-tags">'+Object.keys(reacTipos).map(function(t){return tag(t+' ('+reacTipos[t]+')');}).join('')+'</div>';
+    }
+    if (reacComments.length) {
+      rBody += '<div class="imp-label">Comentarios recibidos</div>'+
+        '<div class="imp-comments">'+
+        reacComments.slice(0,4).map(function(c){
+          return '<div class="imp-comment">'+c+'</div>';
+        }).join('')+'</div>';
+    }
+    reacCard = impCard('⭐', 'Evaluaciones de Reacción', 'imp-grid-full', rBody, '#d97706');
+  }
+
+  // ── Actividades generales card ────────────────────────────
+  var actCard = '';
+  if (acts.length) {
+    var aBody2 = '<div class="imp-stat-grid">'+
+      statR('Total actividades', acts.length)+
+      statR('Completadas', actCompletadas.length)+
+      statR('En proceso', actEnProceso.length)+
+    '</div>';
+    if (actNames.length) {
+      aBody2 += '<div class="imp-label">Actividades registradas</div>'+
+        '<div class="imp-tags">'+actNames.map(tag).join('')+'</div>';
+    }
+    actCard = impCard('📋', 'Actividades generales', '', aBody2);
+  }
+
+  // ── Helper functions for HTML ─────────────────────────────
+  function impCard(icon, title, extraClass, body, accent) {
+    return '<div class="imp-card'+(extraClass?' '+extraClass:'')+'">'+
+      '<div class="imp-card-head" style="border-left:3px solid '+(accent||col)+'">'+
+        '<span class="imp-card-icon">'+icon+'</span>'+
+        '<span class="imp-card-title" style="color:'+(accent||'var(--ink)')+'">'+title+'</span>'+
+      '</div>'+
+      '<div class="imp-card-body">'+body+'</div>'+
+    '</div>';
+  }
+  function statR(label, value, note) {
+    return '<div class="imp-stat-row">'+
+      '<span class="imp-stat-lbl">'+label+'</span>'+
+      '<span class="imp-stat-val">'+value+'</span>'+
+      (note?'<span class="imp-stat-note">'+note+'</span>':'')+
+    '</div>';
+  }
+  function barR(label, val, max, clr, note) {
+    var pct = max>0 ? Math.min(100,Math.round((val/max)*100)) : 0;
+    return '<div class="imp-bar-row">'+
+      '<span class="imp-bar-lbl">'+label+'</span>'+
+      '<div class="imp-bar-track"><div class="imp-bar-fill" style="width:'+pct+'%;background:'+(clr||col)+'"></div></div>'+
+      '<span class="imp-bar-val">'+(note!==undefined?note:val)+'</span>'+
+    '</div>';
+  }
+  function tag(txt) {
+    return '<span class="imp-tag">'+txt+'</span>';
+  }
+
+  // ── Assemble full report ──────────────────────────────────
+  var report =
+    '<div class="imp-report">'+
+      coverHtml +
+      kpiStrip +
+      '<div class="imp-grid">'+
+        distCard +
+        (trainCard||'') +
+        (habCard||'') +
+        (callCard||'') +
+        (acomCard||'') +
+        (entregCard||'') +
+        (devPCard||'') +
+        (devTCard||'') +
+        (actCard||'') +
+        reacCard +
+      '</div>'+
+    '</div>';
 
   var perKey = cTr+'|'+cPer+'|'+(cSel||'');
   impactCache[perKey] = report;
   showImpactResult(report);
   btn.disabled = false;
   btn.textContent = '↺ Actualizar';
+  } catch(e) {
+    var contentEl2 = document.getElementById('IMPACT_CONTENT');
+    if(contentEl2) contentEl2.innerHTML = '<div style="color:#c8440a;padding:14px;font-family:monospace;font-size:11px;background:#fff3f0;border-radius:8px;border:1px solid #fca5a5"><strong>Error en Reporte de Impacto:</strong><br>'+e.message+'<br><br><code>'+e.stack+'</code></div>';
+    if(btn) { btn.disabled=false; btn.textContent='▶ Generar análisis'; }
+  }
 }
+
 
 function showImpactResult(htmlContent) {
   var contentEl = document.getElementById('IMPACT_CONTENT');
