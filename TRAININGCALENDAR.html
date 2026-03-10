@@ -38,14 +38,14 @@
       --shadow-lg:  0 12px 40px rgba(15,22,35,.14), 0 4px 12px rgba(15,22,35,.08);
 
       /* Trainer palette — editar aquí para añadir trainers */
-      --c-mariana:  #1c4ed8;   /* azul */
-      --c-andrea:   #16a34a;   /* verde */
-      --c-joham:    #7c3aed;   /* morado */
-      --c-diego:    #0891b2;   /* cian */
-      --c-nidia:    #ea580c;   /* naranja */
-      --c-karen:    #db2777;   /* rosa */
-      --c-sofia:    #65a30d;   /* verde olivo */
-      --c-brenda:   #d97706;   /* ámbar */
+      --c-mariana:  #5b8ff9;
+      --c-andrea:   #34c471;
+      --c-joham:    #9f6ef5;
+      --c-diego:    #22b4d6;
+      --c-nidia:    #f5823e;
+      --c-karen:    #f056a0;
+      --c-sofia:    #84cc16;
+      --c-brenda:   #f59e0b;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -418,8 +418,8 @@
       transition: all .15s;
     }
     .priority-pill.selected-alta { background: #fef2f2; border-color: #fca5a5; color: var(--danger); }
-    .priority-pill.selected-media { background: #fffbeb; border-color: #fcd34d; color: var(--warning); }
-    .priority-pill.selected-baja { background: #f0fdf4; border-color: #86efac; color: var(--success); }
+    .priority-pill.selected-media { background: #fefce8; border-color: #fcd34d; color: #a16207; }
+    .priority-pill.selected-baja { background: #f0fdf4; border-color: #16a34a; color: #16a34a; }
 
     /* =========================================================
        DETAIL MODAL
@@ -456,9 +456,9 @@
       display: inline-block; padding: 3px 10px; border-radius: 12px;
       font-size: 11.5px; font-weight: 700;
     }
-    .priority-alta   { background: #fef2f2; color: var(--danger); }
-    .priority-media  { background: #fffbeb; color: var(--warning); }
-    .priority-baja   { background: #f0fdf4; color: var(--success); }
+    .priority-alta   { background:#fef2f2; color:#dc2626; border:1px solid #fca5a5; }
+    .priority-media  { background:#fefce8; color:#a16207; border:1px solid #fcd34d; }
+    .priority-baja   { background:#f0fdf4; color:#16a34a; border:1px solid #86efac; }
 
     /* =========================================================
        TOAST
@@ -497,6 +497,121 @@
       .topbar-sub { display: none; }
       .kpi-grid { grid-template-columns: 1fr 1fr; }
     }
+
+    /* =========================================================
+       PRIORIDAD VISUAL EN BLOQUES DE EVENTOS
+    ========================================================= */
+    .ev-priority-stripe {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 4px; border-radius: 3px 0 0 3px;
+      flex-shrink: 0;
+    }
+    .ev-priority-alta   { background: #dc2626; }  /* rojo */
+    .ev-priority-media  { background: #ca8a04; }  /* amarillo dorado */
+    .ev-priority-baja   { background: #16a34a; }  /* verde */
+
+    /* Indicador de prioridad en esquina del bloque */
+    .ev-priority-dot {
+      display: inline-block;
+      width: 7px; height: 7px; border-radius: 50%;
+      flex-shrink: 0; margin-right: 3px; vertical-align: middle;
+    }
+
+    /* =========================================================
+       TOOLTIP NATIVO MEJORADO
+    ========================================================= */
+    .fc-event-wrapper { position: relative; }
+    .ev-tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 0;
+      z-index: 9999;
+      background: #0f1623;
+      color: #fff;
+      font-size: 12px;
+      font-family: 'DM Sans', sans-serif;
+      padding: 8px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+      box-shadow: 0 4px 16px rgba(0,0,0,.35);
+      pointer-events: none;
+      min-width: 180px;
+      max-width: 260px;
+      white-space: normal;
+      line-height: 1.5;
+    }
+    .ev-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%; left: 12px;
+      border: 5px solid transparent;
+      border-top-color: #0f1623;
+    }
+    .fc-event:hover .ev-tooltip { display: block; }
+
+    /* =========================================================
+       BADGE DE DURACIÓN
+    ========================================================= */
+    .ev-duration-badge {
+      display: inline-block;
+      font-size: 9.5px; font-weight: 700;
+      background: rgba(255,255,255,.25);
+      color: #fff;
+      padding: 1px 5px;
+      border-radius: 10px;
+      margin-left: 4px;
+      vertical-align: middle;
+      letter-spacing: .3px;
+    }
+
+    /* =========================================================
+       EVENTOS MULTI-DÍA — bloque continuo
+    ========================================================= */
+    .fc-daygrid-block-event {
+      border-radius: 4px !important;
+    }
+    /* Continuación en días siguientes */
+    .fc-event-start { border-radius: 4px 0 0 4px !important; }
+    .fc-event-end   { border-radius: 0 4px 4px 0 !important; }
+    .fc-event-start.fc-event-end { border-radius: 4px !important; }
+
+    /* =========================================================
+       DETAIL MODAL — mejoras para manager
+    ========================================================= */
+    .detail-priority-banner {
+      padding: 8px 14px; border-radius: 8px;
+      font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 14px;
+    }
+    .detail-priority-banner.alta  { background:#fef2f2; color:#dc2626; border:1.5px solid #fca5a5; }
+    .detail-priority-banner.media { background:#fefce8; color:#a16207; border:1.5px solid #fcd34d; }
+    .detail-priority-banner.baja  { background:#f0fdf4; color:#16a34a; border:1.5px solid #86efac; }
+
+    .detail-duration-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 20px; padding: 3px 10px;
+      font-size: 12px; font-weight: 600; color: var(--text-2);
+    }
+
+    /* =========================================================
+       FORM — sección fecha mejorada
+    ========================================================= */
+    .date-range-hint {
+      font-size: 11px; color: var(--text-3);
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 6px; padding: 6px 10px; margin-top: -8px;
+      margin-bottom: 8px;
+    }
+    .allday-toggle-wrap {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 0; cursor: pointer;
+    }
+    .allday-toggle-wrap input[type=checkbox] { cursor: pointer; }
+    .allday-toggle-wrap label { font-size: 13px; color: var(--text-2); cursor: pointer; font-weight: 500; }
+
   </style>
 </head>
 <body>
@@ -677,12 +792,25 @@
         </div>
       </div>
 
-      <div class="form-section-title">📅 Fecha y hora</div>
-      <div class="form-row thirds">
+      <div class="form-section-title">📅 Fecha y periodo</div>
+      <div class="allday-toggle-wrap">
+        <input type="checkbox" id="f-form-allday" checked>
+        <label for="f-form-allday">Actividad de día completo (sin hora)</label>
+      </div>
+      <div class="form-row" style="margin-bottom:6px">
         <div class="form-group">
-          <label class="form-label">Fecha *</label>
+          <label class="form-label">Fecha inicio *</label>
           <input class="form-control" type="date" id="f-form-date">
         </div>
+        <div class="form-group">
+          <label class="form-label">Fecha fin <span style="font-weight:400;color:var(--text-3)">(opcional)</span></label>
+          <input class="form-control" type="date" id="f-form-date-end">
+        </div>
+      </div>
+      <div class="date-range-hint" id="dateRangeHint" style="display:none">
+        📅 Este evento se mostrará como bloque continuo en el calendario
+      </div>
+      <div class="form-row" id="timeRow" style="display:none;margin-bottom:6px">
         <div class="form-group">
           <label class="form-label">Hora inicio</label>
           <input class="form-control" type="time" id="f-form-start">
@@ -711,6 +839,12 @@
         <div class="form-group">
           <label class="form-label">Área / Proyecto</label>
           <input class="form-control" type="text" id="f-form-area" placeholder="Ej. Inmigración">
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label class="form-label">🔗 Link de la actividad</label>
+          <input class="form-control" type="url" id="f-form-link" placeholder="https://meet.google.com/... · Zoom · Teams · Drive...">
         </div>
       </div>
 
@@ -768,14 +902,20 @@
       <button class="modal-close" onclick="closeModal('detailModal')">×</button>
     </div>
     <div class="modal-body">
+      <!-- Priority banner — visible para managers -->
+      <div class="detail-priority-banner" id="d-priority-banner">
+        <span id="d-priority-icon">🟡</span>
+        <span id="d-priority-text">—</span>
+        <span class="detail-duration-chip" id="d-duration-chip" style="margin-left:auto">📅 —</span>
+      </div>
       <div class="detail-trainer-badge" id="detailTrainerBadge">—</div>
       <div class="detail-grid">
         <div class="detail-field">
-          <div class="detail-field-label">Fecha</div>
+          <div class="detail-field-label">Fecha inicio</div>
           <div class="detail-field-value" id="d-fecha">—</div>
         </div>
         <div class="detail-field">
-          <div class="detail-field-label">Horario</div>
+          <div class="detail-field-label">Horario / Duración</div>
           <div class="detail-field-value" id="d-horario">—</div>
         </div>
         <div class="detail-field">
@@ -798,8 +938,22 @@
           <div class="detail-field-label">Prioridad</div>
           <div class="detail-field-value" id="d-prioridad">—</div>
         </div>
+        <div class="detail-field">
+          <div class="detail-field-label">Tipo de actividad</div>
+          <div class="detail-field-value" id="d-tipo-val">—</div>
+        </div>
       </div>
       <div class="detail-desc" id="d-desc" style="display:none"></div>
+      <div id="d-link-wrap" style="display:none;margin-top:12px">
+        <a id="d-link" href="#" target="_blank" rel="noopener"
+           style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;
+                  background:var(--accent-lt);border:1px solid var(--border-md);
+                  border-radius:8px;font-size:13px;font-weight:600;
+                  color:var(--accent);text-decoration:none;transition:all .15s;word-break:break-all;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          <span id="d-link-text">Abrir enlace de la actividad</span>
+        </a>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-danger btn-sm" id="deleteEventBtn">
@@ -828,14 +982,14 @@
    → Para cambiar colores: modifica el valor hex
 ========================================================= */
 const TRAINERS = {
-  'Mariana': '#1c4ed8',   /* azul */
-  'Andrea':  '#16a34a',   /* verde */
-  'Joham':   '#7c3aed',   /* morado */
-  'Diego':   '#0891b2',   /* cian */
-  'Nidia':   '#ea580c',   /* naranja */
-  'Karen':   '#db2777',   /* rosa */
-  'Sofia':   '#65a30d',   /* verde olivo */
-  'Brenda':  '#d97706',   /* ámbar */
+  'Mariana': '#5b8ff9',   /* azul */
+  'Andrea':  '#34c471',   /* verde */
+  'Joham':   '#9f6ef5',   /* violeta */
+  'Diego':   '#22b4d6',   /* cian */
+  'Nidia':   '#f5823e',   /* naranja */
+  'Karen':   '#f056a0',   /* rosa */
+  'Sofia':   '#84cc16',   /* lima */
+  'Brenda':  '#f59e0b',   /* ámbar */
 };
 
 function trainerColor(name) {
@@ -869,7 +1023,7 @@ const TIPOS_ICON = {
 // Mientras no haya URL configurada, usa datos demo locales.
 // =========================================================
 
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwG68cc5l2MTX9r_I9MVlD1TgSXr6BKFOSHG3n2ep1MhuUeS69f-fvtiR31lqo0_Nk6_A/exec';
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw-7V-Kxw7kME2bXgJFTELde057DsCpb-Kg6zIN3-2rCfNsui4O9tNpgWY4culjLziTDw/exec';
 
 // Datos demo — solo se usan si WEB_APP_URL está vacío
 const EVENTOS_DEMO = [
@@ -952,6 +1106,22 @@ const EVENTOS_DEMO = [
     descripcion: 'Apoyo en cierre documental de expedientes.',
     prioridad: 'Baja', estatus: 'Completado',
     start: hoyOffset(-3) + 'T13:00', end: hoyOffset(-3) + 'T15:00'
+  },
+  {
+    id: '12', title: 'Semana de Habilitación Intensiva',
+    trainer: 'Brenda', tipoActividad: 'Habilitación',
+    modalidad: 'Presencial', sala: 'VAWA', area: 'Inmigración',
+    descripcion: 'Semana completa de habilitación para nuevos ingresos.',
+    prioridad: 'Alta', estatus: 'Confirmado',
+    start: hoyOffset(10), end: hoyOffset(14)
+  },
+  {
+    id: '13', title: 'Desarrollo Material T-Visa',
+    trainer: 'Diego', tipoActividad: 'Desarrollo de material',
+    modalidad: 'Online', sala: '—', area: 'Training',
+    descripcion: 'Desarrollo de módulos de capacitación para T-Visa.',
+    prioridad: 'Media', estatus: 'Planeado',
+    start: hoyOffset(12), end: hoyOffset(15)
   }
 ];
 
@@ -963,36 +1133,67 @@ async function cargarEventos() {
   if (!WEB_APP_URL) {
     eventos = EVENTOS_DEMO.map(e => ({...e}));
     refreshCalendar();
+    updateSidebar();
     return;
   }
   backendActivo = true;
+  showToast('🔄 Conectando con la base de datos...', 'info');
   try {
-    const res = await fetch(WEB_APP_URL + '?action=getAll');
-    const data = await res.json();
+    const url = WEB_APP_URL + '?action=getAll&t=' + Date.now();
+    const res = await fetch(url, {
+      method: 'GET',
+      redirect: 'follow',
+      mode: 'cors',
+      cache: 'no-cache'
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch(e) {
+      // A veces Apps Script manda JSONP o texto con prefijo, intentar limpiar
+      const match = text.match(/\{[\s\S]*\}/);
+      if (match) data = JSON.parse(match[0]);
+      else throw new Error('Respuesta no es JSON válido');
+    }
     if (data.ok) {
-      eventos = data.eventos;
+      eventos = data.eventos || [];
       refreshCalendar();
+      updateSidebar();
+      showToast('✓ Datos cargados desde Google Sheets (' + eventos.length + ' actividades)', 'success');
     } else {
-      throw new Error('Respuesta inválida');
+      throw new Error(data.error || 'Respuesta inválida del servidor');
     }
   } catch(err) {
     console.error('Error cargando desde backend:', err);
-    showToast('⚠️ Error al conectar con la base de datos', 'warn');
+    showToast('⚠️ Sin conexión al backend — mostrando datos locales', 'warn');
+    backendActivo = false;
     eventos = EVENTOS_DEMO.map(e => ({...e}));
     refreshCalendar();
+    updateSidebar();
   }
 }
 
 // ── Guardar / editar / eliminar ────────────────────────────
+// Enviamos JSON plano en el parámetro "data" (más confiable que base64)
+// Con no-cors el request llega al Apps Script sin bloqueo CORS
+// 2.5s después recargamos desde Sheets para confirmar escritura
 async function apiPost(body) {
-  if (!WEB_APP_URL) return; // sin backend, no hace nada
+  if (!WEB_APP_URL) return;
   try {
-    await fetch(WEB_APP_URL, {
-      method: 'POST',
-      body: JSON.stringify(body)
+    const jsonStr = JSON.stringify(body);
+    const url = WEB_APP_URL + '?data=' + encodeURIComponent(jsonStr) + '&t=' + Date.now();
+    await fetch(url, {
+      method: 'GET',
+      mode: 'no-cors',
+      redirect: 'follow',
+      cache: 'no-cache'
     });
+    // Recargar desde Sheets para confirmar que se guardó
+    setTimeout(() => cargarEventos(), 2500);
   } catch(err) {
-    console.error('Error en apiPost:', err);
+    console.error('apiPost error:', err);
     showToast('⚠️ No se pudo sincronizar con la base de datos', 'warn');
   }
 }
@@ -1028,16 +1229,52 @@ function eventosFiltrados() {
 let calendar;
 
 function buildFCEvents(list) {
-  return list.map(ev => ({
-    id: ev.id,
-    title: ev.title,
-    start: ev.start,
-    end: ev.end,
-    backgroundColor: 'transparent',
-    borderColor: 'transparent',
-    textColor: '#fff',
-    extendedProps: { ...ev }
-  }));
+  return list.map(ev => {
+    // Detectar si es evento de día completo (sin hora 'T') o multi-día
+    const isAllDay = !ev.start.includes('T');
+    let endDate = ev.end || null;
+
+    // Para eventos allday multi-día: FullCalendar usa end exclusivo,
+    // si la fecha fin es igual a inicio la ignoramos; si no, sumamos 1 día
+    if (isAllDay && endDate && endDate !== ev.start && !endDate.includes('T')) {
+      // Sumar 1 día para que FullCalendar incluya el último día en el bloque
+      const d = new Date(endDate + 'T00:00:00');
+      d.setDate(d.getDate() + 1);
+      endDate = d.toISOString().slice(0, 10);
+    }
+
+    return {
+      id: ev.id,
+      title: ev.title,
+      start: ev.start,
+      end: endDate,
+      allDay: isAllDay,
+      backgroundColor: 'transparent',
+      borderColor: 'transparent',
+      textColor: '#fff',
+      classNames: ['ev-prio-' + (ev.prioridad || 'media').toLowerCase()],
+      extendedProps: { ...ev }
+    };
+  });
+}
+
+// Calcula duración legible entre dos fechas/strings
+function calcDuracion(ev) {
+  if (!ev.start) return null;
+  const isAllDay = !ev.start.includes('T');
+  if (isAllDay) {
+    if (!ev.end || ev.end === ev.start) return '1 día';
+    const ms = new Date(ev.end) - new Date(ev.start);
+    const days = Math.round(ms / 86400000) + 1;
+    return days + (days === 1 ? ' día' : ' días');
+  } else {
+    if (!ev.end || !ev.end.includes('T')) return null;
+    const ms = new Date(ev.end) - new Date(ev.start);
+    const mins = Math.round(ms / 60000);
+    if (mins < 60) return mins + ' min';
+    const hrs = (mins / 60).toFixed(1).replace('.0','');
+    return hrs + ' h';
+  }
 }
 
 function refreshCalendar() {
@@ -1187,11 +1424,11 @@ document.querySelectorAll('.modal-overlay').forEach(el => {
 let editingId = null;
 
 function resetForm() {
-  ['f-form-trainer','f-form-tipo','f-form-title','f-form-date',
+  ['f-form-trainer','f-form-tipo','f-form-title','f-form-date','f-form-date-end',
    'f-form-start','f-form-end','f-form-modalidad','f-form-sala',
-   'f-form-area','f-form-desc','f-form-estatus'].forEach(id => {
+   'f-form-area','f-form-link','f-form-desc','f-form-estatus'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.value = el.tagName === 'SELECT' ? '' : '';
+    if (el) el.value = '';
   });
   document.getElementById('f-form-estatus').value = 'Planeado';
   document.getElementById('f-form-prioridad').value = 'Media';
@@ -1199,7 +1436,38 @@ function resetForm() {
   selectPriority(document.querySelector('.priority-pill[data-val="Media"]'), 'media');
   document.getElementById('formModalTitle').textContent = 'Nueva actividad';
   document.getElementById('saveEventBtn').textContent = '✓ Guardar actividad';
+  // Reset allday toggle
+  document.getElementById('f-form-allday').checked = true;
+  document.getElementById('timeRow').style.display = 'none';
+  document.getElementById('dateRangeHint').style.display = 'none';
   editingId = null;
+}
+
+// Toggle hora rows when allday changes
+function setupAlldayToggle() {
+  const cb = document.getElementById('f-form-allday');
+  const timeRow = document.getElementById('timeRow');
+  const hint = document.getElementById('dateRangeHint');
+  const dateEnd = document.getElementById('f-form-date-end');
+
+  cb.addEventListener('change', () => {
+    timeRow.style.display = cb.checked ? 'none' : 'grid';
+    if (cb.checked) {
+      document.getElementById('f-form-start').value = '';
+      document.getElementById('f-form-end').value = '';
+    }
+  });
+
+  dateEnd.addEventListener('change', () => {
+    const s = document.getElementById('f-form-date').value;
+    const e = dateEnd.value;
+    hint.style.display = (e && e !== s) ? 'block' : 'none';
+  });
+  document.getElementById('f-form-date').addEventListener('change', () => {
+    const s = document.getElementById('f-form-date').value;
+    const e = dateEnd.value;
+    hint.style.display = (e && e !== s) ? 'block' : 'none';
+  });
 }
 
 function selectPriority(el, cls) {
@@ -1224,6 +1492,8 @@ function saveEvento() {
   const tipo = document.getElementById('f-form-tipo').value;
   const title = document.getElementById('f-form-title').value.trim();
   const date = document.getElementById('f-form-date').value;
+  const dateEnd = document.getElementById('f-form-date-end').value;
+  const isAllDay = document.getElementById('f-form-allday').checked;
   const startT = document.getElementById('f-form-start').value;
   const endT = document.getElementById('f-form-end').value;
 
@@ -1232,8 +1502,18 @@ function saveEvento() {
     return;
   }
 
-  const startStr = date + (startT ? 'T' + startT : '');
-  const endStr = endT ? date + 'T' + endT : null;
+  let startStr, endStr;
+  if (isAllDay) {
+    startStr = date; // solo fecha, sin hora → allDay en FC
+    endStr = (dateEnd && dateEnd !== date) ? dateEnd : null;
+  } else {
+    startStr = date + (startT ? 'T' + startT : 'T00:00');
+    if (dateEnd && dateEnd !== date) {
+      endStr = dateEnd + (endT ? 'T' + endT : 'T00:00');
+    } else {
+      endStr = endT ? date + 'T' + endT : null;
+    }
+  }
 
   const ev = {
     id: editingId || genId(),
@@ -1246,6 +1526,7 @@ function saveEvento() {
     descripcion: document.getElementById('f-form-desc').value,
     prioridad: document.getElementById('f-form-prioridad').value || 'Media',
     estatus: document.getElementById('f-form-estatus').value || 'Planeado',
+    link: document.getElementById('f-form-link').value.trim() || '',
     start: startStr,
     end: endStr
   };
@@ -1276,18 +1557,51 @@ function openDetailById(id) {
   currentDetailId = id;
 
   const color = trainerColor(ev.trainer);
+  const prio = (ev.prioridad || 'Media').toLowerCase();
+  const prioIcon = prio === 'alta' ? '🔴' : prio === 'baja' ? '🟢' : '🟡';
+  const prioLabel = { alta: 'PRIORIDAD ALTA — Actividad crítica', media: 'PRIORIDAD MEDIA', baja: 'PRIORIDAD BAJA' }[prio] || ev.prioridad;
+
+  // Priority banner
+  const banner = document.getElementById('d-priority-banner');
+  banner.className = 'detail-priority-banner ' + prio;
+  document.getElementById('d-priority-icon').textContent = prioIcon;
+  document.getElementById('d-priority-text').textContent = prioLabel;
+
+  // Duration chip
+  const dur = calcDuracion(ev);
+  const durChip = document.getElementById('d-duration-chip');
+  durChip.textContent = dur ? '⏱ ' + dur : '📅 —';
+
+  // Header
   document.getElementById('detailTitle').textContent = ev.title;
-  document.getElementById('detailTipo').textContent = (TIPOS_ICON[ev.tipoActividad] || '📌') + ' ' + ev.tipoActividad;
-  document.getElementById('detailTrainerBadge').textContent = '👤 ' + ev.trainer;
+  document.getElementById('detailTipo').textContent = (TIPOS_ICON[ev.tipoActividad] || '📌') + ' ' + (ev.tipoActividad || '—');
+  document.getElementById('detailTrainerBadge').innerHTML = '👤 ' + ev.trainer;
   document.getElementById('detailTrainerBadge').style.background = color;
 
-  const start = new Date(ev.start);
-  const end = ev.end ? new Date(ev.end) : null;
-  document.getElementById('d-fecha').textContent = start.toLocaleDateString('es-MX', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-  document.getElementById('d-horario').textContent = ev.start.includes('T')
-    ? start.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false }) +
-      (end ? ' – ' + end.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false }) : '')
-    : 'Todo el día';
+  // Dates
+  const isAllDay = !ev.start.includes('T');
+  const start = new Date(isAllDay ? ev.start + 'T00:00:00' : ev.start);
+  const end = ev.end ? new Date(ev.end.includes('T') ? ev.end : ev.end + 'T00:00:00') : null;
+
+  document.getElementById('d-fecha').textContent = start.toLocaleDateString('es-MX',
+    { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+
+  if (isAllDay) {
+    if (ev.end && ev.end !== ev.start) {
+      // Restar 1 día para mostrar el fin real (FC usa exclusivo)
+      const displayEnd = new Date(end);
+      displayEnd.setDate(displayEnd.getDate() - 1);
+      document.getElementById('d-horario').textContent =
+        'Todo el día · hasta ' + displayEnd.toLocaleDateString('es-MX',{ month:'short', day:'numeric' });
+    } else {
+      document.getElementById('d-horario').textContent = 'Todo el día';
+    }
+  } else {
+    document.getElementById('d-horario').textContent =
+      start.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false }) +
+      (end && ev.end.includes('T') ? ' – ' + end.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false }) : '');
+  }
+
   document.getElementById('d-sala').textContent = ev.sala || '—';
   document.getElementById('d-modalidad').textContent = ev.modalidad || '—';
   document.getElementById('d-area').textContent = ev.area || '—';
@@ -1296,11 +1610,31 @@ function openDetailById(id) {
   document.getElementById('d-estatus').innerHTML = `<span class="status-badge status-${cls}">${ev.estatus || '—'}</span>`;
 
   const pcls = (ev.prioridad || '').toLowerCase();
-  document.getElementById('d-prioridad').innerHTML = `<span class="priority-badge priority-${pcls}">${ev.prioridad || '—'}</span>`;
+  document.getElementById('d-prioridad').innerHTML = `<span class="priority-badge priority-${pcls}">${prioIcon} ${ev.prioridad || '—'}</span>`;
+
+  document.getElementById('d-tipo-val').textContent = (TIPOS_ICON[ev.tipoActividad] || '📌') + ' ' + (ev.tipoActividad || '—');
 
   const descEl = document.getElementById('d-desc');
   if (ev.descripcion) { descEl.textContent = ev.descripcion; descEl.style.display = 'block'; }
   else { descEl.style.display = 'none'; }
+
+  // Link
+  const linkWrap = document.getElementById('d-link-wrap');
+  const linkEl = document.getElementById('d-link');
+  const linkText = document.getElementById('d-link-text');
+  if (ev.link && ev.link.trim()) {
+    linkEl.href = ev.link;
+    // Display a short label (domain) as the link text
+    try {
+      const domain = new URL(ev.link).hostname.replace('www.','');
+      linkText.textContent = 'Abrir enlace · ' + domain;
+    } catch(e) {
+      linkText.textContent = ev.link.slice(0, 60) + (ev.link.length > 60 ? '…' : '');
+    }
+    linkWrap.style.display = 'block';
+  } else {
+    linkWrap.style.display = 'none';
+  }
 
   document.getElementById('detailIcon').textContent = TIPOS_ICON[ev.tipoActividad] || '📋';
 
@@ -1326,17 +1660,31 @@ document.getElementById('editEventBtn').addEventListener('click', () => {
   document.getElementById('formModalTitle').textContent = 'Editar actividad';
   document.getElementById('saveEventBtn').textContent = '✓ Guardar cambios';
 
+  const isAllDayEv = !ev.start.includes('T');
   document.getElementById('f-form-trainer').value = ev.trainer;
   document.getElementById('f-form-tipo').value = ev.tipoActividad;
   document.getElementById('f-form-title').value = ev.title;
   document.getElementById('f-form-date').value = ev.start.slice(0, 10);
-  document.getElementById('f-form-start').value = ev.start.includes('T') ? ev.start.slice(11, 16) : '';
-  document.getElementById('f-form-end').value = ev.end && ev.end.includes('T') ? ev.end.slice(11, 16) : '';
+  // Fecha fin: si allday y hay end, restar 1 día (FC es exclusivo)
+  if (isAllDayEv && ev.end && ev.end !== ev.start) {
+    const d = new Date(ev.end + 'T00:00:00');
+    d.setDate(d.getDate() - 1);
+    document.getElementById('f-form-date-end').value = d.toISOString().slice(0,10);
+  } else if (!isAllDayEv && ev.end && !ev.end.includes('T')) {
+    document.getElementById('f-form-date-end').value = ev.end.slice(0,10);
+  } else {
+    document.getElementById('f-form-date-end').value = '';
+  }
+  document.getElementById('f-form-allday').checked = isAllDayEv;
+  document.getElementById('timeRow').style.display = isAllDayEv ? 'none' : 'grid';
+  document.getElementById('f-form-start').value = (!isAllDayEv && ev.start.includes('T')) ? ev.start.slice(11, 16) : '';
+  document.getElementById('f-form-end').value = (!isAllDayEv && ev.end && ev.end.includes('T')) ? ev.end.slice(11, 16) : '';
   document.getElementById('f-form-modalidad').value = ev.modalidad;
   document.getElementById('f-form-sala').value = ev.sala;
   document.getElementById('f-form-area').value = ev.area;
   document.getElementById('f-form-desc').value = ev.descripcion;
   document.getElementById('f-form-estatus').value = ev.estatus;
+  document.getElementById('f-form-link').value = ev.link || '';
 
   const pmap = { 'Alta': 'alta', 'Media': 'media', 'Baja': 'baja' };
   document.getElementById('f-form-prioridad').value = ev.prioridad;
@@ -1391,10 +1739,13 @@ document.getElementById('todayBtn').addEventListener('click', () => {
 function showToast(msg, type = 'ok') {
   const t = document.createElement('div');
   t.className = 'toast';
-  if (type === 'warn') t.style.background = '#d97706';
+  if (type === 'warn')    t.style.background = '#d97706';
+  if (type === 'success') t.style.background = '#16a34a';
+  if (type === 'info')    t.style.background = '#1c4ed8';
   t.textContent = msg;
   document.getElementById('toastContainer').appendChild(t);
-  setTimeout(() => t.remove(), 3200);
+  const delay = (type === 'info') ? 2000 : 3200;
+  setTimeout(() => t.remove(), delay);
 }
 
 /* =========================================================
@@ -1404,8 +1755,14 @@ function handleDateClick(info) {
   resetForm();
   document.getElementById('f-form-date').value = info.dateStr.slice(0, 10);
   if (info.dateStr.includes('T')) {
-    const h = info.dateStr.slice(11, 16);
-    document.getElementById('f-form-start').value = h;
+    // Clic en vista de semana/día — tiene hora → desactivar allday
+    document.getElementById('f-form-allday').checked = false;
+    document.getElementById('timeRow').style.display = 'grid';
+    document.getElementById('f-form-start').value = info.dateStr.slice(11, 16);
+  } else {
+    // Clic en vista de mes → allday activado
+    document.getElementById('f-form-allday').checked = true;
+    document.getElementById('timeRow').style.display = 'none';
   }
   openModal('formModal');
 }
@@ -1430,15 +1787,111 @@ document.addEventListener('DOMContentLoaded', () => {
     buttonText: { today: 'Hoy', month: 'Mes', week: 'Semana', day: 'Día' },
     eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
 
-    /* Render personalizado del evento — bloque de color completo */
+    /* ── eventContent: TRAINER = color de fondo · PRIORIDAD = dot indicador ── */
     eventContent: function(arg) {
-      const p = arg.event.extendedProps;
-      const icon = TIPOS_ICON[p.tipoActividad] || '📌';
-      const color = trainerColor(p.trainer);
-      const el = document.createElement('div');
-      el.style.cssText = `background:${color};border-radius:5px;padding:3px 6px 4px;width:100%;overflow:hidden;line-height:1.35;display:block;`;
-      el.innerHTML = `<div style="font-weight:700;font-size:11.5px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${icon} ${arg.event.title}</div><div style="font-size:10.5px;color:rgba(255,255,255,.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">👤 ${p.trainer}</div>`;
-      return { domNodes: [el] };
+      const p       = arg.event.extendedProps;
+      const icon    = TIPOS_ICON[p.tipoActividad] || '📌';
+      const bgColor = trainerColor(p.trainer);          // fondo principal
+      const prio    = (p.prioridad || 'Media').toLowerCase();
+      const dur     = calcDuracion(p);
+
+      // Dot de prioridad — pequeño, solo indicador
+      const PRIO_DOT = { alta: '🔴', media: '🟡', baja: '🟢' };
+      const PRIO_LABEL = { alta: 'Alta', media: 'Media', baja: 'Baja' };
+      const prioDot   = PRIO_DOT[prio]   || '🟡';
+      const prioLabel = PRIO_LABEL[prio] || 'Media';
+
+      // Horario
+      let scheduleStr = '';
+      if (p.start && p.start.includes('T')) {
+        const tS = p.start.slice(11, 16);
+        const tE = p.end && p.end.includes('T') ? p.end.slice(11, 16) : null;
+        scheduleStr = tE ? `${tS} – ${tE}` : tS;
+      } else if (p.end && p.end !== p.start) {
+        const ds  = new Date(p.start + 'T00:00:00');
+        const de  = new Date(p.end   + 'T00:00:00');
+        de.setDate(de.getDate() - 1);
+        const fmt = d => d.toLocaleDateString('es-MX', { month: 'short', day: 'numeric' });
+        scheduleStr = `${fmt(ds)} – ${fmt(de)}`;
+      } else {
+        scheduleStr = 'Todo el día';
+      }
+
+      // Tooltip
+      const tooltipHTML = `
+        <div style="font-weight:700;font-size:12.5px;margin-bottom:5px">${icon} ${p.title || arg.event.title}</div>
+        <div style="opacity:.85;font-size:11px;margin-bottom:2px">👤 ${p.trainer || '—'} · ${p.tipoActividad || '—'}</div>
+        <div style="opacity:.85;font-size:11px;margin-bottom:2px">🕐 ${scheduleStr}${dur ? ' · ' + dur : ''}</div>
+        <div style="opacity:.85;font-size:11px;margin-bottom:2px">📍 ${p.sala || '—'} · ${p.modalidad || '—'}</div>
+        <div style="margin-top:5px;font-size:11px">${prioDot} Prioridad ${prioLabel}</div>
+        ${p.descripcion ? `<div style="opacity:.7;font-size:10.5px;margin-top:4px;font-style:italic;border-top:1px solid rgba(255,255,255,.15);padding-top:4px">"${p.descripcion.slice(0,90)}${p.descripcion.length>90?'…':''}"</div>` : ''}
+      `;
+
+      // ── DOM ─────────────────────────────────────────────────
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = `position:relative;width:100%;height:100%;`;
+
+      // Bloque principal — color del TRAINER domina el fondo
+      const inner = document.createElement('div');
+      inner.style.cssText = `
+        display:flex;align-items:stretch;
+        width:100%;height:100%;min-height:0;
+        border-radius:6px;
+        overflow:hidden;
+        background:${bgColor};
+        border:1.5px solid rgba(0,0,0,.18);
+        box-shadow:0 1px 3px rgba(0,0,0,.20);
+      `;
+
+      // Texto — toda la anchura
+      const body = document.createElement('div');
+      body.style.cssText = `
+        flex:1;min-width:0;
+        padding:4px 6px;
+        display:flex;flex-direction:column;justify-content:center;gap:1px;
+      `;
+
+      // Línea 1 — dot prioridad + título
+      const titleLine = document.createElement('div');
+      titleLine.style.cssText = `
+        font-weight:600;font-size:11.5px;color:#fff;
+        white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+        line-height:1.35;
+      `;
+      titleLine.textContent = `${prioDot} ${icon} ${arg.event.title}`;
+
+      // Línea 2 — trainer
+      const trainerLine = document.createElement('div');
+      trainerLine.style.cssText = `
+        font-size:10px;font-weight:600;color:rgba(255,255,255,.88);
+        white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+        line-height:1.2;
+      `;
+      trainerLine.textContent = `👤 ${p.trainer || '—'}`;
+
+      // Línea 3 — horario
+      const timeLine = document.createElement('div');
+      timeLine.style.cssText = `
+        font-size:10px;font-weight:600;color:rgba(255,255,255,.78);
+        white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+        line-height:1.2;
+      `;
+      timeLine.textContent = `🕐 ${scheduleStr}`;
+
+      body.appendChild(titleLine);
+      body.appendChild(trainerLine);
+      body.appendChild(timeLine);
+      inner.appendChild(body);
+
+      // Tooltip
+      const tooltip = document.createElement('div');
+      tooltip.className = 'ev-tooltip';
+      tooltip.innerHTML = tooltipHTML;
+
+      wrapper.appendChild(inner);
+      wrapper.appendChild(tooltip);
+
+      return { domNodes: [wrapper] };
     },
 
     eventClick: function(info) {
@@ -1447,31 +1900,62 @@ document.addEventListener('DOMContentLoaded', () => {
 
     dateClick: handleDateClick,
 
-    /* Evento drop (drag) — opcional */
+    /* Drag, resize y selección de rango */
     editable: true,
+    selectable: true,
+    selectMirror: true,
+
+    // Seleccionar rango de fechas abre el form con las fechas prellenadas
+    select: function(info) {
+      resetForm();
+      document.getElementById('f-form-date').value = info.startStr.slice(0, 10);
+      const endD = new Date(info.end);
+      endD.setDate(endD.getDate() - 1); // FC end es exclusivo
+      const endStr = endD.toISOString().slice(0,10);
+      if (endStr !== info.startStr.slice(0,10)) {
+        document.getElementById('f-form-date-end').value = endStr;
+        document.getElementById('dateRangeHint').style.display = 'block';
+      }
+      document.getElementById('f-form-allday').checked = info.allDay;
+      document.getElementById('timeRow').style.display = info.allDay ? 'none' : 'grid';
+      if (!info.allDay && info.startStr.includes('T')) {
+        document.getElementById('f-form-start').value = info.startStr.slice(11,16);
+        if (info.endStr && info.endStr.includes('T'))
+          document.getElementById('f-form-end').value = info.endStr.slice(11,16);
+      }
+      openModal('formModal');
+      calendar.unselect();
+    },
+
     eventDrop: function(info) {
       const ev = eventos.find(e => e.id === info.event.id);
       if (!ev) return;
-      const diff = info.event.start - new Date(ev.start);
-      ev.start = info.event.start.toISOString().slice(0,16).replace('T',' ').slice(0,10) +
-                 ev.start.slice(10);
-      if (ev.end) ev.end = new Date(new Date(ev.end).getTime() + diff).toISOString().slice(0,16);
-      ev.start = info.event.startStr;
-      if (info.event.end) ev.end = info.event.endStr;
-      apiPost({ action: 'update', evento: ev }); // ← sincroniza con Google Sheets
-      showToast('Actividad movida ✓');
+      ev.start = info.event.startStr || info.event.start.toISOString().slice(0,10);
+      ev.end = info.event.endStr || (info.event.end ? info.event.end.toISOString().slice(0,10) : null);
+      // Si allDay no tiene hora
+      if (info.event.allDay && ev.start.includes('T')) ev.start = ev.start.slice(0,10);
+      if (info.event.allDay && ev.end && ev.end.includes('T')) ev.end = ev.end.slice(0,10);
+      apiPost({ action: 'update', evento: ev });
+      showToast('✓ Actividad movida');
       updateSidebar();
-      /* ── BACKEND: actualizar fecha al mover ─────────
-         fetch(WEB_APP_URL, { method:'POST',
-           body: JSON.stringify({ action:'updateDate', id:ev.id,
-                                  start:ev.start, end:ev.end }) });
-      ─────────────────────────────────────────────── */
+    },
+
+    eventResize: function(info) {
+      const ev = eventos.find(e => e.id === info.event.id);
+      if (!ev) return;
+      ev.start = info.event.startStr || ev.start;
+      ev.end = info.event.endStr || (info.event.end ? info.event.end.toISOString().slice(0,10) : null);
+      if (info.event.allDay && ev.end && ev.end.includes('T')) ev.end = ev.end.slice(0,10);
+      apiPost({ action: 'update', evento: ev });
+      showToast('✓ Duración actualizada');
+      updateSidebar();
     }
   });
 
   calendar.render();
   cargarEventos(); // carga desde backend o demo
   updateSidebar();
+  setupAlldayToggle(); // inicializar toggle de día completo
 
   /* ──────────────────────────────────────────────────────
      BACKEND CONNECTION POINT
@@ -1482,7 +1966,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
      // CARGAR EVENTOS AL INICIO:
      async function loadFromBackend() {
-       const res = await fetch(WEB_APP_URL + '?action=getAll');
+       const res = await fetch(WEB_APP_URL + '?action=getAll&t=' + Date.now());
        const data = await res.json();
        eventos = data.eventos; // Reemplaza datos demo
        refreshCalendar();
