@@ -237,68 +237,99 @@ main{padding:20px 32px 80px;max-width:1600px;margin:0 auto}
 .print-hdr{display:none}
 
 @media print{
-  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;box-sizing:border-box!important}
 
-  /* Ocultar controles de UI */
-  header,.sbar,.nav,.back-btn,.noprint,
+  /* ── Página ─────────────────────────────────────────────── */
+  @page{margin:1.2cm;size:A4 portrait}
+  html,body{font-size:9.5px;margin:0;padding:0}
+  main{padding:0!important}
+
+  /* ── Ocultar UI ─────────────────────────────────────────── */
+  header,.sbar,.nav,.noprint,
   .impact-head,.impact-btn,
   .reac-head .period-wrap,.reac-tabs,
   .back-btn,.pdf-btn,
-  .period-wrap,.seg,.period-pills { display:none!important }
+  .period-wrap,.seg,.period-pills,
+  .mini-chart,#MCHART { display:none!important }
 
-  /* Mostrar header de impresión */
-  .print-hdr{display:block!important;background:var(--ink);color:#fff;padding:10px 16px;border-radius:8px;margin-bottom:14px}
-  .print-hdr h1{font-family:'DM Serif Display',serif;font-size:15px;margin:0}
-  .print-hdr em{color:var(--acc2);font-style:italic}
-  .print-hdr p{font-size:9px;color:rgba(255,255,255,.5);margin:3px 0 0}
+  /* ── Ocultar vista general, mostrar detalle trainer ─────── */
+  #VIEW_OV { display:none!important }
+  #VIEW_TR { display:block!important }
 
-  /* Tabs abiertas */
-  .tab-body{display:block!important}
+  /* ── Print header ───────────────────────────────────────── */
+  .print-hdr{display:block!important;background:#1a1a1a!important;color:#fff!important;
+    padding:10px 16px;border-radius:8px;margin-bottom:10px;break-inside:avoid;break-after:avoid}
+  .print-hdr h1{font-family:'DM Serif Display',serif;font-size:15px;margin:0;color:#fff!important}
+  .print-hdr em{color:#f97316!important;font-style:italic}
+  .print-hdr p{font-size:8.5px;color:rgba(255,255,255,.6)!important;margin:3px 0 0}
+
+  /* ── Trainer header card — sin salto después ────────────── */
+  .tr-header{break-inside:avoid;break-after:avoid;margin-bottom:8px}
+
+  /* ── Tabs abiertas ──────────────────────────────────────── */
+  .tab-body{display:block!important;overflow:visible!important}
   .tab-chev{display:none!important}
 
-  /* Cards sin sombra */
-  .card,.tab-sec{box-shadow:none!important}
+  /* ── Cards sin sombra ───────────────────────────────────── */
+  .card,.tab-sec{box-shadow:none!important;border:1px solid #e5e5e5!important}
 
-  /* Evitar cortes en secciones clave */
-  .tab-sec, .imp-sec, .reac-wrap, .reac-scorecard,
-  .sum-grid > *, .g2 > *, .tr-comp { break-inside:avoid }
+  /* ── Reporte de Impacto — fluye después del header ──────── */
+  /* NO break-before aquí — evita página vacía con solo el card */
+  #TR_IMPACT{margin-top:0}
+  .impact-wrap{display:block!important;border:1px solid #ddd!important;
+    border-radius:8px;margin-bottom:10px;break-inside:avoid}
 
-  /* Reporte de impacto — visible y bien formateado */
-  .impact-wrap{display:block!important;border:1px solid #ddd;border-radius:8px;margin-bottom:12px;break-inside:avoid}
-  .impact-body{padding:12px 16px;font-size:10px;line-height:1.7}
-  .impact-body p{margin:0 0 6px}
-  .imp-sec{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #eee;break-inside:avoid}
-  .imp-sec-title{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
-  .imp-stats{background:#f8f8f8!important;border-radius:5px;padding:6px 8px}
-  .imp-stat-row{font-size:9px}
-  .imp-tag{font-size:9px;padding:2px 6px}
-  .imp-comment{font-size:9px;padding:4px 8px}
+  /* Portada del Impact — NO page-break-after (evita pág vacía) */
+  .imp-cover{break-after:avoid!important;page-break-after:avoid!important;
+    border-radius:8px 8px 0 0!important}
+  .imp-kpi-strip{display:flex!important;flex-wrap:wrap;gap:6px;
+    break-inside:avoid;break-before:avoid}
+  .imp-kpi-card{flex:1 1 80px;min-width:70px;padding:5px 8px!important;break-inside:avoid}
+  .imp-kpi-v{font-size:12px!important}
+  .imp-kpi-l{font-size:7.5px!important}
+  .imp-grid{display:block!important}
+  .imp-card{break-inside:avoid;margin-bottom:8px;
+    border:1px solid #e5e5e5!important;border-radius:6px;padding:8px 10px}
+  .imp-card-head{font-size:9px;margin-bottom:5px;break-after:avoid}
+  .imp-body{padding:10px 14px;font-size:9px;line-height:1.6}
+  .imp-stat-row{font-size:8.5px}
   .imp-bar-row{margin-bottom:3px}
-  .imp-bar-lbl{font-size:9px;width:130px}
-  .imp-bar-val{font-size:9px}
-  .imp-kpi{padding:6px 10px}
-  .imp-kpi-v{font-size:13px}
-  .imp-kpi-l{font-size:8px}
+  .imp-bar-lbl{font-size:8px;width:110px!important}
+  .imp-bar-val{font-size:8px}
+  .imp-tag{font-size:8px;padding:1px 5px}
+  .imp-comment{font-size:8.5px;padding:3px 7px}
 
-  /* Evaluaciones de reacción */
-  .reac-wrap{display:block!important;border:1px solid #ddd;border-radius:8px;margin-bottom:12px}
+  /* ── Comparativa — nueva página ─────────────────────────── */
+  #TR_COMP{break-before:page}
+  .tr-comp{display:block!important}
+  .comp-wrap{break-inside:avoid}
+  .comp-kpis{display:flex!important;flex-wrap:wrap;gap:4px;break-inside:avoid}
+  .comp-inner,.wk-chart,.wk-bars{break-inside:avoid}
+
+  /* ── Evaluaciones — nueva página ────────────────────────── */
+  #TR_REAC{break-before:page}
+  .reac-wrap{display:block!important;border:1px solid #ddd!important;
+    border-radius:8px;margin-bottom:10px;break-inside:avoid}
   .reac-kpis{display:flex!important;flex-wrap:wrap;gap:6px}
   .reac-scores{display:flex!important;flex-direction:column;gap:3px}
   .reac-score-row{break-inside:avoid}
-  .reac-tipo-pill{font-size:9px}
+  .reac-tipo-pill{font-size:8.5px}
   .rol-row{break-inside:avoid}
 
-  /* Comparativa trainer */
-  .tr-comp{display:block!important}
+  /* ── Sumario + gráfica de dona ───────────────────────────── */
+  .sum-grid{display:grid!important;break-inside:avoid}
+  .g2{display:grid!important;break-inside:avoid}
+  .sum-grid > *{break-inside:avoid}
+  .g2 > *{break-inside:avoid}
 
-  /* Sumario y gráficas */
-  .sum-grid{display:grid!important}
-  .g2{display:grid!important}
+  /* ── Acordeones de actividad ─────────────────────────────── */
+  .tab-sec{break-inside:avoid;margin-bottom:6px}
+  .tab-head{break-after:avoid}
+  .tab-row{break-inside:avoid}
 
-  /* Página */
-  @page{margin:1.2cm;size:A4 portrait}
-  body{font-size:10px}
-  main{padding:0!important}
+  /* ── Prevenir huérfanos ──────────────────────────────────── */
+  .tab-sec,.reac-wrap,.sum-grid > *,.g2 > *,.comp-wrap{break-inside:avoid}
+  h1,h2,h3,.card-title,.tab-title,.tab-sum-title{break-after:avoid;orphans:3;widows:3}
 }
 @media(max-width:900px){
   .g2,.sum-grid{grid-template-columns:1fr}
@@ -1760,15 +1791,6 @@ function generateAreaReport() {
         }).join('') +
       '</div></div>' : '') +
 
-    // Insights
-    '<div class="area-rep-section">' +
-      '<div class="area-rep-section-title">Hallazgos y observaciones</div>' +
-      '<div class="area-rep-insights">' +
-        insights.map(function(i) {
-          return '<div class="area-rep-insight">' + i + '</div>';
-        }).join('') +
-      '</div>' +
-    '</div>' +
 
   '</div>';
 
@@ -2054,14 +2076,6 @@ function printAreaReport() {
   }
 
   // Insights
-  doc += '<div class="sec">'+
-    '<div class="sec-title"><span class="sec-title-bar"></span>Hallazgos y observaciones</div>'+
-    '<div class="insights">'+
-    insights.map(function(ins){
-      return '<div class="insight">'+ins+'</div>';
-    }).join('')+
-    '</div></div>';
-
   // Footer
   doc += '<div class="pg-footer">'+
     '<span>Training Report 2026 · Área de Formación</span>'+
