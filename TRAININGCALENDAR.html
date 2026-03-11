@@ -677,6 +677,35 @@
     .special-tab.active-vac  { border-color: #f59e0b; background: #fef3c7; color: #92400e; }
     .special-tab.active-bday { border-color: #ec4899; background: #fce7f3; color: #9d174d; }
 
+    /* Días OFF */
+    .off-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 10px; border-radius: 8px;
+      background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+      border: 1px solid #94a3b8;
+      margin-bottom: 5px; cursor: pointer;
+      transition: all .15s;
+    }
+    .off-item:hover { transform: translateX(2px); }
+    .off-item.hoy { background: linear-gradient(135deg, #e2e8f0, #cbd5e1); border-color: #64748b; }
+    .off-name { font-size: 12.5px; font-weight: 700; color: #334155; flex: 1; }
+    .off-dates { font-size: 11px; color: #64748b; }
+    .off-badge {
+      font-size: 10px; background: #475569; color: #fff;
+      padding: 2px 7px; border-radius: 10px; font-weight: 700;
+    }
+    .fc-banner-off {
+      background: repeating-linear-gradient(
+        45deg, #94a3b8, #94a3b8 4px, #cbd5e1 4px, #cbd5e1 10px
+      ) !important;
+      border: none !important; border-radius: 4px !important;
+      color: #1e293b !important; font-weight: 700 !important;
+      font-size: 11px !important; opacity: .85 !important;
+    }
+    /* Highlight días OFF en el calendario */
+    .fc-day-off { background: rgba(148,163,184,.12) !important; }
+    .special-tab.active-off { border-color: #64748b; background: #f1f5f9; color: #334155; }
+
 
   </style>
 </head>
@@ -804,6 +833,16 @@
         <button onclick="openSpecialModal('bday')" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--text-3)" title="Agregar cumpleaños">＋</button>
       </div>
       <div id="bdayList"><div style="font-size:12px;color:var(--text-3);padding:4px">Sin cumpleaños registrados.</div></div>
+    </div>
+
+    <!-- Días OFF -->
+    <div>
+      <div class="sidebar-section-title" style="display:flex;align-items:center;justify-content:space-between">
+        🚫 Días OFF
+        <button onclick="openSpecialModal('off')" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--text-3)" title="Agregar día OFF">＋</button>
+      </div>
+      <div style="font-size:11px;color:var(--text-3);padding:2px 4px 6px;line-height:1.4">Días sin actividades programadas. Se pueden agregar actividades si es forzoso.</div>
+      <div id="offList"><div style="font-size:12px;color:var(--text-3);padding:4px">Sin días OFF registrados.</div></div>
     </div>
 
   </aside>
@@ -1096,13 +1135,14 @@
     </div>
     <div class="modal-body">
       <!-- Tabs -->
-      <div class="special-form-tabs">
+      <div class="special-form-tabs" style="flex-wrap:wrap">
         <button class="special-tab active-vac" id="tab-vac" onclick="switchSpecialTab('vac')">🏖️ Vacaciones</button>
         <button class="special-tab" id="tab-bday" onclick="switchSpecialTab('bday')">🎂 Cumpleaños</button>
+        <button class="special-tab" id="tab-off" onclick="switchSpecialTab('off')" style="flex:1 1 100%">🚫 Día OFF del equipo</button>
       </div>
 
-      <!-- Trainer -->
-      <div class="form-group" style="margin-bottom:14px">
+      <!-- Trainer (oculto en OFF ya que aplica a todo el equipo o a uno) -->
+      <div class="form-group" style="margin-bottom:14px" id="sp-trainer-wrap">
         <label class="form-label">Trainer *</label>
         <select class="form-control" id="sp-trainer">
           <option value="">Seleccionar</option>
@@ -1135,6 +1175,50 @@
         <div class="form-group">
           <label class="form-label">Fecha de cumpleaños *</label>
           <input class="form-control" type="date" id="sp-bday-fecha">
+        </div>
+      </div>
+
+      <!-- Panel Días OFF -->
+      <div id="panel-off" style="display:none">
+        <div style="background:#f1f5f9;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12.5px;color:#475569;line-height:1.5">
+          🚫 Los días OFF bloquean visualmente el calendario. <br>
+          Se <strong>pueden</strong> agregar actividades si es forzoso, pero el día aparecerá marcado como no laborable.
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Fecha inicio *</label>
+            <input class="form-control" type="date" id="sp-off-start">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fecha fin <span style="font-weight:400;color:var(--text-3)">(opcional)</span></label>
+            <input class="form-control" type="date" id="sp-off-end">
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:8px">
+          <label class="form-label">Motivo *</label>
+          <input class="form-control" type="text" id="sp-off-motivo" placeholder="Ej. Día festivo, Semana Santa, Cierre de oficina...">
+        </div>
+        <div class="form-group" style="margin-top:8px">
+          <label class="form-label">¿Aplica a todo el equipo?</label>
+          <div style="display:flex;gap:10px;margin-top:6px">
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer">
+              <input type="radio" name="off-scope" id="off-scope-all" value="all" checked onchange="toggleOffTrainer()">
+              Todo el equipo
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer">
+              <input type="radio" name="off-scope" id="off-scope-one" value="one" onchange="toggleOffTrainer()">
+              Solo un trainer
+            </label>
+          </div>
+        </div>
+        <div id="sp-off-trainer-wrap" style="display:none;margin-top:8px">
+          <label class="form-label">Trainer</label>
+          <select class="form-control" id="sp-off-trainer">
+            <option value="">Seleccionar</option>
+            <option>Mariana</option><option>Andrea</option><option>Joham</option>
+            <option>Diego</option><option>Nidia</option><option>Karen</option>
+            <option>Sofia</option><option>Brenda</option>
+          </select>
         </div>
       </div>
     </div>
@@ -1189,7 +1273,7 @@ const TIPOS_ICON = {
   'Sombreo':'👁️','Reunión':'💬','Seguimiento':'🔁',
   'Desarrollo de material':'🛠️','Planeación':'📋','Llamadas':'📞',
   'Entregable':'📦','Apoyo operativo':'⚙️','Otro':'📌',
-  'Vacaciones':'🏖️','Cumpleaños':'🎂'
+  'Vacaciones':'🏖️','Cumpleaños':'🎂','Día OFF':'🚫'
 };
 
 /* =========================================================
@@ -1462,18 +1546,26 @@ function calcDuracion(ev) {
 ========================================================= */
 
 // Tipos especiales que se manejan como banners en el calendario
-const TIPOS_ESPECIALES = ['Vacaciones', 'Cumpleaños'];
+const TIPOS_ESPECIALES = ['Vacaciones', 'Cumpleaños', 'Día OFF'];
 
 // ── Modal helpers ─────────────────────────────────────────────
 let specialTabActivo = 'vac';
+let specialEditingId = null;
 
 function openSpecialModal(tab) {
+  specialEditingId = null;
   switchSpecialTab(tab || 'vac');
   document.getElementById('sp-trainer').value = '';
   document.getElementById('sp-vac-start').value = '';
   document.getElementById('sp-vac-end').value = '';
   document.getElementById('sp-vac-nota').value = '';
   document.getElementById('sp-bday-fecha').value = '';
+  document.getElementById('sp-off-start').value = '';
+  document.getElementById('sp-off-end').value = '';
+  document.getElementById('sp-off-motivo').value = '';
+  document.getElementById('off-scope-all').checked = true;
+  document.getElementById('sp-off-trainer-wrap').style.display = 'none';
+  document.getElementById('sp-off-trainer').value = '';
   openModal('specialModal');
 }
 
@@ -1481,16 +1573,28 @@ function switchSpecialTab(tab) {
   specialTabActivo = tab;
   document.getElementById('panel-vac').style.display  = tab === 'vac'  ? '' : 'none';
   document.getElementById('panel-bday').style.display = tab === 'bday' ? '' : 'none';
+  document.getElementById('panel-off').style.display  = tab === 'off'  ? '' : 'none';
+  // Ocultar selector de trainer en OFF general (se maneja internamente)
+  document.getElementById('sp-trainer-wrap').style.display = tab === 'off' ? 'none' : '';
   document.getElementById('tab-vac').className  = 'special-tab' + (tab === 'vac'  ? ' active-vac'  : '');
   document.getElementById('tab-bday').className = 'special-tab' + (tab === 'bday' ? ' active-bday' : '');
-  document.getElementById('specialModalIcon').textContent  = tab === 'vac' ? '🏖️' : '🎂';
-  document.getElementById('specialModalTitle').textContent = tab === 'vac' ? 'Nueva Vacación' : 'Nuevo Cumpleaños';
-  document.getElementById('specialModalIcon').style.background = tab === 'vac' ? '#fef3c7' : '#fce7f3';
+  document.getElementById('tab-off').className  = 'special-tab' + (tab === 'off'  ? ' active-off'  : '');
+  const icons  = { vac:'🏖️', bday:'🎂', off:'🚫' };
+  const titles = { vac:'Nueva Vacación', bday:'Nuevo Cumpleaños', off:'Nuevo Día OFF' };
+  const bgs    = { vac:'#fef3c7', bday:'#fce7f3', off:'#f1f5f9' };
+  document.getElementById('specialModalIcon').textContent  = icons[tab]  || '📌';
+  document.getElementById('specialModalTitle').textContent = titles[tab] || '';
+  document.getElementById('specialModalIcon').style.background = bgs[tab] || '#f8f9fc';
+}
+
+function toggleOffTrainer() {
+  const isOne = document.getElementById('off-scope-one').checked;
+  document.getElementById('sp-off-trainer-wrap').style.display = isOne ? '' : 'none';
 }
 
 function saveSpecial() {
   const trainer = document.getElementById('sp-trainer').value;
-  if (!trainer) { showToast('⚠️ Selecciona un trainer', 'warn'); return; }
+  if (!trainer && specialTabActivo !== 'off') { showToast('⚠️ Selecciona un trainer', 'warn'); return; }
 
   let ev;
   if (specialTabActivo === 'vac') {
@@ -1507,7 +1611,7 @@ function saveSpecial() {
       prioridad: '', estatus: '',
       start: s, end: e
     };
-  } else {
+  } else if (specialTabActivo === 'bday') {
     const fecha = document.getElementById('sp-bday-fecha').value;
     if (!fecha) { showToast('⚠️ Ingresa la fecha de cumpleaños', 'warn'); return; }
     ev = {
@@ -1518,13 +1622,43 @@ function saveSpecial() {
       prioridad: '', estatus: '',
       start: fecha, end: fecha
     };
+  } else if (specialTabActivo === 'off') {
+    const s = document.getElementById('sp-off-start').value;
+    const e = document.getElementById('sp-off-end').value;
+    const motivo = document.getElementById('sp-off-motivo').value.trim();
+    const isOne  = document.getElementById('off-scope-one').checked;
+    const offTrainer = isOne ? document.getElementById('sp-off-trainer').value : 'Equipo';
+    if (!s)      { showToast('⚠️ Ingresa la fecha de inicio', 'warn'); return; }
+    if (!motivo) { showToast('⚠️ Ingresa el motivo del día OFF', 'warn'); return; }
+    if (isOne && !offTrainer) { showToast('⚠️ Selecciona el trainer', 'warn'); return; }
+    ev = {
+      id: genId(),
+      title: '🚫 ' + motivo + (isOne ? ' – ' + offTrainer : ''),
+      trainer: offTrainer,
+      tipoActividad: 'Día OFF',
+      modalidad: '', sala: '', area: '',
+      descripcion: motivo,
+      prioridad: '', estatus: '',
+      start: s,
+      end: (e && e !== s) ? e : s
+    };
   }
 
-  eventos.push(ev);
-  apiPost({ action: 'create', evento: ev });
+  if (!ev) return;
+  if (specialEditingId) {
+    ev.id = specialEditingId;
+    const idx = eventos.findIndex(e => e.id === specialEditingId);
+    if (idx > -1) eventos[idx] = ev;
+    apiPost({ action: 'update', evento: ev });
+    showToast('✅ Actualizado correctamente', 'success');
+  } else {
+    eventos.push(ev);
+    apiPost({ action: 'create', evento: ev });
+    showToast('✅ Registrado correctamente', 'success');
+  }
+  specialEditingId = null;
   closeModal('specialModal');
   refreshCalendar();
-  showToast('✅ Registrado correctamente', 'success');
 }
 
 // ── Sidebar: vacaciones & cumpleaños ─────────────────────────
@@ -1610,6 +1744,44 @@ function updateCumpleanos() {
 }
 
 // ── Banners en calendario ─────────────────────────────────────
+
+function updateDiasOff() {
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  const hace7 = new Date(hoy.getTime() - 7 * 86400000);
+
+  const offs = eventos
+    .filter(ev => ev.tipoActividad === 'Día OFF')
+    .filter(ev => new Date((ev.end || ev.start) + 'T23:59:59') >= hace7)
+    .sort((a,b) => new Date(a.start) - new Date(b.start))
+    .slice(0, 8);
+
+  const list = document.getElementById('offList');
+  if (!offs.length) {
+    list.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:4px">Sin días OFF registrados.</div>';
+    return;
+  }
+
+  list.innerHTML = offs.map(ev => {
+    const ini = new Date(ev.start + 'T00:00:00');
+    const fin = new Date((ev.end || ev.start) + 'T00:00:00');
+    const enCurso = ini <= hoy && fin >= hoy;
+    const esFuturo = ini > hoy;
+    const fmtD = d => d.toLocaleDateString('es-MX', { day:'numeric', month:'short' });
+    const rango = ev.start === ev.end ? fmtD(ini) : fmtD(ini) + ' – ' + fmtD(fin);
+    const esEquipo = ev.trainer === 'Equipo';
+    const quien = esEquipo ? '👥 Todo el equipo' : '👤 ' + ev.trainer;
+    return `<div class="off-item${enCurso ? ' hoy' : ''}" onclick="openDetailById('${ev.id}')">
+      <div style="font-size:16px">🚫</div>
+      <div style="flex:1;min-width:0">
+        <div class="off-name">${ev.descripcion || ev.title}</div>
+        <div class="off-dates">${rango} · ${quien}</div>
+      </div>
+      ${enCurso ? '<span class="off-badge">HOY</span>' : ''}
+      ${esFuturo ? '<span class="off-badge" style="background:#0ea5e9">PRÓXIMO</span>' : ''}
+    </div>`;
+  }).join('');
+}
+
 function buildBannerEvents() {
   const hoy = new Date();
   const banners = [];
@@ -1658,6 +1830,37 @@ function buildBannerEvents() {
     });
   });
 
+  // Días OFF — franja gris rayada + banner visible
+  eventos.filter(ev => ev.tipoActividad === 'Día OFF').forEach(ev => {
+    let endFC = ev.end || ev.start;
+    const d = new Date(endFC + 'T00:00:00');
+    d.setDate(d.getDate() + 1);
+    endFC = d.toISOString().slice(0,10);
+
+    // Fondo rayado semitransparente
+    banners.push({
+      id: 'bg-off-' + ev.id,
+      start: ev.start, end: endFC,
+      allDay: true, display: 'background',
+      backgroundColor: 'rgba(148,163,184,.18)',
+      borderColor: 'transparent',
+      extendedProps: { esBanner: true }
+    });
+    // Banner visible
+    const quien = ev.trainer === 'Equipo' ? '' : ' – ' + ev.trainer;
+    banners.push({
+      id: 'vis-off-' + ev.id,
+      title: '🚫 ' + (ev.descripcion || 'Día OFF') + quien,
+      start: ev.start, end: endFC,
+      allDay: true,
+      backgroundColor: '#64748b',
+      borderColor: '#475569',
+      textColor: '#fff',
+      classNames: ['fc-banner-off'],
+      extendedProps: { esBanner: true, tipoEspecial: 'Día OFF', realId: ev.id }
+    });
+  });
+
   return banners;
 }
 
@@ -1678,6 +1881,7 @@ function updateSidebar() {
   updateUpcoming();
   updateVacaciones();
   updateCumpleanos();
+  updateDiasOff();
   updateFilterDropdowns();
 }
 
@@ -2068,6 +2272,44 @@ document.getElementById('editEventBtn').addEventListener('click', () => {
   const ev = eventos.find(e => e.id === currentDetailId);
   if (!ev) return;
   closeModal('detailModal');
+
+  // Tipos especiales abren su propio modal
+  if (ev.tipoActividad === 'Vacaciones') {
+    openSpecialModal('vac');
+    specialEditingId = ev.id;
+    document.getElementById('sp-trainer').value = ev.trainer;
+    document.getElementById('sp-vac-start').value = ev.start.slice(0,10);
+    document.getElementById('sp-vac-end').value = (ev.end || ev.start).slice(0,10);
+    document.getElementById('sp-vac-nota').value = ev.descripcion || '';
+    document.getElementById('specialModalTitle').textContent = 'Editar Vacación';
+    return;
+  }
+
+  if (ev.tipoActividad === 'Cumpleaños') {
+    openSpecialModal('bday');
+    specialEditingId = ev.id;
+    document.getElementById('sp-trainer').value = ev.trainer;
+    document.getElementById('sp-bday-fecha').value = ev.start.slice(0,10);
+    document.getElementById('specialModalTitle').textContent = 'Editar Cumpleaños';
+    return;
+  }
+
+  if (ev.tipoActividad === 'Día OFF') {
+    openSpecialModal('off');
+    specialEditingId = ev.id;
+    document.getElementById('sp-off-start').value = ev.start.slice(0,10);
+    document.getElementById('sp-off-end').value = (ev.end || ev.start).slice(0,10);
+    document.getElementById('sp-off-motivo').value = ev.descripcion || '';
+    const esEquipo = ev.trainer === 'Equipo';
+    document.getElementById('off-scope-all').checked = esEquipo;
+    document.getElementById('off-scope-one').checked = !esEquipo;
+    document.getElementById('sp-off-trainer-wrap').style.display = esEquipo ? 'none' : '';
+    if (!esEquipo) document.getElementById('sp-off-trainer').value = ev.trainer;
+    document.getElementById('specialModalTitle').textContent = 'Editar Día OFF';
+    return;
+  }
+
+  // Actividades normales → formulario estándar
   editingId = ev.id;
   document.getElementById('formModalTitle').textContent = 'Editar actividad';
   document.getElementById('saveEventBtn').textContent = '✓ Guardar cambios';
@@ -2077,7 +2319,6 @@ document.getElementById('editEventBtn').addEventListener('click', () => {
   document.getElementById('f-form-tipo').value = ev.tipoActividad;
   document.getElementById('f-form-title').value = ev.title;
   document.getElementById('f-form-date').value = ev.start.slice(0, 10);
-  // Fecha fin: si allday y hay end, restar 1 día (FC es exclusivo)
   if (isAllDayEv && ev.end && ev.end !== ev.start) {
     const d = new Date(ev.end + 'T00:00:00');
     d.setDate(d.getDate() - 1);
@@ -2314,6 +2555,9 @@ document.addEventListener('DOMContentLoaded', () => {
         openDetailById(realId);
       } else if (id.startsWith('vis-bday-')) {
         const realId = id.replace('vis-bday-', '').replace(/-\d+$/, '');
+        openDetailById(realId);
+      } else if (id.startsWith('vis-off-')) {
+        const realId = id.replace('vis-off-', '');
         openDetailById(realId);
       } else {
         openDetailById(id);
