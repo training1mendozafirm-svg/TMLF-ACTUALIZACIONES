@@ -657,6 +657,12 @@
       font-size: 11px !important;
     }
 
+
+    /* Trainer secundario */
+    .t2-row { display: flex; flex-direction: column; gap: 8px; }
+    .t2-manual-hidden { display: none !important; }
+    .t2-manual-visible { display: block !important; }
+
     /* Modal especial vacaciones/cumpleaños */
     #specialModal .modal { max-width: 480px; }
     .special-form-tabs {
@@ -829,7 +835,7 @@
       <div class="form-section-title">👤 Responsable</div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Trainer *</label>
+          <label class="form-label">Trainer principal *</label>
           <select class="form-control" id="f-form-trainer">
             <option value="">Seleccionar</option>
             <option>Mariana</option>
@@ -861,6 +867,31 @@
             <option>Cumpleaños</option>
             <option>Otro</option>
           </select>
+        </div>
+      </div>
+
+      <!-- Trainer secundario -->
+      <div style="margin-bottom:14px">
+        <label class="form-label" style="display:block;margin-bottom:5px">👥 Trainer secundario <span style="font-weight:400;color:var(--text-3)">(opcional)</span></label>
+        <div class="t2-row">
+          <select class="form-control" id="f-form-trainer2" onchange="onTrainer2Change(this.value)">
+            <option value="">— Sin trainer secundario —</option>
+            <option>Mariana</option>
+            <option>Andrea</option>
+            <option>Joham</option>
+            <option>Diego</option>
+            <option>Nidia</option>
+            <option>Karen</option>
+            <option>Sofia</option>
+            <option>Brenda</option>
+            <option value="__otro__">✏️ Otro (escribir nombre)</option>
+          </select>
+          <div id="t2-manual-wrap" class="t2-manual-hidden">
+            <label class="form-label" style="color:#d97706;margin-bottom:4px;display:block">✏️ Escribe el nombre</label>
+            <input class="form-control" type="text" id="f-form-trainer2-manual" 
+              placeholder="Nombre completo del trainer externo..."
+              style="border:2px dashed #f59e0b;background:#fffbeb">
+          </div>
         </div>
       </div>
 
@@ -1172,7 +1203,7 @@ const TIPOS_ICON = {
 // Mientras no haya URL configurada, usa datos demo locales.
 // =========================================================
 
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw-7V-Kxw7kME2bXgJFTELde057DsCpb-Kg6zIN3-2rCfNsui4O9tNpgWY4culjLziTDw/exec';
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzGIYK7PD6f988LDPr_Jk927X8RiaYLXxBvRLGUx066ouTEwXbfqwba8hQwmGnygpRHPw/exec';
 
 // Datos demo — solo se usan si WEB_APP_URL está vacío
 const EVENTOS_DEMO = [
@@ -1829,6 +1860,26 @@ function setupAlldayToggle() {
   });
 }
 
+function onTrainer2Change(val) {
+  const wrap = document.getElementById('t2-manual-wrap');
+  if (val === '__otro__') {
+    wrap.classList.remove('t2-manual-hidden');
+    wrap.classList.add('t2-manual-visible');
+    setTimeout(() => document.getElementById('f-form-trainer2-manual').focus(), 50);
+  } else {
+    wrap.classList.remove('t2-manual-visible');
+    wrap.classList.add('t2-manual-hidden');
+    document.getElementById('f-form-trainer2-manual').value = '';
+  }
+}
+
+function getTrainer2Value() {
+  const sel = document.getElementById('f-form-trainer2').value;
+  if (!sel) return '';
+  if (sel === '__otro__') return document.getElementById('f-form-trainer2-manual').value.trim();
+  return sel;
+}
+
 function selectPriority(el, cls) {
   document.querySelectorAll('.priority-pill').forEach(p => p.className = 'priority-pill');
   if (el) {
@@ -1878,6 +1929,7 @@ function saveEvento() {
     id: editingId || genId(),
     title,
     trainer,
+    trainer2: getTrainer2Value(),
     tipoActividad: tipo,
     modalidad: document.getElementById('f-form-modalidad').value || '—',
     sala: document.getElementById('f-form-sala').value || '—',
@@ -1934,7 +1986,8 @@ function openDetailById(id) {
   // Header
   document.getElementById('detailTitle').textContent = ev.title;
   document.getElementById('detailTipo').textContent = (TIPOS_ICON[ev.tipoActividad] || '📌') + ' ' + (ev.tipoActividad || '—');
-  document.getElementById('detailTrainerBadge').innerHTML = '👤 ' + ev.trainer;
+  const t2 = ev.trainer2 ? ` <span style="opacity:.8;font-size:11px">+ ${ev.trainer2}</span>` : '';
+  document.getElementById('detailTrainerBadge').innerHTML = '👤 ' + ev.trainer + t2;
   document.getElementById('detailTrainerBadge').style.background = color;
 
   // Dates
@@ -2179,7 +2232,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Tooltip
       const tooltipHTML = `
         <div style="font-weight:700;font-size:12.5px;margin-bottom:5px">${icon} ${p.title || arg.event.title}</div>
-        <div style="opacity:.85;font-size:11px;margin-bottom:2px">👤 ${p.trainer || '—'} · ${p.tipoActividad || '—'}</div>
+        <div style="opacity:.85;font-size:11px;margin-bottom:2px">👤 ${p.trainer || '—'}${p.trainer2 ? ' + ' + p.trainer2 : ''} · ${p.tipoActividad || '—'}</div>
         <div style="opacity:.85;font-size:11px;margin-bottom:2px">🕐 ${scheduleStr}${dur ? ' · ' + dur : ''}</div>
         <div style="opacity:.85;font-size:11px;margin-bottom:2px">📍 ${p.sala || '—'} · ${p.modalidad || '—'}</div>
         <div style="margin-top:5px;font-size:11px">${prioDot} Prioridad ${prioLabel}</div>
@@ -2226,7 +2279,7 @@ document.addEventListener('DOMContentLoaded', () => {
         white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
         line-height:1.2;
       `;
-      trainerLine.textContent = `👤 ${p.trainer || '—'}`;
+      trainerLine.textContent = p.trainer2 ? `👤 ${p.trainer} + ${p.trainer2}` : `👤 ${p.trainer || '—'}`;
 
       // Línea 3 — horario
       const timeLine = document.createElement('div');
