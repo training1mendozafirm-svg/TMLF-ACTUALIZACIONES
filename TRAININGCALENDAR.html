@@ -994,7 +994,7 @@
       <div class="form-row full">
         <div class="form-group">
           <label class="form-label">🔗 Link de la actividad</label>
-          <input class="form-control" type="url" id="f-form-link" placeholder="https://meet.google.com/... · Zoom · Teams · Drive...">
+          <input class="form-control" type="text" id="f-form-link" placeholder="https://meet.google.com/... · Zoom · Teams · Drive...">
         </div>
       </div>
 
@@ -1094,6 +1094,11 @@
         </div>
       </div>
       <div class="detail-desc" id="d-desc" style="display:none"></div>
+      <!-- Link field en el grid -->
+      <div id="d-link-field" class="detail-field" style="display:none;grid-column:1/-1">
+        <div class="detail-field-label">🔗 Link de la actividad</div>
+        <div class="detail-field-value" id="d-link-field-val" style="word-break:break-all;color:var(--accent)"></div>
+      </div>
       <div id="d-link-wrap" style="display:none;margin-top:12px">
         <a id="d-link" href="#" target="_blank" rel="noopener"
            style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;
@@ -1255,6 +1260,15 @@ const TRAINERS = {
   'Brenda':  '#f59e0b',   /* ámbar */
 };
 
+// Parsea fechas siempre en hora local (evita desfase UTC)
+function parseLocal(str) {
+  if (!str) return new Date(NaN);
+  // Si ya tiene T (datetime), parsear directo
+  if (str.includes('T')) return new Date(str);
+  // Si es solo fecha (YYYY-MM-DD), agregar T00:00 para forzar local
+  return new Date(str + 'T00:00:00');
+}
+
 function trainerColor(name) {
   return TRAINERS[name] || '#6b7280';
 }
@@ -1287,7 +1301,7 @@ const TIPOS_ICON = {
 // Mientras no haya URL configurada, usa datos demo locales.
 // =========================================================
 
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzGIYK7PD6f988LDPr_Jk927X8RiaYLXxBvRLGUx066ouTEwXbfqwba8hQwmGnygpRHPw/exec';
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzkoXsibjW7llQSRK7Tr6ClMnAudIWvDjGGaCwO6OfnVMRNLYTmNYFENOGGARlbWzJmIg/exec';
 
 // Datos demo — solo se usan si WEB_APP_URL está vacío
 const EVENTOS_DEMO = [
@@ -1528,12 +1542,12 @@ function calcDuracion(ev) {
   const isAllDay = !ev.start.includes('T');
   if (isAllDay) {
     if (!ev.end || ev.end === ev.start) return '1 día';
-    const ms = new Date(ev.end) - new Date(ev.start);
+    const ms = parseLocal(ev.end) - parseLocal(ev.start);
     const days = Math.round(ms / 86400000) + 1;
     return days + (days === 1 ? ' día' : ' días');
   } else {
     if (!ev.end || !ev.end.includes('T')) return null;
-    const ms = new Date(ev.end) - new Date(ev.start);
+    const ms = parseLocal(ev.end) - parseLocal(ev.start);
     const mins = Math.round(ms / 60000);
     if (mins < 60) return mins + ' min';
     const hrs = (mins / 60).toFixed(1).replace('.0','');
@@ -1672,7 +1686,7 @@ function updateVacaciones() {
     .filter(ev => ev.tipoActividad === 'Vacaciones')
     .filter(ev => {
       const fin = new Date((ev.end || ev.start) + 'T23:59:59');
-      const ini = new Date(ev.start + 'T00:00:00');
+      const ini = parseLocal(ev.start);
       return fin >= hace7; // futuras, en curso, o terminadas hace menos de 7 días
     })
     .sort((a,b) => new Date(a.start) - new Date(b.start))
@@ -1685,8 +1699,8 @@ function updateVacaciones() {
   }
 
   list.innerHTML = vacs.map(ev => {
-    const ini = new Date(ev.start + 'T00:00:00');
-    const fin = new Date((ev.end || ev.start) + 'T00:00:00');
+    const ini = parseLocal(ev.start);
+    const fin = parseLocal(ev.end || ev.start);
     const enCurso = ini <= hoy && fin >= hoy;
     const fmtD = d => d.toLocaleDateString('es-MX', { day:'numeric', month:'short' });
     const rango = ev.start === ev.end ? fmtD(ini) : fmtD(ini) + ' – ' + fmtD(fin);
@@ -1710,7 +1724,7 @@ function updateCumpleanos() {
   const bdays = eventos
     .filter(ev => ev.tipoActividad === 'Cumpleaños')
     .map(ev => {
-      const orig = new Date(ev.start + 'T00:00:00');
+      const orig = parseLocal(ev.start);
       // Próxima ocurrencia: este año o el siguiente
       let proxima = new Date(hoy.getFullYear(), orig.getMonth(), orig.getDate());
       if (proxima < hoy) proxima.setFullYear(proxima.getFullYear() + 1);
@@ -1762,8 +1776,8 @@ function updateDiasOff() {
   }
 
   list.innerHTML = offs.map(ev => {
-    const ini = new Date(ev.start + 'T00:00:00');
-    const fin = new Date((ev.end || ev.start) + 'T00:00:00');
+    const ini = parseLocal(ev.start);
+    const fin = parseLocal(ev.end || ev.start);
     const enCurso = ini <= hoy && fin >= hoy;
     const esFuturo = ini > hoy;
     const fmtD = d => d.toLocaleDateString('es-MX', { day:'numeric', month:'short' });
@@ -1810,7 +1824,7 @@ function buildBannerEvents() {
 
   // Cumpleaños — mostrar solo este año y el próximo
   eventos.filter(ev => ev.tipoActividad === 'Cumpleaños').forEach(ev => {
-    const orig = new Date(ev.start + 'T00:00:00');
+    const orig = parseLocal(ev.start);
     [0, 1].forEach(offset => {
       const fecha = new Date(hoy.getFullYear() + offset, orig.getMonth(), orig.getDate());
       const fechaStr = fecha.toISOString().slice(0,10);
@@ -1892,7 +1906,7 @@ function updateKPIs() {
   const semana = new Date(now.getTime() + 7 * 86400000);
 
   const delMes = eventosFiltrados().filter(ev => {
-    const d = new Date(ev.start);
+    const d = parseLocal(ev.start);
     return d.getMonth() === mesAct && d.getFullYear() === anio;
   });
   const trainings = delMes.filter(ev =>
@@ -1903,7 +1917,7 @@ function updateKPIs() {
     ev.estatus === 'Planeado' || ev.estatus === 'Confirmado'
   );
   const proximas = eventosFiltrados().filter(ev => {
-    const d = new Date(ev.start);
+    const d = parseLocal(ev.start);
     return d >= now && d <= semana;
   });
 
@@ -1956,8 +1970,8 @@ function updateUpcoming() {
   const now = new Date();
   const semana = new Date(now.getTime() + 7 * 86400000);
   const prox = eventosFiltrados()
-    .filter(ev => { const d = new Date(ev.start); return d >= now && d <= semana; })
-    .sort((a, b) => new Date(a.start) - new Date(b.start))
+    .filter(ev => { const d = parseLocal(ev.start); return d >= now && d <= semana; })
+    .sort((a, b) => parseLocal(a.start) - parseLocal(b.start))
     .slice(0, 5);
 
   const list = document.getElementById('upcomingList');
@@ -1966,7 +1980,7 @@ function updateUpcoming() {
     return;
   }
   list.innerHTML = prox.map(ev => {
-    const d = new Date(ev.start);
+    const d = parseLocal(ev.start);
     const fecha = d.toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short' });
     const hora = d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false });
     const color = trainerColor(ev.trainer);
@@ -2141,7 +2155,11 @@ function saveEvento() {
     descripcion: document.getElementById('f-form-desc').value,
     prioridad: document.getElementById('f-form-prioridad').value || 'Media',
     estatus: document.getElementById('f-form-estatus').value || 'Planeado',
-    link: document.getElementById('f-form-link').value.trim() || '',
+    link: (() => {
+      let l = document.getElementById('f-form-link').value.trim();
+      if (l && !l.startsWith('http://') && !l.startsWith('https://')) l = 'https://' + l;
+      return l;
+    })(),
     start: startStr,
     end: endStr
   };
@@ -2196,8 +2214,8 @@ function openDetailById(id) {
 
   // Dates
   const isAllDay = !ev.start.includes('T');
-  const start = new Date(isAllDay ? ev.start + 'T00:00:00' : ev.start);
-  const end = ev.end ? new Date(ev.end.includes('T') ? ev.end : ev.end + 'T00:00:00') : null;
+  const start = parseLocal(ev.start);
+  const end = ev.end ? parseLocal(ev.end) : null;
 
   document.getElementById('d-fecha').textContent = start.toLocaleDateString('es-MX',
     { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
@@ -2239,17 +2257,30 @@ function openDetailById(id) {
   const linkEl = document.getElementById('d-link');
   const linkText = document.getElementById('d-link-text');
   if (ev.link && ev.link.trim()) {
-    linkEl.href = ev.link;
-    // Display a short label (domain) as the link text
+    const rawLink = ev.link.trim();
+    const fullLink = rawLink.startsWith('http') ? rawLink : 'https://' + rawLink;
+    linkEl.href = fullLink;
     try {
-      const domain = new URL(ev.link).hostname.replace('www.','');
+      const domain = new URL(fullLink).hostname.replace('www.','');
       linkText.textContent = 'Abrir enlace · ' + domain;
     } catch(e) {
-      linkText.textContent = ev.link.slice(0, 60) + (ev.link.length > 60 ? '…' : '');
+      linkText.textContent = rawLink.slice(0, 60) + (rawLink.length > 60 ? '…' : '');
     }
     linkWrap.style.display = 'block';
   } else {
     linkWrap.style.display = 'none';
+  }
+
+  // Link field en grid
+  const linkField = document.getElementById('d-link-field');
+  const linkFieldVal = document.getElementById('d-link-field-val');
+  if (ev.link && ev.link.trim()) {
+    const rawLink = ev.link.trim();
+    const fullLink = rawLink.startsWith('http') ? rawLink : 'https://' + rawLink;
+    linkFieldVal.innerHTML = `<a href="${fullLink}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline">${rawLink}</a>`;
+    linkField.style.display = '';
+  } else {
+    linkField.style.display = 'none';
   }
 
   document.getElementById('detailIcon').textContent = TIPOS_ICON[ev.tipoActividad] || '📋';
@@ -2320,7 +2351,7 @@ document.getElementById('editEventBtn').addEventListener('click', () => {
   document.getElementById('f-form-title').value = ev.title;
   document.getElementById('f-form-date').value = ev.start.slice(0, 10);
   if (isAllDayEv && ev.end && ev.end !== ev.start) {
-    const d = new Date(ev.end + 'T00:00:00');
+    const d = parseLocal(ev.end);
     d.setDate(d.getDate() - 1);
     document.getElementById('f-form-date-end').value = d.toISOString().slice(0,10);
   } else if (!isAllDayEv && ev.end && !ev.end.includes('T')) {
