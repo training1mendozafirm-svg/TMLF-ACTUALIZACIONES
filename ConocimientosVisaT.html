@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+<title>Evaluación VISA T | Plataforma de Capacitación</title>
+<style>
+:root{
+  --ink:#0B0F1A;--ink-mid:#131929;--ink-soft:#1C2438;--ink-card:#171E30;
+  --gold:#C9A84C;--gold-lt:#E4C96A;--gold-dim:rgba(201,168,76,.13);
+  --border:rgba(201,168,76,.2);--border-hi:rgba(201,168,76,.5);
+  --white:#fff;--text:#E8EDF5;--muted:rgba(232,237,245,.5);--dim:rgba(232,237,245,.22);
+  --success:#34D399;--danger:#F87171;--warn:#FBBF24;--r:12px;--r-sm:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:var(--ink);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.65}
+.hidden{display:none!important}
+.req{color:var(--gold)}
+.screen{display:none;min-height:100vh}
+.screen.active{display:flex;flex-direction:column}
+.bg-grid{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(201,168,76,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,.05) 1px,transparent 1px);background-size:52px 52px}
+.bg-glow{position:fixed;pointer-events:none;z-index:0;border-radius:50%;filter:blur(130px);opacity:.4}
+.bg-glow-1{width:700px;height:700px;top:-250px;right:-150px;background:radial-gradient(circle,rgba(201,168,76,.22),transparent 70%);animation:gf 9s ease-in-out infinite alternate}
+.bg-glow-2{width:500px;height:500px;bottom:-120px;left:-100px;background:radial-gradient(circle,rgba(20,50,110,.5),transparent 70%);animation:gf 13s ease-in-out infinite alternate-reverse}
+@keyframes gf{from{transform:translate(0,0) scale(1)}to{transform:translate(28px,18px) scale(1.07)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+/* IDENTIFICACION */
+#screen-identification.active{display:grid;grid-template-columns:1fr 1fr;position:relative}
+.id-left{position:relative;z-index:1;display:flex;align-items:center;padding:64px 52px 64px 68px;border-right:1px solid var(--border)}
+.id-left-inner{display:flex;flex-direction:column;gap:44px;max-width:420px;animation:fadeUp .6s ease both}
+.brand{display:flex;align-items:center;gap:16px}
+.brand-org{font-size:.72rem;font-weight:700;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;display:block}
+.brand-sub{font-size:.7rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;display:block}
+.hero{display:flex;flex-direction:column;gap:14px}
+.hero-tag{font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:10px}
+.hero-tag::before{content:'';display:inline-block;width:28px;height:1px;background:var(--gold)}
+.hero-title{font-family:Georgia,'Times New Roman',serif;font-size:clamp(2.2rem,3.8vw,3.2rem);font-weight:700;line-height:1.1;color:var(--white)}
+.hero-title em{font-style:italic;color:var(--gold-lt)}
+.hero-desc{font-size:.9rem;color:var(--muted);line-height:1.8}
+.hero-desc strong{color:var(--text)}
+.hero-note{font-size:.8rem;color:var(--gold-lt);font-style:italic;margin-top:2px}
+.rules{display:flex;flex-direction:column;gap:14px;padding-top:24px;border-top:1px solid var(--border)}
+.rule{display:flex;align-items:flex-start;gap:14px;font-size:.84rem;color:var(--muted)}
+.rule-n{font-family:Georgia,serif;font-size:.7rem;color:var(--gold);font-weight:700;flex-shrink:0;margin-top:3px;letter-spacing:.06em}
+.rule em{color:var(--gold-lt);font-style:normal}
+.rules-title{font-size:.65rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.rules-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.rule-hi{background:rgba(201,168,76,.05);border-radius:var(--r-sm);padding:10px 12px;border-left:2px solid var(--gold)}
+.rule-warn{background:rgba(251,191,36,.08);border-radius:var(--r-sm);padding:10px 12px;border-left:2px solid var(--warn);color:var(--text)!important}
+.rule-warn .rule-n{color:var(--warn)!important}
+.rule-warn strong{color:var(--warn)}
+.rule-danger{background:rgba(248,113,113,.07);border-radius:var(--r-sm);padding:10px 12px;border-left:2px solid var(--danger)}
+.rule-danger .rule-n{color:var(--danger)!important}
+.rule-danger strong{color:var(--danger)}
+.id-right{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;padding:64px 68px 64px 52px}
+.id-card{width:100%;max-width:430px;background:var(--ink-card);border:1px solid var(--border);border-radius:var(--r);padding:42px 40px;box-shadow:0 32px 72px rgba(0,0,0,.5),inset 0 1px 0 rgba(201,168,76,.12);animation:fadeUp .7s ease .1s both}
+.card-tag{font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.card-title{font-family:Georgia,serif;font-size:1.75rem;font-weight:700;color:var(--white);line-height:1.15;margin-bottom:6px}
+.card-desc{font-size:.82rem;color:var(--muted);margin-bottom:32px}
+.form{display:flex;flex-direction:column;gap:20px}
+.fgrp{display:flex;flex-direction:column;gap:7px}
+.fgrp label{font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;gap:6px}
+.lbl-ico{color:var(--gold);font-size:.7rem}
+.finput,.fselect{width:100%;background:var(--ink-soft);border:1px solid var(--border);border-radius:var(--r-sm);padding:13px 16px;font-family:inherit;font-size:.95rem;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;appearance:none}
+.finput::placeholder{color:var(--dim)}
+.finput:focus,.fselect:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+.sel-wrap{position:relative}
+.fselect{padding-right:40px;cursor:pointer}
+.sel-arr{position:absolute;right:14px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--gold)}
+.fselect option{background:var(--ink-mid);color:var(--text)}
+.ct-toggle{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ct-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 10px;background:var(--ink-soft);border:1.5px solid var(--border);border-radius:var(--r-sm);cursor:pointer;transition:all .18s;text-align:center;font-family:inherit;width:100%}
+.ct-btn:hover{border-color:var(--border-hi);background:rgba(201,168,76,.06)}
+.ct-btn.active{border-color:var(--gold);background:var(--gold-dim);box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+.ct-icon{font-size:1.6rem;line-height:1}
+.ct-label{font-size:.82rem;font-weight:700;color:var(--text);line-height:1.3}
+.ct-btn.active .ct-label{color:var(--gold-lt)}
+.ct-sub{font-size:.65rem;color:var(--dim);letter-spacing:.04em;line-height:1.4}
+.ct-btn.active .ct-sub{color:var(--gold);opacity:.8}
+.f-error{display:flex;align-items:center;gap:8px;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:var(--danger);border-radius:var(--r-sm);padding:10px 14px;font-size:.82rem;font-weight:500}
+.btn-main{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--gold);color:var(--ink);border:none;border-radius:var(--r-sm);padding:15px 18px 15px 24px;font-family:inherit;font-size:.95rem;font-weight:700;cursor:pointer;transition:background .2s,transform .2s,box-shadow .2s}
+.btn-main:hover{background:var(--gold-lt);transform:translateY(-2px);box-shadow:0 10px 28px rgba(201,168,76,.35)}
+.btn-main-ico{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-foot{margin-top:28px;padding-top:20px;border-top:1px solid var(--border);font-size:.7rem;color:var(--dim);text-align:center}
+/* EXAMEN */
+#screen-exam.active{display:flex;flex-direction:column;background:var(--ink)}
+.exam-bar{position:sticky;top:0;z-index:100;background:var(--ink-mid);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:20px;padding:0 28px;height:66px;box-shadow:0 4px 28px rgba(0,0,0,.4);flex-shrink:0}
+.eb-brand-lbl{font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.eb-brand-lbl strong{color:var(--gold)}
+.eb-prog{flex:1;display:flex;flex-direction:column;gap:5px;max-width:340px}
+.eb-name{font-size:.74rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eb-bar-row{display:flex;align-items:center;gap:10px}
+.eb-bar{flex:1;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.eb-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-lt));border-radius:2px;transition:width .4s ease;width:0%}
+.eb-count{font-size:.72rem;font-weight:700;color:var(--gold);white-space:nowrap}
+.eb-timer{display:flex;align-items:center;gap:14px;flex-shrink:0;background:rgba(201,168,76,.06);border:1px solid var(--border);border-radius:10px;padding:8px 20px 8px 12px}
+.t-ring-wrap{flex-shrink:0}
+.t-ring{width:56px;height:56px}
+.t-info{display:flex;flex-direction:column;gap:2px}
+.t-lbl{font-size:.58rem;font-weight:700;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;display:block}
+.t-digs{font-family:'Courier New',monospace;font-size:2rem;font-weight:700;color:var(--gold-lt);letter-spacing:.06em;line-height:1;display:block;transition:color .3s}
+.eb-sep{width:1px;height:40px;background:var(--border);flex-shrink:0;margin:0 8px}
+.eb-timer.warn{border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.07)}
+.eb-timer.warn .t-digs{color:var(--warn)}
+.eb-timer.danger{border-color:rgba(248,113,113,.4);background:rgba(248,113,113,.07)}
+.eb-timer.danger .t-digs{color:var(--danger);animation:blink .7s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.exam-body{flex:1;display:grid;grid-template-columns:210px 1fr}
+.q-map{border-right:1px solid var(--border);padding:28px 18px;display:flex;flex-direction:column;gap:20px;background:rgba(0,0,0,.18)}
+.qmap-ttl{font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.qmap-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.nav-dot{aspect-ratio:1;border-radius:6px;background:var(--ink-soft);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:600;color:var(--dim);cursor:pointer;transition:all .18s}
+.nav-dot:hover{border-color:var(--border-hi);color:var(--text)}
+.nav-dot.answered{background:var(--gold-dim);border-color:var(--gold);color:var(--gold-lt)}
+.nav-dot.current{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.nav-dot.is-case{border-style:dashed}
+.qmap-leg{display:flex;flex-direction:column;gap:8px;margin-top:auto}
+.ql-row{display:flex;align-items:center;gap:8px;font-size:.7rem;color:var(--dim)}
+.ql-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.ql-dot-ans{background:var(--gold-dim);border:1px solid var(--gold)}
+.ql-dot-cur{background:var(--gold)}
+.ql-dot-emp{background:var(--ink-soft);border:1px solid var(--border)}
+.q-main{display:flex;flex-direction:column;padding:36px 44px;gap:24px}
+.q-card{background:var(--ink-card);border:1px solid var(--border);border-radius:var(--r);padding:38px 42px;box-shadow:0 8px 40px rgba(0,0,0,.35);animation:fadeUp .25s ease both}
+.q-top{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.q-badge{background:var(--gold-dim);border:1px solid var(--border-hi);color:var(--gold-lt);font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:20px}
+.q-badge.is-case{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3);color:var(--success)}
+.q-format{font-size:.68rem;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+.q-of{font-size:.78rem;color:var(--dim)}
+.case-scenario{background:rgba(201,168,76,.07);border:1px solid var(--border-hi);border-radius:var(--r-sm);padding:16px 18px;margin-bottom:24px}
+.case-scenario-lbl{display:block;font-size:.63rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.case-scenario p{font-size:.87rem;color:var(--muted);line-height:1.8}
+.q-text{font-family:Georgia,'Times New Roman',serif;font-size:1.15rem;font-weight:600;color:var(--white);line-height:1.6;margin-bottom:28px}
+.q-opts{display:flex;flex-direction:column;gap:10px}
+.q-opt{display:flex;align-items:flex-start;gap:14px;padding:15px 18px;background:var(--ink-soft);border:1px solid var(--border);border-radius:var(--r-sm);cursor:pointer;transition:all .18s;user-select:none}
+.q-opt:hover{border-color:var(--border-hi);background:rgba(201,168,76,.06)}
+.q-opt.selected{border-color:var(--gold);background:var(--gold-dim);box-shadow:0 0 0 3px rgba(201,168,76,.1)}
+.q-opt.disabled{pointer-events:none}
+.opt-mk{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:var(--dim);flex-shrink:0;margin-top:1px;transition:all .18s}
+.q-opt.selected .opt-mk{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.opt-txt{font-size:.88rem;color:var(--text);line-height:1.6}
+.q-nav{display:flex;align-items:center;justify-content:flex-start;gap:12px}
+.q-nav .btn-submit-ex{margin-left:auto}
+.btn-nav{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:var(--r-sm);font-family:inherit;font-size:.88rem;font-weight:500;cursor:pointer;border:none;transition:all .18s}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover:not(:disabled){border-color:var(--border-hi);color:var(--text)}
+.btn-ghost:disabled{opacity:.28;cursor:not-allowed}
+.btn-gold{background:rgba(201,168,76,.12);border:1px solid var(--border-hi);color:var(--gold-lt)}
+.btn-gold:hover{background:rgba(201,168,76,.22)}
+.btn-submit-ex{display:inline-flex;align-items:center;gap:8px;padding:11px 24px;border-radius:var(--r-sm);background:linear-gradient(135deg,#1a6e4a,#22a96e);color:#fff;border:none;font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;box-shadow:0 4px 18px rgba(26,127,90,.3);transition:all .18s}
+.btn-submit-ex:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(26,127,90,.4)}
+/* RESULTADOS */
+#screen-results.active{display:flex;align-items:center;justify-content:center;position:relative;background:var(--ink)}
+.res-outer{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;padding:60px 20px;width:100%}
+.res-card{background:var(--ink-card);border:1px solid var(--border);border-radius:var(--r);padding:52px 56px;max-width:560px;width:100%;box-shadow:0 40px 80px rgba(0,0,0,.55),inset 0 1px 0 rgba(201,168,76,.12);animation:fadeUp .5s ease both}
+.res-hero{text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:30px}
+.res-eyebrow{font-size:.65rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.res-title{font-family:Georgia,serif;font-size:1.95rem;font-weight:700;color:var(--white)}
+.res-sub{font-size:.86rem;color:var(--muted);max-width:340px;text-align:center}
+.res-divider{text-align:center;position:relative;margin:26px 0;color:var(--gold);font-size:.62rem;letter-spacing:.2em}
+.res-divider::before,.res-divider::after{content:'';position:absolute;top:50%;width:30%;height:1px;background:var(--border)}
+.res-divider::before{left:0}.res-divider::after{right:0}
+.res-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px}
+.rgi{background:var(--ink-soft);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.rgi-lbl{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.rgi-val{font-size:.92rem;font-weight:500;color:var(--text)}
+.res-score{background:linear-gradient(135deg,rgba(201,168,76,.09),rgba(201,168,76,.04));border:1px solid var(--border-hi);border-radius:var(--r-sm);padding:28px 24px;text-align:center;margin-bottom:22px}
+.rs-lbl{font-size:.63rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:block}
+.rs-num{font-family:Georgia,serif;font-size:3.4rem;font-weight:900;color:var(--gold-lt);line-height:1;margin-bottom:12px;display:block}
+.rs-status{display:inline-block;padding:6px 18px;border-radius:20px;font-size:.82rem;font-weight:600}
+.rs-pass{background:rgba(52,211,153,.1);color:var(--success);border:1px solid rgba(52,211,153,.25)}
+.rs-fail{background:rgba(248,113,113,.1);color:var(--danger);border:1px solid rgba(248,113,113,.25)}
+.res-foot{font-size:.7rem;color:var(--dim);text-align:center;border-top:1px solid var(--border);padding-top:18px}
+/* OVERLAY */
+.overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px}
+.ov-card{background:var(--ink-card);border:1px solid rgba(251,191,36,.4);border-radius:var(--r);padding:44px 40px;max-width:380px;width:100%;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.6);animation:fadeUp .25s ease both}
+.ov-ico{font-size:3rem;margin-bottom:16px}
+.ov-title{font-family:Georgia,serif;font-size:1.55rem;font-weight:700;color:var(--warn);margin-bottom:10px}
+.ov-msg{font-size:.88rem;color:var(--muted);line-height:1.7;margin-bottom:24px}
+@media(max-width:900px){
+  #screen-identification.active{grid-template-columns:1fr}
+  .id-left{display:none}
+  .id-right{padding:40px 24px}
+  .exam-body{grid-template-columns:1fr}
+  .q-map{display:none}
+  .q-main{padding:24px 20px}
+  .q-card{padding:24px 20px}
+  .exam-bar{flex-wrap:wrap;height:auto;padding:10px 16px}
+  .res-card{padding:36px 22px}
+  .res-grid{grid-template-columns:1fr}
+}
+/* ── FEEDBACK STYLES ── */
+
+.feedback-box { display: none; }
+
+
+/* ── FEEDBACK GLOBAL ── */
+.feedback-global { margin-top: 2rem; background: #fff; border: 0.5px solid rgba(0,0,0,0.13); border-radius: 12px; padding: 2rem; }
+
+.feedback-global-title { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5f5e5a; margin-bottom: 1.25rem; }
+
+.feedback-block { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 0.5px solid rgba(0,0,0,0.08); }
+
+.feedback-block:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+.feedback-block-label { font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px; }
+
+.feedback-block-label.pcr { color: #854F0B; }
+
+.feedback-block-label.pwc { color: #185FA5; }
+
+.feedback-block-text { font-size: 14px; color: #2c2c2a; line-height: 1.8; }
+
+.feedback-perfect { text-align: center; padding: 1rem 0; font-size: 14px; color: #27500A; }
+.score-card { background: #fff; border: 0.5px solid rgba(0,0,0,0.13); border-radius: 12px; padding: 2.5rem; text-align: center; }
+.score-msg { font-size: 14px; color: #1a1a18; line-height: 1.75; max-width: 500px; margin: 0 auto 1.5rem; }
+.restart-btn { padding: 10px 28px; border-radius: 8px; color: #fff; border: none; cursor: pointer; font-size: 14px; font-family: inherit; }
+.restart-btn.pcr { background: #854F0B; }
+.restart-btn.pcr:hover { background: #633806; }
+.restart-btn.pwc { background: #185FA5; }
+.restart-btn.pwc:hover { background: #0C447C; }
+.score-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* ── INLINE FEEDBACK ── */
+.q-feedback{padding:14px 18px;border-radius:var(--r-sm);font-size:.88rem;line-height:1.65;margin-top:16px}
+.q-feedback.hidden{display:none}
+.q-feedback-ok{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);color:var(--success)}
+.q-feedback-fail{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.25);color:var(--danger)}
+.opt-correct{border-color:var(--success)!important;background:rgba(52,211,153,.08)!important}
+.opt-wrong{border-color:var(--danger)!important;background:rgba(248,113,113,.08)!important}
+/* ── SCORE / FEEDBACK GLOBAL ── */
+.feedback-global{display:flex;flex-direction:column;gap:16px;margin-top:8px}
+.feedback-block{background:var(--ink-soft);border:1px solid var(--border);border-radius:var(--r-sm);padding:18px 20px}
+.feedback-block-label{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.feedback-block-label.no,.feedback-block-label.pcr{color:#EF9F27}
+.feedback-block-label.si,.feedback-block-label.pwc{color:#85B7EB}
+.feedback-block-text{font-size:.88rem;color:var(--muted);line-height:1.75}
+.feedback-global-title{font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+.feedback-perfect{font-size:.95rem;color:var(--success)}
+
+/* ── INSTRUCTIONS OVERLAY ─────────────────────────────────────── */
+.id-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(11,15,26,.92);
+  backdrop-filter: blur(6px);
+  border-radius: var(--r);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  z-index: 10;
+  padding: 32px;
+  text-align: center;
+  transition: opacity .3s;
+}
+.overlay-lock-icon { font-size: 2.8rem; line-height: 1; }
+.overlay-lock-msg {
+  font-size: .88rem;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 260px;
+}
+.btn-unlock {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--gold);
+  color: var(--ink);
+  border: none;
+  border-radius: var(--r-sm);
+  padding: 13px 22px;
+  font-family: inherit;
+  font-size: .9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .18s;
+  margin-top: 4px;
+}
+.btn-unlock:hover {
+  background: var(--gold-lt);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(201,168,76,.35);
+}
+.id-card { position: relative; }
+</style>
+</head>
+<body>
+
+<!-- PANTALLA 1 -->
+<div id="screen-identification" class="screen active">
+  <div class="bg-grid"></div><div class="bg-glow bg-glow-1"></div><div class="bg-glow bg-glow-2"></div>
+  <div class="id-left">
+    <div class="id-left-inner">
+      <div class="brand">
+        <svg viewBox="0 0 80 80" fill="none" style="width:54px;flex-shrink:0">
+          <polygon points="40,4 76,20 76,60 40,76 4,60 4,20" stroke="#C9A84C" stroke-width="1.5" fill="none" opacity=".65"/>
+          <polygon points="40,13 67,25 67,55 40,67 13,55 13,25" stroke="#C9A84C" stroke-width="1" fill="none" opacity=".3"/>
+          <text x="40" y="48" text-anchor="middle" font-family="Georgia,serif" font-size="18" font-weight="700" fill="#C9A84C">VT</text>
+        </svg>
+        <div><span class="brand-org">CAPACITACIÓN</span><span class="brand-sub">Evaluaciones Internas</span></div>
+      </div>
+      <div class="hero">
+        <div class="hero-tag">EVALUACIÓN OFICIAL · VISA T</div>
+        <h1 class="hero-title">Módulo de<br/><em>Conocimientos</em></h1>
+        <p class="hero-desc">Esta evaluación tiene como objetivo identificar el nivel de conocimiento actual sobre Visa T entre los colaboradores.<br/>
+        Duración máxima: <strong>25 minutos - 25 preguntas</strong>.</p>
+        <p class="hero-note">Incluye bloque de caso práctico según tu área</p>
+      </div>
+      <div class="rules">
+        <div class="rules-title">INSTRUCCIONES</div>
+        <div class="rule rule-hi"><span class="rule-n">01</span><span>Completa tus datos antes de iniciar</span></div>
+        <div class="rule rule-warn"><span class="rule-n">02</span><span><strong>Tienes 25 minutos</strong> para completar la evaluación. El cronómetro inicia al dar clic en <em>Comenzar</em> y no se puede pausar.</span></div>
+        <div class="rule rule-hi"><span class="rule-n">03</span><span><strong>25 preguntas:</strong> 20 teóricas + 5 caso práctico según tu área</span></div>
+        <div class="rule rule-danger"><span class="rule-n">04</span><span><strong>Solo tienes un intento.</strong> Una vez enviada la evaluación o agotado el tiempo, el acceso se bloqueará permanentemente.</span></div>
+        <div class="rule rule-danger"><span class="rule-n">05</span><span><strong>No cierres ni recargues</strong> la ventana hasta finalizar o perderás tu progreso</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="id-right">
+    <div class="id-card">
+      <!-- OVERLAY: bloqueado hasta leer instrucciones -->
+      <div class="id-card-overlay" id="instructions-overlay">
+        <div class="overlay-lock-icon">🔒</div>
+        <p class="overlay-lock-msg">Lee las instrucciones antes de comenzar la evaluación.</p>
+        <button class="btn-unlock" onclick="unlockForm()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Ya leí las instrucciones
+        </button>
+      </div>
+
+      <div class="card-tag">ACCESO AL EXAMEN</div>
+      <h2 class="card-title">Identifícate<br/>para continuar</h2>
+      <p class="card-desc">Tus datos quedarán vinculados a tu resultado.</p>
+      <div class="form">
+        <div class="fgrp">
+          <label for="inp-name"><span class="lbl-ico">o</span> Nombre completo <span class="req">*</span></label>
+          <input class="finput" type="text" id="inp-name" placeholder="Ej. Maria Gonzalez" autocomplete="off"/>
+        </div>
+        <!-- Tipo de area -->
+        <div class="fgrp">
+          <label><span class="lbl-ico">o</span> Tipo de área <span class="req">*</span></label>
+          <div class="ct-toggle">
+            <button type="button" class="ct-btn" id="ct-no" onclick="pickType('no')">
+              <span class="ct-icon">&#128193;</span>
+              <span class="ct-label">Sin contacto<br/>con el cliente</span>
+              
+            </button>
+            <button type="button" class="ct-btn" id="ct-si" onclick="pickType('si')">
+              <span class="ct-icon">&#129309;</span>
+              <span class="ct-label">Con contacto<br/>con el cliente</span>
+              
+            </button>
+          </div>
+        </div>
+        <!-- Area (independiente, siempre visible) -->
+        <div class="fgrp">
+          <label for="inp-area"><span class="lbl-ico">o</span> Área <span class="req">*</span></label>
+          <div class="sel-wrap">
+            <select class="fselect" id="inp-area">
+              <option value="">- Selecciona tu área -</option>
+              <option value="Psychology">Psychology</option>
+              <option value="Compliance">Compliance</option>
+              <option value="Call Backs">Call Backs</option>
+              <option value="Pre Case Review">Pre Case Review</option>
+              <option value="Pre Welcome Call">Pre Welcome Call</option>
+              <option value="Litigation">Litigation</option>
+              <option value="Packets">Packets</option>
+              <option value="Customer Service">Customer Service</option>
+              <option value="WAE's">WAE's</option>
+              <option value="RFE">RFE</option>
+              <option value="Training">Training</option>
+            </select>
+            <div class="sel-arr">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </div>
+        </div>
+        <div id="id-error" class="f-error hidden">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Completa todos los campos requeridos.
+        </div>
+        <button type="button" id="btn-start" class="btn-main">
+          <span>Comenzar evaluación</span>
+          <span class="btn-main-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></span>
+        </button>
+      </div>
+      <div class="card-foot">Plataforma de Capacitación Interna · Uso exclusivo para colaboradores</div>
+    </div>
+  </div>
+</div>
+
+<!-- PANTALLA 2 -->
+<div id="screen-exam" class="screen">
+  <header class="exam-bar">
+    <!-- TIMER — izquierda, grande -->
+    <div class="eb-timer" id="timer-box">
+      <div class="t-ring-wrap">
+        <svg class="t-ring" viewBox="0 0 56 56">
+          <circle cx="28" cy="28" r="24" fill="none" stroke="rgba(201,168,76,.15)" stroke-width="3"/>
+          <circle id="timer-ring-path" cx="28" cy="28" r="24" fill="none" stroke="#C9A84C" stroke-width="3" stroke-dasharray="150.8" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 28 28)"/>
+        </svg>
+      </div>
+      <div class="t-info">
+        <span class="t-lbl">TIEMPO</span>
+        <span id="timer-display" class="t-digs">25:00</span>
+      </div>
+    </div>
+    <!-- SEPARADOR -->
+    <div class="eb-sep"></div>
+    <!-- BRAND + PROGRESO -->
+    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+      <svg width="30" height="30" viewBox="0 0 34 34" fill="none"><polygon points="17,2 32,9 32,25 17,32 2,25 2,9" stroke="#C9A84C" stroke-width="1.2" fill="none"/><text x="17" y="22" text-anchor="middle" font-family="Georgia,serif" font-size="9" font-weight="700" fill="#C9A84C">VT</text></svg>
+      <span class="eb-brand-lbl">VISA <strong>T</strong></span>
+      <span style="font-size:.6rem;color:var(--dim);margin-left:4px">v5</span>
+    </div>
+    <div class="eb-prog">
+      <div id="bar-participant" class="eb-name">-</div>
+      <div class="eb-bar-row">
+        <div class="eb-bar"><div id="progress-bar" class="eb-fill"></div></div>
+        <div id="progress-text" class="eb-count">0 / 0</div>
+      </div>
+    </div>
+  </header>
+  <div class="exam-body">
+    <aside class="q-map">
+      <p class="qmap-ttl">Mapa</p>
+      <div id="nav-dots" class="qmap-grid"></div>
+      <div class="qmap-leg">
+        <div class="ql-row"><span class="ql-dot ql-dot-ans"></span><span>Respondida</span></div>
+        <div class="ql-row"><span class="ql-dot ql-dot-cur"></span><span>Actual</span></div>
+        <div class="ql-row"><span class="ql-dot ql-dot-emp"></span><span>Sin responder</span></div>
+      </div>
+    </aside>
+    <main class="q-main">
+      <!-- VISTA EXAMEN -->
+      <div id="quiz-view">
+        <div id="question-card" class="q-card">
+          <div class="q-top">
+            <span id="q-number" class="q-badge">Pregunta 1</span>
+            <span id="q-format" class="q-format"></span>
+            <span id="q-of-total" class="q-of" style="margin-left:auto">de 0</span>
+          </div>
+          <div id="case-scenario-box" class="case-scenario" style="display:none">
+            <span class="case-scenario-lbl">ESCENARIO DEL CASO PRACTICO</span>
+            <p id="case-scenario-text"></p>
+          </div>
+          <p id="q-text" class="q-text">Cargando...</p>
+          <div id="q-options" class="q-opts"></div>
+        </div>
+        <nav class="q-nav">
+          <button id="btn-prev" class="btn-nav btn-ghost" disabled>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg> Anterior
+          </button>
+          <button id="btn-next" class="btn-nav btn-gold">
+            Siguiente <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button id="btn-submit" class="btn-submit-ex" style="display:none">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Enviar evaluación
+          </button>
+        </nav>
+      </div>
+      <!-- VISTA RESULTADOS -->
+      <div id="score-view" style="display:none;padding:32px 24px">
+        <div class="res-card" style="max-width:680px;margin:0 auto 32px;padding:32px">
+          <div style="font-size:.68rem;font-weight:700;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;margin-bottom:10px">EVALUACIÓN COMPLETADA</div>
+          <div id="score-badge" style="margin-bottom:8px"></div>
+          <p id="score-msg" style="font-size:.93rem;color:var(--muted);line-height:1.75;margin-bottom:0"></p>
+          <div id="restart-btn" style="display:none"></div>
+        </div>
+        <div id="feedback-global-container" style="max-width:680px;margin:0 auto 48px"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- PANTALLA 3 -->
+<div id="screen-results" class="screen">
+  <div class="bg-grid"></div><div class="bg-glow bg-glow-1"></div><div class="bg-glow bg-glow-2"></div>
+  <div class="res-outer">
+    <div class="res-card">
+      <div class="res-hero">
+        <svg viewBox="0 0 80 80" fill="none" style="width:64px;margin-bottom:4px">
+          <polygon points="40,4 76,20 76,60 40,76 4,60 4,20" stroke="#C9A84C" stroke-width="1.5" fill="rgba(201,168,76,.05)"/>
+          <polygon points="40,14 66,26 66,54 40,66 14,54 14,26" stroke="#C9A84C" stroke-width="1" fill="none" opacity=".4"/>
+          <text x="40" y="51" text-anchor="middle" font-family="Georgia,serif" font-size="26" fill="#C9A84C">V</text>
+        </svg>
+        <div class="res-eyebrow" id="rc-tag">EVALUACIÓN COMPLETADA</div>
+        <h2 class="res-title" id="rc-title">Resultado Final</h2>
+        <p class="res-sub" id="rc-sub">Tu intento ha sido registrado correctamente.</p>
+      </div>
+      <div class="res-divider"><span>DETALLE</span></div>
+      <div class="res-grid">
+        <div class="rgi"><span class="rgi-lbl">Colaborador</span><span class="rgi-val" id="r-name">-</span></div>
+        <div class="rgi"><span class="rgi-lbl">Area</span><span class="rgi-val" id="r-area">-</span></div>
+        <div class="rgi"><span class="rgi-lbl">Tipo de area</span><span class="rgi-val" id="r-contact">-</span></div>
+        <div class="rgi"><span class="rgi-lbl">Tiempo empleado</span><span class="rgi-val" id="r-time">-</span></div>
+        <div class="rgi"><span class="rgi-lbl">Respondidas</span><span class="rgi-val" id="r-answered">-</span></div>
+      </div>
+      <div class="res-score">
+        <span class="rs-lbl">PUNTAJE FINAL</span>
+        <span id="r-score" class="rs-num">-</span>
+        <span id="r-status" class="rs-status"></span>
+      </div>
+      <p class="res-foot">Plataforma de Capacitación Interna · VISA T · Uso exclusivo para colaboradores</p>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY 5 MIN -->
+<div id="alert-5min" class="overlay hidden">
+  <div class="ov-card">
+    <div class="ov-ico">&#9201;</div>
+    <h3 class="ov-title">¡Quedan 5 minutos!</h3>
+    <p class="ov-msg">Revisa tus respuestas y envía antes de que se agote el tiempo.</p>
+    <button type="button" id="btn-close-alert" class="btn-main" style="width:100%">
+      <span>Continuar</span>
+      <span class="btn-main-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></span>
+    </button>
+  </div>
+</div>
+
+<script>
+var EXAM_MINUTES  = 25;
+var PASSING_SCORE = 70;
+var EVAL_VERSION  = 5;   // increment when question count changes
+var ÁREAS_NO = ['Compliance','Pre Case Review','Litigation','Packets','RFE'];
+var ÁREAS_SI = ['Psychology','Call Backs','Pre Welcome Call','Customer Service',"WAE's"];
+
+var SCENARIO_NO = `Al revisar el paquete completo de solicitud de Visa T de la cliente —que incluye el Formulario I-914, el I-914B firmado por la agencia policial, la declaración legal (personal statement), evidencias de trata y documentos de apoyo— la paralegal identifica que la cliente declaró en el I-914 haber tenido una condena penal por posesión simple de sustancias controladas ocurrida hace tres años en un estado de EE. UU. Este antecedente la hace inadmisible bajo INA § 212(a)(2)(A)(i)(II). Sin embargo, la cliente cumple plenamente con los cuatro criterios de elegibilidad de la Visa T y su caso de trata está sólido y bien documentado.`;
+var SCENARIO_SI = `Durante la entrevista de recolección de información, la paralegal nota que la cliente narra su situación como violencia doméstica: golpes, control económico y amenazas de parte de su pareja. Sin embargo, al profundizar en los hechos, emergen elementos adicionales: la pareja la obligaba a tener relaciones sexuales con terceros a cambio de dinero y la amenazaba con deportarla si no obedecía. La cliente no identifica esto como trata; para ella, "era parte del maltrato". El esquema de trata existe, pero no está articulado como tal en el testimonio: falta la conexión explícita entre medios (coerción, amenaza) y fines (explotación sexual comercial).`;
+
+var QUESTIONS_BASE = [
+  {
+    format: "Opción múltiple",
+    text: "¿Cuál es el propósito principal de la Visa T según la TVPA?",
+    options: [
+      "Otorgar protección temporal a personas que ingresaron al país sin documentos y que colaboran con autoridades migratorias en procesos de deportación.",
+      "Proteger a víctimas de trata de personas severa que se encuentran en EE. UU. y facilitar su cooperación con las autoridades en la investigación o persecución del delito.",
+      "Proporcionar estatus migratorio temporal a personas que fueron víctimas de cualquier tipo de crimen violento ocurrido dentro del territorio de los Estados Unidos.",
+      "Regularizar la situación migratoria de trabajadores indocumentados que puedan demostrar haber sufrido alguna forma de abuso laboral por parte de un empleador."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. La Visa T fue creada por la TVPA del año 2000 con dos propósitos: proteger a víctimas de trata severa que están en EE. UU. y apoyar la persecución de los traficantes mediante la cooperación de la víctima con las autoridades.",
+    feedbackFail: "Incorrecto. La Visa T no es para víctimas de cualquier crimen, ni para trabajadores indocumentados, ni para casos migratorios generales. Es exclusiva para víctimas de trata severa que cooperan con las autoridades en la investigación o persecución del delito."
+  },
+  {
+    format: "Verdadero o falso",
+    text: "Verdadero o falso: La Visa T puede emitirse de manera ilimitada por año fiscal, ya que USCIS prioriza la protección de víctimas por encima de cualquier cuota establecida por ley.",
+    options: [
+      "Verdadero. USCIS no tiene límite numérico anual para la Visa T porque se trata de una visa de protección humanitaria, por lo que se aprueba toda solicitud que cumpla los criterios.",
+      "Falso. La ley establece un límite de 5,000 visas T-1 por año fiscal, aunque este límite no aplica a los familiares derivados y rara vez se alcanza en la práctica.",
+      "Verdadero. Aunque existe un límite nominal, USCIS puede excederlo si el número de víctimas identificadas en un año determinado supera el tope establecido por la TVPA.",
+      "Falso. El límite anual para la Visa T-1 es de 10,000 visas, no de 5,000, y fue duplicado mediante una enmienda posterior a la TVPA original del año 2000."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. La afirmación es falsa. La TVPA establece un tope de 5,000 visas T-1 por año fiscal. Este límite no aplica a familiares derivados (T-2 a T-6) y, en la práctica, rara vez se alcanza.",
+    feedbackFail: "Incorrecto. La Visa T sí tiene un límite anual: 5,000 visas T-1 por año fiscal. No existe exención humanitaria al tope y el límite nunca fue modificado a 10,000."
+  },
+  {
+    format: "Opción múltiple",
+    text: "¿Cuáles son las dos formas de trata severa reconocidas por USCIS para calificar para la Visa T?",
+    options: [
+      "Trata de menores de edad y trata de personas adultas en situación de vulnerabilidad migratoria o económica documentada.",
+      "Trata sexual, que involucra actos sexuales comerciales bajo fuerza, fraude o coerción, y trata laboral, que implica trabajo forzado mediante esos mismos medios.",
+      "Trata internacional con cruce de fronteras y trata doméstica que ocurre exclusivamente dentro del territorio de los Estados Unidos.",
+      "Trata con fines de explotación sexual y trata con fines de extracción de órganos o tejidos humanos para comercio ilícito."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. La TVPA define dos formas: trata sexual (actos sexuales comerciales bajo fuerza, fraude o coerción, o involucrando a menores de 18 años) y trata laboral (trabajo forzado o servidumbre mediante fuerza, fraude o coerción).",
+    feedbackFail: "Incorrecto. La distinción entre menores/adultos o trata nacional/internacional no define las categorías legales. La extracción de órganos tampoco es una forma reconocida. Las dos formas son trata sexual y trata laboral."
+  },
+  {
+    format: "Opción múltiple",
+    text: "¿Qué significa el criterio de 'presencia física' en territorio de EE. UU. para solicitar la Visa T?",
+    options: [
+      "Que la persona haya ingresado al país de manera legal, cuente con un registro de entrada válido y tenga una dirección residencial verificable al momento de presentar la solicitud.",
+      "Que la persona esté físicamente en territorio de EE. UU. —incluyendo Samoa Americana, Islas Marianas del Norte o un puerto de entrada— al momento de solicitar, sin importar cómo ingresó.",
+      "Que la persona haya residido continuamente en EE. UU. durante un período mínimo de seis meses previos a la presentación de su solicitud ante USCIS.",
+      "Que la persona tenga domicilio fijo comprobable en EE. UU., cuente con al menos un testigo que certifique su residencia y no tenga órdenes de deportación pendientes."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. La presencia física significa estar en territorio de EE. UU. al momento de solicitar, independientemente del modo de ingreso o estatus migratorio. No se requiere ingreso legal, tiempo mínimo de residencia ni domicilio fijo.",
+    feedbackFail: "Incorrecto. La presencia física no requiere entrada legal, seis meses de residencia previa ni domicilio fijo. Basta con estar en territorio de EE. UU. o en un puerto de entrada al momento de presentar la solicitud."
+  },
+  {
+    format: "Verdadero o falso",
+    text: "Verdadero o falso: Un menor de 18 años víctima de trata sexual debe demostrar que fue forzado, defraudado o coaccionado para calificar para la Visa T, igual que cualquier solicitante adulto.",
+    options: [
+      "Verdadero. La ley no distingue entre menores y adultos: todos los solicitantes deben acreditar los mismos medios coercitivos para que el caso sea considerado trata severa.",
+      "Falso. Los menores de 18 años están protegidos automáticamente: el solo hecho de haber participado en un acto sexual comercial es suficiente, sin necesidad de acreditar fuerza, fraude o coerción.",
+      "Verdadero. Aunque el estándar de prueba es más bajo para menores, la ley exige demostrar al menos uno de los tres elementos coercitivos reconocidos por la TVPA.",
+      "Falso. Los menores de 18 años quedan exentos del requisito de coerción únicamente si el traficante es un adulto que no pertenece al núcleo familiar de la víctima."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. La afirmación es falsa. Para víctimas de trata sexual menores de 18 años, la ley no exige demostrar fuerza, fraude ni coerción. Ser menor de 18 años involucrado en un acto sexual comercial es, por sí solo, una forma severa de trata.",
+    feedbackFail: "Incorrecto. La ley no exige demostrar coerción en ninguna forma cuando la víctima es menor de 18 años en casos de trata sexual. Esta protección aplica sin importar quién es el traficante ni si hay relación familiar."
+  },
+  {
+    format: "Opción múltiple",
+    text: "¿En qué consiste el requisito de cooperación con las autoridades para solicitar una Visa T?",
+    options: [
+      "La víctima debe presentar cargos penales formales ante una corte federal, identificar plenamente al traficante y comprometerse a testificar en el juicio oral cuando sea citada por la fiscalía.",
+      "La víctima debe haber cumplido con solicitudes razonables de asistencia en la investigación o persecución del tráfico, con exenciones para menores de 18 años y para quienes no puedan cooperar por trauma severo.",
+      "La víctima debe entregar una declaración firmada ante un oficial de inmigración, describir el esquema de trata en detalle y permitir que su nombre sea incluido en registros de investigación federal.",
+      "La víctima debe demostrar que reportó los hechos a una autoridad policial dentro de los 30 días posteriores al evento de trata y que la denuncia fue admitida formalmente en un sistema oficial."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. El requisito exige cooperación razonable con las autoridades de ley. Existen exenciones automáticas para menores de 18 años y exenciones discrecionales para víctimas que no puedan cooperar por trauma físico o psicológico severo.",
+    feedbackFail: "Incorrecto. No se requiere presentar cargos formales, testificar en juicio ni reportar dentro de 30 días. El estándar es cooperación razonable, con exenciones para menores y víctimas con trauma severo."
+  },
+  {
+    format: "Opción múltiple",
+    text: "¿Qué formulario se usa para solicitar la Visa T principal (T-1) ante USCIS?",
+    options: [
+      "Formulario I-589 (Application for Asylum and for Withholding of Removal), ya que la Visa T es una forma de protección humanitaria similar al asilo en su tramitación ante USCIS.",
+      "Formulario I-914 (Application for T Nonimmigrant Status), que es el formulario oficial diseñado específicamente para solicitar la Visa T ante USCIS.",
+      "Formulario I-918 (Petition for U Nonimmigrant Status), que se usa indistintamente para las visas T y U dado que ambas son visas para víctimas de delitos.",
+      "Formulario I-485 (Application to Register Permanent Residence), ya que la Visa T otorga un camino directo hacia la residencia permanente desde el momento de la solicitud inicial."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. El Formulario I-914 es la solicitud oficial para la Visa T. El I-589 es para asilo, el I-918 para la Visa U (distinta de la Visa T) y el I-485 es para residencia permanente, no para la solicitud inicial de Visa T.",
+    feedbackFail: "Incorrecto. El formulario correcto es el I-914. Las Visas T y U son visas distintas con formularios diferentes. El I-589 es para asilo y el I-485 es para residencia permanente."
+  },
+  {
+    format: "Opción múltiple",
+    text: "¿Cuánto tiempo de estatus migratorio otorga inicialmente la Visa T?",
+    options: [
+      "Hasta dos años de estatus de no inmigrante, prorrogables por períodos anuales sucesivos mientras dure el proceso judicial relacionado con la investigación de la trata.",
+      "Hasta cuatro años de estatus de no inmigrante, con posibilidad de extensión en circunstancias excepcionales vinculadas a una investigación o proceso judicial activo.",
+      "Hasta un año de estatus temporal, renovable una sola vez por un período adicional de un año, tras el cual el titular debe solicitar otro tipo de protección migratoria.",
+      "Hasta diez años de estatus de no inmigrante, que fue el plazo establecido por la TVPA para asegurar la estabilidad de la víctima durante los procesos de recuperación y reintegración."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. La Visa T otorga hasta 4 años de estatus de no inmigrante. En circunstancias excepcionales relacionadas con investigación o juicio activo, puede extenderse más allá de ese plazo a solicitud de las autoridades competentes.",
+    feedbackFail: "Incorrecto. El período inicial de la Visa T es de hasta 4 años, no 1, 2 ni 10. Las extensiones son posibles en casos excepcionales vinculados a procesos judiciales, no de manera automática ni anual."
+  },
+  {
+    format: "Opción múltiple",
+    text: "¿Qué familiares pueden recibir una visa T derivada cuando el solicitante principal es mayor de 21 años?",
+    options: [
+      "Cónyuge, hijos de cualquier edad, padres, hermanos solteros menores de 18 años y cualquier otro familiar que demuestre dependencia económica directa del solicitante principal.",
+      "Únicamente cónyuge e hijos del solicitante principal, con la posibilidad de incluir también padres y hermanos menores de 18 años si existe peligro creíble de represalia.",
+      "Únicamente los hijos menores de 18 años que viven en el mismo domicilio que el solicitante y que puedan demostrar dependencia económica al momento de presentar la solicitud.",
+      "Cónyuge, hijos, padres y hermanos solteros menores de 18 años, sin restricción alguna basada en la edad del solicitante principal ni en la existencia de riesgo de represalia."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. Cuando el solicitante principal es mayor de 21 años, los familiares derivados elegibles son cónyuge e hijos. Sin embargo, si existe peligro creíble de represalia, también pueden incluirse padres y hermanos solteros menores de 18 años.",
+    feedbackFail: "Incorrecto. Los familiares derivados para solicitantes mayores de 21 son cónyuge e hijos. Los padres y hermanos aplican cuando el solicitante es menor de 21 o cuando hay peligro de represalia. La dependencia económica sola no es el criterio determinante."
+  },
+  {
+    format: "Opción múltiple",
+    text: "¿Cuál es la función del Formulario I-914B en una solicitud de Visa T?",
+    options: [
+      "Es la declaración jurada del solicitante que describe en detalle los hechos de trata sufridos, los medios de coerción utilizados y los actos de explotación a los que fue sometido.",
+      "Es la declaración completada por una autoridad de aplicación de ley que certifica que la víctima ha cooperado o está cooperando razonablemente con la investigación o persecución del tráfico.",
+      "Es el formulario de autorización de trabajo que USCIS emite de manera automática junto con la aprobación de la Visa T, sin necesidad de una solicitud separada por parte del titular.",
+      "Es la solicitud de extensión del período de la Visa T que el titular debe presentar ante USCIS antes de que venza su estatus actual de cuatro años de no inmigrante."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. El I-914B es la declaración firmada por una autoridad de ley (policía, FBI, fiscalía u otra agencia) que certifica la cooperación de la víctima. No es obligatorio si se tiene otra evidencia de cooperación, pero es un documento de respaldo muy valioso.",
+    feedbackFail: "Incorrecto. El I-914B no es una declaración del solicitante, ni el EAD, ni una solicitud de extensión. Es la certificación de una autoridad policial o fiscal sobre la cooperación de la víctima con la investigación o persecución del tráfico."
+  },
+  {
+    format: "Qué NO se debe hacer",
+    text: "¿Cuál de las siguientes acciones NO se debe tomar cuando un solicitante de Visa T enfrenta una causa de inadmisibilidad por entrada indocumentada?",
+    options: [
+      "No se debe presentar el caso sin abordar la inadmisibilidad: omitir la causa y esperar que USCIS no la detecte puede derivar en denegación y en consecuencias legales adicionales para el cliente.",
+      "No se debe preparar y adjuntar el Formulario I-192 junto con el I-914, ya que la exención de inadmisibilidad no está permitida para causas relacionadas con el modo de entrada al país.",
+      "No se debe asumir que la inadmisibilidad descalifica automáticamente al solicitante sin primero evaluar si es elegible para una exención discrecional mediante el Formulario I-192.",
+      "No se debe ignorar la causa de inadmisibilidad en la narrativa legal del caso: la carta de argumento debe reconocerla y contextualizarla dentro de la situación de trata vivida por el cliente."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. El I-192 sí está disponible para causas de inadmisibilidad en el contexto de la Visa T, incluyendo la entrada indocumentada. Afirmar que no puede usarse para este tipo de causa es incorrecto y perjudica al cliente.",
+    feedbackFail: "Incorrecto. Lo que NO se debe hacer es afirmar que el I-192 no está permitido para entrada indocumentada, porque sí lo está. Omitir la inadmisibilidad, asumir descalificación automática e ignorar el problema en la narrativa son también errores graves."
+  },
+  {
+    format: "Opción múltiple",
+    text: "¿Cuál de las siguientes causas de inadmisibilidad NO puede ser perdonada mediante el Formulario I-192 para la Visa T?",
+    options: [
+      "Haber ingresado al país sin inspección o sin documentos válidos, ya que este tipo de entrada constituye una violación migratoria grave que impide cualquier tipo de exención discrecional.",
+      "Haber participado en la persecución de personas por motivos de raza, religión, nacionalidad u opinión política, ya que esta conducta es una causa de inadmisibilidad generalmente no exenible.",
+      "Tener presencia ilegal acumulada en EE. UU. por un período que supere los 12 meses continuos desde el primer ingreso al país sin autorización migratoria válida.",
+      "Contar con una condena penal por un delito menor ocurrido con anterioridad al período de trata, siempre que la condena no haya implicado privación de libertad superior a 6 meses."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. La participación en persecuciones de personas por raza, religión, nacionalidad u opinión política es una causa que generalmente no puede ser eximida para la Visa T. En cambio, entrada sin inspección, presencia ilegal y delitos menores sí pueden ser objeto del I-192.",
+    feedbackFail: "Incorrecto. La entrada sin inspección, la presencia ilegal acumulada y los delitos menores pueden ser objeto de exención mediante el I-192. Lo que generalmente no puede perdonarse es la participación en persecuciones de personas por sus características protegidas."
+  },
+  {
+    format: "Opción múltiple",
+    text: "¿Cuándo puede una persona con Visa T solicitar el ajuste de estatus a residente permanente?",
+    options: [
+      "Después de un año de haber recibido la Visa T, siempre que haya mantenido buena conducta y la investigación de trata en la que participó haya concluido con una sentencia condenatoria.",
+      "Después de tres años de presencia continua con Visa T, o cuando el Fiscal General certifique que la investigación o el juicio ha concluido, lo que ocurra primero.",
+      "Después de cinco años de presencia continua con Visa T, siempre que el titular haya renovado su estatus en tiempo y forma y no tenga causas de inadmisibilidad pendientes.",
+      "Después de dos años de presencia continua con Visa T, en la primera fecha de aniversario posterior a que el traficante haya recibido una sentencia firme por los delitos cometidos."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. El ajuste de estatus a residente permanente puede solicitarse tras 3 años de presencia continua con Visa T, o cuando el Fiscal General certifique el cierre de la investigación o juicio, lo que suceda primero. No se requiere condena del traficante.",
+    feedbackFail: "Incorrecto. El plazo es de 3 años de presencia continua con Visa T, no 1, 2 ni 5. Tampoco se requiere condena del traficante para iniciar el proceso de ajuste de estatus a residente permanente."
+  },
+  {
+    format: "Verdadero o falso",
+    text: "Verdadero o falso: Para calificar para la Visa T, la persona debe encontrarse actualmente en situación activa de trata al momento de presentar la solicitud ante USCIS.",
+    options: [
+      "Verdadero. USCIS requiere que la víctima esté siendo activamente explotada al momento de solicitar, ya que el propósito de la visa es intervenir en situaciones de trata en curso.",
+      "Falso. No es necesario estar siendo víctima activa al momento de solicitar. La trata puede haber ocurrido en el pasado; lo importante es que la persona cumpla con los demás criterios de elegibilidad.",
+      "Verdadero. Si la persona ya escapó o fue rescatada, su caso corresponde a otras figuras legales como el asilo o la Visa U, y no puede ser tramitado bajo la categoría de Visa T.",
+      "Falso. Sin embargo, si la trata ocurrió hace más de dos años desde la fecha de la solicitud, la petición será automáticamente denegada por prescripción del evento de trata."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. La afirmación es falsa. La Visa T no exige que la persona siga siendo víctima activa. Muchas solicitudes provienen de personas que ya escaparon o fueron rescatadas. Lo que importa es cumplir con los criterios de elegibilidad al momento de solicitar.",
+    feedbackFail: "Incorrecto. No existe un requisito de victimización activa ni un plazo de prescripción de dos años. La Visa T puede solicitarse aunque la trata haya ocurrido en el pasado, siempre que se cumplan los demás criterios de elegibilidad."
+  },
+  {
+    format: "Opción múltiple",
+    text: "¿Qué beneficio de autorización de empleo recibe automáticamente el titular de una Visa T aprobada?",
+    options: [
+      "El titular debe presentar el Formulario I-765 por separado dentro de los 90 días posteriores a la aprobación para solicitar el permiso de trabajo ante la división correspondiente de USCIS.",
+      "El titular recibe automáticamente un Documento de Autorización de Empleo (EAD) al momento de la aprobación de la Visa T, sin necesidad de ninguna solicitud adicional.",
+      "El titular puede trabajar únicamente con el empleador que figure en la solicitud original de Visa T, y debe notificar a USCIS cualquier cambio de empleo durante la vigencia del estatus.",
+      "El titular no puede trabajar durante los primeros doce meses de la Visa T y debe esperar a que USCIS evalúe su situación de seguridad antes de emitir una autorización de empleo."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. La aprobación de la Visa T conlleva automáticamente la emisión del EAD. No se requiere presentar un I-765 por separado, no hay restricción de empleador específico y no existe un período de espera de 12 meses para poder trabajar.",
+    feedbackFail: "Incorrecto. El EAD se emite de manera automática con la aprobación de la Visa T. No hay formulario adicional que presentar, no hay restricción de empleador y no existe un período de espera de 12 meses."
+  },
+  {
+    format: "Qué NO se debe hacer",
+    text: "Al documentar el esquema de coerción en una solicitud de Visa T, ¿cuál de las siguientes acciones NO se debe realizar?",
+    options: [
+      "No se debe documentar únicamente el contexto de convencimiento o persuasión libre sin ningún elemento de amenaza, engaño ni abuso, ya que eso no constituye coerción bajo la definición de la TVPA.",
+      "No se debe omitir documentar las amenazas de daño físico grave que el traficante ejerció sobre la víctima para obligarla a someterse a la explotación durante el período de trata.",
+      "No se debe ignorar la retención de documentos de identidad como pasaportes o visas por parte del traficante, ya que este tipo de control es una forma reconocida de coerción bajo la ley.",
+      "No se debe dejar sin documentar el abuso del proceso legal o las amenazas de denuncia ante autoridades migratorias que el traficante usó para mantener el control sobre la víctima."
+    ],
+    correct: 0,
+    feedbackOk: "Correcto. Lo que NO se debe hacer es documentar el convencimiento libre como si fuera coerción. La coerción requiere fuerza, amenaza, fraude o abuso. Presentar persuasión sin estos elementos como coerción debilita el caso y puede comprometer su credibilidad ante USCIS.",
+    feedbackFail: "Incorrecto. Las amenazas físicas, la retención de documentos y el abuso del proceso legal son todas formas legítimas de coerción que sí deben documentarse. Lo que NO debe hacerse es presentar convencimiento libre y voluntario como si constituyera coerción bajo la TVPA."
+  },
+  {
+    format: "Opción múltiple",
+    text: "¿Es necesario que la trata haya ocurrido dentro del territorio de los Estados Unidos para calificar para la Visa T?",
+    options: [
+      "Sí, la trata debe haber ocurrido en suelo estadounidense; los hechos ocurridos en el extranjero no son considerados por USCIS al evaluar los criterios de elegibilidad de la Visa T.",
+      "No, la trata puede haber ocurrido en otro país; lo que se requiere es que la víctima esté físicamente presente en EE. UU. o en un puerto de entrada al momento de presentar la solicitud.",
+      "Sí, pero únicamente cuando el traficante es ciudadano o residente permanente de EE. UU.; si el traficante es extranjero, la víctima debe haber sido explotada dentro del territorio nacional.",
+      "No, pero en ese caso la víctima debe demostrar que la trata involucró el cruce de al menos una frontera internacional y que fue trasladada físicamente de un país a otro durante la explotación."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. El lugar donde ocurrió la trata no es un criterio de elegibilidad. Muchas víctimas fueron reclutadas en sus países de origen y trasladadas a EE. UU. Lo único requerido es estar físicamente presente en EE. UU. al momento de solicitar.",
+    feedbackFail: "Incorrecto. La Visa T no exige que la trata haya ocurrido en EE. UU. ni que haya involucrado cruce de fronteras. La residencia del traficante tampoco es determinante. El criterio es la presencia física de la víctima en EE. UU. al momento de la solicitud."
+  },
+  {
+    format: "Opción múltiple",
+    text: "Una víctima de trata que también sufrió un crimen violento en EE. UU. podría ser elegible para la Visa T y para otra visa humanitaria. ¿Cuál sería esa otra visa?",
+    options: [
+      "Visa S (Informante), que protege a personas que proporcionan información crítica sobre organizaciones criminales o terroristas a las autoridades federales de EE. UU.",
+      "Visa U (Víctima de crimen), que protege a víctimas de ciertos crímenes violentos o abusivos que han sufrido daño físico o mental y cooperan con las autoridades en la investigación.",
+      "Visa EB-5 (Inversionista), que otorga residencia a personas que invierten capital en negocios que generan empleo en zonas económicamente deprimidas del territorio estadounidense.",
+      "Visa O-1 (Habilidades extraordinarias), que se otorga a personas con habilidades excepcionales en ciencias, artes, educación, negocios o atletismo reconocidas a nivel nacional o internacional."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. La Visa U está diseñada para víctimas de crímenes violentos o abusivos que cooperan con las autoridades. Puede haber solapamiento con la Visa T cuando la víctima de trata también sufrió otros crímenes violentos en EE. UU.",
+    feedbackFail: "Incorrecto. La Visa S es para informantes en casos criminales o terroristas; la EB-5 es para inversionistas; la O-1 es para habilidades extraordinarias. La visa humanitaria relevante para víctimas de crímenes violentos es la Visa U."
+  },
+  {
+    format: "Verdadero o falso",
+    text: "Verdadero o falso: Si una víctima de trata no puede cooperar con las autoridades por trauma psicológico severo, USCIS denegará automáticamente su solicitud de Visa T por incumplir el requisito de cooperación.",
+    options: [
+      "Verdadero. USCIS no tiene capacidad para evaluar trauma psicológico de manera subjetiva, por lo que aplica el requisito de cooperación de forma estricta e igual para todos los solicitantes.",
+      "Falso. USCIS puede eximir discrecionalmente el requisito de cooperación cuando la víctima no puede cooperar por trauma físico o psicológico severo, evaluando cada caso de forma individual.",
+      "Verdadero. La exención por trauma solo aplica si el médico tratante es un profesional certificado por el gobierno federal; de lo contrario, el requisito de cooperación es obligatorio sin excepción.",
+      "Falso. Sin embargo, la exención por trauma no aplica para trauma psicológico, sino únicamente para casos en los que existen lesiones físicas documentadas que impidan la participación en la investigación."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. La afirmación es falsa. USCIS puede eximir el requisito de cooperación de manera discrecional cuando la víctima no puede cooperar por trauma físico o psicológico severo. La certificación no requiere ser de un médico del gobierno y el trauma psicológico sí aplica.",
+    feedbackFail: "Incorrecto. La exención aplica tanto para trauma físico como psicológico y no requiere certificación por médico del gobierno. USCIS evalúa cada caso individualmente y puede eximir el requisito a su discreción."
+  },
+  {
+    format: "Opción múltiple",
+    text: "¿Cuál es la definición legal de 'trata laboral severa' bajo los criterios que USCIS aplica para la Visa T?",
+    options: [
+      "Cualquier relación laboral en la que el empleador pague salarios inferiores al mínimo legal, retenga pagos o someta al trabajador a condiciones de trabajo insalubres dentro del territorio de EE. UU.",
+      "El reclutamiento, alojamiento, transporte, provisión u obtención de una persona mediante fuerza, fraude o coerción con el propósito de someterla a servidumbre involuntaria, esclavitud o trabajo forzado.",
+      "El trabajo realizado sin remuneración económica por una persona que ingresó al país sin documentos, independientemente de si medió algún acuerdo verbal o escrito con el empleador.",
+      "La contratación de personas en situación migratoria irregular para realizar trabajos domésticos o agrícolas en condiciones que no cumplen los estándares laborales del estado donde residen."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. La trata laboral severa bajo la TVPA requiere reclutamiento, alojamiento, transporte u obtención de una persona mediante fuerza, fraude o coerción con fines de servidumbre involuntaria, esclavitud por deudas o trabajo forzado. El elemento coercitivo es lo que la distingue de una relación laboral irregular.",
+    feedbackFail: "Incorrecto. La trata laboral no equivale a salario bajo, trabajo no remunerado ni empleo irregular de migrantes. Requiere el elemento de fuerza, fraude o coerción con fines de trabajo forzado o servidumbre."
+  }
+];
+var QUESTIONS_CASE_NO = [
+  {
+    format: "Caso práctico",
+    isCase: true,
+    text: "En el escenario descrito, ¿cuáles son los documentos, formularios y pasos concretos que el equipo legal debe seguir para subsanar la inadmisibilidad del cliente y presentar el paquete de solicitud ante USCIS?",
+    options: [
+      "Presentar únicamente el I-914 y el I-914B ante USCIS, sin mencionar el antecedente penal en ningún apartado del paquete, confiando en que el oficial revisor no consulte los registros criminales del solicitante.",
+      "Presentar conjuntamente el I-914 y el Formulario I-192 (Application for Advance Permission to Enter as Nonimmigrant), acompañados de un brief legal que contextualice el delito dentro de la situación de trata y argumente el interés nacional en la aprobación.",
+      "Esperar a que el cliente solicite el expungement del delito ante la corte estatal y presentar la solicitud de Visa T únicamente una vez que el antecedente haya sido eliminado del registro penal oficial.",
+      "Presentar el I-914 sin el I-192 y esperar a que USCIS emita un Request for Evidence (RFE) solicitando información adicional sobre el antecedente, para abordar la inadmisibilidad en ese momento."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. La estrategia adecuada es presentar el I-914 junto con el I-192, que es el mecanismo oficial para solicitar una exención discrecional de inadmisibilidad en el contexto de la Visa T. El brief legal debe reconocer el antecedente de manera transparente, contextualizar el delito dentro de la situación de trata, presentar evidencia de rehabilitación si existe, y argumentar el interés nacional en la aprobación.",
+    feedbackFail: "Incorrecto. Omitir el antecedente es una violación grave. Esperar al expungement puede tomar años y la cliente podría perder su ventana de elegibilidad. Esperar al RFE es una postura reactiva que debilita el caso. La estrategia correcta es el I-914 presentado junto con el I-192."
+  },
+  {
+    format: "Qué NO se debe hacer",
+    isCase: true,
+    text: "En el contexto del caso práctico PCR, ¿cuál de las siguientes acciones NO se debe realizar al manejar la inadmisibilidad por delitos del cliente?",
+    options: [
+      "No se debe contextualizar el delito dentro de la situación de trata en el brief legal que acompaña al I-192, ya que establecer esa conexión podría interpretarse como una admisión de culpabilidad ante USCIS.",
+      "No se debe omitir ni ocultar el antecedente penal en el paquete de solicitud, ya que hacerlo constituye una misrepresentation que puede resultar en denegación y consecuencias legales graves para el cliente.",
+      "No se debe evaluar si el tipo de delito cometido es susceptible de exención discrecional mediante el I-192 antes de decidir la estrategia para manejar la inadmisibilidad en el caso.",
+      "No se debe notificar al cliente sobre la causa de inadmisibilidad identificada y sobre las opciones disponibles para subsanarla antes de presentar el paquete ante USCIS."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. Lo que NO se debe hacer es ocultar o no declarar el antecedente penal. La omisión o el ocultamiento de información material ante USCIS constituye misrepresentation, que es una causa independiente de denegación y puede generar consecuencias legales adicionales graves para el cliente.",
+    feedbackFail: "Incorrecto. Contextualizar el delito en el brief es correcto y necesario. Evaluar el tipo de delito antes de decidir la estrategia es un paso esencial. Notificar al cliente sobre sus opciones es una obligación del equipo legal. Lo que NO debe hacerse es ocultar el antecedente ante USCIS."
+  },
+  {
+    format: "Verdadero o falso",
+    isCase: true,
+    text: "Verdadero o falso sobre el caso PCR: Dado que el delito del cliente es posesión simple de sustancias controladas, esta causa de inadmisibilidad no puede ser perdonada mediante ningún mecanismo disponible dentro de la solicitud de Visa T.",
+    options: [
+      "Verdadero. Los delitos relacionados con sustancias controladas son causas de inadmisibilidad absolutas que no admiten ninguna exención, independientemente de las circunstancias del solicitante.",
+      "Falso. Un delito de posesión simple de sustancias controladas puede ser objeto de una exención discrecional mediante el Formulario I-192, a diferencia de causas como la participación en persecuciones, que generalmente no pueden eximirse.",
+      "Verdadero. La TVPA establece expresamente que los delitos de drogas son causas de inadmisibilidad no exenibles para todos los solicitantes de visa humanitaria, incluida la Visa T.",
+      "Falso. Pero la exención solo aplica si el delito de posesión fue cometido como resultado directo y probado de la situación de trata, lo cual debe certificarse mediante una declaración del traficante."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. La afirmación es falsa. La posesión simple de sustancias controladas, a diferencia de causas como participar en persecuciones, puede ser objeto de una exención discrecional mediante el I-192. USCIS evalúa si es de interés nacional conceder la exención, considerando el contexto de trata.",
+    feedbackFail: "Incorrecto. Los delitos de posesión simple no son causas absolutamente no exenibles para la Visa T. El I-192 existe precisamente para permitir que USCIS evalúe de manera discrecional estos casos. No se requiere certificación del traficante para solicitar la exención."
+  },
+  {
+    format: "Caso práctico",
+    isCase: true,
+    text: "Además del Formulario I-192, ¿qué estrategia adicional puede fortalecer el argumento de interés nacional en el brief legal que acompaña al paquete de solicitud en el caso PCR?",
+    options: [
+      "Solicitar al cliente que presente una declaración pública ante medios de comunicación describiendo su experiencia de trata, para demostrar que su caso tiene relevancia social y merece la aprobación de USCIS.",
+      "Documentar en el brief la conexión entre el delito y la situación de trata, incluir evidencia de rehabilitación del cliente, destacar su cooperación activa con las autoridades y enfatizar el valor de esa cooperación para la investigación.",
+      "Solicitar al fiscal del caso que garantice por escrito que el cliente no volverá a cometer delitos, y adjuntar esa garantía como evidencia principal del argumento de interés nacional ante USCIS.",
+      "Presentar únicamente el I-914B como evidencia de interés nacional, ya que la certificación policial de cooperación es suficiente para subsanar cualquier causa de inadmisibilidad sin necesidad de documentación adicional."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. El brief legal debe conectar el delito con la situación de trata (muchas víctimas son inducidas a actividades ilegales por sus traficantes), incluir evidencia de rehabilitación, destacar la cooperación del cliente con las autoridades y el valor de esa cooperación para la persecución del tráfico. Esta argumentación integral maximiza las posibilidades de que USCIS conceda la exención discrecional.",
+    feedbackFail: "Incorrecto. Declaraciones públicas en medios, garantías del fiscal y confiar únicamente en el I-914B no son estrategias adecuadas ni suficientes. El brief legal debe construir un argumento integral que conecte el delito con la trata, documente rehabilitación y destaque la cooperación del cliente."
+  },
+  {
+    format: "Caso práctico",
+    isCase: true,
+    text: "Si USCIS deniega el Formulario I-192 y, por tanto, no concede la exención de inadmisibilidad en el caso PCR, ¿cuál es la estrategia más adecuada para el equipo legal?",
+    options: [
+      "Cerrar el expediente de inmediato, ya que la denegación del I-192 implica que el caso no tiene ninguna vía legal adicional disponible y continuar con el trámite solo generaría costos innecesarios para el cliente.",
+      "Evaluar si el cliente puede solicitar el expungement del delito en la corte estatal correspondiente, o si existe base para una reconsideración del I-192 con argumentación y evidencia adicional, y consultar con el abogado supervisor sobre ambas opciones.",
+      "Presentar de manera inmediata una solicitud de asilo mediante el I-589, ya que la denegación del I-192 convierte automáticamente el caso en uno de persecución por grupo social particular.",
+      "Solicitar al cliente que abandone voluntariamente el país y presente la solicitud de Visa T desde su país de origen, donde los antecedentes penales de EE. UU. no afectan los criterios de elegibilidad."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. La denegación del I-192 no cierra todas las opciones. El equipo legal debe evaluar si el expungement del delito en la corte estatal es viable, si hay base para presentar una reconsideración con nueva evidencia, y escalar la decisión al abogado supervisor. Estas son las vías procesales adecuadas antes de considerar cerrar el caso.",
+    feedbackFail: "Incorrecto. Cerrar el expediente de inmediato es prematuro. La denegación del I-192 no convierte el caso en asilo ni obliga al cliente a salir del país. El equipo legal debe explorar el expungement, la reconsideración del I-192 y escalar al abogado supervisor antes de tomar decisiones definitivas."
+  }
+];
+var QUESTIONS_CASE_SI = [
+  {
+    format: "Caso práctico",
+    isCase: true,
+    text: "En el escenario descrito, ¿cuáles son los documentos, formularios y pasos concretos que la paralegal debe seguir para subsanar el problema de que el testimonio no articula el esquema de trata y preparar adecuadamente el paquete de solicitud?",
+    options: [
+      "Preparar únicamente la declaración legal (personal statement) con los hechos de violencia doméstica tal como los narró la cliente; adjuntar el I-914 y el I-914B; y presentar el paquete ante USCIS sin modificaciones adicionales al testimonio.",
+      "Reprogramar la entrevista para aplicar un protocolo de preguntas abiertas y cronológicas; documentar en el expediente las frases textuales que conecten medios y fines; y construir sobre esas frases la declaración legal que acompañará al I-914 y al I-914B.",
+      "Suspender el caso, informar a la cliente que su situación corresponde a violencia doméstica y no a trata, y referirla a una organización de apoyo a víctimas de violencia de género sin presentar solicitud de Visa T.",
+      "Solicitar a la cliente que firme una declaración redactada previamente por el abogado que establezca la conexión medios-fines, adjuntarla al I-914 como evidencia principal y presentar el paquete sin realizar una nueva entrevista."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. El paso correcto es realizar una entrevista complementaria con preguntas abiertas y cronológicas que permitan a la cliente articular, con sus propias palabras, la conexión entre los medios coercitivos (amenazas de deportación, fuerza) y el fin de explotación sexual comercial. Las frases textuales resultantes deben documentarse en el expediente y servir de base para la declaración legal que acompañará al I-914 y al I-914B.",
+    feedbackFail: "Incorrecto. Presentar el paquete sin subsanar el testimonio, suspender el caso por considerarlo solo violencia doméstica, o hacer firmar una declaración pre-redactada son errores graves. La estrategia correcta es una entrevista complementaria con preguntas abiertas que permitan a la cliente conectar los hechos con sus propias palabras."
+  },
+  {
+    format: "Qué NO se debe hacer",
+    isCase: true,
+    text: "En el contexto del caso práctico PWC, ¿cuál de las siguientes acciones NO se debe realizar al intentar subsanar el problema de que el testimonio no articula el esquema de trata?",
+    options: [
+      "No se debe usar preguntas abiertas y cronológicas durante la entrevista complementaria, ya que este tipo de preguntas dirige excesivamente el relato de la cliente y compromete la autenticidad del testimonio ante USCIS.",
+      "No se debe sugerir respuestas a la cliente ni completar sus frases durante la entrevista, ya que esto contamina el testimonio, compromete su credibilidad y puede constituir una irregularidad ética y legal.",
+      "No se debe documentar en el expediente las frases textuales con las que la cliente describe la relación entre la coerción ejercida y los actos de explotación sexual con terceros.",
+      "No se debe informar al abogado supervisor sobre el hallazgo de que el testimonio no articula el esquema de trata, ya que la decisión de cómo manejar el caso es responsabilidad exclusiva de la paralegal."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. Lo que NO se debe hacer es sugerir respuestas, completar frases o inducir el relato de la cliente. Estas prácticas contaminan el testimonio, comprometen su valor probatorio ante USCIS y pueden constituir una irregularidad ética y legal grave para la firma.",
+    feedbackFail: "Incorrecto. Las preguntas abiertas sí son la herramienta adecuada y no dirigen el relato. Documentar las frases textuales es esencial. Informar al abogado supervisor es obligatorio. Lo que NO se debe hacer es sugerir respuestas o completar el relato de la cliente."
+  },
+  {
+    format: "Verdadero o falso",
+    isCase: true,
+    text: "Verdadero o falso sobre el caso PWC: Dado que los hechos que describe la cliente contienen tanto elementos de violencia doméstica como elementos de trata sexual, la paralegal debe elegir entre documentar uno u otro patrón, ya que ambos no pueden coexistir en la misma solicitud de Visa T.",
+    options: [
+      "Verdadero. USCIS requiere que la solicitud de Visa T se base en un único patrón de conducta del traficante, por lo que la paralegal debe identificar el patrón predominante y estructurar la declaración legal en torno a ese patrón únicamente.",
+      "Falso. La violencia doméstica y la trata pueden coexistir en el mismo caso. La paralegal no debe descartar ninguno de los dos patrones, sino documentar los hechos de trata que existen en el relato sin eliminar el contexto de violencia doméstica.",
+      "Verdadero. Incluir elementos de violencia doméstica en una solicitud de Visa T debilita el caso porque USCIS podría interpretar que la situación corresponde a una Visa U en lugar de una Visa T.",
+      "Falso. Pero en este caso, dado que la cliente identifica los hechos principalmente como violencia doméstica, la paralegal debe reclasificar el caso como Visa U y notificar al abogado que la Visa T no es la vía adecuada."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. La afirmación es falsa. Violencia doméstica y trata no son excluyentes: pueden y frecuentemente coexisten. La paralegal no debe descartar ningún patrón. Su tarea es documentar con precisión los hechos de trata que ya existen en el relato, sin eliminar el contexto de violencia doméstica, para construir un caso sólido bajo los criterios de la Visa T.",
+    feedbackFail: "Incorrecto. No existe ninguna norma de USCIS que obligue a elegir un único patrón. La violencia doméstica y la trata pueden coexistir en el mismo caso. Tampoco es correcto reclasificar automáticamente como Visa U sin antes explorar los hechos de trata que existen en el relato."
+  },
+  {
+    format: "Caso práctico",
+    isCase: true,
+    text: "Además de la entrevista complementaria, ¿qué otra estrategia puede fortalecer el paquete de solicitud de Visa T de la cliente en el caso PWC, dada la situación en que la cliente no identifica los hechos como trata?",
+    options: [
+      "Solicitar únicamente el I-914B a la autoridad policial y presentarlo como evidencia exclusiva de la trata, sin añadir ningún otro tipo de evidencia corroborante al paquete de solicitud.",
+      "Incluir en el paquete evidencia corroborante como registros médicos, comunicaciones con el traficante, declaraciones de testigos o reportes policiales que documenten el patrón de coerción y explotación, complementando la declaración legal de la cliente.",
+      "Presentar el caso exclusivamente como violencia doméstica en el I-914, sin mencionar los hechos de explotación sexual, y solicitar que el abogado solicite una entrevista presencial con un oficial de USCIS para explicar la situación de manera verbal.",
+      "Esperar a que la cliente haya recibido tratamiento psicológico completo y pueda narrar los hechos de trata de manera autónoma y sin ambigüedades antes de iniciar cualquier trámite de solicitud ante USCIS."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. La evidencia corroborante es una estrategia clave para fortalecer el caso cuando el testimonio de la cliente es ambiguo o incompleto. Registros médicos, comunicaciones, declaraciones de testigos y reportes policiales pueden documentar el patrón de coerción y explotación de manera objetiva, complementando y fortaleciendo la declaración legal.",
+    feedbackFail: "Incorrecto. Confiar únicamente en el I-914B, presentar el caso solo como violencia doméstica u omitir los hechos de trata del I-914, o esperar a que la cliente se recupere completamente antes de tramitar, son estrategias inadecuadas. La evidencia corroborante es el complemento clave a la entrevista bien conducida."
+  },
+  {
+    format: "Caso práctico",
+    isCase: true,
+    text: "Si al finalizar la entrevista complementaria la cliente aún no logra articular con claridad la conexión entre los medios de coerción y la explotación sexual, ¿cuál es la estrategia más adecuada para el equipo legal?",
+    options: [
+      "Cerrar el expediente y desestimar el caso, ya que sin un testimonio claro que establezca el esquema de trata, la solicitud no tiene posibilidades de ser aprobada y presentarla podría perjudicar a la cliente.",
+      "Consultar con el abogado supervisor para evaluar si el caso puede sostenerse con evidencia corroborante, explorar si la cliente puede beneficiarse de apoyo psicológico especializado en trauma antes de continuar, y valorar si una exención del requisito de cooperación por trauma es aplicable.",
+      "Presentar la solicitud inmediatamente con el testimonio incompleto, ya que USCIS tiene la obligación de evaluar el caso en su totalidad y compensar las deficiencias del testimonio con las evidencias del expediente.",
+      "Reclasificar el caso como solicitud de asilo y presentar el I-589, ya que los hechos de violencia doméstica descritos por la cliente encajan mejor dentro de los criterios de persecución por grupo social particular."
+    ],
+    correct: 1,
+    feedbackOk: "Correcto. Cuando el testimonio sigue siendo insuficiente tras la entrevista, la estrategia adecuada es escalar al abogado supervisor, evaluar si la evidencia corroborante puede sostener el caso, explorar apoyo psicológico especializado para la cliente y valorar si aplica una exención del requisito de cooperación por trauma. Estas decisiones corresponden al equipo legal en su conjunto, no a la paralegal de manera aislada.",
+    feedbackFail: "Incorrecto. Cerrar el expediente sin explorar opciones es prematuro. Presentar la solicitud con un testimonio claramente insuficiente también es inadecuado. Reclasificar como asilo cambia la figura legal sin explorar primero todas las opciones dentro de la Visa T. La estrategia correcta es escalar al abogado y evaluar las opciones disponibles."
+  }
+];
+
+var QUESTIONS = [];
+var SCENARIO  = '';
+
+var S = {
+  name:'', area:'', contactType:'',
+  answers:[], currentQ:0,
+  secondsLeft:EXAM_MINUTES*60,
+  deadline:null,
+  startTime:null, submitted:false,
+  alertShown:false, tid:null
+};
+
+var SCORM = (function(){
+  var api=null,ver=null,ini=false;
+  function find(w){
+    var t=0;
+    while(t<10){
+      try{
+        if(w.API_1484_11){ver='2004';return w.API_1484_11;}
+        if(w.API){ver='1.2';return w.API;}
+        if(!w.parent||w.parent===w)break;
+        w=w.parent;
+      }catch(e){break;} // SecurityError on cross-origin frames — stop silently
+      t++;
+    }
+    return null;
+  }
+  function start(){try{api=find(window);if(!api)return false;var r=ver==='2004'?api.Initialize(''):api.LMSInitialize('');ini=(r===true||r==='true');return ini;}catch(e){return false;}}
+  function k12(k){var M={'cmi.completion_status':'cmi.core.lesson_status','cmi.success_status':'cmi.core.lesson_status','cmi.score.scaled':'cmi.core.score.raw','cmi.score.raw':'cmi.core.score.raw','cmi.score.min':'cmi.core.score.min','cmi.score.max':'cmi.core.score.max','cmi.session_time':'cmi.core.session_time','cmi.learner_name':'cmi.core.student_name','cmi.suspend_data':'cmi.suspend_data','cmi.location':'cmi.core.lesson_location'};return M[k]||k;}
+  function set(k,v){try{if(!api)return;var key=ver==='1.2'?k12(k):k;return ver==='2004'?api.SetValue(key,v):api.LMSSetValue(key,v);}catch(e){}}
+  function get(k){try{if(!api)return'';var key=ver==='1.2'?k12(k):k;return ver==='2004'?api.GetValue(key):api.LMSGetValue(key);}catch(e){return '';}}
+  function commit(){try{if(api)ver==='2004'?api.Commit(''):api.LMSCommit('');}catch(e){}}
+  function end(){try{if(!api||!ini)return;ver==='2004'?api.Terminate(''):api.LMSFinish('');ini=false;}catch(e){}}
+  return{start:start,set:set,get:get,commit:commit,end:end,v:function(){return ver;}};
+})();
+
+document.addEventListener('DOMContentLoaded', function(){
+  SCORM.start();
+  // Check permanent lock first
+  if(isLocked()) { showLockedScreen(); return; }
+  tryRestore();
+  document.getElementById('btn-start').addEventListener('click', startExam);
+  document.getElementById('inp-name').addEventListener('keydown', function(e){if(e.key==='Enter')startExam();});
+  document.getElementById('btn-prev').addEventListener('click', function(){ nav(-1); });
+  document.getElementById('btn-next').addEventListener('click', function(){ nav(1); });
+  document.getElementById('btn-submit').addEventListener('click', function(){
+    var u=S.answers.filter(function(a){return a===null;}).length;
+    if(u>0&&!confirm('Tienes '+u+' pregunta(s) sin responder. ¿Enviar de todas formas?'))return;
+    send(false);
+  });
+  document.getElementById('btn-close-alert').addEventListener('click', function(){document.getElementById('alert-5min').classList.add('hidden');});
+  window.addEventListener('beforeunload', save);
+});
+
+function pickType(t) {
+  S.contactType = t;
+  document.getElementById('ct-no').classList.toggle('active', t==='no');
+  document.getElementById('ct-si').classList.toggle('active', t==='si');
+}
+
+function startExam() {
+  var name = document.getElementById('inp-name').value.trim();
+  var area = document.getElementById('inp-area').value;
+  var err  = document.getElementById('id-error');
+  if (!name || !area) { err.classList.remove('hidden'); return; }
+  err.classList.add('hidden');
+  // If user didn't click type buttons, infer from area
+  if (!S.contactType) {
+    var _noAreas = ['Compliance','Pre Case Review','Litigation','Packets','RFE'];
+    S.contactType = _noAreas.indexOf(area) >= 0 ? 'no' : 'si';
+    pickType(S.contactType);
+  }
+  SCENARIO  = S.contactType === 'no' ? SCENARIO_NO : SCENARIO_SI;
+  QUESTIONS = QUESTIONS_BASE.concat(S.contactType === 'no' ? QUESTIONS_CASE_NO : QUESTIONS_CASE_SI);
+  S.name = name; S.area = area;
+  S.answers = new Array(QUESTIONS.length).fill(null);
+  S.currentQ = 0; S.startTime = Date.now();
+  S.submitted = false; S.alertShown = false;
+  S.secondsLeft = EXAM_MINUTES * 60;
+  S.deadline = Date.now() + S.secondsLeft * 1000;
+  SCORM.set('cmi.learner_name', name);
+  markInc(); save();
+  showScreen('screen-exam');
+  mode = S.contactType;
+  questions = QUESTIONS;
+  document.getElementById('bar-participant').textContent = name + ' - ' + area;
+  document.getElementById('quiz-view').style.display = 'block';
+  document.getElementById('score-view').style.display = 'none';
+  buildDots(); renderQ(0); startTimer();
+}
+
+function startTimer(){
+  // Use absolute deadline so tab switches don't affect the countdown
+  if(!S.deadline) S.deadline = Date.now() + S.secondsLeft * 1000;
+  timerUI();
+  S.tid = setInterval(function(){
+    S.secondsLeft = Math.max(0, Math.round((S.deadline - Date.now()) / 1000));
+    timerUI(); save();
+    if(S.secondsLeft <= 300 && !S.alertShown){
+      S.alertShown = true;
+      document.getElementById('alert-5min').classList.remove('hidden');
+    }
+    if(S.secondsLeft <= 0){ clearInterval(S.tid); autoSend(); }
+  }, 500); // tick every 500ms for accuracy
+}
+function timerUI(){
+  var m=Math.floor(S.secondsLeft/60),s=S.secondsLeft%60;
+  document.getElementById('timer-display').textContent=pad(m)+':'+pad(s);
+  var off=150.8*(1-S.secondsLeft/(EXAM_MINUTES*60));
+  var rp=document.getElementById('timer-ring-path');if(rp)rp.style.strokeDashoffset=off;
+  var box=document.getElementById('timer-box');
+  if(box){box.classList.remove('warn','danger');
+    if(S.secondsLeft<=60)box.classList.add('danger');
+    else if(S.secondsLeft<=300)box.classList.add('warn');}
+}
+
+
+
+function send(timeout){
+  if(S.submitted)return;
+  S.submitted=true; clearInterval(S.tid);
+  var correct=0;
+  S.answers.forEach(function(a,i){if(a!==null&&a===QUESTIONS[i].correct)correct++;});
+  var tot=QUESTIONS.length;
+  var ans=S.answers.filter(function(a){return a!==null;}).length;
+  var raw=tot?Math.round(correct/tot*100):0;
+  var passed=raw>=PASSING_SCORE;
+  var used=(EXAM_MINUTES*60)-S.secondsLeft;
+  var v=SCORM.v();
+  if(v==='1.2'){SCORM.set('cmi.core.lesson_status',passed?'passed':'failed');SCORM.set('cmi.core.score.raw',String(raw));SCORM.set('cmi.core.score.min','0');SCORM.set('cmi.core.score.max','100');SCORM.set('cmi.core.session_time',scormTime(used,'1.2'));}
+  else if(v==='2004'){SCORM.set('cmi.completion_status','completed');SCORM.set('cmi.success_status',passed?'passed':'failed');SCORM.set('cmi.score.scaled',(tot?correct/tot:0).toFixed(4));SCORM.set('cmi.score.raw',String(raw));SCORM.set('cmi.score.min','0');SCORM.set('cmi.score.max','100');SCORM.set('cmi.session_time',scormTime(used,'2004'));}
+  SCORM.set('cmi.suspend_data',JSON.stringify({name:S.name,area:S.area,contactType:S.contactType,answers:S.answers,score:raw,seconds:used,passed:passed}));
+  SCORM.set('cmi.location',S.area);
+  SCORM.commit(); SCORM.end();
+  clearSaved();
+  // Show score screen (source engine)
+  sendToSheets(raw, correct, used, passed);
+  document.getElementById('quiz-view').style.display = 'none';
+  document.getElementById('score-view').style.display = 'block';
+  showScore();
+}
+
+
+
+function renderQ(idx){
+  if(!QUESTIONS.length)return;
+  S.currentQ=idx;
+  var q=QUESTIONS[idx];
+  var card=document.getElementById('question-card');
+  card.style.animation='none';card.offsetHeight;card.style.animation='';
+
+  // Badge + format tag
+  var badge=document.getElementById('q-number');
+  badge.textContent='Pregunta '+(idx+1);
+  badge.className='q-badge'+(q.isCase?' is-case':'');
+  document.getElementById('q-format').textContent=q.format||'';
+  document.getElementById('q-of-total').textContent='de '+QUESTIONS.length;
+
+  // Scenario — only on first case question (idx 20)
+  var scBox=document.getElementById('case-scenario-box');
+  var scText=document.getElementById('case-scenario-text');
+  if(q.isCase && idx===20){
+    scBox.style.display='block';
+    scText.textContent=mode==='no'?SCENARIO_NO:SCENARIO_SI;
+  } else { scBox.style.display='none'; }
+
+  // Question text
+  document.getElementById('q-text').textContent=q.text;
+
+  // Options
+  var opts=document.getElementById('q-options');
+  var L=['A','B','C','D'];
+  opts.innerHTML='';
+  q.options.forEach(function(txt,i){
+    var d=document.createElement('div');
+    d.className='q-opt'+(S.answers[idx]===i?' selected':'');
+    d.innerHTML='<div class="opt-mk">'+L[i]+'</div><div class="opt-txt">'+txt+'</div>';
+    d.addEventListener('click',(function(oi){return function(){
+      if(S.answers[idx]!==null)return;
+      S.answers[idx]=oi;
+      // Mark selected only, no correct/incorrect reveal
+      opts.querySelectorAll('.q-opt').forEach(function(el){
+        el.style.pointerEvents='none';
+        el.classList.remove('selected');
+      });
+      d.classList.add('selected');
+      updProg();updDots();save();
+    };})(i));
+    opts.appendChild(d);
+  });
+
+  // Restore selected state only (no correct/incorrect reveal)
+  if(S.answers[idx]!==null){
+    var answered=S.answers[idx];
+    opts.querySelectorAll('.q-opt').forEach(function(el,j){
+      el.style.pointerEvents='none';
+      if(j===answered)el.classList.add('selected');
+    });
+  }
+
+  document.getElementById('btn-prev').disabled = (idx === 0);
+  // On last question: hide Next, show Submit. Otherwise: show Next, hide Submit.
+  var isLast = (idx === QUESTIONS.length - 1);
+  document.getElementById('btn-next').style.display   = isLast ? 'none'         : 'inline-flex';
+  document.getElementById('btn-submit').style.display = isLast ? 'inline-flex'  : 'none';
+  updProg(); updDots();
+}
+
+function nav(dir){var n=S.currentQ+dir;if(n>=0&&n<QUESTIONS.length)renderQ(n);}
+
+function buildDots(){
+  var w=document.getElementById('nav-dots');w.innerHTML='';
+  QUESTIONS.forEach(function(q,i){
+    var d=document.createElement('div');
+    d.className='nav-dot'+(q.isCase?' is-case':'');
+    d.textContent=i+1;
+    d.addEventListener('click',(function(qi){return function(){renderQ(qi);};})(i));
+    w.appendChild(d);
+  });updDots();
+}
+function updDots(){
+  document.querySelectorAll('.nav-dot').forEach(function(d,i){
+    d.classList.toggle('answered',S.answers[i]!==null);
+    d.classList.toggle('current',i===S.currentQ);
+  });
+}
+function updProg(){
+  var ans=S.answers.filter(function(a){return a!==null;}).length;
+  var tot=QUESTIONS.length;
+  document.getElementById('progress-bar').style.width=(tot?Math.round(ans/tot*100):0)+'%';
+  document.getElementById('progress-text').textContent=ans+' / '+tot;
+}
+
+
+/* ── THEMES + FEEDBACK ENGINE ── */
+var mode = 'pwc';
+var questions = [];
+
+const THEMES = [
+  {
+    label: 'Propósito y alcance de la Visa T',
+    indices: [0, 1, 2],
+    summaryNO: 'Revisa los fundamentos de la Visa T: su origen en la TVPA, el límite anual de 5,000 visas T-1 y las dos formas de trata severa reconocidas (sexual y laboral). Estos conceptos son la base para evaluar cualquier caso.',
+    summarySI: 'Revisa los fundamentos de la Visa T: su origen en la TVPA, el límite anual de 5,000 visas T-1 y las dos formas de trata severa reconocidas (sexual y laboral). Estos conceptos son la base para evaluar cualquier caso.'
+  },
+  {
+    label: 'Criterios de elegibilidad',
+    indices: [3, 4, 5],
+    summaryNO: 'Refuerza los cuatro criterios de elegibilidad: presencia física en EE. UU. (sin importar el modo de ingreso), la protección automática a menores de 18 años en casos de trata sexual, y el estándar de cooperación razonable con sus exenciones por trauma.',
+    summarySI: 'Refuerza los cuatro criterios de elegibilidad: presencia física en EE. UU. (sin importar el modo de ingreso), la protección automática a menores de 18 años en casos de trata sexual, y el estándar de cooperación razonable con sus exenciones por trauma.'
+  },
+  {
+    label: 'Formularios y procedimiento',
+    indices: [6, 7, 8, 9],
+    summaryNO: 'Repasa el uso correcto del I-914 (solicitud principal), el I-914B (certificación de cooperación policial) y los plazos clave: 4 años de estatus inicial, familiares derivados según edad del solicitante y emisión automática del EAD con la aprobación.',
+    summarySI: 'Repasa el uso correcto del I-914 (solicitud principal), el I-914B (certificación de cooperación policial) y los plazos clave: 4 años de estatus inicial, familiares derivados según edad del solicitante y emisión automática del EAD con la aprobación.'
+  },
+  {
+    label: 'Inadmisibilidad y exenciones (I-192)',
+    indices: [10, 11],
+    summaryNO: 'Refuerza el manejo de causas de inadmisibilidad: el I-192 sí aplica para entrada indocumentada y la mayoría de delitos menores, pero no para conductas como participar en persecuciones. Nunca se debe omitir una causa de inadmisibilidad en el paquete.',
+    summarySI: 'Refuerza el manejo de causas de inadmisibilidad: el I-192 sí aplica para entrada indocumentada y la mayoría de delitos menores, pero no para conductas como participar en persecuciones. Nunca se debe omitir una causa de inadmisibilidad en el paquete.'
+  },
+  {
+    label: 'Ajuste de estatus, coerción y casos conexos',
+    indices: [12, 13, 14, 15, 16, 17, 18, 19],
+    summaryNO: 'Consolida los conceptos de ajuste de estatus (3 años o cierre del caso, lo que ocurra primero), la distinción entre coerción real y persuasión libre, la relación entre la Visa T y la Visa U, y la exención discrecional por trauma psicológico.',
+    summarySI: 'Consolida los conceptos de ajuste de estatus (3 años o cierre del caso, lo que ocurra primero), la distinción entre coerción real y persuasión libre, la relación entre la Visa T y la Visa U, y la exención discrecional por trauma psicológico.'
+  },
+  {
+    label: 'Caso práctico · Estrategia de inadmisibilidad (PCR)',
+    indices: [20, 21, 22, 23, 24],
+    summaryNO: 'Repasa la estrategia ante antecedentes penales en una solicitud de Visa T: presentar el I-914 junto con el I-192, construir un brief legal que conecte el delito con la situación de trata, incluir evidencia de rehabilitación y nunca ocultar información material. Ante una denegación del I-192, evalúa el expungement y la reconsideración antes de cerrar el caso.',
+    summarySI: ''
+  },
+  {
+    label: 'Caso práctico · Estrategia de entrevista y testimonio (PWC)',
+    indices: [20, 21, 22, 23, 24],
+    summaryNO: '',
+    summarySI: 'Refuerza el protocolo de entrevista cuando el testimonio no articula el esquema de trata: usa preguntas abiertas y cronológicas, documenta las frases textuales de la cliente, nunca sugiereas respuestas ni completes su relato. Violencia doméstica y trata pueden coexistir. Cuando el testimonio sigue siendo insuficiente, escala al abogado supervisor y evalúa evidencia corroborante y apoyo psicológico especializado.'
+  }
+];
+
+
+function showScore() {
+  document.getElementById('quiz-view').style.display = 'none';
+  document.getElementById('score-view').style.display = 'block';
+
+  const wrong = new Set(
+    S.answers.reduce((acc, a, i) => { if (a !== QUESTIONS[i].correct) acc.push(i); return acc; }, [])
+  );
+
+  // restart disabled — single attempt only
+  document.getElementById('score-badge').innerHTML = '';
+
+  const msgEl = document.getElementById('score-msg');
+  const container = document.getElementById('feedback-global-container');
+
+  if (wrong.size === 0) {
+    msgEl.textContent = S.contactType === 'no'
+      ? 'Excelente desempeño. Demuestras dominio sólido de los criterios de la Visa T y capacidad de análisis para resolver situaciones complejas de inadmisibilidad. Estás bien preparado para la revisión de paquetes en la firma.'
+      : 'Excelente desempeño. Demuestras dominio sólido de los criterios de elegibilidad de la Visa T y capacidad de análisis ante situaciones prácticas de recolección de información. Estás bien preparado para apoyar estos casos en la firma.';
+    container.innerHTML = `<div class="feedback-global"><div class="feedback-perfect">🎉 Respondiste correctamente todas las preguntas.</div></div>`;
+    return;
+  }
+
+  msgEl.textContent = 'A continuación encontrarás un análisis de los conceptos que necesitas reforzar, basado en el conjunto de tus respuestas.';
+
+  // Filtra solo los temas que aplican a este modo y donde el colaborador tuvo al menos un error
+  const relevantThemes = THEMES.filter(theme => {
+    // El tema de caso práctico PCR solo aplica en modo PCR, y viceversa
+    if (theme.label.includes('PCR') && S.contactType !== 'no') return false;
+    if (theme.label.includes('PWC') && S.contactType !== 'si') return false;
+    const summary = S.contactType === 'no' ? theme.summaryNO : theme.summarySI;
+    if (!summary) return false;
+    return theme.indices.some(i => wrong.has(i));
+  });
+
+  if (relevantThemes.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+
+  const blocks = relevantThemes.map(theme => {
+    const summary = S.contactType === 'no' ? theme.summaryNO : theme.summarySI;
+    return `
+      <div class="feedback-block">
+        <div class="feedback-block-label ${S.contactType}">${theme.label}</div>
+        <div class="feedback-block-text">${summary}</div>
+      </div>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="feedback-global">
+      <div class="feedback-global-title">Análisis de resultados · áreas de refuerzo</div>
+      ${blocks}
+    </div>`;
+}
+
+function restartExam() {
+  S.submitted = false;
+  clearInterval(S.tid);
+  S.answers = new Array(QUESTIONS.length).fill(null);
+  S.currentQ = 0;
+  S.secondsLeft = EXAM_MINUTES * 60;
+  S.deadline = Date.now() + S.secondsLeft * 1000;
+  document.getElementById('score-view').style.display = 'none';
+  document.getElementById('quiz-view').style.display = 'block';
+  buildDots(); renderQ(0); startTimer();
+}
+
+
+/* ── BLOQUEO PERMANENTE DE EVALUACIÓN ───────────────────────── */
+function lockEval() {
+  try { localStorage.setItem('vt_eval_locked', '1'); } catch(e) {}
+}
+
+function isLocked() {
+  try { return localStorage.getItem('vt_eval_locked') === '1'; } catch(e) { return false; }
+}
+
+function showLockedScreen() {
+  // Hide all screens, show locked message
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('screen-locked').classList.add('active');
+}
+
+
+function unlockForm() {
+  var overlay = document.getElementById('instructions-overlay');
+  overlay.style.opacity = '0';
+  setTimeout(function(){ overlay.style.display = 'none'; }, 300);
+}
+
+/* ── ENVÍO A GOOGLE SHEETS ───────────────────────────────────── */
+var SHEETS_URL = "https://script.google.com/macros/s/AKfycbzCQJ-lfEECmkgtWbSkVgRBIDA7aujknP-3M3_ncr-PnHYi864_oXIwFuhd_tRrHSun/exec"; // ← reemplaza esto
+
+function sendToSheets(raw, correct, used, passed) {
+  if (!SHEETS_URL || SHEETS_URL === "PEGA_AQUI_TU_URL_DE_WEB_APP") return;
+
+  // Calcular temas a reforzar (igual que showScore)
+  var wrongSet = new Set(
+    S.answers.reduce(function(acc, a, i) {
+      if (a !== QUESTIONS[i].correct) acc.push(i);
+      return acc;
+    }, [])
+  );
+
+  var themeLabels = THEMES
+    .filter(function(theme) {
+      if (theme.label.includes('PCR') && S.contactType !== 'no') return false;
+      if (theme.label.includes('PWC') && S.contactType !== 'si') return false;
+      var summary = S.contactType === 'no' ? theme.summaryNO : theme.summarySI;
+      if (!summary) return false;
+      return theme.indices.some(function(i) { return wrongSet.has(i); });
+    })
+    .map(function(t) { return t.label; })
+    .join(' | ');
+
+  var payload = {
+    name:        S.name,
+    area:        S.area,
+    contactType: S.contactType,
+    score:       raw,
+    passed:      passed,
+    correct:     correct,
+    total:       QUESTIONS.length,
+    timeUsed:    humanTime(used),
+    themes:      themeLabels || 'Sin temas a reforzar'
+  };
+
+  try {
+    fetch(SHEETS_URL, {
+      method:  'POST',
+      mode:    'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+  } catch(e) { /* fallo silencioso — no interrumpe la evaluación */ }
+}
+
+
+function save(){
+  var d={version:EVAL_VERSION,name:S.name,area:S.area,contactType:S.contactType,answers:S.answers||[],currentQ:S.currentQ,secondsLeft:S.secondsLeft,deadline:S.deadline,alertShown:S.alertShown,partial:true};
+  try{sessionStorage.setItem('vt_eval',JSON.stringify(d));}catch(e){}
+  if(S.name){SCORM.set('cmi.suspend_data',JSON.stringify(d));SCORM.commit();}
+}
+function tryRestore(){
+  // Only restore from sessionStorage (not SCORM) to avoid stale data
+  var d = null;
+  try {
+    var raw = sessionStorage.getItem('vt_eval');
+    if(raw) d = JSON.parse(raw);
+  } catch(e) { d = null; }
+
+  // Strict validation: must be a valid in-progress session with exactly 25 answers
+  if(!d || !d.name || !d.partial || !d.contactType) return;
+  if(!d.answers || d.answers.length !== 25) { clearSaved(); return; }
+  if(!d.deadline || d.deadline <= Date.now()) { clearSaved(); return; }
+
+  var secondsLeft = Math.round((d.deadline - Date.now()) / 1000);
+  if(secondsLeft <= 0) { clearSaved(); return; }
+
+  if(!confirm('Hay un intento en curso de "' + d.name + '". ¿Continuar donde lo dejaste?')) {
+    clearSaved(); return;
+  }
+
+  // Restore state
+  S.name        = d.name;
+  S.area        = d.area;
+  S.contactType = d.contactType;
+  S.currentQ    = d.currentQ || 0;
+  S.alertShown  = d.alertShown || false;
+  S.secondsLeft = secondsLeft;
+  S.deadline    = d.deadline;
+  S.answers     = d.answers;
+
+  SCENARIO  = S.contactType === 'no' ? SCENARIO_NO : SCENARIO_SI;
+  QUESTIONS = QUESTIONS_BASE.concat(S.contactType === 'no' ? QUESTIONS_CASE_NO : QUESTIONS_CASE_SI);
+
+  // Restore form UI
+  document.getElementById('inp-name').value = S.name;
+  pickType(S.contactType);
+  document.getElementById('inp-area').value = S.area;
+
+  showScreen('screen-exam');
+  document.getElementById('bar-participant').textContent = S.name + ' - ' + S.area;
+  buildDots(); renderQ(S.currentQ); startTimer();
+}
+function clearSaved(){try{sessionStorage.removeItem('vt_eval');}catch(e){}}
+function markInc(){if(SCORM.v()==='1.2')SCORM.set('cmi.core.lesson_status','incomplete');else if(SCORM.v()==='2004'){SCORM.set('cmi.completion_status','incomplete');SCORM.set('cmi.success_status','unknown');}SCORM.commit();}
+function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.toggle('active',s.id===id);});window.scrollTo(0,0);}
+function scormTime(s,v){var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=s%60;return v==='1.2'?pad(h)+':'+pad(m)+':'+pad(ss):'PT'+(h?h+'H':'')+(m?m+'M':'')+ss+'S';}
+function pad(n){return String(n).padStart(2,'0');}
+function humanTime(s){return Math.floor(s/60)+' min '+(s%60)+' seg';}
+</script>
+</body>
+</html>
