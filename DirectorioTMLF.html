@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIRECTORIO TMLF</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f4f4f0; color: #1a1a18;
+    min-height: 100vh; padding: 0 0 48px;
+  }
+
+  /* Buscador fijo arriba */
+  .sticky-top {
+    position: sticky; top: 0; z-index: 10;
+    background: #f4f4f0;
+    padding: 16px 16px 10px;
+    border-bottom: 1px solid #e8e6de;
+  }
+  .sticky-top header { text-align: center; margin-bottom: 12px; }
+  .sticky-top header h1 { font-size: 20px; font-weight: 600; color: #1a1a18; letter-spacing: -0.3px; }
+  .sticky-top header p { font-size: 12px; color: #6b6b66; margin-top: 3px; }
+
+  #search {
+    display: block; width: 100%; max-width: 600px;
+    margin: 0 auto;
+    padding: 11px 16px; font-size: 15px;
+    border: 1px solid #ccc; border-radius: 12px;
+    background: #fff; color: #1a1a18; outline: none;
+  }
+  #search:focus { border-color: #185FA5; }
+
+  /* Contenido scrolleable */
+  .content { padding: 14px 16px 0; }
+  .count { text-align: center; font-size: 12px; color: #9a9994; margin-bottom: 12px; }
+
+  .accordion-list { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 6px; }
+
+  .acc-item { background: #fff; border: 1px solid #e4e2da; border-radius: 14px; overflow: hidden; transition: border-color .2s, box-shadow .2s; }
+  .acc-item.open { border-color: #185FA5; box-shadow: 0 2px 12px rgba(24,95,165,.12); }
+
+  .acc-header { display: flex; align-items: center; gap: 12px; padding: 13px 16px; cursor: pointer; user-select: none; }
+  .acc-header:hover { background: #fafaf8; }
+
+  .avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .acc-name-wrap { flex: 1; }
+  .name { font-size: 14px; font-weight: 600; line-height: 1.3; color: #1a1a18; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 9px; border-radius: 999px; margin-top: 3px; }
+
+  .chevron { font-size: 11px; color: #bbb; transition: transform .25s ease; flex-shrink: 0; }
+  .acc-item.open .chevron { transform: rotate(180deg); color: #185FA5; }
+
+  .acc-body { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+  .acc-item.open .acc-body { max-height: 160px; }
+  .acc-inner { padding: 0 16px 14px; border-top: 1px solid #f0ede6; }
+  .phone { font-size: 13px; color: #555; display: flex; align-items: center; gap: 6px; padding: 10px 0; }
+  .actions { display: flex; gap: 8px; }
+  .btn { flex: 1; padding: 8px 0; font-size: 13px; font-weight: 500; border-radius: 9px; cursor: pointer; text-align: center; text-decoration: none; transition: opacity .15s, background .1s; display: block; }
+  .btn-call { background: #185FA5; color: #fff; border: none; }
+  .btn-call:hover { opacity: .88; }
+  .btn-wa { background: #f0f0eb; color: #1a1a18; border: 1px solid #ddd; }
+  .btn-wa:hover { background: #e4e2da; }
+
+  .empty { text-align: center; color: #999; font-size: 14px; padding: 40px; }
+
+  .av-0{background:#dce8f9;color:#0C447C}.av-1{background:#c8ede0;color:#085041}.av-2{background:#fde8c0;color:#633806}.av-3{background:#f9d5e4;color:#72243E}.av-4{background:#e2e0fc;color:#3C3489}.av-5{background:#fad4d4;color:#791F1F}.av-6{background:#d9edcc;color:#27500A}.av-7{background:#fad5c0;color:#712B13}.av-8{background:#d8eafc;color:#0C447C}.av-9{background:#e4f9ee;color:#085041}.av-10{background:#f9e8c2;color:#633806}
+  .bg-0{background:#B5D4F4;color:#0C447C}.bg-1{background:#9FE1CB;color:#085041}.bg-2{background:#FAC775;color:#633806}.bg-3{background:#F4C0D1;color:#72243E}.bg-4{background:#CECBF6;color:#3C3489}.bg-5{background:#F7C1C1;color:#791F1F}.bg-6{background:#C0DD97;color:#27500A}.bg-7{background:#F5C4B3;color:#712B13}.bg-8{background:#B5D4F4;color:#0C447C}.bg-9{background:#9FE1CB;color:#085041}.bg-10{background:#FAC775;color:#633806}
+
+  footer { text-align: center; margin-top: 36px; font-size: 12px; color: #bbb; }
+</style>
+</head>
+<body>
+
+<!-- Barra fija -->
+<div class="sticky-top">
+  <header>
+    <h1>DIRECTORIO TMLF</h1>
+    <p>The Mendoza Law Firm — Líderes de área</p>
+  </header>
+  <input id="search" type="text" placeholder="🔍  Buscar por nombre, área o número...">
+</div>
+
+<!-- Lista scrolleable -->
+<div class="content">
+  <div class="count" id="count"></div>
+  <div class="accordion-list" id="list"></div>
+  <footer>Mendoza Law Firm LLC · Uso interno</footer>
+</div>
+
+<script>
+const data = [
+  { name: "Misael Raul Moreno",                area: "People",     phone: "56 2101 1940" },
+  { name: "Julio Cesar Vargas Dominguez",       area: "PMO",        phone: "624 136 2161" },
+  { name: "Juan Carlos Sandoval Villa",         area: "Packets",    phone: "55 4080 1367" },
+  { name: "Jessica Berenice Suastegui Alcocer", area: "Packets",    phone: "55 5965 9822" },
+  { name: "Brenda Castellanos Garcia",          area: "RFE",        phone: "55 6867 1710" },
+  { name: "Horacio Alfonso Orantes Altuzar",    area: "Compliance", phone: "5625752281"   },
+  { name: "Itzia Rivera Sodi",                  area: "WAES",       phone: "55 1726 8344" },
+  { name: "Raul Escalante Lopez",               area: "Psychology", phone: "55 3703 9860" },
+  { name: "Francisco Javier Monroy",            area: "Compliance", phone: "55 3279 7144" },
+  { name: "Carlos Antonio Guzman",              area: "Truckers",   phone: "4426106506"   },
+  { name: "Victor Eduardo Romo Trujillo",       area: "TI",         phone: "56 2005 2683" },
+];
+
+const colorIndex = {};
+data.forEach((p, i) => colorIndex[p.name] = i % 11);
+
+function initials(n) { return n.split(" ").filter((_,i)=>i<2).map(w=>w[0]).join("").toUpperCase(); }
+function cleanPhone(p) { return p.replace(/\s/g,""); }
+function sortedAZ(list) { return [...list].sort((a,b)=>a.name.localeCompare(b.name,"es")); }
+
+function render(list) {
+  const container = document.getElementById("list");
+  const countEl   = document.getElementById("count");
+  const sorted    = sortedAZ(list);
+  countEl.textContent = sorted.length + (sorted.length===1?" contacto":" contactos");
+  if (!sorted.length) { container.innerHTML='<div class="empty">Sin resultados para esa búsqueda.</div>'; return; }
+  container.innerHTML = sorted.map(p => {
+    const c=colorIndex[p.name], tel=cleanPhone(p.phone), wa="https://wa.me/52"+tel;
+    return `<div class="acc-item">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="avatar av-${c}">${initials(p.name)}</div>
+        <div class="acc-name-wrap">
+          <div class="name">${p.name}</div>
+          <span class="badge bg-${c}">${p.area}</span>
+        </div>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-inner">
+          <div class="phone">📱 ${p.phone}</div>
+          <div class="actions">
+            <a class="btn btn-call" href="tel:${tel}">Llamar</a>
+            <a class="btn btn-wa" href="${wa}" target="_blank">WhatsApp ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function toggle(header) {
+  const item=header.closest(".acc-item"), isOpen=item.classList.contains("open");
+  document.querySelectorAll(".acc-item.open").forEach(el=>el.classList.remove("open"));
+  if (!isOpen) item.classList.add("open");
+}
+
+render(data);
+
+document.getElementById("search").addEventListener("input", function(){
+  const q=this.value.toLowerCase().trim();
+  render(q ? data.filter(p=>
+    p.name.toLowerCase().includes(q)||
+    p.area.toLowerCase().includes(q)||
+    p.phone.includes(q)
+  ) : data);
+});
+</script>
+</body>
+</html>
