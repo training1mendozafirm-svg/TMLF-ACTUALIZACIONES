@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Guía de Supervivencia EAD 2026 | Capacitación Interna</title>
+<style>
+:root {
+  --ink: #0B0F1A;
+  --ink-mid: #131929;
+  --ink-soft: #1C2438;
+  --ink-card: #171E30;
+  --gold: #C9A84C;
+  --gold-lt: #E4C96A;
+  --gold-dim: rgba(201,168,76,.13);
+  --border: rgba(201,168,76,.2);
+  --border-hi: rgba(201,168,76,.5);
+  --white: #fff;
+  --text: #E8EDF5;
+  --muted: rgba(232,237,245,.6);
+  --dim: rgba(232,237,245,.28);
+  --success: #34D399;
+  --danger: #F87171;
+  --warn: #FBBF24;
+  --r: 12px;
+  --r-sm: 8px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--ink);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.65;
+}
+
+/* ── BACKGROUND ── */
+.bg-grid {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,.04) 1px, transparent 1px);
+  background-size: 52px 52px;
+}
+.bg-glow {
+  position: fixed; pointer-events: none; z-index: 0;
+  border-radius: 50%; filter: blur(140px); opacity: .35;
+}
+.bg-glow-1 {
+  width: 700px; height: 700px; top: -200px; right: -100px;
+  background: radial-gradient(circle, rgba(201,168,76,.2), transparent 70%);
+  animation: gf 10s ease-in-out infinite alternate;
+}
+.bg-glow-2 {
+  width: 500px; height: 500px; bottom: -100px; left: -100px;
+  background: radial-gradient(circle, rgba(20,50,110,.45), transparent 70%);
+  animation: gf 14s ease-in-out infinite alternate-reverse;
+}
+@keyframes gf {
+  from { transform: translate(0,0) scale(1); }
+  to   { transform: translate(24px,16px) scale(1.06); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse-red {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(248,113,113,0); }
+  50% { box-shadow: 0 0 24px 6px rgba(248,113,113,.25); }
+}
+
+/* ── LAYOUT ── */
+.page {
+  position: relative; z-index: 1;
+  max-width: 1080px; margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+/* ── HEADER ── */
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(13,17,30,.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 20px;
+  padding: 0 32px; height: 64px;
+  box-shadow: 0 4px 32px rgba(0,0,0,.4);
+}
+.header-brand { display: flex; align-items: center; gap: 14px; }
+.header-brand-text .org { font-size: .65rem; font-weight: 700; letter-spacing: .18em; color: var(--gold); text-transform: uppercase; display: block; }
+.header-brand-text .sub { font-size: .6rem; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; display: block; }
+.header-badge {
+  margin-left: auto;
+  background: var(--gold-dim); border: 1px solid var(--border-hi);
+  color: var(--gold-lt); font-size: .65rem; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+  padding: 5px 14px; border-radius: 20px;
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 28px 0 16px;
+  animation: fadeUp .6s ease both;
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: .68rem; font-weight: 700; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 18px;
+}
+.hero-tag::before {
+  content: ''; display: inline-block;
+  width: 28px; height: 1px; background: var(--gold);
+}
+.hero-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700; line-height: 1.1; color: var(--white); margin-bottom: 16px;
+}
+.hero-title em { font-style: italic; color: var(--gold-lt); }
+.hero-desc { font-size: .95rem; color: var(--muted); max-width: 600px; line-height: 1.8; }
+.hero-meta {
+  display: flex; align-items: center; gap: 24px;
+  margin-top: 28px; padding-top: 24px;
+  border-top: 1px solid var(--border); flex-wrap: wrap;
+}
+.hero-meta-item {
+  display: flex; align-items: center; gap: 8px;
+  font-size: .76rem; color: var(--muted);
+}
+.hero-meta-item .dot {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+}
+.dot-gold { background: var(--gold); }
+.dot-warn { background: var(--warn); }
+.dot-danger { background: var(--danger); }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  display: flex; align-items: center; gap: 14px;
+  font-size: .65rem; font-weight: 700; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 20px; margin-top: 28px;
+}
+.section-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+.section-num {
+  background: var(--gold-dim); border: 1px solid var(--border);
+  color: var(--gold); font-size: .6rem; font-weight: 700;
+  width: 22px; height: 22px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--ink-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 28px 32px;
+  box-shadow: 0 8px 40px rgba(0,0,0,.32), inset 0 1px 0 rgba(201,168,76,.08);
+  transition: border-color .2s, box-shadow .2s, transform .2s;
+  animation: fadeUp .4s ease both;
+}
+.card:hover {
+  border-color: var(--border-hi);
+  box-shadow: 0 12px 48px rgba(0,0,0,.42), inset 0 1px 0 rgba(201,168,76,.14);
+  transform: translateY(-2px);
+}
+.card-title {
+  font-family: Georgia, serif;
+  font-size: 1.1rem; font-weight: 700; color: var(--white);
+  margin-bottom: 8px;
+}
+.card-body { font-size: .88rem; color: var(--muted); line-height: 1.8; }
+
+/* ── GRID LAYOUTS ── */
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+
+/* ── DEFINITION CARD ── */
+.def-card {
+  background: var(--ink-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 36px 40px;
+  box-shadow: 0 8px 40px rgba(0,0,0,.32), inset 0 1px 0 rgba(201,168,76,.08);
+  animation: fadeUp .4s ease both;
+  display: grid; grid-template-columns: auto 1fr; gap: 32px; align-items: start;
+  transition: border-color .2s, transform .2s;
+}
+.def-card:hover { border-color: var(--border-hi); transform: translateY(-2px); }
+.def-icon-wrap {
+  width: 64px; height: 64px;
+  background: var(--gold-dim); border: 1px solid var(--border-hi);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; flex-shrink: 0;
+}
+.def-content {}
+.def-tag {
+  font-size: .62rem; font-weight: 700; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
+}
+.def-title {
+  font-family: Georgia, serif; font-size: 1.3rem;
+  font-weight: 700; color: var(--white); margin-bottom: 12px;
+}
+.def-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.pill {
+  font-size: .7rem; font-weight: 600; letter-spacing: .06em;
+  padding: 4px 12px; border-radius: 20px;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.pill-gold { background: var(--gold-dim); border: 1px solid var(--border-hi); color: var(--gold-lt); }
+.pill-success { background: rgba(52,211,153,.1); border: 1px solid rgba(52,211,153,.25); color: var(--success); }
+.pill-warn { background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.25); color: var(--warn); }
+.pill-danger { background: rgba(248,113,113,.1); border: 1px solid rgba(248,113,113,.25); color: var(--danger); }
+
+/* ── REQUIREMENT CARDS ── */
+.req-card {
+  background: var(--ink-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 28px 28px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.28);
+  transition: border-color .2s, transform .2s;
+  animation: fadeUp .4s ease both;
+}
+.req-card:hover { border-color: var(--border-hi); transform: translateY(-2px); }
+.req-card-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px; padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.req-card-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--gold-dim); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;
+}
+.req-card-title { font-size: .78rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: .1em; }
+.req-list { display: flex; flex-direction: column; gap: 10px; }
+.req-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: .86rem; color: var(--muted); line-height: 1.6;
+  padding: 10px 12px; border-radius: var(--r-sm);
+  background: rgba(255,255,255,.02); border: 1px solid transparent;
+  transition: background .18s, border-color .18s;
+}
+.req-item:hover { background: var(--gold-dim); border-color: var(--border); }
+.req-item-marker {
+  font-size: .65rem; font-weight: 700; color: var(--gold);
+  flex-shrink: 0; margin-top: 2px;
+}
+.req-item strong { color: var(--text); }
+
+/* ── ALERT BOX ── */
+.alert {
+  border-radius: var(--r-sm); padding: 14px 18px;
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: .88rem; line-height: 1.65;
+}
+.alert-warn {
+  background: rgba(251,191,36,.09);
+  border: 1px solid rgba(251,191,36,.3);
+  color: var(--text);
+}
+.alert-danger {
+  background: rgba(248,113,113,.08);
+  border: 1px solid rgba(248,113,113,.3);
+  color: var(--text);
+}
+.alert-success {
+  background: rgba(52,211,153,.08);
+  border: 1px solid rgba(52,211,153,.25);
+  color: var(--text);
+}
+.alert-gold {
+  background: var(--gold-dim);
+  border: 1px solid var(--border-hi);
+  color: var(--text);
+}
+.alert-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+.alert-content {}
+.alert-label {
+  font-size: .65rem; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; display: block; margin-bottom: 4px;
+}
+.alert-warn .alert-label { color: var(--warn); }
+.alert-danger .alert-label { color: var(--danger); }
+.alert-success .alert-label { color: var(--success); }
+.alert-gold .alert-label { color: var(--gold); }
+
+/* ── CRITICAL BLOCK ── */
+.critical-block {
+  background: linear-gradient(135deg, rgba(248,113,113,.1), rgba(201,168,76,.05));
+  border: 2px solid rgba(248,113,113,.45);
+  border-radius: var(--r);
+  padding: 40px 40px;
+  position: relative; overflow: hidden;
+  animation: fadeUp .4s ease both, pulse-red 3s ease-in-out infinite;
+  box-shadow: 0 0 0 1px rgba(248,113,113,.15), 0 16px 48px rgba(0,0,0,.4);
+}
+.critical-block::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--danger), rgba(248,113,113,.2), var(--danger));
+}
+.critical-eyebrow {
+  display: flex; align-items: center; gap: 10px;
+  font-size: .65rem; font-weight: 700; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--danger); margin-bottom: 14px;
+}
+.critical-eyebrow::before {
+  content: ''; display: inline-block;
+  width: 20px; height: 2px; background: var(--danger);
+}
+.critical-title {
+  font-family: Georgia, serif; font-size: 1.65rem;
+  font-weight: 700; color: var(--white); margin-bottom: 6px;
+}
+.critical-title em { color: var(--danger); font-style: italic; }
+.critical-date-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(248,113,113,.12); border: 1px solid rgba(248,113,113,.35);
+  color: var(--danger); font-size: .72rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  padding: 5px 14px; border-radius: 20px; margin-bottom: 24px;
+}
+.critical-consequences {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 24px;
+}
+.consequence-item {
+  background: rgba(248,113,113,.06); border: 1px solid rgba(248,113,113,.25);
+  border-radius: var(--r-sm); padding: 18px 20px;
+  display: flex; align-items: flex-start; gap: 12px;
+  transition: background .2s, transform .2s;
+}
+.consequence-item:hover { background: rgba(248,113,113,.12); transform: translateY(-2px); }
+.consequence-arrow {
+  font-size: 1.2rem; flex-shrink: 0; color: var(--danger); line-height: 1.6;
+}
+.consequence-text { font-size: .88rem; color: var(--text); line-height: 1.6; }
+.consequence-text strong { color: var(--danger); }
+
+/* ── COMPARISON TABLE ── */
+.comp-table {
+  background: var(--ink-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  animation: fadeUp .4s ease both;
+  box-shadow: 0 8px 40px rgba(0,0,0,.32);
+}
+.comp-table table { width: 100%; border-collapse: collapse; }
+.comp-table thead tr {
+  background: rgba(201,168,76,.1);
+  border-bottom: 1px solid var(--border);
+}
+.comp-table th {
+  padding: 14px 20px; text-align: left;
+  font-size: .65rem; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--gold);
+}
+.comp-table td {
+  padding: 14px 20px; font-size: .88rem;
+  color: var(--muted); border-bottom: 1px solid rgba(201,168,76,.07);
+  transition: background .15s;
+}
+.comp-table tr:last-child td { border-bottom: none; }
+.comp-table tbody tr:hover td { background: var(--gold-dim); color: var(--text); }
+.comp-table td:first-child { color: var(--text); font-weight: 600; }
+.wait-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: .78rem; font-weight: 700; padding: 3px 10px;
+  border-radius: 20px; white-space: nowrap;
+}
+.wait-high { background: rgba(248,113,113,.1); border: 1px solid rgba(248,113,113,.25); color: var(--danger); }
+.wait-mid { background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.25); color: var(--warn); }
+.wait-low { background: rgba(52,211,153,.08); border: 1px solid rgba(52,211,153,.2); color: var(--success); }
+.valid-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: .78rem; font-weight: 700; padding: 3px 10px;
+  border-radius: 20px; white-space: nowrap;
+  background: var(--gold-dim); border: 1px solid var(--border-hi); color: var(--gold-lt);
+}
+.valid-special {
+  background: rgba(52,211,153,.08); border: 1px solid rgba(52,211,153,.2); color: var(--success);
+}
+.cat-icon { font-size: 1.1rem; margin-right: 8px; }
+
+/* ── IMPACT CARDS ── */
+.impact-card {
+  background: var(--ink-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 24px 24px;
+  display: flex; align-items: flex-start; gap: 16px;
+  transition: border-color .2s, transform .2s;
+  animation: fadeUp .4s ease both;
+}
+.impact-card:hover { border-color: var(--border-hi); transform: translateY(-2px); }
+.impact-icon-wrap {
+  width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+}
+.impact-icon-warn { background: rgba(251,191,36,.12); border: 1px solid rgba(251,191,36,.25); }
+.impact-icon-danger { background: rgba(248,113,113,.1); border: 1px solid rgba(248,113,113,.25); }
+.impact-icon-gold { background: var(--gold-dim); border: 1px solid var(--border-hi); }
+.impact-label { font-size: .65rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 4px; }
+.impact-label-warn { color: var(--warn); }
+.impact-label-danger { color: var(--danger); }
+.impact-label-gold { color: var(--gold); }
+.impact-text { font-size: .87rem; color: var(--muted); line-height: 1.7; }
+
+/* ── SEMAPHORE CTA ── */
+.semaphore-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+.sem-card {
+  border-radius: var(--r);
+  padding: 28px 24px;
+  display: flex; flex-direction: column; gap: 14px;
+  transition: transform .2s, box-shadow .2s;
+  animation: fadeUp .4s ease both;
+  position: relative; overflow: hidden;
+}
+.sem-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.sem-card:hover { transform: translateY(-3px); }
+.sem-red {
+  background: rgba(248,113,113,.07);
+  border: 1px solid rgba(248,113,113,.35);
+}
+.sem-red::before { background: var(--danger); }
+.sem-red:hover { box-shadow: 0 8px 32px rgba(248,113,113,.2); }
+.sem-yellow {
+  background: rgba(251,191,36,.07);
+  border: 1px solid rgba(251,191,36,.35);
+}
+.sem-yellow::before { background: var(--warn); }
+.sem-yellow:hover { box-shadow: 0 8px 32px rgba(251,191,36,.2); }
+.sem-green {
+  background: rgba(52,211,153,.06);
+  border: 1px solid rgba(52,211,153,.3);
+}
+.sem-green::before { background: var(--success); }
+.sem-green:hover { box-shadow: 0 8px 32px rgba(52,211,153,.18); }
+.sem-dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  display: inline-block; flex-shrink: 0;
+}
+.sem-dot-red { background: var(--danger); box-shadow: 0 0 12px rgba(248,113,113,.5); }
+.sem-dot-yellow { background: var(--warn); box-shadow: 0 0 12px rgba(251,191,36,.5); }
+.sem-dot-green { background: var(--success); box-shadow: 0 0 12px rgba(52,211,153,.45); }
+.sem-header { display: flex; align-items: center; gap: 10px; }
+.sem-label { font-size: .7rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.sem-label-red { color: var(--danger); }
+.sem-label-yellow { color: var(--warn); }
+.sem-label-green { color: var(--success); }
+.sem-title { font-family: Georgia, serif; font-size: 1rem; font-weight: 700; color: var(--white); }
+.sem-arrow {
+  font-size: .78rem; color: var(--muted);
+  padding: 8px 12px; border-radius: var(--r-sm);
+  display: flex; align-items: flex-start; gap: 8px; line-height: 1.6;
+}
+.sem-red .sem-arrow { background: rgba(248,113,113,.07); }
+.sem-yellow .sem-arrow { background: rgba(251,191,36,.07); }
+.sem-green .sem-arrow { background: rgba(52,211,153,.06); }
+.arrow-symbol { color: var(--gold); font-size: 1rem; flex-shrink: 0; }
+
+/* ── RISK BLOCK ── */
+.risk-block {
+  background: var(--ink-card);
+  border: 1px solid rgba(248,113,113,.3);
+  border-radius: var(--r);
+  padding: 32px 36px;
+  animation: fadeUp .4s ease both;
+  box-shadow: 0 8px 40px rgba(0,0,0,.32), 0 0 0 1px rgba(248,113,113,.08);
+  transition: border-color .2s;
+}
+.risk-block:hover { border-color: rgba(248,113,113,.5); }
+.risk-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+.risk-icon-circle {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: rgba(248,113,113,.1); border: 1px solid rgba(248,113,113,.3);
+  display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;
+}
+.risk-title { font-family: Georgia, serif; font-size: 1.2rem; font-weight: 700; color: var(--white); }
+.risk-subtitle { font-size: .75rem; color: var(--danger); letter-spacing: .08em; text-transform: uppercase; margin-top: 2px; }
+.risk-items { display: flex; flex-direction: column; gap: 10px; }
+.risk-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: rgba(248,113,113,.05); border: 1px solid rgba(248,113,113,.15);
+  border-radius: var(--r-sm); padding: 14px 16px;
+  font-size: .87rem; color: var(--muted); line-height: 1.65;
+  transition: background .18s, border-color .18s;
+}
+.risk-item:hover { background: rgba(248,113,113,.1); border-color: rgba(248,113,113,.3); }
+.risk-item-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+.risk-item strong { color: var(--text); }
+
+/* ── FOOTER ── */
+.site-footer {
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--border);
+  padding: 28px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+}
+.footer-text { font-size: .72rem; color: var(--dim); }
+.footer-badge {
+  font-size: .65rem; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase;
+  background: var(--gold-dim); border: 1px solid var(--border);
+  color: var(--gold); padding: 4px 12px; border-radius: 20px;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 860px) {
+  .grid-3, .semaphore-grid { grid-template-columns: 1fr; }
+  .grid-2, .grid-2-1, .critical-consequences { grid-template-columns: 1fr; }
+  .def-card { grid-template-columns: 1fr; gap: 20px; }
+  .hero { padding: 40px 0 28px; }
+  .page { padding: 0 16px 60px; }
+  .critical-block { padding: 28px 22px; }
+  .risk-block { padding: 24px 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-brand">
+    <svg viewBox="0 0 80 80" fill="none" style="width:46px;flex-shrink:0">
+      <polygon points="40,4 76,20 76,60 40,76 4,60 4,20" stroke="#C9A84C" stroke-width="1.5" fill="none" opacity=".65"/>
+      <polygon points="40,13 67,25 67,55 40,67 13,55 13,25" stroke="#C9A84C" stroke-width="1" fill="none" opacity=".3"/>
+      <text x="40" y="48" text-anchor="middle" font-family="Georgia,serif" font-size="16" font-weight="700" fill="#C9A84C">EAD</text>
+    </svg>
+    <div class="header-brand-text">
+      <span class="org">Capacitación Interna</span>
+      <span class="sub">Inmigración · Módulo EAD 2026</span>
+    </div>
+  </div>
+  <div class="header-badge">Guía de Supervivencia · 2026</div>
+</header>
+
+<!-- PAGE -->
+<main class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">Guía Oficial · Actualización Regulatoria</div>
+    <h1 class="hero-title" style="font-size:clamp(3rem,6vw,5rem);"><em>EAD 2026</em></h1>
+
+    <p class="hero-desc">
+      Nuevas restricciones, plazos críticos y acciones requeridas para la renovación
+      del Employment Authorization Document bajo los lineamientos vigentes de USCIS.
+    </p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="dot dot-danger"></div>
+        <span>Extensión automática de 540 días <strong style="color:var(--danger)">eliminada</strong></span>
+      </div>
+      <div class="hero-meta-item">
+        <div class="dot dot-warn"></div>
+        <span>Renovar con <strong style="color:var(--warn)">180 días</strong> de anticipación</span>
+      </div>
+      <div class="hero-meta-item">
+        <div class="dot dot-gold"></div>
+        <span>Vigencia máxima: <strong style="color:var(--gold)">18 meses</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: ¿QUÉ ES EL EAD? -->
+  <div class="section-label">
+    <div class="section-num">01</div>
+    ¿Qué es el EAD?
+  </div>
+
+  <div class="def-card">
+    <div class="def-icon-wrap">🪪</div>
+    <div class="def-content">
+      <div class="def-tag">Employment Authorization Document · USCIS</div>
+      <div class="def-title">Tarjeta de Autorización de Empleo</div>
+      <p class="card-body">
+        Es una tarjeta emitida por USCIS que permite a ciertos no ciudadanos
+        <strong style="color:var(--text)">trabajar legalmente en EE. UU.</strong> durante un período específico.
+        No es una visa ni un documento de estatus migratorio por sí mismo — es una
+        <strong style="color:var(--gold-lt)">autorización complementaria</strong> basada en una categoría
+        de elegibilidad migratoria ya existente.
+      </p>
+      <div class="def-pills">
+        <span class="pill pill-warn">⚠ No es una visa</span>
+        <span class="pill pill-warn">⚠ No es estatus migratorio</span>
+        <span class="pill pill-gold">✔ Autorización complementaria</span>
+        <span class="pill pill-success">✔ Emitida por USCIS</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: REQUISITOS -->
+  <div class="section-label">
+    <div class="section-num">02</div>
+    Requisitos Actuales
+  </div>
+
+  <div class="grid-2">
+    <!-- Documentación -->
+    <div class="req-card">
+      <div class="req-card-header">
+        <div class="req-card-icon">📋</div>
+        <div>
+          <div class="req-card-title">Documentación Requerida</div>
+        </div>
+      </div>
+      <div class="req-list">
+        <div class="req-item">
+          <span class="req-item-marker">✔</span>
+          <span><strong>Formulario I-765 actualizado</strong> — Usar versión vigente a marzo de 2026</span>
+        </div>
+        <div class="req-item">
+          <span class="req-item-marker">✔</span>
+          <span><strong>Categoría de elegibilidad correcta</strong> — VAWA, Visa T, Visa U o Ajuste de Estatus</span>
+        </div>
+        <div class="req-item">
+          <span class="req-item-marker">✔</span>
+          <span><strong>Evidencia de estatus</strong> — Documentación que respalde la categoría humanitaria</span>
+        </div>
+        <div class="req-item">
+          <span class="req-item-marker">🔴</span>
+          <span><strong>Biometría obligatoria</strong> — Huellas y fotografías para escrutinio de antecedentes (mayor rigor que antes)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vetting -->
+    <div class="req-card">
+      <div class="req-card-header">
+        <div class="req-card-icon">🔍</div>
+        <div>
+          <div class="req-card-title">Escrutinio de Antecedentes (Vetting)</div>
+        </div>
+      </div>
+      <div class="req-list">
+        <div class="req-item">
+          <span class="req-item-marker">⚠</span>
+          <span><strong>Revisión exhaustiva</strong> — Antecedentes penales revisados con mayor rigor en 2026</span>
+        </div>
+        <div class="req-item">
+          <span class="req-item-marker">🔴</span>
+          <span><strong>Faltas menores son motivo de denegación</strong> — Incluso infracciones pequeñas están siendo consideradas</span>
+        </div>
+        <div class="req-item">
+          <span class="req-item-marker">⚠</span>
+          <span><strong>Cualquier arresto requiere explicación legal</strong> — Se necesita respaldo jurídico sólido antes de presentar la solicitud</span>
+        </div>
+      </div>
+      <div style="margin-top:14px">
+        <div class="alert alert-warn">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-content">
+            <span class="alert-label">Riesgo</span>
+            No revelar antecedentes puede resultar en denegación automática y posibles consecuencias adicionales.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: CAMBIO CRÍTICO -->
+  <div class="section-label">
+    <div class="section-num">03</div>
+    Cambio Crítico
+  </div>
+
+  <div class="critical-block">
+    <div class="critical-eyebrow">Cambio Regulatorio Urgente</div>
+    <h2 class="critical-title">El Fin de la <em>Extensión Automática</em></h2>
+    <div class="critical-date-badge">
+      🔴 Efectivo desde el 30 de octubre de 2025
+    </div>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div>
+        <p style="font-size:.9rem;color:var(--muted);line-height:1.8;margin-bottom:12px">
+          La extensión automática de <strong style="color:var(--white)">540 días</strong> que permitía
+          a los titulares de EAD continuar trabajando mientras esperaban la renovación
+          <strong style="color:var(--danger)">fue eliminada por completo</strong> a finales de 2025.
+        </p>
+        <div class="alert alert-danger">
+          <span class="alert-icon">🚨</span>
+          <div class="alert-content">
+            <span class="alert-label">Punto Crítico</span>
+            Esta derogación obliga a gestionar la renovación con mucha mayor anticipación. Ya no existe red de seguridad automática.
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="alert alert-gold" style="flex:1">
+          <span class="alert-icon">📅</span>
+          <div class="alert-content">
+            <span class="alert-label">Antes · hasta octubre 2025</span>
+            Los recibos de extensión valían como prueba de trabajo durante 540 días adicionales.
+          </div>
+        </div>
+        <div class="alert alert-danger" style="flex:1">
+          <span class="alert-icon">❌</span>
+          <div class="alert-content">
+            <span class="alert-label">Ahora · desde octubre 2025</span>
+            Los recibos ya <strong>NO son válidos</strong> como prueba de autorización ante empleadores.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="critical-consequences">
+      <div class="consequence-item">
+        <span class="consequence-arrow">→</span>
+        <p class="consequence-text">
+          Si el nuevo EAD <strong>no llega a tiempo</strong>, el titular debe
+          <strong>cesar actividades laborales inmediatamente</strong>.
+        </p>
+      </div>
+      <div class="consequence-item">
+        <span class="consequence-arrow">→</span>
+        <p class="consequence-text">
+          Los empleadores <strong>ya no pueden aceptar</strong> recibos como prueba de autorización de empleo.
+          Solo la <strong>tarjeta física</strong> es válida.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: COMPARATIVA -->
+  <div class="section-label">
+    <div class="section-num">04</div>
+    Comparativa por Categoría Migratoria
+  </div>
+
+  <div class="comp-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Categoría</th>
+          <th>Tiempo de Espera (EAD Inicial)</th>
+          <th>Validez del Documento</th>
+          <th>Nivel de Urgencia</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="cat-icon">🔵</span>Ajuste de Estatus</td>
+          <td><span class="wait-low">N/A</span></td>
+          <td><span class="valid-badge">⏱ Máx. 18 meses</span></td>
+          <td><span class="pill pill-warn">🟡 Moderado</span></td>
+        </tr>
+        <tr>
+          <td><span class="cat-icon">🟣</span>Visa U</td>
+          <td><span class="wait-high">24 – 36 meses</span></td>
+          <td><span class="valid-badge">⏱ Máx. 18 meses</span></td>
+          <td><span class="pill pill-danger">🔴 Alto</span></td>
+        </tr>
+        <tr>
+          <td><span class="cat-icon">🟠</span>Visa T</td>
+          <td><span class="wait-mid">18 – 24 meses</span></td>
+          <td><span class="valid-badge valid-special">🔗 Ligada al estatus T</span></td>
+          <td><span class="pill pill-danger">🔴 Alto</span></td>
+        </tr>
+        <tr>
+          <td><span class="cat-icon">🔴</span>VAWA</td>
+          <td><span class="wait-high">~46.5 meses (aprobación)</span></td>
+          <td><span class="valid-badge">⏱ Máx. 18 meses</span></td>
+          <td><span class="pill pill-danger">🔴 Crítico</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:14px">
+    <div class="alert alert-warn">
+      <span class="alert-icon">⚠️</span>
+      <div class="alert-content">
+        <span class="alert-label">Consideración importante</span>
+        Los tiempos de espera prolongados, combinados con la validez máxima de 18 meses, obligan a iniciar renovaciones de forma casi continua. La carga administrativa y los costos legales aumentan significativamente.
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: IMPACTO OPERATIVO -->
+  <div class="section-label">
+    <div class="section-num">05</div>
+    Impacto Operativo
+  </div>
+
+  <div class="grid-3">
+    <div class="impact-card">
+      <div class="impact-icon-wrap impact-icon-danger">🔄</div>
+      <div>
+        <div class="impact-label impact-label-danger">Riesgo Operacional</div>
+        <p class="impact-text">
+          Renovaciones más frecuentes debido a la validez máxima de 18 meses y los largos tiempos de espera.
+          Ciclos de trámite casi ininterrumpidos.
+        </p>
+      </div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-icon-wrap impact-icon-warn">📂</div>
+      <div>
+        <div class="impact-label impact-label-warn">Carga Administrativa</div>
+        <p class="impact-text">
+          Mayor volumen de documentación, formularios, biometría y seguimiento de plazos.
+          Requiere sistemas de monitoreo proactivos.
+        </p>
+      </div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-icon-wrap impact-icon-gold">💼</div>
+      <div>
+        <div class="impact-label impact-label-gold">Costos Legales</div>
+        <p class="impact-text">
+          Incremento en honorarios por renovaciones recurrentes, costos de biometría y necesidad de asesoría
+          legal ante antecedentes penales.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: CALL TO ACTION SEMÁFORO -->
+  <div class="section-label">
+    <div class="section-num">06</div>
+    Plan de Acción · Semáforo de Prioridades
+  </div>
+
+  <div class="semaphore-grid">
+    <!-- ROJO -->
+    <div class="sem-card sem-red">
+      <div class="sem-header">
+        <span class="sem-dot sem-dot-red"></span>
+        <span class="sem-label sem-label-red">Acción Inmediata</span>
+      </div>
+      <div class="sem-title">Regla de los 180 Días</div>
+      <div class="sem-arrow">
+        <span class="arrow-symbol">→</span>
+        <span>Radicar la <strong>renovación exactamente 6 meses antes</strong> del vencimiento del EAD vigente. No esperar a que queden menos días.</span>
+      </div>
+      <div class="sem-arrow">
+        <span class="arrow-symbol">→</span>
+        <span>Configurar alertas con 7 meses de anticipación para tener margen de preparación documental.</span>
+      </div>
+    </div>
+
+    <!-- AMARILLO -->
+    <div class="sem-card sem-yellow">
+      <div class="sem-header">
+        <span class="sem-dot sem-dot-yellow"></span>
+        <span class="sem-label sem-label-yellow">Consideración Financiera</span>
+      </div>
+      <div class="sem-title">Fondo de Emergencia EAD</div>
+      <div class="sem-arrow">
+        <span class="arrow-symbol">→</span>
+        <span>Anticipar y presupuestar los costos recurrentes de <strong>biometría, honorarios legales y aranceles de USCIS</strong> para cada ciclo.</span>
+      </div>
+      <div class="sem-arrow">
+        <span class="arrow-symbol">→</span>
+        <span>Prever posibles costos adicionales si hay antecedentes que requieran representación legal.</span>
+      </div>
+    </div>
+
+    <!-- VERDE -->
+    <div class="sem-card sem-green">
+      <div class="sem-header">
+        <span class="sem-dot sem-dot-green"></span>
+        <span class="sem-label sem-label-green">Acción Recomendada</span>
+      </div>
+      <div class="sem-title">Aviso a Empleadores</div>
+      <div class="sem-arrow">
+        <span class="arrow-symbol">→</span>
+        <span>Informar formalmente al empleador que <strong>los recibos de extensión ya NO son válidos</strong> para verificar autorización de empleo.</span>
+      </div>
+      <div class="sem-arrow">
+        <span class="arrow-symbol">→</span>
+        <span>Solo la <strong>tarjeta física del EAD</strong> es evidencia válida. Preparar copia antes de que venza.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 7: RIESGO LEGAL -->
+  <div class="section-label">
+    <div class="section-num">07</div>
+    Riesgo Legal
+  </div>
+
+  <div class="risk-block">
+    <div class="risk-header">
+      <div class="risk-icon-circle">⚖️</div>
+      <div>
+        <div class="risk-title">Consideraciones Legales Críticas</div>
+        <div class="risk-subtitle">Preparación obligatoria ante el nuevo esquema de seguridad</div>
+      </div>
+    </div>
+    <div class="risk-items">
+      <div class="risk-item">
+        <span class="risk-item-icon">🔴</span>
+        <span>
+          <strong>Cualquier interacción previa con las autoridades</strong> debe ser identificada y documentada.
+          Incluso arrestos sin condena pueden ser objeto de escrutinio bajo el nuevo esquema.
+        </span>
+      </div>
+      <div class="risk-item">
+        <span class="risk-item-icon">⚠️</span>
+        <span>
+          <strong>Mayor riesgo de denegación</strong> para personas con faltas menores no declaradas o
+          sin representación legal adecuada durante la solicitud.
+        </span>
+      </div>
+      <div class="risk-item">
+        <span class="risk-item-icon">✔</span>
+        <span>
+          <strong>Preparación legal es obligatoria</strong> si existe cualquier historial de arrestos.
+          Se requiere una explicación jurídica sólida que anticipe y responda las preocupaciones de USCIS.
+        </span>
+      </div>
+      <div class="risk-item">
+        <span class="risk-item-icon">🟡</span>
+        <span>
+          <strong>Anticipar tiempos adicionales</strong> de procesamiento cuando hay antecedentes —
+          esto puede extender los plazos más allá de los estimados habituales por categoría.
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESUMEN FINAL -->
+  <div class="section-label">
+    <div class="section-num" style="width:auto;padding:0 8px">✦</div>
+    Resumen Ejecutivo
+  </div>
+
+  <div class="card" style="border-color:var(--border-hi);background:linear-gradient(135deg,rgba(201,168,76,.07),rgba(13,17,30,.8))">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:start">
+      <div>
+        <div style="font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">🔴 Lo más urgente</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.85rem;color:var(--muted)">
+          <li style="display:flex;gap:8px"><span style="color:var(--danger)">→</span> Renovar 6 meses antes</li>
+          <li style="display:flex;gap:8px"><span style="color:var(--danger)">→</span> Sin extensión automática</li>
+          <li style="display:flex;gap:8px"><span style="color:var(--danger)">→</span> VAWA: casi 4 años de espera</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--warn);margin-bottom:10px">🟡 A considerar</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.85rem;color:var(--muted)">
+          <li style="display:flex;gap:8px"><span style="color:var(--warn)">→</span> Presupuestar costos recurrentes</li>
+          <li style="display:flex;gap:8px"><span style="color:var(--warn)">→</span> Escrutinio más estricto</li>
+          <li style="display:flex;gap:8px"><span style="color:var(--warn)">→</span> Antecedentes = riesgo real</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--success);margin-bottom:10px">🟢 Acción inmediata</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.85rem;color:var(--muted)">
+          <li style="display:flex;gap:8px"><span style="color:var(--success)">→</span> Notificar al empleador</li>
+          <li style="display:flex;gap:8px"><span style="color:var(--success)">→</span> Solo tarjeta física válida</li>
+          <li style="display:flex;gap:8px"><span style="color:var(--success)">→</span> I-765 versión marzo 2026</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-text">Capacitación Interna · Material de uso exclusivo · Basado en lineamientos USCIS vigentes a marzo 2026</div>
+  <div class="footer-badge">EAD 2026 · Guía de Supervivencia</div>
+</footer>
+
+</body>
+</html>
