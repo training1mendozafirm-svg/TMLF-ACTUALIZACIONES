@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Informe de Consentimiento | The Mendoza Law Firm</title>
+<style>
+:root {
+  --bg:        #F7F6F2;
+  --card:      #FFFFFF;
+  --card-alt:  #F9F8F5;
+  --border:    #E2DDD5;
+  --border-hi: #C9A84C;
+  --gold:      #9A6F28;
+  --gold-lt:   #C9A84C;
+  --gold-dim:  #FBF5E9;
+  --text:      #1A1612;
+  --muted:     #6B6358;
+  --dim:       #A09890;
+  --danger:    #991B1B;
+  --warn:      #854D0E;
+  --success:   #14532D;
+  --danger-bg: #FFF1F0;
+  --warn-bg:   #FFFBEB;
+  --success-bg:#F0FDF4;
+  --danger-br: #FECACA;
+  --warn-br:   #FDE68A;
+  --success-br:#BBF7D0;
+  --r:   14px;
+  --r-sm: 8px;
+  --shadow-sm: 0 1px 4px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+  --shadow-md: 0 2px 8px rgba(0,0,0,.07), 0 8px 28px rgba(0,0,0,.07);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,.08), 0 16px 40px rgba(0,0,0,.09);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.65;
+}
+
+/* ── SUBTLE GRID ── */
+.bg-grid {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(rgba(154,111,40,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(154,111,40,.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.bg-glow { display: none; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse-danger {
+  0%,100% { box-shadow: var(--shadow-md); }
+  50%     { box-shadow: 0 0 0 4px rgba(153,27,27,.08), var(--shadow-md); }
+}
+@keyframes gf { from {} to {} }
+
+/* ── LAYOUT ── */
+.page {
+  position: relative; z-index: 1;
+  max-width: 1060px; margin: 0 auto;
+  padding: 0 28px 96px;
+}
+
+/* ══════════════════════════════════════
+   HEADER
+══════════════════════════════════════ */
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(247,246,242,.96);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 20px;
+  padding: 0 36px; height: 62px;
+  box-shadow: 0 1px 0 var(--border), 0 4px 20px rgba(0,0,0,.05);
+}
+.header-brand { display: flex; align-items: center; gap: 14px; }
+.header-brand-text .org { font-size: .63rem; font-weight: 700; letter-spacing: .2em; color: var(--gold); text-transform: uppercase; display: block; }
+.header-brand-text .sub { font-size: .58rem; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; display: block; margin-top: 1px; }
+.header-badge {
+  margin-left: auto;
+  background: var(--gold-dim); border: 1px solid var(--gold-lt);
+  color: var(--gold); font-size: .62rem; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  padding: 4px 14px; border-radius: 20px;
+}
+
+/* ══════════════════════════════════════
+   HERO
+══════════════════════════════════════ */
+.hero { padding: 44px 0 24px; animation: fadeUp .5s ease both; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: .65rem; font-weight: 700; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 20px;
+}
+.hero-tag::before { content: ''; width: 28px; height: 1px; background: var(--gold); display: block; }
+.hero-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2.6rem, 5.5vw, 4.4rem);
+  font-weight: 700; line-height: 1.08; color: var(--text); margin-bottom: 18px;
+  letter-spacing: -.01em;
+}
+.hero-title em { font-style: italic; color: var(--gold); }
+.hero-desc { font-size: .96rem; color: var(--muted); max-width: 600px; line-height: 1.85; }
+.hero-meta {
+  display: flex; align-items: center; gap: 28px;
+  margin-top: 32px; padding-top: 28px;
+  border-top: 1px solid var(--border); flex-wrap: wrap;
+}
+.hero-meta-item { display: flex; align-items: center; gap: 8px; font-size: .78rem; color: var(--muted); }
+.hero-meta-item .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.dot-gold    { background: var(--gold); }
+.dot-warn    { background: #D97706; }
+.dot-danger  { background: var(--danger); }
+.dot-success { background: #16A34A; }
+
+/* ══════════════════════════════════════
+   SECTION LABEL
+══════════════════════════════════════ */
+.section-label {
+  display: flex; align-items: center; gap: 14px;
+  font-size: .85rem; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 20px; margin-top: 44px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.section-num {
+  background: var(--gold-dim); border: 1px solid var(--gold-lt);
+  color: var(--gold); font-size: .72rem; font-weight: 700;
+  width: 26px; height: 26px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════
+   BASE CARD
+══════════════════════════════════════ */
+.card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
+  padding: 28px 32px; box-shadow: var(--shadow-sm);
+  transition: border-color .2s, box-shadow .2s, transform .18s;
+  animation: fadeUp .4s ease both;
+}
+.card:hover { border-color: #C9A84C55; box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.card-title { font-family: Georgia, serif; font-size: 1.4rem; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+.card-body { font-size: .88rem; color: var(--muted); line-height: 1.82; }
+
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 18px; }
+
+/* ══════════════════════════════════════
+   DEFINITION CARD
+══════════════════════════════════════ */
+.def-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
+  padding: 36px 40px; box-shadow: var(--shadow-sm);
+  display: grid; grid-template-columns: auto 1fr; gap: 32px; align-items: start;
+  animation: fadeUp .4s ease both; transition: border-color .2s, box-shadow .2s, transform .18s;
+}
+.def-card:hover { border-color: #C9A84C55; box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.def-icon-wrap {
+  width: 60px; height: 60px;
+  background: var(--gold-dim); border: 1px solid var(--gold-lt);
+  border-radius: 14px; display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem; flex-shrink: 0;
+}
+.def-tag { font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+.def-title { font-family: Georgia, serif; font-size: 1.65rem; font-weight: 700; color: var(--text); margin-bottom: 14px; }
+.def-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.pill { font-size: .7rem; font-weight: 600; letter-spacing: .04em; padding: 5px 13px; border-radius: 20px; display: inline-flex; align-items: center; gap: 5px; }
+.pill-gold    { background: var(--gold-dim);    border: 1px solid var(--gold-lt);   color: var(--gold); }
+.pill-success { background: var(--success-bg);  border: 1px solid var(--success-br); color: var(--success); }
+.pill-warn    { background: var(--warn-bg);     border: 1px solid var(--warn-br);    color: var(--warn); }
+.pill-danger  { background: var(--danger-bg);   border: 1px solid var(--danger-br);  color: var(--danger); }
+
+/* ══════════════════════════════════════
+   REQ CARDS
+══════════════════════════════════════ */
+.req-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
+  padding: 28px; box-shadow: var(--shadow-sm);
+  transition: border-color .2s, box-shadow .2s, transform .18s; animation: fadeUp .4s ease both;
+}
+.req-card:hover { border-color: #C9A84C55; box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.req-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.req-card-icon        { width: 38px; height: 38px; border-radius: 10px; background: var(--gold-dim); border: 1px solid var(--gold-lt); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+.req-card-icon-danger { width: 38px; height: 38px; border-radius: 10px; background: var(--danger-bg); border: 1px solid var(--danger-br); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+.req-card-title        { font-size: .92rem; font-weight: 700; color: var(--gold);    text-transform: uppercase; letter-spacing: .06em; }
+.req-card-title-danger { font-size: .92rem; font-weight: 700; color: var(--danger);  text-transform: uppercase; letter-spacing: .06em; }
+.req-list { display: flex; flex-direction: column; gap: 8px; }
+.req-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: .87rem; color: var(--muted); line-height: 1.65;
+  padding: 10px 14px; border-radius: var(--r-sm);
+  background: var(--card-alt); border: 1px solid var(--border);
+  transition: border-color .18s, background .18s;
+}
+.req-item:hover { background: var(--gold-dim); border-color: var(--gold-lt); color: var(--text); }
+.req-item-marker { font-size: .95rem; flex-shrink: 0; margin-top: 1px; }
+.req-item strong { color: var(--text); font-weight: 600; }
+
+/* ══════════════════════════════════════
+   ALERT BOXES
+══════════════════════════════════════ */
+.alert { border-radius: var(--r-sm); padding: 14px 18px; display: flex; align-items: flex-start; gap: 12px; font-size: .88rem; line-height: 1.68; }
+.alert-warn    { background: var(--warn-bg);    border: 1px solid var(--warn-br);    color: var(--text); }
+.alert-danger  { background: var(--danger-bg);  border: 1px solid var(--danger-br);  color: var(--text); }
+.alert-success { background: var(--success-bg); border: 1px solid var(--success-br); color: var(--text); }
+.alert-gold    { background: var(--gold-dim);   border: 1px solid var(--gold-lt);    color: var(--text); }
+.alert-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 2px; }
+.alert-label { font-size: .76rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; display: block; margin-bottom: 6px; }
+.alert-warn    .alert-label { color: var(--warn); }
+.alert-danger  .alert-label { color: var(--danger); }
+.alert-success .alert-label { color: var(--success); }
+.alert-gold    .alert-label { color: var(--gold); }
+
+/* ══════════════════════════════════════
+   CRITICAL BLOCK
+══════════════════════════════════════ */
+.critical-block {
+  background: #FFF5F5;
+  border: 1.5px solid #FCA5A5; border-radius: var(--r);
+  padding: 40px; position: relative; overflow: hidden;
+  animation: fadeUp .4s ease both, pulse-danger 4s ease-in-out infinite;
+  box-shadow: var(--shadow-md);
+}
+.critical-block::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--danger), #DC2626, var(--danger));
+}
+.critical-eyebrow { display: flex; align-items: center; gap: 10px; font-size: .63rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--danger); margin-bottom: 12px; }
+.critical-eyebrow::before { content: ''; width: 20px; height: 2px; background: var(--danger); display: block; }
+.critical-title { font-family: Georgia, serif; font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.critical-title em { color: var(--danger); font-style: italic; }
+.critical-date-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--danger-bg); border: 1px solid var(--danger-br); color: var(--danger); font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 5px 14px; border-radius: 20px; margin-bottom: 24px; }
+.critical-consequences { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 24px; }
+.consequence-item { background: #fff; border: 1px solid var(--danger-br); border-radius: var(--r-sm); padding: 18px 20px; display: flex; align-items: flex-start; gap: 12px; transition: background .18s, box-shadow .18s; }
+.consequence-item:hover { background: var(--danger-bg); box-shadow: var(--shadow-sm); }
+.consequence-arrow { font-size: 1.1rem; flex-shrink: 0; color: var(--danger); line-height: 1.6; margin-top: 1px; }
+.consequence-text { font-size: .88rem; color: var(--text); line-height: 1.65; }
+.consequence-text strong { color: var(--danger); font-weight: 700; }
+
+/* ══════════════════════════════════════
+   SEMAPHORE
+══════════════════════════════════════ */
+.semaphore-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+.sem-card {
+  border-radius: var(--r); padding: 28px 24px;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: transform .2s, box-shadow .2s;
+  animation: fadeUp .4s ease both;
+  position: relative; overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.sem-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+.sem-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+
+.sem-red    { background: #FFF5F5; border: 1px solid #FCA5A5; }
+.sem-red::before    { background: #DC2626; }
+.sem-yellow { background: #FFFBEB; border: 1px solid #FDE68A; }
+.sem-yellow::before { background: #D97706; }
+.sem-green  { background: #F0FDF4; border: 1px solid #BBF7D0; }
+.sem-green::before  { background: #16A34A; }
+
+.sem-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.sem-dot-red    { background: #DC2626; box-shadow: 0 0 0 3px rgba(220,38,38,.15); }
+.sem-dot-yellow { background: #D97706; box-shadow: 0 0 0 3px rgba(217,119,6,.15); }
+.sem-dot-green  { background: #16A34A; box-shadow: 0 0 0 3px rgba(22,163,74,.15); }
+.sem-header { display: flex; align-items: center; gap: 10px; }
+.sem-label { font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.sem-label-red    { color: #DC2626; }
+.sem-label-yellow { color: #D97706; }
+.sem-label-green  { color: #16A34A; }
+.sem-title { font-family: Georgia, serif; font-size: 1.15rem; font-weight: 700; color: var(--text); }
+.sem-arrow { font-size: .82rem; color: var(--muted); padding: 8px 12px; border-radius: 6px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.6; background: rgba(0,0,0,.03); border: 1px solid rgba(0,0,0,.05); }
+.sem-red    .sem-arrow { background: rgba(220,38,38,.05);   border-color: rgba(220,38,38,.1); }
+.sem-yellow .sem-arrow { background: rgba(217,119,6,.05);   border-color: rgba(217,119,6,.1); }
+.sem-green  .sem-arrow { background: rgba(22,163,74,.05);   border-color: rgba(22,163,74,.1); }
+.arrow-symbol { color: var(--gold); font-weight: 700; flex-shrink: 0; }
+
+/* ══════════════════════════════════════
+   IMPACT CARDS
+══════════════════════════════════════ */
+.impact-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
+  padding: 22px 22px; display: flex; align-items: flex-start; gap: 16px;
+  transition: border-color .2s, box-shadow .2s, transform .18s;
+  animation: fadeUp .4s ease both; box-shadow: var(--shadow-sm);
+}
+.impact-card:hover { border-color: #C9A84C55; box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.impact-icon-wrap { width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; }
+.impact-icon-warn    { background: var(--warn-bg);    border: 1px solid var(--warn-br); }
+.impact-icon-danger  { background: var(--danger-bg);  border: 1px solid var(--danger-br); }
+.impact-icon-gold    { background: var(--gold-dim);   border: 1px solid var(--gold-lt); }
+.impact-icon-success { background: var(--success-bg); border: 1px solid var(--success-br); }
+.impact-label { font-size: .78rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; margin-bottom: 6px; }
+.impact-label-warn    { color: var(--warn); }
+.impact-label-danger  { color: var(--danger); }
+.impact-label-gold    { color: var(--gold); }
+.impact-label-success { color: var(--success); }
+.impact-text { font-size: .87rem; color: var(--muted); line-height: 1.72; }
+
+/* ══════════════════════════════════════
+   RISK BLOCK
+══════════════════════════════════════ */
+.risk-block {
+  background: var(--card); border: 1px solid #FCA5A5; border-radius: var(--r);
+  padding: 32px 36px; animation: fadeUp .4s ease both; box-shadow: var(--shadow-sm);
+  transition: border-color .2s, box-shadow .2s;
+}
+.risk-block:hover { border-color: #F87171; box-shadow: var(--shadow-md); }
+.risk-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+.risk-icon-circle { width: 50px; height: 50px; border-radius: 50%; background: var(--danger-bg); border: 1px solid var(--danger-br); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+.risk-title    { font-family: Georgia, serif; font-size: 1.5rem; font-weight: 700; color: var(--text); }
+.risk-subtitle { font-size: .72rem; color: var(--danger); letter-spacing: .1em; text-transform: uppercase; margin-top: 3px; font-weight: 600; }
+.risk-items { display: flex; flex-direction: column; gap: 10px; }
+.risk-item { display: flex; align-items: flex-start; gap: 12px; background: var(--danger-bg); border: 1px solid var(--danger-br); border-radius: var(--r-sm); padding: 14px 16px; font-size: .87rem; color: var(--text); line-height: 1.68; transition: box-shadow .18s; }
+.risk-item:hover { box-shadow: var(--shadow-sm); }
+.risk-item-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+.risk-item strong { color: var(--danger); font-weight: 700; }
+
+/* ══════════════════════════════════════
+   SPEECH CARD
+══════════════════════════════════════ */
+.speech-card {
+  background: var(--card); border: 1px solid var(--gold-lt); border-radius: var(--r);
+  padding: 36px 40px; position: relative; overflow: hidden;
+  animation: fadeUp .4s ease both;
+  box-shadow: 0 2px 8px rgba(154,111,40,.08), 0 8px 28px rgba(154,111,40,.07);
+}
+.speech-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--gold), var(--gold-lt), var(--gold)); }
+.speech-eyebrow { display: flex; align-items: center; gap: 10px; font-size: .63rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+.speech-eyebrow::before { content: ''; width: 20px; height: 2px; background: var(--gold); display: block; }
+.speech-label { font-family: Georgia, serif; font-size: 1.5rem; font-weight: 700; color: var(--text); margin-bottom: 22px; }
+.speech-bubble { background: var(--gold-dim); border: 1px solid var(--gold-lt); border-left: 4px solid var(--gold); border-radius: 0 var(--r-sm) var(--r-sm) 0; padding: 22px 26px; font-size: .93rem; color: var(--text); line-height: 1.9; font-style: italic; margin-bottom: 14px; }
+.speech-bubble strong { color: var(--gold); font-style: normal; font-weight: 700; }
+.speech-note { font-size: .78rem; color: var(--muted); display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: var(--card-alt); border: 1px solid var(--border); border-radius: var(--r-sm); margin-bottom: 6px; }
+
+/* ══════════════════════════════════════
+   DOCS TABLE
+══════════════════════════════════════ */
+.docs-table { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; animation: fadeUp .4s ease both; box-shadow: var(--shadow-sm); }
+.docs-table table { width: 100%; border-collapse: collapse; }
+.docs-table thead tr { background: var(--gold-dim); border-bottom: 1px solid var(--border); }
+.docs-table th { padding: 14px 20px; text-align: left; font-size: .62rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); }
+.docs-table td { padding: 13px 20px; font-size: .88rem; color: var(--muted); border-bottom: 1px solid var(--border); transition: background .13s; vertical-align: middle; }
+.docs-table tr:last-child td { border-bottom: none; }
+.docs-table tbody tr:hover td { background: var(--gold-dim); color: var(--text); }
+.docs-table td:first-child { color: var(--text); font-weight: 600; }
+.doc-badge { display: inline-flex; align-items: center; gap: 5px; font-size: .72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+.doc-critical  { background: var(--danger-bg);  border: 1px solid var(--danger-br);  color: var(--danger); }
+.doc-important { background: var(--warn-bg);    border: 1px solid var(--warn-br);    color: var(--warn); }
+.doc-standard  { background: var(--gold-dim);   border: 1px solid var(--gold-lt);    color: var(--gold); }
+
+/* ══════════════════════════════════════
+   CONTEXT BANNER
+══════════════════════════════════════ */
+.context-banner { background: var(--danger-bg); border: 1px solid #FCA5A5; border-radius: var(--r); padding: 24px 28px; display: flex; align-items: flex-start; gap: 20px; animation: fadeUp .4s ease both; margin-bottom: 8px; box-shadow: var(--shadow-sm); }
+.context-banner-icon { font-size: 2rem; flex-shrink: 0; }
+.context-banner-title { font-family: Georgia, serif; font-size: 1.2rem; font-weight: 700; color: var(--danger); margin-bottom: 8px; }
+.context-banner-text { font-size: .87rem; color: var(--text); line-height: 1.75; }
+.context-banner-text strong { color: var(--danger); font-weight: 700; }
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+.site-footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 28px 40px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; background: var(--card); }
+.footer-text { font-size: .72rem; color: var(--dim); }
+.footer-badge { font-size: .62rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; background: var(--gold-dim); border: 1px solid var(--gold-lt); color: var(--gold); padding: 4px 12px; border-radius: 20px; }
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media (max-width: 860px) {
+  .grid-3, .semaphore-grid { grid-template-columns: 1fr; }
+  .grid-2, .grid-2-1, .critical-consequences { grid-template-columns: 1fr; }
+  .def-card { grid-template-columns: 1fr; gap: 20px; }
+  .hero { padding: 36px 0 24px; }
+  .page { padding: 0 18px 60px; }
+  .critical-block { padding: 28px 22px; }
+  .risk-block { padding: 24px 20px; }
+  .speech-card { padding: 28px 24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-brand">
+    <svg viewBox="0 0 80 80" fill="none" style="width:46px;flex-shrink:0">
+      <polygon points="40,4 76,20 76,60 40,76 4,60 4,20" stroke="#9A6F28" stroke-width="1.5" fill="none" opacity=".65"/>
+      <polygon points="40,13 67,25 67,55 40,67 13,55 13,25" stroke="#9A6F28" stroke-width="1" fill="none" opacity=".3"/>
+      <text x="40" y="46" text-anchor="middle" font-family="Georgia,serif" font-size="11" font-weight="700" fill="#9A6F28">IC</text>
+    </svg>
+    <div class="header-brand-text">
+      <span class="org">The Mendoza Law Firm, LLC</span>
+      <span class="sub">Capacitación Interna · Módulo Consentimiento</span>
+    </div>
+  </div>
+  <div class="header-badge">Uso Interno · Solo Colaboradores</div>
+</header>
+
+<main class="page">
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- HERO                                       -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="hero">
+    <div class="hero-tag">Protocolo Legal Operativo · The Mendoza Law Firm</div>
+    <h1 class="hero-title">
+      <em>Consentimiento</em><br>Informado
+    </h1>
+    <p class="hero-desc">
+      Aplicación operativa para clientes 2024 en escenarios de resistencia, limitación económica o decisión de abandono del proceso.
+    </p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="dot dot-danger"></div>
+        <span>Solo casos <strong style="color:var(--danger)">2024</strong> — No para casos nuevos</span>
+      </div>
+      <div class="hero-meta-item">
+        <div class="dot dot-warn"></div>
+        <span>Uso <strong style="color:var(--warn)">condicionado</strong> · Requiere firma del cliente</span>
+      </div>
+      <div class="hero-meta-item">
+        <div class="dot dot-gold"></div>
+        <span>Documento <strong style="color:var(--gold)">CONFIDENCIAL</strong> de la firma</span>
+      </div>
+      <div class="hero-meta-item">
+        <div class="dot dot-success"></div>
+        <span>7 secciones · Firmas requeridas</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BANNER CONTEXTO OPERATIVO -->
+  <div class="context-banner" style="margin-top:8px;">
+    <div class="context-banner-icon">🚨</div>
+    <div>
+      <div class="context-banner-title">Contexto Crítico para Colaboradores — Leer Antes de Usar</div>
+      <div class="context-banner-text">
+        Este documento se usa <strong>exclusivamente con clientes 2024</strong> que no pueden obtener sus documentos oficiales <em>en este momento</em>.
+        En casos nuevos: <strong>siempre empuja al cliente a asistir y obtener documentos</strong>. Solo activa este protocolo si el cliente está en estado rojo, muy alterado o con limitaciones reales documentadas.
+        El consentimiento <strong>no sustituye la obligación de obtener documentos</strong> — es una herramienta de protección legal de la firma.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SECCIÓN 01 — ¿QUÉ ES?                     -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section-label">
+    <div class="section-num">01</div>
+    ¿Qué es el Consentimiento Informado?
+  </div>
+
+  <div class="def-card">
+    <div class="def-icon-wrap">⚖️</div>
+    <div>
+      <div class="def-tag">Documento Legal Oficial · The Mendoza Law Firm LLC</div>
+      <div class="def-title">Consentimiento Informado y Reconocimiento de Riesgos Migratorios</div>
+      <p class="card-body" style="margin-bottom:12px;">
+        Es un documento <strong style="color:var(--gold)">CONFIDENCIAL</strong> que confirma que el cliente recibió representación legal de The Mendoza Law Firm LLC
+        y fue informado de la importancia de proporcionar <strong style="color:var(--text)">información completa y documentación oficial</strong>
+        relacionada con su historial penal o contacto previo con autoridades.
+      </p>
+      <p class="card-body">
+        El cliente declara bajo protesta de decir verdad su historial de contactos, reconoce los riesgos de no tener documentos,
+        libera a la firma de responsabilidad por omisiones, y se compromete a informar cualquier cambio futuro.
+        <strong style="color:var(--text)">Requiere firma del cliente y del abogado.</strong>
+      </p>
+      <div class="def-pills">
+        <span class="pill pill-success">✔ Casos 2024</span>
+        <span class="pill pill-warn">⚠ Uso condicionado</span>
+        <span class="pill pill-danger">❌ No para casos nuevos</span>
+        <span class="pill pill-gold">🔒 Confidencial</span>
+        <span class="pill pill-gold">✍ Requiere firmas</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SECCIÓN 02 — DOCUMENTACIÓN OFICIAL         -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section-label">
+    <div class="section-num">02</div>
+    Sec. 1 del Doc — Importancia de la Documentación Oficial
+  </div>
+
+  <div class="grid-2">
+    <div class="req-card">
+      <div class="req-card-header">
+        <div class="req-card-icon">📂</div>
+        <div class="req-card-title">Documentos que el Cliente Debe Obtener</div>
+      </div>
+      <div class="req-list">
+        <div class="req-item">
+          <span class="req-item-marker">📄</span>
+          <span><strong>Rap Sheet</strong> — Registro federal de antecedentes penales</span>
+        </div>
+        <div class="req-item">
+          <span class="req-item-marker">📄</span>
+          <span><strong>Police Clearance Letter (PCL)</strong> — Carta de no antecedentes policiales</span>
+        </div>
+        <div class="req-item">
+          <span class="req-item-marker">📄</span>
+          <span><strong>Disposiciones de corte</strong> — Incluyendo comprobantes de pago de multas de tránsito</span>
+        </div>
+        <div class="req-item">
+          <span class="req-item-marker">📄</span>
+          <span><strong>Registros oficiales</strong> de arrestos, detenciones o cargos</span>
+        </div>
+        <div class="req-item">
+          <span class="req-item-marker">📄</span>
+          <span><strong>Otros registros oficiales</strong> necesarios para manejar correctamente el caso migratorio</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="alert alert-warn">
+        <span class="alert-icon">⚠️</span>
+        <div>
+          <span class="alert-label">Obligación del Cliente</span>
+          Debe decir <strong>toda la verdad</strong> y revelar cualquier arresto, detención, ticket, cargo, investigación, incidente o contacto con autoridades — <strong>incluso si no tiene documentos o no recuerda todos los detalles.</strong>
+        </div>
+      </div>
+      <div class="alert alert-danger">
+        <span class="alert-icon">🚫</span>
+        <div>
+          <span class="alert-label">Consecuencia de Ocultamiento</span>
+          Ocultar información, no mencionar un incidente o proporcionar información incompleta <strong>puede afectar negativamente su caso migratorio.</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACORDEÓN DE DOCUMENTOS -->
+  <div style="margin-top:16px;" id="docs-accordion">
+
+    <div class="acc-item" data-badge="doc-critical" data-badge-text="🔴 Crítico">
+      <button class="acc-header" onclick="toggleAcc(this)" aria-expanded="false">
+        <div class="acc-header-left">
+          <span class="acc-icon">📄</span>
+          <span class="acc-title">Rap Sheet</span>
+        </div>
+        <div class="acc-header-right">
+          <span class="doc-badge doc-critical">🔴 Crítico</span>
+          <span class="acc-chevron">▾</span>
+        </div>
+      </button>
+      <div class="acc-body">
+        <p>Registro federal completo de antecedentes penales del cliente. Es uno de los documentos <strong>más importantes</strong> del expediente migratorio.</p>
+        <div class="acc-detail-grid">
+          <div class="acc-detail-item"><span class="acc-detail-label">¿Dónde obtenerlo?</span><span>FBI · Agencias estatales · Portales en línea oficiales</span></div>
+          <div class="acc-detail-item"><span class="acc-detail-label">¿Cuándo se necesita?</span><span>Desde el inicio del caso, antes de cualquier presentación</span></div>
+          <div class="acc-detail-item"><span class="acc-detail-label">Consecuencia si falta</span><span class="text-danger">Puede causar RFE o negación del beneficio migratorio</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item" data-badge="doc-critical" data-badge-text="🔴 Crítico">
+      <button class="acc-header" onclick="toggleAcc(this)" aria-expanded="false">
+        <div class="acc-header-left">
+          <span class="acc-icon">📄</span>
+          <span class="acc-title">Police Clearance Letter (PCL)</span>
+        </div>
+        <div class="acc-header-right">
+          <span class="doc-badge doc-critical">🔴 Crítico</span>
+          <span class="acc-chevron">▾</span>
+        </div>
+      </button>
+      <div class="acc-body">
+        <p>Carta oficial emitida por la autoridad policial que certifica la <strong>ausencia de antecedentes policiales locales</strong>.</p>
+        <div class="acc-detail-grid">
+          <div class="acc-detail-item"><span class="acc-detail-label">¿Dónde obtenerlo?</span><span>Departamento de Policía local · Ciudad o condado donde vivió</span></div>
+          <div class="acc-detail-item"><span class="acc-detail-label">¿Cuándo se necesita?</span><span>Obligatorio para la mayoría de peticiones de beneficios migratorios</span></div>
+          <div class="acc-detail-item"><span class="acc-detail-label">Consecuencia si falta</span><span class="text-danger">Caso incompleto — USCIS puede solicitar evidencia adicional</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item" data-badge="doc-important" data-badge-text="🟡 Importante">
+      <button class="acc-header" onclick="toggleAcc(this)" aria-expanded="false">
+        <div class="acc-header-left">
+          <span class="acc-icon">⚖️</span>
+          <span class="acc-title">Disposiciones de Corte</span>
+        </div>
+        <div class="acc-header-right">
+          <span class="doc-badge doc-important">🟡 Importante</span>
+          <span class="acc-chevron">▾</span>
+        </div>
+      </button>
+      <div class="acc-body">
+        <p>Resoluciones judiciales, sentencias y comprobantes de pago de <strong>multas de tránsito anteriores</strong> u otras infracciones.</p>
+        <div class="acc-detail-grid">
+          <div class="acc-detail-item"><span class="acc-detail-label">¿Dónde obtenerlo?</span><span>Tribunal de la ciudad o condado donde se emitió la resolución</span></div>
+          <div class="acc-detail-item"><span class="acc-detail-label">¿Cuándo se necesita?</span><span>Si el cliente tuvo contacto con el sistema judicial en cualquier momento</span></div>
+          <div class="acc-detail-item"><span class="acc-detail-label">Nota operativa</span><span class="text-warn">Incluye multas de tránsito — aunque parezcan menores son relevantes</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item" data-badge="doc-critical" data-badge-text="🔴 Crítico">
+      <button class="acc-header" onclick="toggleAcc(this)" aria-expanded="false">
+        <div class="acc-header-left">
+          <span class="acc-icon">🚔</span>
+          <span class="acc-title">Registros de Arrestos</span>
+        </div>
+        <div class="acc-header-right">
+          <span class="doc-badge doc-critical">🔴 Crítico</span>
+          <span class="acc-chevron">▾</span>
+        </div>
+      </button>
+      <div class="acc-body">
+        <p>Documentación oficial de <strong>detenciones, cargos o investigaciones previas</strong>, aunque no hayan derivado en condena.</p>
+        <div class="acc-detail-grid">
+          <div class="acc-detail-item"><span class="acc-detail-label">¿Dónde obtenerlo?</span><span>Agencia que realizó la detención · Sistema judicial federal o estatal</span></div>
+          <div class="acc-detail-item"><span class="acc-detail-label">¿Cuándo se necesita?</span><span>Siempre que el cliente haya sido arrestado, detenido o investigado</span></div>
+          <div class="acc-detail-item"><span class="acc-detail-label">Consecuencia si falta</span><span class="text-danger">Omisión intencional puede comprometer todo el caso migratorio</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item" data-badge="doc-standard" data-badge-text="📋 Según caso">
+      <button class="acc-header" onclick="toggleAcc(this)" aria-expanded="false">
+        <div class="acc-header-left">
+          <span class="acc-icon">📁</span>
+          <span class="acc-title">Otros Registros Oficiales</span>
+        </div>
+        <div class="acc-header-right">
+          <span class="doc-badge doc-standard">📋 Según caso</span>
+          <span class="acc-chevron">▾</span>
+        </div>
+      </button>
+      <div class="acc-body">
+        <p>Cualquier otro documento oficial necesario para <strong>revisar y manejar correctamente el caso migratorio</strong> según su naturaleza específica.</p>
+        <div class="acc-detail-grid">
+          <div class="acc-detail-item"><span class="acc-detail-label">¿Qué incluye?</span><span>Documentos de ICE · Órdenes de deportación · Registros de entrada</span></div>
+          <div class="acc-detail-item"><span class="acc-detail-label">¿Cuándo se necesita?</span><span>Depende del tipo de beneficio migratorio solicitado</span></div>
+          <div class="acc-detail-item"><span class="acc-detail-label">Nota operativa</span><span>Consultar con el abogado responsable qué aplica al caso específico</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <style>
+  /* ── ACCORDION ── */
+  #docs-accordion { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow-sm); }
+  .acc-item { border-bottom: 1px solid var(--border); background: var(--card); }
+  .acc-item:last-child { border-bottom: none; }
+
+  .acc-header {
+    width: 100%; background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 24px; gap: 16px;
+    text-align: left; transition: background .18s;
+  }
+  .acc-header:hover { background: var(--gold-dim); }
+  .acc-header[aria-expanded="true"] { background: var(--gold-dim); border-bottom: 1px solid var(--border); }
+
+  .acc-header-left { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
+  .acc-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .acc-title { font-size: 1rem; font-weight: 700; color: var(--text); font-family: 'Segoe UI', sans-serif; }
+
+  .acc-header-right { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+  .acc-chevron {
+    font-size: 1.1rem; color: var(--gold);
+    transition: transform .28s cubic-bezier(.4,0,.2,1);
+    display: inline-block; line-height: 1;
+  }
+  .acc-header[aria-expanded="true"] .acc-chevron { transform: rotate(180deg); }
+
+  .acc-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height .35s cubic-bezier(.4,0,.2,1), padding .25s ease;
+    padding: 0 24px; background: var(--card-alt);
+  }
+  .acc-body.open { max-height: 320px; padding: 20px 24px 24px; }
+
+  .acc-body p { font-size: .92rem; color: var(--muted); line-height: 1.78; margin-bottom: 16px; }
+  .acc-body p strong { color: var(--text); font-weight: 600; }
+
+  .acc-detail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 680px) { .acc-detail-grid { grid-template-columns: 1fr; } }
+
+  .acc-detail-item {
+    display: flex; flex-direction: column; gap: 4px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--r-sm); padding: 12px 14px;
+    font-size: .82rem; color: var(--muted); line-height: 1.55;
+  }
+  .acc-detail-label { font-size: .66rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin-bottom: 2px; }
+  .text-danger { color: var(--danger); font-weight: 600; }
+  .text-warn   { color: var(--warn);   font-weight: 600; }
+  </style>
+
+  <script>
+  function toggleAcc(btn) {
+    const body = btn.nextElementSibling;
+    const isOpen = btn.getAttribute('aria-expanded') === 'true';
+    // Close all
+    document.querySelectorAll('.acc-header').forEach(b => {
+      b.setAttribute('aria-expanded', 'false');
+      b.nextElementSibling.classList.remove('open');
+    });
+    // Open clicked if it was closed
+    if (!isOpen) {
+      btn.setAttribute('aria-expanded', 'true');
+      body.classList.add('open');
+    }
+  }
+  </script>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SECCIÓN 03 — SEMÁFORO DE DECISIÓN          -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section-label">
+    <div class="section-num">03</div>
+    Semáforo Operativo — ¿Cuándo Activar el Consentimiento?
+  </div>
+
+  <div class="semaphore-grid">
+    <div class="sem-card sem-red">
+      <div class="sem-header">
+        <span class="sem-dot sem-dot-red"></span>
+        <span class="sem-label sem-label-red">Rojo — No Aplicar</span>
+      </div>
+      <div class="sem-title">Detener y escalar</div>
+      <div class="sem-arrow"><span class="arrow-symbol">→</span><span>Escalaciones activas — activar protocolo RAP</span></div>
+      <div class="sem-arrow"><span class="arrow-symbol">→</span><span>Riesgo legal identificado — derivar inmediatamente</span></div>
+      <div class="sem-arrow"><span class="arrow-symbol">→</span><span>Situación de seguridad — llamar a Policía</span></div>
+      <div class="sem-arrow"><span class="arrow-symbol">→</span><span>Casos nuevos sin historial de seguimiento</span></div>
+    </div>
+    <div class="sem-card sem-yellow">
+      <div class="sem-header">
+        <span class="sem-dot sem-dot-yellow"></span>
+        <span class="sem-label sem-label-yellow">Amarillo — Evaluar</span>
+      </div>
+      <div class="sem-title">Analizar antes de proceder</div>
+      <div class="sem-arrow"><span class="arrow-symbol">→</span><span>Cliente dice no tener documentos pero podría obtenerlos</span></div>
+      <div class="sem-arrow"><span class="arrow-symbol">→</span><span>Limitación económica posible, no confirmada</span></div>
+      <div class="sem-arrow"><span class="arrow-symbol">→</span><span>Resistencia parcial — puede resolverse con seguimiento</span></div>
+      <div class="sem-arrow"><span class="arrow-symbol">→</span><span>Evalúa estado emocional antes de activar protocolo</span></div>
+    </div>
+    <div class="sem-card sem-green">
+      <div class="sem-header">
+        <span class="sem-dot sem-dot-green"></span>
+        <span class="sem-label sem-label-green">Verde — Aplicar</span>
+      </div>
+      <div class="sem-title">Proceder con consentimiento</div>
+      <div class="sem-arrow"><span class="arrow-symbol">→</span><span>Cliente 2024 confirmado, no puede obtener docs ahora</span></div>
+      <div class="sem-arrow"><span class="arrow-symbol">→</span><span>Motivo documentado y válido (Sección 2 del formulario)</span></div>
+      <div class="sem-arrow"><span class="arrow-symbol">→</span><span>Cliente enojado / alterado / en riesgo de abandono</span></div>
+      <div class="sem-arrow"><span class="arrow-symbol">→</span><span>+2 semanas sin avance, múltiples contactos registrados</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SECCIÓN 04 — NO APLICA / CRÍTICO           -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section-label">
+    <div class="section-num">04</div>
+    Cuándo NO Aplica — Bloque de Acción Obligatoria
+  </div>
+
+  <div class="critical-block">
+    <div class="critical-eyebrow">Restricción Absoluta · Sin Excepción Posible</div>
+    <div class="critical-title">NO Aplica para <em>Escalaciones</em></div>
+    <div class="critical-date-badge">🔴 Protocolo obligatorio · No negociable</div>
+    <p style="font-size:.92rem;color:var(--muted);line-height:1.8;max-width:680px;margin-bottom:8px;">
+      Si el caso involucra una escalación activa, riesgo legal o situación de seguridad,
+      <strong style="color:var(--text)">el Consentimiento Informado no debe utilizarse bajo ningún escenario.</strong>
+      Existen protocolos específicos que toman precedencia.
+    </p>
+    <div class="critical-consequences">
+      <div class="consequence-item">
+        <div class="consequence-arrow">→</div>
+        <div class="consequence-text">
+          <strong>Acción obligatoria #1:</strong><br>
+          Mandar al cliente por su <strong>RAP</strong> de manera inmediata. No postergar.
+        </div>
+      </div>
+      <div class="consequence-item">
+        <div class="consequence-arrow">→</div>
+        <div class="consequence-text">
+          <strong>Acción obligatoria #2:</strong><br>
+          Llamar al <strong>Departamento de Policía</strong> si hay riesgo de seguridad presente.
+        </div>
+      </div>
+      <div class="consequence-item">
+        <div class="consequence-arrow">🚫</div>
+        <div class="consequence-text">
+          <strong>No aplica si hay:</strong> escalación activa, riesgo legal identificado o vulnerabilidad de seguridad.
+        </div>
+      </div>
+      <div class="consequence-item">
+        <div class="consequence-arrow">🚫</div>
+        <div class="consequence-text">
+          <strong>No aplica para:</strong> casos nuevos sin historial ni para evitar el proceso estándar de seguimiento.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SECCIÓN 05 — RIESGOS MIGRATORIOS (Sec. 4) -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section-label">
+    <div class="section-num">05</div>
+    Sec. 4 del Doc — Riesgos Migratorios que el Cliente Debe Entender
+  </div>
+
+  <div class="risk-block">
+    <div class="risk-header">
+      <div class="risk-icon-circle">⚠️</div>
+      <div>
+        <div class="risk-title">Consecuencias por Falta de Documentación o Información Incompleta</div>
+        <div class="risk-subtitle">El cliente debe entender y firmar que conoce estos riesgos</div>
+      </div>
+    </div>
+    <div class="risk-items">
+      <div class="risk-item">
+        <span class="risk-item-icon">🔴</span>
+        <span><strong>Retrasos o complicaciones</strong> en el procesamiento del caso migratorio — tiempos extendidos indefinidamente.</span>
+      </div>
+      <div class="risk-item">
+        <span class="risk-item-icon">🔴</span>
+        <span><strong>Solicitudes adicionales de evidencia (RFE)</strong> por parte del gobierno — costo adicional y tiempo extra de respuesta.</span>
+      </div>
+      <div class="risk-item">
+        <span class="risk-item-icon">🔴</span>
+        <span><strong>Negación de beneficios migratorios</strong> — resultado final desfavorable por información incompleta presentada.</span>
+      </div>
+      <div class="risk-item">
+        <span class="risk-item-icon">🔴</span>
+        <span><strong>Revisión desfavorable por autoridades migratorias</strong> — puede generar flags o alertas en el sistema federal.</span>
+      </div>
+      <div class="risk-item">
+        <span class="risk-item-icon">🟡</span>
+        <span><strong>Otras consecuencias migratorias</strong> dependiendo de la naturaleza de los incidentes no revelados o no documentados.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SECCIÓN 06 — REGLAS OPERATIVAS             -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section-label">
+    <div class="section-num">06</div>
+    Reglas Operativas para el Colaborador
+  </div>
+
+  <div class="grid-3">
+    <div class="impact-card">
+      <div class="impact-icon-wrap impact-icon-gold">🔍</div>
+      <div>
+        <div class="impact-label impact-label-gold">Validar — Paso 1</div>
+        <div class="impact-text">Confirmar que el cliente es <strong style="color:var(--text)">caso 2024</strong> y que no puede obtener los documentos en este momento. Verificar en sistema, no asumir.</div>
+      </div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-icon-wrap impact-icon-danger">🚫</div>
+      <div>
+        <div class="impact-label impact-label-danger">Descartar — Paso 2</div>
+        <div class="impact-text">Confirmar que <strong style="color:var(--text)">no es una escalación</strong> activa. Si hay riesgo legal o de seguridad, activar protocolo RAP de inmediato.</div>
+      </div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-icon-wrap impact-icon-warn">🧠</div>
+      <div>
+        <div class="impact-label impact-label-warn">Evaluar — Paso 3</div>
+        <div class="impact-text">Evaluar el <strong style="color:var(--text)">estado emocional</strong> del cliente. Si está muy alterado, calmar primero. El tono del speech depende de esto.</div>
+      </div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-icon-wrap impact-icon-gold">📝</div>
+      <div>
+        <div class="impact-label impact-label-gold">Documentar — Paso 4</div>
+        <div class="impact-text">Registrar el <strong style="color:var(--text)">motivo en la Sección 2</strong> del documento. Sin motivo documentado el consentimiento es inválido operativamente.</div>
+      </div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-icon-wrap impact-icon-success">✍️</div>
+      <div>
+        <div class="impact-label impact-label-success">Firmas — Paso 5</div>
+        <div class="impact-text">Obtener <strong style="color:var(--text)">firma del cliente y del abogado</strong>. El documento requiere: nombre, firma y fecha del cliente + nombre y firma del abogado.</div>
+      </div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-icon-wrap impact-icon-warn">🔁</div>
+      <div>
+        <div class="impact-label impact-label-warn">Deber continuo</div>
+        <div class="impact-text">Recordar al cliente su <strong style="color:var(--text)">deber de informar</strong> (Sección 6): nuevos documentos, información adicional o cualquier nuevo contacto con autoridades.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SECCIÓN 07 — SPEECH OPERATIVO              -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section-label">
+    <div class="section-num">07</div>
+    Speech Operativo — Uso en Llamada Real
+  </div>
+
+  <div class="speech-card">
+    <div class="speech-eyebrow">Guión de Referencia · Lenguaje Institucional Empático</div>
+    <div class="speech-label">Cómo explicar el documento al cliente</div>
+
+    <div class="speech-bubble">
+      "Entendemos su situación y queremos asegurarnos de que su caso esté bien protegido.
+      Dado que en este momento no cuenta con los documentos oficiales requeridos, <strong>la firma necesita que firmemos juntos un Consentimiento Informado</strong>
+      para dejar constancia de su situación actual y de que fue informado sobre la importancia de estos documentos.
+      <br><br>
+      En este documento, usted declarará bajo protesta de decir verdad su historial completo con autoridades —
+      todo lo que recuerde, aunque no tenga papeles —, <strong>y deberá notificarnos de inmediato si obtiene nuevos documentos
+      o recuerda información adicional</strong>. Esto es para protegerlo a usted y para que la firma pueda manejar
+      su caso de la mejor manera posible."
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
+      <div class="speech-note">✅ <strong style="color:var(--success);margin:0 4px;">Sí usar:</strong> Lenguaje empático, explicar el porqué, claro en consecuencias, institucional y no amenazante.</div>
+      <div class="speech-note">🚫 <strong style="color:var(--danger);margin:0 4px;">No usar:</strong> Frases de presión, urgencia artificial, lenguaje legal complejo o frases que generen miedo.</div>
+      <div class="speech-note">💡 <strong style="color:var(--warn);margin:0 4px;">Clave operativa:</strong> El cliente debe entender que al firmar <strong style="color:var(--text)">la firma queda protegida</strong> de responsabilidad por omisiones que el propio cliente genera. Eso es lo que libera la Sección 5 del documento.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SECCIÓN 08 — ESTRUCTURA DEL DOCUMENTO      -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section-label">
+    <div class="section-num">08</div>
+    Estructura del Documento Oficial — 7 Secciones
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    <div class="req-card">
+      <div class="req-card-header">
+        <div class="req-card-icon">📋</div>
+        <div class="req-card-title">Secciones del Consentimiento Informado · The Mendoza Law Firm</div>
+      </div>
+      <div class="req-list">
+        <div class="req-item">
+          <span class="req-item-marker">1️⃣</span>
+          <span><strong>Importancia de la Documentación Oficial</strong> — Se explica al cliente qué documentos debe obtener y por qué son críticos para su caso.</span>
+        </div>
+        <div class="req-item">
+          <span class="req-item-marker">2️⃣</span>
+          <span><strong>Falta de Documentación Oficial</strong> — El cliente declara el motivo por el que no cuenta con los documentos en este momento. <strong style="color:var(--warn)">Requiere llenar el campo "Motivo".</strong></span>
+        </div>
+        <div class="req-item">
+          <span class="req-item-marker">3️⃣</span>
+          <span><strong>Declaración de Historial con Autoridades</strong> — El cliente declara bajo protesta toda su historia con autoridades: autoridad, cargo, lugar, fecha, resultado y estatus actual.</span>
+        </div>
+        <div class="req-item">
+          <span class="req-item-marker">4️⃣</span>
+          <span><strong>Riesgos Migratorios</strong> — El cliente reconoce que la falta de documentos puede derivar en retrasos, RFEs, negaciones o revisiones desfavorables.</span>
+        </div>
+        <div class="req-item">
+          <span class="req-item-marker">5️⃣</span>
+          <span><strong>Liberación de Responsabilidad</strong> — El cliente libera a la firma de responsabilidad por resultados negativos causados por información incompleta, incorrecta u omitida por el propio cliente.</span>
+        </div>
+        <div class="req-item">
+          <span class="req-item-marker">6️⃣</span>
+          <span><strong>Deber Continuo de Informar</strong> — El cliente se compromete a notificar a la firma si obtiene nuevos documentos, recuerda información adicional o tiene cualquier nuevo contacto con autoridades.</span>
+        </div>
+        <div class="req-item">
+          <span class="req-item-marker">7️⃣</span>
+          <span><strong>Reconocimiento y Consentimiento + Firmas</strong> — El cliente confirma que entiende el documento, que lo firma libre y voluntariamente. <strong style="color:var(--gold)">Requiere firma del cliente y del abogado.</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALERTA FINAL -->
+  <div style="margin-top:32px;">
+    <div class="alert alert-danger" style="border-radius:var(--r);padding:20px 24px;">
+      <span class="alert-icon" style="font-size:1.4rem;">🚨</span>
+      <div>
+        <span class="alert-label">Recordatorio Operativo Final</span>
+        <strong style="color:var(--text)">Este protocolo es exclusivo para clientes 2024 que no pueden obtener documentos en este momento.</strong>
+        En casos nuevos, el objetivo siempre es empujar al cliente a asistir y obtener sus documentos. El Consentimiento Informado es el último recurso — no el primero.
+        Ante cualquier duda, consulta con tu supervisor o abogado responsable antes de proceder.
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-text">The Mendoza Law Firm, LLC · 6212 Gateway Boulevard East, Suite B, El Paso TX 79905 · (202) 933-3379 · Uso Interno Exclusivo · Confidencial</div>
+  <div class="footer-badge">Documento Operativo · 5 Mar 2025</div>
+</footer>
+
+</body>
+</html>
