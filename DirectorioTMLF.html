@@ -376,11 +376,18 @@ const GROUPS = [
 
 // Estado
 let allContacts  = [];
-let openGroups   = new Set(['mgr']); // Managers abierto por defecto
+let openGroups   = new Set(); // Todos colapsados al inicio
 
 // ── Helpers ──
 function initials(n){ return n.split(" ").filter((_,i)=>i<2).map(w=>w[0]).join("").toUpperCase(); }
-function cleanPhone(p){ return p.replace(/\s/g,""); }
+function cleanPhone(p){ return p.replace(/[\s\-\(\)\.]/g,""); }
+function waLink(phone) {
+  let n = cleanPhone(phone);
+  if (n.startsWith('+52')) n = n.slice(1);
+  else if (n.startsWith('52') && n.length >= 12) n = n;
+  else n = '52' + n;
+  return 'https://wa.me/' + n;
+}
 function sortedAZ(list){ return [...list].sort((a,b)=>a.name.localeCompare(b.name,"es")); }
 function colorFor(name){ let h=0; for(let i=0;i<name.length;i++) h=(h*31+name.charCodeAt(i))&0xffff; return h%11; }
 function matches(p,q){ if(!q)return true; return p.name.toLowerCase().includes(q)||p.area.toLowerCase().includes(q)||p.phone.includes(q); }
@@ -389,7 +396,7 @@ function matches(p,q){ if(!q)return true; return p.name.toLowerCase().includes(q
 function cardHTML(p) {
   const c   = colorFor(p.name);
   const tel = cleanPhone(p.phone);
-  const wa  = "https://wa.me/52"+tel;
+  const wa  = waLink(p.phone);
   return `
   <div class="acc-item">
     <div class="acc-header" onclick="toggleContact(this)">
@@ -409,7 +416,7 @@ function cardHTML(p) {
         </div>
         <div class="actions">
           <a class="btn btn-call" href="tel:${tel}">Llamar</a>
-          <a class="btn btn-wa" href="${wa}" target="_blank">WhatsApp ↗</a>
+          <a class="btn btn-wa" href="${wa}" target="_blank" rel="noopener noreferrer">WhatsApp ↗</a>
         </div>
       </div>
     </div>
