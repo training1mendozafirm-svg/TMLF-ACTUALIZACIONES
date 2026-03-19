@@ -128,6 +128,39 @@ body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); col
 .btn-del { width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(180,50,50,.15); background: rgba(180,50,50,.05); color: #9b3030; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; transition: all .15s; flex-shrink: 0; }
 .btn-del:hover { background: rgba(180,50,50,.12); border-color: rgba(180,50,50,.3); }
 
+/* ══ ADMIN MODE ══ */
+.admin-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 8px 24px;
+  background: linear-gradient(90deg, rgba(201,168,76,.12), rgba(201,168,76,.06));
+  border-bottom: 1px solid rgba(201,168,76,.18);
+  font-size: 11.5px; font-weight: 600; color: var(--gold);
+  font-family: 'DM Sans', sans-serif;
+}
+.admin-bar-left { display: flex; align-items: center; gap: 7px; }
+.admin-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); animation: blink 1.5s ease-in-out infinite; }
+.btn-exit-admin { padding: 5px 14px; border-radius: 999px; font-size: 11px; font-weight: 700; font-family: 'DM Sans', sans-serif; border: 1px solid rgba(201,168,76,.3); background: transparent; color: var(--gold); cursor: pointer; transition: all .15s; letter-spacing: .3px; }
+.btn-exit-admin:hover { background: rgba(201,168,76,.1); }
+
+/* Lock modal */
+.lock-overlay { display: none; position: fixed; inset: 0; z-index: 500; background: rgba(7,17,28,.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 24px; }
+.lock-overlay.show { display: flex; }
+.lock-modal { background: var(--card); border-radius: 20px; width: 100%; max-width: 360px; overflow: hidden; border: 1px solid rgba(201,168,76,.18); box-shadow: 0 40px 80px rgba(7,17,28,.4); animation: slideUp .28s cubic-bezier(.34,1.2,.64,1); }
+.lock-accent { height: 4px; background: linear-gradient(90deg, var(--gold), var(--gold2), rgba(201,168,76,.2)); }
+.lock-body { padding: 32px 28px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.lock-icon { width: 56px; height: 56px; border-radius: 16px; background: var(--gold-dim); border: 1px solid var(--gold-mid); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.lock-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; color: var(--ink); text-align: center; letter-spacing: .2px; }
+.lock-sub { font-size: 12.5px; color: var(--muted); text-align: center; margin-top: -8px; line-height: 1.5; }
+.lock-input { width: 100%; padding: 12px 16px; font-size: 15px; font-family: 'DM Sans', sans-serif; background: var(--bg); border: 1px solid var(--border); border-radius: 11px; color: var(--ink); outline: none; text-align: center; letter-spacing: 4px; transition: border-color .2s; }
+.lock-input:focus { border-color: rgba(201,168,76,.5); background: #fff; }
+.lock-error { font-size: 12px; color: #9b3030; font-weight: 600; display: none; }
+.lock-error.show { display: block; }
+.lock-actions { display: flex; gap: 10px; width: 100%; }
+.btn-lock-cancel { flex: 1; padding: 11px 0; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all .15s; }
+.btn-lock-cancel:hover { background: var(--bg); }
+.btn-lock-enter { flex: 2; padding: 11px 0; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; border-radius: 10px; border: none; background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #1a1200; cursor: pointer; box-shadow: 0 2px 10px rgba(201,168,76,.28); transition: all .18s; }
+.btn-lock-enter:hover { opacity: .9; box-shadow: 0 4px 16px rgba(201,168,76,.36); }
+
 /* ══ EMPTY STATE ══ */
 .group-empty { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 28px 16px; border: 1.5px dashed rgba(201,168,76,.25); border-radius: 12px; }
 .group-empty span { font-size: 22px; opacity: .5; }
@@ -190,11 +223,20 @@ footer { background: linear-gradient(135deg,#07111c 0%,#0f2236 50%,#1a3a5c 100%)
   </div>
   <div class="nav-right">
     <div class="nav-chip"><span class="dot"></span>Directorio Interno</div>
-    <button class="btn-add-nav" onclick="openModal()">
+    <button class="btn-add-nav" id="btn-add-nav" onclick="openModal()" style="display:none">
       <span class="plus">+</span> Agregar contacto
+    </button>
+    <button class="btn-add-nav" id="btn-admin-toggle" onclick="openLockModal()" style="background:transparent;border:1px solid rgba(201,168,76,.3);color:var(--gold);box-shadow:none;">
+      🔐 Admin
     </button>
   </div>
 </nav>
+
+<!-- ADMIN BAR (hidden by default) -->
+<div class="admin-bar" id="adminBar" style="display:none">
+  <div class="admin-bar-left"><span class="admin-dot"></span> Modo Administrador activo</div>
+  <button class="btn-exit-admin" onclick="exitAdmin()">Salir del modo admin</button>
+</div>
 
 <!-- STICKY SEARCH -->
 <div class="search-wrap">
@@ -251,6 +293,24 @@ footer { background: linear-gradient(135deg,#07111c 0%,#0f2236 50%,#1a3a5c 100%)
       <div class="modal-actions">
         <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
         <button class="btn-save" id="btn-save" onclick="saveContact()">Guardar contacto</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOCK MODAL -->
+<div class="lock-overlay" id="lockOverlay" onclick="closeLockOutside(event)">
+  <div class="lock-modal">
+    <div class="lock-accent"></div>
+    <div class="lock-body">
+      <div class="lock-icon">🔐</div>
+      <div class="lock-title">Acceso Administrador</div>
+      <p class="lock-sub">Ingresa la contraseña para editar o eliminar contactos</p>
+      <input class="lock-input" id="lock-pwd" type="password" placeholder="••••••" maxlength="20">
+      <div class="lock-error" id="lock-error">Contraseña incorrecta</div>
+      <div class="lock-actions">
+        <button class="btn-lock-cancel" onclick="closeLockModal()">Cancelar</button>
+        <button class="btn-lock-enter" onclick="checkPassword()">Entrar</button>
       </div>
     </div>
   </div>
@@ -342,8 +402,7 @@ function cardHTML(p) {
         <div class="phone-row">
           <div class="phone-icon">📱</div>
           ${p.phone}
-          <button class="btn-edit" onclick="openEditModal('${p.name.replace(/'/g,"\\'")}',event)" title="Editar">✏️</button>
-          <button class="btn-del" onclick="deleteContact('${p.name.replace(/'/g,"\\'")}',event)" title="Eliminar">🗑</button>
+          ${isAdmin ? `<button class="btn-edit" onclick="openEditModal('${p.name.replace(/'/g,"\\'")}',event)" title="Editar">✏️</button><button class="btn-del" onclick="deleteContact('${p.name.replace(/'/g,"\\'")}',event)" title="Eliminar">🗑</button>` : ''}
         </div>
         <div class="actions">
           <a class="btn btn-call" href="tel:${tel}">Llamar</a>
@@ -575,6 +634,50 @@ function updateContact() {
       errEl.textContent = 'Error de conexión.';
       errEl.classList.add('show');
     });
+}
+
+// ══ ADMIN MODE ══
+const ADMIN_PASSWORD = "tmlf2026"; // Cambia esta contraseña
+let isAdmin = false;
+
+function openLockModal() {
+  document.getElementById('lock-pwd').value = '';
+  document.getElementById('lock-error').classList.remove('show');
+  document.getElementById('lockOverlay').classList.add('show');
+  setTimeout(() => document.getElementById('lock-pwd').focus(), 100);
+}
+function closeLockModal() { document.getElementById('lockOverlay').classList.remove('show'); }
+function closeLockOutside(e) { if (e.target === document.getElementById('lockOverlay')) closeLockModal(); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeLockModal(); closeEditModal(); closeModal(); }
+  if (e.key === 'Enter' && document.getElementById('lockOverlay').classList.contains('show')) checkPassword();
+});
+
+function checkPassword() {
+  const pwd = document.getElementById('lock-pwd').value;
+  if (pwd === ADMIN_PASSWORD) {
+    isAdmin = true;
+    closeLockModal();
+    document.getElementById('adminBar').style.display = 'flex';
+    document.getElementById('btn-add-nav').style.display = 'flex';
+    document.getElementById('btn-admin-toggle').style.display = 'none';
+    render(document.getElementById('search').value);
+    showToast('✓  Modo administrador activado');
+  } else {
+    document.getElementById('lock-error').classList.add('show');
+    document.getElementById('lock-pwd').value = '';
+    document.getElementById('lock-pwd').focus();
+  }
+}
+
+function exitAdmin() {
+  isAdmin = false;
+  document.getElementById('adminBar').style.display = 'none';
+  document.getElementById('btn-add-nav').style.display = 'none';
+  document.getElementById('btn-admin-toggle').style.display = 'flex';
+  render(document.getElementById('search').value);
+  showToast('Modo administrador desactivado');
 }
 
 // ── Init ──
