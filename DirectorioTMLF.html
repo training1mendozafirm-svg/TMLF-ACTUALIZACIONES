@@ -123,7 +123,9 @@ body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); col
 .btn-call:hover { opacity: .92; box-shadow: 0 4px 14px rgba(12,68,124,.32); transform: translateY(-1px); }
 .btn-wa { background: var(--card); color: var(--ink); border: 1px solid var(--border); }
 .btn-wa:hover { background: rgba(201,168,76,.08); border-color: rgba(201,168,76,.3); color: #7a5200; }
-.btn-del { width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(180,50,50,.15); background: rgba(180,50,50,.05); color: #9b3030; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; transition: all .15s; flex-shrink: 0; margin-left: auto; }
+.btn-edit { width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(12,68,124,.15); background: rgba(12,68,124,.05); color: #0C447C; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; transition: all .15s; flex-shrink: 0; margin-left: auto; }
+.btn-edit:hover { background: rgba(12,68,124,.12); border-color: rgba(12,68,124,.3); }
+.btn-del { width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(180,50,50,.15); background: rgba(180,50,50,.05); color: #9b3030; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; transition: all .15s; flex-shrink: 0; }
 .btn-del:hover { background: rgba(180,50,50,.12); border-color: rgba(180,50,50,.3); }
 
 /* ══ EMPTY STATE ══ */
@@ -254,6 +256,48 @@ footer { background: linear-gradient(135deg,#07111c 0%,#0f2236 50%,#1a3a5c 100%)
   </div>
 </div>
 
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModalOverlay" onclick="closeEditModalOutside(event)">
+  <div class="modal">
+    <div class="modal-accent"></div>
+    <div class="modal-header">
+      <div class="modal-icon">✏️</div>
+      <div>
+        <div class="modal-title">Editar contacto</div>
+      </div>
+      <button class="modal-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="e-original-name">
+      <div class="field">
+        <label>Nombre completo</label>
+        <input id="e-name" type="text" placeholder="Ej. María González López">
+      </div>
+      <div class="field">
+        <label>Área</label>
+        <input id="e-area" type="text" placeholder="Ej. Compliance, PMO, RFE...">
+      </div>
+      <div class="field">
+        <label>Número de teléfono</label>
+        <input id="e-phone" type="tel" placeholder="Ej. 55 1234 5678">
+      </div>
+      <div class="field">
+        <label>Grupo</label>
+        <select id="e-group">
+          <option value="mgr">Managers / Coordinadores</option>
+          <option value="tl">Team Leaders</option>
+          <option value="tr">Trainers</option>
+        </select>
+      </div>
+      <div class="error-msg" id="edit-error-msg">Por favor completa todos los campos.</div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
+        <button class="btn-save" id="btn-edit-save" onclick="updateContact()">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -298,6 +342,7 @@ function cardHTML(p) {
         <div class="phone-row">
           <div class="phone-icon">📱</div>
           ${p.phone}
+          <button class="btn-edit" onclick="openEditModal('${p.name.replace(/'/g,"\\'")}',event)" title="Editar">✏️</button>
           <button class="btn-del" onclick="deleteContact('${p.name.replace(/'/g,"\\'")}',event)" title="Eliminar">🗑</button>
         </div>
         <div class="actions">
@@ -462,6 +507,75 @@ const FALLBACK_DATA = [
   {name:"Carlos Antonio Guzman",             area:"Truckers",   phone:"4426106506",   group:"mgr"},
   {name:"Victor Eduardo Romo Trujillo",      area:"TI",         phone:"56 2005 2683", group:"mgr"},
 ];
+
+// ── Edit modal ──
+function openEditModal(name, e) {
+  e.stopPropagation();
+  const p = allContacts.find(c => c.name === name);
+  if (!p) return;
+  document.getElementById('e-original-name').value = p.name;
+  document.getElementById('e-name').value  = p.name;
+  document.getElementById('e-area').value  = p.area;
+  document.getElementById('e-phone').value = p.phone;
+  document.getElementById('e-group').value = p.group;
+  document.getElementById('edit-error-msg').classList.remove('show');
+  document.getElementById('btn-edit-save').disabled = false;
+  document.getElementById('btn-edit-save').textContent = 'Guardar cambios';
+  document.getElementById('editModalOverlay').classList.add('show');
+  setTimeout(() => document.getElementById('e-name').focus(), 100);
+}
+function closeEditModal() { document.getElementById('editModalOverlay').classList.remove('show'); }
+function closeEditModalOutside(e) { if (e.target === document.getElementById('editModalOverlay')) closeEditModal(); }
+
+function updateContact() {
+  const originalName = document.getElementById('e-original-name').value;
+  const name  = document.getElementById('e-name').value.trim();
+  const area  = document.getElementById('e-area').value.trim();
+  const phone = document.getElementById('e-phone').value.trim();
+  const group = document.getElementById('e-group').value;
+  const errEl = document.getElementById('edit-error-msg');
+  const btn   = document.getElementById('btn-edit-save');
+
+  if (!name || !area || !phone) { errEl.classList.add('show'); return; }
+  errEl.classList.remove('show');
+
+  // Update locally first
+  const idx = allContacts.findIndex(c => c.name === originalName);
+  if (idx === -1) return;
+
+  if (!SCRIPT_URL || SCRIPT_URL.includes("PEGA_AQUI")) {
+    allContacts[idx] = { name, area, phone, group };
+    openGroups.add(group);
+    render(); closeEditModal();
+    showToast('✓  Contacto actualizado');
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Guardando...';
+
+  // Delete old + add new in Sheets
+  fetch(`${SCRIPT_URL}?action=deleteContact&name=${encodeURIComponent(originalName)}`)
+    .then(r => r.json())
+    .then(() => fetch(`${SCRIPT_URL}?action=addContact&name=${encodeURIComponent(name)}&area=${encodeURIComponent(area)}&phone=${encodeURIComponent(phone)}&group=${group}`))
+    .then(r => r.json())
+    .then(res => {
+      btn.disabled = false; btn.textContent = 'Guardar cambios';
+      if (res.ok) {
+        allContacts[idx] = { name, area, phone, group };
+        openGroups.add(group);
+        render(); closeEditModal();
+        showToast('✓  Contacto actualizado en Google Sheets');
+      } else {
+        errEl.textContent = res.error || 'Error al guardar.';
+        errEl.classList.add('show');
+      }
+    })
+    .catch(() => {
+      btn.disabled = false; btn.textContent = 'Guardar cambios';
+      errEl.textContent = 'Error de conexión.';
+      errEl.classList.add('show');
+    });
+}
 
 // ── Init ──
 loadContacts();
