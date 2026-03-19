@@ -308,7 +308,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:var(--in
         <div class="hero-tag">EVALUACIÓN OFICIAL · VISA T</div>
         <h1 class="hero-title">Módulo de<br/><em>Conocimientos</em></h1>
         <p class="hero-desc">Esta evaluación tiene como objetivo identificar el nivel de conocimiento actual sobre Visa T entre los colaboradores.<br/>
-        Duración máxima: <strong>25 minutos - 25 preguntas</strong>.</p>
+        Duración máxima: <strong>25 minutos - 26 preguntas</strong>.</p>
         <p class="hero-note">Incluye bloque de caso práctico según tu área</p>
       </div>
       <div class="rules">
@@ -795,6 +795,20 @@ var QUESTIONS_BASE = [
     feedbackOk: "Correcto. La trata laboral severa bajo la TVPA requiere reclutamiento, alojamiento, transporte u obtención de una persona mediante fuerza, fraude o coerción con fines de servidumbre involuntaria, esclavitud por deudas o trabajo forzado. El elemento coercitivo es lo que la distingue de una relación laboral irregular.",
     feedbackFail: "Incorrecto. La trata laboral no equivale a salario bajo, trabajo no remunerado ni empleo irregular de migrantes. Requiere el elemento de fuerza, fraude o coerción con fines de trabajo forzado o servidumbre."
   }
+,
+  {
+    format: "Opción múltiple",
+    text: "En un caso de trata de personas, ¿qué son los medios y cómo se conectan al fin de la trata?",
+    options: [
+      "Son las acciones que los tratantes realizan para retener a la víctima y obligarla a realizar labores en contra de su voluntad.",
+      "Es el objetivo al que someten a una víctima de trata para obtener un beneficio a partir de su explotación.",
+      "Es la manera en la que captan a la víctima para meterla al esquema de trata.",
+      "Es la razón por la cual una víctima es sometida a un esquema de trata."
+    ],
+    correct: 0,
+    feedbackOk: "Correcto. Los medios son las acciones coercitivas (fuerza, fraude, amenazas) que el tratante usa para controlar a la víctima y conectarlos al fin, que es la explotación. Sin esta conexión medios-fines no se configura legalmente la trata severa bajo la TVPA.",
+    feedbackFail: "Incorrecto. Los medios son las acciones de control y coerción que el tratante ejerce sobre la víctima (retención, amenazas, fuerza). Se conectan al fin — la explotación — porque sin esos medios la víctima no podría ser sometida al esquema de trata."
+  }
 ];
 var QUESTIONS_CASE_NO = [
   {
@@ -886,7 +900,7 @@ var QUESTIONS_CASE_SI = [
   {
     format: "Qué NO se debe hacer",
     isCase: true,
-    text: "En el contexto del caso práctico PWC, ¿cuál de las siguientes acciones NO se debe realizar al intentar subsanar el problema de que el testimonio no articula el esquema de trata?",
+    text: "En el contexto del caso práctico, ¿cuál de las siguientes acciones NO se debe realizar al intentar subsanar el problema de que el testimonio no articula el esquema de trata?",
     options: [
       "No se debe usar preguntas abiertas y cronológicas durante la entrevista complementaria, ya que este tipo de preguntas dirige excesivamente el relato de la cliente y compromete la autenticidad del testimonio ante USCIS.",
       "No se debe sugerir respuestas a la cliente ni completar sus frases durante la entrevista, ya que esto contamina el testimonio, compromete su credibilidad y puede constituir una irregularidad ética y legal.",
@@ -900,7 +914,7 @@ var QUESTIONS_CASE_SI = [
   {
     format: "Verdadero o falso",
     isCase: true,
-    text: "Verdadero o falso sobre el caso PWC: Dado que los hechos que describe la cliente contienen tanto elementos de violencia doméstica como elementos de trata sexual, la paralegal debe elegir entre documentar uno u otro patrón, ya que ambos no pueden coexistir en la misma solicitud de Visa T.",
+    text: "Verdadero o falso sobre el caso: Dado que los hechos que describe la cliente contienen tanto elementos de violencia doméstica como elementos de trata sexual, la paralegal debe elegir entre documentar uno u otro patrón, ya que ambos no pueden coexistir en la misma solicitud de Visa T.",
     options: [
       "Verdadero. USCIS requiere que la solicitud de Visa T se base en un único patrón de conducta del traficante, por lo que la paralegal debe identificar el patrón predominante y estructurar la declaración legal en torno a ese patrón únicamente.",
       "Falso. La violencia doméstica y la trata pueden coexistir en el mismo caso. La paralegal no debe descartar ninguno de los dos patrones, sino documentar los hechos de trata que existen en el relato sin eliminar el contexto de violencia doméstica.",
@@ -914,7 +928,7 @@ var QUESTIONS_CASE_SI = [
   {
     format: "Caso práctico",
     isCase: true,
-    text: "Además de la entrevista complementaria, ¿qué otra estrategia puede fortalecer el paquete de solicitud de Visa T de la cliente en el caso PWC, dada la situación en que la cliente no identifica los hechos como trata?",
+    text: "Además de la entrevista complementaria, ¿qué otra estrategia puede fortalecer el paquete de solicitud de Visa T de la cliente en este caso, dada la situación en que la cliente no identifica los hechos como trata?",
     options: [
       "Solicitar únicamente el I-914B a la autoridad policial y presentarlo como evidencia exclusiva de la trata, sin añadir ningún otro tipo de evidencia corroborante al paquete de solicitud.",
       "Incluir en el paquete evidencia corroborante como registros médicos, comunicaciones con el traficante, declaraciones de testigos o reportes policiales que documenten el patrón de coerción y explotación, complementando la declaración legal de la cliente.",
@@ -1014,7 +1028,8 @@ function startExam() {
     pickType(S.contactType);
   }
   SCENARIO  = S.contactType === 'no' ? SCENARIO_NO : SCENARIO_SI;
-  QUESTIONS = QUESTIONS_BASE.concat(S.contactType === 'no' ? QUESTIONS_CASE_NO : QUESTIONS_CASE_SI);
+  var rawQ = QUESTIONS_BASE.concat(S.contactType === 'no' ? QUESTIONS_CASE_NO : QUESTIONS_CASE_SI);
+  QUESTIONS = shuffleQuestionsOptions(rawQ);
   S.name = name; S.area = area;
   S.answers = new Array(QUESTIONS.length).fill(null);
   S.currentQ = 0; S.startTime = Date.now();
@@ -1119,11 +1134,9 @@ function renderQ(idx){
     d.className='q-opt'+(S.answers[idx]===i?' selected':'');
     d.innerHTML='<div class="opt-mk">'+L[i]+'</div><div class="opt-txt">'+txt+'</div>';
     d.addEventListener('click',(function(oi){return function(){
-      if(S.answers[idx]!==null)return;
+      // Allow changing answer — just update selection
       S.answers[idx]=oi;
-      // Mark selected only, no correct/incorrect reveal
       opts.querySelectorAll('.q-opt').forEach(function(el){
-        el.style.pointerEvents='none';
         el.classList.remove('selected');
       });
       d.classList.add('selected');
@@ -1132,11 +1145,10 @@ function renderQ(idx){
     opts.appendChild(d);
   });
 
-  // Restore selected state only (no correct/incorrect reveal)
+  // Restore selected state — allow changing answer
   if(S.answers[idx]!==null){
     var answered=S.answers[idx];
     opts.querySelectorAll('.q-opt').forEach(function(el,j){
-      el.style.pointerEvents='none';
       if(j===answered)el.classList.add('selected');
     });
   }
@@ -1217,7 +1229,7 @@ const THEMES = [
     summarySI: ''
   },
   {
-    label: 'Caso práctico · Estrategia de entrevista y testimonio (PWC)',
+    label: 'Caso práctico · Estrategia de entrevista y testimonio',
     indices: [20, 21, 22, 23, 24],
     summaryNO: '',
     summarySI: 'Refuerza el protocolo de entrevista cuando el testimonio no articula el esquema de trata: usa preguntas abiertas y cronológicas, documenta las frases textuales de la cliente, nunca sugiereas respuestas ni completes su relato. Violencia doméstica y trata pueden coexistir. Cuando el testimonio sigue siendo insuficiente, escala al abogado supervisor y evalúa evidencia corroborante y apoyo psicológico especializado.'
@@ -1363,6 +1375,39 @@ function sendToSheets(raw, correct, used, passed) {
 }
 
 
+/* ── BARAJAR OPCIONES ────────────────────────────────────────── */
+function shuffleArray(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+function shuffleQuestionOptions(q) {
+  // Create index map so we can track the correct answer after shuffle
+  var indices = [0, 1, 2, 3].slice(0, q.options.length);
+  var shuffled = shuffleArray(indices);
+  return {
+    text:        q.text,
+    format:      q.format,
+    isCase:      q.isCase,
+    feedbackOk:  q.feedbackOk,
+    feedbackFail:q.feedbackFail,
+    options:     shuffled.map(function(i){ return q.options[i]; }),
+    correct:     shuffled.indexOf(q.correct)
+  };
+}
+
+function shuffleQuestionsOptions(qs) {
+  return qs.map(function(q) {
+    // Don't shuffle case questions (isCase) — they have long options
+    return q.isCase ? q : shuffleQuestionOptions(q);
+  });
+}
+
+
 function save(){
   var d={version:EVAL_VERSION,name:S.name,area:S.area,contactType:S.contactType,answers:S.answers||[],currentQ:S.currentQ,secondsLeft:S.secondsLeft,deadline:S.deadline,alertShown:S.alertShown,partial:true};
   try{sessionStorage.setItem('vt_eval',JSON.stringify(d));}catch(e){}
@@ -1378,7 +1423,7 @@ function tryRestore(){
 
   // Strict validation: must be a valid in-progress session with exactly 25 answers
   if(!d || !d.name || !d.partial || !d.contactType) return;
-  if(!d.answers || d.answers.length !== 25) { clearSaved(); return; }
+  if(!d.answers || d.answers.length !== 26) { clearSaved(); return; }
   if(!d.deadline || d.deadline <= Date.now()) { clearSaved(); return; }
 
   var secondsLeft = Math.round((d.deadline - Date.now()) / 1000);
@@ -1399,7 +1444,8 @@ function tryRestore(){
   S.answers     = d.answers;
 
   SCENARIO  = S.contactType === 'no' ? SCENARIO_NO : SCENARIO_SI;
-  QUESTIONS = QUESTIONS_BASE.concat(S.contactType === 'no' ? QUESTIONS_CASE_NO : QUESTIONS_CASE_SI);
+  var rawQr = QUESTIONS_BASE.concat(S.contactType === 'no' ? QUESTIONS_CASE_NO : QUESTIONS_CASE_SI);
+  QUESTIONS = shuffleQuestionsOptions(rawQr);
 
   // Restore form UI
   document.getElementById('inp-name').value = S.name;
