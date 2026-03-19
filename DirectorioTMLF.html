@@ -45,32 +45,56 @@ body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); col
 .content { max-width: 680px; margin: 0 auto; padding: 28px 20px 60px; display: flex; flex-direction: column; gap: 10px; }
 
 /* ══ GROUP ACCORDION ══ */
-.group-block { overflow: hidden; margin-bottom: 8px; }
+.group-block { overflow: hidden; }
 
 .group-header {
   display: flex; align-items: center; gap: 14px;
   padding: 10px 0; cursor: pointer; user-select: none;
-  transition: opacity .2s;
 }
-.group-header:hover { opacity: .8; }
 
-.group-line { flex: 1; height: 1.5px; background: linear-gradient(90deg, rgba(201,168,76,.5), transparent); }
-.group-line.rev { background: linear-gradient(270deg, rgba(201,168,76,.5), transparent); }
+.group-line { flex: 1; height: 1.5px; background: linear-gradient(90deg, rgba(201,168,76,.45), transparent); }
+.group-line.rev { background: linear-gradient(270deg, rgba(201,168,76,.45), transparent); }
 
-.group-title-wrap { text-align: center; flex-shrink: 0; }
+.group-title-wrap { flex-shrink: 0; }
+
 .group-title {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 9px 24px;
   font-family: 'Cormorant Garamond', serif;
-  font-size: 18px; font-weight: 700;
+  font-size: 16px; font-weight: 700;
   letter-spacing: 2px; text-transform: uppercase;
-  color: var(--gold); white-space: nowrap; line-height: 1.2;
+  color: var(--gold); white-space: nowrap;
+  background: rgba(201,168,76,.07);
+  border: 1px solid rgba(201,168,76,.28);
+  border-radius: 999px;
+  transition: background .2s, border-color .2s, box-shadow .2s, transform .18s;
+  box-shadow: 0 2px 10px rgba(201,168,76,.08);
 }
-.group-count { font-size: 11px; color: var(--muted); font-weight: 500; margin-top: 6px; text-align: center; }
+.group-block.open .group-title {
+  background: rgba(201,168,76,.14);
+  border-color: rgba(201,168,76,.5);
+  box-shadow: 0 4px 18px rgba(201,168,76,.18);
+}
+.group-header:hover .group-title {
+  background: rgba(201,168,76,.12);
+  border-color: rgba(201,168,76,.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(201,168,76,.16);
+}
+.group-title .g-arrow {
+  font-size: 10px; color: rgba(201,168,76,.6);
+  transition: transform .28s cubic-bezier(.34,1.2,.64,1);
+  display: inline-block;
+}
+.group-block.open .group-title .g-arrow { transform: rotate(180deg); color: var(--gold); }
+
+.group-count { display: none; }
 .group-chevron { display: none; }
 
 /* Group body */
 .group-body { max-height: 0; overflow: hidden; transition: max-height .4s cubic-bezier(.4,0,.2,1); }
 .group-block.open .group-body { max-height: 9999px; }
-.group-inner { padding: 10px 0 6px; display: flex; flex-direction: column; gap: 7px; }
+.group-inner { padding: 14px 0 6px; display: flex; flex-direction: column; gap: 7px; }
 
 /* ══ CONTACT ACCORDION ══ */
 .acc-item { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; transition: border-color .2s, box-shadow .2s, transform .2s; }
@@ -316,7 +340,7 @@ function render(filter) {
       <div class="group-header" onclick="toggleGroup('${g.id}')">
         <div class="group-line"></div>
         <div class="group-title-wrap">
-          <div class="group-title">${g.label}</div>
+          <div class="group-title">${g.label}<span class="g-arrow">▼</span></div>
           <div class="group-count">${count ? count + (count===1?' contacto':' contactos') : 'Sin contactos aún'}</div>
         </div>
         <div class="group-line rev"></div>
