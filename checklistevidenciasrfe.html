@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist de Evidencias — RFE</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;0,900;1,400&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:#B8202F; --red-mid:#D42A3C; --red-light:#FDE8EA; --red-border:#F0B3BA; --red-deep:#8A0D1A;
+  --amber:#8B2800; --amber-mid:#D44000; --amber-light:#FFF0E8; --amber-border:#F0A070;
+  --green:#7A5500; --green-mid:#B87B00; --green-light:#FFF8E0; --green-border:#F0D060;
+  --blue:#1A3A6B; --blue-mid:#2952A3; --blue-light:#E8EEF8; --blue-border:#A8BEDE;
+  --bg:#F4F2ED; --surface:#FFFFFF; --card-alt:#F9F8F5;
+  --border:#DDD9D2; --border2:#C8C3BA;
+  --text:#18140F; --text2:#3E3A34; --muted:#807A72; --muted2:#AAA49C;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.07),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 14px rgba(0,0,0,0.09),0 2px 4px rgba(0,0,0,0.05);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* TOPBAR */
+.global-topbar{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.97);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm);}
+.gtb-inner{max-width:1280px;margin:0 auto;padding:0 40px;display:flex;align-items:stretch;height:60px;gap:0;}
+.gtb-brand{display:flex;align-items:center;gap:10px;padding-right:24px;border-right:1px solid var(--border);flex-shrink:0;}
+.gtb-logo{width:20px;height:50px;background:var(--text);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;padding:5px;flex-shrink:0;}
+.gl-dot{width:9px;height:9px;border-radius:50%;}
+.gl-dot.r{background:var(--red-mid);}
+.gl-dot.a{background:var(--amber-mid);opacity:.7;}
+.gl-dot.g{background:var(--green-mid);opacity:.5;}
+.gtb-name{font-family:'Source Serif 4',serif;font-size:15px;font-weight:700;line-height:1.1;}
+.gtb-name b{color:var(--red);}
+.gtb-sub{font-size:10px;color:var(--muted);font-weight:500;letter-spacing:.02em;}
+.gtb-center{display:flex;align-items:center;padding:0 24px;border-right:1px solid var(--border);flex:1;}
+.gtb-center-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--red);}
+.gtb-right{display:flex;align-items:center;gap:10px;padding-left:16px;flex-shrink:0;}
+.prog-wrap{display:flex;align-items:center;gap:8px;padding:5px 12px;background:var(--card-alt);border:1px solid var(--border);border-radius:8px;}
+.prog-ring{transform:rotate(-90deg);}
+.ring-track{stroke:var(--border);}
+.ring-fill{stroke:var(--red);stroke-dasharray:94.2;stroke-dashoffset:94.2;transition:stroke-dashoffset .5s ease,stroke .4s;}
+.prog-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
+.prog-label strong{color:var(--text);font-size:13px;}
+.btn{padding:6px 14px;border-radius:7px;border:1px solid;font-family:'DM Sans',sans-serif;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .18s;}
+.btn-outline{background:transparent;border-color:var(--border2);color:var(--text2);}
+.btn-outline:hover{background:var(--card-alt);}
+
+/* HERO */
+.hero{background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm);}
+.hero-inner{max-width:1280px;margin:0 auto;padding:32px 40px 26px;display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;}
+.hero-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--red);margin-bottom:10px;}
+.hero-title{font-family:'Source Serif 4',serif;font-size:clamp(30px,3.5vw,48px);font-weight:900;line-height:.95;letter-spacing:-.03em;}
+.hero-title span{color:var(--red);}
+.hero-sub{margin-top:10px;font-size:13px;color:var(--text2);line-height:1.7;max-width:500px;}
+.hero-note{margin-top:12px;display:inline-flex;align-items:center;gap:8px;padding:5px 12px;background:var(--red-light);border:1px solid var(--red-border);border-radius:6px;font-size:11px;color:var(--red);font-weight:600;}
+.hero-graphic{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;}
+.hero-checklist-icon{width:56px;height:70px;background:var(--text);border-radius:13px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:10px;gap:7px;box-shadow:var(--shadow-md);}
+.hci-row{display:flex;align-items:center;gap:6px;}
+.hci-box{width:10px;height:10px;border-radius:3px;border:1.5px solid rgba(255,255,255,.4);flex-shrink:0;}
+.hci-box.checked{background:var(--red-mid);border-color:var(--red-mid);position:relative;}
+.hci-box.checked::after{content:'✓';position:absolute;top:-1px;left:1px;font-size:7px;color:#fff;font-weight:700;}
+.hci-line{height:2px;border-radius:2px;background:rgba(255,255,255,.25);}
+.hci-line.w1{width:20px;}.hci-line.w2{width:15px;}.hci-line.w3{width:18px;}
+.hero-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+
+/* SUMMARY BAR */
+.summary-bar{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:60px;z-index:100;}
+.sb-inner{max-width:1280px;margin:0 auto;padding:0 40px;display:flex;align-items:stretch;height:50px;gap:0;}
+.sb-stat{display:flex;align-items:center;gap:9px;padding:0 18px;border-right:1px solid var(--border);}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.sb-dot.t{background:var(--text);}.sb-dot.m{background:var(--red-mid);}.sb-dot.d{background:var(--green-mid);}.sb-dot.p{background:var(--muted2);}
+.sb-num{font-family:'DM Mono',monospace;font-size:17px;font-weight:500;line-height:1;}
+.sb-num.t{color:var(--text);}.sb-num.m{color:var(--red);}.sb-num.d{color:var(--green-mid);}.sb-num.p{color:var(--muted);}
+.sb-lbl{font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;}
+.sb-progress{flex:1;display:flex;align-items:center;gap:12px;padding:0 18px;border-right:1px solid var(--border);}
+.sb-bar{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.sb-bar-fill{height:100%;background:var(--red);border-radius:2px;transition:width .5s ease;width:0%;}
+.sb-pct{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);white-space:nowrap;}
+.sb-pct strong{color:var(--text);}
+.sb-actions{display:flex;align-items:center;gap:6px;padding-left:14px;}
+.sb-btn{padding:5px 11px;border-radius:6px;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .18s;white-space:nowrap;}
+.sb-btn:hover{background:var(--bg);color:var(--text2);border-color:var(--border2);}
+.sb-btn.danger:hover{background:var(--red-light);color:var(--red);border-color:var(--red-border);}
+
+/* SECTION DIVIDER */
+.section-div{padding:18px 40px 0;}
+.sd-inner{display:flex;align-items:center;gap:12px;max-width:1280px;margin:0 auto;}
+.sd-line{flex:1;height:1px;background:var(--border);}
+.sd-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted2);white-space:nowrap;}
+
+/* MAIN GRID */
+.main-wrap{max-width:1280px;margin:0 auto;padding:20px 40px 60px;}
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:start;}
+
+/* CATEGORY CARD */
+.cat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-sm);position:relative;transition:border-color .25s,box-shadow .25s;display:flex;flex-direction:column;}
+.cat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--border);transition:background .25s;}
+.cat-card.has-some::before{background:var(--red-mid);}
+.cat-card.has-all::before{background:var(--green-mid);}
+.cat-card.has-some{border-color:var(--red-border);box-shadow:0 0 0 1px var(--red-border),var(--shadow-sm);}
+.cat-card.has-all{border-color:var(--green-border);box-shadow:0 0 0 1px var(--green-border),var(--shadow-sm);}
+
+/* Card head */
+.cat-head{display:flex;align-items:center;gap:10px;padding:14px 16px 10px;border-bottom:1px solid var(--border);background:var(--card-alt);}
+.cat-icon{width:32px;height:32px;border-radius:8px;flex-shrink:0;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;}
+.cat-card.has-some .cat-icon{background:var(--red-light);border-color:var(--red-border);}
+.cat-card.has-all .cat-icon{background:var(--green-light);border-color:var(--green-border);}
+.cat-head-info{flex:1;min-width:0;}
+.cat-num{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted2);margin-bottom:2px;}
+.cat-title{font-family:'Source Serif 4',serif;font-size:13px;font-weight:700;letter-spacing:-.01em;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cat-counter{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);flex-shrink:0;white-space:nowrap;}
+.cat-counter strong{color:var(--text);font-size:13px;}
+
+/* Progress bar */
+.cat-pbar{height:2px;background:var(--border);}
+.cat-pbar-fill{height:100%;background:var(--red);transition:width .4s ease;width:0%;}
+.cat-card.has-all .cat-pbar-fill{background:var(--green-mid);}
+
+/* Accordion */
+.cat-head{cursor:pointer;user-select:none;}
+.cat-head:hover{background:var(--bg);}
+.cat-arrow{font-size:10px;color:var(--muted);flex-shrink:0;transition:transform .3s ease;margin-left:4px;}
+.cat-card.open .cat-arrow{transform:rotate(180deg);}
+.cat-collapse{max-height:0;overflow:hidden;transition:max-height .4s ease;}
+.cat-card.open .cat-collapse{max-height:1200px;}
+
+/* Evidence list */
+.cat-body{padding:10px 14px 0;flex:1;}
+.ev-section-lbl{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted2);margin-bottom:7px;margin-top:10px;display:flex;align-items:center;gap:6px;}
+.ev-section-lbl::before{content:'';display:block;width:5px;height:5px;border-radius:50%;background:var(--red-mid);flex-shrink:0;}
+.ev-list{display:flex;flex-direction:column;gap:4px;}
+.ev-item{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-radius:7px;border:1px solid var(--border);background:var(--card-alt);cursor:pointer;transition:all .16s;user-select:none;}
+.ev-item:hover{background:var(--bg);border-color:var(--border2);}
+.ev-item.checked{background:var(--red-light);border-color:var(--red-border);}
+.ev-cb{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--surface);margin-top:1px;transition:all .16s;}
+.ev-item.checked .ev-cb{background:var(--red);border-color:var(--red);}
+.ev-ck{font-size:8px;color:#fff;display:none;}
+.ev-item.checked .ev-ck{display:block;}
+.ev-lbl{font-size:11.5px;color:var(--text2);line-height:1.45;flex:1;}
+.ev-item.checked .ev-lbl{color:var(--red-deep);font-weight:500;}
+
+/* Notes */
+.cat-notes{padding:8px 14px 0;}
+.notes-ta{width:100%;min-height:48px;padding:7px 10px;font-family:'DM Sans',sans-serif;font-size:11.5px;color:var(--text2);background:var(--card-alt);border:1px solid var(--border);border-radius:7px;resize:vertical;line-height:1.5;outline:none;transition:border-color .18s;}
+.notes-ta::placeholder{color:var(--muted2);}
+.notes-ta:focus{border-color:var(--border2);background:var(--surface);}
+
+/* Card footer */
+.cat-foot{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-top:1px solid var(--border);margin-top:10px;background:var(--card-alt);}
+.cat-foot-btns{display:flex;gap:5px;}
+.cf-btn{padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:10.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .16s;}
+.cf-btn:hover{border-color:var(--border2);color:var(--text2);}
+.cf-btn.check-all:hover{background:var(--red-light);color:var(--red);border-color:var(--red-border);}
+.cat-badge{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:4px;border:1px solid;opacity:0;transition:opacity .2s;}
+.cat-badge.visible{opacity:1;}
+.cat-badge.some{background:var(--red-light);color:var(--red);border-color:var(--red-border);}
+.cat-badge.all{background:var(--green-light);color:var(--green);border-color:var(--green-border);}
+
+/* Footer */
+.site-footer{background:var(--surface);border-top:1px solid var(--border);margin-top:20px;}
+.footer-inner{max-width:1280px;margin:0 auto;padding:20px 40px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+.footer-brand{font-family:'Source Serif 4',serif;font-size:15px;font-weight:700;}
+.footer-brand b{color:var(--red);}
+.footer-note{font-size:11px;color:var(--muted);max-width:460px;line-height:1.6;}
+.footer-badge{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted2);border:1px solid var(--border);border-radius:5px;padding:4px 10px;}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.cat-card{animation:fadeUp .35s ease both;}
+.cat-card:nth-child(1){animation-delay:.04s}.cat-card:nth-child(2){animation-delay:.07s}.cat-card:nth-child(3){animation-delay:.10s}
+.cat-card:nth-child(4){animation-delay:.13s}.cat-card:nth-child(5){animation-delay:.16s}.cat-card:nth-child(6){animation-delay:.19s}
+.cat-card:nth-child(7){animation-delay:.22s}.cat-card:nth-child(8){animation-delay:.25s}.cat-card:nth-child(9){animation-delay:.28s}.cat-card:nth-child(10){animation-delay:.31s}
+
+/* Print */
+@media print{
+  .global-topbar,.summary-bar{position:static!important;}
+  .cat-card{break-inside:avoid;page-break-inside:avoid;}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+}
+/* Responsive */
+@media(max-width:1100px){.cat-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:640px){
+  .cat-grid{grid-template-columns:1fr;}
+  .gtb-inner,.sb-inner,.main-wrap,.section-div,.footer-inner{padding-left:16px;padding-right:16px;}
+  .hero-inner{grid-template-columns:1fr;padding:26px 16px;}
+  .hero-graphic{display:none;}
+  .sb-progress{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="global-topbar">
+  <div class="gtb-inner">
+    <div class="gtb-brand">
+      <div class="gtb-logo">
+        <div class="gl-dot r"></div>
+        <div class="gl-dot a"></div>
+        <div class="gl-dot g"></div>
+      </div>
+      <div>
+        <div class="gtb-name"><b>RFE</b> Herramientas</div>
+        <div class="gtb-sub">Recursos de Apoyo Interno</div>
+      </div>
+    </div>
+    <div class="gtb-center">
+      <div class="gtb-center-label">☑ &nbsp;Checklist de Evidencias</div>
+    </div>
+    <div class="gtb-right">
+      <div class="prog-wrap">
+        <svg class="prog-ring" width="28" height="28" viewBox="0 0 30 30">
+          <circle class="ring-track" cx="15" cy="15" r="12" fill="none" stroke-width="2.5"/>
+          <circle class="ring-fill" id="topRingFill" cx="15" cy="15" r="12" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <div class="prog-label"><strong id="topPct">0%</strong> completado</div>
+      </div>
+      <button class="btn btn-outline" onclick="window.print()">⎙ Imprimir</button>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow">Herramienta de Consulta Interna · RFE</div>
+      <h1 class="hero-title">Checklist de <span>Evidencias</span></h1>
+      <p class="hero-sub">Herramienta visual para identificar tipos de abuso, comprender sus manifestaciones y revisar qué evidencias pueden sustentar cada categoría en el análisis de un caso.</p>
+      <div class="hero-note">🔒 Uso interno exclusivo — No sustituye análisis legal ni clínico</div>
+    </div>
+    <div class="hero-graphic">
+      <div class="hero-checklist-icon">
+        <div class="hci-row"><div class="hci-box checked"></div><div class="hci-line w1"></div></div>
+        <div class="hci-row"><div class="hci-box checked"></div><div class="hci-line w2"></div></div>
+        <div class="hci-row"><div class="hci-box"></div><div class="hci-line w3"></div></div>
+        <div class="hci-row"><div class="hci-box"></div><div class="hci-line w1"></div></div>
+      </div>
+      <div class="hero-lbl">Evidencias</div>
+    </div>
+  </div>
+</div>
+
+<!-- SUMMARY BAR -->
+<div class="summary-bar">
+  <div class="sb-inner">
+    <div class="sb-stat">
+      <div class="sb-dot t"></div>
+      <div><div class="sb-num t">10</div><div class="sb-lbl">Categorías</div></div>
+    </div>
+    <div class="sb-stat">
+      <div class="sb-dot m"></div>
+      <div><div class="sb-num m" id="sbMarked">0</div><div class="sb-lbl">Marcadas</div></div>
+    </div>
+    <div class="sb-stat">
+      <div class="sb-dot d"></div>
+      <div><div class="sb-num d" id="sbDone">0</div><div class="sb-lbl">Con evidencias</div></div>
+    </div>
+    <div class="sb-stat">
+      <div class="sb-dot p"></div>
+      <div><div class="sb-num p" id="sbPending">10</div><div class="sb-lbl">Pendientes</div></div>
+    </div>
+    <div class="sb-progress">
+      <div class="sb-bar"><div class="sb-bar-fill" id="sbBarFill"></div></div>
+      <div class="sb-pct"><strong id="sbPct">0</strong>%</div>
+    </div>
+    <div class="sb-actions">
+      <button class="sb-btn" onclick="checkAllGlobal()">Marcar todo</button>
+      <button class="sb-btn" onclick="expandAll()">⊞ Expandir</button>
+      <button class="sb-btn" onclick="collapseAll()">⊟ Contraer</button>
+      <button class="sb-btn danger" onclick="resetAll()">↺ Reiniciar</button>
+      <button class="sb-btn" onclick="window.print()">⎙ Imprimir</button>
+    </div>
+  </div>
+</div>
+
+<div class="section-div">
+  <div class="sd-inner">
+    <div class="sd-line"></div>
+    <div class="sd-label">10 Categorías de Abuso</div>
+    <div class="sd-line"></div>
+  </div>
+</div>
+
+<!-- MAIN GRID -->
+<div class="main-wrap">
+  <div class="cat-grid">
+
+    <!-- 01 ABUSO FÍSICO -->
+    <div class="cat-card" data-cat="0">
+      <div class="cat-head" onclick="toggleCard(this)">
+        <div class="cat-icon">🩹</div>
+        <div class="cat-head-info">
+          <div class="cat-num">01 · Abuso Físico</div>
+          <div class="cat-title">Abuso Físico</div>
+        </div>
+        <div class="cat-counter"><strong class="ev-count">0</strong>/<span class="ev-total">7</span></div>
+        <span class="cat-arrow">▼</span>
+      </div>
+
+      <div class="cat-collapse">
+      <div class="cat-pbar"><div class="cat-pbar-fill"></div></div>
+      <div class="cat-body">
+        <div class="ev-section-lbl">Evidencias sugeridas</div>
+        <div class="ev-list">
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Fotos de lesiones, moretones, cicatrices</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Radiografías (fracturas, lesiones óseas)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Certificados médicos (diagnósticos, informes)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Informes de urgencias médicas</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Testimonios (testigos o la víctima)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Videos (de los abusos o lesiones)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Informes policiales (denuncias, reporte de agresión)</div></div>
+        </div>
+      </div>
+      <div class="cat-notes"><textarea class="notes-ta" placeholder="Notas del caso…"></textarea></div>
+      <div class="cat-foot">
+        <div class="cat-foot-btns">
+          <button class="cf-btn check-all" onclick="checkAllCard(this)">Marcar todo</button>
+          <button class="cf-btn" onclick="clearCard(this)">Limpiar</button>
+        </div>
+        <span class="cat-badge">—</span>
+      </div>
+      </div>
+    </div>
+
+    <!-- 02 DESTRUCCIÓN DE PROPIEDAD -->
+    <div class="cat-card" data-cat="1">
+      <div class="cat-head" onclick="toggleCard(this)">
+        <div class="cat-icon">🪑</div>
+        <div class="cat-head-info">
+          <div class="cat-num">02 · Abuso Físico por Destrucción</div>
+          <div class="cat-title">Destrucción de Propiedad</div>
+        </div>
+        <div class="cat-counter"><strong class="ev-count">0</strong>/<span class="ev-total">4</span></div>
+        <span class="cat-arrow">▼</span>
+      </div>
+
+      <div class="cat-collapse">
+      <div class="cat-pbar"><div class="cat-pbar-fill"></div></div>
+      <div class="cat-body">
+        <div class="ev-section-lbl">Evidencias sugeridas</div>
+        <div class="ev-list">
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Fotos de objetos dañados o propiedad destruida</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Testimonios de personas que presenciaron la destrucción</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Recibos o presupuestos por reparaciones</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Informe policial (si se reportó la destrucción)</div></div>
+        </div>
+      </div>
+      <div class="cat-notes"><textarea class="notes-ta" placeholder="Notas del caso…"></textarea></div>
+      <div class="cat-foot">
+        <div class="cat-foot-btns">
+          <button class="cf-btn check-all" onclick="checkAllCard(this)">Marcar todo</button>
+          <button class="cf-btn" onclick="clearCard(this)">Limpiar</button>
+        </div>
+        <span class="cat-badge">—</span>
+      </div>
+      </div>
+    </div>
+
+    <!-- 03 ABUSO LEGAL -->
+    <div class="cat-card" data-cat="2">
+      <div class="cat-head" onclick="toggleCard(this)">
+        <div class="cat-icon">⚖️</div>
+        <div class="cat-head-info">
+          <div class="cat-num">03 · Abuso Legal</div>
+          <div class="cat-title">Abuso Legal</div>
+        </div>
+        <div class="cat-counter"><strong class="ev-count">0</strong>/<span class="ev-total">5</span></div>
+        <span class="cat-arrow">▼</span>
+      </div>
+
+      <div class="cat-collapse">
+      <div class="cat-pbar"><div class="cat-pbar-fill"></div></div>
+      <div class="cat-body">
+        <div class="ev-section-lbl">Evidencias sugeridas</div>
+        <div class="ev-list">
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Órdenes de arresto (documentos legales)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Registros judiciales (historial del abusador)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Cartas del abogado (comunicaciones legales)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Notificaciones de corte (citaciones, avisos)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Reportes de la policía (detenciones, restricciones)</div></div>
+        </div>
+      </div>
+      <div class="cat-notes"><textarea class="notes-ta" placeholder="Notas del caso…"></textarea></div>
+      <div class="cat-foot">
+        <div class="cat-foot-btns">
+          <button class="cf-btn check-all" onclick="checkAllCard(this)">Marcar todo</button>
+          <button class="cf-btn" onclick="clearCard(this)">Limpiar</button>
+        </div>
+        <span class="cat-badge">—</span>
+      </div>
+      </div>
+    </div>
+
+    <!-- 04 ABUSO SEXUAL -->
+    <div class="cat-card" data-cat="3">
+      <div class="cat-head" onclick="toggleCard(this)">
+        <div class="cat-icon">🚨</div>
+        <div class="cat-head-info">
+          <div class="cat-num">04 · Abuso Sexual</div>
+          <div class="cat-title">Abuso Sexual</div>
+        </div>
+        <div class="cat-counter"><strong class="ev-count">0</strong>/<span class="ev-total">7</span></div>
+        <span class="cat-arrow">▼</span>
+      </div>
+
+      <div class="cat-collapse">
+      <div class="cat-pbar"><div class="cat-pbar-fill"></div></div>
+      <div class="cat-body">
+        <div class="ev-section-lbl">Evidencias sugeridas</div>
+        <div class="ev-list">
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Informes médicos (lesiones genitales, ITS)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Fotos de lesiones o marcas visibles</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Exámenes ginecológicos (pruebas de violación)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Pruebas de ADN</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Testimonios (víctima o testigos)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Documentación de ITS (diagnósticos médicos)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Registros policiales (denuncias de agresión sexual)</div></div>
+        </div>
+      </div>
+      <div class="cat-notes"><textarea class="notes-ta" placeholder="Notas del caso…"></textarea></div>
+      <div class="cat-foot">
+        <div class="cat-foot-btns">
+          <button class="cf-btn check-all" onclick="checkAllCard(this)">Marcar todo</button>
+          <button class="cf-btn" onclick="clearCard(this)">Limpiar</button>
+        </div>
+        <span class="cat-badge">—</span>
+      </div>
+      </div>
+    </div>
+
+    <!-- 05 ABUSO EMOCIONAL -->
+    <div class="cat-card" data-cat="4">
+      <div class="cat-head" onclick="toggleCard(this)">
+        <div class="cat-icon">🧠</div>
+        <div class="cat-head-info">
+          <div class="cat-num">05 · Abuso Emocional / Psicológico</div>
+          <div class="cat-title">Abuso Emocional / Psicológico</div>
+        </div>
+        <div class="cat-counter"><strong class="ev-count">0</strong>/<span class="ev-total">6</span></div>
+        <span class="cat-arrow">▼</span>
+      </div>
+
+      <div class="cat-collapse">
+      <div class="cat-pbar"><div class="cat-pbar-fill"></div></div>
+      <div class="cat-body">
+        <div class="ev-section-lbl">Evidencias sugeridas</div>
+        <div class="ev-list">
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Capturas de pantalla (mensajes, redes sociales)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Testimonios (víctima o testigos)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Grabaciones de audio (llamadas amenazantes)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Correspondencia escrita (cartas, correos)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Registros de llamadas (historial)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Registros de vigilancia (cámaras, apps de seguimiento)</div></div>
+        </div>
+      </div>
+      <div class="cat-notes"><textarea class="notes-ta" placeholder="Notas del caso…"></textarea></div>
+      <div class="cat-foot">
+        <div class="cat-foot-btns">
+          <button class="cf-btn check-all" onclick="checkAllCard(this)">Marcar todo</button>
+          <button class="cf-btn" onclick="clearCard(this)">Limpiar</button>
+        </div>
+        <span class="cat-badge">—</span>
+      </div>
+      </div>
+    </div>
+
+    <!-- 06 ABUSO ECONÓMICO -->
+    <div class="cat-card" data-cat="5">
+      <div class="cat-head" onclick="toggleCard(this)">
+        <div class="cat-icon">💳</div>
+        <div class="cat-head-info">
+          <div class="cat-num">06 · Abuso Económico / Financiero</div>
+          <div class="cat-title">Abuso Económico / Financiero</div>
+        </div>
+        <div class="cat-counter"><strong class="ev-count">0</strong>/<span class="ev-total">4</span></div>
+        <span class="cat-arrow">▼</span>
+      </div>
+
+      <div class="cat-collapse">
+      <div class="cat-pbar"><div class="cat-pbar-fill"></div></div>
+      <div class="cat-body">
+        <div class="ev-section-lbl">Evidencias sugeridas</div>
+        <div class="ev-list">
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Recibos de compras no autorizadas</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Extractos bancarios (movimientos no autorizados)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Testimonios sobre el control financiero</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Reportes de fraude (policía o banco)</div></div>
+        </div>
+      </div>
+      <div class="cat-notes"><textarea class="notes-ta" placeholder="Notas del caso…"></textarea></div>
+      <div class="cat-foot">
+        <div class="cat-foot-btns">
+          <button class="cf-btn check-all" onclick="checkAllCard(this)">Marcar todo</button>
+          <button class="cf-btn" onclick="clearCard(this)">Limpiar</button>
+        </div>
+        <span class="cat-badge">—</span>
+      </div>
+      </div>
+    </div>
+
+    <!-- 07 NEGLIGENCIA -->
+    <div class="cat-card" data-cat="6">
+      <div class="cat-head" onclick="toggleCard(this)">
+        <div class="cat-icon">🏚️</div>
+        <div class="cat-head-info">
+          <div class="cat-num">07 · Negligencia dentro del Hogar</div>
+          <div class="cat-title">Negligencia en el Hogar</div>
+        </div>
+        <div class="cat-counter"><strong class="ev-count">0</strong>/<span class="ev-total">3</span></div>
+        <span class="cat-arrow">▼</span>
+      </div>
+
+      <div class="cat-collapse">
+      <div class="cat-pbar"><div class="cat-pbar-fill"></div></div>
+      <div class="cat-body">
+        <div class="ev-section-lbl">Evidencias sugeridas</div>
+        <div class="ev-list">
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Fotos de condiciones del hogar (suciedad, deterioro)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Reportes de autoridades (bienestar infantil o doméstico)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Testimonios de personas que vieron la situación</div></div>
+        </div>
+      </div>
+      <div class="cat-notes"><textarea class="notes-ta" placeholder="Notas del caso…"></textarea></div>
+      <div class="cat-foot">
+        <div class="cat-foot-btns">
+          <button class="cf-btn check-all" onclick="checkAllCard(this)">Marcar todo</button>
+          <button class="cf-btn" onclick="clearCard(this)">Limpiar</button>
+        </div>
+        <span class="cat-badge">—</span>
+      </div>
+      </div>
+    </div>
+
+    <!-- 08 REDES SOCIALES -->
+    <div class="cat-card" data-cat="7">
+      <div class="cat-head" onclick="toggleCard(this)">
+        <div class="cat-icon">📱</div>
+        <div class="cat-head-info">
+          <div class="cat-num">08 · Redes Sociales</div>
+          <div class="cat-title">Redes Sociales</div>
+        </div>
+        <div class="cat-counter"><strong class="ev-count">0</strong>/<span class="ev-total">3</span></div>
+        <span class="cat-arrow">▼</span>
+      </div>
+
+      <div class="cat-collapse">
+      <div class="cat-pbar"><div class="cat-pbar-fill"></div></div>
+      <div class="cat-body">
+        <div class="ev-section-lbl">Evidencias sugeridas</div>
+        <div class="ev-list">
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Capturas de pantalla (mensajes de abuso, amenazas)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Testimonios de personas que vieron la interacción</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Registros de actividad en línea (historial, publicaciones)</div></div>
+        </div>
+      </div>
+      <div class="cat-notes"><textarea class="notes-ta" placeholder="Notas del caso…"></textarea></div>
+      <div class="cat-foot">
+        <div class="cat-foot-btns">
+          <button class="cf-btn check-all" onclick="checkAllCard(this)">Marcar todo</button>
+          <button class="cf-btn" onclick="clearCard(this)">Limpiar</button>
+        </div>
+        <span class="cat-badge">—</span>
+      </div>
+      </div>
+    </div>
+
+    <!-- 09 TESTIGOS -->
+    <div class="cat-card" data-cat="8">
+      <div class="cat-head" onclick="toggleCard(this)">
+        <div class="cat-icon">👥</div>
+        <div class="cat-head-info">
+          <div class="cat-num">09 · Testigos</div>
+          <div class="cat-title">Testigos</div>
+        </div>
+        <div class="cat-counter"><strong class="ev-count">0</strong>/<span class="ev-total">2</span></div>
+        <span class="cat-arrow">▼</span>
+      </div>
+
+      <div class="cat-collapse">
+      <div class="cat-pbar"><div class="cat-pbar-fill"></div></div>
+      <div class="cat-body">
+        <div class="ev-section-lbl">Evidencias sugeridas</div>
+        <div class="ev-list">
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Declaraciones de testigos (escritas o grabadas)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Registros de entrevistas (a testigos o a la víctima)</div></div>
+        </div>
+      </div>
+      <div class="cat-notes"><textarea class="notes-ta" placeholder="Notas del caso…"></textarea></div>
+      <div class="cat-foot">
+        <div class="cat-foot-btns">
+          <button class="cf-btn check-all" onclick="checkAllCard(this)">Marcar todo</button>
+          <button class="cf-btn" onclick="clearCard(this)">Limpiar</button>
+        </div>
+        <span class="cat-badge">—</span>
+      </div>
+      </div>
+    </div>
+
+    <!-- 10 PERFIL DEL ABUSER -->
+    <div class="cat-card" data-cat="9">
+      <div class="cat-head" onclick="toggleCard(this)">
+        <div class="cat-icon">🔎</div>
+        <div class="cat-head-info">
+          <div class="cat-num">10 · Perfil del Abuser</div>
+          <div class="cat-title">Perfil del Abuser</div>
+        </div>
+        <div class="cat-counter"><strong class="ev-count">0</strong>/<span class="ev-total">8</span></div>
+        <span class="cat-arrow">▼</span>
+      </div>
+
+      <div class="cat-collapse">
+      <div class="cat-pbar"><div class="cat-pbar-fill"></div></div>
+      <div class="cat-body">
+        <div class="ev-section-lbl">Evidencias sugeridas</div>
+        <div class="ev-list">
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Registros judiciales (arrestos, cargos, condenas)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Órdenes de protección (antecedentes de abuso)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Informe psicológico o médico (trastornos de personalidad)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Testimonios de la víctima (manipulación, abuso)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Informes de tratamiento o rehabilitación (sustancias)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Registros policiales (detenciones relacionadas)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Mensajes o grabaciones (chantaje, amenazas)</div></div>
+          <div class="ev-item" onclick="toggleEv(this)"><div class="ev-cb"><span class="ev-ck">✓</span></div><div class="ev-lbl">Testimonios de testigos (familiares, amigos, colegas)</div></div>
+        </div>
+      </div>
+      <div class="cat-notes"><textarea class="notes-ta" placeholder="Notas del caso…"></textarea></div>
+      <div class="cat-foot">
+        <div class="cat-foot-btns">
+          <button class="cf-btn check-all" onclick="checkAllCard(this)">Marcar todo</button>
+          <button class="cf-btn" onclick="clearCard(this)">Limpiar</button>
+        </div>
+        <span class="cat-badge">—</span>
+      </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand"><b>RFE</b> Herramientas</div>
+    <div class="footer-note">Herramienta de uso interno exclusivo. No sustituye el análisis legal, clínico o psicológico. Su uso debe acompañarse del análisis específico del caso concreto.</div>
+    <div class="footer-badge">Uso Interno · Confidencial</div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'rfe_checklist_v2';
+
+function toggleCard(head) {
+  const card = head.closest('.cat-card');
+  card.classList.toggle('open');
+  save();
+}
+
+function toggleEv(item) {
+  event.stopPropagation();
+  item.classList.toggle('checked');
+  updateCard(item.closest('.cat-card'));
+  updateGlobals();
+  save();
+}
+function checkAllCard(btn) {
+  event.stopPropagation();
+  const card = btn.closest('.cat-card');
+  card.querySelectorAll('.ev-item').forEach(i => i.classList.add('checked'));
+  updateCard(card); updateGlobals(); save();
+}
+function clearCard(btn) {
+  event.stopPropagation();
+  const card = btn.closest('.cat-card');
+  card.querySelectorAll('.ev-item').forEach(i => i.classList.remove('checked'));
+  updateCard(card); updateGlobals(); save();
+}
+function checkAllGlobal() {
+  document.querySelectorAll('.ev-item').forEach(i => i.classList.add('checked'));
+  document.querySelectorAll('.cat-card').forEach(c => updateCard(c));
+  updateGlobals(); save();
+}
+function expandAll() {
+  document.querySelectorAll('.cat-card').forEach(c => c.classList.add('open'));
+  save();
+}
+function collapseAll() {
+  document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('open'));
+  save();
+}
+function resetAll() {
+  if (!confirm('¿Reiniciar el checklist? Se eliminarán todas las marcas y notas.')) return;
+  document.querySelectorAll('.ev-item').forEach(i => i.classList.remove('checked'));
+  document.querySelectorAll('.notes-ta').forEach(t => t.value = '');
+  document.querySelectorAll('.cat-card').forEach(c => { c.classList.remove('open'); updateCard(c); });
+  updateGlobals();
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+}
+function updateCard(card) {
+  const all = card.querySelectorAll('.ev-item');
+  const checked = card.querySelectorAll('.ev-item.checked');
+  const total = all.length, count = checked.length;
+  const pct = total > 0 ? (count / total) * 100 : 0;
+  card.querySelector('.ev-count').textContent = count;
+  card.querySelector('.cat-pbar-fill').style.width = pct + '%';
+  card.classList.remove('has-some','has-all');
+  const badge = card.querySelector('.cat-badge');
+  badge.classList.remove('visible','some','all');
+  if (count > 0 && count < total) {
+    card.classList.add('has-some');
+    badge.textContent = count + ' marcadas';
+    badge.classList.add('visible','some');
+  } else if (count === total && total > 0) {
+    card.classList.add('has-all');
+    badge.textContent = '✓ Completa';
+    badge.classList.add('visible','all');
+  }
+}
+function updateGlobals() {
+  let totalEv = 0, markedEv = 0, catsWithEv = 0;
+  document.querySelectorAll('.cat-card').forEach(card => {
+    const items = card.querySelectorAll('.ev-item').length;
+    const checked = card.querySelectorAll('.ev-item.checked').length;
+    totalEv += items; markedEv += checked;
+    if (checked > 0) catsWithEv++;
+  });
+  const pending = 10 - catsWithEv;
+  const pct = totalEv > 0 ? Math.round((markedEv / totalEv) * 100) : 0;
+  document.getElementById('sbMarked').textContent = markedEv;
+  document.getElementById('sbDone').textContent = catsWithEv;
+  document.getElementById('sbPending').textContent = pending;
+  document.getElementById('sbBarFill').style.width = pct + '%';
+  document.getElementById('sbPct').textContent = pct;
+  const offset = 94.2 - (pct / 100) * 94.2;
+  const ring = document.getElementById('topRingFill');
+  ring.style.strokeDashoffset = offset;
+  document.getElementById('topPct').textContent = pct + '%';
+  ring.style.stroke = pct >= 80 ? 'var(--green-mid)' : pct >= 40 ? 'var(--amber-mid)' : 'var(--red)';
+}
+function save() {
+  try {
+    const state = {};
+    document.querySelectorAll('.cat-card').forEach(card => {
+      const idx = card.dataset.cat;
+      const checks = [...card.querySelectorAll('.ev-item')].map(i => i.classList.contains('checked'));
+      const note = card.querySelector('.notes-ta')?.value || '';
+      const open = card.classList.contains('open');
+      state[idx] = { checks, note, open };
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch(e){}
+}
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const state = JSON.parse(raw);
+    document.querySelectorAll('.cat-card').forEach(card => {
+      const s = state[card.dataset.cat];
+      if (!s) return;
+      card.querySelectorAll('.ev-item').forEach((item, i) => { if (s.checks[i]) item.classList.add('checked'); });
+      const ta = card.querySelector('.notes-ta');
+      if (ta && s.note) ta.value = s.note;
+      if (s.open) card.classList.add('open');
+    });
+  } catch(e){}
+}
+document.querySelectorAll('.notes-ta').forEach(ta => ta.addEventListener('input', save));
+load();
+document.querySelectorAll('.cat-card').forEach(c => updateCard(c));
+updateGlobals();
+</script>
+</body>
+</html>
