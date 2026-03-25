@@ -129,15 +129,17 @@ tbody tr:hover td{background:var(--row-hover);}
 
   <div class="area-row">
     <span class="area-label">Área:</span>
-    <button class="area-btn" id="af-Orgánico"      onclick="setArea('Orgánico')">Orgánico / Producto</button>
-    <button class="area-btn" id="af-Psychology"    onclick="setArea('Psychology')">Psychology</button>
-    <button class="area-btn" id="af-Case Review"   onclick="setArea('Case Review')">Case Review</button>
-    <button class="area-btn" id="af-People"        onclick="setArea('People')">People</button>
-    <button class="area-btn" id="af-RFE"           onclick="setArea('RFE')">RFE</button>
-    <button class="area-btn" id="af-CS"            onclick="setArea('CS')">CS</button>
-    <button class="area-btn" id="af-TI"            onclick="setArea('TI')">TI</button>
-    <button class="area-btn" id="af-Admin"         onclick="setArea('Admin')">Admin</button>
-    <button class="area-btn" id="af-Other"         onclick="setArea('Other')">Other</button>
+    <button class="area-btn" id="af-organico"      onclick="setArea('Orgánico')">Orgánico / Producto</button>
+    <button class="area-btn" id="af-packetplus"    onclick="setArea('Packet Plus')">Packet Plus</button>
+    <button class="area-btn" id="af-psychology"    onclick="setArea('Psychology')">Psychology</button>
+    <button class="area-btn" id="af-casereview"    onclick="setArea('Case Review')">Case Review</button>
+    <button class="area-btn" id="af-people"        onclick="setArea('People')">People</button>
+    <button class="area-btn" id="af-rfe"           onclick="setArea('RFE')">RFE</button>
+    <button class="area-btn" id="af-cs"            onclick="setArea('CS')">CS</button>
+    <button class="area-btn" id="af-ti"            onclick="setArea('TI')">TI</button>
+    <button class="area-btn" id="af-admin"         onclick="setArea('Admin')">Admin</button>
+    <button class="area-btn" id="af-other"         onclick="setArea('Other')">Other</button>
+    <button class="area-btn" id="af-backoffice"    onclick="setArea('Back Office')">Back Office</button>
   </div>
 
   <div class="table-wrap">
@@ -272,10 +274,9 @@ function statusBadge(p){
     :`<span class="status-badge s-build"><span class="dot dot-build"></span>${t.statusBuild}</span>`;
 }
 
-function hasFilter(){ return statusFilter!==null||areaFilter!==null||document.getElementById('search').value.trim()!==''; }
+function hasFilter(){ return true; }
 
 function filtered(){
-  if(!hasFilter()) return [];
   const q=document.getElementById('search').value.toLowerCase();
   return all.filter(it=>{
     const mq=!q||it.name.toLowerCase().includes(q)||(it.resp&&it.resp.toLowerCase().includes(q));
@@ -291,10 +292,17 @@ function setStatus(f){
   goPage(1);
 }
 
+const areaSlug={
+  'Orgánico':'organico','Packet Plus':'packetplus','Psychology':'psychology',
+  'Case Review':'casereview','People':'people','RFE':'rfe','CS':'cs',
+  'TI':'ti','Admin':'admin','Other':'other','Back Office':'backoffice'
+};
 function setArea(a){
   areaFilter=(areaFilter===a)?null:a;
-  ['Orgánico','Psychology','Case Review','People','RFE','CS','TI','Admin','Other','Back Office']
-    .forEach(x=>document.getElementById('af-'+x).classList.toggle('active',x===areaFilter));
+  Object.keys(areaSlug).forEach(x=>{
+    const el=document.getElementById('af-'+areaSlug[x]);
+    if(el) el.classList.toggle('active',x===areaFilter);
+  });
   goPage(1);
 }
 
@@ -400,32 +408,29 @@ function applyLang(){
 
 function goPage(p){
   const items=filtered();
-  const idle=!hasFilter();
   const total=items.length;
   const pages=Math.max(1,Math.ceil(total/PAGE_SIZE));
   currentPage=Math.min(Math.max(1,p),pages);
   const slice=items.slice((currentPage-1)*PAGE_SIZE,currentPage*PAGE_SIZE);
 
   const t=T[lang];
-  document.getElementById('tbody').innerHTML=idle
-    ?`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📂</div><div class="empty-title">${t.emptyTitle}</div><div class="empty-sub">${t.emptySub}</div></div></td></tr>`
-    :total===0
-      ?`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">${t.noResults}</div><div class="empty-sub">${t.noResultsSub}</div></div></td></tr>`
-      :slice.map((it,i)=>`
-        <tr>
-          <td class="num-cell">${(currentPage-1)*PAGE_SIZE+i+1}</td>
-          <td>${it.name}</td>
-          <td><span class="area-badge">${it.area}</span></td>
-          <td>${statusBadge(it.pct)}</td>
-          <td class="resp-cell">${it.resp||'—'}</td>
-          <td class="date-cell">${it.desde||'—'}</td>
-          <td>${it.url?`<a class="open-btn" href="${it.url}" target="_blank">${T[lang].openBtn}</a>`:`<span class="no-link">—</span>`}</td>
-        </tr>`).join('');
+  document.getElementById('tbody').innerHTML=total===0
+    ?`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">${t.noResults}</div><div class="empty-sub">${t.noResultsSub}</div></div></td></tr>`
+    :slice.map((it,i)=>`
+      <tr>
+        <td class="num-cell">${(currentPage-1)*PAGE_SIZE+i+1}</td>
+        <td>${it.name}</td>
+        <td><span class="area-badge">${it.area}</span></td>
+        <td>${statusBadge(it.pct)}</td>
+        <td class="resp-cell">${it.resp||'—'}</td>
+        <td class="date-cell">${it.desde||'—'}</td>
+        <td>${it.url?`<a class="open-btn" href="${it.url}" target="_blank">${T[lang].openBtn}</a>`:`<span class="no-link">—</span>`}</td>
+      </tr>`).join('');
 
-  document.getElementById('pager-info').textContent=(!idle&&total>0)
+  document.getElementById('pager-info').textContent=total>0
     ?T[lang].pagerInfo((currentPage-1)*PAGE_SIZE+1, Math.min(currentPage*PAGE_SIZE,total), total):'';
-  document.getElementById('btn-prev').disabled=idle||currentPage===1;
-  document.getElementById('btn-next').disabled=idle||currentPage===pages||total===0;
+  document.getElementById('btn-prev').disabled=currentPage===1;
+  document.getElementById('btn-next').disabled=currentPage===pages||total===0;
 
   const tAct  =all.filter(i=>statusOf(i.pct)==='act').length;
   const tBuild=all.filter(i=>statusOf(i.pct)==='build').length;
