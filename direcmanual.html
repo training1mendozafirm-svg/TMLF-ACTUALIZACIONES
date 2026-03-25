@@ -92,6 +92,7 @@ tbody tr:hover td{background:var(--row-hover);}
 .modal-total-n{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--navy);}
 .breakdown-btn{padding:7px 13px;font-size:12px;font-family:'DM Sans',sans-serif;border:1px solid var(--gold);border-radius:5px;background:var(--white);color:var(--navy);cursor:pointer;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:5px;}
 .breakdown-btn:hover{background:var(--gold);color:var(--navy);}
+#lang-btn{min-width:42px;font-weight:600;letter-spacing:0.05em;}
 </style>
 </head>
 <body>
@@ -112,13 +113,14 @@ tbody tr:hover td{background:var(--row-hover);}
     <button class="status-btn" id="sf-act"   onclick="setStatus('act')">En actualización</button>
     <button class="status-btn" id="sf-build" onclick="setStatus('build')">En construcción</button>
     <button class="breakdown-btn" onclick="openModal()">Por área</button>
+    <button class="breakdown-btn" id="lang-btn" onclick="toggleLang()">EN</button>
   </div>
 
   <!-- MODAL MANUALES POR ÁREA -->
   <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
     <div class="modal">
       <div class="modal-header">
-        <span class="modal-title">Manuales por área</span>
+        <span class="modal-title" id="modal-title-txt">Manuales por área</span>
         <button class="modal-close" onclick="closeModal()">✕</button>
       </div>
       <div class="modal-body" id="modal-body"></div>
@@ -264,9 +266,10 @@ let currentPage=1, statusFilter=null, areaFilter=null;
 // 30–80% → En actualización | <30% → En construcción
 function statusOf(p){ return (p>=30&&p<=80)?'act':'build'; }
 function statusBadge(p){
+  const t = T[lang];
   return statusOf(p)==='act'
-    ?`<span class="status-badge s-act"><span class="dot dot-act"></span>En actualización</span>`
-    :`<span class="status-badge s-build"><span class="dot dot-build"></span>En construcción</span>`;
+    ?`<span class="status-badge s-act"><span class="dot dot-act"></span>${t.statusAct}</span>`
+    :`<span class="status-badge s-build"><span class="dot dot-build"></span>${t.statusBuild}</span>`;
 }
 
 function hasFilter(){ return statusFilter!==null||areaFilter!==null||document.getElementById('search').value.trim()!==''; }
@@ -312,15 +315,88 @@ function openModal(){
   document.getElementById('modal-body').innerHTML=`
     ${rows}
     <div class="modal-total">
-      <span class="modal-total-label">Total manuales</span>
+      <span class="modal-total-label">${T[lang].modalTotal}</span>
       <span class="modal-total-n">${all.length}</span>
     </div>`;
+  document.getElementById('modal-title-txt').textContent = T[lang].modalTitle;
   document.getElementById('modal-overlay').classList.add('open');
 }
 function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
 function closeModalOutside(e){ if(e.target===document.getElementById('modal-overlay')) closeModal(); }
 
 function onSearch(){ goPage(1); }
+
+// ── TRANSLATIONS ──
+const T = {
+  es: {
+    headerSub: 'Directorio de Manuales · Gestión de Calidad 2026',
+    searchPlaceholder: 'Buscar manual o responsable...',
+    sfAct: 'En actualización', sfBuild: 'En construcción',
+    btnArea: 'Por área', langBtn: 'EN',
+    areaLabel: 'Área:',
+    areaAll: 'Todas', // (not used directly, areas kept as-is)
+    thNum: '#', thManual: 'Manual', thArea: 'Área', thStatus: 'Estado',
+    thResp: 'Responsable', thStart: 'Inicio',
+    statTotal: 'Total manuales', statAct: 'En actualización', statBuild: 'En construcción',
+    statusAct: 'En actualización', statusBuild: 'En construcción',
+    emptyTitle: 'Selecciona un área o filtro', emptySub: 'Usa los botones de arriba para explorar los manuales.',
+    noResults: 'Sin resultados', noResultsSub: 'Intenta con otros filtros.',
+    pagerInfo: (a,b,c) => `Mostrando ${a}–${b} de ${c}`,
+    prev: '← Anterior', next: 'Siguiente →',
+    openBtn: 'Abrir →', noLink: '—',
+    modalTitle: 'Manuales por área', modalTotal: 'Total manuales',
+  },
+  en: {
+    headerSub: 'Manuals Directory · Quality Management 2026',
+    searchPlaceholder: 'Search manual or responsible...',
+    sfAct: 'In update', sfBuild: 'Under construction',
+    btnArea: 'By area', langBtn: 'ES',
+    areaLabel: 'Area:',
+    thNum: '#', thManual: 'Manual', thArea: 'Area', thStatus: 'Status',
+    thResp: 'Responsible', thStart: 'Start',
+    statTotal: 'Total manuals', statAct: 'In update', statBuild: 'Under construction',
+    statusAct: 'In update', statusBuild: 'Under construction',
+    emptyTitle: 'Select an area or filter', emptySub: 'Use the buttons above to explore the manuals.',
+    noResults: 'No results', noResultsSub: 'Try different filters.',
+    pagerInfo: (a,b,c) => `Showing ${a}–${b} of ${c}`,
+    prev: '← Previous', next: 'Next →',
+    openBtn: 'Open →', noLink: '—',
+    modalTitle: 'Manuals by area', modalTotal: 'Total manuals',
+  }
+};
+let lang = 'es';
+
+function toggleLang(){
+  lang = lang === 'es' ? 'en' : 'es';
+  applyLang();
+  goPage(currentPage);
+}
+
+function applyLang(){
+  const t = T[lang];
+  document.getElementById('lang-btn').textContent = t.langBtn;
+  document.querySelector('.header-sub').textContent = t.headerSub;
+  document.getElementById('search').placeholder = t.searchPlaceholder;
+  document.getElementById('sf-act').textContent = t.sfAct;
+  document.getElementById('sf-build').textContent = t.sfBuild;
+  document.querySelector('.breakdown-btn:not(#lang-btn)').textContent = t.btnArea;
+  document.querySelector('.area-label').textContent = t.areaLabel;
+  // table headers
+  const ths = document.querySelectorAll('thead th');
+  if(ths.length >= 6){
+    ths[0].textContent = t.thNum;
+    ths[1].textContent = t.thManual;
+    ths[2].textContent = t.thArea;
+    ths[3].textContent = t.thStatus;
+    ths[4].textContent = t.thResp;
+    ths[5].textContent = t.thStart;
+  }
+  // pager buttons
+  document.getElementById('btn-prev').textContent = t.prev;
+  document.getElementById('btn-next').textContent = t.next;
+}
+
+
 
 function goPage(p){
   const items=filtered();
@@ -330,10 +406,11 @@ function goPage(p){
   currentPage=Math.min(Math.max(1,p),pages);
   const slice=items.slice((currentPage-1)*PAGE_SIZE,currentPage*PAGE_SIZE);
 
+  const t=T[lang];
   document.getElementById('tbody').innerHTML=idle
-    ?`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📂</div><div class="empty-title">Selecciona un área o filtro</div><div class="empty-sub">Usa los botones de arriba para explorar los manuales.</div></div></td></tr>`
+    ?`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📂</div><div class="empty-title">${t.emptyTitle}</div><div class="empty-sub">${t.emptySub}</div></div></td></tr>`
     :total===0
-      ?`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">Sin resultados</div><div class="empty-sub">Intenta con otros filtros.</div></div></td></tr>`
+      ?`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">${t.noResults}</div><div class="empty-sub">${t.noResultsSub}</div></div></td></tr>`
       :slice.map((it,i)=>`
         <tr>
           <td class="num-cell">${(currentPage-1)*PAGE_SIZE+i+1}</td>
@@ -342,20 +419,20 @@ function goPage(p){
           <td>${statusBadge(it.pct)}</td>
           <td class="resp-cell">${it.resp||'—'}</td>
           <td class="date-cell">${it.desde||'—'}</td>
-          <td>${it.url?`<a class="open-btn" href="${it.url}" target="_blank">Abrir →</a>`:`<span class="no-link">—</span>`}</td>
+          <td>${it.url?`<a class="open-btn" href="${it.url}" target="_blank">${T[lang].openBtn}</a>`:`<span class="no-link">—</span>`}</td>
         </tr>`).join('');
 
   document.getElementById('pager-info').textContent=(!idle&&total>0)
-    ?`Mostrando ${(currentPage-1)*PAGE_SIZE+1}–${Math.min(currentPage*PAGE_SIZE,total)} de ${total}`:'';
+    ?T[lang].pagerInfo((currentPage-1)*PAGE_SIZE+1, Math.min(currentPage*PAGE_SIZE,total), total):'';
   document.getElementById('btn-prev').disabled=idle||currentPage===1;
   document.getElementById('btn-next').disabled=idle||currentPage===pages||total===0;
 
   const tAct  =all.filter(i=>statusOf(i.pct)==='act').length;
   const tBuild=all.filter(i=>statusOf(i.pct)==='build').length;
   document.getElementById('stats').innerHTML=`
-    <div class="stat"><div class="stat-n">${all.length}</div><div class="stat-l">Total manuales</div></div>
-    <div class="stat"><div class="stat-n">${tAct}</div><div class="stat-l">En actualización</div></div>
-    <div class="stat"><div class="stat-n">${tBuild}</div><div class="stat-l">En construcción</div></div>`;
+    <div class="stat"><div class="stat-n">${all.length}</div><div class="stat-l">${t.statTotal}</div></div>
+    <div class="stat"><div class="stat-n">${tAct}</div><div class="stat-l">${t.statAct}</div></div>
+    <div class="stat"><div class="stat-n">${tBuild}</div><div class="stat-l">${t.statBuild}</div></div>`;
 }
 
 goPage(1);
