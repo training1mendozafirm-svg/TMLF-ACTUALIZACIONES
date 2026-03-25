@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMLF Learning Center — Learning Experience Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CSS VARIABLES & RESET
+   ============================================================ */
+:root {
+  --navy:       #0d1b2a;
+  --navy-mid:   #1a2e45;
+  --navy-light: #243b55;
+  --gold:       #c9a84c;
+  --gold-light: #e8c86a;
+  --gold-pale:  #f5e8c0;
+  --beige:      #f8f3ea;
+  --beige-mid:  #ede4d3;
+  --beige-dark: #ddd0bb;
+  --cream:      #fdfaf5;
+  --white:      #ffffff;
+  --text-dark:  #1a1a2e;
+  --text-mid:   #3a3a5c;
+  --text-soft:  #6b6b8a;
+  --success:    #2e7d5e;
+  --success-bg: #d4eddf;
+  --locked:     #9e9e9e;
+  --locked-bg:  #f0f0f0;
+  --font-display: 'Playfair Display', serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'DM Mono', monospace;
+  --shadow-sm:   0 2px 8px rgba(13,27,42,0.08);
+  --shadow-md:   0 8px 32px rgba(13,27,42,0.12);
+  --shadow-lg:   0 20px 60px rgba(13,27,42,0.18);
+  --shadow-gold: 0 4px 20px rgba(201,168,76,0.3);
+  --radius-sm:  8px;
+  --radius-md:  16px;
+  --radius-lg:  24px;
+  --radius-xl:  40px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--beige);
+  color: var(--text-dark);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+.hidden { display: none !important; }
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+  font-family: var(--font-mono);
+}
+.badge-gold { background: var(--gold-pale); color: #8b6914; }
+.badge-navy { background: var(--navy); color: var(--gold-light); }
+.badge-green { background: var(--success-bg); color: var(--success); }
+.badge-gray  { background: var(--locked-bg); color: var(--locked); }
+
+/* ============================================================
+   LOADER / INTRO
+   ============================================================ */
+#loader {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--navy);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 20px;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+#loader.fade-out { opacity: 0; visibility: hidden; }
+.loader-logo {
+  font-family: var(--font-display);
+  font-size: 52px; font-weight: 900;
+  color: var(--gold-light);
+  letter-spacing: -1px;
+}
+.loader-sub {
+  font-family: var(--font-mono);
+  font-size: 12px; color: rgba(255,255,255,0.5);
+  letter-spacing: 4px; text-transform: uppercase;
+}
+.loader-bar {
+  width: 200px; height: 2px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px; overflow: hidden;
+}
+.loader-fill {
+  height: 100%; background: var(--gold);
+  border-radius: 2px;
+  animation: loadFill 1.8s ease forwards;
+}
+@keyframes loadFill { from { width: 0 } to { width: 100% } }
+
+/* ============================================================
+   HEADER / NAV
+   ============================================================ */
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(248,243,234,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--beige-dark);
+  padding: 0 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+.header-logo {
+  font-family: var(--font-display);
+  font-size: 22px; font-weight: 700;
+  color: var(--navy);
+  display: flex; align-items: center; gap: 10px;
+}
+.header-logo span { color: var(--gold); }
+.header-nav {
+  display: flex; align-items: center; gap: 6px;
+}
+.nav-btn {
+  padding: 7px 16px; border-radius: 20px;
+  font-family: var(--font-body); font-size: 13px; font-weight: 500;
+  border: none; cursor: pointer; transition: all 0.2s;
+  background: transparent; color: var(--text-mid);
+}
+.nav-btn:hover { background: var(--beige-mid); color: var(--navy); }
+.nav-btn.active {
+  background: var(--navy); color: var(--gold-light);
+}
+.header-profile {
+  display: flex; align-items: center; gap: 10px;
+}
+.profile-credits {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--navy); color: var(--gold-light);
+  padding: 6px 14px; border-radius: 20px;
+  font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+}
+.profile-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--navy));
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 14px; font-weight: 700;
+  color: white; cursor: pointer;
+  border: 2px solid var(--gold-pale);
+}
+
+/* ============================================================
+   MAIN SECTIONS
+   ============================================================ */
+.section { display: none; animation: fadeUp 0.4s ease; }
+.section.active { display: block; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+
+/* ============================================================
+   HERO — DASHBOARD
+   ============================================================ */
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #1e3a5f 100%);
+  padding: 60px 40px;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.hero-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+.hero-greeting {
+  font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+  color: var(--gold); letter-spacing: 3px; text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 5vw, 52px); font-weight: 900;
+  color: white; line-height: 1.1; margin-bottom: 16px;
+}
+.hero-title span { color: var(--gold-light); }
+.hero-sub {
+  font-size: 16px; color: rgba(255,255,255,0.65);
+  max-width: 500px; line-height: 1.6; margin-bottom: 32px;
+}
+.hero-stats {
+  display: flex; gap: 32px; flex-wrap: wrap;
+}
+.hero-stat {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.hero-stat-val {
+  font-family: var(--font-display); font-size: 32px; font-weight: 700;
+  color: var(--gold-light); line-height: 1;
+}
+.hero-stat-lbl {
+  font-size: 12px; color: rgba(255,255,255,0.5);
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.hero-level-badge {
+  position: absolute; right: 0; top: 0;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: var(--radius-lg);
+  padding: 24px 32px; text-align: center;
+}
+.hero-level-num {
+  font-family: var(--font-display); font-size: 64px; font-weight: 900;
+  color: var(--gold-light); line-height: 1;
+}
+.hero-level-lbl {
+  font-size: 11px; color: rgba(255,255,255,0.5);
+  letter-spacing: 3px; text-transform: uppercase;
+}
+.hero-level-title {
+  font-family: var(--font-body); font-size: 14px; font-weight: 600;
+  color: var(--gold); margin-top: 6px;
+}
+.level-progress-bar {
+  width: 100%; height: 4px; background: rgba(255,255,255,0.1);
+  border-radius: 2px; margin-top: 12px; overflow: hidden;
+}
+.level-progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 2px; transition: width 1s ease;
+}
+
+/* ============================================================
+   SCHOOL CARDS GRID
+   ============================================================ */
+.section-title {
+  font-family: var(--font-display); font-size: 28px; font-weight: 700;
+  color: var(--navy); margin-bottom: 6px;
+}
+.section-sub {
+  font-size: 14px; color: var(--text-soft); margin-bottom: 32px;
+}
+.schools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+.school-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--beige-dark);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+}
+.school-card:hover:not(.locked-card) {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+.school-card.locked-card { opacity: 0.65; cursor: not-allowed; }
+.school-card-top {
+  height: 100px; position: relative;
+  display: flex; align-items: flex-end;
+  padding: 16px;
+}
+.school-card-icon {
+  font-size: 36px; position: absolute; right: 20px; top: 50%;
+  transform: translateY(-50%);
+}
+.school-card-area {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 500;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+}
+.school-card-name {
+  font-family: var(--font-display); font-size: 20px; font-weight: 700;
+  color: white; line-height: 1.1;
+}
+.lock-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+}
+.school-card-body { padding: 16px; }
+.school-card-desc {
+  font-size: 13px; color: var(--text-soft);
+  line-height: 1.5; margin-bottom: 12px;
+}
+.school-card-meta {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.school-card-credits {
+  font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+  color: var(--navy);
+}
+.school-card-diff {
+  display: flex; gap: 3px;
+}
+.diff-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--beige-dark);
+}
+.diff-dot.filled { background: var(--gold); }
+
+.progress-bar-sm {
+  width: 100%; height: 6px; background: var(--beige-mid);
+  border-radius: 3px; overflow: hidden;
+}
+.progress-bar-sm-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 3px; transition: width 0.8s ease;
+}
+.school-card-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--beige-mid);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.school-progress-text {
+  font-size: 12px; color: var(--text-soft);
+}
+.school-progress-text strong { color: var(--navy); }
+.enter-btn {
+  padding: 6px 16px; border-radius: 20px;
+  background: var(--navy); color: var(--gold-light);
+  font-size: 12px; font-weight: 600; font-family: var(--font-body);
+  border: none; cursor: pointer; transition: all 0.2s;
+}
+.enter-btn:hover { background: var(--gold); color: var(--navy); }
+.enter-btn.locked-btn {
+  background: var(--locked-bg); color: var(--locked); cursor: not-allowed;
+}
+
+/* ============================================================
+   MOTIVATIONAL BANNER
+   ============================================================ */
+.motivational-banner {
+  background: linear-gradient(135deg, var(--gold) 0%, #e8c86a 100%);
+  border-radius: var(--radius-lg);
+  padding: 24px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 32px; gap: 16px; flex-wrap: wrap;
+}
+.motivational-text {
+  font-family: var(--font-display); font-size: 20px; font-weight: 700;
+  color: var(--navy);
+}
+.motivational-sub { font-size: 13px; color: rgba(13,27,42,0.65); margin-top: 4px; }
+.motivational-action {
+  background: var(--navy); color: var(--gold-light);
+  padding: 10px 24px; border-radius: 20px;
+  border: none; cursor: pointer;
+  font-weight: 600; font-family: var(--font-body); font-size: 14px;
+  white-space: nowrap; transition: all 0.2s;
+}
+.motivational-action:hover { transform: scale(1.03); }
+
+/* ============================================================
+   SCHOOL DETAIL VIEW
+   ============================================================ */
+.back-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 500; color: var(--text-soft);
+  cursor: pointer; margin-bottom: 24px;
+  padding: 8px 16px; border-radius: 20px;
+  background: white; border: 1px solid var(--beige-dark);
+  transition: all 0.2s;
+}
+.back-btn:hover { color: var(--navy); border-color: var(--navy); }
+
+.school-hero {
+  border-radius: var(--radius-xl);
+  padding: 48px;
+  color: white;
+  position: relative; overflow: hidden;
+  margin-bottom: 32px;
+}
+.school-hero::after {
+  content: attr(data-emoji);
+  position: absolute; right: 40px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 80px; opacity: 0.25;
+}
+.school-hero-label {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: rgba(255,255,255,0.6); margin-bottom: 8px;
+}
+.school-hero-name {
+  font-family: var(--font-display); font-size: 42px; font-weight: 900;
+  margin-bottom: 12px; line-height: 1;
+}
+.school-hero-desc {
+  font-size: 15px; color: rgba(255,255,255,0.75);
+  max-width: 500px; line-height: 1.6; margin-bottom: 24px;
+}
+.school-hero-stats {
+  display: flex; gap: 32px; flex-wrap: wrap;
+}
+.school-hero-stat {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.school-hero-stat-val {
+  font-family: var(--font-display); font-size: 24px; font-weight: 700;
+  color: var(--gold-light);
+}
+.school-hero-stat-lbl {
+  font-size: 11px; color: rgba(255,255,255,0.5);
+  letter-spacing: 1px; text-transform: uppercase;
+}
+
+/* ROADMAP */
+.roadmap { position: relative; }
+.roadmap-line {
+  position: absolute; left: 31px; top: 0; bottom: 0;
+  width: 2px; background: var(--beige-dark);
+}
+.roadmap-line-fill {
+  position: absolute; left: 0; top: 0;
+  width: 100%; background: linear-gradient(180deg, var(--gold), var(--gold-light));
+  transition: height 1s ease;
+}
+.module-row {
+  position: relative; display: flex; gap: 24px;
+  margin-bottom: 16px; padding-left: 16px;
+}
+.module-dot {
+  width: 32px; height: 32px; border-radius: 50%;
+  flex-shrink: 0; position: relative; z-index: 1;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; border: 3px solid var(--beige);
+  margin-top: 14px;
+}
+.module-dot.done { background: var(--gold); border-color: var(--gold-pale); }
+.module-dot.active { background: var(--navy); border-color: var(--navy-light); animation: pulseDot 2s infinite; }
+.module-dot.pending { background: white; border: 3px solid var(--beige-dark); }
+.module-dot.locked { background: var(--locked-bg); border-color: var(--beige-dark); }
+@keyframes pulseDot {
+  0%,100% { box-shadow: 0 0 0 0 rgba(13,27,42,0.3); }
+  50% { box-shadow: 0 0 0 8px rgba(13,27,42,0); }
+}
+
+.module-card {
+  flex: 1; background: white;
+  border-radius: var(--radius-md); border: 1px solid var(--beige-dark);
+  padding: 16px 20px; cursor: pointer;
+  transition: all 0.2s; position: relative;
+}
+.module-card:hover:not(.module-locked) {
+  border-color: var(--gold); box-shadow: var(--shadow-gold);
+}
+.module-card.module-done {
+  border-color: var(--success-bg); background: #f8fdf9;
+}
+.module-card.module-active {
+  border-color: var(--navy); background: #f5f7fa;
+}
+.module-card.module-locked { opacity: 0.55; cursor: not-allowed; }
+
+.module-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 6px;
+}
+.module-title {
+  font-weight: 600; font-size: 15px; color: var(--navy);
+}
+.module-credits {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-soft);
+}
+.module-desc {
+  font-size: 13px; color: var(--text-soft);
+  line-height: 1.5; margin-bottom: 10px;
+}
+.module-tags {
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+
+/* ============================================================
+   SIMULATOR
+   ============================================================ */
+.simulator-card {
+  background: white; border-radius: var(--radius-xl);
+  border: 1px solid var(--beige-dark); overflow: hidden;
+  margin-top: 32px;
+}
+.simulator-header {
+  background: var(--navy); padding: 24px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.simulator-title {
+  font-family: var(--font-display); font-size: 22px;
+  font-weight: 700; color: white;
+}
+.simulator-badge {
+  background: rgba(201,168,76,0.2); border: 1px solid rgba(201,168,76,0.4);
+  padding: 4px 12px; border-radius: 12px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--gold-light); letter-spacing: 1px;
+}
+.simulator-body { padding: 32px; }
+.sim-chat { display: flex; flex-direction: column; gap: 16px; }
+.sim-msg {
+  display: flex; gap: 12px;
+}
+.sim-msg.user { flex-direction: row-reverse; }
+.sim-avatar {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.sim-avatar.client { background: var(--beige-mid); }
+.sim-avatar.agent { background: var(--navy); font-size: 14px; font-weight: 700; color: var(--gold-light); font-family: var(--font-display); }
+.sim-bubble {
+  max-width: 75%; padding: 12px 16px;
+  border-radius: var(--radius-md); font-size: 14px; line-height: 1.5;
+}
+.sim-msg:not(.user) .sim-bubble { background: var(--beige); color: var(--text-dark); border-bottom-left-radius: 4px; }
+.sim-msg.user .sim-bubble { background: var(--navy); color: white; border-bottom-right-radius: 4px; }
+.sim-name { font-size: 11px; color: var(--text-soft); margin-bottom: 4px; }
+.sim-choices {
+  display: flex; flex-direction: column; gap: 8px; margin-top: 8px;
+}
+.sim-choice-btn {
+  padding: 10px 16px; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--beige-dark);
+  background: white; text-align: left;
+  font-size: 13px; color: var(--navy); cursor: pointer;
+  transition: all 0.2s; font-family: var(--font-body);
+}
+.sim-choice-btn:hover { border-color: var(--gold); background: var(--gold-pale); }
+.sim-choice-btn.correct { border-color: var(--success); background: var(--success-bg); color: var(--success); }
+.sim-choice-btn.incorrect { border-color: #d32f2f; background: #fdecea; color: #c62828; }
+.sim-feedback {
+  padding: 12px 16px; border-radius: var(--radius-sm);
+  font-size: 13px; line-height: 1.5; font-weight: 500;
+  margin-top: 8px;
+}
+.sim-feedback.good { background: var(--success-bg); color: var(--success); }
+.sim-feedback.bad  { background: #fdecea; color: #c62828; }
+.sim-next-btn {
+  margin-top: 16px; padding: 12px 28px;
+  background: var(--navy); color: var(--gold-light);
+  border: none; border-radius: 20px; cursor: pointer;
+  font-weight: 600; font-family: var(--font-body); font-size: 14px;
+  transition: all 0.2s;
+}
+.sim-next-btn:hover { background: var(--gold); color: var(--navy); }
+
+/* ============================================================
+   PROGRESS PAGE
+   ============================================================ */
+.progress-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.progress-card {
+  background: white; border-radius: var(--radius-lg);
+  border: 1px solid var(--beige-dark); padding: 24px;
+}
+.progress-card.full-width { grid-column: 1 / -1; }
+.p-card-title {
+  font-family: var(--font-display); font-size: 18px; font-weight: 700;
+  color: var(--navy); margin-bottom: 4px;
+}
+.p-card-sub { font-size: 13px; color: var(--text-soft); margin-bottom: 20px; }
+.big-stat { text-align: center; padding: 16px 0; }
+.big-num {
+  font-family: var(--font-display); font-size: 56px; font-weight: 900;
+  color: var(--gold); line-height: 1;
+}
+.big-label { font-size: 13px; color: var(--text-soft); margin-top: 4px; }
+.areas-progress-list { display: flex; flex-direction: column; gap: 12px; }
+.area-progress-row {
+  display: flex; align-items: center; gap: 12px;
+}
+.area-progress-label { width: 90px; font-size: 12px; font-weight: 600; color: var(--navy); flex-shrink: 0; }
+.area-progress-bar { flex: 1; height: 8px; background: var(--beige-mid); border-radius: 4px; overflow: hidden; }
+.area-progress-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+.area-progress-pct { width: 36px; font-family: var(--font-mono); font-size: 11px; color: var(--text-soft); text-align: right; }
+
+.badges-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+.achievement-badge {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 16px 12px; border-radius: var(--radius-md);
+  background: var(--beige); border: 1px solid var(--beige-dark);
+  width: 88px; text-align: center;
+  transition: all 0.2s;
+}
+.achievement-badge:hover { transform: scale(1.05); }
+.achievement-badge.earned { background: var(--gold-pale); border-color: var(--gold); }
+.achievement-badge.locked-badge { opacity: 0.4; filter: grayscale(1); }
+.badge-icon { font-size: 28px; }
+.badge-name { font-size: 10px; font-weight: 600; color: var(--navy); line-height: 1.2; }
+
+.level-roadmap { display: flex; gap: 0; position: relative; }
+.level-step {
+  flex: 1; text-align: center; padding: 12px;
+  position: relative;
+}
+.level-step::before {
+  content: ''; position: absolute;
+  top: 50%; left: 0; right: 0; height: 2px;
+  background: var(--beige-dark); z-index: 0;
+  transform: translateY(-50%);
+}
+.level-step:first-child::before { left: 50%; }
+.level-step:last-child::before { right: 50%; }
+.level-circle {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--beige-mid); border: 2px solid var(--beige-dark);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 8px; position: relative; z-index: 1;
+  font-weight: 700; font-size: 13px; color: var(--text-soft);
+  transition: all 0.3s;
+}
+.level-circle.reached {
+  background: var(--navy); border-color: var(--navy); color: var(--gold-light);
+}
+.level-circle.current {
+  background: var(--gold); border-color: var(--gold);
+  color: var(--navy); box-shadow: var(--shadow-gold);
+}
+.level-name { font-size: 11px; font-weight: 600; color: var(--text-soft); }
+.level-name.active-lv { color: var(--navy); }
+.level-credits-req { font-size: 10px; color: var(--text-soft); margin-top: 2px; font-family: var(--font-mono); }
+
+/* ============================================================
+   TOAST NOTIFICATIONS
+   ============================================================ */
+#toast-container {
+  position: fixed; bottom: 24px; right: 24px;
+  display: flex; flex-direction: column; gap: 8px; z-index: 9998;
+}
+.toast {
+  background: var(--navy); color: white;
+  padding: 12px 20px; border-radius: var(--radius-md);
+  font-size: 13px; font-weight: 500; max-width: 280px;
+  box-shadow: var(--shadow-md); border-left: 3px solid var(--gold);
+  animation: slideInRight 0.3s ease;
+  display: flex; align-items: center; gap: 10px;
+}
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+.toast.fadeout { animation: fadeOutRight 0.4s ease forwards; }
+@keyframes fadeOutRight {
+  to { transform: translateX(120%); opacity: 0; }
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  header { padding: 0 16px; }
+  .hero { padding: 32px 16px; }
+  .hero-level-badge { display: none; }
+  .page-container { padding: 24px 16px; }
+  .progress-grid { grid-template-columns: 1fr; }
+  .hero-stats { gap: 20px; }
+  .school-hero { padding: 28px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">TMLF</div>
+  <div class="loader-sub">Learning Center · Learning Experience Platform</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-logo">TMLF <span>Learning Center</span></div>
+  <nav class="header-nav">
+    <button class="nav-btn active" onclick="showSection('dashboard')">🎓 Academia</button>
+    <button class="nav-btn" onclick="showSection('progress')">📊 Mi Progreso</button>
+  </nav>
+  <div class="header-profile">
+    <div class="profile-credits" id="header-credits">⭐ 240 créditos</div>
+    <div class="profile-avatar" title="Tu perfil">A</div>
+  </div>
+</header>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<!-- ============================================================
+     SECTION: DASHBOARD
+     ============================================================ -->
+<div id="section-dashboard" class="section active">
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-greeting">Bienvenido de nuevo</div>
+      <h1 class="hero-title">Desarrolla tus <span>competencias</span><br>profesionales.</h1>
+      <p class="hero-sub">Avanza por las áreas de especialización, acumula créditos y desbloquea tu potencial como Experto TMLF.</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-val" id="stat-credits">240</div>
+          <div class="hero-stat-lbl">Créditos</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-val" id="stat-modules">3</div>
+          <div class="hero-stat-lbl">Módulos Completados</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-val" id="stat-areas">1</div>
+          <div class="hero-stat-lbl">Especializaciones</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-val" id="stat-streak">5</div>
+          <div class="hero-stat-lbl">Días de Racha</div>
+        </div>
+      </div>
+      <div class="hero-level-badge">
+        <div class="hero-level-num">2</div>
+        <div class="hero-level-lbl">Nivel actual</div>
+        <div class="hero-level-title">Trainee</div>
+        <div class="level-progress-bar">
+          <div class="level-progress-fill" style="width: 40%"></div>
+        </div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:6px;font-family:var(--font-mono);">240 / 400 para Specialist</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE CONTENT -->
+  <div class="page-container">
+    <!-- INSTRUCTIVO -->
+    <div style="background:white;border-radius:24px;border:1px solid var(--beige-dark);padding:32px;margin-bottom:24px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+        <span style="font-size:20px;">📖</span>
+        <div style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--navy);">¿Cómo funciona el TMLF Learning Center?</div>
+      </div>
+      <p style="font-size:13px;color:var(--text-soft);margin-bottom:24px;line-height:1.6;">Sigue estos pasos para avanzar de Trainee a Specialist y alcanzar el nivel Expert.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;">
+
+        <!-- Paso 1 -->
+        <div style="background:var(--beige);border-radius:16px;padding:20px;border-left:4px solid var(--navy);position:relative;">
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-soft);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">PASO 01</div>
+          <div style="font-size:22px;margin-bottom:8px;">🎓</div>
+          <div style="font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px;">Elige un Área</div>
+          <div style="font-size:12px;color:var(--text-soft);line-height:1.5;">Selecciona cualquiera de las áreas de especialización disponibles en tu dashboard.</div>
+        </div>
+
+        <!-- Paso 2 -->
+        <div style="background:var(--beige);border-radius:16px;padding:20px;border-left:4px solid var(--gold);position:relative;">
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-soft);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">PASO 02</div>
+          <div style="font-size:22px;margin-bottom:8px;">📚</div>
+          <div style="font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px;">Completa módulos Trainee</div>
+          <div style="font-size:12px;color:var(--text-soft);line-height:1.5;">Cada área comienza con módulos nivel <span style="font-weight:700;color:var(--navy);">Trainee</span>. Debes completarlos en orden para avanzar.</div>
+        </div>
+
+        <!-- Paso 3 -->
+        <div style="background:var(--beige);border-radius:16px;padding:20px;border-left:4px solid #2e7d5e;position:relative;">
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-soft);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">PASO 03</div>
+          <div style="font-size:22px;margin-bottom:8px;">⭐</div>
+          <div style="font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px;">Desbloquea Specialist</div>
+          <div style="font-size:12px;color:var(--text-soft);line-height:1.5;">Al terminar todos los módulos Trainee del área, se desbloquean automáticamente los módulos <span style="font-weight:700;color:#8b6914;">Specialist</span>.</div>
+        </div>
+
+        <!-- Paso 4 -->
+        <div style="background:var(--beige);border-radius:16px;padding:20px;border-left:4px solid #7b3a9e;position:relative;">
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-soft);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">PASO 04</div>
+          <div style="font-size:22px;margin-bottom:8px;">🏆</div>
+          <div style="font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px;">Alcanza Expert</div>
+          <div style="font-size:12px;color:var(--text-soft);line-height:1.5;">Completa los módulos Specialist para acceder al nivel <span style="font-weight:700;color:#2e7d5e;">Expert</span>, el máximo nivel de especialización TMLF.</div>
+        </div>
+
+      </div>
+
+      <!-- Reglas rápidas -->
+      <div style="background:var(--navy);border-radius:16px;padding:20px 24px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;">
+        <div style="font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--gold-light);flex-shrink:0;">📌 Reglas clave:</div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;flex:1;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;display:inline-block;"></span>
+            <span style="font-size:12px;color:rgba(255,255,255,0.75);">Los módulos se completan <strong style="color:white;">en orden</strong> — no puedes saltarte ninguno</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;display:inline-block;"></span>
+            <span style="font-size:12px;color:rgba(255,255,255,0.75);">Cada módulo completado suma <strong style="color:white;">créditos</strong> a tu perfil</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;display:inline-block;"></span>
+            <span style="font-size:12px;color:rgba(255,255,255,0.75);">Puedes avanzar en <strong style="color:white;">varias áreas al mismo tiempo</strong></span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;display:inline-block;"></span>
+            <span style="font-size:12px;color:rgba(255,255,255,0.75);">Los simuladores se activan al <strong style="color:white;">completar el área</strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOTIVATIONAL BANNER -->
+    <div class="motivational-banner">
+      <div>
+        <div class="motivational-text">🔥 ¡Estás en racha! Completa tus módulos <strong>Trainee</strong> para desbloquear nivel <strong>Specialist</strong></div>
+        <div class="motivational-sub">Domina el nivel Specialist y después avanza al nivel más alto: <strong>Expert</strong>. ¡El crecimiento es tuyo!</div>
+      </div>
+      <button class="motivational-action" onclick="openSchool('common')">Comenzar Trainee →</button>
+    </div>
+
+    <!-- SCHOOLS GRID -->
+    <div class="section-title">Áreas de Especialización</div>
+    <p class="section-sub">Selecciona un área para ver sus módulos, simuladores y evaluaciones. Avanza de Trainee a Specialist y alcanza el nivel Experto.</p>
+    <div class="schools-grid" id="schools-grid">
+      <!-- Cards rendered by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SECTION: SCHOOL DETAIL
+     ============================================================ -->
+<div id="section-school" class="section">
+  <div class="page-container">
+    <div class="back-btn" onclick="showSection('dashboard')">← Volver a Especialización</div>
+    <div id="school-detail-content"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SECTION: PROGRESS
+     ============================================================ -->
+<div id="section-progress" class="section">
+  <div class="page-container">
+    <div class="section-title">Mi Progreso</div>
+    <p class="section-sub">Visualiza tus créditos, logros y trayectoria hacia Experto TMLF.</p>
+    <div class="progress-grid">
+      <!-- Total Credits -->
+      <div class="progress-card">
+        <div class="p-card-title">Créditos Totales</div>
+        <div class="p-card-sub">Acumulados en todas las áreas</div>
+        <div class="big-stat">
+          <div class="big-num" id="p-total-credits">240</div>
+          <div class="big-label">de 700 créditos totales disponibles</div>
+        </div>
+      </div>
+      <!-- Level -->
+      <div class="progress-card">
+        <div class="p-card-title">Nivel Actual</div>
+        <div class="p-card-sub">Basado en créditos acumulados</div>
+        <div class="big-stat">
+          <div class="big-num" style="color:var(--navy);">Nv. 2</div>
+          <div class="big-label">Trainee</div>
+          <div style="margin-top:12px;">
+            <div class="progress-bar-sm" style="height:8px;">
+              <div class="progress-bar-sm-fill" style="width:40%"></div>
+            </div>
+            <div style="font-size:11px;color:var(--text-soft);margin-top:6px;font-family:var(--font-mono);">240 / 400 para Specialist</div>
+          </div>
+        </div>
+      </div>
+      <!-- Level Roadmap -->
+      <div class="progress-card full-width">
+        <div class="p-card-title">Tu Trayectoria</div>
+        <div class="p-card-sub">Evolución de nivel según créditos acumulados</div>
+        <div class="level-roadmap">
+          <div class="level-step">
+            <div class="level-circle reached">1</div>
+            <div class="level-name">Trainee</div>
+            <div class="level-credits-req">0 cr.</div>
+          </div>
+          <div class="level-step">
+            <div class="level-circle current">2</div>
+            <div class="level-name active-lv">Specialist</div>
+            <div class="level-credits-req">400 cr.</div>
+          </div>
+          <div class="level-step">
+            <div class="level-circle">3</div>
+            <div class="level-name">Expert</div>
+            <div class="level-credits-req">1000 cr.</div>
+          </div>
+        </div>
+      </div>
+      <!-- Area Progress -->
+      <div class="progress-card">
+        <div class="p-card-title">Progreso por Área</div>
+        <div class="p-card-sub">% completado por especialización</div>
+        <div class="areas-progress-list" id="areas-progress-list"></div>
+      </div>
+      <!-- Achievements -->
+      <div class="progress-card">
+        <div class="p-card-title">Logros & Badges</div>
+        <div class="p-card-sub">Gana badges completando módulos</div>
+        <div class="badges-grid">
+          <div class="achievement-badge earned"><div class="badge-icon">🎯</div><div class="badge-name">Primera Clase</div></div>
+          <div class="achievement-badge earned"><div class="badge-icon">📚</div><div class="badge-name">Lector Ávido</div></div>
+          <div class="achievement-badge earned"><div class="badge-icon">🔥</div><div class="badge-name">Racha de 5</div></div>
+          <div class="achievement-badge locked-badge"><div class="badge-icon">🏆</div><div class="badge-name">Top Student</div></div>
+          <div class="achievement-badge locked-badge"><div class="badge-icon">💡</div><div class="badge-name">Innovador</div></div>
+          <div class="achievement-badge locked-badge"><div class="badge-icon">⚖️</div><div class="badge-name">Master RFE</div></div>
+          <div class="achievement-badge locked-badge"><div class="badge-icon">🛡️</div><div class="badge-name">Anti-Fraude</div></div>
+          <div class="achievement-badge locked-badge"><div class="badge-icon">🌟</div><div class="badge-name">Expert TMLF</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+// ============================================================
+// DATA MODEL
+// ============================================================
+const state = {
+  credits: 240,
+  completedModules: ['cc-1','cc-2','cc-3'],
+  activeArea: null,
+  simulatorStep: 0,
+};
+
+const SCHOOLS = [
+  // ── COMMON CORE ──────────────────────────────────────────────
+  {
+    id: 'common',
+    name: 'Common Core',
+    area: 'GENERAL · BASE',
+    emoji: '🎓',
+    color: 'linear-gradient(135deg, #0d1b2a 0%, #1a3a5f 100%)',
+    desc: 'Fundamentos obligatorios para todos los perfiles. Base de toda especialización TMLF.',
+    difficulty: 2,
+    totalCredits: 120,
+    earnedCredits: 60,
+    locked: false,
+    requires: [],
+    modules: [
+      { id:'cc-1', title:'End to End Process', credits:20, level:'Trainee', desc:'Flujo completo de un caso desde el primer contacto hasta el cierre.', tags:['Trainee','Fundamentos'], status:'done' },
+      { id:'cc-2', title:'Procesos Mendoza', credits:20, level:'Trainee', desc:'Metodología interna Mendoza Way: estándares de trabajo y calidad TMLF.', tags:['Trainee','Metodología'], status:'done' },
+      { id:'cc-3', title:'Plataformas', credits:20, level:'Trainee', desc:'Manejo de sistemas y herramientas tecnológicas utilizadas en TMLF.', tags:['Trainee','Tecnología'], status:'done' },
+      { id:'cc-4', title:'Fraude Migratorio y Consecuencias Legales', credits:20, level:'Trainee', desc:'Identificación de señales de fraude y sus implicaciones legales.', tags:['Trainee','Compliance'], status:'active' },
+      { id:'cc-5', title:'Calidad en el Servicio al Cliente', credits:20, level:'Trainee', desc:'Estándares de atención, comunicación y experiencia del cliente.', tags:['Trainee','Soft Skills'], status:'pending' },
+      { id:'cc-6', title:'VAWA', credits:15, level:'Specialist', desc:'Violencia contra la mujer: elegibilidad, proceso y documentación.', tags:['Specialist','Legal'], status:'locked' },
+      { id:'cc-7', title:'Soft Skills', credits:15, level:'Specialist', desc:'Comunicación avanzada, manejo de objeciones y rapport profesional.', tags:['Specialist','Comunicación'], status:'locked' },
+    ],
+    simulator: { type: 'quiz', area: 'common' },
+  },
+
+  // ── OPENERS / DVS ─────────────────────────────────────────────
+  {
+    id: 'dvs',
+    name: 'Openers / DVS',
+    area: 'APERTURA DE CASOS',
+    emoji: '📋',
+    color: 'linear-gradient(135deg, #1a3a5f 0%, #2e5982 100%)',
+    desc: 'Apertura de casos, elegibilidad, delitos y manejo de scripts. Base del proceso de admisión.',
+    difficulty: 3,
+    totalCredits: 180,
+    earnedCredits: 0,
+    locked: false,
+    requires: [],
+    modules: [
+      { id:'dvs-1', title:'End to End Process', credits:20, level:'Trainee', desc:'Flujo completo de apertura de caso desde el contacto inicial.', tags:['Trainee','Proceso'], status:'active' },
+      { id:'dvs-2', title:'Procesos Mendoza', credits:20, level:'Trainee', desc:'Aplicación del Mendoza Way en la apertura de casos.', tags:['Trainee','Metodología'], status:'pending' },
+      { id:'dvs-3', title:'Plataformas', credits:20, level:'Trainee', desc:'Dominio de las plataformas afines al área de apertura.', tags:['Trainee','Tecnología'], status:'locked' },
+      { id:'dvs-4', title:'Delitos', credits:20, level:'Trainee', desc:'Identificación de delitos y su impacto en la elegibilidad.', tags:['Trainee','Legal'], status:'locked' },
+      { id:'dvs-5', title:'Fraude Migratorio y Consecuencias Legales', credits:15, level:'Trainee', desc:'Reconocimiento de patrones de fraude en la apertura de casos.', tags:['Trainee','Compliance'], status:'locked' },
+      { id:'dvs-6', title:'Calidad en el Servicio al Cliente', credits:15, level:'Trainee', desc:'Estándares de atención al cliente en el proceso de apertura.', tags:['Trainee','Soft Skills'], status:'locked' },
+      { id:'dvs-7', title:'Requisitos de Elegibilidad por Proceso', credits:25, level:'Specialist', desc:'Análisis detallado de requisitos por tipo de proceso migratorio.', tags:['Specialist','Elegibilidad'], status:'locked' },
+      { id:'dvs-8', title:'Admisibilidad', credits:20, level:'Specialist', desc:'Criterios de admisibilidad y factores que la afectan.', tags:['Specialist','Legal'], status:'locked' },
+      { id:'dvs-9', title:'Identificación/Extracción de Cargos y Delitos', credits:20, level:'Specialist', desc:'Lectura e interpretación de antecedentes y expedientes.', tags:['Specialist','Análisis'], status:'locked' },
+      { id:'dvs-10', title:'Mendoza Way', credits:15, level:'Specialist', desc:'Aplicación avanzada del Mendoza Way en evaluación de casos.', tags:['Specialist','Metodología'], status:'locked' },
+      { id:'dvs-11', title:'Manejo de Scripts', credits:15, level:'Specialist', desc:'Dominio de scripts de comunicación por tipo de proceso.', tags:['Specialist','Comunicación'], status:'locked' },
+      { id:'dvs-12', title:'Admisibilidad / Elegibilidad / Fraude', credits:30, level:'Expert', desc:'Análisis experto integrado: admisibilidad, elegibilidad y detección de fraude.', tags:['Expert','Avanzado'], status:'locked' },
+      { id:'dvs-13', title:'Extracción Especializada de Cargos y Delitos', credits:25, level:'Expert', desc:'Análisis forense de antecedentes complejos y estrategia de presentación.', tags:['Expert','Especialización'], status:'locked' },
+      { id:'dvs-14', title:'Dominio de Plataformas Afines al Área', credits:20, level:'Expert', desc:'Uso avanzado y optimización de todas las plataformas del área.', tags:['Expert','Plataformas'], status:'locked' },
+      { id:'dvs-15', title:'Solicitudes Específicas de Información por Proceso', credits:20, level:'Expert', desc:'Gestión de solicitudes especiales de USCIS por tipo de proceso.', tags:['Expert','USCIS'], status:'locked' },
+      { id:'dvs-16', title:'Dominio de Script', credits:15, level:'Expert', desc:'Maestría en scripts complejos y manejo de situaciones excepcionales.', tags:['Expert','Comunicación'], status:'locked' },
+    ],
+    simulator: { type: 'dvs', area: 'dvs' },
+  },
+
+  // ── LSU / ATTY WC ─────────────────────────────────────────────
+  {
+    id: 'lsu',
+    name: 'LSU (Atty WC)',
+    area: 'LEGAL SUPPORT UNIT',
+    emoji: '⚖️',
+    color: 'linear-gradient(135deg, #1c3a1a 0%, #2e6b2a 100%)',
+    desc: 'Soporte legal avanzado: análisis documental, elegibilidad y manejo de información por proceso.',
+    difficulty: 4,
+    totalCredits: 200,
+    earnedCredits: 0,
+    locked: false,
+    requires: [],
+    modules: [
+      { id:'lsu-1', title:'End to End Process', credits:20, level:'Trainee', desc:'Flujo completo del proceso desde la perspectiva de soporte legal.', tags:['Trainee','Proceso'], status:'active' },
+      { id:'lsu-2', title:'Procesos Mendoza', credits:20, level:'Trainee', desc:'Metodología Mendoza aplicada al soporte legal.', tags:['Trainee','Metodología'], status:'pending' },
+      { id:'lsu-3', title:'Plataformas', credits:15, level:'Trainee', desc:'Herramientas tecnológicas del área LSU.', tags:['Trainee','Tecnología'], status:'locked' },
+      { id:'lsu-4', title:'I-Forms en General', credits:20, level:'Trainee', desc:'Conocimiento base de todos los formularios I aplicables.', tags:['Trainee','Formularios'], status:'locked' },
+      { id:'lsu-5', title:'Delitos', credits:20, level:'Trainee', desc:'Identificación y clasificación de antecedentes penales.', tags:['Trainee','Legal'], status:'locked' },
+      { id:'lsu-6', title:'Documentos / Información', credits:15, level:'Trainee', desc:'Manejo y organización de documentos del cliente.', tags:['Trainee','Documentos'], status:'locked' },
+      { id:'lsu-7', title:'Calidad en el Servicio al Cliente', credits:15, level:'Trainee', desc:'Estándares de atención en el contexto de soporte legal.', tags:['Trainee','Soft Skills'], status:'locked' },
+      { id:'lsu-8', title:'Videollamada Eficaz', credits:15, level:'Trainee', desc:'Técnicas para entrevistas y reuniones virtuales efectivas.', tags:['Trainee','Comunicación'], status:'locked' },
+      { id:'lsu-9', title:'Fraude Migratorio y Consecuencias Legales', credits:15, level:'Trainee', desc:'Protocolos ante indicios de fraude en documentación.', tags:['Trainee','Compliance'], status:'locked' },
+      { id:'lsu-10', title:'Requisitos de Elegibilidad por Proceso', credits:25, level:'Specialist', desc:'Evaluación detallada de elegibilidad según el tipo de proceso.', tags:['Specialist','Elegibilidad'], status:'locked' },
+      { id:'lsu-11', title:'Admisibilidad', credits:20, level:'Specialist', desc:'Criterios de admisibilidad y barreras comunes.', tags:['Specialist','Legal'], status:'locked' },
+      { id:'lsu-12', title:'Manejo Básico de Plataformas Afines al Área', credits:15, level:'Specialist', desc:'Uso funcional de todas las plataformas del área LSU.', tags:['Specialist','Plataformas'], status:'locked' },
+      { id:'lsu-13', title:'Estructura de Paquete por Proceso', credits:20, level:'Specialist', desc:'Armado correcto de paquetes según el tipo de caso.', tags:['Specialist','Packets'], status:'locked' },
+      { id:'lsu-14', title:'Lectura de Récords Criminales', credits:20, level:'Specialist', desc:'Análisis e interpretación de antecedentes penales.', tags:['Specialist','Análisis'], status:'locked' },
+      { id:'lsu-15', title:'Mendoza Way', credits:15, level:'Specialist', desc:'Implementación avanzada de la metodología Mendoza.', tags:['Specialist','Metodología'], status:'locked' },
+      { id:'lsu-16', title:'Manejo de Scripts por Proceso', credits:15, level:'Specialist', desc:'Scripts específicos por tipo de proceso migratorio.', tags:['Specialist','Comunicación'], status:'locked' },
+      { id:'lsu-17', title:'Admisibilidad / Elegibilidad / Fraude', credits:30, level:'Expert', desc:'Dominio experto integrado de los tres pilares de evaluación.', tags:['Expert','Avanzado'], status:'locked' },
+      { id:'lsu-18', title:'Interpretación de Rapsheet / PCL / Court Documents', credits:25, level:'Expert', desc:'Lectura experta de expedientes judiciales y policiales.', tags:['Expert','Documentos'], status:'locked' },
+      { id:'lsu-19', title:'Dominio de Plataformas Afines al Área', credits:20, level:'Expert', desc:'Uso avanzado y automatización de plataformas LSU.', tags:['Expert','Plataformas'], status:'locked' },
+      { id:'lsu-20', title:'Dominio de Ensamblaje por Proceso', credits:20, level:'Expert', desc:'Armado experto de paquetes en casos complejos y multifacéticos.', tags:['Expert','Packets'], status:'locked' },
+      { id:'lsu-21', title:'Localización Específica de Información por Proceso', credits:20, level:'Expert', desc:'Búsqueda y extracción de información crítica para cada proceso.', tags:['Expert','Investigación'], status:'locked' },
+      { id:'lsu-22', title:'Análisis Especializado de Documentos', credits:20, level:'Expert', desc:'Evaluación forense de documentos con criterios de autenticidad.', tags:['Expert','Análisis'], status:'locked' },
+      { id:'lsu-23', title:'Dominio de Scripts por Proceso', credits:15, level:'Expert', desc:'Maestría en comunicación estratégica por tipo de proceso.', tags:['Expert','Comunicación'], status:'locked' },
+    ],
+    simulator: { type: 'packets', area: 'lsu' },
+  },
+
+  // ── PACKETS ────────────────────────────────────────────────────
+  {
+    id: 'packets',
+    name: 'Packets',
+    area: 'PAQUETES DE PETICIÓN',
+    emoji: '📦',
+    color: 'linear-gradient(135deg, #1a4a5c 0%, #2e7a9e 100%)',
+    desc: 'Armado, revisión y ensamblaje de paquetes de petición. Elegibilidad, delitos y análisis documental.',
+    difficulty: 4,
+    totalCredits: 220,
+    earnedCredits: 0,
+    locked: false,
+    requires: [],
+    modules: [
+      { id:'pkt-1', title:'End to End Process', credits:20, level:'Trainee', desc:'Flujo completo del proceso de armado de paquetes.', tags:['Trainee','Proceso'], status:'active' },
+      { id:'pkt-2', title:'Procesos Mendoza', credits:20, level:'Trainee', desc:'Metodología Mendoza aplicada al ensamblaje de paquetes.', tags:['Trainee','Metodología'], status:'pending' },
+      { id:'pkt-3', title:'Plataformas', credits:15, level:'Trainee', desc:'Herramientas digitales para gestión y armado de packets.', tags:['Trainee','Tecnología'], status:'locked' },
+      { id:'pkt-4', title:'I-Forms en General', credits:20, level:'Trainee', desc:'Conocimiento base de todos los formularios de inmigración.', tags:['Trainee','Formularios'], status:'locked' },
+      { id:'pkt-5', title:'Delitos', credits:20, level:'Trainee', desc:'Identificación de antecedentes y su impacto en el packet.', tags:['Trainee','Legal'], status:'locked' },
+      { id:'pkt-6', title:'Documentos / Información', credits:15, level:'Trainee', desc:'Organización y verificación de documentos del cliente.', tags:['Trainee','Documentos'], status:'locked' },
+      { id:'pkt-7', title:'Fraude Migratorio y Consecuencias Legales', credits:15, level:'Trainee', desc:'Detección de documentos fraudulentos en el paquete.', tags:['Trainee','Compliance'], status:'locked' },
+      { id:'pkt-8', title:'End to End Packets', credits:25, level:'Specialist', desc:'Flujo completo y estándares de calidad para cada tipo de packet.', tags:['Specialist','Proceso'], status:'locked' },
+      { id:'pkt-9', title:'Requisitos de Elegibilidad por Proceso', credits:20, level:'Specialist', desc:'Requisitos documentales específicos por categoría de visa.', tags:['Specialist','Elegibilidad'], status:'locked' },
+      { id:'pkt-10', title:'Admisibilidad', credits:20, level:'Specialist', desc:'Evaluación de admisibilidad en el contexto del packet.', tags:['Specialist','Legal'], status:'locked' },
+      { id:'pkt-11', title:'Manejo Básico de Plataformas Afines al Área', credits:15, level:'Specialist', desc:'Uso funcional de plataformas de gestión de packets.', tags:['Specialist','Plataformas'], status:'locked' },
+      { id:'pkt-12', title:'Estructura de Paquete por Proceso', credits:25, level:'Specialist', desc:'Orden, documentos requeridos y estructura correcta por proceso.', tags:['Specialist','Estructura'], status:'locked' },
+      { id:'pkt-13', title:'Ensamblaje por Proceso', credits:20, level:'Specialist', desc:'Técnica de ensamblaje correcto según cada tipo de caso.', tags:['Specialist','Ensamblaje'], status:'locked' },
+      { id:'pkt-14', title:'Lectura de Récords Criminales', credits:20, level:'Specialist', desc:'Análisis de antecedentes penales para determinar impacto en el caso.', tags:['Specialist','Análisis'], status:'locked' },
+      { id:'pkt-15', title:'Cumplimiento de Pilares en Evidencia Documental', credits:20, level:'Specialist', desc:'Verificación de existencia, identidad y elegibilidad en la evidencia.', tags:['Specialist','Calidad'], status:'locked' },
+      { id:'pkt-16', title:'Admisibilidad / Elegibilidad / Fraude y Reclasificación', credits:35, level:'Expert', desc:'Análisis experto integrado con capacidad de reclasificar estrategias.', tags:['Expert','Avanzado'], status:'locked' },
+      { id:'pkt-17', title:'Interpretación de Rapsheet / PCL / Court Documents', credits:30, level:'Expert', desc:'Lectura experta de documentos judiciales y policiales.', tags:['Expert','Documentos'], status:'locked' },
+      { id:'pkt-18', title:'Dominio de Plataformas Afines al Área', credits:20, level:'Expert', desc:'Uso avanzado de todas las plataformas de packets.', tags:['Expert','Plataformas'], status:'locked' },
+      { id:'pkt-19', title:'Dominio de Ensamblaje por Proceso', credits:25, level:'Expert', desc:'Ensamblaje experto de paquetes complejos y multifacéticos.', tags:['Expert','Ensamblaje'], status:'locked' },
+      { id:'pkt-20', title:'Localización Específica de Información por Proceso', credits:20, level:'Expert', desc:'Investigación y localización de evidencia crítica por proceso.', tags:['Expert','Investigación'], status:'locked' },
+      { id:'pkt-21', title:'Análisis Especializado de Documentos', credits:20, level:'Expert', desc:'Evaluación forense de autenticidad y consistencia documental.', tags:['Expert','Análisis'], status:'locked' },
+    ],
+    simulator: { type: 'packets', area: 'packets' },
+  },
+
+  // ── PSYCH ─────────────────────────────────────────────────────
+  {
+    id: 'psych',
+    name: 'PSYCH',
+    area: 'PSICOLOGÍA & SOFT SKILLS',
+    emoji: '🧠',
+    color: 'linear-gradient(135deg, #4a1a5c 0%, #7b3a9e 100%)',
+    desc: 'Comunicación, entrevista y manejo emocional. Esencial para cualquier perfil de contacto con clientes.',
+    difficulty: 3,
+    totalCredits: 160,
+    earnedCredits: 0,
+    locked: false,
+    requires: [],
+    modules: [
+      { id:'psy-1', title:'Common Core', credits:20, level:'Trainee', desc:'Fundamentos base aplicados al contexto de comunicación con clientes.', tags:['Trainee','Base'], status:'active' },
+      { id:'psy-2', title:'CCM (Case Communication Model)', credits:20, level:'Trainee', desc:'Modelo de comunicación interno para el manejo de casos.', tags:['Trainee','Comunicación'], status:'pending' },
+      { id:'psy-3', title:'Soft Skills Base', credits:20, level:'Trainee', desc:'Habilidades blandas fundamentales: escucha activa, empatía y rapport.', tags:['Trainee','Soft Skills'], status:'locked' },
+      { id:'psy-4', title:'VAWA', credits:25, level:'Specialist', desc:'Protocolo de comunicación y entrevista en casos de violencia doméstica.', tags:['Specialist','VAWA'], status:'locked' },
+      { id:'psy-5', title:'Visa T', credits:20, level:'Specialist', desc:'Manejo empático de víctimas de tráfico humano: entrevista y documentación.', tags:['Specialist','Visa T'], status:'locked' },
+      { id:'psy-6', title:'Soft Skills Avanzados', credits:20, level:'Specialist', desc:'Comunicación asertiva avanzada, manejo de crisis y objeciones difíciles.', tags:['Specialist','Soft Skills'], status:'locked' },
+      { id:'psy-7', title:'Visa U', credits:25, level:'Expert', desc:'Comunicación estratégica en casos de víctimas de crímenes.', tags:['Expert','Visa U'], status:'locked' },
+      { id:'psy-8', title:'Waivers', credits:20, level:'Expert', desc:'Manejo comunicacional en casos de waivers: expectativas y estrategia.', tags:['Expert','Waivers'], status:'locked' },
+      { id:'psy-9', title:'K1', credits:20, level:'Expert', desc:'Comunicación en procesos de visa de prometido: sensibilidades y cultura.', tags:['Expert','K1'], status:'locked' },
+    ],
+    simulator: { type: 'psych', area: 'psych' },
+  },
+
+  // ── PWC ───────────────────────────────────────────────────────
+  {
+    id: 'pwc',
+    name: 'PWC',
+    area: 'PERMISOS DE TRABAJO',
+    emoji: '📂',
+    color: 'linear-gradient(135deg, #2d4a22 0%, #4a7c3f 100%)',
+    desc: 'Permisos de trabajo, elegibilidad por proceso y manejo avanzado de casos complejos.',
+    difficulty: 4,
+    totalCredits: 160,
+    earnedCredits: 0,
+    locked: false,
+    requires: [],
+    modules: [
+      { id:'pwc-1', title:'Common Core', credits:20, level:'Trainee', desc:'Base común aplicada al proceso de permisos de trabajo.', tags:['Trainee','Base'], status:'active' },
+      { id:'pwc-2', title:'CCM (Case Communication Model)', credits:20, level:'Trainee', desc:'Modelo de comunicación para el manejo de permisos.', tags:['Trainee','Comunicación'], status:'pending' },
+      { id:'pwc-3', title:'Soft Skills Base', credits:20, level:'Trainee', desc:'Habilidades de comunicación base para el área de permisos.', tags:['Trainee','Soft Skills'], status:'locked' },
+      { id:'pwc-4', title:'VAWA', credits:25, level:'Specialist', desc:'EAD bajo VAWA: criterios, documentación y proceso.', tags:['Specialist','VAWA'], status:'locked' },
+      { id:'pwc-5', title:'Visa T', credits:20, level:'Specialist', desc:'Permiso de trabajo para víctimas de tráfico humano.', tags:['Specialist','Visa T'], status:'locked' },
+      { id:'pwc-6', title:'Other Process', credits:20, level:'Specialist', desc:'Permisos de trabajo en procesos alternativos y especiales.', tags:['Specialist','Otros'], status:'locked' },
+      { id:'pwc-7', title:'Soft Skills', credits:15, level:'Specialist', desc:'Comunicación avanzada aplicada a casos de permisos complejos.', tags:['Specialist','Soft Skills'], status:'locked' },
+      { id:'pwc-8', title:'Visa U', credits:25, level:'Expert', desc:'EAD bajo Visa U: proceso, evidencia y estrategia.', tags:['Expert','Visa U'], status:'locked' },
+      { id:'pwc-9', title:'Waivers', credits:20, level:'Expert', desc:'Casos de permisos con waivers: análisis y presentación.', tags:['Expert','Waivers'], status:'locked' },
+      { id:'pwc-10', title:'K1', credits:20, level:'Expert', desc:'Permiso de trabajo en proceso K1: requisitos y tiempos.', tags:['Expert','K1'], status:'locked' },
+    ],
+    simulator: { type: 'quiz', area: 'pwc' },
+  },
+
+  // ── PCR ───────────────────────────────────────────────────────
+  {
+    id: 'pcr',
+    name: 'PCR',
+    area: 'POST CASE REVIEW',
+    emoji: '🔍',
+    color: 'linear-gradient(135deg, #2a2a0d 0%, #5c5c1a 100%)',
+    desc: 'Revisión profunda de casos: formularios, documentos, rapsheet, medical y cortes.',
+    difficulty: 5,
+    totalCredits: 190,
+    earnedCredits: 0,
+    locked: false,
+    requires: [],
+    modules: [
+      { id:'pcr-1', title:'Common Core', credits:20, level:'Trainee', desc:'Fundamentos base aplicados a la revisión de casos.', tags:['Trainee','Base'], status:'active' },
+      { id:'pcr-2', title:'CCM (Case Communication Model)', credits:20, level:'Trainee', desc:'Modelo de comunicación en revisión y seguimiento de casos.', tags:['Trainee','Comunicación'], status:'pending' },
+      { id:'pcr-3', title:'Soft Skills Base', credits:20, level:'Trainee', desc:'Habilidades blandas para la interacción con clientes en revisión.', tags:['Trainee','Soft Skills'], status:'locked' },
+      { id:'pcr-4', title:'Especialista en Formas', credits:25, level:'Specialist', desc:'Dominio completo de todos los formularios I utilizados en casos.', tags:['Specialist','Formularios'], status:'locked' },
+      { id:'pcr-5', title:'Especialista en Documentos', credits:25, level:'Specialist', desc:'Evaluación experta de documentos: autenticidad, validez y consistencia.', tags:['Specialist','Documentos'], status:'locked' },
+      { id:'pcr-6', title:'Rapsheet', credits:20, level:'Specialist', desc:'Lectura e interpretación de antecedentes policiales y judiciales.', tags:['Specialist','Análisis'], status:'locked' },
+      { id:'pcr-7', title:'Medical', credits:20, level:'Specialist', desc:'Revisión del I-693 y evaluación médica en el contexto del caso.', tags:['Specialist','Medical'], status:'locked' },
+      { id:'pcr-8', title:'Soft Skills', credits:15, level:'Specialist', desc:'Comunicación avanzada en situaciones de revisión crítica.', tags:['Specialist','Soft Skills'], status:'locked' },
+      { id:'pcr-9', title:'Cortes', credits:30, level:'Expert', desc:'Interpretación de órdenes, resoluciones y documentos judiciales.', tags:['Expert','Cortes'], status:'locked' },
+      { id:'pcr-10', title:'Fully Ensamblaje', credits:35, level:'Expert', desc:'Ensamblaje completo y experto de casos complejos con múltiples elementos.', tags:['Expert','Ensamblaje'], status:'locked' },
+    ],
+    simulator: { type: 'quiz', area: 'pcr' },
+  },
+
+  // ── WAES ──────────────────────────────────────────────────────
+  {
+    id: 'waes',
+    name: "WAE's",
+    area: 'WAIVERS & EXCEPCIONES',
+    emoji: '🛡️',
+    color: 'linear-gradient(135deg, #5c3a1a 0%, #9e6a38 100%)',
+    desc: 'Waivers, affidavits, trata humana y legal requirements. Nivel de alta especialización.',
+    difficulty: 5,
+    totalCredits: 200,
+    earnedCredits: 0,
+    locked: false,
+    requires: [],
+    modules: [
+      { id:'wae-1', title:'Common Core', credits:20, level:'Trainee', desc:'Base común obligatoria antes de abordar waivers.', tags:['Trainee','Base'], status:'active' },
+      { id:'wae-2', title:'Escritura y Edición', credits:20, level:'Trainee', desc:'Técnicas de redacción profesional para cartas y declaraciones.', tags:['Trainee','Redacción'], status:'pending' },
+      { id:'wae-3', title:'Compliance Policy Manual', credits:20, level:'Trainee', desc:'Políticas internas y cumplimiento normativo en waivers.', tags:['Trainee','Compliance'], status:'locked' },
+      { id:'wae-4', title:'Análisis y Estudio de Casos', credits:20, level:'Trainee', desc:'Metodología de análisis de casos para determinar estrategia de waiver.', tags:['Trainee','Análisis'], status:'locked' },
+      { id:'wae-5', title:'Evidencias', credits:20, level:'Trainee', desc:'Tipos de evidencia, su peso y cómo presentarla efectivamente.', tags:['Trainee','Evidencias'], status:'locked' },
+      { id:'wae-6', title:'Trata Humana', credits:20, level:'Trainee', desc:'Protocolo específico para casos de víctimas de trata humana.', tags:['Trainee','Trata'], status:'locked' },
+      { id:'wae-7', title:'Legal Requirements', credits:15, level:'Trainee', desc:'Requisitos legales base para solicitudes de waiver.', tags:['Trainee','Legal'], status:'locked' },
+      { id:'wae-8', title:'Procesos TMLF', credits:15, level:'Trainee', desc:'Procesos internos específicos de TMLF para gestión de waivers.', tags:['Trainee','Proceso'], status:'locked' },
+      { id:'wae-9', title:'VAWA', credits:25, level:'Specialist', desc:'Waiver bajo VAWA: criterios, evidencia y estrategia de presentación.', tags:['Specialist','VAWA'], status:'locked' },
+      { id:'wae-10', title:'Visa T', credits:20, level:'Specialist', desc:'Waivers disponibles en el contexto de Visa T.', tags:['Specialist','Visa T'], status:'locked' },
+      { id:'wae-11', title:'Visa U', credits:20, level:'Specialist', desc:'Waivers disponibles bajo la protección de Visa U.', tags:['Specialist','Visa U'], status:'locked' },
+      { id:'wae-12', title:'Waivers', credits:25, level:'Specialist', desc:'Tipos de waiver, criterios de aprobación y estrategias de argumentación.', tags:['Specialist','Waivers'], status:'locked' },
+      { id:'wae-13', title:'Visa K1', credits:20, level:'Specialist', desc:'Waivers en procesos de visa de prometido.', tags:['Specialist','K1'], status:'locked' },
+      { id:'wae-14', title:'Casos Complex', credits:35, level:'Expert', desc:'Manejo experto de casos con múltiples waivers y estrategias combinadas.', tags:['Expert','Avanzado'], status:'locked' },
+      { id:'wae-15', title:'Affidavits', credits:30, level:'Expert', desc:'Redacción y estructura de affidavits de alto impacto.', tags:['Expert','Redacción'], status:'locked' },
+    ],
+    simulator: { type: 'rfe', area: 'waes' },
+  },
+
+  // ── RFE ───────────────────────────────────────────────────────
+  {
+    id: 'rfe',
+    name: 'RFE',
+    area: 'SOLICITUDES DE EVIDENCIA',
+    emoji: '⚡',
+    color: 'linear-gradient(135deg, #5c1a2e 0%, #9e3a5c 100%)',
+    desc: 'Respuesta estratégica a RFEs por perfil: Psicología, Ev. Analyst, Legal Intelligence, Gov. Branch, Paralegals y Auditory.',
+    difficulty: 5,
+    totalCredits: 250,
+    earnedCredits: 0,
+    locked: false,
+    requires: [],
+    modules: [
+      // Trainee (común a todos los perfiles)
+      { id:'rfe-1', title:'Common Core', credits:20, level:'Trainee', desc:'Base común para todos los perfiles que manejan RFEs.', tags:['Trainee','Base'], status:'active' },
+      { id:'rfe-2', title:'Manual de Protocolos', credits:20, level:'Trainee', desc:'Protocolos internos de manejo y respuesta a RFEs.', tags:['Trainee','Protocolos'], status:'pending' },
+      { id:'rfe-3', title:'RFEs y NOIDS', credits:20, level:'Trainee', desc:'Diferencias entre RFE y NOID: tiempos, alcance y respuesta.', tags:['Trainee','USCIS'], status:'locked' },
+      { id:'rfe-4', title:'Análisis de Casos', credits:20, level:'Trainee', desc:'Metodología de análisis para determinar la respuesta óptima.', tags:['Trainee','Análisis'], status:'locked' },
+      { id:'rfe-5', title:'Contacto con Clientes', credits:15, level:'Trainee', desc:'Comunicación efectiva con el cliente durante el proceso de RFE.', tags:['Trainee','Comunicación'], status:'locked' },
+      { id:'rfe-6', title:'Redacción de Casos', credits:15, level:'Trainee', desc:'Técnicas de redacción para respuestas formales a USCIS.', tags:['Trainee','Redacción'], status:'locked' },
+      { id:'rfe-7', title:'Compliance Policy Manual', credits:15, level:'Trainee', desc:'Políticas de cumplimiento en la gestión de RFEs.', tags:['Trainee','Compliance'], status:'locked' },
+      // Specialist
+      { id:'rfe-8', title:'VAWA', credits:25, level:'Specialist', desc:'RFEs específicos para casos VAWA: evidencia y argumentación.', tags:['Specialist','VAWA'], status:'locked' },
+      { id:'rfe-9', title:'Visa T', credits:20, level:'Specialist', desc:'Respuesta a RFEs en casos de víctimas de tráfico humano.', tags:['Specialist','Visa T'], status:'locked' },
+      { id:'rfe-10', title:'Waivers', credits:20, level:'Specialist', desc:'RFEs relacionados con solicitudes de waiver.', tags:['Specialist','Waivers'], status:'locked' },
+      { id:'rfe-11', title:'Visa U', credits:20, level:'Specialist', desc:'RFEs en casos de Visa U: respuesta y documentación adicional.', tags:['Specialist','Visa U'], status:'locked' },
+      { id:'rfe-12', title:'Visa K1', credits:20, level:'Specialist', desc:'RFEs en procesos K1: requisitos adicionales y tiempos.', tags:['Specialist','K1'], status:'locked' },
+      { id:'rfe-13', title:'Calidad de Entregables', credits:15, level:'Specialist', desc:'Estándares de calidad para todos los entregables de RFE.', tags:['Specialist','Calidad'], status:'locked' },
+      { id:'rfe-14', title:'Análisis y Estudio de Casos', credits:20, level:'Specialist', desc:'Análisis profundo de casos con RFE para definir estrategia ganadora.', tags:['Specialist','Análisis'], status:'locked' },
+      // Expert
+      { id:'rfe-15', title:'Estrategias COMPLEX', credits:40, level:'Expert', desc:'Estrategias avanzadas para RFEs en casos altamente complejos.', tags:['Expert','Estrategia'], status:'locked' },
+      { id:'rfe-16', title:'Casos Complex', credits:35, level:'Expert', desc:'Manejo experto de RFEs en casos con múltiples obstáculos.', tags:['Expert','Avanzado'], status:'locked' },
+    ],
+    simulator: { type: 'rfe', area: 'rfe' },
+  },
+
+  // ── COMPLIANCE ────────────────────────────────────────────────
+  {
+    id: 'compliance',
+    name: 'Compliance',
+    area: 'CUMPLIMIENTO & CALIDAD',
+    emoji: '🛡️',
+    color: 'linear-gradient(135deg, #1a1a3a 0%, #2e2e6e 100%)',
+    desc: 'Control de calidad, cumplimiento normativo y criterios de elegibilidad. Esencial para garantizar la integridad de cada caso.',
+    difficulty: 4,
+    totalCredits: 210,
+    earnedCredits: 0,
+    locked: false,
+    requires: [],
+    modules: [
+      // TRAINEE
+      { id:'cmp-1', title:'Common Core', credits:20, level:'Trainee', desc:'Fundamentos base aplicados al contexto de cumplimiento y calidad.', tags:['Base','Proceso'], status:'active' },
+      { id:'cmp-2', title:'Control de Calidad por Caso', credits:20, level:'Trainee', desc:'Metodología de control de calidad aplicada a cada caso individual.', tags:['Calidad','QA'], status:'pending' },
+      { id:'cmp-3', title:'Compliance Policy Manual', credits:20, level:'Trainee', desc:'Manual de políticas internas y estándares de cumplimiento TMLF.', tags:['Políticas','Manual'], status:'locked' },
+      { id:'cmp-4', title:'Análisis y Estudio de Casos', credits:20, level:'Trainee', desc:'Metodología de análisis de casos bajo criterios de compliance.', tags:['Análisis','Casos'], status:'locked' },
+      { id:'cmp-5', title:'Criterios de Calidad', credits:20, level:'Trainee', desc:'Estándares y métricas de calidad aplicados a la gestión de casos.', tags:['Calidad','Métricas'], status:'locked' },
+      { id:'cmp-6', title:'Estándares de Cumplimiento', credits:15, level:'Trainee', desc:'Normativas y estándares de cumplimiento regulatorio en inmigración.', tags:['Normativa','Cumplimiento'], status:'locked' },
+      { id:'cmp-7', title:'Legal Requirements', credits:15, level:'Trainee', desc:'Requisitos legales fundamentales que todo colaborador debe conocer.', tags:['Legal','Requisitos'], status:'locked' },
+      // SPECIALIST
+      { id:'cmp-8', title:'VAWA', credits:25, level:'Specialist', desc:'Cumplimiento y calidad específicos en casos bajo protección VAWA.', tags:['VAWA','Specialist'], status:'locked' },
+      { id:'cmp-9', title:'Visa T', credits:20, level:'Specialist', desc:'Estándares de compliance en casos de víctimas de tráfico humano.', tags:['Visa T','Specialist'], status:'locked' },
+      { id:'cmp-10', title:'Visa U', credits:20, level:'Specialist', desc:'Criterios de cumplimiento en casos de víctimas de crímenes.', tags:['Visa U','Specialist'], status:'locked' },
+      { id:'cmp-11', title:'Waivers', credits:20, level:'Specialist', desc:'Control de calidad en procesos de waiver: documentación y evidencia.', tags:['Waivers','Calidad'], status:'locked' },
+      { id:'cmp-12', title:'Visa K1', credits:20, level:'Specialist', desc:'Compliance en procesos de visa de prometido: requisitos y verificación.', tags:['K1','Specialist'], status:'locked' },
+      { id:'cmp-13', title:'Procesos TMLF', credits:15, level:'Specialist', desc:'Procesos internos TMLF bajo la lente del cumplimiento normativo.', tags:['Proceso','Interno'], status:'locked' },
+      // EXPERT
+      { id:'cmp-14', title:'Prevención de Riesgos', credits:30, level:'Expert', desc:'Identificación, evaluación y mitigación de riesgos en la gestión de casos.', tags:['Riesgos','Prevención'], status:'locked' },
+      { id:'cmp-15', title:'Estrategias de Manejo de Casos', credits:25, level:'Expert', desc:'Estrategias avanzadas para el manejo de casos con alertas de compliance.', tags:['Estrategia','Avanzado'], status:'locked' },
+      { id:'cmp-16', title:'Complex Cases', credits:25, level:'Expert', desc:'Gestión de casos complejos con múltiples factores de cumplimiento.', tags:['Complex','Expert'], status:'locked' },
+      { id:'cmp-17', title:'Antidilatory Conducts', credits:20, level:'Expert', desc:'Identificación y manejo de conductas dilatorias en el proceso migratorio.', tags:['Conductas','Legal'], status:'locked' },
+      { id:'cmp-18', title:'Entrevistas', credits:20, level:'Expert', desc:'Preparación y evaluación de entrevistas bajo criterios de compliance.', tags:['Entrevistas','Expert'], status:'locked' },
+      { id:'cmp-19', title:'Documentos', credits:20, level:'Expert', desc:'Auditoría documental avanzada: autenticidad, consistencia y validez.', tags:['Documentos','Auditoría'], status:'locked' },
+      { id:'cmp-20', title:'Escritura', credits:15, level:'Expert', desc:'Redacción profesional de reportes, cartas y documentos de compliance.', tags:['Redacción','Expert'], status:'locked' },
+      { id:'cmp-21', title:'Criterios de Elegibilidad de Visas', credits:20, level:'Expert', desc:'Dominio experto de criterios de elegibilidad por categoría de visa.', tags:['Elegibilidad','Visas'], status:'locked' },
+    ],
+    simulator: { type: 'quiz', area: 'compliance' },
+  },
+
+  // ── CALLBACKS ─────────────────────────────────────────────────
+  {
+    id: 'callbacks',
+    name: 'Callbacks',
+    area: 'GESTIÓN DE LLAMADAS',
+    emoji: '📞',
+    color: 'linear-gradient(135deg, #1a2a5c 0%, #2e4a9e 100%)',
+    desc: 'Manejo de callbacks por perfil: Paralegals, Analistas, Agentes de llamada y Attys.',
+    difficulty: 3,
+    totalCredits: 160,
+    earnedCredits: 0,
+    locked: false,
+    requires: [],
+    modules: [
+      { id:'cb-1', title:'Common Core', credits:20, level:'Trainee', desc:'Base común para todos los perfiles de callbacks.', tags:['Trainee','Base'], status:'active' },
+      { id:'cb-2', title:'Plataformas', credits:20, level:'Trainee', desc:'Herramientas tecnológicas para gestión de llamadas.', tags:['Trainee','Tecnología'], status:'pending' },
+      { id:'cb-3', title:'Contacto con Cliente', credits:20, level:'Trainee', desc:'Técnicas de comunicación y manejo de llamadas con clientes.', tags:['Trainee','Comunicación'], status:'locked' },
+      { id:'cb-4', title:'Legal Strategy', credits:20, level:'Trainee', desc:'Estrategia legal básica aplicada al contexto de callbacks.', tags:['Trainee','Legal'], status:'locked' },
+      { id:'cb-5', title:'Redacción', credits:15, level:'Trainee', desc:'Documentación y seguimiento escrito de callbacks.', tags:['Trainee','Redacción'], status:'locked' },
+      { id:'cb-6', title:'Procesos Mendoza', credits:15, level:'Trainee', desc:'Aplicación del Mendoza Way en el manejo de llamadas.', tags:['Trainee','Metodología'], status:'locked' },
+      { id:'cb-7', title:'Delitos', credits:15, level:'Trainee', desc:'Manejo de preguntas sensibles sobre antecedentes en llamadas.', tags:['Trainee','Legal'], status:'locked' },
+      { id:'cb-8', title:'I-Forms General', credits:15, level:'Trainee', desc:'Conocimiento base de formularios para soporte en llamadas.', tags:['Trainee','Formularios'], status:'locked' },
+      { id:'cb-9', title:'Criterios de Elegibilidad', credits:25, level:'Specialist', desc:'Evaluación de elegibilidad durante callbacks: preguntas y flujos.', tags:['Specialist','Elegibilidad'], status:'locked' },
+      { id:'cb-10', title:'VAWA', credits:20, level:'Specialist', desc:'Manejo especializado de callbacks en casos VAWA.', tags:['Specialist','VAWA'], status:'locked' },
+      { id:'cb-11', title:'Visa T', credits:20, level:'Specialist', desc:'Callbacks en casos de tráfico humano: sensibilidad y protocolo.', tags:['Specialist','Visa T'], status:'locked' },
+      { id:'cb-12', title:'Visa U', credits:20, level:'Specialist', desc:'Gestión de llamadas en casos de Visa U.', tags:['Specialist','Visa U'], status:'locked' },
+      { id:'cb-13', title:'Discovery Calls', credits:20, level:'Specialist', desc:'Técnicas para llamadas de descubrimiento de información del caso.', tags:['Specialist','Técnica'], status:'locked' },
+      { id:'cb-14', title:'Waivers', credits:20, level:'Specialist', desc:'Callbacks relacionados con procesos de waiver.', tags:['Specialist','Waivers'], status:'locked' },
+      { id:'cb-15', title:'Visa K1', credits:20, level:'Specialist', desc:'Manejo de callbacks en procesos de visa de prometido.', tags:['Specialist','K1'], status:'locked' },
+    ],
+    simulator: { type: 'psych', area: 'callbacks' },
+  },
+];
+
+// ============================================================
+// SIMULATORS DATA
+// ============================================================
+const SIMULATORS = {
+  psych: {
+    title: 'Simulador: Entrevista con Cliente',
+    description: 'Practica cómo manejar una entrevista inicial con un cliente en situación vulnerable.',
+    steps: [
+      {
+        client: 'Hola, me llamo María. Vine porque mi esposo me dijo que viniera aquí... no sé si pueden ayudarme. Tenemos 8 años aquí y... tengo mucho miedo.',
+        question: '¿Cómo respondes para generar confianza y obtener información clave?',
+        choices: [
+          { text: '"Ok, necesito que me traiga todos sus documentos para empezar."', correct: false, feedback: '❌ Muy transaccional. Primero debemos establecer rapport antes de pedir documentos.' },
+          { text: '"María, entiendo que esto es difícil. Están en el lugar correcto. ¿Puede contarme un poco más sobre su situación?"', correct: true, feedback: '✅ Perfecto. Validas su emoción, das seguridad y abres el espacio para escucharla.' },
+          { text: '"No se preocupe, casi todos los casos tienen solución. ¿Cuánto puede pagar?"', correct: false, feedback: '❌ Jamás hagas promesas sobre el caso ni preguntes por pago en este momento.' },
+        ],
+      },
+      {
+        client: '"Nunca he tenido problemas... bueno, tuve una multa de tráfico hace 5 años pero fue muy chiquita. ¿Eso importa?"',
+        question: '¿Cómo manejas esta revelación sobre antecedentes?',
+        choices: [
+          { text: '"Sí, eso es grave. Puede afectar todo el caso."', correct: false, feedback: '❌ No asustes sin tener toda la información. Una multa de tráfico generalmente no es grave.' },
+          { text: '"Gracias por compartirlo. Es importante que me cuentes todo, incluso lo que parece pequeño. ¿Recuerda si pagó la multa o si tuvo que ir a corte?"', correct: true, feedback: '✅ Excelente. Refuerzas la confianza, explicas por qué es importante y pides detalles sin alarmar.' },
+          { text: '"No se preocupe, eso no importa para nada."', correct: false, feedback: '❌ No minimices sin saber los detalles. Necesitas la información completa para evaluar.' },
+        ],
+      },
+    ],
+  },
+  dvs: {
+    title: 'Simulador: Análisis de Elegibilidad',
+    description: 'Determina si el cliente es elegible basándote en los datos presentados.',
+    steps: [
+      {
+        client: 'Cliente: Pedro, 34 años. Llegó con visa de turista en 2018, nunca overstayed. Lleva 6 años de matrimonio con ciudadana americana. Tiene 1 hijo ciudadano de 5 años.',
+        question: '¿Cuál es la ruta de elegibilidad más adecuada para Pedro?',
+        choices: [
+          { text: 'I-485 Ajuste de Estatus por matrimonio (IR-1)', correct: true, feedback: '✅ Correcto. Al ser esposo de ciudadana, es Immediate Relative, la ruta más directa y sin cuota de visas.' },
+          { text: 'I-130 solamente, debe esperar su turno en el extranjero.', correct: false, feedback: '❌ Puede hacer Ajuste de Estatus en USA ya que entró legalmente y no tiene infracciones.' },
+          { text: 'DACA, por llevar más de 5 años en el país.', correct: false, feedback: '❌ DACA es para personas que llegaron de niños y aplica solo para ciertas edades. No aplica aquí.' },
+        ],
+      },
+    ],
+  },
+  packets: {
+    title: 'Simulador: Revisión de Packet',
+    description: 'Identifica los errores en este packet antes de enviarlo.',
+    steps: [
+      {
+        client: 'Estás revisando un I-485. La lista incluye: I-485 firmada ✓, Foto ✓, I-94 ✓, Acta de nacimiento SIN traducción, I-130 aprobada ✓, Evidencia de relación ✓, Medical (I-693) con fecha de hace 3 años.',
+        question: '¿Cuáles son los errores críticos que debes corregir?',
+        choices: [
+          { text: 'Solo el acta de nacimiento sin traducir.', correct: false, feedback: '❌ Hay dos errores: el acta necesita traducción certificada Y el I-693 tiene más de 2 años y debe renovarse.' },
+          { text: 'El acta de nacimiento sin traducir Y el I-693 vencido (>2 años).', correct: true, feedback: '✅ Exactamente. Ambos son motivos de devolución automática. Excelente ojo clínico.' },
+          { text: 'El packet está bien, todos los documentos están presentes.', correct: false, feedback: '❌ Tener todos los documentos no es suficiente. La traducción y la vigencia del médico son requisitos.' },
+        ],
+      },
+    ],
+  },
+  rfe: {
+    title: 'Simulador: Respuesta a RFE',
+    description: 'USCIS solicita evidencia adicional. Elige la estrategia correcta.',
+    steps: [
+      {
+        client: 'RFE recibido: "No se ha demostrado suficientemente la bona fide del matrimonio. Por favor provea evidencia adicional de que el matrimonio no fue realizado para obtener beneficios migratorios." Plazo: 87 días.',
+        question: '¿Cuál es la estrategia más sólida para responder este RFE?',
+        choices: [
+          { text: 'Enviar más fotos de la boda y una carta del cónyuge.', correct: false, feedback: '❌ Insuficiente. USCIS ya vio fotos. Necesitas evidencia de vida en común, no solo de la boda.' },
+          { text: 'Compilar: estados de cuenta conjuntos, arrendamiento, pólizas de seguro, fotos en familia a lo largo del tiempo, declaraciones de impuestos y cartas de personas que conocen la relación.', correct: true, feedback: '✅ Perfecto. Esta evidencia demuestra vida en común sostenida, que es exactamente lo que USCIS quiere ver.' },
+          { text: 'Solicitar extensión de tiempo primero y después ver qué se consigue.', correct: false, feedback: '❌ No pierdas tiempo valioso. Tienes 87 días que es suficiente. La extensión raramente se concede.' },
+        ],
+      },
+    ],
+  },
+  quiz: {
+    title: 'Evaluación del Módulo',
+    description: 'Responde las siguientes preguntas para completar el módulo.',
+    steps: [
+      {
+        client: 'Pregunta de evaluación: ¿Cuál es el propósito principal del formulario I-485?',
+        question: 'Selecciona la respuesta correcta:',
+        choices: [
+          { text: 'Solicitar una visa de turista.', correct: false, feedback: '❌ Incorrecto. El I-485 es para ajuste de estatus a residente permanente.' },
+          { text: 'Ajustar el estatus migratorio a residente permanente legal dentro de EE.UU.', correct: true, feedback: '✅ Correcto. El I-485 (Application to Register Permanent Residence) es el formulario clave para el ajuste de estatus.' },
+          { text: 'Renovar el permiso de trabajo.', correct: false, feedback: '❌ Eso es el I-765 (EAD). El I-485 es para residencia permanente.' },
+        ],
+      },
+    ],
+  },
+};
+
+// ============================================================
+// RENDER SCHOOLS
+// ============================================================
+function renderSchools() {
+  const grid = document.getElementById('schools-grid');
+  grid.innerHTML = SCHOOLS.map(school => {
+    const pct = Math.round((school.earnedCredits / school.totalCredits) * 100);
+    const isLocked = school.locked;
+    const diffDots = [1,2,3,4,5].map(i =>
+      `<div class="diff-dot ${i <= school.difficulty ? 'filled' : ''}"></div>`
+    ).join('');
+    const lockHtml = isLocked ? `<div class="lock-overlay">🔒</div>` : '';
+    const reqText = isLocked && school.requires.length
+      ? `<div style="font-size:11px;color:#d32f2f;margin-top:6px;font-weight:600;">Requiere: ${school.requires.map(r => SCHOOLS.find(s=>s.id===r)?.name || r).join(' + ')}</div>`
+      : '';
+    return `
+    <div class="school-card ${isLocked?'locked-card':''}" onclick="${isLocked?`showLockedMsg('${school.id}')`:`openSchool('${school.id}')`}">
+      <div class="school-card-top" style="background:${school.color}">
+        ${lockHtml}
+        <div>
+          <div class="school-card-area">${school.area}</div>
+          <div class="school-card-name">${school.name}</div>
+        </div>
+        <div class="school-card-icon">${school.emoji}</div>
+      </div>
+      <div class="school-card-body">
+        <div class="school-card-desc">${school.desc}</div>
+        <div class="school-card-meta">
+          <div class="school-card-credits">${school.earnedCredits} / ${school.totalCredits} cr.</div>
+          <div class="school-card-diff">${diffDots}</div>
+        </div>
+        <div class="progress-bar-sm">
+          <div class="progress-bar-sm-fill" style="width:${pct}%"></div>
+        </div>
+        ${reqText}
+      </div>
+      <div class="school-card-footer">
+        <div class="school-progress-text"><strong>${pct}%</strong> completado · ${school.modules.length} módulos</div>
+        <button class="enter-btn ${isLocked?'locked-btn':''}">${isLocked?'🔒 Bloqueado':'Ir al área →'}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// OPEN SCHOOL DETAIL
+// ============================================================
+function openSchool(schoolId) {
+  const school = SCHOOLS.find(s => s.id === schoolId);
+  if (!school) return;
+  if (school.locked) { showLockedMsg(schoolId); return; }
+  state.activeArea = schoolId;
+
+  const completedCount = school.modules.filter(m => m.status === 'done').length;
+  const pct = Math.round((completedCount / school.modules.length) * 100);
+  const roadmapFillPct = Math.round((completedCount / school.modules.length) * 100);
+
+  // Status map
+  const statusIcon = { done: '✓', active: '▶', pending: '○', locked: '🔒' };
+  const statusClass = { done: 'done', active: 'active', pending: 'pending', locked: 'locked' };
+
+  let modulesHtml = school.modules.map((mod, i) => {
+    const dotCls = statusClass[mod.status];
+    const cardCls = `module-${mod.status}`;
+    const isLocked = mod.status === 'locked';
+    const levelColors = { Trainee:'badge-navy', Specialist:'badge-gold', Expert:'badge-green' };
+    const levelBadge = mod.level ? `<span class="badge ${levelColors[mod.level] || 'badge-gray'}">${mod.level}</span>` : '';
+    const tagsHtml = mod.tags.filter(t => !['Trainee','Specialist','Expert'].includes(t)).map(t => `<span class="badge badge-gold">${t}</span>`).join('');
+    const actionBtn = isLocked
+      ? `<span class="badge badge-gray">🔒 Bloqueado</span>`
+      : mod.status === 'done'
+        ? `<span class="badge badge-green">✓ Completado</span>`
+        : `<button class="enter-btn" style="font-size:11px;padding:5px 14px" onclick="completeModule('${school.id}','${mod.id}')">Iniciar →</button>`;
+    return `
+    <div class="module-row">
+      <div class="module-dot ${dotCls}">${mod.status === 'done' ? '✓' : mod.status === 'active' ? '▶' : mod.status === 'locked' ? '🔒' : ''}</div>
+      <div class="module-card ${cardCls} ${isLocked ? 'module-locked' : ''}">
+        <div class="module-header">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            ${levelBadge}
+            <div class="module-title">${mod.title}</div>
+          </div>
+          <div class="module-credits">+${mod.credits} cr.</div>
+        </div>
+        <div class="module-desc">${mod.desc}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <div class="module-tags">${tagsHtml}</div>
+          ${actionBtn}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Simulator
+  const simData = SIMULATORS[school.simulator.type] || SIMULATORS.quiz;
+  const simHtml = `
+  <div class="simulator-card">
+    <div class="simulator-header">
+      <div class="simulator-title">🧪 ${simData.title}</div>
+      <div class="simulator-badge">SIMULADOR INTERACTIVO</div>
+    </div>
+    <div class="simulator-body">
+      <p style="font-size:14px;color:var(--text-soft);margin-bottom:20px;">${simData.description}</p>
+      <div id="sim-content-${school.id}">
+        ${renderSimStep(school.id, 0)}
+      </div>
+    </div>
+  </div>`;
+
+  document.getElementById('school-detail-content').innerHTML = `
+    <div class="school-hero" style="background:${school.color}" data-emoji="${school.emoji}">
+      <div class="school-hero-label">${school.area}</div>
+      <div class="school-hero-name">${school.name}</div>
+      <div class="school-hero-desc">${school.desc}</div>
+      <div class="school-hero-stats">
+        <div class="school-hero-stat">
+          <div class="school-hero-stat-val">${school.earnedCredits}</div>
+          <div class="school-hero-stat-lbl">Créditos ganados</div>
+        </div>
+        <div class="school-hero-stat">
+          <div class="school-hero-stat-val">${school.totalCredits}</div>
+          <div class="school-hero-stat-lbl">Créditos totales</div>
+        </div>
+        <div class="school-hero-stat">
+          <div class="school-hero-stat-val">${completedCount}/${school.modules.length}</div>
+          <div class="school-hero-stat-lbl">Módulos</div>
+        </div>
+        <div class="school-hero-stat">
+          <div class="school-hero-stat-val">${pct}%</div>
+          <div class="school-hero-stat-lbl">Completado</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:32px;align-items:start;" class="detail-grid">
+      <div>
+        <div class="section-title" style="margin-bottom:6px;">Ruta de Aprendizaje</div>
+        <p class="section-sub">Completa cada módulo en orden para desbloquear el siguiente y avanzar hacia Specialist y Experto.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
+          <span class="badge badge-navy">● Trainee</span>
+          <span class="badge badge-gold">● Specialist</span>
+          <span class="badge badge-green">● Expert</span>
+        </div>
+        <div class="roadmap">
+          <div class="roadmap-line"><div class="roadmap-fill" style="height:${roadmapFillPct}%"></div></div>
+          ${modulesHtml}
+        </div>
+      </div>
+      <div style="position:sticky;top:80px;">
+        <div style="background:white;border-radius:var(--radius-lg);border:1px solid var(--beige-dark);padding:24px;margin-bottom:20px;">
+          <div class="p-card-title" style="margin-bottom:4px;">Tu Progreso</div>
+          <div class="p-card-sub">en ${school.name}</div>
+          <div style="margin:16px 0;">
+            <div class="progress-bar-sm" style="height:10px;">
+              <div class="progress-bar-sm-fill" style="width:${pct}%"></div>
+            </div>
+            <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-soft);margin-top:6px;">${pct}% · ${school.earnedCredits}/${school.totalCredits} créditos</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            ${school.modules.map(m => {
+              const colors = { done:'var(--gold)', active:'var(--navy)', pending:'var(--beige-dark)', locked:'var(--locked-bg)' };
+              return `<div style="width:28px;height:28px;border-radius:6px;background:${colors[m.status]};display:flex;align-items:center;justify-content:center;font-size:11px;color:${m.status==='active'?'var(--gold-light)':'white'};" title="${m.title}">${m.status==='done'?'✓':m.status==='active'?'▶':m.status==='locked'?'🔒':'○'}</div>`;
+            }).join('')}
+          </div>
+        </div>
+        <div style="background:linear-gradient(135deg,var(--navy),var(--navy-mid));border-radius:var(--radius-lg);padding:24px;color:white;">
+          <div style="font-family:var(--font-display);font-size:16px;font-weight:700;margin-bottom:8px;">💡 Consejo del día</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.6;">Cada módulo que completas te acerca más a tu siguiente nivel. ¡La constancia es la clave del éxito!</div>
+        </div>
+      </div>
+    </div>
+    ${simHtml}
+  `;
+
+  // Handle grid responsiveness
+  const grid = document.querySelector('.detail-grid');
+  if (grid && window.innerWidth < 900) {
+    grid.style.gridTemplateColumns = '1fr';
+  }
+
+  showSection('school');
+}
+
+// ============================================================
+// SIMULATOR
+// ============================================================
+function renderSimStep(schoolId, step) {
+  const school = SCHOOLS.find(s => s.id === schoolId);
+  const simData = SIMULATORS[school.simulator.type] || SIMULATORS.quiz;
+  if (step >= simData.steps.length) {
+    return `<div style="text-align:center;padding:32px;">
+      <div style="font-size:48px;margin-bottom:12px;">🎉</div>
+      <div style="font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--navy);margin-bottom:8px;">¡Simulador Completado!</div>
+      <div style="font-size:14px;color:var(--text-soft);">Has demostrado tus habilidades. ¡Sigue así!</div>
+      <button class="sim-next-btn" style="margin-top:16px" onclick="resetSim('${schoolId}')">Reiniciar Simulador 🔄</button>
+    </div>`;
+  }
+  const s = simData.steps[step];
+  const choicesHtml = s.choices.map((c,i) =>
+    `<button class="sim-choice-btn" onclick="selectChoice('${schoolId}',${step},${i})">${c.text}</button>`
+  ).join('');
+  return `
+  <div class="sim-chat">
+    <div class="sim-msg">
+      <div class="sim-avatar client">🧑</div>
+      <div>
+        <div class="sim-name">Cliente</div>
+        <div class="sim-bubble">${s.client}</div>
+      </div>
+    </div>
+    <div class="sim-msg" style="align-items:flex-start;gap:0;flex-direction:column;padding-left:48px;">
+      <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:10px;">🤔 ${s.question}</div>
+      <div class="sim-choices" id="choices-${schoolId}-${step}">${choicesHtml}</div>
+    </div>
+  </div>`;
+}
+
+function selectChoice(schoolId, step, choiceIdx) {
+  const school = SCHOOLS.find(s => s.id === schoolId);
+  const simData = SIMULATORS[school.simulator.type] || SIMULATORS.quiz;
+  const choice = simData.steps[step].choices[choiceIdx];
+  const choicesContainer = document.getElementById(`choices-${schoolId}-${step}`);
+  if (!choicesContainer) return;
+
+  // Disable all buttons
+  const btns = choicesContainer.querySelectorAll('.sim-choice-btn');
+  btns.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === choiceIdx) {
+      btn.classList.add(choice.correct ? 'correct' : 'incorrect');
+    }
+  });
+
+  // Feedback
+  const feedback = document.createElement('div');
+  feedback.className = `sim-feedback ${choice.correct ? 'good' : 'bad'}`;
+  feedback.textContent = choice.feedback;
+  choicesContainer.after(feedback);
+
+  if (choice.correct) {
+    showToast(`✅ ¡Correcto! +${Math.floor(Math.random()*10)+5} puntos`);
+  } else {
+    showToast('❌ Revisa la explicación e inténtalo de nuevo');
+  }
+
+  // Next button
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'sim-next-btn';
+  nextBtn.textContent = step + 1 < simData.steps.length ? 'Siguiente escenario →' : '¡Finalizar simulador! 🎉';
+  nextBtn.onclick = () => {
+    const container = document.getElementById(`sim-content-${schoolId}`);
+    if (container) {
+      container.innerHTML = renderSimStep(schoolId, step + 1);
+    }
+  };
+  feedback.after(nextBtn);
+}
+
+function resetSim(schoolId) {
+  const container = document.getElementById(`sim-content-${schoolId}`);
+  if (container) container.innerHTML = renderSimStep(schoolId, 0);
+}
+
+// ============================================================
+// COMPLETE MODULE
+// ============================================================
+function completeModule(schoolId, moduleId) {
+  const school = SCHOOLS.find(s => s.id === schoolId);
+  if (!school) return;
+  const mod = school.modules.find(m => m.id === moduleId);
+  if (!mod || mod.status !== 'active') return;
+
+  mod.status = 'done';
+  school.earnedCredits += mod.credits;
+  state.credits += mod.credits;
+  state.completedModules.push(moduleId);
+
+  // Unlock next module
+  const idx = school.modules.indexOf(mod);
+  if (idx + 1 < school.modules.length && school.modules[idx+1].status === 'locked') {
+    school.modules[idx+1].status = 'active';
+  }
+
+  // Check if school unlocks another school
+  SCHOOLS.forEach(s => {
+    if (s.locked && s.requires.every(req => {
+      const reqSchool = SCHOOLS.find(r => r.id === req);
+      return reqSchool && reqSchool.modules.every(m => m.status === 'done' || m.status === 'active');
+    })) {
+      s.locked = false;
+      s.modules.forEach(m => { if (m.status === 'locked') m.status = 'pending'; });
+      if (s.modules[0]) s.modules[0].status = 'active';
+      showToast(`🔓 ¡Nueva especialización desbloqueada: ${s.name}!`);
+    }
+  });
+
+  updateStats();
+  showToast(`⭐ +${mod.credits} créditos — Módulo "${mod.title}" completado!`);
+  openSchool(schoolId);
+}
+
+// ============================================================
+// PROGRESS SECTION
+// ============================================================
+function renderProgressSection() {
+  // Total credits
+  const total = SCHOOLS.reduce((a,s) => a + s.earnedCredits, 0);
+  document.getElementById('p-total-credits').textContent = total;
+
+  // Area progress
+  const list = document.getElementById('areas-progress-list');
+  const colors = ['#c9a84c','#2e7d5e','#1a3a5f','#4a7c3f','#9e3a5c','#2e7a9e','#9e6a38','#7b3a9e'];
+  list.innerHTML = SCHOOLS.map((s,i) => {
+    const pct = Math.round((s.earnedCredits / s.totalCredits) * 100);
+    return `
+    <div class="area-progress-row">
+      <div class="area-progress-label">${s.name}</div>
+      <div class="area-progress-bar">
+        <div class="area-progress-fill" style="width:${pct}%;background:${colors[i%colors.length]}"></div>
+      </div>
+      <div class="area-progress-pct">${pct}%</div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// LOCKED MESSAGE
+// ============================================================
+function showLockedMsg(schoolId) {
+  const school = SCHOOLS.find(s => s.id === schoolId);
+  if (!school) return;
+  const reqNames = school.requires.map(r => SCHOOLS.find(s=>s.id===r)?.name || r).join(' y ');
+  showToast(`🔒 Completa ${reqNames} primero para desbloquear ${school.name}`);
+}
+
+// ============================================================
+// STATS UPDATE
+// ============================================================
+function updateStats() {
+  const total = SCHOOLS.reduce((a,s) => a + s.earnedCredits, 0);
+  const completedMods = SCHOOLS.reduce((a,s) => a + s.modules.filter(m=>m.status==='done').length, 0);
+  const activeAreas = SCHOOLS.filter(s => s.earnedCredits > 0).length;
+
+  document.getElementById('stat-credits').textContent = total;
+  document.getElementById('stat-modules').textContent = completedMods;
+  document.getElementById('stat-areas').textContent = activeAreas;
+  document.getElementById('header-credits').textContent = `⭐ ${total} créditos`;
+  document.getElementById('p-total-credits').textContent = total;
+}
+
+// ============================================================
+// SECTION NAVIGATION
+// ============================================================
+function showSection(sectionId) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`section-${sectionId}`)?.classList.add('active');
+  document.querySelector(`.nav-btn[onclick*="${sectionId}"]`)?.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+  if (sectionId === 'progress') renderProgressSection();
+  if (sectionId === 'dashboard') renderSchools();
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg) {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => {
+    t.classList.add('fadeout');
+    setTimeout(() => t.remove(), 400);
+  }, 3200);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Hide loader after 2s
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('fade-out');
+    renderSchools();
+    renderProgressSection();
+  }, 2000);
+});
+</script>
+</body>
+</html>
