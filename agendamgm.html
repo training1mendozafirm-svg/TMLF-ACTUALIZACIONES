@@ -119,6 +119,12 @@ body{font-family:'DM Sans',sans-serif;background:#f5f4f0;min-height:100vh;}
 .lock-error{font-size:11px;color:#A32D2D;display:none;}
 .close-session-btn{font-size:11px;color:#888780;background:none;border:0.5px solid #D3D1C7;border-radius:20px;padding:4px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;}
 .close-session-btn:hover{background:#f5f4f0;}
+.day-toggle{display:flex;gap:0;margin:0 1.5rem 18px;border:0.5px solid #d0cec8;border-radius:8px;overflow:hidden;}
+.day-btn{flex:1;padding:8px 12px;font-size:11px;font-weight:500;cursor:pointer;border:none;background:#eeede8;color:#888780;transition:all 0.2s;font-family:'DM Sans',sans-serif;letter-spacing:0.02em;}
+.day-btn.active{background:#1e2a4a;color:#C9A84C;}
+.day-pane{display:none;}
+.day-pane.active{display:block;}
+
 </style>
 </head>
 <body>
@@ -127,6 +133,7 @@ body{font-family:'DM Sans',sans-serif;background:#f5f4f0;min-height:100vh;}
 <div class="view-toggle">
   <button class="view-btn active" id="btn-p" onclick="switchView('p')">Participantes</button>
   <button class="view-btn" id="btn-f" onclick="switchView('f')">Equipo training</button>
+  <button class="view-btn" id="btn-m" onclick="switchView('m')">Resumen del día</button>
 </div>
 
 <!-- ===== PARTICIPANTES ===== -->
@@ -140,6 +147,12 @@ body{font-family:'DM Sans',sans-serif;background:#f5f4f0;min-height:100vh;}
   </div>
   <div class="gold-line"></div>
 
+  <div class="day-toggle">
+    <button class="day-btn active" id="dbtn-1" onclick="switchDay(1)">Día 1 · 26 mar</button>
+    <button class="day-btn" id="dbtn-2" onclick="switchDay(2)">Día 2 · 27 mar</button>
+  </div>
+
+  <div class="day-pane active" id="dpane-1">
   <div class="meta-row">
     <div class="meta-item"><div class="meta-dot"></div><strong>Sala Rosario</strong></div>
     <div class="meta-item"><div class="meta-dot"></div><strong>Retransmisión en línea</strong></div>
@@ -171,6 +184,7 @@ body{font-family:'DM Sans',sans-serif;background:#f5f4f0;min-height:100vh;}
       </div>
     </div>
   </div>
+
 
   <div class="day-section" style="padding-top:0">
     <div class="day-header"><div class="day-badge badge-break">Receso · 12:00 – 12:30 pm</div><div class="day-line"></div></div>
@@ -225,6 +239,60 @@ body{font-family:'DM Sans',sans-serif;background:#f5f4f0;min-height:100vh;}
     </div>
   </div>
 
+
+  </div>
+
+  <div class="day-pane" id="dpane-2">
+    <div class="meta-row">
+      <div class="meta-item"><div class="meta-dot"></div><strong>Sala Rosario</strong></div>
+      <div class="meta-item"><div class="meta-dot"></div><strong>Retransmisión en línea</strong></div>
+    </div>
+    <div class="join-box">
+      <div class="join-icon">
+        <svg viewBox="0 0 16 16" fill="none" width="15" height="15"><rect x="2" y="4" width="12" height="8" rx="1.5" stroke="#185FA5" stroke-width="1.2"/><path d="M11 8l3-2v4l-3-2z" stroke="#185FA5" stroke-width="1.2" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <div class="join-label">Unirse a la sesión en línea</div>
+        <span class="join-placeholder">Link por confirmar</span>
+      </div>
+    </div>
+    <div class="day-section">
+      <div class="day-header"><div class="day-badge badge-morning">Agenda · 27 marzo · Por definir</div><div class="day-line"></div></div>
+      <div class="module-card">
+        <div class="mod-top">
+          <div class="mod-bar bar-blue"></div>
+          <div class="mod-num">01</div>
+          <div class="mod-name">Módulo por definir</div>
+          <span class="mod-time mt-gray">Por definir</span>
+        </div>
+        <div class="activity-list">
+          <div class="act-item"><div class="act-bullet" style="background:#B4B2A9"></div><div class="act-name" style="color:#888780">Contenido por confirmar</div><span class="act-time at-gray">—</span></div>
+        </div>
+      </div>
+      <div class="module-card">
+        <div class="mod-top">
+          <div class="mod-bar bar-green"></div>
+          <div class="mod-num">02</div>
+          <div class="mod-name">Módulo por definir</div>
+          <span class="mod-time mt-gray">Por definir</span>
+        </div>
+        <div class="activity-list">
+          <div class="act-item"><div class="act-bullet" style="background:#B4B2A9"></div><div class="act-name" style="color:#888780">Contenido por confirmar</div><span class="act-time at-gray">—</span></div>
+        </div>
+      </div>
+      <div class="module-card">
+        <div class="mod-top">
+          <div class="mod-bar bar-amber"></div>
+          <div class="mod-num">03</div>
+          <div class="mod-name">Módulo por definir</div>
+          <span class="mod-time mt-gray">Por definir</span>
+        </div>
+        <div class="activity-list">
+          <div class="act-item"><div class="act-bullet" style="background:#B4B2A9"></div><div class="act-name" style="color:#888780">Contenido por confirmar</div><span class="act-time at-gray">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="footer-txt">Training · MGM · Marzo 2026 · The Mendoza Law Firm</div>
 </div>
 
@@ -395,7 +463,140 @@ body{font-family:'DM Sans',sans-serif;background:#f5f4f0;min-height:100vh;}
 
     <div class="footer-txt">Equipo training · MGM · Marzo 2026 · The Mendoza Law Firm</div>
   </div>
+
 </div>
+<!-- ===== RESUMEN DEL DÍA ===== -->
+<div class="view-panel" id="panel-m">
+  <div class="firm-header">
+    <img class="firm-logo" src="data:image/png;base64,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" style="width:72px;height:72px;object-fit:contain;border-radius:4px;"/>
+    <div>
+      <div class="firm-name">The Mendoza Law Firm</div>
+      <div class="firm-sub">Resumen del día · MGM · Marzo 2026</div>
+    </div>
+  </div>
+  <div class="gold-line"></div>
+
+  <div class="day-section">
+    <div class="day-header">
+      <div class="day-badge badge-morning">Resumen del día · MGM</div>
+      <div class="day-line"></div>
+    </div>
+
+    <div class="module-card">
+      <div class="mod-top">
+        <div class="mod-bar bar-blue"></div>
+        <div class="mod-num" style="font-size:10px;color:#378ADD;font-weight:600;">L1</div>
+        <div class="mod-name">Llamada 1 · Visa T · Psicología</div>
+        <span class="mod-time mt-blue">8:30 am</span>
+      </div>
+      <div style="padding:0 12px 14px 12px;display:flex;flex-direction:column;gap:8px;border-top:0.5px solid #eeede8;">
+        <div style="margin-top:10px;background:#E6F1FB;border-radius:8px;padding:9px 12px;">
+          <div style="font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#0C447C;margin-bottom:4px;">Contexto</div>
+          <div style="font-size:12px;color:#1a3a5c;line-height:1.5;">Resistencia inicial ante temas sensibles. Bloqueo emocional detectado — requiere profundización progresiva.</div>
+        </div>
+        <div style="background:#EEEDFE;border-radius:8px;padding:9px 12px;">
+          <div style="font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#3C3489;margin-bottom:6px;">Hallazgos clave</div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#7F77DD;margin-top:5px;flex-shrink:0;"></div><span style="font-size:12px;color:#2C2C2A;line-height:1.5;"><strong>Difamación:</strong> patrón amenazó con hablar mal con otros empleadores → cliente no veía salida laboral.</span></div>
+            <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#7F77DD;margin-top:5px;flex-shrink:0;"></div><span style="font-size:12px;color:#2C2C2A;line-height:1.5;"><strong>Secuela física:</strong> accidente con dolor de espalda crónico hasta hoy → evidencia médica potencial.</span></div>
+            <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#7F77DD;margin-top:5px;flex-shrink:0;"></div><span style="font-size:12px;color:#2C2C2A;line-height:1.5;"><strong>Control económico:</strong> deudas y salario usados como retención.</span></div>
+            <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#7F77DD;margin-top:5px;flex-shrink:0;"></div><span style="font-size:12px;color:#2C2C2A;line-height:1.5;"><strong>Amenaza migra:</strong> elemento coercitivo adicional confirmado.</span></div>
+          </div>
+        </div>
+        <div style="background:#EAF3DE;border-radius:8px;padding:9px 12px;">
+          <div style="font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#27500A;margin-bottom:6px;">Preguntas de profundización</div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#639922;margin-top:5px;flex-shrink:0;"></div><span style="font-size:12px;color:#2C2C2A;line-height:1.5;">"¿Cuántas veces al día pensaste que él podía hablar mal de ti?"</span></div>
+            <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#639922;margin-top:5px;flex-shrink:0;"></div><span style="font-size:12px;color:#2C2C2A;line-height:1.5;">"¿Tenías dificultades para hablar de lo que pasaba?"</span></div>
+            <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#639922;margin-top:5px;flex-shrink:0;"></div><span style="font-size:12px;color:#2C2C2A;line-height:1.5;">"¿Cuál es la razón por la que te quedaste?" → retención por miedo, no por voluntad.</span></div>
+            <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#639922;margin-top:5px;flex-shrink:0;"></div><span style="font-size:12px;color:#2C2C2A;line-height:1.5;">Contextualizar ciudad/mercado → ausencia de alternativas reales.</span></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <div style="flex:1;background:#FAEEDA;border-radius:8px;padding:9px 12px;">
+            <div style="font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#633806;margin-bottom:6px;">Áreas de mejora</div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#EF9F27;margin-top:5px;flex-shrink:0;"></div><span style="font-size:11px;color:#2C2C2A;line-height:1.4;">Avanzar más rápido al núcleo coercitivo.</span></div>
+              <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#EF9F27;margin-top:5px;flex-shrink:0;"></div><span style="font-size:11px;color:#2C2C2A;line-height:1.4;">Documentar contexto geográfico/laboral.</span></div>
+              <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#EF9F27;margin-top:5px;flex-shrink:0;"></div><span style="font-size:11px;color:#2C2C2A;line-height:1.4;">Conectar violencia observada con miedo personal.</span></div>
+            </div>
+          </div>
+          <div style="flex:1;background:#f0f7e8;border-radius:8px;padding:9px 12px;">
+            <div style="font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#27500A;margin-bottom:6px;">Acciones</div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#639922;margin-top:5px;flex-shrink:0;"></div><span style="font-size:11px;color:#2C2C2A;line-height:1.4;">Solicitar expediente médico del accidente.</span></div>
+              <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#639922;margin-top:5px;flex-shrink:0;"></div><span style="font-size:11px;color:#2C2C2A;line-height:1.4;">Preguntas cuantitativas sobre difamación.</span></div>
+              <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#639922;margin-top:5px;flex-shrink:0;"></div><span style="font-size:11px;color:#2C2C2A;line-height:1.4;">Reforzar narrativa de aislamiento laboral.</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="background:#1e2a4a;border-radius:8px;padding:9px 12px;">
+          <div style="font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#C9A84C;margin-bottom:4px;">Impacto en operación</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.85);line-height:1.5;">Alto valor probatorio. Triángulo coercitivo: difamación + control económico + impacto físico. Prioridad: evidencia médica y cuantificar el miedo.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="mod-top">
+        <div class="mod-bar bar-blue"></div>
+        <div class="mod-num" style="font-size:10px;color:#378ADD;font-weight:600;">L2</div>
+        <div class="mod-name">Llamada 2 · Visa T · Psicología</div>
+        <span class="mod-time mt-blue">12:00 pm</span>
+      </div>
+      <div style="padding:0 12px 14px 12px;display:flex;flex-direction:column;gap:8px;border-top:0.5px solid #eeede8;">
+        <div style="margin-top:10px;background:#E6F1FB;border-radius:8px;padding:9px 12px;">
+          <div style="font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#0C447C;margin-bottom:4px;">Contexto</div>
+          <div style="font-size:12px;color:#1a3a5c;line-height:1.5;">Enfoque en impacto psicológico, emocional y social post-trata. Secuelas activas, afectación familiar y capacidad funcional actual.</div>
+        </div>
+        <div style="background:#EEEDFE;border-radius:8px;padding:9px 12px;">
+          <div style="font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#3C3489;margin-bottom:6px;">Hallazgos clave</div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#7F77DD;margin-top:5px;flex-shrink:0;"></div><span style="font-size:12px;color:#2C2C2A;line-height:1.5;"><strong>Secuelas activas:</strong> físicas y psicológicas confirmadas.</span></div>
+            <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#7F77DD;margin-top:5px;flex-shrink:0;"></div><span style="font-size:12px;color:#2C2C2A;line-height:1.5;"><strong>Pesadillas recurrentes:</strong> posible PTSD → daño psicológico continuo.</span></div>
+            <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#7F77DD;margin-top:5px;flex-shrink:0;"></div><span style="font-size:12px;color:#2C2C2A;line-height:1.5;"><strong>Impacto relacional:</strong> falta de confianza, afectación con esposo actual.</span></div>
+            <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#7F77DD;margin-top:5px;flex-shrink:0;"></div><span style="font-size:12px;color:#2C2C2A;line-height:1.5;"><strong>Impacto familiar:</strong> dificultades proyectadas para la hija + problemas económicos presentes.</span></div>
+          </div>
+        </div>
+        <div style="background:#EAF3DE;border-radius:8px;padding:9px 12px;">
+          <div style="font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#27500A;margin-bottom:6px;">Preguntas de profundización</div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#639922;margin-top:5px;flex-shrink:0;"></div><span style="font-size:12px;color:#2C2C2A;line-height:1.5;">"Del 1 al 10, ¿qué tanto se siente afectada?" → cuantificar severidad para declaración.</span></div>
+            <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#639922;margin-top:5px;flex-shrink:0;"></div><span style="font-size:12px;color:#2C2C2A;line-height:1.5;">"¿Todavía tiene pesadillas?" → continuidad del daño psicológico.</span></div>
+            <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#639922;margin-top:5px;flex-shrink:0;"></div><span style="font-size:12px;color:#2C2C2A;line-height:1.5;">"¿Qué dificultades sufriría su hija?" → ampliar impacto al núcleo familiar.</span></div>
+            <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#639922;margin-top:5px;flex-shrink:0;"></div><span style="font-size:12px;color:#2C2C2A;line-height:1.5;">"¿Está en terapia?" → tratamiento activo como evidencia de daño real.</span></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <div style="flex:1;background:#FAEEDA;border-radius:8px;padding:9px 12px;">
+            <div style="font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#633806;margin-bottom:6px;">Áreas de mejora</div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#EF9F27;margin-top:5px;flex-shrink:0;"></div><span style="font-size:11px;color:#2C2C2A;line-height:1.4;">Profundizar afectación a la hija con ejemplos.</span></div>
+              <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#EF9F27;margin-top:5px;flex-shrink:0;"></div><span style="font-size:11px;color:#2C2C2A;line-height:1.4;">Explorar si la desconfianza genera aislamiento social.</span></div>
+              <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#EF9F27;margin-top:5px;flex-shrink:0;"></div><span style="font-size:11px;color:#2C2C2A;line-height:1.4;">Vincular problemas económicos a pérdida laboral post-trata.</span></div>
+            </div>
+          </div>
+          <div style="flex:1;background:#f0f7e8;border-radius:8px;padding:9px 12px;">
+            <div style="font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#27500A;margin-bottom:6px;">Acciones</div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#639922;margin-top:5px;flex-shrink:0;"></div><span style="font-size:11px;color:#2C2C2A;line-height:1.4;">Carta de terapeuta como evidencia psicológica.</span></div>
+              <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#639922;margin-top:5px;flex-shrink:0;"></div><span style="font-size:11px;color:#2C2C2A;line-height:1.4;">Escala 1-10: salud, relaciones, economía, sueño.</span></div>
+              <div style="display:flex;gap:7px;align-items:flex-start;"><div style="width:5px;height:5px;border-radius:50%;background:#639922;margin-top:5px;flex-shrink:0;"></div><span style="font-size:11px;color:#2C2C2A;line-height:1.4;">Narrativa del impacto en la hija para declaración.</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="background:#1e2a4a;border-radius:8px;padding:9px 12px;">
+          <div style="font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#C9A84C;margin-bottom:4px;">Impacto en operación</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.85);line-height:1.5;">Alto valor para "necesidad de servicios" Visa T. Daño multidimensional: físico, psicológico, familiar y económico. Próximo paso: evidencia terapéutica + escala de impacto cuantificada.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-txt">Resumen del día · MGM · Marzo 2026 · The Mendoza Law Firm</div>
+</div>
+
 
 </div>
 
@@ -403,11 +604,18 @@ body{font-family:'DM Sans',sans-serif;background:#f5f4f0;min-height:100vh;}
 const PW = 'tra2';
 const fStates = {psych:0,cs:0,ai:0,mand:0};
 
+function switchDay(n){
+  [1,2].forEach(i=>{
+    document.getElementById('dpane-'+i).classList.toggle('active',i===n);
+    document.getElementById('dbtn-'+i).classList.toggle('active',i===n);
+  });
+}
+
 function switchView(v){
-  document.getElementById('panel-p').classList.toggle('active',v==='p');
-  document.getElementById('panel-f').classList.toggle('active',v==='f');
-  document.getElementById('btn-p').classList.toggle('active',v==='p');
-  document.getElementById('btn-f').classList.toggle('active',v==='f');
+  ['p','f','m'].forEach(id=>{
+    document.getElementById('panel-'+id).classList.toggle('active',v===id);
+    document.getElementById('btn-'+id).classList.toggle('active',v===id);
+  });
 }
 
 function checkPw(){
