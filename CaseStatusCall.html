@@ -679,6 +679,78 @@
   }
   .guide-footer strong { color: var(--navy); }
 
+  /* ── RECEIPT PANEL ── */
+  .receipt-panel-title {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--gold);
+  }
+  .receipt-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    overflow: hidden;
+    margin-bottom: 0.8rem;
+  }
+  .receipt-card-header {
+    background: var(--navy);
+    padding: 0.55rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .receipt-badge {
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .receipt-date {
+    font-size: 0.66rem;
+    color: rgba(255,255,255,0.5);
+  }
+  .receipt-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    padding: 0.3rem 0;
+  }
+  @media(max-width:500px){ .receipt-grid { grid-template-columns: 1fr; } }
+  .receipt-field {
+    padding: 0.45rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .receipt-field:nth-last-child(-n+2) { border-bottom: none; }
+  .receipt-field-label {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--gray);
+    font-weight: 700;
+    margin-bottom: 0.15rem;
+  }
+  .receipt-field-val {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .receipt-green { color: var(--green) !important; }
+  .receipt-footer {
+    background: var(--blue-lt);
+    padding: 0.4rem 1rem;
+    font-size: 0.68rem;
+    color: var(--gray);
+    border-top: 1px solid var(--border);
+  }
+
   /* ── LINK BUTTONS ── */
   .link-btns {
     display: flex;
@@ -829,9 +901,6 @@
         </select>
       </div>
     </div>
-    <button class="calc-btn" onclick="calculate()">
-      📊 Calcular Avance del Caso
-    </button>
   </div>
 
   <!-- ════ CLIENT BIG DISPLAY (visible in client mode) ════ -->
@@ -865,14 +934,156 @@
         <div class="step-content">
           <div class="step-title">Mostrar Recibos (Receipts)</div>
           <div class="step-desc">
-            Comparte en pantalla o describe el Receipt Notice del cliente. Confirma nombre, número de caso y fecha.
+            Confirma el Receipt Notice del cliente — número de caso, nombre y fecha de recibo.
             <div class="link-btns">
-              <a href="https://egov.uscis.gov/" target="_blank" class="link-btn secondary" onclick="markDone(event,1)">
-                <span class="link-btn-icon">🔍</span> Buscar Receipt en eGov
+              <a class="link-btn secondary" onclick="toggleReceipt(event)">
+                <span class="link-btn-icon">📄</span> Ver Receipts del Caso
+              </a>
+              <a href="https://egov.uscis.gov/" target="_blank" class="link-btn primary" onclick="markDone(event,1)">
+                <span class="link-btn-icon">🔍</span> Buscar en eGov
               </a>
             </div>
             <span class="step-tag">Pantalla Compartida</span><span class="step-tag">Receipt Notice</span>
           </div>
+
+          <!-- RECEIPT PANEL -->
+          <div id="receiptPanel" style="display:none;margin-top:1rem;">
+            <div class="receipt-panel-title">📋 Form I-797C · Notice of Action — Receipts del Caso</div>
+
+            <!-- Receipt 1 -->
+            <div class="receipt-card">
+              <div class="receipt-card-header">
+                <span class="receipt-badge">Receipt #1 · Account Access Notice</span>
+                <span class="receipt-date">Notice Date: July 29, 2025</span>
+              </div>
+              <div class="receipt-grid">
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Receipt Number</div>
+                  <div class="receipt-field-val">IOE0933173548</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Case Type</div>
+                  <div class="receipt-field-val">I-130 · Petition for Alien Relative</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Received Date</div>
+                  <div class="receipt-field-val">July 25, 2025</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Priority Date</div>
+                  <div class="receipt-field-val">July 25, 2025</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Applicant (Petitioner)</div>
+                  <div class="receipt-field-val">CABUTO CEDANO, WENCESLAO</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">USCIS Alien Number</div>
+                  <div class="receipt-field-val">A090 996 366</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Notice Type</div>
+                  <div class="receipt-field-val">USCIS Account Access Notice</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">USCIS Online Account #</div>
+                  <div class="receipt-field-val">098961759363</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Receipt 2 -->
+            <div class="receipt-card">
+              <div class="receipt-card-header">
+                <span class="receipt-badge">Receipt #2 · Attorney Copy</span>
+                <span class="receipt-date">Notice Date: July 29, 2025</span>
+              </div>
+              <div class="receipt-grid">
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Receipt Number</div>
+                  <div class="receipt-field-val">IOE0933173548</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Case Type</div>
+                  <div class="receipt-field-val">I-130 · Petition for Alien Relative</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Received Date</div>
+                  <div class="receipt-field-val">July 25, 2025</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Priority Date</div>
+                  <div class="receipt-field-val">July 25, 2025</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Petitioner</div>
+                  <div class="receipt-field-val">WENCESLAO CABUTO CEDANO</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Beneficiary</div>
+                  <div class="receipt-field-val">GONZALEZ AVILA, DALIA · DOB 2/5/1974 · Mexico</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Preference Classification</div>
+                  <div class="receipt-field-val">201 B INA Spouse of USC</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Application Fee Paid</div>
+                  <div class="receipt-field-val receipt-green">$675.00 · Balance Due: $0.00</div>
+                </div>
+              </div>
+              <div class="receipt-footer">
+                USCIS Nebraska Service Center · P.O. Box 82521 · Lincoln, NE 68501-2521 · (800) 375-5283
+              </div>
+            </div>
+
+            <!-- Receipt 3 -->
+            <div class="receipt-card">
+              <div class="receipt-card-header">
+                <span class="receipt-badge">Receipt #3 · Applicant Copy</span>
+                <span class="receipt-date">Notice Date: July 29, 2025</span>
+              </div>
+              <div class="receipt-grid">
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Receipt Number</div>
+                  <div class="receipt-field-val">IOE0933173548</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Case Type</div>
+                  <div class="receipt-field-val">I-130 · Petition for Alien Relative</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Received Date</div>
+                  <div class="receipt-field-val">July 25, 2025</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Priority Date</div>
+                  <div class="receipt-field-val">July 25, 2025</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Petitioner</div>
+                  <div class="receipt-field-val">WENCESLAO CABUTO CEDANO</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Beneficiary</div>
+                  <div class="receipt-field-val">GONZALEZ AVILA, DALIA · DOB 2/5/1974 · Mexico</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Preference Classification</div>
+                  <div class="receipt-field-val">201 B INA Spouse of USC</div>
+                </div>
+                <div class="receipt-field">
+                  <div class="receipt-field-label">Application Fee Paid</div>
+                  <div class="receipt-field-val receipt-green">$675.00 · Balance Due: $0.00</div>
+                </div>
+              </div>
+              <div class="receipt-footer">
+                USCIS Nebraska Service Center · P.O. Box 82521 · Lincoln, NE 68501-2521 · (800) 375-5283
+              </div>
+            </div>
+
+          </div><!-- end receiptPanel -->
+
         </div>
       </div>
 
@@ -929,9 +1140,14 @@
     <!-- ════ PROGRESS PANEL (inline between step 4 and 5) ════ -->
     <div class="progress-panel animate-in" id="progressPanel" style="margin-bottom:0.75rem;">
 
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.6rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.8rem;">
         <p class="section-title" style="margin-bottom:0;">Línea de Tiempo del Caso</p>
-        <span id="progressPlaceholder" style="font-size:0.76rem;color:var(--gray);font-style:italic;">Ingresa los datos arriba y presiona "Calcular" para ver el avance</span>
+        <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;">
+          <span id="progressPlaceholder" style="font-size:0.74rem;color:var(--gray);font-style:italic;">Ingresa los datos arriba y presiona "Calcular" para ver el avance</span>
+          <button class="calc-btn" onclick="calculate()" style="margin:0;padding:0.55rem 1.3rem;font-size:0.72rem;">
+            📊 Calcular Avance
+          </button>
+        </div>
       </div>
 
       <!-- Stats -->
@@ -1232,6 +1448,20 @@
     } else {
       cbdStatus.className = 'cbd-status rojo';
       cbdStatus.textContent = '🔴 Por encima del tiempo promedio';
+    }
+  }
+
+  function toggleReceipt(event) {
+    event.stopPropagation();
+    const panel = document.getElementById('receiptPanel');
+    const btn = event.currentTarget;
+    if (panel.style.display === 'none') {
+      panel.style.display = 'block';
+      panel.style.animation = 'fadeSlideIn 0.3s ease forwards';
+      btn.innerHTML = '<span class="link-btn-icon">📄</span> Ocultar Receipts';
+    } else {
+      panel.style.display = 'none';
+      btn.innerHTML = '<span class="link-btn-icon">📄</span> Ver Receipts del Caso';
     }
   }
 
