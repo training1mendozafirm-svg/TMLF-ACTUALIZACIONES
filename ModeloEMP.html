@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Human Trafficking Analysis Form</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap');
+
+  :root {
+    --red: #C0392B;
+    --red-light: #E8524A;
+    --red-pale: #FDF2F1;
+    --dark: #1A1A2E;
+    --mid: #3D3D5C;
+    --gray: #6B7280;
+    --light: #F5F6FA;
+    --white: #FFFFFF;
+    --border: #E2E8F0;
+    --green: #16A34A;
+    --amber: #D97706;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--light);
+    color: var(--dark);
+    min-height: 100vh;
+  }
+
+  .nav {
+    background: var(--dark);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .nav-brand {
+    font-family: 'DM Serif Display', serif;
+    color: var(--white);
+    font-size: 1.1rem;
+  }
+  .nav-brand span { color: var(--red-light); }
+  .tab-switcher {
+    display: flex;
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 4px;
+    gap: 4px;
+  }
+  .tab-btn {
+    padding: 6px 20px;
+    border: none;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: transparent;
+    color: rgba(255,255,255,0.5);
+  }
+  .tab-btn.active {
+    background: var(--red);
+    color: white;
+    box-shadow: 0 2px 8px rgba(192,57,43,0.4);
+  }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  .form-wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 4rem;
+  }
+
+  .form-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border);
+  }
+  .form-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    color: var(--dark);
+    margin-bottom: 0.4rem;
+  }
+  .form-header p { color: var(--gray); font-size: 0.9rem; }
+
+  .collab-meta {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .meta-field label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gray);
+    margin-bottom: 0.4rem;
+  }
+  .meta-field input {
+    width: 100%;
+    padding: 0.6rem 0.9rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+    background: var(--light);
+  }
+  .meta-field input:focus {
+    outline: none;
+    border-color: var(--red);
+    background: white;
+  }
+
+  .three-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .col-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .col-header {
+    padding: 0.9rem 1.2rem;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: center;
+  }
+  .col-header.ends { background: var(--red); color: white; }
+  .col-header.means { background: var(--dark); color: white; }
+  .col-header.process { background: var(--mid); color: white; }
+
+  .col-body { padding: 1.2rem; display: flex; flex-direction: column; gap: 1rem; }
+
+  .q-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--mid);
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+  }
+  .q-num { color: var(--red); font-weight: 800; margin-right: 0.2rem; }
+
+  .start-here-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0.5rem 0;
+    height: 80px;
+  }
+  .start-circle {
+    width: 80px;
+    height: 80px;
+    border: 4px dashed var(--red-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.75rem;
+    color: var(--red);
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  textarea.q-input {
+    width: 100%;
+    min-height: 80px;
+    padding: 0.65rem 0.8rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    resize: vertical;
+    transition: border-color 0.2s;
+    background: var(--light);
+    line-height: 1.5;
+  }
+  textarea.q-input:focus {
+    outline: none;
+    border-color: var(--red);
+    background: white;
+  }
+
+  .checkbox-group { display: flex; flex-direction: column; gap: 0.5rem; }
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.45rem 0.7rem;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--light);
+    font-size: 0.82rem;
+    font-weight: 500;
+  }
+  .check-item:hover { border-color: var(--red-light); background: var(--red-pale); }
+  .check-item input[type="checkbox"] { accent-color: var(--red); width: 15px; height: 15px; cursor: pointer; }
+
+  .summary-card {
+    background: white;
+    border: 2px dashed var(--dark);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .summary-card h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: var(--dark);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .summary-card h3 span { color: var(--red); }
+
+  .summary-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+    flex-wrap: wrap;
+  }
+  .summary-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--gray);
+    white-space: nowrap;
+  }
+  .summary-fill {
+    flex: 1;
+    min-width: 120px;
+    border: none;
+    border-bottom: 1.5px solid var(--border);
+    padding: 0.2rem 0.4rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    background: transparent;
+    transition: border-color 0.2s;
+  }
+  .summary-fill:focus { outline: none; border-bottom-color: var(--red); }
+
+  .submit-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+  }
+  .submit-info { font-size: 0.85rem; color: var(--gray); }
+  .btn-submit {
+    background: var(--red);
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-submit:hover { background: var(--red-light); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(192,57,43,0.3); }
+
+  .success-msg {
+    display: none;
+    background: #ECFDF5;
+    border: 1.5px solid #6EE7B7;
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    color: var(--green);
+    font-weight: 600;
+    margin-top: 1rem;
+    text-align: center;
+  }
+
+  .admin-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 2rem 4rem;
+  }
+  .admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border);
+  }
+  .admin-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+  }
+  .admin-header p { color: var(--gray); font-size: 0.85rem; margin-top: 0.2rem; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    text-align: center;
+  }
+  .stat-number { font-size: 2rem; font-weight: 700; color: var(--red); font-family: 'DM Serif Display', serif; }
+  .stat-label { font-size: 0.78rem; color: var(--gray); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.2rem; }
+
+  .responses-grid { display: flex; flex-direction: column; gap: 1.2rem; }
+
+  .response-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .response-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+
+  .response-header {
+    padding: 1rem 1.5rem;
+    background: var(--light);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+  }
+  .response-id {
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+  .badge {
+    background: var(--red);
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-weight: 700;
+  }
+  .badge-amber { background: var(--amber); }
+  .response-meta { font-size: 0.78rem; color: var(--gray); }
+  .chevron { font-size: 0.8rem; color: var(--gray); transition: transform 0.2s; display: inline-block; }
+  .chevron.open { transform: rotate(180deg); }
+
+  .response-body {
+    display: none;
+    padding: 1.5rem;
+  }
+  .response-body.open { display: block; }
+
+  .r-three-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+  .r-col-card {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .r-col-head {
+    padding: 0.5rem 1rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: center;
+  }
+  .r-col-head.ends { background: var(--red); color: white; }
+  .r-col-head.means { background: var(--dark); color: white; }
+  .r-col-head.process { background: var(--mid); color: white; }
+  .r-col-body { padding: 1rem; display: flex; flex-direction: column; gap: 0.8rem; }
+  .r-q-label { font-weight: 600; color: var(--gray); margin-bottom: 0.25rem; font-size: 0.72rem; }
+  .r-q-val {
+    background: var(--light);
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    color: var(--dark);
+    line-height: 1.4;
+    min-height: 30px;
+  }
+  .r-q-val.empty { color: var(--gray); font-style: italic; }
+  .tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .tag {
+    background: var(--red-pale);
+    color: var(--red);
+    border: 1px solid #F5C6C3;
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-weight: 600;
+  }
+
+  .r-summary-block {
+    background: var(--light);
+    border: 1.5px dashed var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+  }
+  .r-summary-title { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray); margin-bottom: 0.5rem; }
+  .r-summary-text { font-size: 0.88rem; line-height: 1.6; color: var(--dark); }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--gray);
+  }
+  .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
+  .empty-state h3 { font-size: 1.1rem; margin-bottom: 0.4rem; color: var(--mid); }
+
+  .btn-clear {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--gray);
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-clear:hover { border-color: var(--red); color: var(--red); }
+
+  /* ===== COMMENTS SECTION ===== */
+  .comments-card {
+    background: var(--white);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    margin-top: 1.5rem;
+    border-top: 3px solid #7C3AED;
+  }
+  .comments-header {
+    background: linear-gradient(135deg, #1e1b4b 0%, #3730a3 100%);
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .comments-header .icon-badge {
+    background: rgba(255,255,255,0.15);
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+  }
+  .comments-header h3 {
+    font-family: 'DM Serif Display', serif;
+    color: white;
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+  }
+  .comments-header p {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.75rem;
+    margin-top: 1px;
+  }
+  .comments-body { padding: 1.5rem; }
+  .comments-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+  @media (max-width: 700px) { .comments-grid { grid-template-columns: 1fr; } }
+  .comment-field label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gray);
+    margin-bottom: 0.5rem;
+  }
+  .comment-field label .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-purple { background: #7C3AED; }
+  .dot-amber { background: #D97706; }
+  .dot-blue { background: #2563EB; }
+  .dot-red { background: var(--red); }
+  .comment-field textarea {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 9px;
+    padding: 0.75rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    color: var(--dark);
+    resize: vertical;
+    min-height: 90px;
+    background: var(--light);
+    transition: border-color 0.2s, background 0.2s;
+    outline: none;
+    line-height: 1.5;
+  }
+  .comment-field textarea:focus {
+    border-color: #7C3AED;
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.08);
+  }
+  .comment-field.full-width { grid-column: 1 / -1; }
+  .priority-selector {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+  }
+  .priority-selector label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gray);
+    width: 100%;
+    margin-bottom: 0.4rem;
+  }
+  .priority-btn {
+    border: 1.5px solid var(--border);
+    background: var(--light);
+    color: var(--gray);
+    padding: 0.35rem 0.9rem;
+    border-radius: 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .priority-btn:hover { border-color: #7C3AED; color: #7C3AED; }
+  .priority-btn.selected-low { background: #ECFDF5; border-color: #16A34A; color: #16A34A; }
+  .priority-btn.selected-mid { background: #FFFBEB; border-color: #D97706; color: #D97706; }
+  .priority-btn.selected-high { background: #FEF2F2; border-color: var(--red); color: var(--red); }
+  .priority-btn.selected-info { background: #EFF6FF; border-color: #2563EB; color: #2563EB; }
+
+  /* Admin comments display */
+  .r-comments-block {
+    margin-top: 1rem;
+    border: 1.5px solid #e0d9f7;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .r-comments-head {
+    background: linear-gradient(135deg, #1e1b4b 0%, #3730a3 100%);
+    padding: 0.6rem 1rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.85);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .r-comments-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    background: var(--white);
+  }
+  .r-comment-cell {
+    padding: 0.875rem 1rem;
+    border-right: 1px solid #e0d9f7;
+    border-bottom: 1px solid #e0d9f7;
+  }
+  .r-comment-cell:nth-child(even) { border-right: none; }
+  .r-comment-cell.full { grid-column: 1/-1; border-right: none; }
+  .r-comment-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #7C3AED;
+    margin-bottom: 0.35rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .r-comment-val {
+    font-size: 0.84rem;
+    color: var(--dark);
+    line-height: 1.5;
+  }
+  .r-comment-val.empty { color: var(--gray); font-style: italic; }
+  .priority-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .chip-low { background: #ECFDF5; color: #16A34A; }
+  .chip-mid { background: #FFFBEB; color: #D97706; }
+  .chip-high { background: #FEF2F2; color: var(--red); }
+  .chip-info { background: #EFF6FF; color: #2563EB; }
+
+  .refresh-btn {
+    background: var(--dark);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .refresh-btn:hover { background: var(--mid); }
+
+  /* ===== DOWNLOAD STYLES ===== */
+  .download-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 0.875rem 1.25rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .download-bar-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--mid);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .download-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .btn-dl {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 1rem;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .btn-dl-pdf { background:#FEF2F2; color:var(--red); border-color:#FECACA; }
+  .btn-dl-pdf:hover { background:var(--red); color:white; border-color:var(--red); }
+  .btn-dl-csv { background:#ECFDF5; color:#16A34A; border-color:#BBF7D0; }
+  .btn-dl-csv:hover { background:#16A34A; color:white; border-color:#16A34A; }
+  .btn-dl-json { background:#EFF6FF; color:#2563EB; border-color:#BFDBFE; }
+  .btn-dl-json:hover { background:#2563EB; color:white; border-color:#2563EB; }
+  .card-dl-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1rem;
+    background: var(--light);
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .card-dl-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--gray);
+    margin-right: 0.25rem;
+  }
+  .btn-dl-sm {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.74rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.15s;
+  }
+  .dl-toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--dark);
+    color: white;
+    padding: 0.75rem 1.25rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    z-index: 9999;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  }
+  .dl-toast.show { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 700px) {
+    .three-cols, .r-three-cols { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .collab-meta { grid-template-columns: 1fr; }
+    .submit-bar { flex-direction: column; gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">Human Trafficking <span>Analysis Tool</span></div>
+  <div class="tab-switcher">
+    <button class="tab-btn active" onclick="switchView('collab', this)">👤 Colaborador</button>
+    <button class="tab-btn" onclick="switchView('admin', this)">🛡️ Administrador</button>
+  </div>
+</nav>
+
+<!-- COLLABORATOR VIEW -->
+<div id="view-collab" class="view active">
+  <div class="form-wrap">
+    <div class="form-header">
+      <h1>Formulario de Análisis de Caso</h1>
+      <p>Complete todos los campos. Su respuesta quedará registrada para revisión del administrador.</p>
+    </div>
+
+    <div class="collab-meta">
+      <div class="meta-field">
+        <label>Nombre del Colaborador</label>
+        <input type="text" id="c-name" placeholder="Nombre completo">
+      </div>
+      <div class="meta-field">
+        <label>ID de Caso / Referencia</label>
+        <input type="text" id="c-case" placeholder="Ej. CASE-2024-001">
+      </div>
+    </div>
+
+    <div class="three-cols">
+      <!-- ENDS -->
+      <div class="col-card">
+        <div class="col-header ends">ENDS · Fines</div>
+        <div class="col-body">
+          <div>
+            <div class="start-here-circle">
+              <div class="start-circle">Start<br>Here</div>
+            </div>
+            <div class="q-label"><span class="q-num">(1)</span> What are the services the victim was made to perform?</div>
+            <textarea class="q-input" id="q1" rows="3" placeholder="Describe los servicios..."></textarea>
+          </div>
+          <div>
+            <div class="q-label"><span class="q-num">(2)</span> The type of services the victim was made to perform fall under:</div>
+            <div class="checkbox-group">
+              <label class="check-item"><input type="checkbox" id="c-involuntary" value="Involuntary Servitude"> Involuntary Servitude</label>
+              <label class="check-item"><input type="checkbox" id="c-debt" value="Debt Bondage"> Debt Bondage</label>
+              <label class="check-item"><input type="checkbox" id="c-sex" value="Sex Trafficking"> Sex Trafficking</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MEANS -->
+      <div class="col-card">
+        <div class="col-header means">MEANS · Medios</div>
+        <div class="col-body">
+          <div>
+            <div class="q-label"><span class="q-num">(3a)</span> What did the perpetrator do to ensure that the victim provided the services in Question 1?</div>
+            <textarea class="q-input" id="q3a" rows="3" placeholder="Describe las acciones..."></textarea>
+          </div>
+          <div>
+            <div class="q-label"><span class="q-num">(3b)</span> What would the perpetrator do (or threaten to do) if the victim didn't perform the services in Question 1?</div>
+            <textarea class="q-input" id="q3b" rows="3" placeholder="Describe las amenazas..."></textarea>
+          </div>
+          <div>
+            <div class="q-label"><span class="q-num">(4)</span> The mechanisms the perpetrator used to control the victim fall under the category:</div>
+            <div class="checkbox-group">
+              <label class="check-item"><input type="checkbox" id="c-force" value="Force"> Force</label>
+              <label class="check-item"><input type="checkbox" id="c-fraud" value="Fraud*"> Fraud*</label>
+              <label class="check-item"><input type="checkbox" id="c-coercion" value="Coercion"> Coercion</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROCESS -->
+      <div class="col-card">
+        <div class="col-header process">PROCESS · Proceso</div>
+        <div class="col-body">
+          <div>
+            <div class="q-label"><span class="q-num">(5)</span> What were the intentional acts the perpetrator took to get the victim in the situation?</div>
+            <textarea class="q-input" id="q5" rows="3" placeholder="Describe los actos intencionales..."></textarea>
+          </div>
+          <div>
+            <div class="q-label"><span class="q-num">(6)</span> The method the perpetrator used to get the victim in the situation was:</div>
+            <div class="checkbox-group">
+              <label class="check-item"><input type="checkbox" id="c-recruiting" value="Recruiting"> Recruiting</label>
+              <label class="check-item"><input type="checkbox" id="c-harboring" value="Harboring"> Harboring</label>
+              <label class="check-item"><input type="checkbox" id="c-transport" value="Transportation"> Transportation</label>
+              <label class="check-item"><input type="checkbox" id="c-provision" value="Provision"> Provision</label>
+              <label class="check-item"><input type="checkbox" id="c-obtaining" value="Obtaining"> Obtaining</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="summary-card">
+      <h3><span>(7)</span> Summarize!</h3>
+      <div class="summary-row">
+        <span class="summary-label">The victim was</span>
+        <input type="text" class="summary-fill" id="s-action" placeholder="Action/Process">
+        <span class="summary-label">for the purpose of</span>
+        <input type="text" class="summary-fill" id="s-end" placeholder="End/Purpose">
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">specifically,</span>
+        <input type="text" class="summary-fill" id="s-service" placeholder="Type of Service">
+        <span class="summary-label">through the use of</span>
+        <input type="text" class="summary-fill" id="s-means" placeholder="Means">
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">such as</span>
+        <input type="text" class="summary-fill" id="s-coercive" placeholder="Specific types of coercive actions taken by the Perpetrator" style="flex:2">
+      </div>
+    </div>
+
+    <!-- COMMENTS & OBSERVATIONS -->
+    <div class="comments-card">
+      <div class="comments-header">
+        <div class="icon-badge">💬</div>
+        <div>
+          <h3>Comentarios y Observaciones</h3>
+          <p>Información adicional, necesidades de búsqueda o notas de profundización</p>
+        </div>
+      </div>
+      <div class="comments-body">
+        <div style="margin-bottom:1.25rem;">
+          <div class="priority-selector">
+            <label>Nivel de urgencia / prioridad de seguimiento</label>
+            <button type="button" class="priority-btn" id="prio-info" onclick="selectPriority('info')">🔵 Informativo</button>
+            <button type="button" class="priority-btn" id="prio-low" onclick="selectPriority('low')">🟢 Baja</button>
+            <button type="button" class="priority-btn" id="prio-mid" onclick="selectPriority('mid')">🟡 Media</button>
+            <button type="button" class="priority-btn" id="prio-high" onclick="selectPriority('high')">🔴 Alta</button>
+          </div>
+        </div>
+        <div class="comments-grid">
+          <div class="comment-field">
+            <label><span class="dot dot-purple"></span>Observaciones generales del caso</label>
+            <textarea id="obs-general" placeholder="Anota cualquier observación relevante sobre el caso que no encaje en las preguntas anteriores..."></textarea>
+          </div>
+          <div class="comment-field">
+            <label><span class="dot dot-amber"></span>Información pendiente / necesidad de búsqueda</label>
+            <textarea id="obs-pending" placeholder="¿Qué información hace falta? ¿Qué fuentes o documentos se deben consultar?..."></textarea>
+          </div>
+          <div class="comment-field">
+            <label><span class="dot dot-blue"></span>Discrepancias o inconsistencias detectadas</label>
+            <textarea id="obs-discrepancies" placeholder="¿Hay contradicciones en la información? ¿Datos que no coinciden?..."></textarea>
+          </div>
+          <div class="comment-field">
+            <label><span class="dot dot-red"></span>Siguientes pasos recomendados</label>
+            <textarea id="obs-nextsteps" placeholder="¿Qué acciones se recomiendan tomar a continuación?..."></textarea>
+          </div>
+          <div class="comment-field full-width">
+            <label><span class="dot dot-purple"></span>Notas adicionales o contexto de profundización</label>
+            <textarea id="obs-extra" style="min-height:80px;" placeholder="Contexto adicional, referencias a otros casos relacionados, o información que ayude al análisis..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="submit-bar">
+      <span class="submit-info">Al enviar, su respuesta quedará registrada y visible para el administrador.</span>
+      <button class="btn-submit" onclick="submitForm()">Enviar Respuesta &rarr;</button>
+    </div>
+    <div class="success-msg" id="success-msg">&#x2705; Respuesta enviada correctamente. El administrador puede visualizarla en su panel.</div>
+  </div>
+</div>
+
+<!-- ADMIN VIEW -->
+<div id="view-admin" class="view">
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <div>
+        <h1>Panel de Administrador</h1>
+        <p>Visualizacion de todas las respuestas enviadas por los colaboradores.</p>
+      </div>
+      <div style="display:flex;gap:0.7rem;">
+        <button class="btn-clear" onclick="clearAll()">&#x1F5D1; Limpiar todo</button>
+        <button class="refresh-btn" onclick="loadResponses()">&#x21BB; Actualizar</button>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-number" id="stat-total">0</div><div class="stat-label">Respuestas totales</div></div>
+      <div class="stat-card"><div class="stat-number" id="stat-sex">0</div><div class="stat-label">Sex Trafficking</div></div>
+      <div class="stat-card"><div class="stat-number" id="stat-force">0</div><div class="stat-label">Uso de Force</div></div>
+      <div class="stat-card"><div class="stat-number" id="stat-recruit">0</div><div class="stat-label">Recruiting</div></div>
+    </div>
+
+    <!-- GLOBAL DOWNLOAD BAR -->
+    <div class="download-bar" id="dl-bar" style="display:none;">
+      <div class="download-bar-label">
+        <span>⬇️</span> Descargar todos los formularios
+      </div>
+      <div class="download-group">
+        <button class="btn-dl btn-dl-pdf" onclick="downloadAllPDF()">📄 PDF (todos)</button>
+        <button class="btn-dl btn-dl-csv" onclick="downloadCSV()">📊 Excel / CSV</button>
+        <button class="btn-dl btn-dl-json" onclick="downloadJSON()">🗂 JSON</button>
+      </div>
+    </div>
+
+    <div class="responses-grid" id="responses-grid">
+      <div class="empty-state">
+        <div class="icon">&#x1F4CB;</div>
+        <h3>Sin respuestas aun</h3>
+        <p>Las respuestas enviadas por los colaboradores apareceran aqui.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="dl-toast" id="dl-toast"></div>
+
+<script>
+var STORAGE_KEY = 'ht_form_responses_v2';
+let currentPriority = null;
+
+function selectPriority(level) {
+  currentPriority = level;
+  ['info','low','mid','high'].forEach(l => {
+    const btn = document.getElementById('prio-' + l);
+    if (btn) {
+      btn.className = 'priority-btn' + (level === l ? ' selected-' + l : '');
+    }
+  });
+}
+
+function switchView(v, btn) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  btn.classList.add('active');
+  if (v === 'admin') loadResponses();
+}
+
+function getChecked(ids) {
+  return ids.filter(id => {
+    const el = document.getElementById(id);
+    return el && el.checked;
+  }).map(id => document.getElementById(id).value);
+}
+
+function submitForm() {
+  const name = document.getElementById('c-name').value.trim();
+  const caseId = document.getElementById('c-case').value.trim();
+  if (!name) { alert('Por favor ingresa tu nombre antes de enviar.'); return; }
+
+  const response = {
+    id: Date.now(),
+    timestamp: new Date().toLocaleString('es-MX'),
+    collaborator: name,
+    caseId: caseId || 'Sin referencia',
+    q1: document.getElementById('q1').value.trim(),
+    q2: getChecked(['c-involuntary','c-debt','c-sex']),
+    q3a: document.getElementById('q3a').value.trim(),
+    q3b: document.getElementById('q3b').value.trim(),
+    q4: getChecked(['c-force','c-fraud','c-coercion']),
+    q5: document.getElementById('q5').value.trim(),
+    q6: getChecked(['c-recruiting','c-harboring','c-transport','c-provision','c-obtaining']),
+    summary: {
+      action: document.getElementById('s-action').value.trim(),
+      end: document.getElementById('s-end').value.trim(),
+      service: document.getElementById('s-service').value.trim(),
+      means: document.getElementById('s-means').value.trim(),
+      coercive: document.getElementById('s-coercive').value.trim()
+    },
+    comments: {
+      priority: currentPriority,
+      general: document.getElementById('obs-general').value.trim(),
+      pending: document.getElementById('obs-pending').value.trim(),
+      discrepancies: document.getElementById('obs-discrepancies').value.trim(),
+      nextsteps: document.getElementById('obs-nextsteps').value.trim(),
+      extra: document.getElementById('obs-extra').value.trim()
+    }
+  };
+
+  const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  existing.push(response);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
+
+  // Reset form
+  ['q1','q3a','q3b','q5','s-action','s-end','s-service','s-means','s-coercive','c-name','c-case',
+   'obs-general','obs-pending','obs-discrepancies','obs-nextsteps','obs-extra'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  ['c-involuntary','c-debt','c-sex','c-force','c-fraud','c-coercion',
+   'c-recruiting','c-harboring','c-transport','c-provision','c-obtaining'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.checked = false;
+  });
+  selectPriority(null);
+
+  const msg = document.getElementById('success-msg');
+  msg.style.display = 'block';
+  setTimeout(() => { msg.style.display = 'none'; }, 5000);
+}
+
+function loadResponses() {
+  const responses = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  const grid = document.getElementById('responses-grid');
+
+  document.getElementById('stat-total').textContent = responses.length;
+  document.getElementById('stat-sex').textContent = responses.filter(r => r.q2 && r.q2.includes('Sex Trafficking')).length;
+  document.getElementById('stat-force').textContent = responses.filter(r => r.q4 && r.q4.includes('Force')).length;
+  document.getElementById('stat-recruit').textContent = responses.filter(r => r.q6 && r.q6.includes('Recruiting')).length;
+
+  if (responses.length === 0) {
+    grid.innerHTML = '<div class="empty-state"><div class="icon">&#x1F4CB;</div><h3>Sin respuestas aun</h3><p>Las respuestas enviadas por los colaboradores apareceran aqui.</p></div>';
+    document.getElementById('dl-bar').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('dl-bar').style.display = 'flex';
+
+  grid.innerHTML = responses.slice().reverse().map((r, idx) => {
+    const rNum = responses.length - idx;
+    const summaryHtml = buildSummary(r.summary);
+    const hasSex = r.q2 && r.q2.includes('Sex Trafficking');
+    const c = r.comments || {};
+    const priorityBadge = c.priority ? priorityChip(c.priority) : '';
+    const hasComments = c.general || c.pending || c.discrepancies || c.nextsteps || c.extra;
+    return '<div class="response-card">' +
+      '<div class="response-header" onclick="toggleCard(this)">' +
+        '<div class="response-id">' +
+          '<span>#' + rNum + '</span>' +
+          '<span class="badge">' + escHtml(r.caseId) + '</span>' +
+          '<span style="font-weight:400;color:var(--mid)">' + escHtml(r.collaborator) + '</span>' +
+          (hasSex ? '<span class="badge badge-amber">Sex Trafficking</span>' : '') +
+          priorityBadge +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:1rem">' +
+          '<span class="response-meta">' + escHtml(r.timestamp) + '</span>' +
+          '<span class="chevron">&#x25BC;</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="response-body">' +
+        '<div class="r-three-cols">' +
+          '<div class="r-col-card">' +
+            '<div class="r-col-head ends">ENDS &middot; Fines</div>' +
+            '<div class="r-col-body">' +
+              '<div><div class="r-q-label">(1) Services performed</div><div class="r-q-val' + (!r.q1 ? ' empty' : '') + '">' + (r.q1 ? escHtml(r.q1) : 'Sin respuesta') + '</div></div>' +
+              '<div><div class="r-q-label">(2) Type of service</div><div class="r-q-val">' + tagsHtml(r.q2) + '</div></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="r-col-card">' +
+            '<div class="r-col-head means">MEANS &middot; Medios</div>' +
+            '<div class="r-col-body">' +
+              '<div><div class="r-q-label">(3a) Ensuring services</div><div class="r-q-val' + (!r.q3a ? ' empty' : '') + '">' + (r.q3a ? escHtml(r.q3a) : 'Sin respuesta') + '</div></div>' +
+              '<div><div class="r-q-label">(3b) Threat if not performed</div><div class="r-q-val' + (!r.q3b ? ' empty' : '') + '">' + (r.q3b ? escHtml(r.q3b) : 'Sin respuesta') + '</div></div>' +
+              '<div><div class="r-q-label">(4) Control mechanisms</div><div class="r-q-val">' + tagsHtml(r.q4) + '</div></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="r-col-card">' +
+            '<div class="r-col-head process">PROCESS &middot; Proceso</div>' +
+            '<div class="r-col-body">' +
+              '<div><div class="r-q-label">(5) Intentional acts</div><div class="r-q-val' + (!r.q5 ? ' empty' : '') + '">' + (r.q5 ? escHtml(r.q5) : 'Sin respuesta') + '</div></div>' +
+              '<div><div class="r-q-label">(6) Method used</div><div class="r-q-val">' + tagsHtml(r.q6) + '</div></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="r-summary-block">' +
+          '<div class="r-summary-title">(7) Resumen del Caso</div>' +
+          '<div class="r-summary-text">' + summaryHtml + '</div>' +
+        '</div>' +
+        (hasComments ? commentsHtml(c) : '') +
+        '<div class="card-dl-row">' +
+          '<span class="card-dl-label">⬇ Descargar:</span>' +
+          '<button class="btn-dl-sm btn-dl-pdf" onclick="downloadOnePDF(' + r.id + ')">📄 PDF</button>' +
+          '<button class="btn-dl-sm btn-dl-json" onclick="downloadOneJSON(' + r.id + ')">🗂 JSON</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function tagsHtml(arr) {
+  if (!arr || arr.length === 0) return '<span style="color:var(--gray);font-style:italic;font-size:0.82rem">Sin seleccion</span>';
+  return '<div class="tags">' + arr.map(t => '<span class="tag">' + escHtml(t) + '</span>').join('') + '</div>';
+}
+
+function buildSummary(s) {
+  if (!s) return '<span style="color:var(--gray);font-style:italic">Sin resumen</span>';
+  if (!s.action && !s.end && !s.service && !s.means && !s.coercive) return '<span style="color:var(--gray);font-style:italic">Sin resumen</span>';
+  let parts = [];
+  if (s.action || s.end) parts.push('The victim was <strong>' + escHtml(s.action || '___') + '</strong> for the purpose of <strong>' + escHtml(s.end || '___') + '</strong>.');
+  if (s.service || s.means) parts.push('Specifically, <strong>' + escHtml(s.service || '___') + '</strong> through the use of <strong>' + escHtml(s.means || '___') + '</strong>.');
+  if (s.coercive) parts.push('Such as <strong>' + escHtml(s.coercive) + '</strong>.');
+  return parts.join(' ');
+}
+
+function priorityChip(p) {
+  const map = {
+    info: ['chip-info','🔵 Informativo'],
+    low:  ['chip-low', '🟢 Baja'],
+    mid:  ['chip-mid', '🟡 Media'],
+    high: ['chip-high','🔴 Alta']
+  };
+  if (!p || !map[p]) return '';
+  return '<span class="priority-chip ' + map[p][0] + '" style="margin-left:4px;">' + map[p][1] + '</span>';
+}
+
+function commentsHtml(c) {
+  const cell = (label, val) =>
+    '<div class="r-comment-cell">' +
+      '<div class="r-comment-label">💬 ' + label + '</div>' +
+      '<div class="r-comment-val' + (!val ? ' empty' : '') + '">' + (val ? escHtml(val) : 'Sin respuesta') + '</div>' +
+    '</div>';
+
+  return '<div class="r-comments-block">' +
+    '<div class="r-comments-head">💬 Comentarios y Observaciones' +
+      (c.priority ? ' &nbsp;|&nbsp; Prioridad: ' + priorityChip(c.priority) : '') +
+    '</div>' +
+    '<div class="r-comments-grid">' +
+      cell('Observaciones generales', c.general) +
+      cell('Información pendiente / búsqueda', c.pending) +
+      cell('Discrepancias o inconsistencias', c.discrepancies) +
+      cell('Siguientes pasos recomendados', c.nextsteps) +
+      (c.extra ? '<div class="r-comment-cell full"><div class="r-comment-label">💬 Notas adicionales</div><div class="r-comment-val">' + escHtml(c.extra) + '</div></div>' : '') +
+    '</div>' +
+  '</div>';
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toggleCard(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.chevron');
+  body.classList.toggle('open');
+  chevron.classList.toggle('open');
+}
+
+function clearAll() {
+  if (confirm('Estas seguro de que deseas eliminar todas las respuestas? Esta accion no se puede deshacer.')) {
+    localStorage.removeItem(STORAGE_KEY);
+    document.getElementById('dl-bar').style.display = 'none';
+    loadResponses();
+  }
+}
+
+// ── Download helpers ──────────────────────────────────────────────────────────
+
+function showDlToast(msg) {
+  const t = document.getElementById('dl-toast');
+  t.innerHTML = '✅ ' + msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function triggerDownload(content, filename, mime) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+// ── JSON ──────────────────────────────────────────────────────────────────────
+
+function downloadJSON() {
+  const responses = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  if (!responses.length) return;
+  triggerDownload(JSON.stringify(responses, null, 2), 'formularios_todos.json', 'application/json');
+  showDlToast('JSON con todos los formularios descargado');
+}
+
+function downloadOneJSON(id) {
+  const responses = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  const r = responses.find(x => x.id === id);
+  if (!r) return;
+  triggerDownload(JSON.stringify(r, null, 2), 'formulario_' + (r.caseId || id) + '.json', 'application/json');
+  showDlToast('JSON del caso ' + escHtml(r.caseId) + ' descargado');
+}
+
+// ── CSV ───────────────────────────────────────────────────────────────────────
+
+function downloadCSV() {
+  const responses = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  if (!responses.length) return;
+
+  const headers = [
+    'ID','Fecha','Colaborador','ID Caso',
+    '(1) Servicios realizados','(2) Tipo de servicio',
+    '(3a) Acciones del perpetrador','(3b) Amenazas',
+    '(4) Mecanismos de control','(5) Actos intencionales','(6) Métodos',
+    'Resumen - Acción','Resumen - Fin','Resumen - Tipo servicio','Resumen - Medios','Resumen - Acciones coercitivas',
+    'Prioridad','Obs. generales','Info. pendiente','Discrepancias','Sig. pasos','Notas adicionales'
+  ];
+
+  const csvEsc = v => '"' + String(v || '').replace(/"/g, '""') + '"';
+
+  const rows = responses.map(r => {
+    const s = r.summary || {}; const c = r.comments || {};
+    return [
+      r.id, r.timestamp, r.collaborator, r.caseId,
+      r.q1, (r.q2||[]).join('; '),
+      r.q3a, r.q3b,
+      (r.q4||[]).join('; '), r.q5, (r.q6||[]).join('; '),
+      s.action, s.end, s.service, s.means, s.coercive,
+      c.priority, c.general, c.pending, c.discrepancies, c.nextsteps, c.extra
+    ].map(csvEsc).join(',');
+  });
+
+  const bom = '\uFEFF'; // UTF-8 BOM for Excel compatibility
+  triggerDownload(bom + [headers.map(csvEsc).join(','), ...rows].join('\r\n'),
+    'formularios_todos.csv', 'text/csv;charset=utf-8');
+  showDlToast('Excel / CSV con todos los formularios descargado');
+}
+
+// ── PDF (individual) ──────────────────────────────────────────────────────────
+
+function buildPDFContent(r) {
+  var s = r.summary || {}; var c = r.comments || {};
+  var priorityLabels = { info:'🔵 Informativo', low:'🟢 Baja', mid:'🟡 Media', high:'🔴 Alta' };
+
+  function row(label, val) {
+    return '<tr><td style="font-weight:600;color:#555;padding:5px 10px 5px 0;vertical-align:top;white-space:nowrap;font-size:11px;">' + label + '</td>' +
+    '<td style="padding:5px 0;font-size:12px;color:#1a1a2e;">' + (val || '<span style="color:#aaa;font-style:italic">Sin respuesta</span>') + '</td></tr>';
+  }
+
+  function tags(arr) {
+    return arr && arr.length
+      ? arr.map(function(t){ return '<span style="background:#fdf2f1;color:#c0392b;border:1px solid #fecaca;border-radius:4px;padding:2px 8px;font-size:10px;font-weight:700;margin-right:4px;">' + t + '</span>'; }).join('')
+      : '<span style="color:#aaa;font-style:italic;font-size:11px">Sin seleccion</span>';
+  }
+
+  function secHead(label, bg) {
+    return '<div style="background:' + bg + ';color:white;padding:6px 14px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;">' + label + '</div>';
+  }
+
+  var commentsBlock = '';
+  if (c.general || c.pending || c.discrepancies || c.nextsteps || c.extra) {
+    commentsBlock =
+      '<div style="border:1.5px solid #c4b5fd;border-radius:8px;overflow:hidden;margin-bottom:16px;">' +
+        '<div style="background:linear-gradient(135deg,#1e1b4b,#3730a3);color:white;padding:6px 14px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;">' +
+          'Comentarios y Observaciones' + (c.priority ? ' - Prioridad: ' + (priorityLabels[c.priority] || '') : '') +
+        '</div>' +
+        '<div style="padding:10px 14px;">' +
+          '<table style="width:100%;border-collapse:collapse;">' +
+            (c.general      ? row('Observaciones generales:', c.general) : '') +
+            (c.pending      ? row('Info. pendiente / busqueda:', c.pending) : '') +
+            (c.discrepancies? row('Discrepancias:', c.discrepancies) : '') +
+            (c.nextsteps    ? row('Siguientes pasos:', c.nextsteps) : '') +
+            (c.extra        ? row('Notas adicionales:', c.extra) : '') +
+          '</table>' +
+        '</div>' +
+      '</div>';
+  }
+
+  return '<div style="font-family:Arial,sans-serif;max-width:780px;margin:0 auto;padding:30px;color:#1a1a2e;">' +
+
+    '<div style="border-bottom:3px solid #c0392b;padding-bottom:16px;margin-bottom:20px;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-end;">' +
+        '<div>' +
+          '<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:#c0392b;margin-bottom:4px;">Formulario de Analisis</div>' +
+          '<div style="font-size:20px;font-weight:700;color:#1a1a2e;">Human Trafficking Analysis Tool</div>' +
+        '</div>' +
+        '<div style="text-align:right;font-size:10px;color:#666;">' +
+          '<div><strong>Caso:</strong> ' + escHtml(r.caseId) + '</div>' +
+          '<div><strong>Colaborador:</strong> ' + escHtml(r.collaborator) + '</div>' +
+          '<div><strong>Fecha:</strong> ' + escHtml(r.timestamp) + '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+
+    '<table style="width:100%;border-collapse:collapse;margin-bottom:16px;">' +
+      '<tr style="vertical-align:top;">' +
+        '<td style="width:33%;padding-right:8px;">' +
+          '<div style="border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">' +
+            secHead('ENDS - Fines','#c0392b') +
+            '<div style="padding:10px 12px;"><table style="width:100%;border-collapse:collapse;">' +
+              row('(1) Servicios realizados:', escHtml(r.q1)) +
+              row('(2) Tipo de servicio:', tags(r.q2)) +
+            '</table></div>' +
+          '</div>' +
+        '</td>' +
+        '<td style="width:34%;padding:0 4px;">' +
+          '<div style="border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">' +
+            secHead('MEANS - Medios','#1a1a2e') +
+            '<div style="padding:10px 12px;"><table style="width:100%;border-collapse:collapse;">' +
+              row('(3a) Acciones del perpetrador:', escHtml(r.q3a)) +
+              row('(3b) Amenazas:', escHtml(r.q3b)) +
+              row('(4) Mecanismos:', tags(r.q4)) +
+            '</table></div>' +
+          '</div>' +
+        '</td>' +
+        '<td style="width:33%;padding-left:8px;">' +
+          '<div style="border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">' +
+            secHead('PROCESS - Proceso','#3d3d5c') +
+            '<div style="padding:10px 12px;"><table style="width:100%;border-collapse:collapse;">' +
+              row('(5) Actos intencionales:', escHtml(r.q5)) +
+              row('(6) Metodos:', tags(r.q6)) +
+            '</table></div>' +
+          '</div>' +
+        '</td>' +
+      '</tr>' +
+    '</table>' +
+
+    '<div style="border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;margin-bottom:16px;">' +
+      secHead('(7) Summarize! - Resumen del Caso','#1a1a2e') +
+      '<div style="padding:12px 16px;font-size:12px;line-height:1.9;color:#1a1a2e;">' +
+        'The victim was <strong>' + escHtml(s.action||'___') + '</strong> for the purpose of <strong>' + escHtml(s.end||'___') + '</strong>, ' +
+        'specifically <strong>' + escHtml(s.service||'___') + '</strong> through the use of <strong>' + escHtml(s.means||'___') + '</strong>, ' +
+        'such as <strong>' + escHtml(s.coercive||'___') + '</strong>.' +
+      '</div>' +
+    '</div>' +
+
+    commentsBlock +
+
+    '<div style="border-top:1px solid #e2e8f0;padding-top:10px;font-size:9px;color:#aaa;display:flex;justify-content:space-between;">' +
+      '<span>Human Trafficking Analysis Tool - Documento confidencial</span>' +
+      '<span>Generado: ' + new Date().toLocaleString('es-MX') + '</span>' +
+    '</div>' +
+  '</div>';
+}
+
+function downloadOnePDF(id) {
+  const responses = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  const r = responses.find(x => x.id === id);
+  if (!r) return;
+  printPDF([r], 'formulario_' + (r.caseId || id));
+  showDlToast('PDF del caso ' + (r.caseId || id) + ' generado');
+}
+
+function downloadAllPDF() {
+  const responses = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  if (!responses.length) return;
+  printPDF(responses, 'formularios_todos');
+  showDlToast('PDF con todos los formularios generado');
+}
+
+function printPDF(responses, filename) {
+  var win = window.open('', '_blank');
+  if (!win) { alert('Por favor permite ventanas emergentes para generar el PDF.'); return; }
+  var pages = responses.map(function(r){ return buildPDFContent(r); }).join(
+    '<div style="page-break-after:always;"></div>'
+  );
+  var html = '<!DOCTYPE html><html><head>' +
+    '<meta charset="UTF-8">' +
+    '<title>' + filename + '</title>' +
+    '<style>' +
+    '@media print { body { margin:0; } @page { margin:15mm; size:A4; } }' +
+    'body { font-family: Arial, sans-serif; background: white; }' +
+    '</style>' +
+    '</head><body>' + pages +
+    '<scr' + 'ipt>window.onload=function(){setTimeout(function(){window.print();},400);};<\/scr' + 'ipt>' +
+    '</body></html>';
+  win.document.write(html);
+  win.document.close();
+}
+
+loadResponses();
+</script>
+</body>
+</html>
