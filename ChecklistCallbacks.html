@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMLF — Case Checklist Operativo</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CSS VARIABLES — TMLF DESIGN SYSTEM
+   ============================================================ */
+:root {
+  --navy:        #0d1b2a;
+  --navy-mid:    #1a2e45;
+  --navy-light:  #243b55;
+  --gold:        #c9a84c;
+  --gold-light:  #e8c86a;
+  --gold-pale:   #f5e8c0;
+  --beige:       #f8f3ea;
+  --beige-mid:   #ede4d3;
+  --beige-dark:  #ddd0bb;
+  --cream:       #fdfaf5;
+  --white:       #ffffff;
+  --text-dark:   #1a1a2e;
+  --text-mid:    #3a3a5c;
+  --text-soft:   #6b6b8a;
+  --success:     #2e7d5e;
+  --success-bg:  #d4eddf;
+  --danger:      #c62828;
+  --danger-bg:   #fdecea;
+  --warn:        #e65100;
+  --warn-bg:     #fff3e0;
+  --font-display: 'Playfair Display', serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'DM Mono', monospace;
+  --shadow-sm:   0 2px 8px rgba(13,27,42,0.08);
+  --shadow-md:   0 8px 32px rgba(13,27,42,0.12);
+  --shadow-lg:   0 20px 60px rgba(13,27,42,0.18);
+  --shadow-gold: 0 4px 20px rgba(201,168,76,0.3);
+  --radius-sm:   8px;
+  --radius-md:   16px;
+  --radius-lg:   24px;
+  --radius-xl:   40px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--beige);
+  color: var(--text-dark);
+  min-height: 100vh;
+}
+input, select, textarea, button { font-family: var(--font-body); }
+
+/* ── HEADER ── */
+.app-header {
+  background: var(--navy);
+  padding: 0 32px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid rgba(201,168,76,0.3);
+}
+.header-logo {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--gold-light);
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header-logo-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+.header-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.header-time {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--gold);
+  background: rgba(201,168,76,0.1);
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(201,168,76,0.2);
+}
+
+/* ── PROGRESS BAR ── */
+.progress-banner {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.progress-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.progress-info { flex: 1; position: relative; }
+.progress-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 8px;
+}
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 4px;
+  transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+  width: 0%;
+}
+.progress-pct {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--gold-light);
+  line-height: 1;
+  position: relative;
+  white-space: nowrap;
+}
+.progress-pct-sub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+  margin-top: 3px;
+}
+.progress-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  position: relative;
+  transition: all 0.4s ease;
+}
+.progress-status-indicator.green { background: rgba(46,125,94,0.2); color: #5ec492; }
+.progress-status-indicator.yellow { background: rgba(230,81,0,0.2); color: #ffb74d; }
+.progress-status-indicator.red { background: rgba(198,40,40,0.2); color: #ef9a9a; }
+.psi-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+.progress-status-indicator.green .psi-dot { background: #5ec492; }
+.progress-status-indicator.yellow .psi-dot { background: #ffb74d; }
+.progress-status-indicator.red .psi-dot { background: #ef9a9a; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* ── MAIN LAYOUT ── */
+.main-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 60px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.col-left { display: flex; flex-direction: column; gap: 20px; }
+.col-right { display: flex; flex-direction: column; gap: 20px; }
+.full-width { grid-column: 1 / -1; }
+
+/* ── BLOCK CARDS ── */
+.block {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--beige-dark);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.25s ease;
+}
+.block:hover { box-shadow: var(--shadow-md); }
+
+.block-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--beige-mid);
+  background: var(--cream);
+}
+.block-icon {
+  width: 36px; height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.block-title-wrap { flex: 1; }
+.block-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1;
+}
+.block-subtitle {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  margin-top: 3px;
+}
+.block-counter {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-soft);
+  background: var(--beige);
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--beige-dark);
+}
+.block-body { padding: 20px 22px; display: flex; flex-direction: column; gap: 14px; }
+
+/* ── FORM ELEMENTS ── */
+.field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.field-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+.field-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--beige-dark);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-dark);
+  background: var(--cream);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+}
+.field-textarea {
+  resize: vertical;
+  min-height: 72px;
+  line-height: 1.5;
+}
+.field-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6b8a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+.field-select:focus { border-color: var(--gold); }
+
+/* ── CHECKBOX ROW ── */
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--beige);
+  user-select: none;
+}
+.check-row:hover { border-color: var(--gold); background: var(--gold-pale); }
+.check-row.checked { border-color: var(--success); background: var(--success-bg); }
+
+.check-box {
+  width: 20px; height: 20px;
+  border-radius: 6px;
+  border: 2px solid var(--beige-dark);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  font-size: 12px;
+  color: transparent;
+}
+.check-row.checked .check-box {
+  background: var(--success);
+  border-color: var(--success);
+  color: white;
+}
+.check-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-mid);
+  flex: 1;
+}
+.check-row.checked .check-label { color: var(--success); font-weight: 600; }
+
+/* Sub-input in checkbox row */
+.check-sub-input {
+  margin-top: 8px;
+  padding-left: 31px;
+}
+
+/* Checkbox grid (2-col) */
+.check-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* ── CASE STATUS BADGES (RADIO) ── */
+.status-badge-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 2px solid var(--beige-dark);
+  background: var(--beige);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-mid);
+  user-select: none;
+}
+.status-badge:hover { border-color: var(--navy); color: var(--navy); }
+.status-badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--beige-dark); transition: background 0.2s; }
+
+/* Status-specific active states */
+.status-badge[data-status="sent"].active         { background: rgba(13,27,42,0.07); border-color: var(--navy); color: var(--navy); }
+.status-badge[data-status="sent"].active .status-badge-dot { background: var(--navy); }
+
+.status-badge[data-status="receipt"].active      { background: #e8f4fd; border-color: #1976d2; color: #1565c0; }
+.status-badge[data-status="receipt"].active .status-badge-dot { background: #1976d2; }
+
+.status-badge[data-status="approved"].active     { background: var(--success-bg); border-color: var(--success); color: var(--success); }
+.status-badge[data-status="approved"].active .status-badge-dot { background: var(--success); }
+
+.status-badge[data-status="denied"].active       { background: var(--danger-bg); border-color: var(--danger); color: var(--danger); }
+.status-badge[data-status="denied"].active .status-badge-dot { background: var(--danger); }
+
+.status-badge[data-status="rejected"].active     { background: var(--warn-bg); border-color: var(--warn); color: var(--warn); }
+.status-badge[data-status="rejected"].active .status-badge-dot { background: var(--warn); }
+
+.status-badge[data-status="resent"].active       { background: var(--gold-pale); border-color: var(--gold); color: #8b6914; }
+.status-badge[data-status="resent"].active .status-badge-dot { background: var(--gold); }
+
+/* ── ALERT/RISK BLOCK ── */
+.alert-block {
+  background: linear-gradient(135deg, #fff8f8, var(--danger-bg));
+  border: 1.5px solid rgba(198,40,40,0.2);
+  border-radius: var(--radius-lg);
+}
+.alert-block .block-header { background: rgba(198,40,40,0.05); border-bottom-color: rgba(198,40,40,0.15); }
+.alert-block .block-icon { background: var(--danger); }
+
+/* ── CONTACT BLOCK ── */
+.contact-block {
+  border: 1.5px solid rgba(201,168,76,0.3);
+  background: var(--cream);
+}
+.contact-block .block-header { background: rgba(201,168,76,0.06); border-bottom-color: rgba(201,168,76,0.2); }
+.contact-block .block-icon { background: linear-gradient(135deg, var(--gold), #a07830); }
+
+/* ── DIVIDER ── */
+.field-divider {
+  height: 1px;
+  background: var(--beige-mid);
+  margin: 2px 0;
+}
+
+/* ── INLINE FIELD + CHECK ── */
+.inline-check-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.inline-check-field .field-input { flex: 1; }
+
+/* ── ACTION BUTTONS ── */
+.actions-bar {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 20px 24px;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--beige-dark);
+  box-shadow: var(--shadow-sm);
+}
+.btn {
+  padding: 11px 26px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.btn-primary {
+  background: var(--gold);
+  color: var(--navy);
+}
+.btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); box-shadow: var(--shadow-gold); }
+
+.btn-navy {
+  background: var(--navy);
+  color: var(--gold-light);
+}
+.btn-navy:hover { background: var(--navy-mid); transform: translateY(-1px); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-soft);
+  border: 1.5px solid var(--beige-dark);
+}
+.btn-ghost:hover { border-color: var(--navy); color: var(--navy); }
+
+/* ── COMPLETE STATE ── */
+.btn-complete {
+  background: var(--success);
+  color: white;
+}
+.btn-complete:hover { background: #25694e; transform: translateY(-1px); }
+
+/* ── TOAST ── */
+#toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 9000;
+}
+.toast {
+  background: var(--navy);
+  color: white;
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  max-width: 300px;
+  box-shadow: var(--shadow-md);
+  border-left: 3px solid var(--gold);
+  animation: slideInRight 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+@keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.toast.fadeout { animation: fadeOutRight 0.4s ease forwards; }
+@keyframes fadeOutRight { to { transform: translateX(120%); opacity: 0; } }
+
+/* ── BADGE ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  font-family: var(--font-mono);
+}
+.badge-gold  { background: var(--gold-pale); color: #8b6914; }
+.badge-green { background: var(--success-bg); color: var(--success); }
+.badge-red   { background: var(--danger-bg); color: var(--danger); }
+.badge-warn  { background: var(--warn-bg); color: var(--warn); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 800px) {
+  .main-wrap { grid-template-columns: 1fr; padding: 20px 16px 60px; }
+  .full-width { grid-column: 1; }
+  .check-grid { grid-template-columns: 1fr; }
+  .progress-banner { padding: 16px 20px; }
+  .status-badge-group { gap: 6px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="app-header">
+  <div class="header-logo">
+    <div class="header-logo-dot"></div>
+    TMLF
+    <span style="color:rgba(255,255,255,0.3);font-size:14px;font-weight:400;margin-left:2px">·</span>
+    <span style="font-size:14px;font-weight:400;color:rgba(255,255,255,0.55);letter-spacing:0">Case Checklist</span>
+  </div>
+  <div class="header-right">
+    <div class="header-badge">Operativo Legal</div>
+    <div class="header-time" id="live-clock">—</div>
+  </div>
+</header>
+
+<!-- ── PROGRESS BANNER ── -->
+<div class="progress-banner">
+  <div class="progress-pct" id="pct-display">0%</div>
+  <div class="progress-info">
+    <div class="progress-label">Progreso del Checklist</div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;">
+      <span style="font-family:var(--font-mono);font-size:10px;color:rgba(255,255,255,0.3);"><span id="checked-count">0</span> / <span id="total-count">0</span> campos completados</span>
+    </div>
+  </div>
+  <div class="progress-status-indicator red" id="status-indicator">
+    <div class="psi-dot"></div>
+    <span id="status-label">Pendiente</span>
+  </div>
+</div>
+
+<!-- ── MAIN CONTENT ── -->
+<div class="main-wrap">
+
+  <!-- ══════════════════════════════════════
+       BLOQUE 1: CONTROL GENERAL
+  ══════════════════════════════════════ -->
+  <div class="block col-left full-width" style="grid-column:1/-1">
+    <div class="block-header">
+      <div class="block-icon">📋</div>
+      <div class="block-title-wrap">
+        <div class="block-title">Control General</div>
+        <div class="block-subtitle">Bloque 01 · Links & Accesos</div>
+      </div>
+      <div class="block-counter" id="counter-b1">0/3</div>
+    </div>
+    <div class="block-body" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+      <div class="field-row" style="flex-direction:row;align-items:center;gap:10px;background:var(--beige);padding:12px 14px;border-radius:var(--radius-sm);border:1.5px solid transparent;" id="callback-row" onclick="toggleCheckRow('callback-row','cb-callback')">
+        <div class="check-box" id="cb-callback">✓</div>
+        <div>
+          <div class="field-label" style="margin-bottom:0">Callback</div>
+          <div style="font-size:12px;color:var(--text-soft)">Llamada de retorno</div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Dropbox Link</div>
+        <input type="url" class="field-input" placeholder="https://dropbox.com/..." data-trackable="text" id="inp-dropbox">
+      </div>
+      <div class="field-row">
+        <div class="field-label">MyCase / Tram</div>
+        <input type="url" class="field-input" placeholder="https://mycase.com/..." data-trackable="text" id="inp-mycase">
+      </div>
+      <div class="field-row" style="grid-column:1/-1">
+        <div class="field-label">Prompt / Notas de Llamada</div>
+        <textarea class="field-input field-textarea" placeholder="Escribe las notas del caso o prompt inicial para la llamada..." data-trackable="text" id="inp-prompt"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       BLOQUE 2: INFORMACIÓN DEL CASO
+  ══════════════════════════════════════ -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-icon">⚖️</div>
+      <div class="block-title-wrap">
+        <div class="block-title">Información del Caso</div>
+        <div class="block-subtitle">Bloque 02 · Datos Principales</div>
+      </div>
+      <div class="block-counter" id="counter-b2">0/9</div>
+    </div>
+    <div class="block-body">
+      <div class="field-row">
+        <div class="field-label">Case Open</div>
+        <input type="date" class="field-input" data-trackable="text" id="inp-case-open">
+      </div>
+      <div class="field-row">
+        <div class="field-label">Case Type</div>
+        <select class="field-input field-select" data-trackable="select" id="inp-case-type">
+          <option value="">Seleccionar tipo...</option>
+          <option>Adjustment of Status (AOS)</option>
+          <option>Asylum</option>
+          <option>DACA</option>
+          <option>Family Petition</option>
+          <option>Green Card Renewal</option>
+          <option>Naturalization (N-400)</option>
+          <option>Removal Defense</option>
+          <option>TPS</option>
+          <option>U-Visa</option>
+          <option>VAWA</option>
+          <option>Otro</option>
+        </select>
+      </div>
+
+      <div class="field-divider"></div>
+      <div class="check-grid">
+        <div class="check-row" id="row-combo" onclick="toggleCheckRow('row-combo','cbx-combo')">
+          <div class="check-box" id="cbx-combo">✓</div>
+          <span class="check-label">Combo</span>
+        </div>
+        <div class="check-row" id="row-aos" onclick="toggleCheckRow('row-aos','cbx-aos')">
+          <div class="check-box" id="cbx-aos">✓</div>
+          <span class="check-label">AOS</span>
+        </div>
+        <div class="check-row" id="row-pb" onclick="toggleCheckRow('row-pb','cbx-pb')">
+          <div class="check-box" id="cbx-pb">✓</div>
+          <span class="check-label">PB (Public Benefit)</span>
+        </div>
+        <div class="check-row" id="row-waiver" onclick="toggleCheckRow('row-waiver','cbx-waiver')">
+          <div class="check-box" id="cbx-waiver">✓</div>
+          <span class="check-label">Waiver</span>
+        </div>
+        <div class="check-row" id="row-falseclaim" onclick="toggleCheckRow('row-falseclaim','cbx-falseclaim')">
+          <div class="check-box" id="cbx-falseclaim">✓</div>
+          <span class="check-label">False Claim</span>
+        </div>
+        <div class="check-row" id="row-poe" onclick="toggleCheckRow('row-poe','cbx-poe')">
+          <div class="check-box" id="cbx-poe">✓</div>
+          <span class="check-label">Petty Offense Exc.</span>
+        </div>
+        <div class="check-row" id="row-crimes" onclick="toggleCheckRow('row-crimes','cbx-crimes')" style="grid-column:1/-1">
+          <div class="check-box" id="cbx-crimes">✓</div>
+          <span class="check-label">Crimes (Historial criminal)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       BLOQUE 3: BENEFICIOS Y PROCESO
+  ══════════════════════════════════════ -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-icon">🧩</div>
+      <div class="block-title-wrap">
+        <div class="block-title">Beneficios &amp; Proceso</div>
+        <div class="block-subtitle">Bloque 03 · Servicios Incluidos</div>
+      </div>
+      <div class="block-counter" id="counter-b3">0/7</div>
+    </div>
+    <div class="block-body">
+      <div class="check-row" id="row-biometric" onclick="toggleCheckRow('row-biometric','cbx-biometric')">
+        <div class="check-box" id="cbx-biometric">✓</div>
+        <span class="check-label">Biometric Appointment</span>
+      </div>
+      <div class="check-row" id="row-otherbene" onclick="toggleCheckRow('row-otherbene','cbx-otherbene')">
+        <div class="check-box" id="cbx-otherbene">✓</div>
+        <span class="check-label">Other Benefits</span>
+      </div>
+      <div class="check-row" id="row-travel" onclick="toggleCheckRow('row-travel','cbx-travel')">
+        <div class="check-box" id="cbx-travel">✓</div>
+        <span class="check-label">Travel Permit</span>
+      </div>
+      <div class="check-row" id="row-ead" onclick="toggleCheckRow('row-ead','cbx-ead')">
+        <div class="check-box" id="cbx-ead">✓</div>
+        <span class="check-label">EAD (Work Authorization)</span>
+      </div>
+      <div class="check-row" id="row-renewal" onclick="toggleCheckRow('row-renewal','cbx-renewal')">
+        <div class="check-box" id="cbx-renewal">✓</div>
+        <span class="check-label">Renewal</span>
+      </div>
+      <div class="check-row" id="row-deriv" onclick="toggleCheckRow('row-deriv','cbx-deriv')">
+        <div class="check-box" id="cbx-deriv">✓</div>
+        <span class="check-label">Derivatives</span>
+      </div>
+      <div class="check-row" id="row-ssn" onclick="toggleCheckRow('row-ssn','cbx-ssn')">
+        <div class="check-box" id="cbx-ssn">✓</div>
+        <span class="check-label">SSN Application</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       BLOQUE 4: CASE STATUS
+  ══════════════════════════════════════ -->
+  <div class="block full-width" style="grid-column:1/-1">
+    <div class="block-header">
+      <div class="block-icon">📡</div>
+      <div class="block-title-wrap">
+        <div class="block-title">Case Status</div>
+        <div class="block-subtitle">Bloque 04 · Estado Actual ante USCIS</div>
+      </div>
+      <div id="active-status-badge" style="display:none" class="badge badge-green">—</div>
+    </div>
+    <div class="block-body">
+      <div class="status-badge-group" id="status-group">
+        <div class="status-badge" data-status="sent" onclick="selectStatus(this)">
+          <div class="status-badge-dot"></div>
+          Sent to USCIS
+        </div>
+        <div class="status-badge" data-status="receipt" onclick="selectStatus(this)">
+          <div class="status-badge-dot"></div>
+          Receipt
+        </div>
+        <div class="status-badge" data-status="approved" onclick="selectStatus(this)">
+          <div class="status-badge-dot"></div>
+          Approved
+        </div>
+        <div class="status-badge" data-status="denied" onclick="selectStatus(this)">
+          <div class="status-badge-dot"></div>
+          Denied
+        </div>
+        <div class="status-badge" data-status="rejected" onclick="selectStatus(this)">
+          <div class="status-badge-dot"></div>
+          Rejected
+        </div>
+        <div class="status-badge" data-status="resent" onclick="selectStatus(this)">
+          <div class="status-badge-dot"></div>
+          Resent
+        </div>
+      </div>
+      <div class="field-row" style="margin-top:4px">
+        <div class="field-label">Notas de Status</div>
+        <input type="text" class="field-input" placeholder="Fecha, número de caso, observaciones..." data-trackable="text" id="inp-status-notes">
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       BLOQUE 5: TRAVEL & DOCUMENTOS
+  ══════════════════════════════════════ -->
+  <div class="block">
+    <div class="block-header">
+      <div class="block-icon">✈️</div>
+      <div class="block-title-wrap">
+        <div class="block-title">Travel &amp; Documentos</div>
+        <div class="block-subtitle">Bloque 05 · Documentos Clave</div>
+      </div>
+      <div class="block-counter" id="counter-b5">0/2</div>
+    </div>
+    <div class="block-body">
+      <div>
+        <div class="check-row" id="row-i131" onclick="toggleCheckRow('row-i131','cbx-i131')" style="margin-bottom:8px">
+          <div class="check-box" id="cbx-i131">✓</div>
+          <span class="check-label">I-131 (Advance Parole / Travel)</span>
+        </div>
+        <div class="field-row check-sub-input">
+          <div class="field-label">Número / Referencia I-131</div>
+          <input type="text" class="field-input" placeholder="IOE-..." data-trackable="text" id="inp-i131-ref">
+        </div>
+      </div>
+      <div class="field-divider"></div>
+      <div>
+        <div class="check-row" id="row-gc" onclick="toggleCheckRow('row-gc','cbx-gc')" style="margin-bottom:8px">
+          <div class="check-box" id="cbx-gc">✓</div>
+          <span class="check-label">Green Card</span>
+        </div>
+        <div class="field-row check-sub-input">
+          <div class="field-label">Número de Green Card</div>
+          <input type="text" class="field-input" placeholder="A-number / Card #" data-trackable="text" id="inp-gc-ref">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       BLOQUE 6: RIESGOS / ALERTAS
+  ══════════════════════════════════════ -->
+  <div class="block alert-block">
+    <div class="block-header">
+      <div class="block-icon">⚠️</div>
+      <div class="block-title-wrap">
+        <div class="block-title">Riesgos &amp; Alertas</div>
+        <div class="block-subtitle">Bloque 06 · Factores Críticos</div>
+      </div>
+      <div class="block-counter" id="counter-b6">0/3</div>
+    </div>
+    <div class="block-body">
+      <div class="field-row">
+        <div class="field-label">Recent Crimes</div>
+        <textarea class="field-input field-textarea" placeholder="Detalla crímenes recientes, cargos, fechas, disposición..." data-trackable="text" id="inp-crimes-detail" style="min-height:80px"></textarea>
+      </div>
+      <div>
+        <div class="check-row" id="row-eoir" onclick="toggleCheckRow('row-eoir','cbx-eoir')" style="margin-bottom:8px;border-color:rgba(198,40,40,0.2)">
+          <div class="check-box" id="cbx-eoir">✓</div>
+          <span class="check-label">EOIR Matter (Corte / Remoción)</span>
+        </div>
+        <div class="field-row check-sub-input">
+          <div class="field-label">Detalle EOIR</div>
+          <input type="text" class="field-input" placeholder="Número de alien, corte, fecha próxima..." data-trackable="text" id="inp-eoir-detail">
+        </div>
+      </div>
+      <div class="check-row" id="row-followup" onclick="toggleCheckRow('row-followup','cbx-followup')" style="border-color:rgba(198,40,40,0.2)">
+        <div class="check-box" id="cbx-followup">✓</div>
+        <span class="check-label">Follow Up Needed</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       BLOQUE 7: CONTACTO CRÍTICO
+  ══════════════════════════════════════ -->
+  <div class="block contact-block full-width" style="grid-column:1/-1">
+    <div class="block-header">
+      <div class="block-icon">🚨</div>
+      <div class="block-title-wrap">
+        <div class="block-title">Contacto de Emergencia</div>
+        <div class="block-subtitle">Bloque 07 · Emergency Contact in Event of Detention</div>
+      </div>
+      <span class="badge badge-warn">CRÍTICO</span>
+    </div>
+    <div class="block-body" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+      <div class="field-row">
+        <div class="field-label">Nombre Completo</div>
+        <input type="text" class="field-input" placeholder="Nombre del contacto" data-trackable="text" id="inp-ec-name">
+      </div>
+      <div class="field-row">
+        <div class="field-label">Relación</div>
+        <select class="field-input field-select" data-trackable="select" id="inp-ec-relation">
+          <option value="">Seleccionar...</option>
+          <option>Esposo/a</option>
+          <option>Padre/Madre</option>
+          <option>Hermano/a</option>
+          <option>Hijo/a</option>
+          <option>Abogado</option>
+          <option>Amigo/a de confianza</option>
+          <option>Otro familiar</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Teléfono</div>
+        <input type="tel" class="field-input" placeholder="(555) 000-0000" data-trackable="text" id="inp-ec-phone">
+      </div>
+      <div class="field-row" style="grid-column:1/-1">
+        <div class="field-label">Dirección / Información Adicional</div>
+        <input type="text" class="field-input" placeholder="Dirección, email, instrucciones específicas..." data-trackable="text" id="inp-ec-address">
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       ACTION BAR
+  ══════════════════════════════════════ -->
+  <div class="actions-bar full-width" style="grid-column:1/-1">
+    <div style="flex:1">
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-soft);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px">ID de Sesión</div>
+      <div style="font-family:var(--font-mono);font-size:12px;color:var(--navy);font-weight:500" id="session-id">—</div>
+    </div>
+    <button class="btn btn-ghost" onclick="resetAll()">🗑 Limpiar todo</button>
+    <button class="btn btn-navy" onclick="saveChecklist()">💾 Guardar Checklist</button>
+    <button class="btn btn-complete" onclick="markComplete()">✅ Marcar como Completo</button>
+  </div>
+
+</div><!-- /main-wrap -->
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<script>
+// ════════════════════════════════════════════════════════
+// TMLF Case Checklist — JavaScript Engine
+// ════════════════════════════════════════════════════════
+
+// ── SESSION ID ──
+const sessionId = 'TMLF-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2,4).toUpperCase();
+document.getElementById('session-id').textContent = sessionId;
+
+// ── CLOCK ──
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('live-clock').textContent = `${h}:${m}:${s}`;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// ── TRACKABLE ITEMS ──
+// We track: text inputs (non-empty), selects (non-empty), checkboxes (checked), status (selected)
+// Total trackable = all inputs/textareas[data-trackable] + all checkboxes + status
+
+const CHECKBOX_IDS = [
+  'callback-row',
+  'row-combo','row-aos','row-pb','row-waiver','row-falseclaim','row-poe','row-crimes',
+  'row-biometric','row-otherbene','row-travel','row-ead','row-renewal','row-deriv','row-ssn',
+  'row-i131','row-gc',
+  'row-eoir','row-followup'
+];
+
+let selectedStatus = null;
+
+// ── CHECKBOX TOGGLE ──
+function toggleCheckRow(rowId, boxId) {
+  const row = document.getElementById(rowId);
+  const box = document.getElementById(boxId);
+  row.classList.toggle('checked');
+  updateProgress();
+
+  // Also sync check-row styling on the callback special row
+  if (rowId === 'callback-row') {
+    row.style.border = row.classList.contains('checked')
+      ? '1.5px solid var(--success)'
+      : '1.5px solid transparent';
+    row.style.background = row.classList.contains('checked')
+      ? 'var(--success-bg)'
+      : 'var(--beige)';
+    box.style.background = row.classList.contains('checked') ? 'var(--success)' : 'white';
+    box.style.color = row.classList.contains('checked') ? 'white' : 'transparent';
+    box.style.borderColor = row.classList.contains('checked') ? 'var(--success)' : 'var(--beige-dark)';
+  }
+}
+
+// ── STATUS RADIO ──
+function selectStatus(el) {
+  document.querySelectorAll('.status-badge').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  selectedStatus = el.dataset.status;
+
+  // Show badge
+  const badge = document.getElementById('active-status-badge');
+  badge.style.display = 'inline-flex';
+  const labels = {
+    sent: 'Sent to USCIS', receipt: 'Receipt',
+    approved: 'Approved', denied: 'Denied',
+    rejected: 'Rejected', resent: 'Resent'
+  };
+  const colors = {
+    sent: 'badge-gold', receipt: 'badge-gold',
+    approved: 'badge-green', denied: 'badge-red',
+    rejected: 'badge-warn', resent: 'badge-gold'
+  };
+  badge.className = 'badge ' + (colors[selectedStatus] || 'badge-gold');
+  badge.textContent = '● ' + (labels[selectedStatus] || selectedStatus);
+
+  updateProgress();
+}
+
+// ── BLOCK COUNTERS ──
+function getBlockStats() {
+  // B1: callback + dropbox + mycase (prompt optional here)
+  const b1Checks = ['callback-row'].filter(id => document.getElementById(id)?.classList.contains('checked')).length;
+  const b1Inputs = ['inp-dropbox','inp-mycase'].filter(id => document.getElementById(id)?.value.trim()).length;
+  const b1Total = 3; // callback + dropbox + mycase
+  const b1Done = b1Checks + b1Inputs;
+  document.getElementById('counter-b1').textContent = `${b1Done}/${b1Total}`;
+
+  // B2: case-open + case-type + 7 checkboxes
+  const b2Inputs = ['inp-case-open','inp-case-type'].filter(id => document.getElementById(id)?.value.trim()).length;
+  const b2Checks = ['row-combo','row-aos','row-pb','row-waiver','row-falseclaim','row-poe','row-crimes']
+    .filter(id => document.getElementById(id)?.classList.contains('checked')).length;
+  const b2Total = 9;
+  const b2Done = b2Inputs + b2Checks;
+  document.getElementById('counter-b2').textContent = `${b2Done}/${b2Total}`;
+
+  // B3: 7 checkboxes
+  const b3 = ['row-biometric','row-otherbene','row-travel','row-ead','row-renewal','row-deriv','row-ssn']
+    .filter(id => document.getElementById(id)?.classList.contains('checked')).length;
+  document.getElementById('counter-b3').textContent = `${b3}/7`;
+
+  // B5: 2 checkboxes
+  const b5 = ['row-i131','row-gc']
+    .filter(id => document.getElementById(id)?.classList.contains('checked')).length;
+  document.getElementById('counter-b5').textContent = `${b5}/2`;
+
+  // B6: crimes-detail + eoir + followup
+  const b6Inputs = ['inp-crimes-detail'].filter(id => document.getElementById(id)?.value.trim()).length;
+  const b6Checks = ['row-eoir','row-followup']
+    .filter(id => document.getElementById(id)?.classList.contains('checked')).length;
+  const b6Done = b6Inputs + b6Checks;
+  document.getElementById('counter-b6').textContent = `${b6Done}/3`;
+}
+
+// ── PROGRESS CALCULATION ──
+function getCompletedCount() {
+  let done = 0;
+  let total = 0;
+
+  // Text inputs
+  const trackableInputs = document.querySelectorAll('[data-trackable="text"]');
+  trackableInputs.forEach(inp => {
+    total++;
+    if (inp.value.trim()) done++;
+  });
+
+  // Selects
+  const trackableSelects = document.querySelectorAll('[data-trackable="select"]');
+  trackableSelects.forEach(sel => {
+    total++;
+    if (sel.value) done++;
+  });
+
+  // Checkboxes
+  CHECKBOX_IDS.forEach(id => {
+    total++;
+    if (document.getElementById(id)?.classList.contains('checked')) done++;
+  });
+
+  // Status (counts as 1 trackable)
+  total++;
+  if (selectedStatus) done++;
+
+  return { done, total };
+}
+
+function updateProgress() {
+  const { done, total } = getCompletedCount();
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('pct-display').textContent = pct + '%';
+  document.getElementById('checked-count').textContent = done;
+  document.getElementById('total-count').textContent = total;
+
+  // Status indicator
+  const indicator = document.getElementById('status-indicator');
+  const label = document.getElementById('status-label');
+  indicator.className = 'progress-status-indicator';
+  if (pct >= 80) {
+    indicator.classList.add('green');
+    label.textContent = 'En orden';
+  } else if (pct >= 40) {
+    indicator.classList.add('yellow');
+    label.textContent = 'En progreso';
+  } else {
+    indicator.classList.add('red');
+    label.textContent = 'Pendiente';
+  }
+
+  // Block counters
+  getBlockStats();
+}
+
+// ── LISTEN to inputs ──
+document.querySelectorAll('[data-trackable]').forEach(el => {
+  el.addEventListener('input', updateProgress);
+  el.addEventListener('change', updateProgress);
+});
+
+// Initial count
+updateProgress();
+
+// ── SAVE ──
+function saveChecklist() {
+  const data = {
+    session: sessionId,
+    timestamp: new Date().toISOString(),
+    status: selectedStatus,
+    // Could be extended with all field values
+  };
+  // In production: POST to internal API
+  showToast('💾 Checklist guardado — ' + new Date().toLocaleTimeString('es-MX'), 'gold');
+}
+
+// ── MARK COMPLETE ──
+function markComplete() {
+  const { done, total } = getCompletedCount();
+  const pct = Math.round((done/total)*100);
+  if (pct < 50) {
+    showToast('⚠ El checklist está al ' + pct + '% — revisa campos faltantes', 'warn');
+    return;
+  }
+  showToast('✅ Caso marcado como COMPLETO · ' + sessionId, 'success');
+}
+
+// ── RESET ──
+function resetAll() {
+  if (!confirm('¿Confirmas limpiar todo el checklist?')) return;
+  document.querySelectorAll('[data-trackable]').forEach(el => { el.value = ''; });
+  CHECKBOX_IDS.forEach(id => {
+    const row = document.getElementById(id);
+    if (row) row.classList.remove('checked');
+  });
+  // Reset callback special row
+  const cbRow = document.getElementById('callback-row');
+  if (cbRow) {
+    cbRow.style.border = '1.5px solid transparent';
+    cbRow.style.background = 'var(--beige)';
+    const box = document.getElementById('cb-callback');
+    if (box) { box.style.background = 'white'; box.style.color = 'transparent'; box.style.borderColor = 'var(--beige-dark)'; }
+  }
+  document.querySelectorAll('.status-badge').forEach(b => b.classList.remove('active'));
+  document.getElementById('active-status-badge').style.display = 'none';
+  selectedStatus = null;
+  updateProgress();
+  showToast('🗑 Checklist limpiado', 'navy');
+}
+
+// ── TOAST ──
+function showToast(msg, type = 'navy') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  const colors = {
+    gold: 'var(--gold)', success: 'var(--success)',
+    warn: 'var(--warn)', navy: 'var(--gold)'
+  };
+  toast.style.borderLeftColor = colors[type] || colors.navy;
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.add('fadeout');
+    setTimeout(() => toast.remove(), 400);
+  }, 3500);
+}
+</script>
+</body>
+</html>
