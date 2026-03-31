@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Callback Process Diagram | TMLF Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════
+   DESIGN TOKENS — TMLF Academy
+═══════════════════════════════════ */
+:root {
+  --ink:#0f1923; --slate:#5a6a7a; --steel:#6b8fa8; --ice:#8db8d8;
+  --gold:#c9a84c; --gold-bg:rgba(201,168,76,.09); --gold-bd:rgba(201,168,76,.28);
+  --white:#fff; --bg:#eef1f5;
+  --shadow:0 8px 28px rgba(15,25,35,.11); --radius:16px; --nav-h:56px;
+  --green:#1e6641; --green-bg:rgba(30,102,65,.09); --green-bd:rgba(30,102,65,.28);
+  --red:#7a2222; --red-bg:rgba(122,34,34,.08); --red-bd:rgba(122,34,34,.22);
+  --amber:#7a5200; --amber-bg:rgba(180,130,0,.09);
+  --accent:#1a3a5c; --accent2:#2e5c8a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+
+/* ─ TOPNAV ─ */
+.topnav{position:fixed;top:0;left:0;right:0;z-index:300;height:var(--nav-h);background:rgba(10,18,28,.97);backdrop-filter:blur(16px);border-bottom:1px solid rgba(201,168,76,.12);display:flex;align-items:center;padding:0 28px;gap:14px}
+.brand{font-family:'Cormorant Garamond',serif;font-size:19px;color:#fff;display:flex;align-items:center;gap:10px;letter-spacing:.3px}
+.brand .seal{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,rgba(201,168,76,.3),rgba(201,168,76,.08));border:1px solid rgba(201,168,76,.3);display:flex;align-items:center;justify-content:center;font-size:14px}
+.brand span{color:var(--gold)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.nav-pill{padding:5px 14px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:rgba(37,99,235,.15);border:1px solid rgba(37,99,235,.3);color:#6ba3f7}
+
+/* ─ LAYOUT ─ */
+.app-shell{padding-top:var(--nav-h)}
+.main-wrap{max-width:1600px;margin:0 auto;padding:32px 28px 72px}
+
+/* ─ PAGE HEADER ─ */
+.page-header{background:linear-gradient(135deg,#0b1f35 0%,#0e2540 45%,#1a3a5c 100%);color:#fff;border-radius:20px;padding:40px 40px 34px;box-shadow:0 16px 40px rgba(10,20,35,.22);position:relative;overflow:hidden;margin-bottom:26px;animation:fadeUp .4s ease}
+.page-header::before{content:'';position:absolute;top:-70px;right:-50px;width:300px;height:300px;border:1.5px solid rgba(201,168,76,.1);border-radius:50%;animation:pulse 5s ease-in-out infinite}
+.page-header::after{content:'';position:absolute;bottom:-60px;right:120px;width:180px;height:180px;border:1.5px solid rgba(37,99,235,.07);border-radius:50%;animation:pulse 6s ease-in-out infinite .8s}
+.header-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;background:rgba(37,99,235,.15);border:1px solid rgba(37,99,235,.35);border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;margin-bottom:14px;color:#fff}
+.header-badge .dot{width:5px;height:5px;background:#6ba3f7;border-radius:50%}
+.page-header h1{font-family:'Cormorant Garamond',serif;font-size:36px;letter-spacing:.4px;font-weight:700;line-height:1.15;position:relative;z-index:1}
+.page-header p{font-size:14px;color:rgba(255,255,255,.78);max-width:62ch;position:relative;z-index:1;margin-top:10px;line-height:1.65}
+.header-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;position:relative;z-index:1}
+.meta-pill{display:flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;font-size:11.5px}
+.meta-pill .mpd{opacity:.5}
+
+/* ─ CONTROLS ─ */
+.controls-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:20px;animation:fadeUp .45s ease}
+.ctrl-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--slate);margin-right:2px}
+.ctrl-btn{display:flex;align-items:center;gap:7px;padding:8px 18px;border-radius:10px;border:1.5px solid rgba(15,25,35,.12);background:var(--white);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:600;color:var(--slate);transition:all .22s;box-shadow:0 2px 8px rgba(15,25,35,.06)}
+.ctrl-btn:hover{border-color:rgba(201,168,76,.4);color:var(--amber);background:var(--gold-bg)}
+.ctrl-btn.af{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 4px 14px rgba(26,58,92,.22)}
+.ctrl-btn.ao{background:#1a5c38;color:#fff;border-color:#1a5c38;box-shadow:0 4px 14px rgba(26,92,56,.2)}
+.ctrl-btn.ae{background:#6e1a1a;color:#fff;border-color:#6e1a1a;box-shadow:0 4px 14px rgba(110,26,26,.2)}
+.ctrl-btn .bi{font-size:14px}
+
+/* ─ DIAGRAM CARD ─ */
+.diagram-outer{background:#fff;border-radius:20px;box-shadow:var(--shadow);border:1px solid rgba(15,25,35,.07);overflow:hidden;animation:fadeUp .5s ease}
+.diagram-scroll{overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch}
+.diagram-scroll::-webkit-scrollbar{height:6px}
+.diagram-scroll::-webkit-scrollbar-track{background:rgba(15,25,35,.04)}
+.diagram-scroll::-webkit-scrollbar-thumb{background:rgba(15,25,35,.15);border-radius:3px}
+
+/* ─ LEGEND ─ */
+.legend-bar{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:14px 24px;border-top:1px solid rgba(15,25,35,.06);background:rgba(238,241,245,.55)}
+.legend-title{font-family:'Barlow Condensed',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--slate);margin-right:4px}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--slate);font-weight:500}
+.leg-rect{width:22px;height:14px;border-radius:4px;border:1.5px solid rgba(107,143,168,.35);background:#f0f5fa}
+.leg-diamond{width:14px;height:14px;border-radius:2px;border:1.5px solid rgba(201,168,76,.45);background:rgba(201,168,76,.1);transform:rotate(45deg)}
+.leg-pill{width:28px;height:14px;border-radius:7px;background:linear-gradient(135deg,#1a3a5c,#2e5c8a)}
+.leg-line{width:28px;height:2px;border-radius:1px}
+.esc-line{background:#8b2c2c}
+.opt-line{background:#1e7a4a}
+
+/* ─ KEYFRAMES ─ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.04);opacity:.85}}
+
+/* ─ SVG HOVER ─ */
+.flow-node{cursor:default;transition:opacity .22s}
+.flow-node.clickable{cursor:pointer}
+.node-body{transition:transform .18s,filter .18s;transform-box:fill-box;transform-origin:center}
+.flow-node.clickable:hover .node-body{transform:scale(1.032);filter:drop-shadow(0 6px 16px rgba(15,25,35,.18))}
+
+/* ─ LANG BUTTON ─ */
+.lang-btn{display:flex;align-items:center;gap:7px;padding:6px 14px;border-radius:999px;border:1.5px solid rgba(201,168,76,.35);background:rgba(201,168,76,.08);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11.5px;font-weight:700;color:var(--gold);letter-spacing:.4px;transition:all .22s;white-space:nowrap}
+.lang-btn:hover{background:rgba(201,168,76,.18);border-color:rgba(201,168,76,.65);transform:translateY(-1px);box-shadow:0 3px 10px rgba(201,168,76,.15)}
+.lang-btn .lf{font-size:14px;line-height:1}
+[data-t]{transition:opacity .15s ease}
+[data-t].fading{opacity:0;pointer-events:none}
+
+/* ─ RESPONSIVE ─ */
+@media(max-width:900px){.main-wrap{padding:22px 14px 60px}.page-header{padding:28px 20px 24px}.page-header h1{font-size:26px}}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="brand">
+    <div class="seal">⚖</div>
+    <div>TMLF <span>Academy</span></div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-pill" data-t="nav-pill">Operational Flow</div>
+    <button class="lang-btn" id="langBtn" onclick="toggleLang()">
+      <span class="lf" id="langFlag">🇲🇽</span>
+      <span id="langLabel">ES</span>
+    </button>
+  </div>
+</nav>
+
+<div class="app-shell">
+<div class="main-wrap">
+
+  <!-- HEADER -->
+  <header class="page-header">
+    <div class="header-badge"><div class="dot"></div> <span data-t="badge">Process Documentation</span></div>
+    <h1 data-t="h1">Callback Process Diagram</h1>
+    <p data-t="subtitle">Visual workflow for callback routing, risk assessment, escalation layers, and management follow-up actions across the CDMX Callback Team, Attorney review, and MGM.</p>
+    <div class="header-meta">
+      <div class="meta-pill"><span class="mpd">🔒</span> <span data-t="m1">Internal Use</span></div>
+      <div class="meta-pill"><span class="mpd">⚙</span> <span data-t="m2">Operations</span></div>
+      <div class="meta-pill"><span class="mpd">⚖</span> <span data-t="m3">Legal Support</span></div>
+      <div class="meta-pill"><span class="mpd">📋</span> <span data-t="m4">Client Services</span></div>
+    </div>
+  </header>
+
+  <!-- CONTROLS -->
+  <div class="controls-bar">
+    <span class="ctrl-label" data-t="view-label">View:</span>
+    <button class="ctrl-btn af" id="btn-full" onclick="setMode('full')"><span class="bi">🔍</span> <span data-t="btn-full">Full Process</span></button>
+    <button class="ctrl-btn" id="btn-opt" onclick="setMode('optimal')"><span class="bi">✅</span> <span data-t="btn-opt">Optimal Path</span></button>
+    <button class="ctrl-btn" id="btn-esc" onclick="setMode('escalation')"><span class="bi">⚠</span> <span data-t="btn-esc">Escalation Path</span></button>
+  </div>
+
+  <!-- DIAGRAM -->
+  <div class="diagram-outer">
+    <div class="diagram-scroll">
+<!--
+  SVG COORDINATE MAP (all measurements in SVG units)
+  ─────────────────────────────────────────────────
+  Canvas: 1480 × 930
+  
+  Lane boundaries (x start → x end), content center x:
+    CDMX:    x 10→420   center 215
+    Jr Atty: x 428→620  center 524
+    Gibrán:  x 628→840  center 734
+    Aaron:   x 848→1060 center 954
+    MGM:     x 1068→1470 center 1265
+  
+  Node vertical positions (y center):
+    Header row: y 22→84
+    Agenda: y 160
+    ERA: y 260
+    Analyst: y 340
+    Requires Call: y 430 (diamond)
+    Call Agent: y 560 (taller)
+    Paralegal: y 430 (same row as RequiresCall, in right zone)
+    Jr Callback: y 470
+    Sat Callback: y 470
+    Gibran Optimal: y 570 (diamond)
+    Aaron Callback: y 570
+    Aaron Optimal: y 680 (diamond)
+    MGM Follow Up: y 700
+    MGM Callback: y 820
+    End: y 700
+-->
+<svg id="diagramSvg"
+     viewBox="0 0 1480 940"
+     width="1480" height="940"
+     xmlns="http://www.w3.org/2000/svg"
+     style="display:block">
+<defs>
+  <!-- Gradients -->
+  <linearGradient id="gLane" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#0b1f35"/>
+    <stop offset="100%" stop-color="#1e4470"/>
+  </linearGradient>
+  <linearGradient id="gStart" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#0d2040"/>
+    <stop offset="100%" stop-color="#1e3e6a"/>
+  </linearGradient>
+  <linearGradient id="gEnd" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#1a4a2e"/>
+    <stop offset="100%" stop-color="#2a7a50"/>
+  </linearGradient>
+  <linearGradient id="gNote" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="rgba(201,168,76,.06)"/>
+    <stop offset="100%" stop-color="rgba(201,168,76,.12)"/>
+  </linearGradient>
+
+  <!-- Arrow markers -->
+  <marker id="mDef" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,1 L9,5 L0,9" fill="none" stroke="#8faabb" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
+  </marker>
+  <marker id="mOpt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,1 L9,5 L0,9" fill="none" stroke="#1e7a4a" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
+  </marker>
+  <marker id="mEsc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,1 L9,5 L0,9" fill="none" stroke="#8b2c2c" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
+  </marker>
+
+  <!-- Filters -->
+  <filter id="fShadow" x="-15%" y="-20%" width="130%" height="150%">
+    <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="rgba(15,25,35,.13)" flood-opacity="1"/>
+  </filter>
+  <filter id="fShadowHover" x="-20%" y="-30%" width="140%" height="160%">
+    <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="rgba(15,25,35,.20)" flood-opacity="1"/>
+  </filter>
+
+  <!-- Lane stripe pattern -->
+  <pattern id="pStripe" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+    <rect width="40" height="40" fill="transparent"/>
+    <circle cx="20" cy="20" r=".7" fill="rgba(15,25,35,.035)"/>
+  </pattern>
+</defs>
+
+<!-- ═══════════════════════════════════════════════════════
+     BACKGROUND
+═══════════════════════════════════════════════════════ -->
+<rect width="1480" height="940" fill="#f3f6f9"/>
+
+<!-- ═══════════════════════════════════════════════════════
+     LANE BODIES
+═══════════════════════════════════════════════════════ -->
+<!-- CDMX -->
+<rect x="10" y="18" width="412" height="904" rx="13" fill="rgba(255,255,255,.52)" stroke="rgba(107,143,168,.15)" stroke-width="1"/>
+<rect x="10" y="18" width="412" height="904" rx="13" fill="url(#pStripe)"/>
+<!-- Jr Atty -->
+<rect x="430" y="18" width="192" height="904" rx="13" fill="rgba(255,255,255,.44)" stroke="rgba(107,143,168,.14)" stroke-width="1"/>
+<rect x="430" y="18" width="192" height="904" rx="13" fill="url(#pStripe)"/>
+<!-- Gibrán -->
+<rect x="630" y="18" width="210" height="904" rx="13" fill="rgba(255,255,255,.44)" stroke="rgba(107,143,168,.14)" stroke-width="1"/>
+<rect x="630" y="18" width="210" height="904" rx="13" fill="url(#pStripe)"/>
+<!-- Aaron -->
+<rect x="848" y="18" width="210" height="904" rx="13" fill="rgba(255,255,255,.44)" stroke="rgba(107,143,168,.14)" stroke-width="1"/>
+<rect x="848" y="18" width="210" height="904" rx="13" fill="url(#pStripe)"/>
+<!-- MGM -->
+<rect x="1066" y="18" width="404" height="904" rx="13" fill="rgba(255,255,255,.52)" stroke="rgba(107,143,168,.15)" stroke-width="1"/>
+<rect x="1066" y="18" width="404" height="904" rx="13" fill="url(#pStripe)"/>
+
+<!-- ═══════════════════════════════════════════════════════
+     LANE HEADERS
+═══════════════════════════════════════════════════════ -->
+<!-- CDMX -->
+<rect x="10" y="18" width="412" height="64" rx="13" fill="url(#gLane)"/>
+<rect x="10" y="62" width="412" height="20" fill="rgba(0,0,0,.18)"/><!-- shadow bar -->
+<text id="st-lane-cdmx" x="216" y="46" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="14" font-weight="700" letter-spacing="1.5" fill="#fff">CDMX CALLBACK TEAM</text>
+<line x1="120" y1="58" x2="312" y2="58" stroke="rgba(201,168,76,.32)" stroke-width="1"/>
+
+<!-- Jr Atty -->
+<rect x="430" y="18" width="192" height="64" rx="13" fill="url(#gLane)"/>
+<rect x="430" y="62" width="192" height="20" fill="rgba(0,0,0,.18)"/>
+<text id="st-lane-jr-1" x="526" y="41" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="13.5" font-weight="700" letter-spacing="1.3" fill="#fff">JUNIOR</text>
+<text id="st-lane-jr-2" x="526" y="58" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="13.5" font-weight="700" letter-spacing="1.3" fill="#fff">ATTORNEY</text>
+
+<!-- Gibrán -->
+<rect x="630" y="18" width="210" height="64" rx="13" fill="url(#gLane)"/>
+<rect x="630" y="62" width="210" height="20" fill="rgba(0,0,0,.18)"/>
+<text id="st-lane-gibr-1" x="735" y="41" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="13.5" font-weight="700" letter-spacing="1.2" fill="#fff">GIBRÁN</text>
+<text id="st-lane-gibr-2" x="735" y="58" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="13.5" font-weight="700" letter-spacing="1.2" fill="#fff">ALCERRECA</text>
+
+<!-- Aaron -->
+<rect x="848" y="18" width="210" height="64" rx="13" fill="url(#gLane)"/>
+<rect x="848" y="62" width="210" height="20" fill="rgba(0,0,0,.18)"/>
+<text id="st-lane-aaron-1" x="953" y="41" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="13.5" font-weight="700" letter-spacing="1.2" fill="#fff">ATTY</text>
+<text id="st-lane-aaron-2" x="953" y="58" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="13.5" font-weight="700" letter-spacing="1.2" fill="#fff">AARON</text>
+
+<!-- MGM -->
+<rect x="1066" y="18" width="404" height="64" rx="13" fill="url(#gLane)"/>
+<rect x="1066" y="62" width="404" height="20" fill="rgba(0,0,0,.18)"/>
+<text id="st-lane-mgm" x="1268" y="51" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="14" font-weight="700" letter-spacing="2" fill="#fff">MGM</text>
+
+<!-- ═══════════════════════════════════════════════════════
+     CONNECTIONS  (painted BEFORE nodes so nodes sit on top)
+     
+     Node centers reference:
+       Agenda:          x=175, y=160
+       ERA:             x=175, y=254 bottom=277
+       Analyst:         x=175, y=330 bottom=353
+       ReqCall diamond: x=175, y=424 top=390 bot=458 left=141 right=209
+       CallAgent:       x=175, y=548 top=500 bot=596
+       Paralegal:       x=310, y=428 left=240 right=380 top=408 bot=448
+       JrCallback:      x=526, y=462 left=435 right=617
+       SatCallback:     x=735, y=462 left=643 right=827
+       GibrOpt:         x=735, y=572 top=538 bot=606 left=701 right=769
+       AaronCB:         x=953, y=556 left=860 right=1046 top=534 bot=578
+       AaronOpt:        x=953, y=680 top=646 bot=714 left=919 right=987
+       MGMFollowUp:     x=1220, y=700 left=1090 right=1350 top=678 bot=722
+       MGMCallback:     x=1220, y=820 left=1090 right=1350 top=798 bot=842
+       End:             x=1418, y=700 left=1375 right=1461
+═══════════════════════════════════════════════════════ -->
+
+<!-- [1] Agenda → ERA -->
+<path id="c1" class="conn path-full path-opt path-esc"
+      d="M 175 183 L 175 232"
+      fill="none" stroke="#8faabb" stroke-width="1.7" marker-end="url(#mDef)"/>
+
+<!-- [2] ERA → Analyst -->
+<path id="c2" class="conn path-full path-opt path-esc"
+      d="M 175 277 L 175 308"
+      fill="none" stroke="#8faabb" stroke-width="1.7" marker-end="url(#mDef)"/>
+
+<!-- [3] Analyst → RequiresCall -->
+<path id="c3" class="conn path-full path-opt path-esc"
+      d="M 175 354 L 175 390"
+      fill="none" stroke="#8faabb" stroke-width="1.7" marker-end="url(#mDef)"/>
+
+<!-- [4] RequiresCall YES (down) → CallAgent -->
+<path id="c4" class="conn path-full path-opt path-esc"
+      d="M 175 458 L 175 500"
+      fill="none" stroke="#1e7a4a" stroke-width="1.8" marker-end="url(#mOpt)"/>
+
+<!-- [5] RequiresCall NO (right) → Paralegal -->
+<path id="c5" class="conn path-full path-opt path-esc"
+      d="M 209 424 L 240 424"
+      fill="none" stroke="#8b2c2c" stroke-width="1.8" marker-end="url(#mEsc)"/>
+
+<!-- [6] CallAgent → JrCallback (right, curve up) -->
+<path id="c6" class="conn path-full path-opt path-esc"
+      d="M 265 548 C 360 548 400 462 435 462"
+      fill="none" stroke="#8faabb" stroke-width="1.7" marker-end="url(#mDef)"/>
+
+<!-- [7] Paralegal → JrCallback (right) -->
+<path id="c7" class="conn path-full path-opt path-esc"
+      d="M 380 428 C 415 428 415 462 435 462"
+      fill="none" stroke="#8faabb" stroke-width="1.7" marker-end="url(#mDef)"/>
+
+<!-- [8] JrCallback → SatCallback (right) -->
+<path id="c8" class="conn path-full path-opt path-esc"
+      d="M 617 462 L 643 462"
+      fill="none" stroke="#8faabb" stroke-width="1.7" marker-end="url(#mDef)"/>
+
+<!-- [9] SatCallback → GibrOpt (down) -->
+<path id="c9" class="conn path-full path-opt path-esc"
+      d="M 735 485 L 735 538"
+      fill="none" stroke="#8faabb" stroke-width="1.7" marker-end="url(#mDef)"/>
+
+<!-- [10] GibrOpt YES (right) → MGMFollowUp - arc across lanes -->
+<path id="c10" class="conn path-full path-opt"
+      d="M 769 572 C 830 572 830 700 1090 700"
+      fill="none" stroke="#1e7a4a" stroke-width="2.0" marker-end="url(#mOpt)"/>
+
+<!-- [11] GibrOpt NO (down/left) → AaronCallback -->
+<path id="c11" class="conn path-full path-esc"
+      d="M 735 606 C 735 640 820 590 860 565"
+      fill="none" stroke="#8b2c2c" stroke-width="2.0" marker-end="url(#mEsc)"/>
+
+<!-- [12] AaronCallback → AaronOpt (down) -->
+<path id="c12" class="conn path-full path-esc"
+      d="M 953 578 L 953 646"
+      fill="none" stroke="#8faabb" stroke-width="1.7" marker-end="url(#mDef)"/>
+
+<!-- [13] AaronOpt YES (right) → MGMFollowUp -->
+<path id="c13" class="conn path-full path-esc path-opt"
+      d="M 987 680 C 1038 680 1038 700 1090 700"
+      fill="none" stroke="#1e7a4a" stroke-width="2.0" marker-end="url(#mOpt)"/>
+
+<!-- [14] AaronOpt NO (down) → MGMCallback -->
+<path id="c14" class="conn path-full path-esc"
+      d="M 953 714 C 953 766 1060 820 1090 820"
+      fill="none" stroke="#8b2c2c" stroke-width="2.0" marker-end="url(#mEsc)"/>
+
+<!-- [15] MGMCallback → MGMFollowUp (up) -->
+<path id="c15" class="conn path-full path-esc"
+      d="M 1220 798 L 1220 722"
+      fill="none" stroke="#8faabb" stroke-width="1.7" marker-end="url(#mDef)"/>
+
+<!-- [16] MGMFollowUp → End (right) -->
+<path id="c16" class="conn path-full path-opt path-esc"
+      d="M 1350 700 L 1375 700"
+      fill="none" stroke="#8faabb" stroke-width="1.7" marker-end="url(#mDef)"/>
+
+<!-- ═══════════════════════════════════════════════════════
+     EDGE LABELS
+═══════════════════════════════════════════════════════ -->
+<!-- YES on Req Call -->
+<g class="conn path-full path-opt path-esc">
+  <rect x="147" y="458" width="34" height="18" rx="5" fill="#edf7f2" stroke="rgba(30,102,65,.3)" stroke-width="1"/>
+  <text id="st-yes-1" x="164" y="471" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="9.5" font-weight="700" fill="#1e6641">Yes</text>
+</g>
+<!-- NO on Req Call -->
+<g class="conn path-full path-opt path-esc">
+  <rect x="211" y="412" width="32" height="18" rx="5" fill="#fef0f0" stroke="rgba(122,34,34,.28)" stroke-width="1"/>
+  <text id="st-no-1" x="227" y="425" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="9.5" font-weight="700" fill="#7a2222">No</text>
+</g>
+<!-- YES on Gibr Opt -->
+<g class="conn path-full path-opt">
+  <rect x="770" y="562" width="34" height="18" rx="5" fill="#edf7f2" stroke="rgba(30,102,65,.3)" stroke-width="1"/>
+  <text id="st-yes-2" x="787" y="575" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="9.5" font-weight="700" fill="#1e6641">Yes</text>
+</g>
+<!-- NO on Gibr Opt -->
+<g class="conn path-full path-esc">
+  <rect x="694" y="603" width="32" height="18" rx="5" fill="#fef0f0" stroke="rgba(122,34,34,.28)" stroke-width="1"/>
+  <text id="st-no-2" x="710" y="616" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="9.5" font-weight="700" fill="#7a2222">No</text>
+</g>
+<!-- YES on Aaron Opt -->
+<g class="conn path-full path-esc path-opt">
+  <rect x="988" y="670" width="34" height="18" rx="5" fill="#edf7f2" stroke="rgba(30,102,65,.3)" stroke-width="1"/>
+  <text id="st-yes-3" x="1005" y="683" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="9.5" font-weight="700" fill="#1e6641">Yes</text>
+</g>
+<!-- NO on Aaron Opt -->
+<g class="conn path-full path-esc">
+  <rect x="916" y="712" width="32" height="18" rx="5" fill="#fef0f0" stroke="rgba(122,34,34,.28)" stroke-width="1"/>
+  <text id="st-no-3" x="932" y="725" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="9.5" font-weight="700" fill="#7a2222">No</text>
+</g>
+
+<!-- ═══════════════════════════════════════════════════════
+     NODES
+═══════════════════════════════════════════════════════ -->
+
+<!-- ── CDMX LANE ── -->
+
+<!-- CALLBACK ORIGINATED (note card, floated left) -->
+<g id="n-orig" class="flow-node path-full path-opt path-esc clickable"
+   data-tip="Callbacks may originate from multiple channels.">
+  <g class="node-body" filter="url(#fShadow)">
+    <rect x="22" y="108" width="110" height="88" rx="10"
+          fill="url(#gNote)" stroke="rgba(201,168,76,.35)" stroke-width="1.4" stroke-dasharray="5,3"/>
+    <!-- Fold corner -->
+    <polygon points="112,108 132,108 132,128" fill="rgba(201,168,76,.18)" stroke="rgba(201,168,76,.35)" stroke-width="1"/>
+    <text id="st-orig-label" x="77" y="130" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="8.5" font-weight="800" fill="#7a5200" letter-spacing=".5">ORIGINATED:</text>
+    <text id="st-orig-1" x="77" y="145" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="8" fill="#5a6a7a">Call Centre</text>
+    <text id="st-orig-2" x="77" y="157" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="8" fill="#5a6a7a">Social Media</text>
+    <text id="st-orig-3" x="77" y="169" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="8" fill="#5a6a7a">Retentions</text>
+    <text id="st-orig-4" x="77" y="181" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="7.5" fill="#5a6a7a">Interdept. Escalations</text>
+  </g>
+  <!-- Dashed connector to Agenda -->
+  <path d="M 132 155 L 142 160" stroke="rgba(201,168,76,.4)" stroke-width="1" stroke-dasharray="3,2" fill="none"/>
+</g>
+
+<!-- AGENDA (start — pill) -->
+<g id="n-agenda" class="flow-node path-full path-opt path-esc clickable"
+   data-tip="Process start: Callback is scheduled and queued.">
+  <g class="node-body" filter="url(#fShadow)">
+    <rect x="109" y="137" width="132" height="46" rx="23"
+          fill="url(#gStart)" stroke="rgba(201,168,76,.4)" stroke-width="1.5"/>
+    <text id="st-agenda" x="175" y="165" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="13" font-weight="700" fill="#fff" letter-spacing=".2">Agenda</text>
+  </g>
+</g>
+
+<!-- ERA -->
+<g id="n-era" class="flow-node path-full path-opt path-esc clickable"
+   data-tip="AI-Enhanced Risk Assessment evaluates client risk profile before action.">
+  <g class="node-body" filter="url(#fShadow)">
+    <rect x="82" y="232" width="186" height="45" rx="12" fill="#fff" stroke="rgba(107,143,168,.28)" stroke-width="1.4"/>
+    <rect x="82" y="232" width="5" height="45" rx="2.5" fill="#6b8fa8"/>
+    <text id="st-era-1" x="177" y="251" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" font-weight="700" fill="#1a3a5c">AI-Enhanced Risk</text>
+    <text id="st-era-2" x="177" y="266" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" font-weight="700" fill="#1a3a5c">Assessment (ERA)</text>
+  </g>
+</g>
+
+<!-- Analyst -->
+<g id="n-analyst" class="flow-node path-full path-opt path-esc clickable"
+   data-tip="Analyst reviews ERA results and defines the callback response strategy.">
+  <g class="node-body" filter="url(#fShadow)">
+    <rect x="82" y="308" width="186" height="46" rx="12" fill="#fff" stroke="rgba(107,143,168,.28)" stroke-width="1.4"/>
+    <rect x="82" y="308" width="5" height="46" rx="2.5" fill="#6b8fa8"/>
+    <text id="st-analyst-1" x="177" y="327" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" font-weight="700" fill="#1a3a5c">Analyst — ERA Analysis</text>
+    <text id="st-analyst-2" x="177" y="342" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" font-weight="700" fill="#1a3a5c">&amp; Strategy</text>
+  </g>
+</g>
+
+<!-- REQUIRES CALL (diamond) -->
+<!-- diamond: cx=175, cy=424; half=34 → rect rotated 45° at center -->
+<g id="n-reqcall" class="flow-node path-full path-opt path-esc clickable"
+   data-tip="Decision: Does this callback require a live call by a call agent?">
+  <g class="node-body" filter="url(#fShadow)">
+    <rect x="141" y="390" width="68" height="68" rx="7"
+          fill="rgba(201,168,76,.1)" stroke="rgba(201,168,76,.52)" stroke-width="1.5"
+          transform="rotate(45,175,424)"/>
+    <text id="st-reqcall-1" x="175" y="420" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="10.5" font-weight="700" fill="#7a5200">Requires</text>
+    <text id="st-reqcall-2" x="175" y="433" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="10.5" font-weight="700" fill="#7a5200">Call?</text>
+  </g>
+</g>
+
+<!-- CALL AGENT -->
+<g id="n-callagent" class="flow-node path-full path-opt path-esc clickable"
+   data-tip="Call Agent handles direct client contact: screening, collecting extra evidence, and processing Mandamus requests.">
+  <g class="node-body" filter="url(#fShadow)">
+    <rect x="82" y="500" width="186" height="96" rx="12" fill="#fff" stroke="rgba(107,143,168,.28)" stroke-width="1.4"/>
+    <rect x="82" y="500" width="5" height="96" rx="2.5" fill="#2e5c8a"/>
+    <text id="st-callagent" x="177" y="523" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" font-weight="700" fill="#1a3a5c">Call Agent</text>
+    <text id="st-ca-1" x="100" y="541" font-family="'DM Sans',sans-serif" font-size="10.5" fill="#5a6a7a">·  Screening</text>
+    <text id="st-ca-2" x="100" y="558" font-family="'DM Sans',sans-serif" font-size="10.5" fill="#5a6a7a">·  Extra Evidence</text>
+    <text id="st-ca-3" x="100" y="575" font-family="'DM Sans',sans-serif" font-size="10.5" fill="#5a6a7a">·  Mandamus</text>
+  </g>
+</g>
+
+<!-- PARALEGAL -->
+<g id="n-paralegal" class="flow-node path-full path-opt path-esc clickable"
+   data-tip="Paralegal assembles the full case package and prepares the scheduled callback with the client.">
+  <g class="node-body" filter="url(#fShadow)">
+    <rect x="240" y="404" width="140" height="56" rx="12" fill="#fff" stroke="rgba(107,143,168,.28)" stroke-width="1.4"/>
+    <rect x="240" y="404" width="5" height="56" rx="2.5" fill="#8db8d8"/>
+    <text id="st-para-1" x="313" y="425" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="10" font-weight="700" fill="#1a3a5c">Paralegal Assemble</text>
+    <text id="st-para-2" x="313" y="439" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="10" font-weight="700" fill="#1a3a5c">Package &amp; Prepares</text>
+    <text id="st-para-3" x="313" y="453" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="10" font-weight="700" fill="#1a3a5c">Callback w Client</text>
+  </g>
+</g>
+
+<!-- ── JR ATTORNEY LANE ── -->
+
+<!-- JR CALLBACK -->
+<g id="n-jr-cb" class="flow-node path-full path-opt path-esc clickable"
+   data-tip="Junior Attorney conducts the client callback review session.">
+  <g class="node-body" filter="url(#fShadow)">
+    <rect x="437" y="440" width="178" height="44" rx="12" fill="#fff" stroke="rgba(107,143,168,.28)" stroke-width="1.4"/>
+    <rect x="437" y="440" width="5" height="44" rx="2.5" fill="#6b8fa8"/>
+    <text id="st-jr-cb" x="528" y="466" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" font-weight="600" fill="#1a3a5c">Callback</text>
+  </g>
+</g>
+
+<!-- ── GIBRÁN LANE ── -->
+
+<!-- SAT CALLBACK -->
+<g id="n-gibr-sat" class="flow-node path-full path-opt path-esc clickable"
+   data-tip="Gibrán conducts a satisfaction-focused callback to assess the client's experience and resolution status.">
+  <g class="node-body" filter="url(#fShadow)">
+    <rect x="639" y="440" width="192" height="44" rx="12" fill="#fff" stroke="rgba(107,143,168,.28)" stroke-width="1.4"/>
+    <rect x="639" y="440" width="5" height="44" rx="2.5" fill="#6b8fa8"/>
+    <text id="st-gibr-sat" x="737" y="461" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11.5" font-weight="700" fill="#1a3a5c">Satisfaction Callback</text>
+  </g>
+</g>
+
+<!-- GIBRÁN OPTIMAL? (diamond) -->
+<!-- cx=735, cy=572 -->
+<g id="n-gibr-opt" class="flow-node path-full path-opt path-esc clickable"
+   data-tip="Is the client's case resolved optimally? YES → MGM Follow-up; NO → Escalate to Atty Aaron.">
+  <g class="node-body" filter="url(#fShadow)">
+    <rect x="701" y="538" width="68" height="68" rx="7"
+          fill="rgba(201,168,76,.1)" stroke="rgba(201,168,76,.52)" stroke-width="1.5"
+          transform="rotate(45,735,572)"/>
+    <text id="st-gibr-opt" x="735" y="568" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="10.5" font-weight="700" fill="#7a5200">Optimal?</text>
+  </g>
+</g>
+
+<!-- ── ATTY AARON LANE ── -->
+
+<!-- AARON CALLBACK -->
+<g id="n-aaron-cb" class="flow-node path-full path-esc clickable"
+   data-tip="Atty Aaron performs a callback when Gibrán's outcome is not optimal — escalation step 1.">
+  <g class="node-body" filter="url(#fShadow)">
+    <rect x="857" y="534" width="192" height="44" rx="12" fill="#fff" stroke="rgba(139,44,44,.22)" stroke-width="1.4"/>
+    <rect x="857" y="534" width="5" height="44" rx="2.5" fill="#8b2c2c"/>
+    <text id="st-aaron-cb" x="955" y="560" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" font-weight="600" fill="#1a3a5c">Callback</text>
+  </g>
+</g>
+
+<!-- AARON OPTIMAL? (diamond) -->
+<!-- cx=953, cy=680 -->
+<g id="n-aaron-opt" class="flow-node path-full path-esc clickable"
+   data-tip="Is the resolution optimal after Atty Aaron's callback? YES → MGM Follow-up; NO → MGM direct callback.">
+  <g class="node-body" filter="url(#fShadow)">
+    <rect x="919" y="646" width="68" height="68" rx="7"
+          fill="rgba(201,168,76,.1)" stroke="rgba(201,168,76,.52)" stroke-width="1.5"
+          transform="rotate(45,953,680)"/>
+    <text id="st-aaron-opt" x="953" y="676" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="10.5" font-weight="700" fill="#7a5200">Optimal?</text>
+  </g>
+</g>
+
+<!-- ── MGM LANE ── -->
+
+<!-- MGM FOLLOW UP OF ACTIONS NEEDED -->
+<g id="n-mgm-fu" class="flow-node path-full path-opt path-esc clickable"
+   data-tip="Management reviews all outstanding actions and ensures follow-through on commitments made during callback process.">
+  <g class="node-body" filter="url(#fShadow)">
+    <rect x="1092" y="678" width="258" height="44" rx="12" fill="#fff" stroke="rgba(30,102,65,.28)" stroke-width="1.4"/>
+    <rect x="1092" y="678" width="5" height="44" rx="2.5" fill="#1e6641"/>
+    <text id="st-mgm-fu-1" x="1223" y="697" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" font-weight="700" fill="#1a3a5c">Follow Up of Actions</text>
+    <text id="st-mgm-fu-2" x="1223" y="712" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" font-weight="700" fill="#1a3a5c">Needed</text>
+  </g>
+</g>
+
+<!-- MGM CALLBACK (escalation) -->
+<g id="n-mgm-cb" class="flow-node path-full path-esc clickable"
+   data-tip="MGM performs a direct callback when Atty Aaron's outcome is still not optimal — final escalation step.">
+  <g class="node-body" filter="url(#fShadow)">
+    <rect x="1092" y="798" width="258" height="44" rx="12" fill="#fff" stroke="rgba(139,44,44,.22)" stroke-width="1.4"/>
+    <rect x="1092" y="798" width="5" height="44" rx="2.5" fill="#8b2c2c"/>
+    <text id="st-mgm-cb" x="1223" y="824" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" font-weight="600" fill="#1a3a5c">Callback</text>
+  </g>
+</g>
+
+<!-- END (pill) -->
+<g id="n-end" class="flow-node path-full path-opt path-esc clickable"
+   data-tip="Process complete. All actions resolved.">
+  <g class="node-body" filter="url(#fShadow)">
+    <rect x="1375" y="678" width="86" height="44" rx="22"
+          fill="url(#gEnd)" stroke="rgba(30,102,65,.42)" stroke-width="1.5"/>
+    <text id="st-end" x="1418" y="704" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12.5" font-weight="700" fill="#fff">End</text>
+  </g>
+</g>
+
+</svg>
+    </div><!-- /diagram-scroll -->
+
+    <!-- LEGEND -->
+    <div class="legend-bar">
+      <span class="legend-title" data-t="legend-title">Legend:</span>
+      <div class="legend-item"><div class="leg-rect"></div><span data-t="leg-process">Process</span></div>
+      <div class="legend-item"><div class="leg-diamond"></div><span data-t="leg-decision">Decision</span></div>
+      <div class="legend-item"><div class="leg-pill"></div><span data-t="leg-startend">Start / End</span></div>
+      <div class="legend-item"><div class="leg-line esc-line"></div><span data-t="leg-esc">Escalation</span></div>
+      <div class="legend-item"><div class="leg-line opt-line"></div><span data-t="leg-opt">Optimal Flow</span></div>
+    </div>
+
+  </div><!-- /diagram-outer -->
+
+</div><!-- /main-wrap -->
+</div><!-- /app-shell -->
+
+<!-- TOOLTIP -->
+<div id="tip" style="
+  display:none;position:fixed;z-index:600;
+  background:rgba(10,18,28,.93);color:#fff;
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;line-height:1.55;
+  padding:9px 15px;border-radius:10px;
+  border:1px solid rgba(201,168,76,.28);
+  box-shadow:0 6px 22px rgba(0,0,0,.35);
+  max-width:270px;pointer-events:none;
+"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   BILINGUAL STRINGS
+═══════════════════════════════════════════════════ */
+const STRINGS = {
+  en: {
+    /* nav */
+    'nav-pill': 'Operational Flow',
+    /* header */
+    'badge':    'Process Documentation',
+    'h1':       'Callback Process Diagram',
+    'subtitle': 'Visual workflow for callback routing, risk assessment, escalation layers, and management follow-up actions across the CDMX Callback Team, Attorney review, and MGM.',
+    'm1': 'Internal Use', 'm2': 'Operations', 'm3': 'Legal Support', 'm4': 'Client Services',
+    /* controls */
+    'view-label': 'View:',
+    'btn-full': 'Full Process',
+    'btn-opt':  'Optimal Path',
+    'btn-esc':  'Escalation Path',
+    /* legend */
+    'legend-title': 'Legend:',
+    'leg-process':  'Process',
+    'leg-decision': 'Decision',
+    'leg-startend': 'Start / End',
+    'leg-esc':      'Escalation',
+    'leg-opt':      'Optimal Flow',
+    /* tooltips */
+    'tip-orig':      'Callbacks may originate from multiple channels.',
+    'tip-agenda':    'Process start: Callback is scheduled and queued.',
+    'tip-era':       'AI-Enhanced Risk Assessment evaluates client risk profile before action.',
+    'tip-analyst':   'Analyst reviews ERA results and defines the callback response strategy.',
+    'tip-reqcall':   'Decision: Does this callback require a live call by a call agent?',
+    'tip-callagent': 'Call Agent handles direct client contact: screening, collecting extra evidence, and processing Mandamus requests.',
+    'tip-paralegal': 'Paralegal assembles the full case package and prepares the scheduled callback with the client.',
+    'tip-jr-cb':     'Junior Attorney conducts the client callback review session.',
+    'tip-gibr-sat':  'Gibrán conducts a satisfaction-focused callback to assess the client\'s experience and resolution status.',
+    'tip-gibr-opt':  'Is the client\'s case resolved optimally? YES → MGM Follow-up; NO → Escalate to Atty Aaron.',
+    'tip-aaron-cb':  'Atty Aaron performs a callback when Gibrán\'s outcome is not optimal — escalation step 1.',
+    'tip-aaron-opt': 'Is the resolution optimal after Atty Aaron\'s callback? YES → MGM Follow-up; NO → MGM direct callback.',
+    'tip-mgm-fu':    'Management reviews all outstanding actions and ensures follow-through on commitments made during callback process.',
+    'tip-mgm-cb':    'MGM performs a direct callback when Atty Aaron\'s outcome is still not optimal — final escalation step.',
+    'tip-end':       'Process complete. All actions resolved.',
+    /* SVG node labels — each entry is an array of <text> lines */
+    'svg-orig-label': 'ORIGINATED:',
+    'svg-orig-1': 'Call Centre', 'svg-orig-2': 'Social Media',
+    'svg-orig-3': 'Retentions', 'svg-orig-4': 'Interdept. Escalations',
+    'svg-agenda': 'Agenda',
+    'svg-era-1': 'AI-Enhanced Risk', 'svg-era-2': 'Assessment (ERA)',
+    'svg-analyst-1': 'Analyst — ERA Analysis', 'svg-analyst-2': '& Strategy',
+    'svg-reqcall-1': 'Requires', 'svg-reqcall-2': 'Call?',
+    'svg-callagent': 'Call Agent',
+    'svg-ca-1': '·  Screening', 'svg-ca-2': '·  Extra Evidence', 'svg-ca-3': '·  Mandamus',
+    'svg-paralegal-1': 'Paralegal Assemble', 'svg-paralegal-2': 'Package & Prepares', 'svg-paralegal-3': 'Callback w Client',
+    'svg-jr-cb': 'Callback',
+    'svg-gibr-sat': 'Satisfaction Callback',
+    'svg-gibr-opt': 'Optimal?',
+    'svg-aaron-cb': 'Callback',
+    'svg-aaron-opt': 'Optimal?',
+    'svg-mgm-fu-1': 'Follow Up of Actions', 'svg-mgm-fu-2': 'Needed',
+    'svg-mgm-cb': 'Callback',
+    'svg-end': 'End',
+    'svg-yes-1': 'Yes', 'svg-yes-2': 'Yes', 'svg-yes-3': 'Yes',
+    'svg-no-1':  'No',  'svg-no-2':  'No',  'svg-no-3':  'No',
+    /* lane headers */
+    'lane-cdmx':   'CDMX CALLBACK TEAM',
+    'lane-jr-1':   'JUNIOR', 'lane-jr-2': 'ATTORNEY',
+    'lane-gibr-1': 'GIBRÁN', 'lane-gibr-2': 'ALCERRECA',
+    'lane-aaron-1':'ATTY',   'lane-aaron-2':'AARON',
+    'lane-mgm':    'MGM',
+  },
+  es: {
+    /* nav */
+    'nav-pill': 'Flujo Operacional',
+    /* header */
+    'badge':    'Documentación de Proceso',
+    'h1':       'Diagrama de Proceso de Callbacks',
+    'subtitle': 'Flujo visual para el enrutamiento, evaluación de riesgo, escalaciones y acciones de seguimiento del equipo CDMX, revisión de abogados y MGM.',
+    'm1': 'Uso Interno', 'm2': 'Operaciones', 'm3': 'Soporte Legal', 'm4': 'Atención al Cliente',
+    /* controls */
+    'view-label': 'Ver:',
+    'btn-full': 'Proceso Completo',
+    'btn-opt':  'Ruta Óptima',
+    'btn-esc':  'Ruta de Escalación',
+    /* legend */
+    'legend-title': 'Leyenda:',
+    'leg-process':  'Proceso',
+    'leg-decision': 'Decisión',
+    'leg-startend': 'Inicio / Fin',
+    'leg-esc':      'Escalación',
+    'leg-opt':      'Flujo Óptimo',
+    /* tooltips */
+    'tip-orig':      'Los callbacks pueden originarse desde múltiples canales.',
+    'tip-agenda':    'Inicio del proceso: el callback es agendado y puesto en cola.',
+    'tip-era':       'La Evaluación de Riesgo con IA analiza el perfil del cliente antes de actuar.',
+    'tip-analyst':   'El analista revisa los resultados del ERA y define la estrategia de respuesta.',
+    'tip-reqcall':   'Decisión: ¿Este callback requiere una llamada en vivo por un agente?',
+    'tip-callagent': 'El agente de llamadas gestiona el contacto directo con el cliente: screening, evidencia adicional y solicitudes de Mandamus.',
+    'tip-paralegal': 'El paralegal ensambla el expediente completo y prepara el callback programado con el cliente.',
+    'tip-jr-cb':     'El abogado junior conduce la sesión de revisión del callback con el cliente.',
+    'tip-gibr-sat':  'Gibrán realiza un callback enfocado en la satisfacción del cliente y el estado de resolución.',
+    'tip-gibr-opt':  '¿El caso del cliente está resuelto de forma óptima? SÍ → Seguimiento MGM; NO → Escalar a Atty Aaron.',
+    'tip-aaron-cb':  'Atty Aaron realiza un callback cuando el resultado de Gibrán no es óptimo — escalación nivel 1.',
+    'tip-aaron-opt': '¿La resolución es óptima tras el callback de Atty Aaron? SÍ → Seguimiento MGM; NO → Callback directo MGM.',
+    'tip-mgm-fu':    'Gerencia revisa todas las acciones pendientes y asegura el seguimiento de los compromisos adquiridos.',
+    'tip-mgm-cb':    'MGM realiza un callback directo cuando el resultado de Atty Aaron sigue sin ser óptimo — escalación final.',
+    'tip-end':       'Proceso finalizado. Todas las acciones resueltas.',
+    /* SVG node labels */
+    'svg-orig-label': 'ORIGEN:',
+    'svg-orig-1': 'Call Centre', 'svg-orig-2': 'Redes Sociales',
+    'svg-orig-3': 'Retenciones', 'svg-orig-4': 'Escalaciones Interdept.',
+    'svg-agenda': 'Agenda',
+    'svg-era-1': 'Evaluación de Riesgo', 'svg-era-2': 'con IA (ERA)',
+    'svg-analyst-1': 'Analista — Análisis ERA', 'svg-analyst-2': 'y Estrategia',
+    'svg-reqcall-1': '¿Requiere', 'svg-reqcall-2': 'Llamada?',
+    'svg-callagent': 'Agente de Llamadas',
+    'svg-ca-1': '·  Screening', 'svg-ca-2': '·  Evidencia Adicional', 'svg-ca-3': '·  Mandamus',
+    'svg-paralegal-1': 'Paralegal Ensambla', 'svg-paralegal-2': 'Expediente y Prepara', 'svg-paralegal-3': 'Callback con Cliente',
+    'svg-jr-cb': 'Callback',
+    'svg-gibr-sat': 'Callback de Satisfacción',
+    'svg-gibr-opt': '¿Óptimo?',
+    'svg-aaron-cb': 'Callback',
+    'svg-aaron-opt': '¿Óptimo?',
+    'svg-mgm-fu-1': 'Seguimiento de Acciones', 'svg-mgm-fu-2': 'Requeridas',
+    'svg-mgm-cb': 'Callback',
+    'svg-end': 'Fin',
+    'svg-yes-1': 'Sí', 'svg-yes-2': 'Sí', 'svg-yes-3': 'Sí',
+    'svg-no-1':  'No', 'svg-no-2':  'No', 'svg-no-3':  'No',
+    /* lane headers */
+    'lane-cdmx':   'EQUIPO CALLBACK CDMX',
+    'lane-jr-1':   'ABOGADO', 'lane-jr-2': 'JUNIOR',
+    'lane-gibr-1': 'GIBRÁN', 'lane-gibr-2': 'ALCERRECA',
+    'lane-aaron-1':'ATTY',   'lane-aaron-2':'AARON',
+    'lane-mgm':    'MGM',
+  }
+};
+
+/* Map SVG text element IDs → string keys */
+const SVG_TEXT_MAP = {
+  'st-orig-label': 'svg-orig-label',
+  'st-orig-1': 'svg-orig-1', 'st-orig-2': 'svg-orig-2',
+  'st-orig-3': 'svg-orig-3', 'st-orig-4': 'svg-orig-4',
+  'st-agenda': 'svg-agenda',
+  'st-era-1': 'svg-era-1', 'st-era-2': 'svg-era-2',
+  'st-analyst-1': 'svg-analyst-1', 'st-analyst-2': 'svg-analyst-2',
+  'st-reqcall-1': 'svg-reqcall-1', 'st-reqcall-2': 'svg-reqcall-2',
+  'st-callagent': 'svg-callagent',
+  'st-ca-1': 'svg-ca-1', 'st-ca-2': 'svg-ca-2', 'st-ca-3': 'svg-ca-3',
+  'st-para-1': 'svg-paralegal-1', 'st-para-2': 'svg-paralegal-2', 'st-para-3': 'svg-paralegal-3',
+  'st-jr-cb': 'svg-jr-cb',
+  'st-gibr-sat': 'svg-gibr-sat',
+  'st-gibr-opt': 'svg-gibr-opt',
+  'st-aaron-cb': 'svg-aaron-cb',
+  'st-aaron-opt': 'svg-aaron-opt',
+  'st-mgm-fu-1': 'svg-mgm-fu-1', 'st-mgm-fu-2': 'svg-mgm-fu-2',
+  'st-mgm-cb': 'svg-mgm-cb',
+  'st-end': 'svg-end',
+  'st-yes-1': 'svg-yes-1', 'st-yes-2': 'svg-yes-2', 'st-yes-3': 'svg-yes-3',
+  'st-no-1': 'svg-no-1',   'st-no-2': 'svg-no-2',   'st-no-3': 'svg-no-3',
+  'st-lane-cdmx': 'lane-cdmx',
+  'st-lane-jr-1': 'lane-jr-1', 'st-lane-jr-2': 'lane-jr-2',
+  'st-lane-gibr-1': 'lane-gibr-1', 'st-lane-gibr-2': 'lane-gibr-2',
+  'st-lane-aaron-1': 'lane-aaron-1', 'st-lane-aaron-2': 'lane-aaron-2',
+  'st-lane-mgm': 'lane-mgm',
+};
+
+/* Tooltip key map (node id → tip key) */
+const TIP_MAP = {
+  'n-orig':'tip-orig','n-agenda':'tip-agenda','n-era':'tip-era',
+  'n-analyst':'tip-analyst','n-reqcall':'tip-reqcall','n-callagent':'tip-callagent',
+  'n-paralegal':'tip-paralegal','n-jr-cb':'tip-jr-cb','n-gibr-sat':'tip-gibr-sat',
+  'n-gibr-opt':'tip-gibr-opt','n-aaron-cb':'tip-aaron-cb','n-aaron-opt':'tip-aaron-opt',
+  'n-mgm-fu':'tip-mgm-fu','n-mgm-cb':'tip-mgm-cb','n-end':'tip-end'
+};
+
+/* ═══════════════════════════════════════════════════
+   LANGUAGE STATE
+═══════════════════════════════════════════════════ */
+let currentLang = 'en';
+
+function toggleLang() {
+  currentLang = currentLang === 'en' ? 'es' : 'en';
+  applyLang(currentLang);
+}
+
+function applyLang(lang) {
+  const S = STRINGS[lang];
+
+  /* Fade transition */
+  const allT = document.querySelectorAll('[data-t]');
+  allT.forEach(el => el.classList.add('fading'));
+
+  setTimeout(() => {
+    /* HTML elements */
+    allT.forEach(el => {
+      const key = el.getAttribute('data-t');
+      if (S[key] !== undefined) el.textContent = S[key];
+    });
+
+    /* SVG text elements */
+    Object.entries(SVG_TEXT_MAP).forEach(([svgId, strKey]) => {
+      const el = document.getElementById(svgId);
+      if (el && S[strKey] !== undefined) el.textContent = S[strKey];
+    });
+
+    /* Tooltips: update data-tip on nodes */
+    Object.entries(TIP_MAP).forEach(([nodeId, tipKey]) => {
+      const el = document.getElementById(nodeId);
+      if (el && S[tipKey]) el.setAttribute('data-tip', S[tipKey]);
+    });
+
+    /* Lang button */
+    document.getElementById('langFlag').textContent = lang === 'en' ? '🇲🇽' : '🇺🇸';
+    document.getElementById('langLabel').textContent = lang === 'en' ? 'ES' : 'EN';
+
+    allT.forEach(el => el.classList.remove('fading'));
+  }, 150);
+}
+
+/* ═══════════════════════════════════════════════════
+   MODE CONTROL
+═══════════════════════════════════════════════════ */
+const ALL_NODES = ['n-orig','n-agenda','n-era','n-analyst','n-reqcall','n-callagent','n-paralegal','n-jr-cb','n-gibr-sat','n-gibr-opt','n-aaron-cb','n-aaron-opt','n-mgm-fu','n-mgm-cb','n-end'];
+const ALL_CONNS = ['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10','c11','c12','c13','c14','c15','c16'];
+
+const MODES = {
+  full: { nodes: ALL_NODES, conns: ALL_CONNS },
+  optimal: {
+    nodes: ['n-orig','n-agenda','n-era','n-analyst','n-reqcall','n-callagent','n-paralegal','n-jr-cb','n-gibr-sat','n-gibr-opt','n-mgm-fu','n-end'],
+    conns: ['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10','c13','c16']
+  },
+  escalation: {
+    nodes: ['n-agenda','n-era','n-analyst','n-reqcall','n-callagent','n-jr-cb','n-gibr-sat','n-gibr-opt','n-aaron-cb','n-aaron-opt','n-mgm-fu','n-mgm-cb','n-end'],
+    conns: ['c1','c2','c3','c4','c6','c8','c9','c11','c12','c13','c14','c15','c16']
+  }
+};
+
+function setMode(mode) {
+  const classes = { full:'af', optimal:'ao', escalation:'ae' };
+  ['full','optimal','escalation'].forEach(m => {
+    const btn = document.getElementById('btn-' + (m === 'full' ? 'full' : m === 'optimal' ? 'opt' : 'esc'));
+    btn.className = 'ctrl-btn' + (m === mode ? ' ' + classes[m] : '');
+  });
+  const cfg = MODES[mode];
+  if (mode === 'full') {
+    ALL_NODES.forEach(id => { const el = document.getElementById(id); if(el) el.style.opacity = ''; });
+    ALL_CONNS.forEach(id => { const el = document.getElementById(id); if(el) { el.style.opacity = ''; el.style.strokeWidth = ''; } });
+    return;
+  }
+  ALL_NODES.forEach(id => { const el = document.getElementById(id); if(el) el.style.opacity = '.14'; });
+  ALL_CONNS.forEach(id => { const el = document.getElementById(id); if(el) { el.style.opacity = '.08'; el.style.strokeWidth = ''; } });
+  cfg.nodes.forEach(id => { const el = document.getElementById(id); if(el) el.style.opacity = '1'; });
+  cfg.conns.forEach(id => { const el = document.getElementById(id); if(el) { el.style.opacity = '1'; el.style.strokeWidth = '2.4'; } });
+}
+
+/* ═══════════════════════════════════════════════════
+   TOOLTIPS
+═══════════════════════════════════════════════════ */
+const tip = document.getElementById('tip');
+
+document.querySelectorAll('.flow-node[data-tip]').forEach(node => {
+  node.addEventListener('mouseenter', e => {
+    tip.textContent = node.getAttribute('data-tip');
+    tip.style.display = 'block';
+    moveTip(e);
+  });
+  node.addEventListener('mousemove', moveTip);
+  node.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+});
+
+function moveTip(e) {
+  const x = e.clientX + 16, y = e.clientY - 8;
+  const w = tip.offsetWidth, vw = window.innerWidth;
+  tip.style.left = (x + w > vw ? x - w - 32 : x) + 'px';
+  tip.style.top = y + 'px';
+}
+
+/* ═══════════════════════════════════════════════════
+   HOVER LIFT
+═══════════════════════════════════════════════════ */
+document.querySelectorAll('.flow-node.clickable').forEach(node => {
+  const body = node.querySelector('.node-body');
+  if (!body) return;
+  node.addEventListener('mouseenter', () => { body.style.transform = 'scale(1.035)'; body.style.filter = 'drop-shadow(0 8px 18px rgba(15,25,35,.2))'; });
+  node.addEventListener('mouseleave', () => { body.style.transform = ''; body.style.filter = ''; });
+});
+</script>
+</body>
+</html>
