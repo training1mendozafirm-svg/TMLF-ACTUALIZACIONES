@@ -60,6 +60,30 @@ body{font-family:var(--font-body);background:var(--beige);color:var(--text-dark)
 .pb:hover{background:var(--gold-light);transform:translateY(-1px);box-shadow:var(--shadow-gold);}
 .pb svg{width:13px;height:13px;}
 
+/* ── DAY TABS ── */
+.day-nav{background:var(--navy-mid);border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;padding:0 36px;gap:0;}
+.day-tab{display:flex;align-items:center;gap:8px;padding:14px 22px;font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.08em;color:rgba(255,255,255,.4);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;user-select:none;}
+.day-tab:hover{color:rgba(255,255,255,.7);}
+.day-tab.active{color:var(--gold-light);border-bottom-color:var(--gold);}
+.day-tab.locked{cursor:default;opacity:.35;}
+.day-tab.locked:hover{color:rgba(255,255,255,.4);}
+.day-num{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;background:rgba(255,255,255,.08);color:rgba(255,255,255,.5);transition:all .2s;}
+.day-tab.active .day-num{background:var(--gold);color:var(--navy);}
+.day-tab.locked .day-num{background:rgba(255,255,255,.05);}
+.day-lock{font-size:10px;opacity:.6;}
+.day-nav-spacer{flex:1;}
+.day-nav-total{font-family:var(--font-mono);font-size:10px;color:rgba(255,255,255,.25);letter-spacing:.1em;padding-right:4px;}
+
+/* ── DAY VIEWS ── */
+.day-view{display:none;}
+.day-view.active{display:block;}
+
+/* ── COMING SOON PLACEHOLDER ── */
+.coming-soon{max-width:960px;margin:0 auto;padding:80px 36px;text-align:center;}
+.cs-icon{width:64px;height:64px;border-radius:50%;background:var(--beige-mid);border:1.5px solid var(--beige-dark);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:26px;}
+.cs-title{font-family:var(--font-display);font-size:22px;font-weight:600;color:var(--navy);margin-bottom:8px;}
+.cs-sub{font-size:13px;color:var(--text-soft);line-height:1.7;max-width:380px;margin:0 auto;}
+
 /* ── HERO ── */
 .hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 60%,var(--navy-light) 100%);padding:44px 40px 40px;border-bottom:1px solid rgba(255,255,255,.06);position:relative;overflow:hidden;}
 .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,.1) 0%,transparent 65%);pointer-events:none;}
@@ -197,14 +221,92 @@ body{font-family:var(--font-body);background:var(--beige);color:var(--text-dark)
 /* ── SECTION CARD WRAP ── */
 .sec-card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--beige-dark);box-shadow:var(--shadow-sm);padding:24px 28px;}
 
+/* ── PARTICIPANT COLLAPSIBLE ROWS ── */
+.prow{background:var(--white);border:1px solid var(--beige-dark);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);margin-bottom:10px;overflow:hidden;}
+.prow-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;cursor:pointer;transition:background .15s;}
+.prow-header:hover{background:var(--beige);}
+.btn-detalle{font-family:var(--font-mono);font-size:11px;font-weight:600;padding:6px 14px;border-radius:20px;border:1.5px solid var(--beige-dark);background:transparent;color:var(--text-mid);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .18s;white-space:nowrap;flex-shrink:0;}
+.btn-detalle:hover{border-color:var(--gold);color:var(--navy);background:var(--gold-pale);}
+.btn-detalle.open{background:var(--navy);color:var(--gold-light);border-color:var(--navy);}
+.det-arrow{display:inline-block;transition:transform .25s;font-size:13px;}
+.btn-detalle.open .det-arrow{transform:rotate(180deg);}
+.det-grid{max-height:0;overflow:hidden;transition:max-height .35s ease;padding:0 20px;}
+.det-grid.open{max-height:2000px;padding:0 20px 20px;}
+
 /* ── FOOTER ── */
 .foot{background:var(--navy);border-top:1px solid rgba(255,255,255,.08);text-align:center;padding:20px;font-family:var(--font-mono);font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase;}
 
 @media print{
-  body{background:var(--white)!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
-  .tb{position:static!important}
-  @page{margin:8mm;size:letter landscape}
-  .cc,.sbox,.sec-card{page-break-inside:avoid}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  .tb,.day-nav{position:static!important;}
+  .day-view{display:block!important;}
+  .day-view:not(.active){display:none!important;}
+  @page{margin:8mm;size:letter portrait}
+  .det-grid{max-height:none!important;overflow:visible!important;padding:0 12px 12px!important;}
+  .btn-detalle,.pb,.actions{display:none!important;}
+
+  /* Compact spacing */
+  .wrap{padding:12px 20px 24px!important;gap:12px!important;}
+  .hero{padding:18px 24px 16px!important;}
+  .hero-inner .meta{padding-top:10px!important;}
+  .sbox{padding:12px 16px!important;}
+  .sbox p{font-size:11px!important;line-height:1.55!important;margin-bottom:5px!important;}
+  .sh{margin-bottom:8px!important;}
+  .st{font-size:14px!important;}
+
+  /* Compact case grid */
+  .cgrid{grid-template-columns:repeat(3,1fr)!important;gap:6px!important;}
+  .cc .ccb{padding:8px 10px 10px!important;}
+  .cc .cch{padding:8px 10px 7px!important;}
+  .ccn{font-size:11px!important;}
+  .cca{font-size:9px!important;}
+  .rv{font-size:10px!important;}
+  .rk{font-size:8px!important;}
+  .eb{padding:4px 5px!important;}
+  .ebv{font-size:9px!important;}
+  .rows{gap:4px!important;}
+
+  /* Compact KPIs */
+  .krow{gap:6px!important;margin-bottom:8px!important;}
+  .kpi{padding:10px 10px 8px!important;}
+  .kv{font-size:22px!important;}
+  .kl{font-size:9px!important;}
+
+  /* Compact table */
+  .qt td,.qt th{padding:7px 10px!important;font-size:11px!important;}
+
+  /* Compact participant rows */
+  .prow{margin-bottom:6px!important;}
+  .prow-header{padding:10px 14px!important;}
+
+  /* Compact participation cards */
+  .pc{padding:8px 12px!important;}
+  .pd{font-size:10px!important;}
+  .pn{font-size:11px!important;}
+
+  /* Compact agenda */
+  .agrid{grid-template-columns:repeat(4,1fr)!important;gap:6px!important;}
+  .ag{padding:8px!important;}
+  .at{font-size:11px!important;}
+  .ad{font-size:9px!important;}
+  .tmr{padding:14px 16px!important;}
+  .tt{font-size:13px!important;}
+
+  /* Compact strategies */
+  .li{padding:7px 10px!important;}
+  .lt{font-size:11px!important;}
+
+  /* Compact comm skills */
+  .sec-card{padding:10px 14px!important;}
+
+  /* Compact footer */
+  .foot{padding:10px!important;}
+
+  /* Hero text */
+  .ht{font-size:20px!important;}
+  .ey{font-size:9px!important;}
+  .mv{font-size:12px!important;}
+  .ml{font-size:8px!important;}
 }
 @media(max-width:720px){
   .krow,.cgrid,.agrid,.lgrid{grid-template-columns:1fr 1fr}
@@ -234,6 +336,28 @@ body{font-family:var(--font-body);background:var(--beige);color:var(--text-dark)
     </button>
   </div>
 </div>
+
+<!-- DAY NAV -->
+<div class="day-nav">
+  <div class="day-tab active" onclick="switchDay(1)">
+    <div class="day-num">1</div>
+    <span id="nav-d1">Day 1 · Mar 30</span>
+  </div>
+  <div class="day-tab" onclick="switchDay(2)">
+    <div class="day-num">2</div>
+    <span id="nav-d2">Day 2 · Mar 31</span>
+  </div>
+  <div class="day-tab locked" onclick="return false">
+    <div class="day-num">3</div>
+    <span id="nav-d3">Day 3 · Apr 1</span>
+    <span class="day-lock">🔒</span>
+  </div>
+  <div class="day-nav-spacer"></div>
+  <div class="day-nav-total" id="nav-total">3-Day Training · T Visa</div>
+</div>
+
+<!-- DAY 1 -->
+<div class="day-view active" id="day-1">
 
 <!-- HERO -->
 <div class="hero">
@@ -459,11 +583,263 @@ body{font-family:var(--font-body);background:var(--beige);color:var(--text-dark)
 
 </div>
 
+</div><!-- /day-1 -->
+
+<!-- DAY 2 -->
+<div class="day-view" id="day-2">
+
+  <!-- HERO D2 -->
+  <div class="hero">
+    <div class="hero-inner">
+      <span class="ey" id="d2-ey">Day 2 Training Report · March 31, 2026</span>
+      <h1 class="ht" id="d2-ht">Re-screenings &amp; <em>Call Back Strategies</em></h1>
+      <p class="hm" id="d2-hm">Legal Strategies · Communication · Role Play</p>
+      <div class="meta">
+        <div class="meta-item"><div class="ml" id="d2-m1l">Date</div><div class="mv">March 31, 2026</div></div>
+        <div class="meta-item"><div class="ml" id="d2-m2l">Duration</div><div class="mv" id="d2-m2v">Full day</div></div>
+        <div class="meta-item"><div class="ml" id="d2-m3l">Modality</div><div class="mv" id="d2-m3v">In-person + Online</div></div>
+        <div class="meta-item"><div class="ml" id="d2-m4l">Focus</div><div class="mv" id="d2-m4v">Re-screening &amp; Call Backs</div></div>
+        <div class="meta-item"><div class="ml" id="d2-m5l">Exercise</div><div class="mv" id="d2-m5v">6-Case Simulation</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- 1. SESSION SUMMARY -->
+    <div>
+      <div class="sh"><div class="sn">1</div><span class="st" id="d2-s1t">Session Summary</span><span class="sp2" id="d2-s1s">Day 2</span></div>
+      <div class="sbox">
+        <span class="tpill" id="d2-s1b">Re-screening strategies applied to real cases</span>
+        <p id="d2-s1p1">The training focused on developing strategies for the correct execution of re-screenings and call backs, integrating both <strong>legal analysis</strong> and the strengthening of <strong>client communication skills</strong>.</p>
+        <p id="d2-s1p2">Participants reviewed calls from attorney <strong>Guadalupe Mendoza</strong>, conducted group analysis and gave structured feedback, and practiced through role play simulations based on real cases.</p>
+      </div>
+    </div>
+
+    <!-- 2. STRATEGIES -->
+    <div class="two">
+      <div>
+        <div class="sh"><div class="sn">2</div><span class="st" id="d2-s2t">Legal Strategies</span><span class="sp2" id="d2-s2s">Re-screening</span></div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div class="li" style="border-left:3px solid var(--gold);"><div class="ll">01</div><div class="lt" id="d2-vt-lt">Multi-strategy Approach</div></div>
+          <div class="li" style="border-left:3px solid var(--gold);"><div class="ll">02</div><div class="lt" id="d2-vu-lt">Strategic Qualifying Questions</div></div>
+          <div class="li" style="border-left:3px solid var(--gold);"><div class="ll">03</div><div class="lt" id="d2-s3-lt">Identification of Key Elements</div></div>
+          <div class="li" style="border-left:3px solid var(--gold);"><div class="ll">04</div><div class="lt" id="d2-s4-lt">Waivers &amp; Visas Explanation</div></div>
+          <div class="li" style="border-left:3px solid var(--gold);"><div class="ll">05</div><div class="lt" id="d2-s5-lt">Expert Consultation</div></div>
+          <div class="li" style="border-left:3px solid var(--gold);"><div class="ll">06</div><div class="lt" id="d2-s6-lt">EOIR Review / FOIA Request</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="sh"><div class="sn" style="background:var(--teal);color:#fff;">C</div><span class="st" id="d2-cs-t">Communication Skills</span><span class="sp2" id="d2-cs-s">Key Competencies</span></div>
+        <div class="sec-card" style="padding:16px 20px;">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--beige-mid);"><div style="width:22px;height:22px;border-radius:50%;background:var(--navy);color:var(--gold-light);font-family:var(--font-display);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div><span style="font-size:13px;color:var(--text-dark);font-weight:500;" id="d2-c1">Client emotion management</span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--beige-mid);"><div style="width:22px;height:22px;border-radius:50%;background:var(--navy);color:var(--gold-light);font-family:var(--font-display);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div><span style="font-size:13px;color:var(--text-dark);font-weight:500;" id="d2-c2">Exploration of legal options</span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--beige-mid);"><div style="width:22px;height:22px;border-radius:50%;background:var(--navy);color:var(--gold-light);font-family:var(--font-display);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div><span style="font-size:13px;color:var(--text-dark);font-weight:500;" id="d2-c3">Obtaining sensitive information</span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--beige-mid);"><div style="width:22px;height:22px;border-radius:50%;background:var(--navy);color:var(--gold-light);font-family:var(--font-display);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">4</div><span style="font-size:13px;color:var(--text-dark);font-weight:500;" id="d2-c4">Expectation management</span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:7px 0;"><div style="width:22px;height:22px;border-radius:50%;background:var(--navy);color:var(--gold-light);font-family:var(--font-display);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">5</div><span style="font-size:13px;color:var(--text-dark);font-weight:500;" id="d2-c5">Trust recovery</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. ACTIVITIES -->
+    <div>
+      <div class="sh"><div class="sn">3</div><span class="st" id="d2-s3t">Activities</span><span class="sp2" id="d2-s3s">Session Flow</span></div>
+      <div class="tmr">
+        <div class="tt" id="d2-tmr-t">Training Session · Day 2</div>
+        <div class="ts" id="d2-tmr-s">March 31, 2026 · Re-screening &amp; Call Back Strategies</div>
+        <div class="agrid">
+          <div class="ag"><div class="an">01</div><div class="at" id="d2-ag1t">Legal &amp; Comm. Review</div><div class="ad" id="d2-ag1d">Legal and communication strategy review.</div><span class="atg al" id="d2-ag1tag">Legal</span></div>
+          <div class="ag"><div class="an">02</div><div class="at" id="d2-ag2t">Call Simulations</div><div class="ad" id="d2-ag2d">Role play based on real case scenarios.</div><span class="atg ar" id="d2-ag2tag">Practice</span></div>
+          <div class="ag"><div class="an">03</div><div class="at" id="d2-ag3t">Open Forum</div><div class="ad" id="d2-ag3d">Group discussion and strategy building.</div><span class="atg ac" id="d2-ag3tag">Comms</span></div>
+          <div class="ag"><div class="an">04</div><div class="at" id="d2-ag4t">Guadalupe's Calls</div><div class="ad" id="d2-ag4d">Review + group analysis + structured feedback.</div><span class="atg ap" id="d2-ag4tag">Review</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. RE-SCREENING EXERCISE -->
+    <div>
+      <div class="sh"><div class="sn">4</div><span class="st" id="d2-s4t">Re-screening Exercise</span><span class="sp2" id="d2-s4s">6 Cases · 4 Participants</span></div>
+      <div class="krow" style="margin-bottom:14px;">
+        <div class="kpi g"><div class="kv">4</div><div class="kl" id="d2-k1">Participants</div></div>
+        <div class="kpi gr"><div class="kv">3</div><div class="kl" id="d2-k2">Passed (83%+)</div></div>
+        <div class="kpi tl"><div class="kv">83%</div><div class="kl" id="d2-k3">Average Score</div></div>
+        <div class="kpi bl"><div class="kv">6</div><div class="kl" id="d2-k4">Cases / participant</div></div>
+      </div>
+      <div class="qt-wrap" style="margin-bottom:16px;">
+        <table class="qt">
+          <thead><tr><th>#</th><th id="d2-th1">Participant</th><th id="d2-th2">Date &amp; Time</th><th id="d2-th3">Score</th><th>%</th></tr></thead>
+          <tbody>
+            <tr><td style="font-family:var(--font-mono);color:var(--text-soft);font-size:12px;">1</td><td><div class="nc"><div class="av">RL</div><strong>Roberto Lizarra Padua</strong></div></td><td style="font-family:var(--font-mono);font-size:11px;color:var(--text-soft);">31/03/2026, 02:32 p.m.</td><td><div class="bw"><div class="bb"><div class="bf" style="width:83%;"></div></div><span class="bn">5/6</span></div></td><td><span class="bd">83%</span></td></tr>
+            <tr><td style="font-family:var(--font-mono);color:var(--text-soft);font-size:12px;">2</td><td><div class="nc"><div class="av">SM</div><strong>Susana Martinez</strong></div></td><td style="font-family:var(--font-mono);font-size:11px;color:var(--text-soft);">31/03/2026, 02:22 p.m.</td><td><div class="bw"><div class="bb"><div class="bf" style="width:83%;"></div></div><span class="bn">5/6</span></div></td><td><span class="bd">83%</span></td></tr>
+            <tr><td style="font-family:var(--font-mono);color:var(--text-soft);font-size:12px;">3</td><td><div class="nc"><div class="av">JM</div><strong>Jesus Martinez</strong></div></td><td style="font-family:var(--font-mono);font-size:11px;color:var(--text-soft);">31/03/2026, 02:22 p.m.</td><td><div class="bw"><div class="bb"><div class="bf" style="width:83%;"></div></div><span class="bn">5/6</span></div></td><td><span class="bd">83%</span></td></tr>
+            <tr><td style="font-family:var(--font-mono);color:var(--text-soft);font-size:12px;">4</td><td><div class="nc"><div class="av">BS</div><strong>Betzaida Santiago</strong></div></td><td style="font-family:var(--font-mono);font-size:11px;color:var(--text-soft);">31/03/2026, 02:18 p.m.</td><td><div class="bw"><div class="bb"><div class="bf" style="width:33%;background:var(--warn);"></div></div><span class="bn">2/6</span></div></td><td><span class="bd" style="background:var(--warn-bg);color:var(--warn);border-color:rgba(230,81,0,.2);">33%</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Roberto -->
+      <div class="prow">
+        <div class="prow-header" onclick="toggleDetail('det-rl',this)">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="sn" style="background:var(--info);color:#fff;font-size:9px;width:26px;height:26px;flex-shrink:0;">RL</div>
+            <span class="st" style="font-size:14px;">Roberto Lizarra Padua</span>
+            <span class="sp2">5/6 · 83%</span>
+          </div>
+          <button class="btn-detalle"><span class="det-lbl" id="d2-btn-rl">View detail</span> <span class="det-arrow">▾</span></button>
+        </div>
+        <div class="det-grid" id="det-rl">
+          <div class="cgrid" style="padding:20px 0 4px;">
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 1 — Sandra Reyes</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Rescreening</div></div><span class="cv op">✓</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-dec-ref">Decision</span><span class="rv">Rescreening</span></div><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"Hay que analizar si existe una vía alternativa antes de responder el NOID."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 2 — Jorge Martínez</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Mandamus</div></div><span class="cv op">✓</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-dec-ref">Decision</span><span class="rv">Mandamus</span></div><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"El riesgo documentable de represalias eleva la urgencia del caso."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 3 — Ana Muñoz</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Motion to reopen</div></div><span class="cv op">✓</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-dec-ref">Decision</span><span class="rv">Motion to reopen</span></div><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"Escogería resometer todo. La nueva evidencia es directamente material a la razón de la denegación. El timing está dentro del plazo."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 4 — Carmen Medina</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Case review Patiño · <span class="d2-correct-ref">Correct</span>: Apertura paralela</div></div><span class="cv no">✗</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-dec-ref">Decision</span><span class="rv dn">Case review Patiño</span></div><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"El matrimonio reciente genera un riesgo real en el VAWA. Pero la base de tráfico laboral es fácticamente independiente y más sólida probatoriamente."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 5 — Roberto Vásquez</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Escalación interna</div></div><span class="cv op">✓</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-dec-ref">Decision</span><span class="rv">Escalación interna</span></div><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"El freno es interno — la estrategia debe enfocarse en resolver el bloqueo operativo dentro de la firma."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 6 — Laura Pineda</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Case review Patiño</div></div><span class="cv op">✓</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-dec-ref">Decision</span><span class="rv">Case review Patiño</span></div><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"El filing sin análisis del attorney puede tener consecuencias migratorias adversas."</span></div></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Susana -->
+      <div class="prow">
+        <div class="prow-header" onclick="toggleDetail('det-sm',this)">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="sn" style="background:var(--gold);color:var(--navy);font-size:9px;width:26px;height:26px;flex-shrink:0;">SM</div>
+            <span class="st" style="font-size:14px;">⭐ Susana Martinez</span>
+            <span class="sp2">5/6 · 83%</span>
+          </div>
+          <button class="btn-detalle"><span class="det-lbl d2-btn-ref">View detail</span> <span class="det-arrow">▾</span></button>
+        </div>
+        <div class="det-grid" id="det-sm">
+          <div class="cgrid" style="padding:20px 0 4px;">
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 1 — Sandra Reyes</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Rescreening</div></div><span class="cv op">✓</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"As a victim of crime can be eligible for U visa since she was victim of assault and she reported it."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 2 — Jorge Martínez</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Mandamus</div></div><span class="cv op">✓</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"Client is eligible for writ of mandamus to mandate USCIS to adjudicate the case."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 3 — Ana Muñoz</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Rescreening · <span class="d2-correct-ref">Correct</span>: Motion to reopen</div></div><span class="cv no">✗</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-dec-ref">Decision</span><span class="rv dn">Rescreening</span></div><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"We can re-screen for a U visa since VD is qualifying. Or visa VAWA with more evidence."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 4 — Carmen Medina</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Apertura paralela</div></div><span class="cv op">✓</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"Apertura paralela para aplicar por T visa."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 5 — Roberto Vásquez</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Escalación interna</div></div><span class="cv op">✓</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"Contactar al cliente para verificar tiempos de obtención de los documentos para poder completar el caso."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 6 — Laura Pineda</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Case review Patiño</div></div><span class="cv op">✓</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"Abogado debe verificar para determinar los pasos correctos del caso."</span></div></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Jesus -->
+      <div class="prow">
+        <div class="prow-header" onclick="toggleDetail('det-jm',this)">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="sn" style="background:var(--gold);color:var(--navy);font-size:9px;width:26px;height:26px;flex-shrink:0;">JM</div>
+            <span class="st" style="font-size:14px;">⭐ Jesus Martinez</span>
+            <span class="sp2">5/6 · 83%</span>
+          </div>
+          <button class="btn-detalle"><span class="det-lbl d2-btn-ref">View detail</span> <span class="det-arrow">▾</span></button>
+        </div>
+        <div class="det-grid" id="det-jm">
+          <div class="cgrid" style="padding:20px 0 4px;">
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 1 — Sandra Reyes</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Rescreening</div></div><span class="cv op">✓</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"Evaluar la posibilidad de Visa T o Visa U y para conseguir algún waiver."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 2 — Jorge Martínez</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Mandamus</div></div><span class="cv op">✓</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"Evaluación de writ of mandamus por exceder los tiempos de dilación."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 3 — Ana Muñoz</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Escalación interna · <span class="d2-correct-ref">Correct</span>: Motion to reopen</div></div><span class="cv no">✗</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-dec-ref">Decision</span><span class="rv dn">Escalación interna</span></div><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"Presentar nuevamente con más evidencia."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 4 — Carmen Medina</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Apertura paralela</div></div><span class="cv op">✓</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"Someter VAWA y Visa T si se comprueba todos los elementos de visa T."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 5 — Roberto Vásquez</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Escalación interna</div></div><span class="cv op">✓</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"Comunicarse con el cliente para que someta los documentos del caso."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 6 — Laura Pineda</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Case review Patiño</div></div><span class="cv op">✓</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"Escalar con abogado para darle asesoramiento indicado, resuelva dudas y se realice la escalación necesaria."</span></div></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Betzaida -->
+      <div class="prow">
+        <div class="prow-header" onclick="toggleDetail('det-bs',this)">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="sn" style="background:var(--warn);color:#fff;font-size:9px;width:26px;height:26px;flex-shrink:0;">BS</div>
+            <span class="st" style="font-size:14px;">Betzaida Santiago</span>
+            <span class="sp2" style="background:var(--warn-bg);color:var(--warn);border-color:rgba(230,81,0,.2);">2/6 · 33%</span>
+          </div>
+          <button class="btn-detalle"><span class="det-lbl d2-btn-ref">View detail</span> <span class="det-arrow">▾</span></button>
+        </div>
+        <div class="det-grid" id="det-bs">
+          <div style="background:var(--gold-pale);border:1px solid rgba(201,168,76,.35);border-left:4px solid var(--gold);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;display:flex;gap:12px;align-items:flex-start;">
+            <span style="font-size:18px;flex-shrink:0;margin-top:1px;">⚠️</span>
+            <div>
+              <div style="font-family:var(--font-mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#8b6914;margin-bottom:5px;" id="d2-bs-notelbl">Important note</div>
+              <p style="font-size:13px;color:var(--text-dark);line-height:1.7;" id="d2-bs-note">The re-screening exercises indicate that <strong>Betzaida responded according to her own criteria</strong>. Answers are not evaluated as correct or incorrect, as they are aligned with the attorney's own judgment and experience. This was discussed during the session.</p>
+            </div>
+          </div>
+          <div class="cgrid" style="padding:16px 0 4px;">
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 1 — Sandra Reyes</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Apertura paralela · <span class="d2-correct-ref">Correct</span>: Rescreening</div></div><span class="cv no">✗</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"Para U visa, solicitando la denuncia."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 2 — Jorge Martínez</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Mandamus</div></div><span class="cv op">✓</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"Mandamus por el delay, pero la situación de hechos está incompleta, actualmente son 29 meses para T visa."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 3 — Ana Muñoz</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Rescreening · <span class="d2-correct-ref">Correct</span>: Motion to reopen</div></div><span class="cv no">✗</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"No son 6 meses para hacer una I-290b. Son 33 días por lo tanto, la mejor opción es rescreening."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 4 — Carmen Medina</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Rescreening · <span class="d2-correct-ref">Correct</span>: Apertura paralela</div></div><span class="cv no">✗</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"Rescreening para T visa, dada las circunstancias que existe una explotación laboral para el pago."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 5 — Roberto Vásquez</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Escalación interna</div></div><span class="cv op">✓</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"Comunicarse con el cliente explicando porque se debe tener estos documentos para avanzar con el caso."</span></div></div></div></div>
+            <div class="cc"><div class="cch"><div><div class="ccn">Case 6 — Laura Pineda</div><div class="cca"><span class="d2-chose-ref">Chose</span>: Escalación interna · <span class="d2-correct-ref">Correct</span>: Case review Patiño</div></div><span class="cv no">✗</span></div><div class="ccb"><div class="rows"><div class="row"><span class="rk d2-rsn-ref">Reasoning</span><span class="rv" style="font-style:italic;">"Se debe solicitar una FOIA EIOR, para verificar la orden de deportación. Y en dado caso, solamente trabajar VAWA no el ajuste."</span></div></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. OBSERVATIONS -->
+    <div>
+      <div class="sh"><div class="sn">5</div><span class="st" id="d2-s5t">Observations &amp; Feedback</span><span class="sp2" id="d2-s5s">Instructor Notes</span></div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="pc g"><div class="pav">RL</div><div><div class="pn" id="d2-obs-rl-t">Roberto Lizarra — Outstanding participation</div><div class="pd" id="d2-obs-rl-d">Accurate contributions and strong learning disposition. Recommended area of growth: emotional management when receiving feedback.</div></div></div>
+        <div class="pc s"><div class="pav">DP</div><div><div class="pn" id="d2-obs-dp-t">Daniel Patiño — Specific feedback</div><div class="pd" id="d2-obs-dp-d">Provided specific, targeted feedback to improve quality of client interactions across cases.</div></div></div>
+        <div class="pc n"><div class="pav">SM</div><div><div class="pn" id="d2-obs-sm-t">Susana Martinez — Critical analysis</div><div class="pd" id="d2-obs-sm-d">Raised a critical stance on the call back process, opening space for constructive group analysis and discussion.</div></div></div>
+        <div class="pc" style="background:var(--danger-bg);border-color:rgba(198,40,40,.15);"><div class="pav" style="background:var(--danger);color:#fff;">BS</div><div><div class="pn" style="color:var(--navy);" id="d2-obs-bs-t">Betzaida Santiago — Low participation noted</div><div class="pd" id="d2-obs-bs-d">Low participation observed during the session. Follow-up recommended to address engagement and comprehension gaps.</div></div></div>
+      </div>
+    </div>
+
+    <!-- 6. TOMORROW -->
+    <div>
+      <div class="sh"><div class="sn">6</div><span class="st" id="d2-s6t">Tomorrow — Day 3</span><span class="sp2" id="d2-s6s">Apr 1</span></div>
+      <div class="tmr">
+        <div class="tt" id="d2-tmr2-t">Training Session · Day 3</div>
+        <div class="ts" id="d2-tmr2-s">April 1, 2026 · Call Backs — Live Practice</div>
+        <div class="agrid">
+          <div class="ag"><div class="an">01</div><div class="at" id="d2-t1t">Call Back Team</div><div class="ad" id="d2-t1d">Team presentation and process explanation.</div><span class="atg ac" id="d2-t1tag">Intro</span></div>
+          <div class="ag"><div class="an">02</div><div class="at" id="d2-t2t">Daniel's Checklist</div><div class="ad" id="d2-t2d">Operational checklist presentation by Daniel Patiño.</div><span class="atg al" id="d2-t2tag">Legal</span></div>
+          <div class="ag"><div class="an">03</div><div class="at" id="d2-t3t">Call Exercises</div><div class="ad" id="d2-t3d">Additional call practice exercises.</div><span class="atg ap" id="d2-t3tag">Practice</span></div>
+          <div class="ag"><div class="an">04</div><div class="at" id="d2-t4t">Live Calls</div><div class="ad" id="d2-t4d">Live call practice with real-time feedback.</div><span class="atg ar" id="d2-t4tag">Live</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /day-2 -->
+
+<!-- DAY 3 -->
+<div class="day-view" id="day-3">
+  <div class="coming-soon">
+    <div class="cs-icon">📋</div>
+    <div class="cs-title" id="cs3t">Day 3 — Coming Soon</div>
+    <div class="cs-sub" id="cs3s">Content for April 1 will be added after the final session.</div>
+  </div>
+</div>
+
 <div class="foot" id="foot">THE MENDOZA LAW FIRM · T VISA THEORY AND ELIGIBILITY CRITERIA · DVS INTAKE RECORDINGS · MARCH–APRIL 2026 · CONFIDENTIAL</div>
 
 <script>
+function toggleDetail(id, headerEl){
+  const grid = document.getElementById(id);
+  const btn = headerEl.querySelector('.btn-detalle');
+  const lbl = headerEl.querySelector('.det-lbl');
+  const isOpen = grid.classList.contains('open');
+  const lang = document.documentElement.lang || 'en';
+  grid.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+  if(lbl) lbl.innerHTML = !isOpen ? (lang==='es'?'Ocultar':'Hide') : (lang==='es'?'Ver detalle':'View detail');
+  headerEl.querySelector('.det-arrow').innerHTML = !isOpen ? '▴' : '▾';
+}
+
+function switchDay(n){
+  document.querySelectorAll('.day-view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.day-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('day-'+n).classList.add('active');
+  document.querySelectorAll('.day-tab')[n-1].classList.add('active');
+}
+
 const T={
 en:{
+'nav-d1':'Day 1 · Mar 30','nav-d2':'Day 2 · Mar 31','nav-d3':'Day 3 · Apr 1','nav-total':'3-Day Training · T Visa',
+'cs2t':'Day 2 — Coming Soon','cs2s':'Content for March 31 will be added shortly. Check back after the session.',
+'cs3t':'Day 3 — Coming Soon','cs3s':'Content for April 1 will be added after the final session.',
 'tb-tag':'Internal Training','h-ey':'Day 1 Training Report · March 30, 2026','h-mod':'Case Review',
 'm1l':'Date','m2l':'Closes','m3l':'Duration','m3v':'3 days','m4l':'Modality','m4v':'In-person + Online','m5l':'Module',
 's1t':'Session Summary','s1s':'Day 1','s1b':'Theory review applied to cases',
@@ -487,10 +863,46 @@ en:{
 's5t':'Tomorrow — Day 2','s5s':'Mar 31','tmr-t':'Training Session · Day 2','tmr-s':'March 31, 2026 · Prep for attorneys',
 'ag1t':'Legal Strategies','ag1d':'Eligibility & USCIS argumentation.','ag2t':'Communication','ag2d':'Trauma-informed interviewing.','ag3t':'Call Back Checklist','ag3d':'EMP follow-up & hardship protocol.','ag4t':'ABD & Role Play','ag4d':'Live intake simulation & EMP practice.',
 's6t':'EMP Reference','e1t':'Type of service?','e1d':'Forced labor, involuntary servitude, debt peonage, sexual exploitation.','e2t':'How controlled?','e2d':'Force: violence. Fraud: false promises. Coercion: threats, fear.','e3t':'How carried out?','e3d':'Recruitment, transport, harboring or receipt for exploitation.','e4t':'Eligibility','e4d':'Severe trafficking + LEA cert + US presence + exceptional hardship.',
+'d2-ey':'Day 2 Training Report · March 31, 2026','d2-ht':'Re-screenings &amp; <em>Call Back Strategies</em>','d2-hm':'Legal Strategies · Communication · Role Play',
+'d2-m1l':'Date','d2-m2l':'Duration','d2-m2v':'Full day','d2-m3l':'Modality','d2-m3v':'In-person + Online','d2-m4l':'Focus','d2-m4v':'Re-screening &amp; Call Backs','d2-m5l':'Exercise','d2-m5v':'6-Case Simulation',
+'d2-s1t':'Session Summary','d2-s1s':'Day 2','d2-s1b':'Re-screening strategies applied to real cases',
+'d2-s1p1':'The training focused on developing strategies for the correct execution of re-screenings and call backs, integrating both <strong>legal analysis</strong> and the strengthening of <strong>client communication skills</strong>.',
+'d2-s1p2':'Participants reviewed calls from attorney <strong>Guadalupe Mendoza</strong>, conducted group analysis and gave structured feedback, and practiced through role play simulations based on real cases.',
+'d2-s2t':'Legal Strategies','d2-s2s':'Re-screening','d2-vt-lt':'Multi-strategy Approach','d2-vt-ld':'Assess cases using multiple legal pathways simultaneously to identify the strongest route forward.',
+'d2-vu-lt':'Strategic Qualifying Questions','d2-vu-ld':'Use targeted questions to determine which visa or relief option best fits the client\'s situation.',
+'d2-s3-lt':'Identification of Key Elements','d2-s3-ld':'Recognize and document the legal elements needed to support each potential strategy.',
+'d2-s4-lt':'Waivers &amp; Visas Explanation','d2-s4-ld':'Clearly explain available relief options — waivers, visas, and their implications — to the client.',
+'d2-s5-lt':'Expert Consultation','d2-s5-ld':'Escalate complex cases to senior attorneys or specialists for guidance before proceeding.',
+'d2-s6-lt':'EOIR Review / FOIA Request','d2-s6-ld':'Consult immigration court records or request FOIA documents to verify client history and status.',
+'d2-cs-t':'Communication Skills','d2-cs-s':'Key Competencies',
+'d2-c1':'Client emotion management','d2-c2':'Exploration of legal options','d2-c3':'Obtaining sensitive information','d2-c4':'Expectation management','d2-c5':'Trust recovery',
+'d2-s3t':'Activities','d2-s3s':'Session Flow','d2-tmr-t':'Training Session · Day 2','d2-tmr-s':'March 31, 2026 · Re-screening &amp; Call Back Strategies',
+'d2-ag1t':'Legal &amp; Comm. Review','d2-ag1d':'Legal and communication strategy review.','d2-ag1tag':'Legal',
+'d2-ag2t':'Call Simulations','d2-ag2d':'Role play based on real case scenarios.','d2-ag2tag':'Practice',
+'d2-ag3t':'Open Forum','d2-ag3d':'Group discussion and strategy building.','d2-ag3tag':'Comms',
+'d2-ag4t':'Guadalupe\'s Calls','d2-ag4d':'Review + group analysis + structured feedback.','d2-ag4tag':'Review',
+'d2-s4t':'Re-screening Exercise','d2-s4s':'6 Cases · 4 Participants',
+'d2-k1':'Participants','d2-k2':'Passed (83%+)','d2-k3':'Average Score','d2-k4':'Cases / participant',
+'d2-th1':'Participant','d2-th2':'Date &amp; Time','d2-th3':'Score',
+'d2-btn-rl':'View detail','d2-bs-notelbl':'Important note',
+'d2-bs-note':'The re-screening exercises indicate that <strong>Betzaida responded according to her own criteria</strong>. Answers are not evaluated as correct or incorrect, as they are aligned with the attorney\'s own judgment and experience. This was discussed during the session.',
+'d2-s5t':'Observations &amp; Feedback','d2-s5s':'Instructor Notes',
+'d2-obs-rl-t':'Roberto Lizarra — Outstanding participation','d2-obs-rl-d':'Accurate contributions and strong learning disposition. Recommended area of growth: emotional management when receiving feedback.',
+'d2-obs-dp-t':'Daniel Patiño — Specific feedback','d2-obs-dp-d':'Provided specific, targeted feedback to improve quality of client interactions across cases.',
+'d2-obs-sm-t':'Susana Martinez — Critical analysis','d2-obs-sm-d':'Raised a critical stance on the call back process, opening space for constructive group analysis and discussion.',
+'d2-obs-bs-t':'Betzaida Santiago — Low participation noted','d2-obs-bs-d':'Low participation observed during the session. Follow-up recommended to address engagement and comprehension gaps.',
+'d2-s6t':'Tomorrow — Day 3','d2-s6s':'Apr 1','d2-tmr2-t':'Training Session · Day 3','d2-tmr2-s':'April 1, 2026 · Call Backs — Live Practice',
+'d2-t1t':'Call Back Team','d2-t1d':'Team presentation and process explanation.','d2-t1tag':'Intro',
+'d2-t2t':'Daniel\'s Checklist','d2-t2d':'Operational checklist presentation by Daniel Patiño.','d2-t2tag':'Legal',
+'d2-t3t':'Call Exercises','d2-t3d':'Additional call practice exercises.','d2-t3tag':'Practice',
+'d2-t4t':'Live Calls','d2-t4d':'Live call practice with real-time feedback.','d2-t4tag':'Live',
 'foot':'THE MENDOZA LAW FIRM · T VISA THEORY AND ELIGIBILITY CRITERIA · DVS INTAKE RECORDINGS · MARCH–APRIL 2026 · CONFIDENTIAL',
 'pdf-lbl':'Download PDF'
 },
 es:{
+'nav-d1':'Día 1 · 30 Mar','nav-d2':'Día 2 · 31 Mar','nav-d3':'Día 3 · 1 Abr','nav-total':'Entrenamiento 3 Días · T Visa',
+'cs2t':'Día 2 — Próximamente','cs2s':'El contenido del 31 de marzo se agregará en breve. Vuelve después de la sesión.',
+'cs3t':'Día 3 — Próximamente','cs3s':'El contenido del 1 de abril se agregará al finalizar la sesión.',
 'tb-tag':'Entrenamiento Interno','h-ey':'Reporte Día 1 · 30 de Marzo, 2026','h-mod':'Revisión de Casos de T Visa',
 'm1l':'Fecha','m2l':'Cierre','m3l':'Duración','m3v':'3 días','m4l':'Modalidad','m4v':'Presencial + Online','m5l':'Módulo',
 's1t':'Resumen de la Sesión','s1s':'Día 1','s1b':'Repaso teórico aplicado a casos',
@@ -514,6 +926,39 @@ es:{
 's5t':'Mañana — Día 2','s5s':'31 Mar','tmr-t':'Sesión de Entrenamiento · Día 2','tmr-s':'31 de marzo de 2026 · Preparación para abogados',
 'ag1t':'Estrategias Legales','ag1d':'Elegibilidad y argumentación ante USCIS.','ag2t':'Comunicación','ag2d':'Entrevista trauma-informada.','ag3t':'Checklist Call Backs','ag3d':'Protocolo EMP pendiente y hardship.','ag4t':'ABD & Role Play','ag4d':'Simulación de intake y extracción EMP.',
 's6t':'Referencia EMP','e1t':'¿Tipo de servicio?','e1d':'Trabajo forzado, servidumbre, deuda de peonaje, explotación sexual.','e2t':'¿Cómo controló?','e2d':'Fuerza: violencia. Fraude: promesas falsas. Coerción: amenazas.','e3t':'¿Cómo se realizó?','e3d':'Reclutamiento, transporte, alojamiento o recepción para explotación.','e4t':'Elegibilidad','e4d':'Trata severa + certificación LEA + presencia en EUA + hardship excepcional.',
+'d2-ey':'Reporte Día 2 · 31 de Marzo, 2026','d2-ht':'Re-screenings &amp; <em>Estrategias de Call Back</em>','d2-hm':'Estrategias Legales · Comunicación · Role Play',
+'d2-m1l':'Fecha','d2-m2l':'Duración','d2-m2v':'Día completo','d2-m3l':'Modalidad','d2-m3v':'Presencial + Online','d2-m4l':'Enfoque','d2-m4v':'Re-screening &amp; Call Backs','d2-m5l':'Ejercicio','d2-m5v':'Simulación 6 Casos',
+'d2-s1t':'Resumen de la Sesión','d2-s1s':'Día 2','d2-s1b':'Estrategias de re-screening aplicadas a casos reales',
+'d2-s1p1':'El entrenamiento estuvo enfocado en el desarrollo de estrategias para la correcta ejecución de re-screenings y call backs, integrando tanto el <strong>análisis legal</strong> como el fortalecimiento de las <strong>habilidades de comunicación con el cliente</strong>.',
+'d2-s1p2':'Los participantes revisaron llamadas de la abogada <strong>Guadalupe Mendoza</strong>, realizaron análisis grupal y retroalimentación estructurada, y practicaron mediante simulaciones de role play basadas en casos reales.',
+'d2-s2t':'Estrategias Legales','d2-s2s':'Re-screening','d2-vt-lt':'Enfoque Multi-estratégico','d2-vt-ld':'Evaluar los casos usando múltiples vías legales simultáneamente para identificar la ruta más sólida.',
+'d2-vu-lt':'Preguntas de Cualificación Estratégicas','d2-vu-ld':'Usar preguntas dirigidas para determinar qué visa u opción de alivio es la más adecuada para el cliente.',
+'d2-s3-lt':'Identificación de Elementos Clave','d2-s3-ld':'Reconocer y documentar los elementos legales necesarios para soportar cada estrategia potencial.',
+'d2-s4-lt':'Explicación de Perdones y Visas','d2-s4-ld':'Explicar claramente las opciones de alivio disponibles — perdones, visas y sus implicaciones — al cliente.',
+'d2-s5-lt':'Consulta de Expertos','d2-s5-ld':'Escalar casos complejos a abogados senior o especialistas para orientación antes de proceder.',
+'d2-s6-lt':'Consulta EOIR / Solicitud FOIA','d2-s6-ld':'Consultar registros de la corte de inmigración o solicitar documentos FOIA para verificar historial y estatus del cliente.',
+'d2-cs-t':'Habilidades de Comunicación','d2-cs-s':'Competencias Clave',
+'d2-c1':'Manejo de emociones del cliente','d2-c2':'Exploración de opciones legales','d2-c3':'Obtención de información sensible','d2-c4':'Gestión de expectativas','d2-c5':'Recuperación de confianza',
+'d2-s3t':'Actividades','d2-s3s':'Flujo de Sesión','d2-tmr-t':'Sesión de Entrenamiento · Día 2','d2-tmr-s':'31 de marzo de 2026 · Estrategias de Re-screening y Call Back',
+'d2-ag1t':'Revisión Legal y Comunicación','d2-ag1d':'Revisión de estrategias legales y de comunicación.','d2-ag1tag':'Legal',
+'d2-ag2t':'Simulaciones de Llamadas','d2-ag2d':'Role play basado en escenarios de casos reales.','d2-ag2tag':'Práctica',
+'d2-ag3t':'Foro Abierto','d2-ag3d':'Discusión grupal y construcción de estrategias.','d2-ag3tag':'Comms',
+'d2-ag4t':'Llamadas de Guadalupe','d2-ag4d':'Revisión + análisis grupal + retroalimentación estructurada.','d2-ag4tag':'Revisión',
+'d2-s4t':'Ejercicio de Re-screening','d2-s4s':'6 Casos · 4 Participantes',
+'d2-k1':'Participantes','d2-k2':'Aprobaron (83%+)','d2-k3':'Promedio','d2-k4':'Casos / participante',
+'d2-th1':'Participante','d2-th2':'Fecha y Hora','d2-th3':'Puntaje',
+'d2-btn-rl':'Ver detalle','d2-bs-notelbl':'Nota importante',
+'d2-bs-note':'Los ejercicios de re-screening señalan que <strong>Betzaida respondió acorde a sus propios criterios</strong>. Las respuestas no se evalúan como correctas o incorrectas, ya que están apegadas al propio criterio y experiencia de la abogada. Esto fue comentado y discutido durante la sesión.',
+'d2-s5t':'Observaciones y Retroalimentación','d2-s5s':'Notas del Instructor',
+'d2-obs-rl-t':'Roberto Lizarra — Participación destacada','d2-obs-rl-d':'Aportaciones acertadas y gran disposición de aprendizaje. Área de crecimiento recomendada: manejo emocional al recibir retroalimentación.',
+'d2-obs-dp-t':'Daniel Patiño — Retroalimentación específica','d2-obs-dp-d':'Proporcionó retroalimentación específica y puntual para mejorar la calidad de interacciones con clientes.',
+'d2-obs-sm-t':'Susana Martinez — Análisis crítico','d2-obs-sm-d':'Mostró una postura crítica respecto al proceso de call backs, abriendo espacio para análisis y discusión constructiva grupal.',
+'d2-obs-bs-t':'Betzaida Santiago — Baja participación','d2-obs-bs-d':'Se observó baja participación durante la sesión. Se recomienda seguimiento para abordar brechas de comprensión y participación.',
+'d2-s6t':'Mañana — Día 3','d2-s6s':'1 Abr','d2-tmr2-t':'Sesión de Entrenamiento · Día 3','d2-tmr2-s':'1 de abril de 2026 · Call Backs — Práctica en Vivo',
+'d2-t1t':'Equipo Call Back','d2-t1d':'Presentación del equipo y explicación del proceso.','d2-t1tag':'Intro',
+'d2-t2t':'Checklist de Daniel','d2-t2d':'Presentación de la checklist operativa por Daniel Patiño.','d2-t2tag':'Legal',
+'d2-t3t':'Ejercicios de Llamadas','d2-t3d':'Ejercicios adicionales de llamadas.','d2-t3tag':'Práctica',
+'d2-t4t':'Llamadas en Vivo','d2-t4d':'Práctica de llamadas en vivo con retroalimentación en tiempo real.','d2-t4tag':'En Vivo',
 'foot':'THE MENDOZA LAW FIRM · T VISA THEORY AND ELIGIBILITY CRITERIA · DVS INTAKE RECORDINGS · MARZO–ABRIL 2026 · CONFIDENCIAL',
 'pdf-lbl':'Descargar PDF'
 }};
@@ -526,6 +971,22 @@ function setLang(l){
     const el=document.getElementById(id);
     if(el)el.innerHTML=val;
   }
+  // Class-based repeated elements for Day 2
+  const cls={
+    'd2-chose-ref': l==='en'?'Chose':'Eligió',
+    'd2-rsn-ref':   l==='en'?'Reasoning':'Razonamiento',
+    'd2-dec-ref':   l==='en'?'Decision':'Decisión',
+    'd2-correct-ref':l==='en'?'Correct':'Correcta',
+    'd2-btn-ref':   l==='en'?'View detail':'Ver detalle',
+  };
+  for(const[cls_name,val]of Object.entries(cls)){
+    document.querySelectorAll('.'+cls_name).forEach(el=>el.innerHTML=val);
+  }
+  // Sync open/close button labels
+  document.querySelectorAll('.det-grid.open').forEach(grid=>{
+    const btn=grid.closest('.prow').querySelector('.det-lbl');
+    if(btn) btn.innerHTML=l==='en'?'Hide':'Ocultar';
+  });
   document.documentElement.lang=l;
 }
 </script>
