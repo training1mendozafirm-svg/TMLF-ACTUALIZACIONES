@@ -1,0 +1,2515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación Call Backs · The Mendoza Law Firm</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f1e3d;
+    --navy-mid: #1a3260;
+    --accent: #c8934a;
+    --accent-light: #e8b87a;
+    --cream: #faf7f2;
+    --cream-dark: #f0ead8;
+    --text: #1a1a2e;
+    --text-muted: #5a6278;
+    --border: #d5c9b0;
+    --green: #2d6a4f;
+    --green-light: #e8f5ee;
+    --yellow: #b5850a;
+    --yellow-light: #fef9e7;
+    --red: #8b2635;
+    --red-light: #fdecea;
+    --shadow: 0 2px 16px rgba(15,30,61,0.10);
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--navy);
+    color: white;
+    padding: 36px 40px 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    border: 40px solid rgba(200,147,74,0.15);
+    pointer-events: none;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    left: 40%; bottom: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    border: 24px solid rgba(200,147,74,0.08);
+    pointer-events: none;
+  }
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(200,147,74,0.18);
+    border: 1px solid rgba(200,147,74,0.4);
+    color: var(--accent-light);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.1rem;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .header h1 em { color: var(--accent-light); font-style: italic; }
+  .header p {
+    color: rgba(255,255,255,0.65);
+    font-size: 13px;
+    max-width: 560px;
+  }
+
+  /* META INFO */
+  .meta-bar {
+    background: white;
+    border-bottom: 2px solid var(--border);
+    padding: 20px 40px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .meta-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 150px;
+  }
+  .meta-field label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .meta-field input, .meta-field select {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 10px;
+    background: var(--cream);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .meta-field input:focus, .meta-field select:focus { border-color: var(--accent); }
+
+  /* LAYOUT */
+  .main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 60px;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 32px;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    padding: 12px 22px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    cursor: pointer;
+    color: var(--text-muted);
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    color: var(--navy);
+    border-bottom-color: var(--accent);
+    font-weight: 600;
+  }
+  .tab-btn:hover:not(.active) { color: var(--navy); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 28px;
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .section-header {
+    background: var(--navy);
+    color: white;
+    padding: 14px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .section-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.05rem;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .section-header .section-num {
+    background: var(--accent);
+    color: white;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-score {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    color: var(--accent-light);
+    min-width: 90px;
+    text-align: right;
+  }
+
+  /* CRITERION */
+  .criterion {
+    border-bottom: 1px solid var(--cream-dark);
+    padding: 18px 22px;
+  }
+  .criterion:last-child { border-bottom: none; }
+  .criterion-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .criterion-info { flex: 1; min-width: 220px; }
+  .criterion-name {
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--navy);
+    margin-bottom: 3px;
+  }
+  .criterion-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+  .indicators {
+    margin-bottom: 8px;
+  }
+  .indicators-title {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 5px;
+  }
+  .indicator-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .indicator-list li {
+    font-size: 12px;
+    color: var(--text-muted);
+    padding-left: 14px;
+    position: relative;
+  }
+  .indicator-list li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* EXAMPLES */
+  .examples {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .example {
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-size: 11.5px;
+    line-height: 1.45;
+  }
+  .example-label {
+    font-weight: 600;
+    font-size: 10px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .example.low { background: var(--red-light); color: #5c1a25; }
+  .example.low .example-label { color: var(--red); }
+  .example.high { background: var(--green-light); color: #1a4a35; }
+  .example.high .example-label { color: var(--green); }
+
+  /* RATING */
+  .rating-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 180px;
+  }
+  .rating-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .rating-btns {
+    display: flex;
+    gap: 5px;
+  }
+  .rating-btn {
+    width: 32px; height: 32px;
+    border-radius: 7px;
+    border: 2px solid var(--border);
+    background: white;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+    position: relative;
+  }
+  .rating-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .rating-btn.selected-1 { background: var(--red-light); border-color: var(--red); color: var(--red); }
+  .rating-btn.selected-2 { background: var(--yellow-light); border-color: var(--yellow); color: var(--yellow); }
+  .rating-btn.selected-3 { background: #e8f0fe; border-color: #4a6fa5; color: #4a6fa5; }
+  .rating-btn.selected-4 { background: #e6f4ea; border-color: #2d6a4f; color: #2d6a4f; }
+  .rating-btn.selected-5 { background: var(--green-light); border-color: var(--green); color: var(--green); font-weight:700; }
+  .rating-legend {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  /* NOTES */
+  .criterion-notes {
+    margin-top: 10px;
+  }
+  .criterion-notes textarea {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    width: 100%;
+    border: 1.5px solid var(--cream-dark);
+    border-radius: 6px;
+    padding: 8px 10px;
+    resize: vertical;
+    min-height: 52px;
+    color: var(--text);
+    background: var(--cream);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .criterion-notes textarea:focus { border-color: var(--accent); }
+  .criterion-notes textarea::placeholder { color: var(--border); }
+
+  /* QUALITATIVE FEEDBACK */
+  .qualitative-section {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    padding: 24px;
+    margin-bottom: 28px;
+  }
+  .qualitative-section h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: var(--navy);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--cream-dark);
+  }
+  .qualitative-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .qual-field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .qual-field textarea {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 80px;
+    color: var(--text);
+    background: var(--cream);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .qual-field textarea:focus { border-color: var(--accent); }
+  .qual-field.full { grid-column: 1 / -1; }
+
+  /* SCORE PANEL */
+  .score-panel {
+    background: var(--navy);
+    border-radius: var(--radius);
+    color: white;
+    padding: 24px 28px;
+    margin-bottom: 28px;
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    flex-wrap: wrap;
+    box-shadow: 0 4px 24px rgba(15,30,61,0.18);
+  }
+  .score-main {
+    text-align: center;
+    min-width: 140px;
+  }
+  .score-number {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3.5rem;
+    line-height: 1;
+    color: var(--accent-light);
+  }
+  .score-denom {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.5);
+    margin-top: 2px;
+  }
+  .score-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-top: 6px;
+  }
+  .score-divider {
+    width: 1px;
+    background: rgba(255,255,255,0.15);
+    align-self: stretch;
+    min-height: 80px;
+  }
+  .score-breakdown {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  .score-cat {
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 8px;
+  }
+  .score-cat-name {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 4px;
+  }
+  .score-cat-val {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    color: var(--accent-light);
+  }
+  .score-cat-max {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+  }
+  .level-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+  .level-low { background: var(--red-light); color: var(--red); }
+  .level-mid { background: var(--yellow-light); color: var(--yellow); }
+  .level-high { background: var(--green-light); color: var(--green); }
+
+  /* GUIDE */
+  .guide-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    font-size: 12.5px;
+  }
+  .guide-table th {
+    background: var(--navy);
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+  .guide-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--cream-dark);
+    vertical-align: top;
+  }
+  .guide-table tr:last-child td { border-bottom: none; }
+  .guide-table tr:hover td { background: var(--cream); }
+
+  /* COLLABORATIVE */
+  .collab-evaluators {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .evaluator-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .evaluator-card-header {
+    background: var(--cream-dark);
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+  }
+  .evaluator-card-header .ev-name-input {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    background: white;
+    color: var(--navy);
+    outline: none;
+    min-width: 200px;
+  }
+  .evaluator-card-header .ev-role-select {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    background: white;
+    color: var(--text-muted);
+    outline: none;
+  }
+  .evaluator-card-body {
+    padding: 16px 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .ev-score-box {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .ev-score-box label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .ev-score-box input {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    width: 90px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 12px;
+    text-align: center;
+    background: var(--cream);
+    color: var(--navy);
+    outline: none;
+  }
+  .ev-comment textarea {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    resize: vertical;
+    min-height: 70px;
+    background: var(--cream);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .ev-comment label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 5px;
+  }
+  .add-evaluator-btn {
+    background: white;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    text-align: center;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .add-evaluator-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* CONSOLIDATED */
+  .consolidated-panel {
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 24px;
+    margin-top: 20px;
+    box-shadow: var(--shadow);
+  }
+  .consolidated-panel h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.05rem;
+    color: var(--navy);
+    margin-bottom: 16px;
+  }
+  .consolidated-grid {
+    display: grid;
+    grid-template-columns: auto 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  .avg-score-box {
+    text-align: center;
+    padding: 16px 24px;
+    background: var(--navy);
+    border-radius: var(--radius);
+    color: white;
+  }
+  .avg-score-val {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.6rem;
+    color: var(--accent-light);
+  }
+  .avg-score-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-top: 4px;
+  }
+  .pattern-box {
+    padding: 14px 16px;
+    border-radius: 8px;
+  }
+  .pattern-box.strengths { background: var(--green-light); border-left: 3px solid var(--green); }
+  .pattern-box.improvements { background: var(--red-light); border-left: 3px solid var(--red); }
+  .pattern-box h4 {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .pattern-box.strengths h4 { color: var(--green); }
+  .pattern-box.improvements h4 { color: var(--red); }
+  .pattern-box textarea {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    width: 100%;
+    border: none;
+    background: transparent;
+    resize: none;
+    min-height: 60px;
+    outline: none;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* EXECUTIVE SUMMARY */
+  .summary-panel {
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-bottom: 28px;
+  }
+  .summary-header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+    padding: 20px 28px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .summary-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+  }
+  .summary-body {
+    padding: 24px 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .summary-box {
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .summary-box h4 {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .summary-box.executive { grid-column: 1 / -1; background: var(--cream); }
+  .summary-box.executive h4 { color: var(--navy); }
+  .summary-box.strengths-s { background: var(--green-light); }
+  .summary-box.strengths-s h4 { color: var(--green); }
+  .summary-box.improvements-s { background: var(--red-light); }
+  .summary-box.improvements-s h4 { color: var(--red); }
+  .summary-box.coaching { background: var(--yellow-light); grid-column: 1 / -1; }
+  .summary-box.coaching h4 { color: var(--yellow); }
+  .summary-box textarea, .summary-box ul-area {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12.5px;
+    width: 100%;
+    border: 1.5px solid rgba(0,0,0,0.08);
+    border-radius: 6px;
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 80px;
+    background: rgba(255,255,255,0.6);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.55;
+  }
+  .summary-box textarea:focus { border-color: var(--accent); }
+
+  /* BUTTONS */
+  .actions-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 22px;
+    border-radius: 7px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .btn-primary { background: var(--navy); color: white; }
+  .btn-primary:hover { background: var(--navy-mid); }
+  .btn-accent { background: var(--accent); color: white; }
+  .btn-accent:hover { background: #b07d38; }
+  .btn-outline { background: white; color: var(--navy); border: 1.5px solid var(--border); }
+  .btn-outline:hover { border-color: var(--navy); }
+  .btn-danger { background: var(--red-light); color: var(--red); border: 1.5px solid #e0a0a8; }
+  .btn-danger:hover { background: #fac0c8; }
+
+  /* PRINT */
+  @media print {
+    .tabs, .actions-bar, .add-evaluator-btn { display: none !important; }
+    .tab-panel { display: block !important; }
+    body { background: white; }
+    .section, .qualitative-section, .score-panel, .summary-panel { break-inside: avoid; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 700px) {
+    .header { padding: 24px 16px; }
+    .header h1 { font-size: 1.5rem; }
+    .meta-bar { padding: 16px; }
+    .main { padding: 20px 10px 40px; }
+    .qualitative-grid, .summary-body, .examples, .consolidated-grid { grid-template-columns: 1fr; }
+    .evaluator-card-body { grid-template-columns: 1fr; }
+    .summary-box.executive, .summary-box.coaching { grid-column: 1; }
+  }
+
+  .tooltip {
+    position: relative;
+    cursor: help;
+  }
+  .tooltip::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--navy);
+    color: white;
+    font-size: 11px;
+    padding: 5px 9px;
+    border-radius: 5px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 10;
+  }
+  .tooltip:hover::after { opacity: 1; }
+
+  .progress-bar-wrap { height: 4px; background: rgba(255,255,255,0.15); border-radius: 2px; margin-top: 8px; }
+  .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s; }
+
+  /* LANGUAGE TOGGLE */
+  .lang-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    transition: all 0.18s;
+    letter-spacing: 0.3px;
+  }
+  .lang-btn:hover { background: rgba(255,255,255,0.15); color: white; }
+  .lang-btn.lang-active { background: var(--accent); border-color: var(--accent); color: white; }
+
+  /* COLLAPSIBLE DETAIL */
+  .detail-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 7px;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--accent);
+    cursor: pointer;
+    background: none;
+    border: 1.5px solid var(--accent);
+    border-radius: 5px;
+    padding: 4px 10px;
+    font-family: 'DM Sans', sans-serif;
+    user-select: none;
+    transition: all 0.15s;
+  }
+  .detail-toggle:hover { background: rgba(200,147,74,0.08); }
+  .detail-toggle .toggle-arrow {
+    display: inline-block;
+    transition: transform 0.22s ease;
+    font-size: 10px;
+  }
+  .detail-toggle.open .toggle-arrow { transform: rotate(90deg); }
+
+  .criterion-detail {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.32s ease, opacity 0.25s ease;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .criterion-detail.open {
+    max-height: 700px;
+    opacity: 1;
+    pointer-events: auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+    <div class="header-badge">⚖️ The Mendoza Law Firm</div>
+    <div style="display:flex;gap:6px;">
+      <button onclick="setLang('es')" id="btn-lang-es" class="lang-btn lang-active">🇲🇽 Español</button>
+      <button onclick="setLang('en')" id="btn-lang-en" class="lang-btn">🇺🇸 English</button>
+    </div>
+  </div>
+  <h1 data-es="Evaluación <em>Call Backs</em>" data-en="<em>Call Backs</em> Evaluation">Evaluación <em>Call Backs</em></h1>
+  <p data-es="Herramienta de evaluación práctica para supervisores y trainers · Criterios observables · Retroalimentación estructurada" data-en="Practical evaluation tool for supervisors and trainers · Observable criteria · Structured feedback">Herramienta de evaluación práctica para supervisores y trainers · Criterios observables · Retroalimentación estructurada</p>
+</div>
+
+<!-- META INFO -->
+<div class="meta-bar">
+  <div class="meta-field">
+    <label>Evaluado</label>
+    <input type="text" id="colabName" placeholder="Nombre completo">
+  </div>
+  <div class="meta-field">
+    <label>Fecha de la llamada</label>
+    <input type="date" id="callDate">
+  </div>
+  <div class="meta-field">
+    <label>Duración (min)</label>
+    <input type="number" id="callDuration" placeholder="ej. 35" min="1">
+  </div>
+  <div class="meta-field">
+    <label>Tipo de caso</label>
+    <select id="caseType">
+      <option value="">Seleccionar...</option>
+      <option>Consulta inicial</option>
+      <option>Seguimiento de caso</option>
+      <option>Caso de violencia / VAWA</option>
+      <option>Solicitud de visa</option>
+      <option>Procedimiento de remoción</option>
+      <option>Otro</option>
+    </select>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('criterios', this)">📋 Criterios de Evaluación</button>
+    <button class="tab-btn" onclick="switchTab('retroalimentacion', this)">💬 Retroalimentación</button>
+    <button class="tab-btn" onclick="switchTab('colaborativa', this)">👥 Evaluación Colaborativa</button>
+    <button class="tab-btn" onclick="switchTab('resumen', this)">📊 Resumen Ejecutivo</button>
+    <button class="tab-btn" onclick="switchTab('guia', this)">📖 Guía de Interpretación</button>
+  </div>
+
+  <!-- TAB: CRITERIOS -->
+  <div id="tab-criterios" class="tab-panel active">
+
+    <!-- SCORE PANEL -->
+    <div class="score-panel" id="scorePanelMain">
+      <div class="score-main">
+        <div class="score-number" id="totalScoreDisplay">0</div>
+        <div class="score-denom">/ <span id="maxScoreDisplay">115</span> pts</div>
+        <div class="score-label">Puntaje Total</div>
+        <div id="levelBadgeMain" class="level-badge level-mid" style="margin:8px auto 0;display:inline-flex;">—</div>
+        <div class="progress-bar-wrap" style="margin-top:10px;width:120px;margin-left:auto;margin-right:auto;">
+          <div class="progress-bar-fill" id="mainProgressBar" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="score-divider"></div>
+      <div class="score-breakdown" id="scoreBreakdown">
+        <div class="score-cat">
+          <div class="score-cat-name">Preparación</div>
+          <div><span class="score-cat-val" id="cat1Score">0</span><span class="score-cat-max">/10</span></div>
+        </div>
+        <div class="score-cat">
+          <div class="score-cat-name">Manejo llamada</div>
+          <div><span class="score-cat-val" id="cat2Score">0</span><span class="score-cat-max">/20</span></div>
+        </div>
+        <div class="score-cat">
+          <div class="score-cat-name">Estrategia legal</div>
+          <div><span class="score-cat-val" id="cat3Score">0</span><span class="score-cat-max">/20</span></div>
+        </div>
+        <div class="score-cat">
+          <div class="score-cat-name">Comunicación</div>
+          <div><span class="score-cat-val" id="cat4Score">0</span><span class="score-cat-max">/65</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORIA 1 -->
+    <div class="section">
+      <div class="section-header">
+        <h2><span class="section-num">1</span> Preparación previa a la llamada</h2>
+        <div class="section-score" id="sec1Score">0 / 10</div>
+      </div>
+
+      <!-- C1.1 -->
+      <div class="criterion" data-cat="1">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">1.1 · Análisis del caso</div>
+            <div class="criterion-desc">Revisó el expediente o información disponible antes de iniciar la llamada y demuestra conocimiento del caso desde el primer contacto.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Menciona detalles previos del cliente sin preguntarlos de nuevo</li>
+                <li>No repite preguntas ya respondidas en sesiones anteriores</li>
+                <li>Hace referencia a documentos o situaciones previas del caso</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>"¿Me puede decir su nombre y por qué nos contacta?" (sin haber revisado nada)</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"Sra. García, veo que nos contactó la semana pasada por una situación de visa. Quiero retomar desde donde quedamos."</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c1_1')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c1_1')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c1_1')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c1_1')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c1_1')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C1.2 -->
+      <div class="criterion" data-cat="1">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">1.2 · Uso de checklist previo</div>
+            <div class="criterion-desc">Utilizó una guía o lista de verificación antes de la llamada para asegurarse de cubrir todos los puntos clave del proceso.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Aborda de forma ordenada y sistemática los temas de la llamada</li>
+                <li>No olvida preguntas de cualificación importantes</li>
+                <li>La llamada sigue una estructura coherente de principio a fin</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>Olvida preguntar sobre el estatus migratorio actual o salta sin orden entre temas diferentes.</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>Sigue un flujo claro: bienvenida → motivo de contacto → historial → opciones → cierre.</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c1_2')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c1_2')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c1_2')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c1_2')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c1_2')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORIA 2 -->
+    <div class="section">
+      <div class="section-header">
+        <h2><span class="section-num">2</span> Manejo de la llamada</h2>
+        <div class="section-score" id="sec2Score">0 / 20</div>
+      </div>
+
+      <!-- C2.1 -->
+      <div class="criterion" data-cat="2">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">2.1 · Presentación adecuada</div>
+            <div class="criterion-desc">Se presenta como abogado de The Mendoza Law Firm al inicio de la llamada, mencionando su nombre, la firma y el propósito del contacto.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Dice su nombre y menciona "The Mendoza Law Firm" claramente</li>
+                <li>Se identifica como abogado o representante de la firma</li>
+                <li>Explica el propósito de la llamada en los primeros 30 segundos</li>
+                <li>Saluda de forma cálida y profesional</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>"Hola, ¿con quién hablo?" (sin presentarse ni mencionar la firma)</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"Buenos días, le habla [Nombre], abogado de The Mendoza Law Firm. Hoy vamos a revisar las opciones para su caso. ¿Es buen momento?"</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c2_1')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c2_1')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c2_1')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c2_1')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c2_1')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C2.2 -->
+      <div class="criterion" data-cat="2">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">2.2 · Tono de voz</div>
+            <div class="criterion-desc">Mantuvo un tono cálido, profesional y empático a lo largo de toda la llamada, adaptándolo según el estado emocional del cliente.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Velocidad al hablar adecuada (ni muy rápido ni muy lento)</li>
+                <li>Voz tranquilizadora cuando el cliente muestra angustia</li>
+                <li>No usa tono monótono, robótico ni impaciente</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>Habla de forma apresurada o con tono frío ante un cliente en crisis emocional.</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>Baja el ritmo, modula la voz y transmite calma: "Entiendo que esta situación es muy difícil. Estoy aquí para ayudarle."</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c2_2')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c2_2')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c2_2')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c2_2')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c2_2')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C2.3 -->
+      <div class="criterion" data-cat="2">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">2.3 · Claridad al explicar</div>
+            <div class="criterion-desc">Explicó conceptos legales y procesos en lenguaje sencillo, sin jerga innecesaria, asegurándose de que el cliente comprenda.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Evita tecnicismos sin explicarlos</li>
+                <li>Usa analogías o ejemplos concretos cuando es necesario</li>
+                <li>Verifica comprensión: "¿Tiene alguna pregunta sobre esto?"</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>"Su caso califica bajo la sección 245(i) y necesitamos filing fees y EAD simultáneo." (sin explicar)</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"Existe una opción para regularizar su estatus sin salir del país. Se llama ajuste de estatus. ¿Le explico cómo funciona?"</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c2_3')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c2_3')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c2_3')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c2_3')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c2_3')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C2.4 -->
+      <div class="criterion" data-cat="2">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">2.4 · Control de la conversación</div>
+            <div class="criterion-desc">Dirigió la conversación de forma proactiva, manteniendo el foco sin perder el hilo, incluso cuando el cliente se desvió del tema.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Reencuadra gentilmente cuando el cliente divaga: "Entiendo, permítame retomar..."</li>
+                <li>No deja silencios prolongados sin gestión</li>
+                <li>Cierra temas antes de abrir nuevos</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>La llamada se dispersa en múltiples temas no resueltos; el colaborador no guía el cierre.</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"Anotado. Antes de seguir con ese punto, déjeme confirmar lo que hemos visto hasta ahora..."</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c2_4')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c2_4')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c2_4')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c2_4')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c2_4')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORIA 3 -->
+    <div class="section">
+      <div class="section-header">
+        <h2><span class="section-num">3</span> Estrategia legal</h2>
+        <div class="section-score" id="sec3Score">0 / 20</div>
+      </div>
+
+      <!-- C3.1 -->
+      <div class="criterion" data-cat="3">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">3.1 · Enfoque multi-estratégico</div>
+            <div class="criterion-desc">Exploró más de una opción legal posible para el caso, sin limitarse a la primera que surgió.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Menciona al menos 2 vías o categorías de alivio posibles</li>
+                <li>No descarta opciones sin indagar primero</li>
+                <li>Conecta la situación del cliente con diferentes tipos de beneficios</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>Solo menciona una opción de visa sin explorar otras posibilidades como VAWA, U-Visa o asilo.</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"Basado en lo que me comenta, podría haber al menos tres caminos: la visa familiar, la U-Visa y un posible perdón. Exploremos cada uno."</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c3_1')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c3_1')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c3_1')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c3_1')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c3_1')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C3.2 -->
+      <div class="criterion" data-cat="3">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">3.2 · Preguntas de cualificación (screening)</div>
+            <div class="criterion-desc">Realizó las preguntas necesarias para determinar qué opciones legales aplican al caso específico del cliente.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Pregunta sobre estatus migratorio actual, entradas, órdenes de remoción</li>
+                <li>Indaga sobre relaciones familiares calificantes</li>
+                <li>Pregunta si ha sufrido abuso, violencia o explotación</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>No pregunta sobre antecedentes penales o entradas sin inspección, perdiendo elegibilidad clave.</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"Para ver todas sus opciones, necesito preguntarle: ¿Cómo ingresó al país? ¿Tiene algún familiar ciudadano?"</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c3_2')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c3_2')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c3_2')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c3_2')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c3_2')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C3.3 -->
+      <div class="criterion" data-cat="3">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">3.3 · Identificación de elementos clave</div>
+            <div class="criterion-desc">Detectó y registró los elementos críticos del caso que determinan elegibilidad (fechas, relaciones, historial de entradas, violencia, etc.).</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Confirma fechas relevantes (entrada al país, vencimiento de estatus)</li>
+                <li>Identifica si hay factores que complican la elegibilidad</li>
+                <li>Toma nota activa o repite datos clave para confirmar</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>No registra la fecha de entrada ni indaga sobre órdenes de deportación existentes.</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"Déjeme confirmar: entró en 2018, tiene un familiar ciudadano y no tiene órdenes previas. Con eso podemos avanzar."</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c3_3')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c3_3')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c3_3')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c3_3')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c3_3')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C3.4 -->
+      <div class="criterion" data-cat="3">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">3.4 · Explicación de opciones legales</div>
+            <div class="criterion-desc">Explicó de forma clara las visas, perdones u opciones legales identificadas, incluyendo qué implican, tiempos y requisitos generales.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Menciona el nombre de la visa/opción y su propósito en lenguaje simple</li>
+                <li>Da contexto sobre tiempos o documentación sin prometer resultados</li>
+                <li>Diferencia claramente entre opciones cuando hay más de una</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>"Puede aplicar a la U-Visa." (sin explicar qué es, cuánto tarda ni qué necesita)</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"La U-Visa es para víctimas de ciertos crímenes. Si califica, le da estatus legal por 4 años y puede llevar a una residencia. Requiere una certificación policial."</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c3_4')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c3_4')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c3_4')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c3_4')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c3_4')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORIA 4 -->
+    <div class="section">
+      <div class="section-header">
+        <h2><span class="section-num">4</span> Estrategias de comunicación</h2>
+        <div class="section-score" id="sec4Score">0 / 65</div>
+      </div>
+
+      <!-- C4.1 -->
+      <div class="criterion" data-cat="4">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">4.1 · Seguridad del cliente</div>
+            <div class="criterion-desc">Confirmó al inicio si el cliente se encuentra en un lugar seguro y privado para hablar, especialmente en casos sensibles.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Pregunta explícitamente: "¿Puede hablar con libertad ahora?"</li>
+                <li>Si el cliente duda, ofrece reagendar o usar señas de respuesta</li>
+                <li>Lo hace en los primeros minutos de la llamada</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>Inicia directamente con preguntas sensibles sin verificar si el cliente puede hablar con privacidad.</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"Antes de empezar, ¿se encuentra en un lugar donde puede hablar con confianza? Algunos temas son delicados y quiero asegurarme."</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c4_1')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c4_1')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c4_1')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c4_1')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c4_1')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C4.2 -->
+      <div class="criterion" data-cat="4">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">4.2 · Validación emocional</div>
+            <div class="criterion-desc">Reconoció y validó abiertamente los sentimientos del cliente antes de continuar con información legal o procedimental.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Frases como "entiendo cómo se siente" o "es normal sentirse así"</li>
+                <li>No apresura al cliente a pasar a la parte informativa cuando está angustiado</li>
+                <li>Reconoce explícitamente la dificultad de la situación</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>El cliente llora y el colaborador responde: "Bueno, vamos a ver qué opciones tiene..." (sin validar)</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"Lo que está viviendo es muy difícil y es completamente válido sentirse así. Estamos aquí para acompañarle en esto."</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c4_2')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c4_2')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c4_2')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c4_2')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c4_2')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C4.3 -->
+      <div class="criterion" data-cat="4">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">4.3 · Escucha activa</div>
+            <div class="criterion-desc">Demostró atención genuina, sin interrumpir, dejando espacio al cliente y respondiendo a lo que realmente dijo.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Hace silencio cuando el cliente habla (no interrumpe)</li>
+                <li>Sus respuestas se conectan directamente con lo que el cliente dijo</li>
+                <li>Usa reflejos verbales: "ajá", "entiendo", "sigo..."</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>Interrumpe al cliente repetidamente o responde sin conectar con lo que el cliente acaba de compartir.</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>Deja terminar al cliente, pausa brevemente y responde directamente a lo que compartió.</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c4_3')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c4_3')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c4_3')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c4_3')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c4_3')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C4.4 -->
+      <div class="criterion" data-cat="4">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">4.4 · Parafraseo para confirmar información</div>
+            <div class="criterion-desc">Resumió con sus propias palabras lo que el cliente dijo para confirmar comprensión mutua y asegurar precisión en datos críticos.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>"Si entiendo bien, usted está diciendo que..." seguido de resumen</li>
+                <li>Repite cifras, fechas o hechos clave para confirmar</li>
+                <li>Pide corrección si se equivoca: "¿Es correcto?"</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>Asume que entendió y continúa sin verificar, lo que genera malentendidos posteriores.</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"Si le entiendo bien, llegó en 2019, tiene dos hijos ciudadanos y nunca ha tenido una orden de deportación. ¿Correcto?"</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c4_4')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c4_4')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c4_4')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c4_4')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c4_4')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C4.5 -->
+      <div class="criterion" data-cat="4">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">4.5 · Preguntas directas pero respetuosas</div>
+            <div class="criterion-desc">Formuló preguntas necesarias de manera directa y sin rodeos, pero con un tono respetuoso que no incomoda al cliente.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Introduce preguntas sensibles con contexto: "Para ayudarle mejor, necesito preguntarle..."</li>
+                <li>No evita preguntas incómodas por temor</li>
+                <li>Usa formulaciones neutras, sin juicio</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>Evita preguntar sobre antecedentes penales o situación migratoria por incomodidad, perdiendo información clave.</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"Para evaluar todas sus opciones, ¿ha tenido algún contacto con el sistema judicial en EE.UU.? No hay respuesta incorrecta, es solo para orientarle mejor."</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c4_5')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c4_5')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c4_5')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c4_5')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c4_5')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C4.6 -->
+      <div class="criterion" data-cat="4">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">4.6 · Obtención de información sensible</div>
+            <div class="criterion-desc">Abordó con tacto y estrategia la obtención de información delicada (violencia, abuso, historial criminal) creando un ambiente de confianza.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Explica antes por qué necesita la información</li>
+                <li>Usa un tono neutro y sin juicio</li>
+                <li>Da espacio para que el cliente decida cuánto compartir</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>"¿Ha sufrido violencia doméstica?" (pregunta directa sin contexto ni preparación)</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"Hay opciones especiales para personas que han vivido situaciones difíciles en casa. Si se siente cómoda, ¿me puede contar un poco más sobre su situación familiar?"</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c4_6')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c4_6')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c4_6')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c4_6')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c4_6')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C4.7 -->
+      <div class="criterion" data-cat="4">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">4.7 · Gestión de expectativas</div>
+            <div class="criterion-desc">Comunicó de manera honesta y empática los tiempos, posibilidades y limitaciones del proceso legal, sin generar falsas esperanzas.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>No promete resultados garantizados</li>
+                <li>Explica que los tiempos son aproximados y pueden variar</li>
+                <li>Ofrece alternativas si una opción no es viable</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>"No se preocupe, esto tarda 6 meses y saldrá bien." (promesas no respaldadas)</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"Este proceso suele tomar entre 1 y 2 años dependiendo de varios factores. No puedo garantizar el resultado, pero sí acompañarle en cada paso."</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c4_7')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c4_7')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c4_7')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c4_7')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c4_7')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C4.8 -->
+      <div class="criterion" data-cat="4">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">4.8 · Recuperación de confianza</div>
+            <div class="criterion-desc">Ante situaciones donde el cliente expresa desconfianza o frustración, tomó medidas activas para reconstruir la relación.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Reconoce la insatisfacción del cliente sin ponerse defensivo</li>
+                <li>Ofrece pasos concretos para mejorar la situación</li>
+                <li>Mantiene la calma y profesionalismo bajo presión</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>Se pone a la defensiva o ignora la frustración del cliente cuando este expresa desconfianza.</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"Entiendo su frustración y es completamente válida. Le propongo esto para reencauzar su caso: primero vamos a..."</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c4_8')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c4_8')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c4_8')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c4_8')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c4_8')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C4.9 -->
+      <div class="criterion" data-cat="4">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">4.9 · Reconocimiento de errores</div>
+            <div class="criterion-desc">Cuando se identificó un error (propio o de la firma), lo reconoció con honestidad y sin minimizarlo.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Dice "tiene razón" o "cometimos un error" cuando corresponde</li>
+                <li>No busca excusas ni culpa al cliente</li>
+                <li>Reconocimiento seguido de plan de acción</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>"Es que el sistema a veces falla..." (sin asumir responsabilidad directa)</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"Tiene razón, debimos haberle informado antes. Me disculpo y voy a asegurarme de que esto se corrija hoy."</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c4_9')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c4_9')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c4_9')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c4_9')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c4_9')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C4.10 -->
+      <div class="criterion" data-cat="4">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">4.10 · Manejo de emociones del cliente</div>
+            <div class="criterion-desc">Reconoció y gestionó adecuadamente estados emocionales intensos (miedo, llanto, enojo) sin perder el enfoque ni desestabilizarse.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Pausa la parte informativa si el cliente necesita procesar</li>
+                <li>No ignora ni minimiza el estado emocional del cliente</li>
+                <li>Redirige con suavidad una vez el cliente se estabiliza</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>Continúa explicando documentos mientras el cliente está llorando, sin reconocer su estado.</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"Tómese el tiempo que necesite. No hay prisa. Cuando se sienta listo/a continuamos, estoy aquí."</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c4_10')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c4_10')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c4_10')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c4_10')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c4_10')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C4.11 -->
+      <div class="criterion" data-cat="4">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">4.11 · Exploración de opciones legales</div>
+            <div class="criterion-desc">Comunicó las opciones disponibles de manera que el cliente pudiera participar activamente en la decisión.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Presenta opciones como un menú: "Tiene estas alternativas..."</li>
+                <li>Explica pros y contras de cada opción de forma accesible</li>
+                <li>Involucra al cliente en la decisión sin imponerla</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>"Lo que debe hacer es la visa familiar." (impone una opción sin explicar)</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"Tiene dos caminos posibles. Uno es más rápido pero costoso; el otro tarda más pero es más seguro. ¿Cuál le conviene explorar primero?"</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c4_11')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c4_11')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c4_11')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c4_11')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c4_11')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C4.12 -->
+      <div class="criterion" data-cat="4">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">4.12 · Propuesta de soluciones</div>
+            <div class="criterion-desc">Al finalizar la llamada, ofreció pasos concretos, accionables y claros que el cliente puede seguir inmediatamente.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>Define el próximo paso específico: "Esta semana necesitamos..."</li>
+                <li>Asigna responsabilidades claras (quién hace qué)</li>
+                <li>Confirma que el cliente entendió y está de acuerdo</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>"Bueno, seguimos en contacto." (cierre vago sin compromisos claros)</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"El siguiente paso es que usted reúna estos 3 documentos para el viernes. Yo programaré la cita con el abogado para la próxima semana. ¿Tiene alguna duda?"</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c4_12')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c4_12')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c4_12')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c4_12')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c4_12')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C4.13 -->
+      <div class="criterion" data-cat="4">
+        <div class="criterion-top">
+          <div class="criterion-info">
+            <div class="criterion-name">4.13 · Manejo de emociones del cliente (cierre)</div>
+            <div class="criterion-desc">Al cerrar la llamada, dejó al cliente en un estado emocional estable, con claridad y esperanza razonable sobre su situación.</div>
+            <div class="indicators">
+              <div class="indicators-title">Indicadores observables</div>
+              <ul class="indicator-list">
+                <li>El cliente concluye la llamada con preguntas respondidas</li>
+                <li>Usa un cierre que normaliza: "No está solo/a en esto"</li>
+                <li>No deja al cliente más angustiado de lo que llegó</li>
+              </ul>
+            </div>
+            <div class="examples">
+              <div class="example low"><div class="example-label">⚠ Necesita mejora</div>La llamada termina abruptamente con el cliente confundido y sin saber qué sigue.</div>
+              <div class="example high"><div class="example-label">✓ Sobresaliente</div>"Recuerde que no está solo/a. Tenemos un plan claro. Si surge cualquier duda, no dude en llamarnos."</div>
+            </div>
+            <div class="criterion-notes"><textarea placeholder="Notas observadas en la llamada..."></textarea></div>
+          </div>
+          <div class="rating-block">
+            <div class="rating-label">Calificación</div>
+            <div class="rating-btns">
+              <button class="rating-btn tooltip" data-tip="Necesita mejora" onclick="rate(this,1,'c4_13')">1</button>
+              <button class="rating-btn tooltip" data-tip="Por debajo" onclick="rate(this,2,'c4_13')">2</button>
+              <button class="rating-btn tooltip" data-tip="Aceptable" onclick="rate(this,3,'c4_13')">3</button>
+              <button class="rating-btn tooltip" data-tip="Bueno" onclick="rate(this,4,'c4_13')">4</button>
+              <button class="rating-btn tooltip" data-tip="Sobresaliente" onclick="rate(this,5,'c4_13')">5</button>
+            </div>
+            <div class="rating-legend">1 = Necesita mejora · 5 = Sobresaliente</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end section 4 -->
+
+    <div class="actions-bar">
+      <button class="btn btn-primary" onclick="switchTab('retroalimentacion', document.querySelector('.tab-btn:nth-child(2)'))">Continuar → Retroalimentación</button>
+      <button class="btn btn-outline" onclick="window.print()">🖨 Imprimir</button>
+      <button class="btn btn-danger" onclick="resetAll()">↺ Reiniciar evaluación</button>
+    </div>
+
+  </div><!-- end tab-criterios -->
+
+  <!-- TAB: RETROALIMENTACION -->
+  <div id="tab-retroalimentacion" class="tab-panel">
+    <div class="qualitative-section">
+      <h3 data-es="💬 Retroalimentación por Criterio" data-en="💬 Feedback by Criterion">💬 Retroalimentación por Criterio</h3>
+      <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:20px;" data-es="Un comentario por criterio. Enfócate en lo observable y accionable." data-en="One comment per criterion. Focus on what is observable and actionable.">Un comentario por criterio. Enfócate en lo observable y accionable.</p>
+
+      <!-- CAT 1 -->
+      <div style="margin-bottom:22px;">
+        <div style="font-family:'DM Serif Display',serif;font-size:0.95rem;color:var(--navy);border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:12px;" data-es="1 · Preparación previa" data-en="1 · Pre-call Preparation">1 · Preparación previa</div>
+        <div class="qualitative-grid">
+          <div class="qual-field full">
+            <label data-es="1.1 Análisis del caso" data-en="1.1 Case Analysis">1.1 Análisis del caso</label>
+            <textarea id="fb_c1_1" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+          <div class="qual-field full">
+            <label data-es="1.2 Uso de checklist previo" data-en="1.2 Pre-call Checklist Use">1.2 Uso de checklist previo</label>
+            <textarea id="fb_c1_2" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- CAT 2 -->
+      <div style="margin-bottom:22px;">
+        <div style="font-family:'DM Serif Display',serif;font-size:0.95rem;color:var(--navy);border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:12px;" data-es="2 · Manejo de la llamada" data-en="2 · Call Management">2 · Manejo de la llamada</div>
+        <div class="qualitative-grid">
+          <div class="qual-field full">
+            <label data-es="2.1 Presentación adecuada" data-en="2.1 Proper Introduction">2.1 Presentación adecuada</label>
+            <textarea id="fb_c2_1" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+          <div class="qual-field full">
+            <label data-es="2.2 Tono de voz" data-en="2.2 Tone of Voice">2.2 Tono de voz</label>
+            <textarea id="fb_c2_2" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+          <div class="qual-field full">
+            <label data-es="2.3 Claridad al explicar" data-en="2.3 Clarity When Explaining">2.3 Claridad al explicar</label>
+            <textarea id="fb_c2_3" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+          <div class="qual-field full">
+            <label data-es="2.4 Control de la conversación" data-en="2.4 Conversation Control">2.4 Control de la conversación</label>
+            <textarea id="fb_c2_4" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- CAT 3 -->
+      <div style="margin-bottom:22px;">
+        <div style="font-family:'DM Serif Display',serif;font-size:0.95rem;color:var(--navy);border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:12px;" data-es="3 · Estrategia legal" data-en="3 · Legal Strategy">3 · Estrategia legal</div>
+        <div class="qualitative-grid">
+          <div class="qual-field full">
+            <label data-es="3.1 Enfoque multi-estratégico" data-en="3.1 Multi-strategy Approach">3.1 Enfoque multi-estratégico</label>
+            <textarea id="fb_c3_1" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+          <div class="qual-field full">
+            <label data-es="3.2 Preguntas de cualificación" data-en="3.2 Screening Questions">3.2 Preguntas de cualificación</label>
+            <textarea id="fb_c3_2" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+          <div class="qual-field full">
+            <label data-es="3.3 Identificación de elementos clave" data-en="3.3 Key Elements Identification">3.3 Identificación de elementos clave</label>
+            <textarea id="fb_c3_3" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+          <div class="qual-field full">
+            <label data-es="3.4 Explicación de opciones legales" data-en="3.4 Explanation of Legal Options">3.4 Explicación de opciones legales</label>
+            <textarea id="fb_c3_4" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- CAT 4 -->
+      <div style="margin-bottom:22px;">
+        <div style="font-family:'DM Serif Display',serif;font-size:0.95rem;color:var(--navy);border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:12px;" data-es="4 · Estrategias de comunicación" data-en="4 · Communication Strategies">4 · Estrategias de comunicación</div>
+        <div class="qualitative-grid">
+          <div class="qual-field full">
+            <label data-es="4.1 Seguridad del cliente" data-en="4.1 Client Safety Check">4.1 Seguridad del cliente</label>
+            <textarea id="fb_c4_1" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+          <div class="qual-field full">
+            <label data-es="4.2 Validación emocional" data-en="4.2 Emotional Validation">4.2 Validación emocional</label>
+            <textarea id="fb_c4_2" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+          <div class="qual-field full">
+            <label data-es="4.3 Escucha activa" data-en="4.3 Active Listening">4.3 Escucha activa</label>
+            <textarea id="fb_c4_3" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+          <div class="qual-field full">
+            <label data-es="4.4 Parafraseo para confirmar" data-en="4.4 Paraphrasing to Confirm">4.4 Parafraseo para confirmar</label>
+            <textarea id="fb_c4_4" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+          <div class="qual-field full">
+            <label data-es="4.5 Preguntas directas pero respetuosas" data-en="4.5 Direct but Respectful Questions">4.5 Preguntas directas pero respetuosas</label>
+            <textarea id="fb_c4_5" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+          <div class="qual-field full">
+            <label data-es="4.6 Obtención de información sensible" data-en="4.6 Gathering Sensitive Information">4.6 Obtención de información sensible</label>
+            <textarea id="fb_c4_6" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+          <div class="qual-field full">
+            <label data-es="4.7 Gestión de expectativas" data-en="4.7 Expectation Management">4.7 Gestión de expectativas</label>
+            <textarea id="fb_c4_7" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+          <div class="qual-field full">
+            <label data-es="4.8 Recuperación de confianza" data-en="4.8 Trust Recovery">4.8 Recuperación de confianza</label>
+            <textarea id="fb_c4_8" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+          <div class="qual-field full">
+            <label data-es="4.9 Reconocimiento de errores" data-en="4.9 Acknowledging Mistakes">4.9 Reconocimiento de errores</label>
+            <textarea id="fb_c4_9" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+          <div class="qual-field full">
+            <label data-es="4.10 Manejo de emociones del cliente" data-en="4.10 Managing Client Emotions">4.10 Manejo de emociones del cliente</label>
+            <textarea id="fb_c4_10" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+          <div class="qual-field full">
+            <label data-es="4.11 Exploración de opciones legales" data-en="4.11 Exploring Legal Options">4.11 Exploración de opciones legales</label>
+            <textarea id="fb_c4_11" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+          <div class="qual-field full">
+            <label data-es="4.12 Propuesta de soluciones" data-en="4.12 Proposing Solutions">4.12 Propuesta de soluciones</label>
+            <textarea id="fb_c4_12" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+          <div class="qual-field full">
+            <label data-es="4.13 Cierre emocional" data-en="4.13 Emotional Closing">4.13 Cierre emocional</label>
+            <textarea id="fb_c4_13" placeholder="Comentario observado en la llamada..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- GENERAL -->
+      <div>
+        <div style="font-family:'DM Serif Display',serif;font-size:0.95rem;color:var(--navy);border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:12px;" data-es="Comentario general" data-en="General Comments">Comentario general</div>
+        <div class="qualitative-grid">
+          <div class="qual-field full">
+            <label data-es="Observaciones adicionales / contexto de la llamada" data-en="Additional observations / call context">Observaciones adicionales / contexto de la llamada</label>
+            <textarea id="qgeneral" style="min-height:80px" placeholder="Observaciones adicionales sobre el contexto, circunstancias especiales o comportamientos destacados..."></textarea>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="actions-bar">
+      <button class="btn btn-primary" onclick="switchTab('colaborativa', document.querySelector('.tab-btn:nth-child(3)'))"><span data-es="Continuar → Evaluación Colaborativa" data-en="Continue → Collaborative Evaluation">Continuar → Evaluación Colaborativa</span></button>
+      <button class="btn btn-outline" onclick="switchTab('criterios', document.querySelector('.tab-btn:nth-child(1)'))"><span data-es="← Volver a criterios" data-en="← Back to Criteria">← Volver a criterios</span></button>
+    </div>
+  </div>
+
+  <!-- TAB: COLABORATIVA -->
+  <div id="tab-colaborativa" class="tab-panel">
+    <div style="margin-bottom:20px">
+      <h2 style="font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--navy);margin-bottom:6px;">👥 Evaluación Colaborativa</h2>
+      <p style="color:var(--text-muted);font-size:13px;">Integra las evaluaciones de múltiples participantes. Cada evaluador registra su puntaje total y comentarios cualitativos.</p>
+    </div>
+
+    <div class="collab-evaluators" id="evaluatorsList">
+      <!-- Evaluator cards injected by JS -->
+    </div>
+
+    <button class="add-evaluator-btn" onclick="addEvaluator()">+ Agregar evaluador</button>
+
+    <!-- CONSOLIDATED RESULTS -->
+    <div class="consolidated-panel">
+      <h3>📊 Resultados Consolidados</h3>
+      <div class="consolidated-grid">
+        <div class="avg-score-box">
+          <div class="avg-score-val" id="avgScoreDisplay">—</div>
+          <div class="avg-score-label">Promedio<br>Final</div>
+        </div>
+        <div class="pattern-box strengths">
+          <h4>✓ Principales Fortalezas (patrones positivos)</h4>
+          <textarea id="colStrengths" placeholder="Anota aquí los patrones positivos que se repiten entre evaluadores..."></textarea>
+        </div>
+        <div class="pattern-box improvements">
+          <h4>⚠ Principales Áreas de Mejora (patrones repetidos)</h4>
+          <textarea id="colImprovements" placeholder="Anota aquí los patrones de mejora que se repiten entre evaluadores..."></textarea>
+        </div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-accent" onclick="calcAverage()">⟳ Calcular promedio</button>
+      </div>
+    </div>
+
+    <div class="actions-bar">
+      <button class="btn btn-primary" onclick="switchTab('resumen', document.querySelector('.tab-btn:nth-child(4)'))">Continuar → Resumen Ejecutivo</button>
+    </div>
+  </div>
+
+  <!-- TAB: RESUMEN EJECUTIVO -->
+  <div id="tab-resumen" class="tab-panel">
+
+    <div class="summary-panel">
+      <div class="summary-header">
+        <div>
+          <h2>📄 Resumen Ejecutivo de Desempeño</h2>
+          <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;" id="summaryMeta">—</div>
+        </div>
+        <div id="summaryLevelBadge" class="level-badge level-mid">Nivel: —</div>
+      </div>
+      <div class="summary-body">
+        <div class="summary-box executive">
+          <h4>Resumen Ejecutivo</h4>
+          <textarea id="execSummary" placeholder="Escribe aquí un resumen ejecutivo del desempeño general del colaborador en esta llamada. Incluye contexto del caso, actitud general, aspectos destacados y áreas críticas..."></textarea>
+        </div>
+        <div class="summary-box strengths-s">
+          <h4>✓ 3 Fortalezas Clave</h4>
+          <textarea id="sumStrengths" placeholder="1. &#10;2. &#10;3. "></textarea>
+        </div>
+        <div class="summary-box improvements-s">
+          <h4>⚠ 3 Áreas de Mejora Prioritarias</h4>
+          <textarea id="sumImprovements" placeholder="1. &#10;2. &#10;3. "></textarea>
+        </div>
+        <div class="summary-box coaching">
+          <h4>🎯 Recomendaciones Accionables para Coaching</h4>
+          <textarea id="sumCoaching" style="min-height:100px" placeholder="1. [Acción concreta] → [Cómo practicarla] → [Métrica de seguimiento]&#10;2. &#10;3. "></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:white;border-radius:var(--radius);border:1px solid var(--border);padding:20px 24px;margin-bottom:24px;">
+      <h3 style="font-family:'DM Serif Display',serif;color:var(--navy);margin-bottom:12px;font-size:1rem;">Guía rápida de nivel</h3>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:150px;background:var(--red-light);border-radius:8px;padding:12px 16px;">
+          <div style="font-weight:700;color:var(--red);font-size:12px;margin-bottom:4px;">BAJO · 23–46 pts</div>
+          <div style="font-size:12px;color:#5c1a25;">Requiere mentoría intensiva y seguimiento semanal. No apto para casos complejos sin supervisión.</div>
+        </div>
+        <div style="flex:1;min-width:150px;background:var(--yellow-light);border-radius:8px;padding:12px 16px;">
+          <div style="font-weight:700;color:var(--yellow);font-size:12px;margin-bottom:4px;">MEDIO · 47–84 pts</div>
+          <div style="font-size:12px;color:#7a5c0a;">Desempeño aceptable con áreas específicas de mejora. Coaching focalizado en 2-3 criterios.</div>
+        </div>
+        <div style="flex:1;min-width:150px;background:var(--green-light);border-radius:8px;padding:12px 16px;">
+          <div style="font-weight:700;color:var(--green);font-size:12px;margin-bottom:4px;">ALTO · 85–115 pts</div>
+          <div style="font-size:12px;color:#1a4a35;">Desempeño sobresaliente. Candidato para mentorar a otros y asumir casos más complejos.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions-bar">
+      <button class="btn btn-accent" onclick="autoFillSummary()">✨ Prellenar con datos de evaluación</button>
+      <button id="btnEnviar" class="btn btn-primary" onclick="submitToSheets()">📤 Guardar en Google Sheets</button>
+      <button class="btn btn-outline" onclick="window.print()">🖨 Imprimir / Exportar PDF</button>
+      <button class="btn btn-outline" onclick="switchTab('guia', document.querySelector('.tab-btn:nth-child(5)'))">Ver guía de interpretación</button>
+      <span id="submitStatus" style="font-size:12px;align-self:center;font-family:'DM Sans',sans-serif;"></span>
+    </div>
+  </div>
+
+  <!-- TAB: GUIA -->
+  <div id="tab-guia" class="tab-panel">
+    <div class="qualitative-section">
+      <h3>📖 Guía de Interpretación de Resultados</h3>
+
+      <table class="guide-table">
+        <thead>
+          <tr>
+            <th>Puntaje Total</th>
+            <th>Nivel</th>
+            <th>Descripción</th>
+            <th>Acción recomendada</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color:var(--red)">23 – 46 pts</strong></td>
+            <td><span class="level-badge level-low" style="display:inline-flex;font-size:11px;padding:3px 10px;">BAJO</span></td>
+            <td>Desempeño que necesita mejora significativa en múltiples áreas. El colaborador no cumple con los estándares mínimos de atención al cliente y estrategia legal.</td>
+            <td>Plan de mejora individual. Mentoría intensiva. Supervisión en cada llamada. No asignar casos complejos sin acompañamiento.</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--yellow)">47 – 84 pts</strong></td>
+            <td><span class="level-badge level-mid" style="display:inline-flex;font-size:11px;padding:3px 10px;">MEDIO</span></td>
+            <td>Desempeño aceptable con fortalezas identificables y áreas de mejora específicas. El colaborador cumple requisitos básicos pero tiene margen de crecimiento.</td>
+            <td>Coaching focalizado en los 2-3 criterios de menor puntaje. Revisión mensual de progreso. Puede manejar casos estándar con supervisión ocasional.</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--green)">85 – 115 pts</strong></td>
+            <td><span class="level-badge level-high" style="display:inline-flex;font-size:11px;padding:3px 10px;">ALTO</span></td>
+            <td>Desempeño sobresaliente. El colaborador demuestra dominio de habilidades técnicas, estratégicas y de comunicación. Es un modelo a seguir.</td>
+            <td>Reconocimiento formal. Considerar para mentoría de pares. Asignar casos más complejos. Revisión trimestral de desarrollo.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 style="margin-top:28px;margin-bottom:12px;">Escala de calificación por criterio</h3>
+      <table class="guide-table">
+        <thead>
+          <tr><th>Puntuación</th><th>Nivel</th><th>Descripción operativa</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color:var(--red)">1 – Necesita mejora</strong></td>
+            <td>Por debajo del estándar</td>
+            <td>El comportamiento observado no cumple el criterio. Hay impacto negativo en la experiencia del cliente o en el proceso legal.</td>
+          </tr>
+          <tr>
+            <td><strong style="color:#c0392b)">2 – Por debajo</strong></td>
+            <td>Debajo del estándar</td>
+            <td>Intenta cumplir el criterio pero con errores o inconsistencias notables. Requiere supervisión y práctica adicional.</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--yellow)">3 – Aceptable</strong></td>
+            <td>Cumple el estándar</td>
+            <td>El comportamiento observado cumple con el criterio de manera básica. No destaca pero es funcional. Hay margen de mejora.</td>
+          </tr>
+          <tr>
+            <td><strong style="color:#4a6fa5">4 – Bueno</strong></td>
+            <td>Por encima del estándar</td>
+            <td>El comportamiento supera las expectativas básicas con consistencia. Demuestra dominio sólido del criterio con mínimas oportunidades de mejora.</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--green)">5 – Sobresaliente</strong></td>
+            <td>Supera el estándar</td>
+            <td>El comportamiento supera todas las expectativas. Es un ejemplo claro de excelencia en ese criterio. Impacto positivo notable en el cliente.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 style="margin-top:28px;margin-bottom:12px;">Pesos por categoría</h3>
+      <table class="guide-table">
+        <thead>
+          <tr><th>Categoría</th><th>Criterios</th><th>Puntaje máximo</th><th>Importancia relativa</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1. Preparación previa</td><td>2</td><td>10 pts</td><td>Fundamento del desempeño</td></tr>
+          <tr><td>2. Manejo de la llamada</td><td>4</td><td>20 pts</td><td>Ejecución técnica</td></tr>
+          <tr><td>3. Estrategia legal</td><td>4</td><td>20 pts</td><td>Competencia profesional</td></tr>
+          <tr><td>4. Estrategias de comunicación</td><td>13</td><td>65 pts</td><td>Factor diferenciador crítico</td></tr>
+          <tr><td><strong>TOTAL</strong></td><td><strong>23</strong></td><td><strong>115 pts</strong></td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- end main -->
+
+<script>
+  // STATE
+  const scores = {};
+  const catMaxes = {1: 10, 2: 20, 3: 20, 4: 65};
+  const catCriteria = {1: ['c1_1','c1_2'], 2: ['c2_1','c2_2','c2_3','c2_4'], 3: ['c3_1','c3_2','c3_3','c3_4'], 4: ['c4_1','c4_2','c4_3','c4_4','c4_5','c4_6','c4_7','c4_8','c4_9','c4_10','c4_11','c4_12','c4_13']};
+  let evaluatorCount = 0;
+
+  // TABS
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    if (btn) btn.classList.add('active');
+    if (id === 'resumen') updateSummaryMeta();
+  }
+
+  // RATING
+  function rate(btn, val, key) {
+    const siblings = btn.parentElement.querySelectorAll('.rating-btn');
+    siblings.forEach(b => { b.className = 'rating-btn tooltip'; b.setAttribute('data-tip', b.getAttribute('data-tip')); });
+    btn.classList.add('selected-' + val);
+    scores[key] = val;
+    updateScores();
+  }
+
+  function updateScores() {
+    let total = 0;
+    for (let cat = 1; cat <= 4; cat++) {
+      let catScore = 0;
+      catCriteria[cat].forEach(k => { catScore += scores[k] || 0; });
+      document.getElementById('cat' + cat + 'Score').textContent = catScore;
+      document.getElementById('sec' + cat + 'Score').textContent = catScore + ' / ' + catMaxes[cat];
+      total += catScore;
+    }
+    document.getElementById('totalScoreDisplay').textContent = total;
+    const pct = Math.round((total / 115) * 100);
+    document.getElementById('mainProgressBar').style.width = pct + '%';
+    const badge = document.getElementById('levelBadgeMain');
+    if (total < 47) { badge.className = 'level-badge level-low'; badge.textContent = '⬇ Nivel Bajo'; }
+    else if (total < 85) { badge.className = 'level-badge level-mid'; badge.textContent = '→ Nivel Medio'; }
+    else { badge.className = 'level-badge level-high'; badge.textContent = '⬆ Nivel Alto'; }
+  }
+
+  function getTotal() {
+    let total = 0;
+    Object.values(scores).forEach(v => total += v);
+    return total;
+  }
+
+  function getLevel(score) {
+    if (score < 47) return {label: 'BAJO', cls: 'level-low'};
+    if (score < 85) return {label: 'MEDIO', cls: 'level-mid'};
+    return {label: 'ALTO', cls: 'level-high'};
+  }
+
+  // EVALUATORS
+  function addEvaluator() {
+    evaluatorCount++;
+    const id = 'ev_' + evaluatorCount;
+    const div = document.createElement('div');
+    div.className = 'evaluator-card';
+    div.id = id;
+    div.innerHTML = `
+      <div class="evaluator-card-header">
+        <input class="ev-name-input" type="text" placeholder="Nombre del evaluador ${evaluatorCount}" id="${id}_name">
+        <select class="ev-role-select" id="${id}_role">
+          <option>Supervisor</option>
+          <option>Trainer</option>
+          <option>Peer / Colega</option>
+          <option>Auto-evaluación</option>
+        </select>
+        <button class="btn btn-danger" style="padding:6px 12px;font-size:11px" onclick="document.getElementById('${id}').remove();calcAverage()">✕ Eliminar</button>
+      </div>
+      <div class="evaluator-card-body">
+        <div class="ev-score-box">
+          <label>Puntaje total (de 115)</label>
+          <input type="number" id="${id}_score" min="0" max="115" placeholder="0" oninput="calcAverage()">
+        </div>
+        <div class="ev-comment" style="grid-column:2/3">
+          <label>Comentarios cualitativos</label>
+          <textarea id="${id}_comments" placeholder="Observaciones generales, fortalezas y áreas de mejora identificadas por este evaluador..."></textarea>
+        </div>
+      </div>`;
+    document.getElementById('evaluatorsList').appendChild(div);
+  }
+
+  function calcAverage() {
+    const scoreInputs = document.querySelectorAll('[id$="_score"]');
+    let sum = 0, count = 0;
+    scoreInputs.forEach(inp => {
+      const v = parseFloat(inp.value);
+      if (!isNaN(v)) { sum += v; count++; }
+    });
+    const avg = count > 0 ? (sum / count).toFixed(1) : '—';
+    document.getElementById('avgScoreDisplay').textContent = avg;
+  }
+
+  // SUMMARY
+  function updateSummaryMeta() {
+    const colab = document.getElementById('colabName').value || '(sin nombre)';
+    const date = document.getElementById('callDate').value || '(sin fecha)';
+    const evaluator = document.getElementById('evaluatorName').value || '(sin evaluador)';
+    document.getElementById('summaryMeta').textContent = `Colaborador: ${colab} · Fecha: ${date} · Evaluador: ${evaluator}`;
+    const total = getTotal();
+    const level = getLevel(total);
+    const badge = document.getElementById('summaryLevelBadge');
+    badge.className = 'level-badge ' + level.cls;
+    badge.textContent = 'Nivel: ' + level.label + ' (' + total + '/115 pts)';
+  }
+
+  function autoFillSummary() {
+    const colab = document.getElementById('colabName').value || 'el colaborador';
+    const total = getTotal();
+    const level = getLevel(total);
+    const pct = Math.round((total / 69) * 100);
+
+    // Gather cat scores
+    const catNames = ['Preparación', 'Manejo de llamada', 'Estrategia legal', 'Comunicación'];
+    const catScores = [0,0,0,0];
+    for (let cat = 1; cat <= 4; cat++) {
+      catCriteria[cat].forEach(k => { catScores[cat-1] += scores[k] || 0; });
+    }
+
+    // Find best and worst cats
+    const catMaxArr = [10,20,20,65];
+    const catPcts = catScores.map((s,i) => ({ name: catNames[i], pct: catMaxArr[i] > 0 ? Math.round((s/catMaxArr[i])*100) : 0 }));
+    catPcts.sort((a,b) => b.pct - a.pct);
+
+    // Qualitative inputs — collect non-empty feedback comments
+    var allFeedback = [];
+    document.querySelectorAll('[id^="fb_"]').forEach(function(ta) {
+      if (ta.value.trim()) allFeedback.push(ta.value.trim());
+    });
+    var coach = document.getElementById('qgeneral') ? document.getElementById('qgeneral').value : '';
+
+    const exec = `${colab} obtuvo un puntaje de ${total}/115 puntos (${pct}%), correspondiente al nivel ${level.label}. Su mejor desempeño se observó en ${catPcts[0].name} (${catPcts[0].pct}%) y el área con mayor oportunidad de mejora es ${catPcts[catPcts.length-1].name} (${catPcts[catPcts.length-1].pct}%). ${total >= 85 ? 'El colaborador demostró una sólida capacidad para manejar llamadas complejas y generar confianza en el cliente.' : total >= 47 ? 'El colaborador muestra competencias básicas consolidadas con áreas específicas de desarrollo.' : 'El colaborador requiere acompañamiento intensivo para alcanzar los estándares de calidad requeridos.'}`;
+
+    document.getElementById('execSummary').value = exec;
+    document.getElementById('sumStrengths').value = '1. \n2. \n3. ';
+    document.getElementById('sumImprovements').value = '1. \n2. \n3. ';
+    document.getElementById('sumCoaching').value = coach || '1. \n2. \n3. ';
+    updateSummaryMeta();
+  }
+
+  // RESET
+  function resetAll() {
+    if (!confirm('¿Seguro que deseas reiniciar toda la evaluación? Se perderán todos los datos ingresados.')) return;
+    document.querySelectorAll('.rating-btn').forEach(b => b.className = 'rating-btn tooltip');
+    document.querySelectorAll('input[type="text"], input[type="date"], input[type="number"], textarea, select').forEach(el => { el.value = ''; });
+    Object.keys(scores).forEach(k => delete scores[k]);
+    document.getElementById('evaluatorsList').innerHTML = '';
+    evaluatorCount = 0;
+    updateScores();
+    calcAverage();
+    switchTab('criterios', document.querySelector('.tab-btn'));
+  }
+
+  // LANGUAGE TOGGLE
+  var currentLang = 'es';
+  var translations = {
+    es: {
+      tabCriterios: '📋 Criterios de Evaluación',
+      tabRetro: '💬 Retroalimentación',
+      tabColab: '👥 Evaluación Colaborativa',
+      tabResumen: '📊 Resumen Ejecutivo',
+      tabGuia: '📖 Guía de Interpretación',
+      metaEvaluado: 'Evaluado',
+      metaFecha: 'Fecha de la llamada',
+      metaDuracion: 'Duración (min)',
+      metaCaso: 'Tipo de caso',
+      placeholderNombre: 'Nombre completo',
+      placeholderDuracion: 'ej. 35',
+      btnContinuarRetro: 'Continuar → Evaluación Colaborativa',
+      btnVolver: '← Volver a criterios',
+      detailShow: '› Ver indicadores y ejemplos',
+      detailHide: '› Ocultar detalles',
+      noteplaceholder: 'Notas observadas en la llamada...',
+      fbplaceholder: 'Comentario observado en la llamada...',
+    },
+    en: {
+      tabCriterios: '📋 Evaluation Criteria',
+      tabRetro: '💬 Feedback',
+      tabColab: '👥 Collaborative Evaluation',
+      tabResumen: '📊 Executive Summary',
+      tabGuia: '📖 Interpretation Guide',
+      metaEvaluado: 'Evaluated',
+      metaFecha: 'Call Date',
+      metaDuracion: 'Duration (min)',
+      metaCaso: 'Case Type',
+      placeholderNombre: 'Full name',
+      placeholderDuracion: 'e.g. 35',
+      btnContinuarRetro: 'Continue → Collaborative Evaluation',
+      btnVolver: '← Back to Criteria',
+      detailShow: '› View indicators & examples',
+      detailHide: '› Hide details',
+      noteplaceholder: 'Notes observed in the call...',
+      fbplaceholder: 'Comment observed in the call...',
+    }
+  };
+
+  function setLang(lang) {
+    currentLang = lang;
+    var t = translations[lang];
+
+    // Tab buttons
+    var tabs = document.querySelectorAll('.tab-btn');
+    var tabKeys = ['tabCriterios','tabRetro','tabColab','tabResumen','tabGuia'];
+    tabs.forEach(function(tab, i) { if (tabKeys[i]) tab.textContent = t[tabKeys[i]]; });
+
+    // Lang buttons
+    document.getElementById('btn-lang-es').classList.toggle('lang-active', lang === 'es');
+    document.getElementById('btn-lang-en').classList.toggle('lang-active', lang === 'en');
+
+    // All data-es / data-en elements
+    document.querySelectorAll('[data-es]').forEach(function(el) {
+      var val = el.getAttribute('data-' + lang);
+      if (val) el.innerHTML = val;
+    });
+
+    // Placeholders on feedback textareas
+    document.querySelectorAll('[id^="fb_"]').forEach(function(ta) {
+      ta.placeholder = t.fbplaceholder;
+    });
+    document.querySelectorAll('.criterion-notes textarea').forEach(function(ta) {
+      ta.placeholder = t.noteplaceholder;
+    });
+
+    // Detail toggle buttons
+    document.querySelectorAll('.detail-toggle').forEach(function(btn) {
+      var isOpen = btn.classList.contains('open');
+      btn.innerHTML = '<span class="toggle-arrow">›</span> ' + (isOpen ? t.detailHide : t.detailShow);
+    });
+
+    // Meta labels
+    var metaLabels = document.querySelectorAll('.meta-field label');
+    var metaKeys = ['metaEvaluado','metaFecha','metaDuracion','metaCaso'];
+    metaLabels.forEach(function(lbl, i) { if (metaKeys[i]) lbl.textContent = t[metaKeys[i]]; });
+
+    // Meta input placeholders
+    document.getElementById('colabName').placeholder = t.placeholderNombre;
+    document.getElementById('callDuration').placeholder = t.placeholderDuracion;
+  }
+
+  // ── APPS SCRIPT INTEGRATION ─────────────────────────────────────
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyOYdIx49bFRNouPYb0ZtZ-M-iwAfTbbtGoZMpN5yn4Ui8HTjzN8C7JWHNe8Se_Osh4/exec';
+
+  function submitToSheets() {
+    const btn      = document.getElementById('btnEnviar');
+    const statusEl = document.getElementById('submitStatus');
+
+    const meta = {
+      colaborador : (document.getElementById('colabName').value || '').trim(),
+      fecha       : document.getElementById('callDate').value,
+      duracion    : document.getElementById('callDuration').value,
+      caso        : document.getElementById('caseType') ? document.getElementById('caseType').value : '',
+      evaluador   : document.getElementById('evaluatorName') ? (document.getElementById('evaluatorName').value || '').trim() : ''
+    };
+
+    if (!meta.colaborador) {
+      statusEl.textContent = '⚠ Ingresa el nombre del colaborador antes de enviar.';
+      statusEl.style.color = 'var(--red)';
+      return;
+    }
+
+    const totalScore = getTotal();
+    const nivel      = getLevel(totalScore).label;
+
+    const catScores = {};
+    for (let cat = 1; cat <= 4; cat++) {
+      let sum = 0;
+      catCriteria[cat].forEach(k => { sum += scores[k] || 0; });
+      catScores['cat' + cat] = sum;
+    }
+
+    const feedback = {};
+    document.querySelectorAll('[id^="fb_"]').forEach(ta => {
+      feedback[ta.id.replace('fb_', '')] = ta.value.trim();
+    });
+    feedback.general = document.getElementById('qgeneral') ? document.getElementById('qgeneral').value.trim() : '';
+
+    const collab = {
+      promedio   : document.getElementById('avgScoreDisplay').textContent,
+      fortalezas : document.getElementById('colStrengths') ? document.getElementById('colStrengths').value.trim() : '',
+      mejoras    : document.getElementById('colImprovements') ? document.getElementById('colImprovements').value.trim() : ''
+    };
+
+    const summary = {
+      ejecutivo  : document.getElementById('execSummary') ? document.getElementById('execSummary').value.trim() : '',
+      fortalezas : document.getElementById('sumStrengths') ? document.getElementById('sumStrengths').value.trim() : '',
+      mejoras    : document.getElementById('sumImprovements') ? document.getElementById('sumImprovements').value.trim() : '',
+      coaching   : document.getElementById('sumCoaching') ? document.getElementById('sumCoaching').value.trim() : ''
+    };
+
+    const payload = { meta, totalScore, nivel, catScores, scores, feedback, collab, summary };
+
+    btn.disabled = true;
+    btn.textContent = '⏳ Enviando...';
+    statusEl.textContent = '';
+
+    fetch(APPS_SCRIPT_URL, {
+      method  : 'POST',
+      mode    : 'no-cors',
+      headers : { 'Content-Type': 'application/json' },
+      body    : JSON.stringify(payload)
+    })
+    .then(() => {
+      btn.textContent = '✓ Guardado en Sheets';
+      btn.style.background = 'var(--green)';
+      btn.style.color = 'white';
+      statusEl.textContent = 'Registro enviado · ' + new Date().toLocaleTimeString('es-MX');
+      statusEl.style.color = 'var(--green)';
+    })
+    .catch(err => {
+      btn.disabled = false;
+      btn.textContent = '📤 Guardar en Google Sheets';
+      btn.style.background = '';
+      btn.style.color = '';
+      statusEl.textContent = 'Error al enviar: ' + err.message;
+      statusEl.style.color = 'var(--red)';
+    });
+  }
+  // ─────────────────────────────────────────────────────────────────
+
+  // SET TODAY DATE
+  document.getElementById('callDate').valueAsDate = new Date();
+
+  // INIT: add one evaluator
+  addEvaluator();
+
+  // COLLAPSIBLE DETAILS — wrap indicators + examples + notes per criterion
+  document.querySelectorAll('.criterion-info').forEach(function(info) {
+    var indicators = info.querySelector('.indicators');
+    var examples   = info.querySelector('.examples');
+    var notes      = info.querySelector('.criterion-notes');
+
+    if (!indicators && !examples && !notes) return;
+
+    // Create toggle button
+    var btn = document.createElement('button');
+    btn.className = 'detail-toggle';
+    btn.innerHTML = '<span class="toggle-arrow">›</span> Ver indicadores y ejemplos';
+
+    // Create collapsible wrapper
+    var detail = document.createElement('div');
+    detail.className = 'criterion-detail';
+
+    // Move elements inside wrapper
+    if (indicators) detail.appendChild(indicators);
+    if (examples)   detail.appendChild(examples);
+    if (notes)      detail.appendChild(notes);
+
+    // Insert toggle + wrapper after criterion-desc
+    var desc = info.querySelector('.criterion-desc');
+    if (desc) {
+      desc.insertAdjacentElement('afterend', detail);
+      desc.insertAdjacentElement('afterend', btn);
+    } else {
+      info.appendChild(btn);
+      info.appendChild(detail);
+    }
+
+    // Toggle logic
+    btn.addEventListener('click', function() {
+      var isOpen = detail.classList.toggle('open');
+      btn.classList.toggle('open', isOpen);
+      btn.querySelector('.toggle-arrow').textContent = isOpen ? '›' : '›';
+      btn.innerHTML = '<span class="toggle-arrow">' + (isOpen ? '›' : '›') + '</span> ' + (isOpen ? 'Ocultar detalles' : 'Ver indicadores y ejemplos');
+      if (isOpen) btn.classList.add('open'); else btn.classList.remove('open');
+    });
+  });
+</script>
+</body>
+</html>
