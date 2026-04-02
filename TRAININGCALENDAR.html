@@ -121,9 +121,10 @@
     .btn-icon { padding: 7px; border-radius: var(--radius); }
 
     /* =========================================================
-       MAIN LAYOUT — altura fija, sin scroll externo
+       MAIN LAYOUT
     ========================================================= */
-    html, body { height: 100%; overflow: hidden; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; overflow: hidden; }
 
     .layout {
       display: grid;
@@ -246,13 +247,26 @@
       padding: 20px;
       display: flex;
       flex-direction: column;
-      overflow-y: auto;
-      overflow-x: hidden;
+      overflow: hidden;
       height: 100%;
+      box-sizing: border-box;
     }
-    .calendar-card {
+
+    .view-tabs {
+      flex: 0 0 auto;
+      margin-bottom: 0;
+    }
+    #calPanel {
       flex: 1;
       min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    #elPanel {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
     }
 
     /* FullCalendar overrides */
@@ -262,9 +276,17 @@
       --fc-today-bg-color: rgba(28,78,216,.05);
       --fc-event-border-radius: 5px;
       --fc-small-font-size: 12px;
+      flex: 1;
+      min-height: 0;
+    }
+    #calendar {
+      flex: 1;
+      min-height: 0;
       height: 100%;
     }
     #calendar {
+      flex: 1;
+      min-height: 0;
       height: 100%;
     }
     .fc-toolbar-title {
@@ -331,10 +353,16 @@
     .fc-timegrid-slot-label { font-size: 11px !important; color: var(--text-3); }
     .fc-toolbar { margin-bottom: 16px !important; }
     .calendar-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
       box-shadow: var(--shadow-sm);
-      flex: 1; min-height: 0;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
 
     /* =========================================================
@@ -707,7 +735,184 @@
     .special-tab.active-off { border-color: #64748b; background: #f1f5f9; color: #334155; }
 
 
-  </style>
+  
+    /* ── View Tabs (Calendario / E-Learning) ── */
+    .view-tabs {
+      display: flex; gap: 4px;
+      background: var(--bg-2); border-radius: 10px;
+      padding: 4px; margin-bottom: 16px;
+      border: 1px solid var(--border);
+    }
+    .view-tab {
+      flex: 1; padding: 8px 16px; border: none; cursor: pointer;
+      border-radius: 7px; font-size: 13px; font-weight: 600;
+      background: transparent; color: var(--text-3);
+      transition: all .2s; display: flex; align-items: center;
+      justify-content: center; gap: 6px;
+    }
+    .view-tab.active {
+      background: white; color: var(--text-1);
+      box-shadow: 0 1px 4px rgba(0,0,0,.1);
+    }
+    .view-tab.active.el { color: #6366f1; }
+
+    /* ── E-Learning Panel ── */
+    #elPanel { display: none; }
+    .el-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .el-title {
+      font-size: 18px; font-weight: 700; color: var(--text-1);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .el-kpi-row {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 12px; margin-bottom: 20px;
+    }
+    .el-kpi {
+      background: white; border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px; text-align: center;
+    }
+    .el-kpi-num {
+      font-size: 26px; font-weight: 800; color: #6366f1;
+      font-family: 'DM Mono', monospace;
+    }
+    .el-kpi-label { font-size: 11px; color: var(--text-3); margin-top: 2px; font-weight: 600; }
+    .el-filters {
+      display: flex; gap: 10px; align-items: center;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .el-filters select, .el-filters input {
+      padding: 7px 12px; border: 1px solid var(--border);
+      border-radius: 8px; font-size: 12.5px; color: var(--text-1);
+      background: white; outline: none;
+    }
+    .el-filters select:focus, .el-filters input:focus {
+      border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.1);
+    }
+    .el-table-wrap {
+      background: white; border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+    }
+    .el-table { width: 100%; border-collapse: collapse; }
+    .el-table th {
+      background: #f8f9fc; padding: 11px 14px;
+      font-size: 11px; font-weight: 700; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: .04em;
+      border-bottom: 1px solid var(--border); text-align: left;
+    }
+    .el-table td {
+      padding: 11px 14px; font-size: 13px; color: var(--text-1);
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .el-table tr:last-child td { border-bottom: none; }
+    .el-table tr:hover td { background: #f8f9fc; }
+    .el-table .trainer-dot {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-weight: 600;
+    }
+    .el-status {
+      display: inline-block; padding: 3px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 700;
+    }
+    .el-status.pendiente   { background: #fef3c7; color: #92400e; }
+    .el-status.en-revision { background: #dbeafe; color: #1e40af; }
+    .el-status.completado  { background: #d1fae5; color: #065f46; }
+    .el-status.cancelado   { background: #fee2e2; color: #991b1b; }
+    .el-link-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 10px; border-radius: 6px; font-size: 11.5px;
+      font-weight: 600; background: #eef2ff; color: #6366f1;
+      text-decoration: none; border: 1px solid #c7d2fe;
+      transition: all .15s;
+    }
+    .el-link-btn:hover { background: #e0e7ff; }
+    .el-actions { display: flex; gap: 6px; }
+    .el-btn-icon {
+      padding: 5px 8px; border: 1px solid var(--border);
+      border-radius: 6px; background: white; cursor: pointer;
+      font-size: 13px; transition: all .15s; line-height: 1;
+    }
+    .el-btn-icon:hover { background: var(--bg-2); }
+    .el-btn-icon.danger:hover { background: #fee2e2; border-color: #fca5a5; }
+    .el-empty {
+      text-align: center; padding: 48px 20px;
+      color: var(--text-3); font-size: 14px;
+    }
+    .el-empty-icon { font-size: 36px; margin-bottom: 8px; }
+
+    /* E-Learning split layout: calendario izquierda + tabla derecha */
+    #elPanel {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      gap: 0;
+    }
+    .el-top-bar {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .el-split {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      overflow: hidden;
+    }
+    .el-cal-wrap {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .el-cal-wrap .fc {
+      flex: 1;
+      min-height: 0;
+    }
+    .el-list-wrap {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+      gap: 10px;
+    }
+    .el-kpi-row {
+      flex: 0 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 8px;
+    }
+    .el-kpi {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: center;
+    }
+    .el-kpi-num { font-size: 22px; font-weight: 800; color: #6366f1; font-family: 'DM Mono', monospace; }
+    .el-kpi-label { font-size: 10px; color: var(--text-3); margin-top: 2px; font-weight: 600; }
+    .el-table-wrap {
+      flex: 1;
+      min-height: 0;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow-y: auto;
+    }
+</style>
 </head>
 <body>
 
@@ -721,12 +926,12 @@
     <span class="badge">TMLF</span>
   </div>
   <div class="topbar-sep"></div>
-  <span class="topbar-sub">Coordinación del equipo de capacitación</span>
+  <span class="topbar-sub" id="topbar-sub-text">Coordinación del equipo de capacitación</span>
   <div class="topbar-actions">
-    <button class="btn btn-ghost btn-sm" id="todayBtn">Hoy</button>
+    <button class="btn btn-ghost btn-sm" id="todayBtn" style="display:none">Hoy</button>
     <button class="btn btn-primary" id="openFormBtn">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Agregar actividad
+      <span id="openFormBtnLabel">Agregar actividad</span>
     </button>
   </div>
 </div>
@@ -849,9 +1054,90 @@
 
   <!-- MAIN CONTENT -->
   <main class="main">
-    <div class="calendar-card">
-      <div id="calendar"></div>
+
+    <!-- View Tabs -->
+    <div class="view-tabs">
+      <button class="view-tab active" id="tab-cal" onclick="switchView('cal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Calendario
+      </button>
+      <button class="view-tab el" id="tab-el" onclick="switchView('el')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Revisión E-Learning
+      </button>
     </div>
+
+    <!-- Vista Calendario -->
+    <div id="calPanel">
+      <div class="calendar-card">
+        <div id="calendar"></div>
+      </div>
+    </div>
+
+    <!-- Vista E-Learning -->
+    <div id="elPanel">
+
+      <!-- Top bar: título + filtros -->
+      <div class="el-top-bar">
+        <div class="el-title">📚 Revisión E-Learning</div>
+        <div class="el-filters" style="margin-bottom:0">
+          <select id="el-f-trainer" onchange="renderElTable();renderElCalendar()">
+            <option value="">Todos los trainers</option>
+            <option>Mariana</option><option>Andrea</option><option>Joham</option>
+            <option>Diego</option><option>Nidia</option><option>Karen</option>
+            <option>Sofia</option><option>Brenda</option>
+          </select>
+          <select id="el-f-estatus" onchange="renderElTable();renderElCalendar()">
+            <option value="">Todos los estatus</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="En revisión">En revisión</option>
+            <option value="Completado">Completado</option>
+            <option value="Cancelado">Cancelado</option>
+          </select>
+          <input type="text" id="el-f-buscar" placeholder="🔍 Buscar..." oninput="renderElTable()" style="width:160px">
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="el-kpi-row">
+        <div class="el-kpi"><div class="el-kpi-num" id="el-kpi-total">—</div><div class="el-kpi-label">Total</div></div>
+        <div class="el-kpi"><div class="el-kpi-num" id="el-kpi-pendiente" style="color:#d97706">—</div><div class="el-kpi-label">Pendientes</div></div>
+        <div class="el-kpi"><div class="el-kpi-num" id="el-kpi-revision" style="color:#2563eb">—</div><div class="el-kpi-label">En revisión</div></div>
+        <div class="el-kpi"><div class="el-kpi-num" id="el-kpi-completado" style="color:#059669">—</div><div class="el-kpi-label">Completadas</div></div>
+      </div>
+
+      <!-- Split: calendario + lista -->
+      <div class="el-split">
+
+        <!-- Calendario E-Learning -->
+        <div class="el-cal-wrap">
+          <div id="elCalendar"></div>
+        </div>
+
+        <!-- Lista / tabla -->
+        <div class="el-list-wrap">
+          <div class="el-table-wrap">
+            <table class="el-table">
+              <thead>
+                <tr>
+                  <th>Sesión / Módulo</th>
+                  <th>Trainer</th>
+                  <th>Fecha</th>
+                  <th>Estatus</th>
+                  <th>Link</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="elTableBody">
+                <tr><td colspan="6"><div class="el-empty"><div class="el-empty-icon">📚</div>Sin sesiones</div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </main>
 
 </div>
@@ -1237,6 +1523,100 @@
   </div>
 </div>
 
+
+<!-- =========================================================
+     MODAL: SESIÓN E-LEARNING
+========================================================= -->
+<div class="modal-overlay" id="elModal">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <div class="modal-header-icon" style="background:#eef2ff">📚</div>
+      <div>
+        <div class="modal-title" id="elModalTitle">Nueva sesión E-Learning</div>
+        <div class="modal-subtitle">Revisión de módulo en plataforma E-Learning</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('elModal')">×</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="form-section-title">📋 Sesión</div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label class="form-label">Nombre de la sesión / módulo *</label>
+          <input class="form-control" type="text" id="el-form-titulo" placeholder="Ej. Módulo 3 – T Visa Criterios">
+        </div>
+      </div>
+
+      <div class="form-section-title">👤 Responsable</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Trainer *</label>
+          <select class="form-control" id="el-form-trainer">
+            <option value="">Seleccionar</option>
+            <option>Mariana</option><option>Andrea</option><option>Joham</option>
+            <option>Diego</option><option>Nidia</option><option>Karen</option>
+            <option>Sofia</option><option>Brenda</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Estatus *</label>
+          <select class="form-control" id="el-form-estatus">
+            <option value="Pendiente">Pendiente</option>
+            <option value="En revisión">En revisión</option>
+            <option value="Completado">Completado</option>
+            <option value="Cancelado">Cancelado</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section-title">📅 Fecha y hora</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Fecha *</label>
+          <input class="form-control" type="date" id="el-form-fecha">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Hora inicio</label>
+          <input class="form-control" type="time" id="el-form-hora-ini">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Hora fin</label>
+          <input class="form-control" type="time" id="el-form-hora-fin">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Plataforma</label>
+          <input class="form-control" type="text" id="el-form-plataforma" placeholder="Ej. Moodle, TalentLMS...">
+        </div>
+      </div>
+
+      <div class="form-section-title">🔗 Acceso</div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label class="form-label">Link de la sesión</label>
+          <input class="form-control" type="text" id="el-form-link" placeholder="https://...">
+        </div>
+      </div>
+
+      <div class="form-row full">
+        <div class="form-group">
+          <label class="form-label">Notas</label>
+          <textarea class="form-control" id="el-form-notas" rows="2" placeholder="Observaciones, instrucciones, participantes..." style="resize:vertical"></textarea>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('elModal')">Cancelar</button>
+      <button class="btn btn-primary" id="elSaveBtn" onclick="saveElSesion()" style="background:#6366f1;border-color:#6366f1">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Guardar sesión
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast container -->
 <div class="toast-container" id="toastContainer"></div>
 
@@ -1301,7 +1681,7 @@ const TIPOS_ICON = {
 // Mientras no haya URL configurada, usa datos demo locales.
 // =========================================================
 
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzkoXsibjW7llQSRK7Tr6ClMnAudIWvDjGGaCwO6OfnVMRNLYTmNYFENOGGARlbWzJmIg/exec';
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxKxPpEI1XBHLjPOTHsWTaPIfdHG1UscYmmTA0LhB2XFBji6zDKn4C6yJKwBGwQw1vg1w/exec';
 
 // Datos demo — solo se usan si WEB_APP_URL está vacío
 const EVENTOS_DEMO = [
@@ -1417,16 +1797,73 @@ async function cargarEventos() {
   }
   backendActivo = true;
   showToast('🔄 Cargando datos...', 'info');
+
+  // Intentar con cors primero, fallback a jsonp si falla
+  const url = WEB_APP_URL + '?action=getAll&t=' + Date.now();
+
+  // Intentar múltiples métodos para superar CORS
+  let text = null;
+
+  // Método 1: fetch sin mode (usa default del navegador)
+  const tryFetch = async (mode) => {
+    const opts = { method:'GET', redirect:'follow', cache:'no-cache' };
+    if (mode) opts.mode = mode;
+    const r = await fetch(url, opts);
+    return r.text();
+  };
+
+  // Método 2: JSONP (requiere que el Apps Script soporte ?callback=)
+  const tryJsonp = () => new Promise((resolve, reject) => {
+    const cbName = '_cb' + Date.now();
+    const script = document.createElement('script');
+    const timer = setTimeout(() => {
+      delete window[cbName];
+      if (document.body.contains(script)) document.body.removeChild(script);
+      reject(new Error('JSONP timeout'));
+    }, 12000);
+    window[cbName] = (data) => {
+      clearTimeout(timer);
+      delete window[cbName];
+      if (document.body.contains(script)) document.body.removeChild(script);
+      resolve(JSON.stringify(data));
+    };
+    script.src = url + '&callback=' + cbName;
+    script.onerror = () => {
+      clearTimeout(timer);
+      if (document.body.contains(script)) document.body.removeChild(script);
+      reject(new Error('Script error'));
+    };
+    document.body.appendChild(script);
+  });
+
+  // Intentar en orden
+  const methods = [
+    () => tryFetch('cors'),
+    () => tryFetch(null),
+    () => tryJsonp(),
+  ];
+
+  let lastErr = null;
+  for (const method of methods) {
+    try {
+      text = await method();
+      if (text) break;
+    } catch(e) {
+      lastErr = e;
+      // Método falló, probando siguiente...
+    }
+  }
+
+  if (!text) {
+    showToast('⚠️ No se puede conectar al backend. Instala el Apps Script v3 FINAL.', 'warn');
+    backendActivo = false;
+    // Mantener eventos en memoria si ya había datos cargados
+    refreshCalendar();
+    updateSidebar();
+    return;
+  }
+
   try {
-    const url = WEB_APP_URL + '?action=getAll&t=' + Date.now();
-    const res = await fetch(url, {
-      method: 'GET',
-      redirect: 'follow',
-      mode: 'cors',
-      cache: 'no-cache'
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const text = await res.text();
     let data;
     try {
       data = JSON.parse(text);
@@ -1444,8 +1881,8 @@ async function cargarEventos() {
       throw new Error(data.error || 'Respuesta inválida');
     }
   } catch(err) {
-    console.error('Error cargando desde backend:', err);
-    showToast('⚠️ Error al cargar datos: ' + err.message, 'warn');
+    console.error('Error procesando respuesta:', err);
+    showToast('⚠️ Error al procesar datos: ' + err.message, 'warn');
     backendActivo = false;
     eventos = [];
     refreshCalendar();
@@ -2107,8 +2544,8 @@ function selectPriority(el, cls) {
 }
 
 document.getElementById('openFormBtn').addEventListener('click', () => {
+  if (vistaActiva === 'el') { openElModal(); return; }
   resetForm();
-  // Pre-fill today's date
   document.getElementById('f-form-date').value = new Date().toISOString().slice(0, 10);
   openModal('formModal');
 });
@@ -2454,6 +2891,330 @@ function handleDateClick(info) {
 /* =========================================================
    INIT
 ========================================================= */
+
+/* =========================================================
+   E-LEARNING MODULE
+========================================================= */
+const EL_SHEET = 'ELearning';
+let elSesiones = [];
+let elEditingId = null;
+let vistaActiva = 'cal';
+let elCalendar = null;
+
+// ── Calendario E-Learning ─────────────────────────────────
+function initElCalendar() {
+  if (elCalendar) return;
+  const el = document.getElementById('elCalendar');
+  if (!el) return;
+  elCalendar = new FullCalendar.Calendar(el, {
+    locale: 'es',
+    initialView: 'dayGridMonth',
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek'
+    },
+    buttonText: { today:'Hoy', month:'Mes', week:'Semana' },
+    height: '100%',
+    eventClick: function(info) {
+      const id = info.event.id;
+      const s = elSesiones.find(x => x.id === id);
+      if (s) openElModal(id);
+    },
+    dateClick: function(info) {
+      openElModal();
+      document.getElementById('el-form-fecha').value = info.dateStr;
+    }
+  });
+  elCalendar.render();
+}
+
+function renderElCalendar() {
+  if (!elCalendar) return;
+  const fTrainer = document.getElementById('el-f-trainer')?.value || '';
+  const fEstatus = document.getElementById('el-f-estatus')?.value || '';
+
+  elCalendar.removeAllEvents();
+
+  const ESTATUS_COLOR = {
+    'Pendiente':   '#f59e0b',
+    'En revisión': '#3b82f6',
+    'Completado':  '#10b981',
+    'Cancelado':   '#ef4444',
+  };
+
+  elSesiones
+    .filter(s => (!fTrainer || s.trainer === fTrainer) && (!fEstatus || s.estatus === fEstatus))
+    .forEach(s => {
+      const color = ESTATUS_COLOR[s.estatus] || '#6366f1';
+      elCalendar.addEvent({
+        id:    s.id,
+        title: '📚 ' + s.title + (s.trainer ? ' · ' + s.trainer : ''),
+        start: s.start,
+        end:   s.end || s.start,
+        backgroundColor: color,
+        borderColor:     color,
+        textColor:       '#fff',
+        extendedProps:   { sesion: s }
+      });
+    });
+}
+
+// ── Cambio de vista ────────────────────────────────────────
+function switchView(vista) {
+  vistaActiva = vista;
+  document.getElementById('calPanel').style.display = vista === 'cal' ? '' : 'none';
+  document.getElementById('elPanel').style.display  = vista === 'el'  ? '' : 'none';
+  // FullCalendar necesita updateSize al volver a ser visible
+  if (vista === 'cal') {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        try { calendar.updateSize(); } catch(e){}
+        setTimeout(() => { try { calendar.updateSize(); } catch(e){}}, 200);
+      });
+    });
+  }
+  document.getElementById('tab-cal').className = 'view-tab' + (vista === 'cal' ? ' active' : '');
+  document.getElementById('tab-el').className  = 'view-tab el' + (vista === 'el'  ? ' active' : '');
+  document.getElementById('todayBtn').style.display = vista === 'cal' ? '' : 'none';
+  document.getElementById('openFormBtn').style.display = '';
+
+  if (vista === 'cal') {
+    document.getElementById('topbar-sub-text').textContent = 'Coordinación del equipo de capacitación';
+    document.getElementById('openFormBtnLabel').textContent = 'Agregar actividad';
+    document.getElementById('openFormBtn').style.background = '';
+    document.getElementById('openFormBtn').style.borderColor = '';
+    document.getElementById('openFormBtn').onclick = null;
+    document.getElementById('openFormBtn').onclick = () => {
+      resetForm();
+      document.getElementById('f-form-date').value = new Date().toISOString().slice(0,10);
+      openModal('formModal');
+    };
+  } else {
+    document.getElementById('topbar-sub-text').textContent = 'Revisión E-Learning';
+    document.getElementById('openFormBtnLabel').textContent = 'Nueva sesión';
+    document.getElementById('openFormBtn').style.background = '#6366f1';
+    document.getElementById('openFormBtn').style.borderColor = '#6366f1';
+    document.getElementById('openFormBtn').onclick = () => openElModal();
+    if (!elSesiones.length) cargarElSesiones();
+  }
+}
+
+// ── CRUD E-Learning ───────────────────────────────────────
+async function cargarElSesiones() {
+  if (!WEB_APP_URL) { renderElTable(); updateElKpis(); return; }
+  const url = WEB_APP_URL + '?action=getAll&sheet=' + EL_SHEET + '&t=' + Date.now();
+
+  const fetchData = () => new Promise((resolve, reject) => {
+    // Intentar fetch cors primero
+    fetch(url, { method:'GET', redirect:'follow', mode:'cors', cache:'no-cache' })
+      .then(r => r.text()).then(resolve).catch(() => {
+        // Fallback JSONP
+        const cb = '_elcb' + Date.now();
+        const s  = document.createElement('script');
+        const t  = setTimeout(() => {
+          delete window[cb];
+          if (document.body.contains(s)) document.body.removeChild(s);
+          reject(new Error('Timeout'));
+        }, 10000);
+        window[cb] = d => {
+          clearTimeout(t);
+          delete window[cb];
+          if (document.body.contains(s)) document.body.removeChild(s);
+          resolve(JSON.stringify(d));
+        };
+        s.src = url + '&callback=' + cb;
+        s.onerror = () => { clearTimeout(t); reject(new Error('Script error')); };
+        document.body.appendChild(s);
+      });
+  });
+
+  try {
+    const text = await fetchData();
+    let data;
+    try { data = JSON.parse(text); }
+    catch(e) { const m = text.match(/\{[\s\S]*\}/); if (m) data = JSON.parse(m[0]); else throw e; }
+    if (data?.ok) {
+      elSesiones = data.eventos || [];
+    } else {
+      elSesiones = [];
+    }
+  } catch(err) {
+    elSesiones = [];
+  }
+  renderElTable();
+  renderElCalendar();
+  updateElKpis();
+  setTimeout(() => { try { if(elCalendar) elCalendar.updateSize(); } catch(e){} }, 150);
+}
+
+async function apiPostEl(body) {
+  if (!WEB_APP_URL) return;
+  body.sheet = EL_SHEET;
+  const url = WEB_APP_URL + '?data=' + encodeURIComponent(JSON.stringify(body)) + '&t=' + Date.now();
+  try {
+    await fetch(url, { method:'GET', mode:'no-cors', redirect:'follow', cache:'no-cache' });
+    setTimeout(() => cargarElSesiones(), 2500);
+  } catch(err) {
+    console.error('apiPostEl error:', err);
+  }
+}
+
+// ── Modal ────────────────────────────────────────────────
+function openElModal(id) {
+  elEditingId = id || null;
+  // Reset
+  ['el-form-titulo','el-form-trainer','el-form-fecha','el-form-hora-ini',
+   'el-form-hora-fin','el-form-plataforma','el-form-link','el-form-notas'].forEach(i => {
+    const el = document.getElementById(i);
+    if (el) el.value = '';
+  });
+  document.getElementById('el-form-estatus').value = 'Pendiente';
+  document.getElementById('el-form-fecha').value = new Date().toISOString().slice(0,10);
+
+  if (id) {
+    const s = elSesiones.find(x => x.id === id);
+    if (s) {
+      document.getElementById('el-form-titulo').value      = s.title || '';
+      document.getElementById('el-form-trainer').value     = s.trainer || '';
+      document.getElementById('el-form-estatus').value     = s.estatus || 'Pendiente';
+      document.getElementById('el-form-plataforma').value  = s.plataforma || '';
+      document.getElementById('el-form-link').value        = s.link || '';
+      document.getElementById('el-form-notas').value       = s.notas || '';
+      if (s.start) {
+        document.getElementById('el-form-fecha').value     = s.start.slice(0,10);
+        if (s.start.includes('T')) document.getElementById('el-form-hora-ini').value = s.start.slice(11,16);
+      }
+      if (s.end && s.end.includes('T')) document.getElementById('el-form-hora-fin').value = s.end.slice(11,16);
+    }
+    document.getElementById('elModalTitle').textContent = 'Editar sesión E-Learning';
+  } else {
+    document.getElementById('elModalTitle').textContent = 'Nueva sesión E-Learning';
+  }
+  openModal('elModal');
+}
+
+function saveElSesion() {
+  const titulo    = document.getElementById('el-form-titulo').value.trim();
+  const trainer   = document.getElementById('el-form-trainer').value;
+  const estatus   = document.getElementById('el-form-estatus').value;
+  const fecha     = document.getElementById('el-form-fecha').value;
+  const horaIni   = document.getElementById('el-form-hora-ini').value;
+  const horaFin   = document.getElementById('el-form-hora-fin').value;
+  const plataforma= document.getElementById('el-form-plataforma').value.trim();
+  let   link      = document.getElementById('el-form-link').value.trim();
+  const notas     = document.getElementById('el-form-notas').value.trim();
+
+  if (!titulo || !trainer || !fecha) {
+    showToast('⚠️ Completa los campos obligatorios', 'warn'); return;
+  }
+  if (link && !link.startsWith('http')) link = 'https://' + link;
+
+  const start = fecha + (horaIni ? 'T' + horaIni : '');
+  const end   = fecha + (horaFin ? 'T' + horaFin : '');
+
+  const sesion = {
+    id:         elEditingId || genId(),
+    title:      titulo,
+    trainer,
+    estatus,
+    plataforma,
+    link,
+    notas,
+    start,
+    end: horaFin ? end : start
+  };
+
+  if (elEditingId) {
+    const idx = elSesiones.findIndex(x => x.id === elEditingId);
+    if (idx > -1) elSesiones[idx] = sesion;
+    apiPostEl({ action: 'update', evento: sesion });
+    showToast('✅ Sesión actualizada', 'success');
+  } else {
+    elSesiones.push(sesion);
+    apiPostEl({ action: 'create', evento: sesion });
+    showToast('✅ Sesión registrada', 'success');
+  }
+
+  closeModal('elModal');
+  renderElTable();
+  renderElCalendar();
+  updateElKpis();
+}
+
+function deleteElSesion(id) {
+  if (!confirm('¿Eliminar esta sesión E-Learning?')) return;
+  elSesiones = elSesiones.filter(x => x.id !== id);
+  apiPostEl({ action: 'delete', id });
+  renderElTable();
+  renderElCalendar();
+  updateElKpis();
+  showToast('🗑 Sesión eliminada');
+}
+
+// ── Render tabla ──────────────────────────────────────────
+function renderElTable() {
+  const fTrainer = document.getElementById('el-f-trainer')?.value || '';
+  const fEstatus = document.getElementById('el-f-estatus')?.value || '';
+  const fBuscar  = (document.getElementById('el-f-buscar')?.value || '').toLowerCase();
+
+  let lista = elSesiones.filter(s => {
+    if (fTrainer && s.trainer !== fTrainer) return false;
+    if (fEstatus && s.estatus !== fEstatus) return false;
+    if (fBuscar && !((s.title||'') + (s.notas||'') + (s.plataforma||'')).toLowerCase().includes(fBuscar)) return false;
+    return true;
+  }).sort((a,b) => (a.start||'').localeCompare(b.start||''));
+
+  const tbody = document.getElementById('elTableBody');
+  if (!lista.length) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="el-empty"><div class="el-empty-icon">📚</div>Sin sesiones registradas</div></td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = lista.map(s => {
+    const color = trainerColor(s.trainer);
+    const est   = (s.estatus || 'Pendiente').toLowerCase().replace(' ','-').replace('ó','o').replace('é','e');
+    const fechaD = s.start ? parseLocal(s.start).toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short',year:'numeric'}) : '—';
+    const horaD  = s.start?.includes('T') ? parseLocal(s.start).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',hour12:false}) +
+                   (s.end?.includes('T') ? ' – ' + parseLocal(s.end).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',hour12:false}) : '') : 'Todo el día';
+    const linkHtml = s.link
+      ? `<a href="${s.link}" target="_blank" rel="noopener" class="el-link-btn">
+           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+           Abrir
+         </a>`
+      : '<span style="color:var(--text-3);font-size:12px">—</span>';
+
+    return `<tr>
+      <td>
+        <div style="font-weight:600;color:var(--text-1)">${s.title}</div>
+        ${s.plataforma ? '<div style="font-size:11px;color:var(--text-3);margin-top:2px">'+s.plataforma+'</div>' : ''}
+        ${s.notas ? '<div style="font-size:11px;color:var(--text-3);margin-top:2px;font-style:italic">'+s.notas+'</div>' : ''}
+      </td>
+      <td><span class="trainer-dot"><span style="width:8px;height:8px;border-radius:50%;background:${color};display:inline-block"></span>${s.trainer}</span></td>
+      <td>
+        <div style="font-size:12.5px">${fechaD}</div>
+        <div style="font-size:11px;color:var(--text-3)">${horaD}</div>
+      </td>
+      <td><span class="el-status ${est}">${s.estatus || 'Pendiente'}</span></td>
+      <td>${linkHtml}</td>
+      <td>
+        <div class="el-actions">
+          <button class="el-btn-icon" onclick="openElModal('${s.id}')" title="Editar">✏️</button>
+          <button class="el-btn-icon danger" onclick="deleteElSesion('${s.id}')" title="Eliminar">🗑</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function updateElKpis() {
+  document.getElementById('el-kpi-total').textContent     = elSesiones.length;
+  document.getElementById('el-kpi-pendiente').textContent  = elSesiones.filter(s => s.estatus === 'Pendiente').length;
+  document.getElementById('el-kpi-revision').textContent   = elSesiones.filter(s => s.estatus === 'En revisión').length;
+  document.getElementById('el-kpi-completado').textContent = elSesiones.filter(s => s.estatus === 'Completado').length;
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
   const calendarEl = document.getElementById('calendar');
 
@@ -2650,10 +3411,31 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 
-  calendar.render();
-  cargarEventos(); // carga desde backend o demo
+  setupAlldayToggle();
+
+  // Forzar vista Calendario al inicio
+  document.getElementById('calPanel').style.display = 'flex';
+  document.getElementById('elPanel').style.display  = 'none';
+  document.getElementById('tab-cal').classList.add('active');
+  document.getElementById('tab-el').classList.remove('active');
+  document.getElementById('topbar-sub-text').textContent = 'Coordinación del equipo de capacitación';
+  document.getElementById('openFormBtnLabel').textContent = 'Agregar actividad';
+  document.getElementById('openFormBtn').style.background = '';
+  document.getElementById('openFormBtn').style.borderColor = '';
+  document.getElementById('todayBtn').style.display = '';
+  vistaActiva = 'cal';
+
+  // Renderizar FullCalendar tras dos frames para asegurar dimensiones
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      calendar.render();
+      setTimeout(() => { try { calendar.updateSize(); } catch(e){} }, 100);
+      setTimeout(() => { try { calendar.updateSize(); } catch(e){} }, 500);
+    });
+  });
+
+  cargarEventos();
   updateSidebar();
-  setupAlldayToggle(); // inicializar toggle de día completo
 
   /* ──────────────────────────────────────────────────────
      BACKEND CONNECTION POINT
