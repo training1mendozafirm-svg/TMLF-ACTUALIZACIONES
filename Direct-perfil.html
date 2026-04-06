@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIRECTORIO TMLF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #07111c; --navy2: #0c1e30; --navy3: #122540; --navy4: #1a3354;
+  --gold: #c9a84c; --gold2: #e2c06a;
+  --gold-dim: rgba(201,168,76,.09); --gold-mid: rgba(201,168,76,.22);
+  --white: #ffffff; --bg: #f4f4f0; --ink: #1a1a18; --muted: #6b6b66;
+  --border: #e4e2da; --card: #ffffff;
+  --shadow: 0 2px 8px rgba(15,25,35,.07), 0 8px 28px rgba(15,25,35,.05);
+  --r: 14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+
+/* ══ TOP NAV ══ */
+.topnav { position: sticky; top: 0; z-index: 100; height: 58px; background: rgba(7,17,28,.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(201,168,76,.14); display: flex; align-items: center; padding: 0 24px; gap: 14px; box-shadow: 0 1px 0 rgba(201,168,76,.07), 0 4px 20px rgba(0,0,0,.18); }
+.brand { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 700; color: var(--white); display: flex; align-items: center; gap: 12px; letter-spacing: .4px; }
+.brand .emblem { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg,rgba(201,168,76,.28),rgba(201,168,76,.07)); border: 1px solid rgba(201,168,76,.32); display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 2px 8px rgba(201,168,76,.12); }
+.brand em { color: var(--gold); font-style: normal; }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.nav-chip { display: flex; align-items: center; gap: 7px; padding: 6px 16px; border-radius: 999px; font-size: 9.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; background: rgba(201,168,76,.10); border: 1px solid rgba(201,168,76,.24); color: var(--gold); }
+.nav-chip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: blink 2s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.btn-add-nav { display: flex; align-items: center; gap: 6px; padding: 7px 15px; border-radius: 999px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .3px; background: linear-gradient(135deg,var(--gold),var(--gold2)); color: #1a1200; border: none; cursor: pointer; box-shadow: 0 2px 10px rgba(201,168,76,.3); transition: all .18s; white-space: nowrap; }
+.btn-add-nav:hover { opacity: .92; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(201,168,76,.38); }
+.btn-add-nav .plus { font-size: 16px; line-height: 1; font-weight: 400; }
+
+/* ══ SEARCH ══ */
+.search-wrap { background: rgba(7,17,28,.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 12px 24px 14px; border-bottom: 1px solid rgba(201,168,76,.08); position: sticky; top: 58px; z-index: 99; }
+.search-inner { max-width: 600px; margin: 0 auto; position: relative; }
+.search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,.3); font-size: 15px; pointer-events: none; }
+#search { width: 100%; padding: 11px 16px 11px 40px; font-size: 14px; font-family: 'DM Sans', sans-serif; background: rgba(255,255,255,.07); border: 1px solid rgba(201,168,76,.18); border-radius: 12px; color: var(--white); outline: none; transition: border-color .2s, background .2s; }
+#search::placeholder { color: rgba(255,255,255,.3); }
+#search:focus { border-color: rgba(201,168,76,.5); background: rgba(255,255,255,.1); }
+
+/* ══ CONTENT ══ */
+.content { max-width: 680px; margin: 0 auto; padding: 28px 20px 60px; display: flex; flex-direction: column; gap: 10px; }
+
+/* ══ GROUP ACCORDION ══ */
+.group-block { overflow: hidden; }
+
+.group-header {
+  display: flex; align-items: center; gap: 14px;
+  padding: 10px 0; cursor: pointer; user-select: none;
+}
+
+.group-line { flex: 1; height: 1.5px; background: linear-gradient(90deg, rgba(201,168,76,.45), transparent); }
+.group-line.rev { background: linear-gradient(270deg, rgba(201,168,76,.45), transparent); }
+
+.group-title-wrap { flex-shrink: 0; }
+
+.group-title {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 9px 24px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold); white-space: nowrap;
+  background: rgba(201,168,76,.07);
+  border: 1px solid rgba(201,168,76,.28);
+  border-radius: 999px;
+  transition: background .2s, border-color .2s, box-shadow .2s, transform .18s;
+  box-shadow: 0 2px 10px rgba(201,168,76,.08);
+}
+.group-block.open .group-title {
+  background: rgba(201,168,76,.14);
+  border-color: rgba(201,168,76,.5);
+  box-shadow: 0 4px 18px rgba(201,168,76,.18);
+}
+.group-header:hover .group-title {
+  background: rgba(201,168,76,.12);
+  border-color: rgba(201,168,76,.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(201,168,76,.16);
+}
+.group-title .g-arrow {
+  font-size: 10px; color: rgba(201,168,76,.6);
+  transition: transform .28s cubic-bezier(.34,1.2,.64,1);
+  display: inline-block;
+}
+.group-block.open .group-title .g-arrow { transform: rotate(180deg); color: var(--gold); }
+
+.group-count { display: none; }
+.group-chevron { display: none; }
+
+/* Group body */
+.group-body { max-height: 0; overflow: hidden; transition: max-height .4s cubic-bezier(.4,0,.2,1); }
+.group-block.open .group-body { max-height: 9999px; }
+.group-inner { padding: 14px 0 6px; display: flex; flex-direction: column; gap: 7px; }
+
+/* ══ CONTACT ACCORDION ══ */
+.acc-item { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; transition: border-color .2s, box-shadow .2s, transform .2s; }
+.acc-item:hover { border-color: rgba(12,68,124,.2); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(15,25,35,.09); }
+.acc-item.open { border-color: rgba(201,168,76,.4); box-shadow: 0 3px 16px rgba(201,168,76,.1); background: var(--card); transform: translateY(-1px); }
+.acc-item.open::before { content:''; display:block; height:2px; background:linear-gradient(90deg,var(--gold),var(--gold2),rgba(201,168,76,.1)); border-radius:var(--r) var(--r) 0 0; }
+.acc-header { display: flex; align-items: center; gap: 13px; padding: 12px 14px; cursor: pointer; user-select: none; }
+.acc-header:hover { background: rgba(12,68,124,.03); }
+.acc-item.open .acc-header { background: rgba(201,168,76,.04); }
+.avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; flex-shrink: 0; transition: transform .2s cubic-bezier(.34,1.56,.64,1); }
+.acc-item.open .avatar { transform: scale(1.08); }
+.acc-name-wrap { flex: 1; min-width: 0; }
+.name { font-family: 'DM Sans', sans-serif; font-size: 13.5px; font-weight: 600; line-height: 1.3; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.acc-item.open .name { color: var(--navy4); }
+.badge { display: inline-block; font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .4px; padding: 2px 9px; border-radius: 999px; margin-top: 3px; }
+.chevron { font-size: 10px; color: rgba(180,168,140,.5); transition: transform .28s cubic-bezier(.34,1.2,.64,1), color .2s; flex-shrink: 0; }
+.acc-item.open .chevron { transform: rotate(180deg); color: var(--gold); }
+.acc-body { max-height: 0; overflow: hidden; transition: max-height .32s ease; }
+.acc-item.open .acc-body { max-height: 500px; }
+.acc-inner { padding: 0 14px 14px; border-top: 1px solid rgba(201,168,76,.1); }
+.phone-row { display: flex; align-items: center; gap: 8px; padding: 10px 0 11px; font-size: 13px; color: var(--muted); font-weight: 500; }
+.phone-icon { width: 27px; height: 27px; border-radius: 8px; background: rgba(12,68,124,.07); border: 1px solid rgba(12,68,124,.1); display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+.actions { display: flex; gap: 8px; }
+.btn { flex: 1; padding: 8px 0; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; border-radius: 10px; cursor: pointer; text-align: center; text-decoration: none; display: block; transition: all .18s; }
+.btn-call { background: linear-gradient(135deg,#0C447C,#185FA5); color: #fff; border: none; box-shadow: 0 2px 8px rgba(12,68,124,.22); }
+.btn-call:hover { opacity: .92; box-shadow: 0 4px 14px rgba(12,68,124,.32); transform: translateY(-1px); }
+.btn-wa { background: var(--card); color: var(--ink); border: 1px solid var(--border); }
+.btn-wa:hover { background: rgba(201,168,76,.08); border-color: rgba(201,168,76,.3); color: #7a5200; }
+.btn-edit { width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(12,68,124,.15); background: rgba(12,68,124,.05); color: #0C447C; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; transition: all .15s; flex-shrink: 0; margin-left: auto; }
+.btn-edit:hover { background: rgba(12,68,124,.12); border-color: rgba(12,68,124,.3); }
+.btn-del { width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(180,50,50,.15); background: rgba(180,50,50,.05); color: #9b3030; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; transition: all .15s; flex-shrink: 0; }
+.btn-del:hover { background: rgba(180,50,50,.12); border-color: rgba(180,50,50,.3); }
+
+/* ══ PERFIL & CARGO ══ */
+.cargo { display: block; font-size: 9.5px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: var(--muted); margin-top: 2px; line-height: 1.3; }
+.perfil-row { padding: 10px 0 2px; font-size: 12.5px; color: #444; line-height: 1.55; font-weight: 400; border-top: 1px dashed rgba(201,168,76,.15); margin-top: 6px; }
+.perfil-row .perfil-label { font-size: 9px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
+.email-row { display: flex; align-items: center; gap: 8px; padding: 6px 0 0; font-size: 12.5px; }
+.email-row a { color: #0C447C; text-decoration: none; font-weight: 500; word-break: break-all; }
+.email-row a:hover { text-decoration: underline; }
+.email-icon { width: 27px; height: 27px; border-radius: 8px; background: rgba(201,168,76,.08); border: 1px solid rgba(201,168,76,.15); display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+.perfil-pending { color: var(--muted); font-style: italic; }
+
+/* ══ ADMIN MODE ══ */
+.admin-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 8px 24px;
+  background: linear-gradient(90deg, rgba(201,168,76,.12), rgba(201,168,76,.06));
+  border-bottom: 1px solid rgba(201,168,76,.18);
+  font-size: 11.5px; font-weight: 600; color: var(--gold);
+  font-family: 'DM Sans', sans-serif;
+}
+.admin-bar-left { display: flex; align-items: center; gap: 7px; }
+.admin-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); animation: blink 1.5s ease-in-out infinite; }
+.btn-exit-admin { padding: 5px 14px; border-radius: 999px; font-size: 11px; font-weight: 700; font-family: 'DM Sans', sans-serif; border: 1px solid rgba(201,168,76,.3); background: transparent; color: var(--gold); cursor: pointer; transition: all .15s; letter-spacing: .3px; }
+.btn-exit-admin:hover { background: rgba(201,168,76,.1); }
+
+/* Lock modal */
+.lock-overlay { display: none; position: fixed; inset: 0; z-index: 500; background: rgba(7,17,28,.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 24px; }
+.lock-overlay.show { display: flex; }
+.lock-modal { background: var(--card); border-radius: 20px; width: 100%; max-width: 360px; overflow: hidden; border: 1px solid rgba(201,168,76,.18); box-shadow: 0 40px 80px rgba(7,17,28,.4); animation: slideUp .28s cubic-bezier(.34,1.2,.64,1); }
+.lock-accent { height: 4px; background: linear-gradient(90deg, var(--gold), var(--gold2), rgba(201,168,76,.2)); }
+.lock-body { padding: 32px 28px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.lock-icon { width: 56px; height: 56px; border-radius: 16px; background: var(--gold-dim); border: 1px solid var(--gold-mid); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.lock-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; color: var(--ink); text-align: center; letter-spacing: .2px; }
+.lock-sub { font-size: 12.5px; color: var(--muted); text-align: center; margin-top: -8px; line-height: 1.5; }
+.lock-input { width: 100%; padding: 12px 16px; font-size: 15px; font-family: 'DM Sans', sans-serif; background: var(--bg); border: 1px solid var(--border); border-radius: 11px; color: var(--ink); outline: none; text-align: center; letter-spacing: 4px; transition: border-color .2s; }
+.lock-input:focus { border-color: rgba(201,168,76,.5); background: #fff; }
+.lock-error { font-size: 12px; color: #9b3030; font-weight: 600; display: none; }
+.lock-error.show { display: block; }
+.lock-actions { display: flex; gap: 10px; width: 100%; }
+.btn-lock-cancel { flex: 1; padding: 11px 0; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all .15s; }
+.btn-lock-cancel:hover { background: var(--bg); }
+.btn-lock-enter { flex: 2; padding: 11px 0; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; border-radius: 10px; border: none; background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #1a1200; cursor: pointer; box-shadow: 0 2px 10px rgba(201,168,76,.28); transition: all .18s; }
+.btn-lock-enter:hover { opacity: .9; box-shadow: 0 4px 16px rgba(201,168,76,.36); }
+
+/* ══ EMPTY STATE ══ */
+.group-empty { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 28px 16px; border: 1.5px dashed rgba(201,168,76,.25); border-radius: 12px; }
+.group-empty span { font-size: 22px; opacity: .5; }
+.group-empty p { font-size: 12.5px; color: var(--muted); font-weight: 500; text-align: center; }
+
+/* ══ LOADING ══ */
+.loading-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px 0; }
+.spinner { width: 32px; height: 32px; border: 3px solid rgba(201,168,76,.15); border-top-color: var(--gold); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-wrap p { font-size: 12px; color: var(--muted); }
+
+/* ══ AVATAR + BADGE PALETTE ══ */
+.av-0{background:#dce8f9;color:#0C447C}.av-1{background:#c8ede0;color:#085041}.av-2{background:#fde8c0;color:#633806}.av-3{background:#f9d5e4;color:#72243E}.av-4{background:#e2e0fc;color:#3C3489}.av-5{background:#fad4d4;color:#791F1F}.av-6{background:#d9edcc;color:#27500A}.av-7{background:#fad5c0;color:#712B13}.av-8{background:#d8eafc;color:#0C447C}.av-9{background:#e4f9ee;color:#085041}.av-10{background:#f9e8c2;color:#633806}
+.bg-0{background:#B5D4F4;color:#0C447C}.bg-1{background:#9FE1CB;color:#085041}.bg-2{background:#FAC775;color:#633806}.bg-3{background:#F4C0D1;color:#72243E}.bg-4{background:#CECBF6;color:#3C3489}.bg-5{background:#F7C1C1;color:#791F1F}.bg-6{background:#C0DD97;color:#27500A}.bg-7{background:#F5C4B3;color:#712B13}.bg-8{background:#B5D4F4;color:#0C447C}.bg-9{background:#9FE1CB;color:#085041}.bg-10{background:#FAC775;color:#633806}
+
+/* ══ MODAL ══ */
+.modal-overlay { display: none; position: fixed; inset: 0; z-index: 500; background: rgba(7,17,28,.72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 24px; }
+.modal-overlay.show { display: flex; }
+.modal { background: var(--card); border-radius: 20px; width: 100%; max-width: 440px; box-shadow: 0 40px 80px rgba(7,17,28,.4); overflow: hidden; border: 1px solid rgba(201,168,76,.15); animation: slideUp .28s cubic-bezier(.34,1.2,.64,1); }
+@keyframes slideUp { from{transform:translateY(24px);opacity:0} to{transform:translateY(0);opacity:1} }
+.modal-accent { height: 4px; background: linear-gradient(90deg,var(--gold),var(--gold2),rgba(201,168,76,.2)); }
+.modal-header { padding: 22px 24px 18px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--border); }
+.modal-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--gold-dim); border: 1px solid var(--gold-mid); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.modal-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; color: var(--ink); letter-spacing: .2px; }
+.modal-subtitle { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.modal-close { margin-left: auto; width: 32px; height: 32px; border-radius: 9px; border: 1px solid var(--border); background: transparent; cursor: pointer; font-size: 16px; color: var(--muted); display: flex; align-items: center; justify-content: center; transition: all .15s; flex-shrink: 0; }
+.modal-close:hover { background: var(--bg); color: var(--ink); }
+.modal-body { padding: 20px 24px 24px; display: flex; flex-direction: column; gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 10.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--muted); }
+.field input, .field select { padding: 11px 14px; font-size: 14px; font-family: 'DM Sans', sans-serif; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; color: var(--ink); outline: none; transition: border-color .2s, background .2s; -webkit-appearance: none; appearance: none; }
+.field input:focus, .field select:focus { border-color: rgba(201,168,76,.5); background: #fff; }
+.field input::placeholder { color: rgba(107,107,102,.5); }
+.modal-actions { display: flex; gap: 10px; margin-top: 4px; }
+.btn-cancel { flex: 1; padding: 11px 0; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all .15s; }
+.btn-cancel:hover { background: var(--bg); color: var(--ink); }
+.btn-save { flex: 2; padding: 11px 0; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; border-radius: 10px; border: none; background: linear-gradient(135deg,#0C447C,#185FA5); color: #fff; cursor: pointer; box-shadow: 0 2px 10px rgba(12,68,124,.25); transition: all .18s; }
+.btn-save:hover { opacity: .92; box-shadow: 0 4px 16px rgba(12,68,124,.35); }
+.btn-save:disabled { opacity: .5; cursor: not-allowed; }
+.error-msg { font-size: 11.5px; color: #9b3030; font-weight: 600; display: none; padding: 8px 12px; background: rgba(180,50,50,.06); border: 1px solid rgba(180,50,50,.15); border-radius: 8px; }
+.error-msg.show { display: block; }
+
+/* ══ TOAST ══ */
+.toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--navy); color: #fff; padding: 12px 22px; border-radius: 12px; font-size: 13px; font-weight: 600; z-index: 600; opacity: 0; transition: all .3s cubic-bezier(.34,1.2,.64,1); border: 1px solid rgba(201,168,76,.2); white-space: nowrap; box-shadow: 0 8px 28px rgba(7,17,28,.3); pointer-events: none; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ══ FOOTER ══ */
+footer { background: linear-gradient(135deg,#07111c 0%,#0f2236 50%,#1a3a5c 100%); border-radius: 16px; padding: 22px 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border: 1px solid rgba(201,168,76,.09); box-shadow: 0 8px 28px rgba(7,17,28,.18); max-width: 640px; margin: 32px auto 0; }
+.footer-brand { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 700; color: var(--gold); letter-spacing: .3px; }
+.footer-note { font-size: 11px; color: rgba(255,255,255,.35); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <div class="brand">
+    <div class="emblem">⚖️</div>
+    The Mendoza <em>Law Firm</em>
+  </div>
+  <div class="nav-right">
+    <div class="nav-chip"><span class="dot"></span>Directorio Interno</div>
+    <button class="btn-add-nav" id="btn-add-nav" onclick="openModal()" style="display:none">
+      <span class="plus">+</span> Agregar contacto
+    </button>
+    <button class="btn-add-nav" id="btn-admin-toggle" onclick="openLockModal()" style="background:transparent;border:1px solid rgba(201,168,76,.3);color:var(--gold);box-shadow:none;">
+      🔐 Admin
+    </button>
+  </div>
+</nav>
+
+<!-- ADMIN BAR (hidden by default) -->
+<div class="admin-bar" id="adminBar" style="display:none">
+  <div class="admin-bar-left"><span class="admin-dot"></span> Modo Administrador activo</div>
+  <button class="btn-exit-admin" onclick="exitAdmin()">Salir del modo admin</button>
+</div>
+
+<!-- STICKY SEARCH -->
+<div class="search-wrap">
+  <div class="search-inner">
+    <span class="search-icon">🔍</span>
+    <input id="search" type="text" placeholder="Buscar por nombre, área o número...">
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content" id="content">
+  <div class="loading-wrap"><div class="spinner"></div><p>Cargando directorio...</p></div>
+</div>
+
+<footer>
+  <div class="footer-brand">TMLF · Mendoza Law Firm LLC</div>
+  <div class="footer-note">Uso interno exclusivo · 2026</div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-accent"></div>
+    <div class="modal-header">
+      <div class="modal-icon">👤</div>
+      <div>
+        <div class="modal-title">Nuevo contacto</div>
+
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Nombre completo</label>
+        <input id="f-name" type="text" placeholder="Ej. María González López">
+      </div>
+      <div class="field">
+        <label>Área</label>
+        <input id="f-area" type="text" placeholder="Ej. Compliance, PMO, RFE...">
+      </div>
+      <div class="field">
+        <label>Número de teléfono</label>
+        <input id="f-phone" type="tel" placeholder="Ej. 55 1234 5678">
+      </div>
+      <div class="field">
+        <label>Grupo</label>
+        <select id="f-group">
+          <option value="mgr">Managers</option>
+          <option value="tl">Team Leaders</option>
+          <option value="tr">Trainers</option>
+          <option value="coo">Coordinadores</option>
+        </select>
+      </div>
+      <div class="error-msg" id="error-msg">Por favor completa todos los campos.</div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+        <button class="btn-save" id="btn-save" onclick="saveContact()">Guardar contacto</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOCK MODAL -->
+<div class="lock-overlay" id="lockOverlay" onclick="closeLockOutside(event)">
+  <div class="lock-modal">
+    <div class="lock-accent"></div>
+    <div class="lock-body">
+      <div class="lock-icon">🔐</div>
+      <div class="lock-title">Acceso Administrador</div>
+      <p class="lock-sub">Ingresa la contraseña para editar o eliminar contactos</p>
+      <input class="lock-input" id="lock-pwd" type="password" placeholder="••••••" maxlength="20">
+      <div class="lock-error" id="lock-error">Contraseña incorrecta</div>
+      <div class="lock-actions">
+        <button class="btn-lock-cancel" onclick="closeLockModal()">Cancelar</button>
+        <button class="btn-lock-enter" onclick="checkPassword()">Entrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModalOverlay" onclick="closeEditModalOutside(event)">
+  <div class="modal">
+    <div class="modal-accent"></div>
+    <div class="modal-header">
+      <div class="modal-icon">✏️</div>
+      <div>
+        <div class="modal-title">Editar contacto</div>
+      </div>
+      <button class="modal-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="e-original-name">
+      <div class="field">
+        <label>Nombre completo</label>
+        <input id="e-name" type="text" placeholder="Ej. María González López">
+      </div>
+      <div class="field">
+        <label>Área</label>
+        <input id="e-area" type="text" placeholder="Ej. Compliance, PMO, RFE...">
+      </div>
+      <div class="field">
+        <label>Número de teléfono</label>
+        <input id="e-phone" type="tel" placeholder="Ej. 55 1234 5678">
+      </div>
+      <div class="field">
+        <label>Grupo</label>
+        <select id="e-group">
+          <option value="mgr">Managers</option>
+          <option value="tl">Team Leaders</option>
+          <option value="tr">Trainers</option>
+          <option value="coo">Coordinadores</option>
+        </select>
+      </div>
+      <div class="error-msg" id="edit-error-msg">Por favor completa todos los campos.</div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
+        <button class="btn-save" id="btn-edit-save" onclick="updateContact()">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-t2Dltne-xQV2tQYYXFXJBxoLDnS3a3Y439kOotSWR2m1EbMN3q_XcNerCIpfWD6c/exec";
+
+// ── Grupos definidos ──
+const GROUPS = [
+  { id: 'mgr', label: 'Managers', icon: '🏛️' },
+  { id: 'coo', label: 'Coordinadores',             icon: '📋' },
+  { id: 'tl',  label: 'Team Leaders',              icon: '👥' },
+  { id: 'tr',  label: 'Trainers',                  icon: '🎓' },
+];
+
+// Estado
+let allContacts  = [];
+let openGroups   = new Set(); // Todos colapsados al inicio
+
+// ── Helpers ──
+function initials(n){ return n.split(" ").filter((_,i)=>i<2).map(w=>w[0]).join("").toUpperCase(); }
+function cleanPhone(p){ return p.replace(/[\s\-\(\)\.]/g,""); }
+function waLink(phone) {
+  let n = cleanPhone(phone);
+  if (n.startsWith('+52')) n = n.slice(1);
+  else if (n.startsWith('52') && n.length >= 12) n = n;
+  else n = '52' + n;
+  return 'https://wa.me/' + n;
+}
+function sortedAZ(list){ return [...list].sort((a,b)=>a.name.localeCompare(b.name,"es")); }
+function colorFor(name){ let h=0; for(let i=0;i<name.length;i++) h=(h*31+name.charCodeAt(i))&0xffff; return h%11; }
+function matches(p,q){ if(!q)return true; return p.name.toLowerCase().includes(q)||p.area.toLowerCase().includes(q)||p.phone.includes(q)||(p.cargo||'').toLowerCase().includes(q)||(p.email||'').toLowerCase().includes(q); }
+
+// ── Contact card ──
+function cardHTML(p) {
+  const c   = colorFor(p.name);
+  const tel = cleanPhone(p.phone);
+  const wa  = waLink(p.phone);
+  const cargoHTML = p.cargo ? `<span class="cargo">${p.cargo}</span>` : '';
+  const emailHTML = p.email ? `<div class="email-row"><div class="email-icon">✉️</div><a href="mailto:${p.email}">${p.email}</a></div>` : '';
+  const perfilHTML = p.perfil && p.perfil !== 'PENDIENTE'
+    ? `<div class="perfil-row"><div class="perfil-label">Perfil</div>${p.perfil}</div>`
+    : (p.perfil === 'PENDIENTE' ? `<div class="perfil-row"><div class="perfil-label">Perfil</div><span class="perfil-pending">Pendiente de registro</span></div>` : '');
+  return `
+  <div class="acc-item">
+    <div class="acc-header" onclick="toggleContact(this)">
+      <div class="avatar av-${c}">${initials(p.name)}</div>
+      <div class="acc-name-wrap">
+        <div class="name">${p.name}</div>
+        <span class="badge bg-${c}">${p.area}</span>
+        ${cargoHTML}
+      </div>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="acc-body">
+      <div class="acc-inner">
+        <div class="phone-row">
+          <div class="phone-icon">📱</div>
+          ${p.phone}
+          ${isAdmin ? `<button class="btn-edit" onclick="openEditModal('${p.name.replace(/'/g,"\\'")}',event)" title="Editar">✏️</button><button class="btn-del" onclick="deleteContact('${p.name.replace(/'/g,"\\'")}',event)" title="Eliminar">🗑</button>` : ''}
+        </div>
+        ${emailHTML}
+        ${perfilHTML}
+        <div class="actions">
+          <a class="btn btn-call" href="tel:${tel}">Llamar</a>
+          <a class="btn btn-wa" href="${wa}" target="_blank" rel="noopener noreferrer">WhatsApp ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── Render completo ──
+function render(filter) {
+  const q       = (filter||'').toLowerCase().trim();
+  const content = document.getElementById('content');
+
+  // Si hay búsqueda activa, mostrar todos los resultados sin acordeón de grupo
+  if (q) {
+    const results = sortedAZ(allContacts.filter(p => matches(p, q)));
+    if (!results.length) {
+      content.innerHTML = `<div style="text-align:center;padding:60px 0;color:var(--muted);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;">Sin resultados para "${filter}"</div>`;
+      return;
+    }
+    content.innerHTML = results.map(p => cardHTML(p)).join('');
+    return;
+  }
+
+  // Sin búsqueda: mostrar acordeón de grupos
+  content.innerHTML = GROUPS.map(g => {
+    const list  = sortedAZ(allContacts.filter(p => p.group === g.id));
+    const isOpen = openGroups.has(g.id);
+    const count  = list.length;
+
+    const bodyContent = count
+      ? list.map(p => cardHTML(p)).join('')
+      : `<div class="group-empty"><span>📋</span><p>Próximamente — contactos en proceso de registro</p></div>`;
+
+    return `
+    <div class="group-block ${isOpen ? 'open' : ''}" id="group-${g.id}">
+      <div class="group-header" onclick="toggleGroup('${g.id}')">
+        <div class="group-line"></div>
+        <div class="group-title-wrap">
+          <div class="group-title">${g.label}<span class="g-arrow">▼</span></div>
+          <div class="group-count">${count ? count + (count===1?' contacto':' contactos') : 'Sin contactos aún'}</div>
+        </div>
+        <div class="group-line rev"></div>
+      </div>
+      <div class="group-body">
+        <div class="group-inner">${bodyContent}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Toggle grupo ──
+function toggleGroup(id) {
+  if (openGroups.has(id)) openGroups.delete(id);
+  else openGroups.add(id);
+  render(document.getElementById('search').value);
+}
+
+// ── Toggle contacto ──
+function toggleContact(header) {
+  const item   = header.closest(".acc-item");
+  const isOpen = item.classList.contains("open");
+  document.querySelectorAll(".acc-item.open").forEach(el => el.classList.remove("open"));
+  if (!isOpen) item.classList.add("open");
+}
+
+// ══ SHEETS ══
+function loadContacts() {
+  if (!SCRIPT_URL || SCRIPT_URL.includes("PEGA_AQUI")) {
+    allContacts = FALLBACK_DATA; render(); return;
+  }
+  fetch(`${SCRIPT_URL}?action=getContacts`)
+    .then(r => r.json())
+    .then(data => { allContacts = data; render(); })
+    .catch(() => { allContacts = FALLBACK_DATA; render(); showToast('⚠️  Sin conexión — datos locales'); });
+}
+
+function saveContact() {
+  const name  = document.getElementById('f-name').value.trim();
+  const area  = document.getElementById('f-area').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  const group = document.getElementById('f-group').value;
+  const errEl = document.getElementById('error-msg');
+  const btn   = document.getElementById('btn-save');
+
+  if (!name||!area||!phone) { errEl.classList.add('show'); return; }
+  errEl.classList.remove('show');
+
+  if (!SCRIPT_URL || SCRIPT_URL.includes("PEGA_AQUI")) {
+    allContacts.push({name,area,phone,group});
+    openGroups.add(group);
+    render(); closeModal(); showToast('✓  Guardado localmente'); return;
+  }
+
+  btn.disabled=true; btn.textContent='Guardando...';
+  fetch(`${SCRIPT_URL}?action=addContact&name=${encodeURIComponent(name)}&area=${encodeURIComponent(area)}&phone=${encodeURIComponent(phone)}&group=${group}`)
+    .then(r=>r.json())
+    .then(res=>{
+      btn.disabled=false; btn.textContent='Guardar contacto';
+      if(res.ok){
+        allContacts.push({name,area,phone,group});
+        openGroups.add(group);
+        render(); closeModal(); showToast('✓  Contacto guardado en Google Sheets');
+      } else { errEl.textContent=res.error||'Error al guardar.'; errEl.classList.add('show'); }
+    })
+    .catch(()=>{ btn.disabled=false; btn.textContent='Guardar contacto'; errEl.textContent='Error de conexión.'; errEl.classList.add('show'); });
+}
+
+function deleteContact(name, e) {
+  e.stopPropagation();
+  if (!confirm(`¿Eliminar a ${name}?`)) return;
+
+  if (!SCRIPT_URL || SCRIPT_URL.includes("PEGA_AQUI")) {
+    allContacts = allContacts.filter(p=>p.name!==name);
+    render(); showToast('🗑  Contacto eliminado'); return;
+  }
+
+  fetch(`${SCRIPT_URL}?action=deleteContact&name=${encodeURIComponent(name)}`)
+    .then(r=>r.json())
+    .then(res=>{
+      if(res.ok){ allContacts=allContacts.filter(p=>p.name!==name); render(); showToast('🗑  Eliminado de Google Sheets'); }
+      else showToast('⚠️  '+res.error);
+    })
+    .catch(()=>showToast('⚠️  Error de conexión'));
+}
+
+// ── Modal ──
+function openModal(){
+  ['f-name','f-area','f-phone'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-group').value='mgr';
+  document.getElementById('error-msg').classList.remove('show');
+  document.getElementById('btn-save').disabled=false;
+  document.getElementById('btn-save').textContent='Guardar contacto';
+  document.getElementById('modalOverlay').classList.add('show');
+  setTimeout(()=>document.getElementById('f-name').focus(),100);
+}
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('show'); }
+function closeModalOutside(e){ if(e.target===document.getElementById('modalOverlay')) closeModal(); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+// ── Toast ──
+let toastTimer;
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),3000); }
+
+// ── Search ──
+document.getElementById("search").addEventListener("input",function(){ render(this.value); });
+
+// ── Fallback ──
+const FALLBACK_DATA = [
+  {name:"Misael Raul Moreno",area:"PEOPLE",cargo:"PEOPLE / MANAGER",email:"mmoreno@mendozafirm.com",phone:"56 2101 1940",perfil:"Especialista en la dirección estratégica de talento y administración de personal, supervisa iniciativas de desarrollo, cultura, compensación y cumplimiento alineadas a los objetivos organizacionales.",group:"mgr"},
+  {name:"Samuel Barranco Guzman",area:"PEOPLE",cargo:"PEOPLE / COORDINATOR",email:"sbarranco@mendozafirm.com",phone:"55 3907 0675",perfil:"Coordinador de la operación de desarrollo organizacional, comunicación interna, reclutamiento y administración de personal, asegura la correcta ejecución de los procesos internos",group:"coo"},
+  {name:"Victor Eduardo Romo Trujillo",area:"IT",cargo:"IT AUDITOR LEADER",email:"victor.r@mendozafirm.com",phone:"56 2005 2683",perfil:"Responsable de la operación de IT, supervisa soporte técnico, gestión de accesos y sistemas, asegura la eficiencia y continuidad operativa.",group:"tl"},
+  {name:"Laura Karen Reyna Castro",area:"TRAINING",cargo:"TRAINING COORDINATOR",email:"lreynac@mendozafirm.com",phone:"55 2342 2322",perfil:"Responsable de la implementación y seguimiento de programas de capacitación y diseño instruccional",group:"coo"},
+  {name:"Nidia Consuelo Nava Garcia",area:"TRAINING",cargo:"WRITERS TRAINER",email:"nnava@mendozafirm.com",phone:"72 9152 7160",perfil:"Especialista en capacitación y diseño instruccional enfocada en estandarizar la narrativa legal y potenciar la efectividad técnica de los equipos de redacción y análisis de evidencia.",group:"tr"},
+  {name:"Andrea Zendejas Morales",area:"TRAINING",cargo:"PSYCHOLOGISTS T1 TRAINER",email:"azendejas@mendozafirm.com",phone:"81 1584 6707",perfil:"Capacitadora especializada en la estandarización de procesos, recolección de evidencia y calidad de la información en contextos migratorios.",group:"tr"},
+  {name:"Joham Omar Burgos Rosales",area:"TRAINING",cargo:"RFE TRAINER",email:"jburgos@mendozafirm.com",phone:"55 1492 7267",perfil:"Diseñador de programas de formación para personal jurídico y administrativo, enfocado en actualización normativa y cumplimiento de estándares de calidad.",group:"tr"},
+  {name:"Diego Romo Juarez",area:"TRAINING",cargo:"COMPLIANCE TRAINER",email:"djuarez@mendozafirm.com",phone:"44 4171 8091",perfil:"Entrenador especialista en redacción y cumplimiento de requisitos de elegibilidad en DCL y CVL, enfocado en elaborar estrategias para la construcción efectiva del caso del cliente.",group:"tr"},
+  {name:"Sofia Analuz Vazquez Cotero",area:"TRAINING",cargo:"COMPLIANCE TRAINER",email:"svazquezc@mendozafirm.com",phone:"55 1308 1279",perfil:"Desarrollor de capacitaciones y estrategias para Compliance, enfocadas en estándares de calidad, prevención de riesgos y mejora de la eficiencia operativa mediante análisis de datos.",group:"tr"},
+  {name:"Brenda Dominguez Mendoza",area:"TRAINING",cargo:"PSYCHOLOGISTS T2 TRAINER",email:"bdominguez@mendozafirm.com",phone:"56 1145 1762",perfil:"Diseñador e implementador de instrumentos y metodologías operativas que traducen criterios legales en procesos claros y eficientes, optimizando la calidad de los casos y la toma de decisiones.",group:"tr"},
+  {name:"Mariana Diaz Ferrusquia",area:"TRAINING",cargo:"FOLLOW UP & PACKETS TRAINER",email:"mdiazf@mendozafirm.com",phone:"56 2070 5804",perfil:"Facilitador de cursos de entrenamiento, responsable de formar a personal en áreas de ensamblado de paquetes y contacto con cliente para extracción de información y revisión de calidad en aplicaciones migratorias.",group:"tr"},
+  {name:"Julio Cesar Vargas Dominguez",area:"PMO",cargo:"PMO MANAGER",email:"jvargas@mendozafirm.com",phone:"62 4136 2161",perfil:"Responsable de diseñar y liderar la estrategia integral de gestión de desempeño y análisis de KPIs, transformando datos operativos en información clave para la toma de decisiones estratégicas que impulsan la eficiencia y resultados del área.",group:"mgr"},
+  {name:"Misael De Jesus Hurtado Gomez",area:"PMO",cargo:"COMPLIANCE TL",email:"mhurtado@mendozafirm.com",phone:"56 3142 2188",perfil:"PENDIENTE",group:"tl"},
+  {name:"Alexandro Diaz Dominguez",area:"PMO",cargo:"RFE & P+ TL",email:"adiazd@mendozafirm.com",phone:"72 2304 9193",perfil:"Líder en gestión de desempeño y KPIs, responsable de coordinar equipos para el seguimiento, análisis y optimización de indicadores clave.",group:"tl"},
+  {name:"Jose Victor Gonzalez Garcia",area:"PMO",cargo:"PACKETS TL",email:"jgonzalezg@mendozafirm.com",phone:"55 2174 1839",perfil:"Estratega de datos y seguimiento dedicado a transformar el estado de los casos en información clave para la toma de decisiones y la efectividad operativa.",group:"tl"},
+  {name:"Carlos Antonio Guzman Canel",area:"TRUCKERS",cargo:"TRUCK PROJECT TL",email:"cguzman@mendozafirm.com",phone:"44 2610 6506",perfil:"Especialista en la dirección estratégica de Recruitment, liderando procesos H2B y EB-3 para conectar empresas de EE. UU. con talento latinoamericano, asegura la eficiencia y cumplimiento regulatorio.",group:"tl"},
+  {name:"Juan Carlos Sandoval Villa",area:"PACKETS",cargo:"PACKETS MANAGER",email:"jcarlossa@mendozafirm.com",phone:"55 4080 1367",perfil:"Especialista en la dirección estratégica y gestión integral del área de armado de paquetes migratorios, lidera la coordinación con abogados firmantes y garantiza la precisión, cumplimiento legal y eficiencia operativa en casos complejos ante USCIS",group:"mgr"},
+  {name:"Jessica Berenice Suastegui Alcocer",area:"PACKETS",cargo:"PACKETS COORDINATOR",email:"jsuastegui@mendozafirm.com",phone:"55 5965 9822",perfil:"Responsable de la gestión de equipos de packets, impulsa el cumplimiento de metas mediante la eliminación de obstáculos, optimización de tiempos, aseguramiento de calidad y cumplimiento de plazos",group:"coo"},
+  {name:"Omar Eduardo Reyes Hernandez",area:"PACKETS",cargo:"CASE REVIEW / ATTY REVIEW TL 1",email:"oreyes@mendozafirm.com",phone:"55 3031 7115",perfil:"Responsable de la gestión con áreas involucradas en la revisión, desarrollo y firma de paquetes, coordina la relación con abogados firmantes para asegurar cumplimiento y eficiencia en los procesos.",group:"tl"},
+  {name:"Christian Perez Quijada",area:"PACKETS",cargo:"CASE REVIEW / ATTY REVIEW TL 2",email:"cperezq@mendozafirm.com",phone:"55 4188 5334",perfil:"Responsable de la gestión con áreas involucradas en la revisión, desarrollo y firma de paquetes, coordina la relación con abogados firmantes para asegurar cumplimiento y eficiencia en los procesos.",group:"tl"},
+  {name:"Carolina Garcia Palacios",area:"PACKETS",cargo:"DECISIONS / USCIS INTERVIEWS TL",email:"cgarciap@mendozafirm.com",phone:"55 2394 6823",perfil:"Especialista en el análisis estratégico y gestión integral de casos migratorios complejos en fases finales ante USCIS.",group:"tl"},
+  {name:"Jose Roberto Maliachi Puig",area:"PACKETS",cargo:"SPECIAL PROCESS TL",email:"jmaliachi@mendozafirm.com",phone:"92 1150 2486",perfil:"Especialista en procesos migratorios, lidera un equipo de paralegales y garantiza documentación precisa, eficiencia y cumplimiento legal en solicitudes de visas.",group:"tl"},
+  {name:"Luz Ivannia Salgado Mendoza",area:"PACKETS",cargo:"INCOMMING MAIL TL",email:"lsalgado@mendozafirm.com",phone:"55 3114 1228",perfil:"Líder operativo especializado en la gestión, clasificación y priorización de correspondencia por parte de USCIS, así como gestión y presentación de solicitudes en línea de FOIAs.",group:"tl"},
+  {name:"Kevin Emmanuel Miranda Perez",area:"PACKETS",cargo:"LEA COOPERATION TL",email:"kmiranda@mendozafirm.com",phone:"56 1183 0972",perfil:"Responsable de la supervisión y coordinación de procesos de cooperación entre clientes y agencias de investigación criminal a nivel federal y estatal, asegurando la eficiencia operativa y el cumplimiento de lineamientos en cada gestión.",group:"tl"},
+  {name:"Gibran Alonso Alcerreca Manrique",area:"CUSTOMER SERVICE",cargo:"CS MANAGER",email:"gibran.al@mendozafirm.com",phone:"99 8293 4636",perfil:"Especialista en la dirección estratégica y gestión integral del área de Customer Service, lidera equipos para optimizar la experiencia del cliente, resolver incidencias críticas y garantizar eficiencia operativa en procesos migratorios.",group:"mgr"},
+  {name:"Ana Perla Avila Johnson",area:"CUSTOMER SERVICE",cargo:"CS T1 TL",email:"aavila@mendozafirm.com",phone:"55 2303 4847",perfil:"Líder de equipo enfocado en la gestión operativa, resolución de dudas en procesos migratorios y manejo de situaciones críticas con clientes",group:"tl"},
+  {name:"Oskar Garcia Jimenez",area:"CUSTOMER SERVICE",cargo:"CS T1 TL",email:"ogarcia@mendozafirm.com",phone:"95 1183 0835",perfil:"Especialista en atención al cliente enfocado en la gestión de equipos, mejora de la experiencia del cliente y resolución efectiva de incidencias.",group:"tl"},
+  {name:"Maria Fernanda Juarez Hernandez",area:"CALL BACKS",cargo:"CALL BACKS COORDINATOR",email:"mjuarezh@mendozafirm.com",phone:"55 1591 2100",perfil:"Responsable del control y estandarización del proceso de callbacks, asegurando trazabilidad y eficiencia operativa mediante análisis de casos y alineación con áreas.",group:"coo"},
+  {name:"Nalleli Itzel Ratia Labastida",area:"CALL BACKS",cargo:"CALL BACKS TL",email:"nratia@mendozafirm.com",phone:"55 6575 8137",perfil:"Líder operativo enfocado en optimizar la comunicación con clientes, el soporte a abogados en Puerto Rico y el análisis previo de casos para una atención eficiente y alineada entre equipos de Cancún y Puerto Rico.",group:"tl"},
+  {name:"Renata Ramirez Flores",area:"PRE WELCOME CALL",cargo:"PRE WELCOME CALL COORDINATOR",email:"rramirezf@mendozafirm.com",phone:"95 1217 1518",perfil:"Especialista en optimización operativa dedicada a maximizar la productividad, el cumplimiento de metas y la mejora continua de los procesos internos del área.",group:"coo"},
+  {name:"Diego Raul Rojas Rodriguez",area:"PRE WELCOME CALL",cargo:"PWC ASSEMBLER TL",email:"drojas@mendozafirm.com",phone:"55 2989 5893",perfil:"Gestión estratégica de la operación y del equipo, enfocada en priorizar casos, cumplir KPIs y asegurar calidad mediante seguimiento continuo, comunicación efectiva y resolución de bloqueos.",group:"tl"},
+  {name:"Alejandro Valdes Armada",area:"PRE WELCOME CALL",cargo:"PRE WELCOME CALL TL",email:"avaldes@mendozafirm.com",phone:"55 4951 8428",perfil:"Responsable de resolver casos escalados y gestionar situaciones complejas con clientes, así como monitorear llamadas, chats y correos para garantizar el cumplimiento de estándares de calidad.",group:"tl"},
+  {name:"Edgar Daniel Figueroa Alarcon",area:"PRE WELCOME CALL",cargo:"PRE WELCOME CALL TL",email:"efigueroa@mendozafirm.com",phone:"56 1866 7083",perfil:"Responsable de supervisar la estrategia de evidencias y la recolección de documentos e información para el llenado de formularios críticos ante USCIS.",group:"tl"},
+  {name:"Victor Manuel Mendoza Medina",area:"PRE CASE REVIEW",cargo:"PRE CASE REVIEW TL",email:"vmendoza@mendozafirm.com",phone:"55 7662 9825",perfil:"Líder de equipo y especialista en aplicaciones migratorias, responsable de la integración y validación de paquetes, supérvisa la calidad y seguimiento de casos urgentes para su envío a USCIS.",group:"tl"},
+  {name:"Giovana Lizete Ayala Gonzalez",area:"PRE CASE REVIEW",cargo:"PCR FULLY TL",email:"gayala@mendozafirm.com",phone:"55 4075 6896",perfil:"Supervisora del proceso integral de integración de expedientes, enfocada en la validación de documentos, coordinación de equipo y cumplimiento de KPIs mediante control de calidad y optimización de procesos.",group:"tl"},
+  {name:"Jonathan Saul Miguel Romero",area:"PRE CASE REVIEW",cargo:"RAPSHEETS TL",email:"jmiguel@mendozafirm.com",phone:"55 4785 3052",perfil:"Responsable de la gestión de equipo para la tramitación de Rapsheet a clientes de la firma.",group:"tl"},
+  {name:"Juan Manuel Delgado De Luna",area:"PRE CASE REVIEW",cargo:"PCR FULLY TL",email:"jdelgadod@mendozafirm.com",phone:"55 4789 4377",perfil:"Responsable de la gestión documental y seguimiento al cliente, asegurando la correcta integración de expedientes, garantizando que los paquetes destinados a USICS estén completos y cumplan con los requisitos establecidos.",group:"tl"},
+  {name:"Brenda Castellanos Garcia",area:"RFE",cargo:"LEGAL INTELLIGENCE AND RFE MANAGER",email:"bcastellanos@mendozafirm.com",phone:"55 6867 1710",perfil:"Especialista en la dirección estratégica y gestión integral del área de RFE, lidera la coordinación de equipos y la asignación de tareas para asegurar la recolección de evidencias, calidad en entregables, cumplimiento de plazos y consistencia legal, optimizando resultados en casos complejos ante USCIS",group:"mgr"},
+  {name:"Valeria Dafne Perez Cuevas",area:"RFE",cargo:"RFE COORDINATOR",email:"vperez@mendozafirm.com",phone:"22 9213 2189",perfil:"Coordinador del proceso operativo del área de RFE. Acompaña a TLs, asegura cumplimiento de plazos y la calidad en entregas. Es puente de comunicación con el equipo de El Paso para el manejo, seguimiento y envío de RFEs.",group:"coo"},
+  {name:"Veronica Martinez Millan",area:"RFE",cargo:"SUPERVISOR SPECIAL REPORTS",email:"vmartinez@mendozafirm.com",phone:"55 3443 2127",perfil:"Especialista en la gestión, programación y distribución de reportes provenientes de agencias terceras para el fortalecimiento de casos.",group:"coo"},
+  {name:"Alejandro Antonio Rios Quintana",area:"RFE",cargo:"ATTORNEY AUDIT AND ADVISORY TL",email:"ariosq@mendozafirm.com",phone:"55 4058 0629",perfil:"Especialista en gestión de RFEs, proporcionando herramientas, definiendo estrategias y asegurando respuestas precisas y profesionales, así como la correcta coordinación del case review.",group:"tl"},
+  {name:"Consuelo Garcia Garcia",area:"RFE",cargo:"PARALEGAL TL",email:"cgarciag@mendozafirm.com",phone:"55 2883 1838",perfil:"Lider enfocada en garantizar respuestas de calidad, sólidas y elegibles coordinando la gestión de clientes para mi equipo de trabajo y acompañamiento continuo para mejorar resultados.",group:"tl"},
+  {name:"Angel Fernando Perez Negrete",area:"RFE",cargo:"PARALEGALS TL",email:"aperezn@mendozafirm.com",phone:"55 1049 2450",perfil:"Desarrollo de estrategias para casos VAWA, coordinación interáreas y asignación de RFE, con seguimiento de paquetes y retroalimentación al equipo para asegurar entregas en tiempo.",group:"tl"},
+  {name:"Adriana Dominique Cotija De Anda",area:"RFE",cargo:"PARALEGALS TL",email:"dcotija@mendozafirm.com",phone:"56 3353 3226",perfil:"Responsable de supervisar la preparación de evidencia para RFE, garantiza cumplimiento y calidad, coordina la asignación estratégica de tareas según habilidades, optimiza desempeño y resultados del equipo.",group:"tl"},
+  {name:"Gerson Yoav Sanchez Bernal",area:"RFE",cargo:"GOVERNMENT BRANCH TL",email:"gsanchez@mendozafirm.com",phone:"56 1755 4441",perfil:"Especialista en diseño y ejecución de estrategias de elegibilidad Good Moral Character, y en coordinación especializada con autoridades locales, estatales y federales alineadas al cumplimiento de objetivos ante USCIS.",group:"tl"},
+  {name:"Jacob Navarrete Sanchez",area:"RFE",cargo:"SUPERVISOR GOVERNMENT BRANCH T2",email:"jnavarrete@mendozafirm.com",phone:"55 4842 4603",perfil:"Especialista en organización, manejo y revisión de cumplimiento en lineamientos de elegibilidad Good Moral Character, y promoción del cumplimiento operacional alineado a los objetivos del área y firma.",group:"coo"},
+  {name:"Agustin Nava Garcia",area:"RFE",cargo:"NON VAWA TL",email:"anavag@mendozafirm.com",phone:"55 3461 8902",perfil:"Toma de decisiones y validación de declaraciones conforme a requisitos, asegurando calidad, priorización de tareas, coordinación del equipo y cumplimiento de objetivos.",group:"tl"},
+  {name:"Nayeli Rioja Padilla",area:"RFE",cargo:"PSYCHOLOGISTS RFE TL",email:"nrioja@mendozafirm.com",phone:"55 3515 9450",perfil:"Responsable enfocado en definir objetivos, coordinar equipos y asignar tareas estratégicamente, asegurando seguimiento de casos, toma de decisiones, comunicación efectiva y cumplimiento de resultados mediante mejora continua.",group:"tl"},
+  {name:"Karla Judith Vigil Astudillo",area:"RFE",cargo:"PSYCHOLOGISTS RFE TL",email:"kvigil@mendozafirm.com",phone:"55 1481 3269",perfil:"Coordinación y supervisión de equipo, asegurando la correcta gestión de casos y calidad en entregables.",group:"tl"},
+  {name:"Ever Eduardo Viveros Pineda",area:"RFE",cargo:"PSYCHOLOGISTS RFE TL",email:"eviveros@mendozafirm.com",phone:"55 5060 3564",perfil:"Responsable de coordinar la obtención de evidencias y testimonios para casos VAWA y RFE, asegurando contacto efectivo con clientes y calidad en la documentación.",group:"tl"},
+  {name:"Raul Antonio Ochoa Gomez",area:"RFE",cargo:"CRIMMIGRATION VISA T TL",email:"rochoa@mendozafirm.com",phone:"55 1843 9631",perfil:"Especialista en dirección estratégica y coherencia jurídica, integrando derecho penal y migratorio para construir casos sólidos desde el inicio, asegurando consistencia, credibilidad y cumplimiento de los más altos estándares legales.",group:"tl"},
+  {name:"Alejandro Ernesto Gonzalez Gonzalez",area:"RFE",cargo:"LEGAL INTELLIGENCE ATTORNEY TL",email:"agonzalezgo@mendozafirm.com",phone:"55 7447 6558",perfil:"Supervisor de analistas y attorneys, con enfoque en revisión de covers y paquetes, análisis legal, coordinación operativa y aseguramiento del desempeño y cumplimiento de estándares.",group:"tl"},
+  {name:"Francisco Javier Monroy Canel",area:"COMPLIANCE",cargo:"CHIEF COMPLIANCE OFFICER",email:"fmonroy@mendozafirm.com",phone:"55 3279 7144",perfil:"Especialista en la dirección estratégica y gestión integral de Compliance, liderando la coordinación de equipos y la estandarización de procesos para asegurar la ejecución efectiva de controles, monitoreo de riesgos y cohesión operativa, garantizando la estabilidad y cumplimiento del sistema institucional.",group:"mgr"},
+  {name:"Horacio Alfonso Orantes Altuzar",area:"COMPLIANCE",cargo:"COMPLIANCE OPERATIONS MANAGER",email:"horantes@mendozafirm.com",phone:"56 2575 2281",perfil:"Responsable de coordinar flujos de trabajo y equipos de cumplimiento, asegurando la ejecución eficiente de procedimientos, controles y monitoreo de riesgos.",group:"mgr"},
+  {name:"Daniela Cristina Silva Arce",area:"COMPLIANCE",cargo:"COMPLIANCE MONITOR COORDINATOR",email:"dsilva@mendozafirm.com",phone:"55 5472 2982",perfil:"Responsable de liderar la ejecución y continuidad operativa del monitoreo basado en riesgos de la firma, asegurando el cumplimiento de metodologías y detectando tempranamente los posibles riesgos.",group:"coo"},
+  {name:"Clarisa Mendieta Ahumada",area:"COMPLIANCE",cargo:"COMPLIANCE ENABLEMENT COORDINATOR",email:"cmandieta@mendozafirm.com",phone:"55 3508 0961",perfil:"Responsable de estandarizar procesos y fortalecer controles operativos, impulsando la gestión de riesgos mediante herramientas, analítica e infraestructura, asegurando ejecución y trazabilidad en Compliance.",group:"coo"},
+  {name:"Itzia Rivera Sodi",area:"WAEs",cargo:"WAEs COORDINATOR",email:"irivera@mendozafirm.com",phone:"55 1726 8344",perfil:"Responsable de la gestión de actividades, equipos y recursos para garantizar el cumplimiento de los objetivos del área, asegurando alineación y eficiencia en los procesos dentro de WAEs",group:"coo"},
+  {name:"Jacqueline Vazquez De Leon",area:"WAEs",cargo:"WAEs TL",email:"jvazquez@mendozafirm.com",phone:"55 2197 9171",perfil:"Especialista en gestión de equipo y control de calidad, supervisando entregables como DCL, CVL y otros documentos de visas, asegurando cumplimiento de estándares y métricas de desempeño.",group:"tl"},
+  {name:"Anaid Sofia Jimenez Cruz",area:"WAEs",cargo:"WAEs TL",email:"ajimenez@mendozafirm.com",phone:"55 3466 8137",perfil:"Especialista en gestión de equipo y control de calidad, responsable de la supervisión de entregables y del cumplimiento de estándares y métricas de desempeño y productividad, con enfoque en distintas categorías de visas humanitarias.",group:"tl"},
+  {name:"Cesar Galvez Ortiz",area:"WAEs",cargo:"WAEs TL",email:"cgalvez@mendozafirm.com",phone:"55 3848 1853",perfil:"Encargado de la gestión de equipo y control de calidad, enfocado en supervisar entregables y garantizar resultados alineados a estándares de calidad y métricas de desempeño y productividad.",group:"tl"},
+  {name:"Daniel Arce Garcia",area:"WAEs",cargo:"WAEs TL",email:"darceg@mendozafirm.com",phone:"55 1368 9564",perfil:"Especialista en gestión de equipo y control de calidad, responsable de supervisar entregables como DCL, CVL y affidavits en distintos tipos de visa.",group:"tl"},
+  {name:"Frida Alexandra Castillo Navarro",area:"WAEs",cargo:"WAEs TL",email:"frcastillo@mendozafirm.com",phone:"55 4810 4527",perfil:"Especialista en gestión de equipos y control de calidad, con experiencia en la coordinación y supervisión de la elaboración de entregables (DCL, CVL y demás documentación requerida para distintos tipos de visa)",group:"tl"},
+  {name:"Raul Escalante Lopez",area:"PSYCHOLOGY",cargo:"PSYCHOLOGISTS MANAGER",email:"rescalante@mendozafirm.com",phone:"55 3703 9860",perfil:"Especialista en la dirección estratégica y gestión integral de operaciones migratorias, liderando equipos multidisciplinarios para supervisar la recolección de documentos, integración de expedientes y llenado de formularios críticos ante USCIS, asegurando calidad, cumplimiento de KPIs y eficiencia operativa.",group:"mgr"},
+  {name:"Alicia Soria Reyes",area:"PSYCHOLOGY",cargo:"PSYCHOLOGISTS COORDINATOR SR",email:"asoria@mendozafirm.com",phone:"55 3413 6233",perfil:"Responsable del equipo especializado en realizar entrevistas para la obtención de información y con ello generar una declaración para ser presentada ante USCIS, con la finalidad de obtener un beneficio migratorio (permiso de trabajo, residencia)",group:"coo"},
+  {name:"Dannevi Garcia Hernandez",area:"PSYCHOLOGY",cargo:"COMPLEX CASES PSYCHOLOGIST TL",email:"dgarcia@mendozafirm.com",phone:"55 1847 2712",perfil:"Responsable de supervición de casos especializados de distintos tipos de visado, asegurando un análisis estratégico y una guía precisa para fortalecer cada caso.",group:"tl"},
+  {name:"Tatiana Itzel Jaimes Aguirre",area:"PSYCHOLOGY",cargo:"PSYCHOLOGIST VISA T TL",email:"tjaimes@mendozafirm.com",phone:"55 2524 4459",perfil:"Responsable de supervisar el proceso de toma de declaraciones para solicitantes de la Visa T, garantizando un acompañamiento empático, seguro y conforme a los marcos legales de USCIS y políticas internas de Mendoza.",group:"tl"},
+  {name:"Alma Erendira Duran Rivera",area:"PSYCHOLOGY",cargo:"PSYCHOLOGIST VISA T TL",email:"aduran@mendozafirm.com",phone:"55 4443 1317",perfil:"Responsable de la coordinación, supervisión y desempeño de un equipo, asegurando el cumplimiento de objetivos, calidad en los procesos y mejora continua.",group:"tl"},
+  {name:"Martha Susana Paredes Gonzalez",area:"PSYCHOLOGY",cargo:"PSYCOLOGISTS VAWA P+ Org TL",email:"mparedes@mendozafirm.com",phone:"55 6673 7788",perfil:"Responsable de supervisar y asegurar la calidad del equipo operativo, tanto en el contacto diario con el cliente como en el tratamiento de los entregables del caso.",group:"tl"},
+  {name:"Jose Francisco Diaz Castañeda",area:"PSYCHOLOGY",cargo:"PSYCHOLOGISTS VAWA P+ Org TL",email:"jdiaz@mendozafirm.com",phone:"65 6191 4706",perfil:"Responsable de coordinar a los entrevistadores para la recolección de información de clientes en procesos migratorios (Visa T y VAWA).",group:"tl"},
+];
+
+// ── Edit modal ──
+function openEditModal(name, e) {
+  e.stopPropagation();
+  const p = allContacts.find(c => c.name === name);
+  if (!p) return;
+  document.getElementById('e-original-name').value = p.name;
+  document.getElementById('e-name').value  = p.name;
+  document.getElementById('e-area').value  = p.area;
+  document.getElementById('e-phone').value = p.phone;
+  document.getElementById('e-group').value = p.group;
+  document.getElementById('edit-error-msg').classList.remove('show');
+  document.getElementById('btn-edit-save').disabled = false;
+  document.getElementById('btn-edit-save').textContent = 'Guardar cambios';
+  document.getElementById('editModalOverlay').classList.add('show');
+  setTimeout(() => document.getElementById('e-name').focus(), 100);
+}
+function closeEditModal() { document.getElementById('editModalOverlay').classList.remove('show'); }
+function closeEditModalOutside(e) { if (e.target === document.getElementById('editModalOverlay')) closeEditModal(); }
+
+function updateContact() {
+  const originalName = document.getElementById('e-original-name').value;
+  const name  = document.getElementById('e-name').value.trim();
+  const area  = document.getElementById('e-area').value.trim();
+  const phone = document.getElementById('e-phone').value.trim();
+  const group = document.getElementById('e-group').value;
+  const errEl = document.getElementById('edit-error-msg');
+  const btn   = document.getElementById('btn-edit-save');
+
+  if (!name || !area || !phone) { errEl.classList.add('show'); return; }
+  errEl.classList.remove('show');
+
+  // Update locally first
+  const idx = allContacts.findIndex(c => c.name === originalName);
+  if (idx === -1) return;
+
+  if (!SCRIPT_URL || SCRIPT_URL.includes("PEGA_AQUI")) {
+    allContacts[idx] = { name, area, phone, group };
+    openGroups.add(group);
+    render(); closeEditModal();
+    showToast('✓  Contacto actualizado');
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Guardando...';
+
+  // Delete old + add new in Sheets
+  fetch(`${SCRIPT_URL}?action=deleteContact&name=${encodeURIComponent(originalName)}`)
+    .then(r => r.json())
+    .then(() => fetch(`${SCRIPT_URL}?action=addContact&name=${encodeURIComponent(name)}&area=${encodeURIComponent(area)}&phone=${encodeURIComponent(phone)}&group=${group}`))
+    .then(r => r.json())
+    .then(res => {
+      btn.disabled = false; btn.textContent = 'Guardar cambios';
+      if (res.ok) {
+        allContacts[idx] = { name, area, phone, group };
+        openGroups.add(group);
+        render(); closeEditModal();
+        showToast('✓  Contacto actualizado en Google Sheets');
+      } else {
+        errEl.textContent = res.error || 'Error al guardar.';
+        errEl.classList.add('show');
+      }
+    })
+    .catch(() => {
+      btn.disabled = false; btn.textContent = 'Guardar cambios';
+      errEl.textContent = 'Error de conexión.';
+      errEl.classList.add('show');
+    });
+}
+
+// ══ ADMIN MODE ══
+const ADMIN_PASSWORD = "tmlf2026"; // Cambia esta contraseña
+let isAdmin = false;
+
+function openLockModal() {
+  document.getElementById('lock-pwd').value = '';
+  document.getElementById('lock-error').classList.remove('show');
+  document.getElementById('lockOverlay').classList.add('show');
+  setTimeout(() => document.getElementById('lock-pwd').focus(), 100);
+}
+function closeLockModal() { document.getElementById('lockOverlay').classList.remove('show'); }
+function closeLockOutside(e) { if (e.target === document.getElementById('lockOverlay')) closeLockModal(); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeLockModal(); closeEditModal(); closeModal(); }
+  if (e.key === 'Enter' && document.getElementById('lockOverlay').classList.contains('show')) checkPassword();
+});
+
+function checkPassword() {
+  const pwd = document.getElementById('lock-pwd').value;
+  if (pwd === ADMIN_PASSWORD) {
+    isAdmin = true;
+    closeLockModal();
+    document.getElementById('adminBar').style.display = 'flex';
+    document.getElementById('btn-add-nav').style.display = 'flex';
+    document.getElementById('btn-admin-toggle').style.display = 'none';
+    render(document.getElementById('search').value);
+    showToast('✓  Modo administrador activado');
+  } else {
+    document.getElementById('lock-error').classList.add('show');
+    document.getElementById('lock-pwd').value = '';
+    document.getElementById('lock-pwd').focus();
+  }
+}
+
+function exitAdmin() {
+  isAdmin = false;
+  document.getElementById('adminBar').style.display = 'none';
+  document.getElementById('btn-add-nav').style.display = 'none';
+  document.getElementById('btn-admin-toggle').style.display = 'flex';
+  render(document.getElementById('search').value);
+  showToast('Modo administrador desactivado');
+}
+
+// ── Init ──
+loadContacts();
+</script>
+</body>
+</html>
