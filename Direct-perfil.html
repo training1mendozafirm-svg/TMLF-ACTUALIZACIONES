@@ -506,7 +506,23 @@ function loadContacts() {
   }
   fetch(`${SCRIPT_URL}?action=getContacts`)
     .then(r => r.json())
-    .then(data => { allContacts = data; render(); })
+    .then(data => {
+      // Usar FALLBACK como base (tiene cargo, email, perfil completos)
+      const fallbackMap = {};
+      FALLBACK_DATA.forEach(p => { fallbackMap[p.name.toLowerCase()] = p; });
+      // Enriquecer datos de Sheets con info de FALLBACK
+      allContacts = data.map(p => {
+        const fb = fallbackMap[p.name.toLowerCase()];
+        if (fb) {
+          delete fallbackMap[p.name.toLowerCase()];
+          return { ...fb, ...p, cargo: fb.cargo, email: fb.email, perfil: fb.perfil };
+        }
+        return p;
+      });
+      // Agregar contactos de FALLBACK que no estén en Sheets
+      Object.values(fallbackMap).forEach(p => allContacts.push(p));
+      render();
+    })
     .catch(() => { allContacts = FALLBACK_DATA; render(); showToast('⚠️  Sin conexión — datos locales'); });
 }
 
