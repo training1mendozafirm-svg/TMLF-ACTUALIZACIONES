@@ -3638,26 +3638,31 @@ textarea.cal-form-ctrl { resize:vertical; min-height:68px; }
         </div>
 
         <!-- KPIs dinámicos -->
-        <div class="kpi-grid" id="dashboard-kpis">
+        <div class="kpi-grid" id="dashboard-kpis" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">
           <div class="kpi-card accent-gold">
             <div class="kpi-card-label">Trainings este mes</div>
             <div class="kpi-card-value" id="kpi-trainings-mes">—</div>
-            <div class="kpi-card-sub">Desde el calendario</div>
-          </div>
-          <div class="kpi-card accent-green">
-            <div class="kpi-card-label">Revisiones completadas</div>
-            <div class="kpi-card-value" id="kpi-revisiones-comp">—</div>
-            <div class="kpi-card-sub">Total registradas</div>
-          </div>
-          <div class="kpi-card accent-warn">
-            <div class="kpi-card-label">Solicitudes pendientes</div>
-            <div class="kpi-card-value" id="kpi-sol-pend">—</div>
-            <div class="kpi-card-sub">Sin completar</div>
+            <div class="kpi-card-sub" id="kpi-trainings-sub">Desde el calendario</div>
           </div>
           <div class="kpi-card accent-navy">
-            <div class="kpi-card-label">Materiales activos</div>
-            <div class="kpi-card-value" id="kpi-materiales">—</div>
-            <div class="kpi-card-sub">En el repositorio</div>
+            <div class="kpi-card-label">Actividades esta semana</div>
+            <div class="kpi-card-value" id="kpi-act-semana">—</div>
+            <div class="kpi-card-sub" id="kpi-act-sub">En el calendario</div>
+          </div>
+          <div class="kpi-card accent-info">
+            <div class="kpi-card-label">Sesiones E-Learning</div>
+            <div class="kpi-card-value" id="kpi-elearning">—</div>
+            <div class="kpi-card-sub" id="kpi-elearning-sub">Total registradas</div>
+          </div>
+          <div class="kpi-card accent-warn">
+            <div class="kpi-card-label">Tickets DI abiertos</div>
+            <div class="kpi-card-value" id="kpi-di-abiertos">—</div>
+            <div class="kpi-card-sub" id="kpi-di-sub">Sin confirmar</div>
+          </div>
+          <div class="kpi-card accent-green">
+            <div class="kpi-card-label">Revisiones DI completadas</div>
+            <div class="kpi-card-value" id="kpi-revisiones-comp">—</div>
+            <div class="kpi-card-sub">Estado: Confirmado</div>
           </div>
         </div>
 
@@ -3666,7 +3671,7 @@ textarea.cal-form-ctrl { resize:vertical; min-height:68px; }
           <div class="card">
             <div class="card-header">
               <div>
-                <div class="card-title">Próximos Trainings</div>
+                <div class="card-title">📅 Próximos Trainings</div>
                 <div class="card-subtitle">Agenda de los próximos 14 días</div>
               </div>
               <button class="filter-btn" onclick="showSection('calendario')">Ver todos →</button>
@@ -3676,14 +3681,44 @@ textarea.cal-form-ctrl { resize:vertical; min-height:68px; }
             </div>
           </div>
 
-          <!-- Solicitudes recientes -->
+          <!-- Sesiones E-Learning recientes -->
           <div class="card">
             <div class="card-header">
               <div>
-                <div class="card-title">Solicitudes Recientes</div>
-                <div class="card-subtitle">Últimas solicitudes registradas</div>
+                <div class="card-title">📚 Sesiones E-Learning</div>
+                <div class="card-subtitle">Últimas sesiones registradas</div>
               </div>
-              <button class="filter-btn" onclick="showSection('solicitudes')">Ver todas →</button>
+              <button class="filter-btn" onclick="showSection('calendario')">Ver todas →</button>
+            </div>
+            <div class="card-body" style="padding-top:8px">
+              <div id="dashboard-elearning-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:24px">
+          <!-- Tickets DI recientes -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">🎫 Tickets DI</div>
+                <div class="card-subtitle">Solicitudes de diseño instruccional activas</div>
+              </div>
+              <button class="filter-btn" onclick="showSection('revisiones')">Ver todas →</button>
+            </div>
+            <div class="card-body" style="padding-top:8px">
+              <div id="dashboard-di-list"></div>
+            </div>
+          </div>
+
+          <!-- Revisiones DI del portal -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">🔍 Revisiones DI</div>
+                <div class="card-subtitle">Peticiones de revisión instruccional</div>
+              </div>
+              <button class="filter-btn" onclick="showSection('revisiones')">Ver todas →</button>
             </div>
             <div class="card-body" style="padding-top:8px">
               <div id="dashboard-solicitudes-list"></div>
@@ -3695,8 +3730,8 @@ textarea.cal-form-ctrl { resize:vertical; min-height:68px; }
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">Estatus del Equipo</div>
-              <div class="card-subtitle">Carga actual y actividad de los trainers</div>
+              <div class="card-title">👥 Estatus del Equipo</div>
+              <div class="card-subtitle">Actividad en calendario · E-Learning · Tickets DI</div>
             </div>
           </div>
           <div class="table-wrap">
@@ -3704,11 +3739,11 @@ textarea.cal-form-ctrl { resize:vertical; min-height:68px; }
               <thead>
                 <tr>
                   <th>Trainer</th>
-                  <th>Rol</th>
-                  <th>Proyecto Activo</th>
-                  <th>Solicitudes</th>
-                  <th>Carga</th>
-                  <th>Estatus</th>
+                  <th>Act. Calendario</th>
+                  <th>Sesiones EL</th>
+                  <th>Tickets DI</th>
+                  <th>Próxima actividad</th>
+                  <th>Actividad</th>
                 </tr>
               </thead>
               <tbody id="dashboard-equipo-table"></tbody>
@@ -4638,116 +4673,137 @@ textarea.cal-form-ctrl { resize:vertical; min-height:68px; }
         <div class="page-header flex-between">
           <div>
             <div class="page-title">Reportes y Métricas</div>
-            <div class="page-subtitle">KPIs del equipo de training — productividad, tiempos y estatus</div>
+            <div class="page-subtitle" id="reporte-subtitle">KPIs del equipo — datos en tiempo real del calendario, E-Learning y tickets DI</div>
           </div>
-          <div style="display:flex;gap:8px">
-            <select class="filter-select">
-              <option>Abril 2025</option>
-              <option>Marzo 2025</option>
-              <option>Febrero 2025</option>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select class="filter-select" id="reporte-mes-filter" onchange="renderReportes()">
+              <option value="mes">Este mes</option>
+              <option value="semana">Esta semana</option>
+              <option value="anio">Este año</option>
+              <option value="todo">Todo el historial</option>
             </select>
-            <button class="filter-btn primary-btn">Exportar PDF</button>
+            <button class="filter-btn primary-btn" onclick="exportarReporteCSV()">⬇ Exportar CSV</button>
           </div>
         </div>
 
-        <!-- KPIs principales -->
-        <div class="kpi-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">
+        <!-- KPIs principales — 100% reales -->
+        <div class="kpi-grid" id="reporte-kpis" style="grid-template-columns:repeat(auto-fill,minmax(170px,1fr))">
           <div class="kpi-card accent-gold">
             <div class="kpi-card-label">Trainings impartidos</div>
-            <div class="kpi-card-value">28</div>
-            <div class="kpi-card-sub">Este año</div>
-            <div class="kpi-card-trend trend-up">↑ 12% vs año anterior</div>
-          </div>
-          <div class="kpi-card accent-green">
-            <div class="kpi-card-label">Materiales creados</div>
-            <div class="kpi-card-value">47</div>
-            <div class="kpi-card-sub">Este año</div>
-            <div class="kpi-card-trend trend-up">↑ 23 nuevos</div>
+            <div class="kpi-card-value" id="rk-trainings">—</div>
+            <div class="kpi-card-sub" id="rk-trainings-sub">Del calendario</div>
           </div>
           <div class="kpi-card accent-navy">
-            <div class="kpi-card-label">Revisiones completadas</div>
-            <div class="kpi-card-value">91</div>
-            <div class="kpi-card-sub">Puntualidad: 88%</div>
-            <div class="kpi-card-trend trend-up">↑ promedio 2.3 días</div>
+            <div class="kpi-card-label">Total actividades</div>
+            <div class="kpi-card-value" id="rk-actividades">—</div>
+            <div class="kpi-card-sub" id="rk-act-sub">Calendario</div>
           </div>
-          <div class="kpi-card accent-warn">
-            <div class="kpi-card-label">Tiempo prom. entrega</div>
-            <div class="kpi-card-value">4.2</div>
-            <div class="kpi-card-sub">días hábiles</div>
-            <div class="kpi-card-trend trend-up">↓ 0.8 días vs anterior</div>
+          <div class="kpi-card accent-info">
+            <div class="kpi-card-label">Sesiones E-Learning</div>
+            <div class="kpi-card-value" id="rk-elearning">—</div>
+            <div class="kpi-card-sub" id="rk-el-sub">Registradas</div>
           </div>
           <div class="kpi-card accent-green">
-            <div class="kpi-card-label">Tasa de aprobación</div>
-            <div class="kpi-card-value">92%</div>
-            <div class="kpi-card-sub">Sin revisión adicional</div>
-            <div class="kpi-card-trend trend-up">↑ 4% vs trimestre ant.</div>
+            <div class="kpi-card-label">Tickets DI confirmados</div>
+            <div class="kpi-card-value" id="rk-di-conf">—</div>
+            <div class="kpi-card-sub" id="rk-di-sub">De total registrados</div>
+          </div>
+          <div class="kpi-card accent-warn">
+            <div class="kpi-card-label">Revisiones DI abiertas</div>
+            <div class="kpi-card-value" id="rk-rev-abiertas">—</div>
+            <div class="kpi-card-sub">Portal de revisiones</div>
           </div>
         </div>
 
         <div class="grid-2 mt-24" style="align-items:flex-start">
-          <!-- Trainings por mes -->
+
+          <!-- Actividades por mes (bar chart real) -->
           <div class="card">
             <div class="card-header">
-              <div><div class="card-title">Trainings por Mes</div><div class="card-subtitle">Enero – Abril 2025</div></div>
+              <div><div class="card-title">📅 Actividades por Mes</div><div class="card-subtitle" id="bar-subtitle">Últimos 6 meses · del calendario</div></div>
             </div>
             <div class="card-body">
-              <div class="bar-chart" id="bar-trainings-mes"></div>
+              <div class="bar-chart" id="bar-trainings-mes" style="height:140px"></div>
             </div>
           </div>
 
-          <!-- Distribución por tipo -->
+          <!-- Distribución por tipo de actividad -->
           <div class="card">
             <div class="card-header">
-              <div><div class="card-title">Materiales por Tipo</div><div class="card-subtitle">Distribución del repositorio</div></div>
+              <div><div class="card-title">📊 Actividades por Tipo</div><div class="card-subtitle">Distribución real del calendario</div></div>
             </div>
             <div class="card-body">
-              <div class="donut-wrap">
-                <div class="donut"></div>
-                <div class="donut-legend">
-                  <div class="donut-legend-item"><div class="donut-dot" style="background:var(--gold)"></div><span>Trainings (42%)</span></div>
-                  <div class="donut-legend-item"><div class="donut-dot" style="background:var(--success)"></div><span>Guías (26%)</span></div>
-                  <div class="donut-legend-item"><div class="donut-dot" style="background:var(--info)"></div><span>Simuladores (17%)</span></div>
-                  <div class="donut-legend-item"><div class="donut-dot" style="background:var(--warn)"></div><span>Infografías (15%)</span></div>
-                </div>
-              </div>
+              <div id="reporte-tipo-bars"></div>
             </div>
           </div>
 
-          <!-- Productividad por trainer -->
-          <div class="card">
+          <!-- Actividad por trainer (real) -->
+          <div class="card" style="grid-column:1/-1">
             <div class="card-header">
-              <div><div class="card-title">Productividad por Trainer</div><div class="card-subtitle">Entregas y revisiones — mes actual</div></div>
+              <div><div class="card-title">👥 Actividad por Trainer</div><div class="card-subtitle">Calendario · E-Learning · Tickets DI</div></div>
             </div>
             <div class="table-wrap">
               <table class="data-table">
-                <thead><tr><th>Trainer</th><th>Entregas</th><th>Revisiones</th><th>Puntualidad</th><th>Carga</th></tr></thead>
+                <thead><tr>
+                  <th>Trainer</th>
+                  <th>Act. Calendario</th>
+                  <th>Trainings</th>
+                  <th>Sesiones EL</th>
+                  <th>Tickets DI</th>
+                  <th>Revs. DI</th>
+                  <th>Actividad relativa</th>
+                </tr></thead>
                 <tbody id="reporte-trainer-table"></tbody>
               </table>
             </div>
           </div>
 
-          <!-- Solicitudes por estatus -->
+          <!-- Tickets DI por estatus -->
           <div class="card">
             <div class="card-header">
-              <div><div class="card-title">Solicitudes por Estatus</div><div class="card-subtitle">Estado actual del backlog</div></div>
+              <div><div class="card-title">🎫 Tickets DI por Estatus</div><div class="card-subtitle">Estado del pipeline de diseño instruccional</div></div>
             </div>
             <div class="card-body">
               <div id="reporte-estatus-bars"></div>
             </div>
           </div>
 
-          <!-- Pendientes por área -->
+          <!-- Revisiones DI por estatus (portal) -->
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">🔍 Revisiones DI por Estatus</div><div class="card-subtitle">Portal de revisiones instruccionales</div></div>
+            </div>
+            <div class="card-body">
+              <div id="reporte-revdi-bars"></div>
+            </div>
+          </div>
+
+          <!-- Distribución por área (del calendario + DI) -->
           <div class="card" style="grid-column:1/-1">
             <div class="card-header">
-              <div><div class="card-title">Pendientes por Área</div><div class="card-subtitle">Materiales y solicitudes sin resolver por área legal</div></div>
+              <div><div class="card-title">🗂 Actividad por Área</div><div class="card-subtitle">Actividades del calendario clasificadas por área del proyecto</div></div>
             </div>
             <div class="table-wrap">
               <table class="data-table">
-                <thead><tr><th>Área</th><th>Pendientes</th><th>En Proceso</th><th>Completados</th><th>% Avance</th></tr></thead>
+                <thead><tr><th>Área</th><th>Actividades Cal.</th><th>Tickets DI</th><th>Revs. DI</th><th>Total</th><th>Proporción</th></tr></thead>
                 <tbody id="reporte-area-table"></tbody>
               </table>
             </div>
           </div>
+
+          <!-- E-Learning por trainer -->
+          <div class="card" style="grid-column:1/-1">
+            <div class="card-header">
+              <div><div class="card-title">📚 Sesiones E-Learning por Trainer</div><div class="card-subtitle">Detalle de sesiones registradas</div></div>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Trainer</th><th>Total</th><th>Completadas</th><th>Pendientes</th><th>En revisión</th><th>Avance</th></tr></thead>
+                <tbody id="reporte-el-table"></tbody>
+              </table>
+            </div>
+          </div>
+
         </div>
       </div>
     </div><!-- /section-reportes -->
@@ -5156,7 +5212,7 @@ textarea.cal-form-ctrl { resize:vertical; min-height:68px; }
           <span class="alert-icon">🔐</span>
           <div class="alert-body">
             <strong>Seguridad de contraseñas</strong>
-            Las contraseñas se almacenan localmente en el navegador. Al resetear, el usuario recibe la contraseña temporal <strong>tmlf2025</strong> y deberá cambiarla en su próximo acceso. Para producción, conectar con Google Apps Script como backend seguro.
+            Las contraseñas se almacenan localmente en el navegador. El administrador puede establecer cualquier contraseña al resetear. Para producción, conectar con Google Apps Script como backend seguro.
           </div>
         </div>
       </div>
@@ -5304,94 +5360,113 @@ function cargaClass(n) {
    DASHBOARD RENDER
    ============================================================ */
 function renderDashboard() {
-  // ── Pull data from the real calendar ────────────────────────
-  const now    = new Date(); now.setHours(0,0,0,0);
-  const lun    = new Date(now); lun.setDate(now.getDate() - ((now.getDay()+6)%7));
-  const dom    = new Date(lun); dom.setDate(lun.getDate()+6);
-  const en14   = new Date(now.getTime() + 14*86400000);
-  const en30   = new Date(now.getTime() + 30*86400000);
+  /* ── Fuentes de datos reales ─────────────────────────────────
+     cal49Eventos  → actividades del calendario (Google Sheets)
+     elSesiones    → sesiones E-Learning (Google Sheets)
+     diTickets     → tickets DI del calendario (Google Sheets)
+     getRevisiones → revisiones DI del portal (localStorage)
+  ─────────────────────────────────────────────────────────── */
+  const now   = new Date(); now.setHours(0,0,0,0);
+  const lun   = new Date(now); lun.setDate(now.getDate() - ((now.getDay()+6)%7));
+  const dom   = new Date(lun); dom.setDate(lun.getDate()+6);
+  const en14  = new Date(now.getTime() + 14*86400000);
 
-  const realEvents = calEventos.filter(e =>
-    !['Vacaciones','Cumpleaños','Día OFF'].includes(e.tipoActividad)
-  );
-  const trainingTypes = ['Training teórico','Training práctico','Habilitación'];
+  // ── Datos del calendario
+  const SPECIAL = ['Vacaciones','Cumpleaños','Día OFF'];
+  const TRAINING_TYPES = ['Training teórico','Training práctico','Habilitación','Sombreo'];
+  const realEvents = (typeof cal49Eventos !== 'undefined' ? cal49Eventos : [])
+    .filter(e => !SPECIAL.includes(e.tipoActividad));
 
-  // Semana actual
-  const semanaEvs   = realEvents.filter(e => { const d=calParseLocal(e.start); d.setHours(0,0,0,0); return d>=lun && d<=dom; });
-  const trainingsSem= semanaEvs.filter(e  => trainingTypes.includes(e.tipoActividad));
-
-  // Hero boxes
-  const solEl = document.getElementById('hero-box-sol');
-  const entEl = document.getElementById('hero-box-entregas');
-  if (solEl) solEl.textContent  = SOLICITUDES.length ? SOLICITUDES.filter(s=>s.estatus!=='Completada').length : '—';
-  if (entEl) entEl.textContent  = trainingsSem.length || '—';
-
-  // KPI cards
   const mesEvs = realEvents.filter(e => {
-    const d = calParseLocal(e.start);
+    const d = new Date((e.start||'').slice(0,10)+'T00:00:00');
     return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear();
   });
-  const kpiTrain = document.getElementById('kpi-trainings-mes');
-  const kpiRev   = document.getElementById('kpi-revisiones-comp');
-  const kpiSol   = document.getElementById('kpi-sol-pend');
-  const kpiMat   = document.getElementById('kpi-materiales');
-  if (kpiTrain) kpiTrain.textContent = mesEvs.filter(e=>trainingTypes.includes(e.tipoActividad)).length || '0';
-  if (kpiRev)   kpiRev.textContent   = REVISIONES.length || '0';
-  if (kpiSol)   kpiSol.textContent   = SOLICITUDES.filter(s=>s.estatus!=='Completada').length || '0';
-  if (kpiMat)   kpiMat.textContent   = MATERIALES.length || '0';
+  const semanaEvs   = realEvents.filter(e => { const d=new Date((e.start||'').slice(0,10)+'T00:00:00'); return d>=lun && d<=dom; });
+  const trainingsMes= mesEvs.filter(e => TRAINING_TYPES.includes(e.tipoActividad));
+  const proximosEvs = realEvents
+    .filter(e => { const d=new Date((e.start||'').slice(0,10)+'T00:00:00'); return d>=now && d<=en14; })
+    .sort((a,b)=>new Date(a.start)-new Date(b.start));
 
-  // Hero stat vals
-  const hTrainings  = document.getElementById('hero-stat-trainings');
-  const hRevisiones = document.getElementById('hero-stat-revisiones');
-  const hSolicitudes= document.getElementById('hero-stat-solicitudes');
-  const hMateriales = document.getElementById('hero-stat-materiales');
-  if (hTrainings)   hTrainings.textContent   = mesEvs.filter(e=>trainingTypes.includes(e.tipoActividad)).length || '0';
-  if (hRevisiones)  hRevisiones.textContent  = REVISIONES.length || '0';
-  if (hSolicitudes) hSolicitudes.textContent = SOLICITUDES.length || '0';
-  if (hMateriales)  hMateriales.textContent  = MATERIALES.length || '0';
+  // ── Datos E-Learning
+  const el  = typeof elSesiones !== 'undefined' ? elSesiones : [];
+  const elCompletadas = el.filter(s => s.estatus==='Completado' || s.estatus==='completado');
+  const elPendientes  = el.filter(s => s.estatus==='Pendiente'  || s.estatus==='pendiente');
 
-  // Portal sidebar status
-  const sbTrain = document.getElementById('sidebar-trainings-activos');
-  const sbSem   = document.getElementById('sidebar-act-semana');
-  if (sbTrain) sbTrain.textContent = mesEvs.filter(e=>trainingTypes.includes(e.tipoActividad)).length || '0';
-  if (sbSem)   sbSem.textContent   = semanaEvs.length || '0';
+  // ── Datos Tickets DI (del calendario)
+  const di = typeof diTickets !== 'undefined' ? diTickets : [];
+  const diAbiertos    = di.filter(t => !['Confirmado'].includes(t.estatus));
+  const diConfirmados = di.filter(t => t.estatus === 'Confirmado');
 
-  // Pending header bubble
+  // ── Revisiones DI (portal / localStorage)
+  const revs = typeof getRevisiones === 'function' ? getRevisiones() : [];
+  const revsAbiertas = revs.filter(r => !['Completada','Aprobada'].includes(r.estatus));
+
+  // ── Hero stats
+  const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+  set('hero-stat-trainings',   trainingsMes.length);
+  set('hero-stat-revisiones',  di.length);
+  set('hero-stat-solicitudes', revs.length);
+  set('hero-stat-materiales',  el.length);
+  set('hero-box-sol',          revsAbiertas.length || diAbiertos.length || '0');
+  set('hero-box-entregas',     semanaEvs.length || '—');
+
+  // ── KPI cards
+  set('kpi-trainings-mes',  trainingsMes.length);
+  set('kpi-act-semana',     semanaEvs.length);
+  set('kpi-elearning',      el.length);
+  set('kpi-di-abiertos',    diAbiertos.length);
+  set('kpi-revisiones-comp',diConfirmados.length);
+
+  // KPI subs
+  const setSub = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+  setSub('kpi-trainings-sub', `+${mesEvs.length} actividades totales`);
+  setSub('kpi-act-sub',       semanaEvs.length ? `Hoy: ${realEvents.filter(e=>{const d=new Date((e.start||'').slice(0,10)+'T00:00:00');return d.getTime()===now.getTime();}).length} act.` : 'Sin actividades hoy');
+  setSub('kpi-elearning-sub', `${elCompletadas.length} completadas · ${elPendientes.length} pendientes`);
+  setSub('kpi-di-sub',        `${diConfirmados.length} confirmados`);
+
+  // ── Sidebar
+  set('sidebar-trainings-activos', trainingsMes.length);
+  set('sidebar-act-semana',        semanaEvs.length);
+
+  // ── Pending bubble (revisiones DI abiertas + tickets DI abiertos)
+  const totalPend = revsAbiertas.length + diAbiertos.length;
   const pendEl = document.getElementById('pending-count');
-  const pend = SOLICITUDES.filter(s=>s.estatus!=='Completada').length;
-  if (pendEl) {
-    pendEl.textContent = pend;
-    pendEl.style.display = pend > 0 ? '' : 'none';
+  if (pendEl) { pendEl.textContent = totalPend; pendEl.style.display = totalPend > 0 ? '' : 'none'; }
+
+  // ── Alertas dinámicas
+  const alertsEl = document.getElementById('dashboard-alerts');
+  if (alertsEl) {
+    const alerts = [];
+    const hoy = realEvents.filter(e => {
+      const d=new Date((e.start||'').slice(0,10)+'T00:00:00');
+      return d.getTime()===now.getTime() && TRAINING_TYPES.includes(e.tipoActividad);
+    });
+    if (hoy.length) alerts.push(`<div class="alert-banner green"><span class="alert-icon">🎓</span><div class="alert-body"><strong>Trainings hoy: ${hoy.length}</strong>${hoy.map(e=>`${e.title} · ${e.trainer}`).join(' — ')}</div></div>`);
+    if (diAbiertos.length) alerts.push(`<div class="alert-banner warn"><span class="alert-icon">🎫</span><div class="alert-body"><strong>${diAbiertos.length} ticket${diAbiertos.length>1?'s':''} DI sin confirmar</strong> Pendientes de revisión en el calendario.</div></div>`);
+    if (revsAbiertas.length) alerts.push(`<div class="alert-banner navy"><span class="alert-icon">🔍</span><div class="alert-body"><strong>${revsAbiertas.length} revisión${revsAbiertas.length>1?'es':''} DI abiertas</strong> En el portal de revisiones.</div></div>`);
+    if (elPendientes.length) alerts.push(`<div class="alert-banner navy"><span class="alert-icon">📚</span><div class="alert-body"><strong>${elPendientes.length} sesión${elPendientes.length>1?'es':''} E-Learning pendientes</strong> Por completar o revisar.</div></div>`);
+    alertsEl.innerHTML = alerts.join('');
   }
 
-  // ── Próximos trainings (del calendario real) ─────────────────
-  const proximos = realEvents
-    .filter(e => { const d=calParseLocal(e.start); d.setHours(0,0,0,0); return d>=now && d<=en14 && trainingTypes.includes(e.tipoActividad); })
-    .sort((a,b)=>calParseLocal(a.start)-calParseLocal(b.start))
-    .slice(0,4);
-
+  // ── Próximos trainings (del calendario)
   const listEl = document.getElementById('proximos-trainings-list');
   if (listEl) {
-    if (!proximos.length) {
-      listEl.innerHTML = `<div class="empty-state" style="padding:24px 0">
-        <div class="empty-state-icon">📅</div>
-        <div>Sin trainings en los próximos 14 días</div>
-      </div>`;
+    const prox = proximosEvs.filter(e => TRAINING_TYPES.includes(e.tipoActividad)).slice(0,5);
+    if (!prox.length) {
+      listEl.innerHTML = `<div class="empty-state" style="padding:20px 0"><div class="empty-state-icon">📅</div><div>Sin trainings en los próximos 14 días</div></div>`;
     } else {
-      listEl.innerHTML = proximos.map(ev => {
-        const d = calParseLocal(ev.start);
-        const icon = CAL_TIPOS_ICON[ev.tipoActividad]||'📌';
-        const color = calTrainerColor(ev.trainer);
-        const timeStr = ev.start.includes('T')
-          ? d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'})
-          : 'Todo el día';
+      listEl.innerHTML = prox.map(ev => {
+        const d     = new Date((ev.start||'').slice(0,10)+'T00:00:00');
+        const color = (typeof calTrainerColor==='function') ? calTrainerColor(ev.trainer) : '#6b7280';
+        const icon  = (typeof CAL49_TIPOS_ICON!=='undefined' && CAL49_TIPOS_ICON[ev.tipoActividad]) || '🎓';
+        const timeStr = (ev.start||'').includes('T') ? new Date(ev.start).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}) : 'Todo el día';
         return `<div class="agenda-item">
           <div class="agenda-date-box">
             <div class="agenda-date-day">${d.getDate()}</div>
             <div class="agenda-date-month">${d.toLocaleDateString('es-MX',{month:'short'}).toUpperCase()}</div>
           </div>
           <div class="agenda-content">
-            <div class="agenda-title">${icon} ${ev.title}</div>
+            <div class="agenda-title">${icon} ${ev.title||ev.titulo||'—'}</div>
             <div class="agenda-meta">
               <span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:${color}">
                 <span style="width:7px;height:7px;border-radius:50%;background:${color};flex-shrink:0"></span>${ev.trainer||'—'}
@@ -5405,65 +5480,110 @@ function renderDashboard() {
     }
   }
 
-  // ── Solicitudes recientes ─────────────────────────────────────
-  const solListEl = document.getElementById('dashboard-solicitudes-list');
-  if (solListEl) {
-    if (!SOLICITUDES.length) {
-      solListEl.innerHTML = `<div class="empty-state" style="padding:24px 0">
-        <div class="empty-state-icon">📝</div>
-        <div>Sin solicitudes registradas aún</div>
-      </div>`;
+  // ── Sesiones E-Learning recientes
+  const elListEl = document.getElementById('dashboard-elearning-list');
+  if (elListEl) {
+    if (!el.length) {
+      elListEl.innerHTML = `<div class="empty-state" style="padding:20px 0"><div class="empty-state-icon">📚</div><div>Sin sesiones E-Learning registradas</div></div>`;
     } else {
-      solListEl.innerHTML = SOLICITUDES.slice(0,5).map(s => `
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--beige-mid)">
+      const recents = [...el].sort((a,b)=>new Date(b.fecha||b.start||0)-new Date(a.fecha||a.start||0)).slice(0,5);
+      elListEl.innerHTML = recents.map(s => {
+        const color = (typeof calTrainerColor==='function') ? calTrainerColor(s.trainer) : '#6b7280';
+        const statusMap = { Pendiente:'badge-warn', pendiente:'badge-warn', 'En revisión':'badge-info', 'en-revision':'badge-info', Completado:'badge-green', completado:'badge-green', Cancelado:'badge-red', cancelado:'badge-red' };
+        const badge = statusMap[s.estatus] || 'badge-gray';
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--beige-mid)">
           <div>
             <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:2px">${s.titulo||s.title||'—'}</div>
-            <div style="font-size:11px;color:var(--text-soft)">${s.tipo||''} · ${s.area||''}</div>
+            <div style="font-size:11px;color:var(--text-soft);display:flex;align-items:center;gap:6px">
+              <span style="display:inline-flex;align-items:center;gap:4px;font-weight:600;color:${color}"><span style="width:6px;height:6px;border-radius:50%;background:${color}"></span>${s.trainer||'—'}</span>
+              <span>${s.fecha||s.start||''}</span>
+            </div>
           </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-            ${statusBadge(s.estatus)}
+          <span class="badge ${badge}">${s.estatus||'—'}</span>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  // ── Tickets DI recientes
+  const diListEl = document.getElementById('dashboard-di-list');
+  if (diListEl) {
+    const allDi = [...di, ...revs]; // tickets del calendario + revisiones del portal
+    if (!allDi.length) {
+      diListEl.innerHTML = `<div class="empty-state" style="padding:20px 0"><div class="empty-state-icon">🎫</div><div>Sin tickets DI registrados</div></div>`;
+    } else {
+      const recent = allDi.slice(0,5);
+      diListEl.innerHTML = recent.map(t => {
+        const isPortal = !!t.solicitanteNombre; // viene de revisiones del portal
+        const titulo   = t.titulo || t.title || '—';
+        const trainer  = t.trainer || t.solicitanteNombre || '—';
+        const estatus  = t.estatus || '—';
+        const color    = (typeof calTrainerColor==='function') ? calTrainerColor(trainer) : '#6b7280';
+        const statusMap = { 'Abierto':'badge-info','En proceso':'badge-purple','En revisión':'badge-warn','Confirmado':'badge-green','Nueva':'badge-gold','Con observaciones':'badge-warn','Aprobada':'badge-green','Completada':'badge-green' };
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--beige-mid)">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:2px">${titulo}</div>
+            <div style="font-size:11px;color:var(--text-soft);display:flex;align-items:center;gap:6px">
+              <span style="display:inline-flex;align-items:center;gap:4px;font-weight:600;color:${color}"><span style="width:6px;height:6px;border-radius:50%;background:${color}"></span>${trainer}</span>
+              <span class="badge badge-gray" style="font-size:9px">${isPortal?'Portal':'Calendario'}</span>
+            </div>
           </div>
+          <span class="badge ${statusMap[estatus]||'badge-gray'}">${estatus}</span>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  // ── Revisiones DI del portal
+  const solListEl = document.getElementById('dashboard-solicitudes-list');
+  if (solListEl) {
+    if (!revs.length) {
+      solListEl.innerHTML = `<div class="empty-state" style="padding:20px 0"><div class="empty-state-icon">🔍</div><div>Sin revisiones DI registradas aún</div></div>`;
+    } else {
+      const statusMap = { 'Nueva':'badge-gold','En revisión':'badge-info','Con observaciones':'badge-warn','Modificaciones enviadas':'badge-purple','Aprobada':'badge-green','Lista para subir':'badge-navy','Completada':'badge-green' };
+      solListEl.innerHTML = revs.slice(0,5).map(r => `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--beige-mid)">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:2px">${r.titulo||'—'}</div>
+            <div style="font-size:11px;color:var(--text-soft)">${r.tipoMaterial||''} · ${r.area||''}</div>
+          </div>
+          <span class="badge ${statusMap[r.estatus]||'badge-gray'}">${r.estatus}</span>
         </div>`).join('');
     }
   }
 
-  // ── Estatus del equipo (desde usuarios registrados + calendario) ──
-  const users    = (typeof getUsers === 'function' ? getUsers() : null) || [];
-  const trainers = users.filter(u => u.rol === 'trainer' && u.activo);
-  const equipoEl = document.getElementById('dashboard-equipo-table');
+  // ── Estatus del equipo (combinando las 3 fuentes)
+  const users   = (typeof getUsers==='function' ? getUsers() : null) || [];
+  const trainers= users.filter(u => u.rol==='trainer' && u.activo);
+  const equipoEl= document.getElementById('dashboard-equipo-table');
   if (equipoEl) {
     if (!trainers.length) {
-      equipoEl.innerHTML = `<tr><td colspan="5"><div class="empty-state" style="padding:20px">Sin trainers registrados aún</div></td></tr>`;
+      equipoEl.innerHTML = `<tr><td colspan="6"><div class="empty-state" style="padding:20px">Sin trainers registrados aún</div></td></tr>`;
     } else {
+      const maxCal = Math.max(1,...trainers.map(u=>realEvents.filter(e=>e.trainer===u.trainer).length));
       equipoEl.innerHTML = trainers.map(u => {
-        const count = realEvents.filter(e=>e.trainer===u.trainer).length;
-        const maxCnt= Math.max(1,...trainers.map(x=>realEvents.filter(e=>e.trainer===x.trainer).length));
-        const pct   = Math.round((count/maxCnt)*100);
-        const cls   = pct>=80?'high':pct>=50?'mid':'low';
-        const prox  = realEvents.filter(e=>{
-          const d=calParseLocal(e.start);d.setHours(0,0,0,0);
-          return e.trainer===u.trainer && d>=now && d<=en14;
-        });
+        const calCount = realEvents.filter(e=>e.trainer===u.trainer).length;
+        const elCount  = el.filter(s=>s.trainer===u.trainer||s.trainer===u.nombre).length;
+        const diCount  = di.filter(t=>t.trainer===u.trainer||t.trainer===u.nombre).length;
+        const pct      = Math.round((calCount/maxCal)*100);
+        const cls      = pct>=80?'high':pct>=50?'mid':'low';
+        const nextAct  = proximosEvs.filter(e=>e.trainer===u.trainer)[0];
         return `<tr>
           <td>
             <div style="display:flex;align-items:center;gap:10px">
               <div style="width:30px;height:30px;border-radius:50%;background:${u.color};display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:11px;font-weight:700;color:white;flex-shrink:0">${u.iniciales}</div>
-              <div>
-                <div class="td-main">${u.nombre}</div>
-                <div class="td-soft">${u.username}</div>
-              </div>
+              <div class="td-main">${u.nombre}</div>
             </div>
           </td>
-          <td><span class="badge badge-green" style="font-size:10px">Trainer</span></td>
-          <td class="td-soft">${prox[0]?.title || '—'}</td>
-          <td><span class="badge badge-gold">${count} registros</span></td>
-          <td>
-            <div style="min-width:80px">
-              <div style="display:flex;justify-content:space-between;font-size:10px;font-family:var(--font-mono);margin-bottom:3px">
-                <span>Actividad</span><span>${count}</span>
-              </div>
-              <div class="workload-bar"><div class="workload-fill ${cls}" style="width:${pct}%"></div></div>
-            </div>
+          <td><span class="badge badge-gold">${calCount}</span></td>
+          <td><span class="badge badge-info">${elCount}</span></td>
+          <td><span class="badge ${diCount>0?'badge-warn':'badge-gray'}">${diCount}</span></td>
+          <td class="td-soft" style="font-size:11px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+            ${nextAct ? nextAct.title : '—'}
+          </td>
+          <td style="min-width:80px">
+            <div class="workload-bar"><div class="workload-fill ${cls}" style="width:${pct}%"></div></div>
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-soft);margin-top:3px">${calCount} act.</div>
           </td>
         </tr>`;
       }).join('');
@@ -6362,84 +6482,305 @@ function renderMateriales() {
 }
 
 /* ============================================================
-   REPORTES RENDER
+   REPORTES RENDER — 100% datos reales
+   Fuentes: cal49Eventos (calendario) · elSesiones (E-Learning) · diTickets (DI) · getRevisiones() (portal)
    ============================================================ */
 function renderReportes() {
-  // Bar chart
-  const monthData = [
-    { mes:'Ene', val:5 },
-    { mes:'Feb', val:7 },
-    { mes:'Mar', val:9 },
-    { mes:'Abr', val:7 },
-  ];
-  const max = Math.max(...monthData.map(m=>m.val));
-  document.getElementById('bar-trainings-mes').innerHTML = monthData.map(m => `
-    <div class="bar-item">
-      <div class="bar-val">${m.val}</div>
-      <div class="bar-fill" style="height:${(m.val/max)*100}px"></div>
-      <div class="bar-label">${m.mes}</div>
-    </div>`).join('');
+  /* ── Fuentes ─────────────────────────────────────────────── */
+  const allCal  = typeof cal49Eventos !== 'undefined' ? cal49Eventos : [];
+  const allEl   = typeof elSesiones   !== 'undefined' ? elSesiones   : [];
+  const allDi   = typeof diTickets    !== 'undefined' ? diTickets    : [];
+  const allRevs = typeof getRevisiones === 'function'  ? getRevisiones() : [];
 
-  // Trainer table
-  const trainerData = [
-    { nombre:'Sofía García',   entregas:8, revisiones:12, puntualidad:'96%', carga:82 },
-    { nombre:'Rodrigo Méndez', entregas:7, revisiones:10, puntualidad:'91%', carga:75 },
-    { nombre:'Isabel Torres',  entregas:5, revisiones:8,  puntualidad:'82%', carga:91 },
-    { nombre:'Carlos Vega',    entregas:3, revisiones:4,  puntualidad:'100%',carga:45 },
-  ];
-  document.getElementById('reporte-trainer-table').innerHTML = trainerData.map(t => `
-    <tr>
-      <td class="td-main">${t.nombre}</td>
-      <td class="td-mono">${t.entregas}</td>
-      <td class="td-mono">${t.revisiones}</td>
-      <td><span class="badge ${parseInt(t.puntualidad)>=90?'badge-green':'badge-warn'}">${t.puntualidad}</span></td>
-      <td>
-        <div style="min-width:80px">
-          <div class="workload-bar"><div class="workload-fill ${cargaClass(t.carga)}" style="width:${t.carga}%"></div></div>
-          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-soft);margin-top:3px">${t.carga}%</div>
-        </div>
-      </td>
-    </tr>`).join('');
+  const SPECIAL        = ['Vacaciones','Cumpleaños','Día OFF'];
+  const TRAINING_TYPES = ['Training teórico','Training práctico','Habilitación','Sombreo'];
+  const realCal = allCal.filter(e => !SPECIAL.includes(e.tipoActividad));
 
-  // Solicitudes estatus bars
-  const estatusData = [
-    { label:'Completada', n:21, color:'var(--success)' },
-    { label:'En Proceso',  n:8,  color:'var(--info)' },
-    { label:'Nueva',       n:3,  color:'var(--gold)' },
-    { label:'Detenida',    n:1,  color:'var(--danger)' },
-  ];
-  const totalSol = estatusData.reduce((a,s)=>a+s.n,0);
-  document.getElementById('reporte-estatus-bars').innerHTML = estatusData.map(s => `
-    <div style="margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:5px">
-        <span style="font-size:13px;font-weight:500">${s.label}</span>
-        <span class="text-mono">${s.n} · ${Math.round(s.n/totalSol*100)}%</span>
-      </div>
-      <div class="progress-bar"><div class="progress-bar-fill" style="width:${Math.round(s.n/totalSol*100)}%;background:${s.color}"></div></div>
-    </div>`).join('');
+  /* ── Filtro de período ──────────────────────────────────── */
+  const filtro  = document.getElementById('reporte-mes-filter')?.value || 'mes';
+  const now     = new Date(); now.setHours(0,0,0,0);
+  const year    = now.getFullYear();
+  const month   = now.getMonth();
+  const lun     = new Date(now); lun.setDate(now.getDate()-((now.getDay()+6)%7));
+  const dom     = new Date(lun); dom.setDate(lun.getDate()+6);
 
-  // Área table
-  const areaData = [
-    { area:'T Visa',          pend:4, enproc:6, comp:18, pct:72 },
-    { area:'U Visa',          pend:2, enproc:3, comp:12, pct:80 },
-    { area:'VAWA',            pend:5, enproc:4, comp:9,  pct:50 },
-    { area:'Mandamus',        pend:3, enproc:2, comp:11, pct:69 },
-    { area:'USCIS Callbacks', pend:2, enproc:3, comp:14, pct:74 },
-    { area:'General',         pend:1, enproc:1, comp:8,  pct:80 },
+  function inPeriod(dateStr) {
+    if (!dateStr) return false;
+    const d = new Date((dateStr||'').slice(0,10)+'T00:00:00');
+    if (filtro==='semana') return d>=lun && d<=dom;
+    if (filtro==='mes')    return d.getMonth()===month && d.getFullYear()===year;
+    if (filtro==='anio')   return d.getFullYear()===year;
+    return true; // 'todo'
+  }
+
+  const filteredCal  = realCal.filter(e  => inPeriod(e.start));
+  const filteredEl   = allEl.filter(s   => inPeriod(s.fecha || s.start));
+  const filteredDi   = allDi.filter(t   => inPeriod(t.fechaSolicitud || t.start));
+  const filteredRevs = allRevs.filter(r => inPeriod(r.fechaSolicitud));
+
+  const periodLabel = { mes:'este mes', semana:'esta semana', anio:'este año', todo:'en total' }[filtro];
+  const subtitle = document.getElementById('reporte-subtitle');
+  if (subtitle) subtitle.textContent = `Datos en tiempo real del calendario, E-Learning y tickets DI — ${periodLabel}`;
+
+  /* ── KPIs ─────────────────────────────────────────────── */
+  const trainings    = filteredCal.filter(e => TRAINING_TYPES.includes(e.tipoActividad));
+  const diConf       = filteredDi.filter(t  => t.estatus==='Confirmado');
+  const revsAbiertas = filteredRevs.filter(r => !['Completada','Aprobada'].includes(r.estatus));
+
+  const setEl = (id, v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+  setEl('rk-trainings',    trainings.length   || '0');
+  setEl('rk-actividades',  filteredCal.length || '0');
+  setEl('rk-elearning',    filteredEl.length  || '0');
+  setEl('rk-di-conf',      `${diConf.length}/${filteredDi.length}`);
+  setEl('rk-rev-abiertas', revsAbiertas.length || '0');
+  setEl('rk-trainings-sub',`${filteredCal.length} act. totales ${periodLabel}`);
+  setEl('rk-act-sub',      `${TRAINING_TYPES.map(t=>filteredCal.filter(e=>e.tipoActividad===t).length).join('·')} por tipo`);
+  setEl('rk-el-sub',       `${filteredEl.filter(s=>s.estatus==='Completado'||s.estatus==='completado').length} completadas`);
+  setEl('rk-di-sub',       `${filteredDi.length} registrados ${periodLabel}`);
+
+  /* ── Bar chart: actividades por mes (últimos 6 meses) ───── */
+  const barEl = document.getElementById('bar-trainings-mes');
+  if (barEl) {
+    const meses = [];
+    for (let i=5; i>=0; i--) {
+      const d = new Date(year, month-i, 1);
+      const label = d.toLocaleDateString('es-MX',{month:'short'}).replace('.','');
+      const count = realCal.filter(e => {
+        const ed = new Date((e.start||'').slice(0,10)+'T00:00:00');
+        return ed.getMonth()===d.getMonth() && ed.getFullYear()===d.getFullYear();
+      }).length;
+      meses.push({ label: label.charAt(0).toUpperCase()+label.slice(1), count });
+    }
+    const maxVal = Math.max(1,...meses.map(m=>m.count));
+    barEl.innerHTML = meses.map(m => `
+      <div class="bar-item">
+        <div class="bar-val">${m.count}</div>
+        <div class="bar-fill" style="height:${Math.round((m.count/maxVal)*110)}px;${m.count===0?'background:var(--beige-dark)':''}"></div>
+        <div class="bar-label">${m.label}</div>
+      </div>`).join('');
+    const subEl = document.getElementById('bar-subtitle');
+    if (subEl) subEl.textContent = `Últimos 6 meses · del calendario (${realCal.length} total)`;
+  }
+
+  /* ── Barras: distribución por tipo de actividad ───────── */
+  const tipoEl = document.getElementById('reporte-tipo-bars');
+  if (tipoEl) {
+    const allTypes = [...new Set(filteredCal.map(e=>e.tipoActividad))].filter(Boolean).sort();
+    const maxT = Math.max(1,...allTypes.map(t=>filteredCal.filter(e=>e.tipoActividad===t).length));
+    const TIPO_COLORS = {
+      'Training teórico':'#1c4ed8','Training práctico':'#0891b2','Habilitación':'#16a34a',
+      'Sombreo':'#7c3aed','Reunión':'#db2777','Seguimiento':'#d97706',
+      'Desarrollo de material':'#ea580c','Planeación':'#0f766e',
+      'Llamadas':'#64748b','Entregable':'#b91c1c','Apoyo operativo':'#4338ca','Otro':'#6b7280',
+    };
+    if (!allTypes.length) {
+      tipoEl.innerHTML = `<div class="empty-state" style="padding:20px 0"><div>Sin actividades registradas ${periodLabel}</div></div>`;
+    } else {
+      const total = filteredCal.length || 1;
+      tipoEl.innerHTML = allTypes.map(t => {
+        const n    = filteredCal.filter(e=>e.tipoActividad===t).length;
+        const pct  = Math.round((n/total)*100);
+        const color= TIPO_COLORS[t] || '#6b7280';
+        return `<div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+            <span style="font-size:13px;font-weight:500">${t}</span>
+            <span class="text-mono">${n} · ${pct}%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  /* ── Tabla: actividad por trainer ─────────────────────── */
+  const trainerEl = document.getElementById('reporte-trainer-table');
+  if (trainerEl) {
+    const names = Object.keys(typeof CAL49_TRAINERS!=='undefined' ? CAL49_TRAINERS : {});
+    if (!names.length) {
+      trainerEl.innerHTML = `<tr><td colspan="7"><div class="empty-state" style="padding:20px">Sin trainers registrados</div></td></tr>`;
+    } else {
+      const maxCal = Math.max(1,...names.map(n=>filteredCal.filter(e=>e.trainer===n).length));
+      trainerEl.innerHTML = names.map(name => {
+        const calCount  = filteredCal.filter(e=>e.trainer===name).length;
+        const trCount   = filteredCal.filter(e=>e.trainer===name && TRAINING_TYPES.includes(e.tipoActividad)).length;
+        const elCount   = filteredEl.filter(s=>(s.trainer||s.nombre)===name).length;
+        const diCount   = filteredDi.filter(t=>(t.trainer||t.nombre)===name).length;
+        const revCount  = filteredRevs.filter(r=>r.solicitanteNombre===name||r.trainer===name).length;
+        const pct       = Math.round((calCount/maxCal)*100);
+        const cls       = pct>=80?'high':pct>=50?'mid':'low';
+        const color     = typeof calTrainerColor==='function' ? calTrainerColor(name) : '#6b7280';
+        return `<tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:26px;height:26px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0">${name.slice(0,2)}</div>
+              <span class="td-main">${name}</span>
+            </div>
+          </td>
+          <td><span class="badge badge-gold">${calCount}</span></td>
+          <td><span class="badge badge-navy">${trCount}</span></td>
+          <td><span class="badge badge-info">${elCount}</span></td>
+          <td><span class="badge ${diCount>0?'badge-warn':'badge-gray'}">${diCount}</span></td>
+          <td><span class="badge ${revCount>0?'badge-purple':'badge-gray'}">${revCount}</span></td>
+          <td style="min-width:100px">
+            <div class="workload-bar" style="margin-bottom:3px"><div class="workload-fill ${cls}" style="width:${pct}%"></div></div>
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-soft)">${calCount} act. · ${pct}%</div>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+  }
+
+  /* ── Barras: tickets DI por estatus ───────────────────── */
+  const diBarEl = document.getElementById('reporte-estatus-bars');
+  if (diBarEl) {
+    const diStatuses = [
+      { label:'🔵 Abierto',     color:'#94a3b8', evs:filteredDi.filter(t=>t.estatus==='Abierto') },
+      { label:'🟣 En proceso',  color:'#7c3aed', evs:filteredDi.filter(t=>t.estatus==='En proceso') },
+      { label:'🟠 En revisión', color:'#ea580c', evs:filteredDi.filter(t=>t.estatus==='En revisión') },
+      { label:'🟢 Confirmado',  color:'#16a34a', evs:filteredDi.filter(t=>t.estatus==='Confirmado') },
+    ];
+    const totalDi = filteredDi.length || 1;
+    if (!filteredDi.length) {
+      diBarEl.innerHTML = `<div class="empty-state" style="padding:20px 0"><div>Sin tickets DI ${periodLabel}</div></div>`;
+    } else {
+      diBarEl.innerHTML = diStatuses.map(s => {
+        const n   = s.evs.length;
+        const pct = Math.round((n/totalDi)*100);
+        return `<div style="margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+            <span style="font-size:13px;font-weight:500">${s.label}</span>
+            <span class="text-mono">${n} · ${pct}%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-bar-fill" style="width:${pct}%;background:${s.color}"></div></div>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  /* ── Barras: revisiones DI del portal por estatus ──────── */
+  const revBarEl = document.getElementById('reporte-revdi-bars');
+  if (revBarEl) {
+    const revStatuses = [
+      { label:'🆕 Nueva',                   color:'#c9a84c' },
+      { label:'🔍 En revisión',              color:'#1d4ed8' },
+      { label:'📝 Con observaciones',        color:'#b45309' },
+      { label:'📨 Modificaciones enviadas',  color:'#6366f1' },
+      { label:'✅ Aprobada',                  color:'#16a34a' },
+      { label:'🏁 Completada',               color:'#94a3b8' },
+    ];
+    const totalRevs = filteredRevs.length || 1;
+    if (!filteredRevs.length) {
+      revBarEl.innerHTML = `<div class="empty-state" style="padding:20px 0"><div>Sin revisiones DI ${periodLabel}</div></div>`;
+    } else {
+      revBarEl.innerHTML = revStatuses.map(s => {
+        const key = s.label.split(' ').slice(1).join(' ');
+        const n   = filteredRevs.filter(r=>r.estatus===key||r.estatus===s.label.replace(/^[^ ]+ /,'')).length;
+        const pct = Math.round((n/totalRevs)*100);
+        if (!n) return '';
+        return `<div style="margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+            <span style="font-size:13px;font-weight:500">${s.label}</span>
+            <span class="text-mono">${n} · ${pct}%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-bar-fill" style="width:${pct}%;background:${s.color}"></div></div>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  /* ── Tabla: actividad por área ──────────────────────────── */
+  const areaEl = document.getElementById('reporte-area-table');
+  if (areaEl) {
+    const allAreas = [...new Set([
+      ...filteredCal.map(e=>e.area),
+      ...filteredDi.map(t=>t.area),
+      ...filteredRevs.map(r=>r.area),
+    ])].filter(Boolean).sort();
+    const grandTotal = filteredCal.length + filteredDi.length + filteredRevs.length || 1;
+    if (!allAreas.length) {
+      areaEl.innerHTML = `<tr><td colspan="6"><div class="empty-state" style="padding:20px">Sin datos clasificados por área ${periodLabel}</div></td></tr>`;
+    } else {
+      areaEl.innerHTML = allAreas.map(area => {
+        const calN  = filteredCal.filter(e=>e.area===area).length;
+        const diN   = filteredDi.filter(t=>t.area===area).length;
+        const revN  = filteredRevs.filter(r=>r.area===area).length;
+        const total = calN + diN + revN;
+        const pct   = Math.round((total/grandTotal)*100);
+        return `<tr>
+          <td class="td-main">${area}</td>
+          <td><span class="badge badge-gold">${calN}</span></td>
+          <td><span class="badge badge-warn">${diN}</span></td>
+          <td><span class="badge badge-info">${revN}</span></td>
+          <td><span class="badge badge-navy">${total}</span></td>
+          <td style="min-width:120px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="progress-bar" style="flex:1"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+              <span class="text-mono">${pct}%</span>
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+  }
+
+  /* ── Tabla: E-Learning por trainer ─────────────────────── */
+  const elTableEl = document.getElementById('reporte-el-table');
+  if (elTableEl) {
+    const names = [...new Set(filteredEl.map(s=>s.trainer).filter(Boolean))];
+    if (!names.length) {
+      elTableEl.innerHTML = `<tr><td colspan="6"><div class="empty-state" style="padding:20px">Sin sesiones E-Learning ${periodLabel}</div></td></tr>`;
+    } else {
+      elTableEl.innerHTML = names.map(name => {
+        const sAll  = filteredEl.filter(s=>s.trainer===name);
+        const sComp = sAll.filter(s=>s.estatus==='Completado'||s.estatus==='completado').length;
+        const sPend = sAll.filter(s=>s.estatus==='Pendiente' ||s.estatus==='pendiente').length;
+        const sRev  = sAll.filter(s=>s.estatus==='En revisión'||s.estatus==='en-revision').length;
+        const pct   = sAll.length ? Math.round((sComp/sAll.length)*100) : 0;
+        const color = typeof calTrainerColor==='function' ? calTrainerColor(name) : '#6b7280';
+        return `<tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:26px;height:26px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0">${name.slice(0,2)}</div>
+              <span class="td-main">${name}</span>
+            </div>
+          </td>
+          <td><span class="badge badge-navy">${sAll.length}</span></td>
+          <td><span class="badge badge-green">${sComp}</span></td>
+          <td><span class="badge badge-warn">${sPend}</span></td>
+          <td><span class="badge badge-info">${sRev}</span></td>
+          <td style="min-width:100px">
+            <div class="workload-bar" style="margin-bottom:3px"><div class="progress-bar-fill green" style="width:${pct}%;height:6px;border-radius:3px;background:linear-gradient(90deg,#2e7d5e,#4caf82)"></div></div>
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-soft)">${pct}% completadas</div>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+  }
+}
+
+/* ── CSV Export ───────────────────────────────────────────── */
+function exportarReporteCSV() {
+  const allCal  = typeof cal49Eventos !== 'undefined' ? cal49Eventos : [];
+  const allEl   = typeof elSesiones   !== 'undefined' ? elSesiones   : [];
+  const allDi   = typeof diTickets    !== 'undefined' ? diTickets    : [];
+  const allRevs = typeof getRevisiones==='function'   ? getRevisiones() : [];
+
+  const rows = [
+    ['Fuente','Título','Trainer','Fecha','Tipo','Estatus','Área'],
+    ...allCal.filter(e=>!['Vacaciones','Cumpleaños','Día OFF'].includes(e.tipoActividad))
+       .map(e=>['Calendario', e.title||'', e.trainer||'', (e.start||'').slice(0,10), e.tipoActividad||'', e.estatus||'', e.area||'']),
+    ...allEl.map(s=>['E-Learning', s.titulo||s.title||'', s.trainer||'', s.fecha||'', s.tipo||'', s.estatus||'', s.area||'']),
+    ...allDi.map(t=>['Ticket DI', t.titulo||t.title||'', t.trainer||'', t.fechaSolicitud||'', t.tipo||'', t.estatus||'', t.area||'']),
+    ...allRevs.map(r=>['Revisión DI', r.titulo||'', r.solicitanteNombre||'', r.fechaSolicitud||'', r.tipoMaterial||'', r.estatus||'', r.area||'']),
   ];
-  document.getElementById('reporte-area-table').innerHTML = areaData.map(a => `
-    <tr>
-      <td class="td-main">${a.area}</td>
-      <td><span class="badge badge-warn">${a.pend}</span></td>
-      <td><span class="badge badge-info">${a.enproc}</span></td>
-      <td><span class="badge badge-green">${a.comp}</span></td>
-      <td>
-        <div style="display:flex;align-items:center;gap:8px;min-width:120px">
-          <div class="progress-bar" style="flex:1"><div class="progress-bar-fill" style="width:${a.pct}%"></div></div>
-          <span class="text-mono">${a.pct}%</span>
-        </div>
-      </td>
-    </tr>`).join('');
+  const csv  = rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'TMLF_Reporte_'+new Date().toISOString().slice(0,10)+'.csv';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  showToast('📊 Reporte exportado como CSV', 'success');
 }
 
 /* ============================================================
@@ -7068,7 +7409,7 @@ function renderUsuarios() {
       <td>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="user-action-btn" onclick="editUserModal('${u.id}')">✏️ Editar</button>
-          <button class="user-action-btn" onclick="resetUserPassword('${u.id}')" title="Resetear a contraseña temporal: tmlf2025">🔑 Reset pass</button>
+          <button class="user-action-btn" onclick="resetUserPassword('${u.id}')" title="Resetear contraseña del usuario">🔑 Reset pass</button>
           ${!isSelf ? `<button class="user-action-btn danger" onclick="deleteUserConfirm('${u.id}')">🗑</button>` : ''}
         </div>
       </td>
@@ -7090,10 +7431,149 @@ function resetUserPassword(id) {
   const users = getUsers() || [];
   const u = users.find(x=>x.id===id);
   if (!u) return;
-  if (!confirm(`¿Resetear contraseña de ${u.nombre}?\nLa nueva contraseña temporal será: tmlf2025`)) return;
-  u.password = TEMP_PASS;
+
+  showModal(`
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">🔑 Resetear contraseña</div>
+        <div class="modal-sub">${u.nombre} · <span style="font-family:var(--font-mono)">${u.username}</span></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="alert-banner navy" style="margin-bottom:20px">
+        <span class="alert-icon">ℹ️</span>
+        <div class="alert-body">La nueva contraseña se guarda de forma inmediata. El usuario deberá usarla en su próximo inicio de sesión.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nueva contraseña *</label>
+        <div style="position:relative">
+          <input class="form-control" type="password" id="rp-new"
+            placeholder="Mínimo 6 caracteres"
+            style="padding-right:44px"
+            oninput="checkResetStrength(this.value)">
+          <button onclick="toggleResetPassVis('rp-new',this)"
+            style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-soft);font-size:16px;line-height:1">
+            👁
+          </button>
+        </div>
+        <div id="rp-strength" style="margin-top:6px;height:4px;border-radius:2px;background:var(--beige-dark);overflow:hidden">
+          <div id="rp-strength-bar" style="height:100%;border-radius:2px;width:0;transition:width .3s,background .3s"></div>
+        </div>
+        <div id="rp-strength-label" style="font-size:11px;color:var(--text-soft);margin-top:4px"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmar contraseña *</label>
+        <div style="position:relative">
+          <input class="form-control" type="password" id="rp-confirm"
+            placeholder="Repite la contraseña"
+            style="padding-right:44px"
+            oninput="checkResetMatch()">
+          <button onclick="toggleResetPassVis('rp-confirm',this)"
+            style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-soft);font-size:16px;line-height:1">
+            👁
+          </button>
+        </div>
+        <div id="rp-match-label" style="font-size:11px;margin-top:4px"></div>
+      </div>
+      <!-- Sugerencias rápidas -->
+      <div style="margin-top:4px">
+        <div style="font-size:11px;color:var(--text-soft);margin-bottom:6px">Sugerencias rápidas:</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${['tmlf2025','Training2025','Mendoza25','Reset2025'].map(s =>
+            `<button onclick="applyResetSuggestion('${s}')"
+              style="padding:4px 10px;border-radius:20px;border:1px solid var(--beige-dark);background:var(--beige);
+                     font-size:11px;font-family:var(--font-mono);cursor:pointer;color:var(--text-mid);transition:all .15s"
+              onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'"
+              onmouseout="this.style.borderColor='var(--beige-dark)';this.style.color='var(--text-mid)'"
+            >${s}</button>`
+          ).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="filter-btn" onclick="closeModal()">Cancelar</button>
+      <button class="filter-btn primary-btn" onclick="saveResetPassword('${id}')">🔑 Guardar contraseña</button>
+    </div>
+  `);
+}
+
+function toggleResetPassVis(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  if (!inp) return;
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+}
+
+function checkResetStrength(val) {
+  const bar   = document.getElementById('rp-strength-bar');
+  const label = document.getElementById('rp-strength-label');
+  if (!bar || !label) return;
+  let score = 0;
+  if (val.length >= 6)  score++;
+  if (val.length >= 10) score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+  const configs = [
+    { pct:'0%',   color:'transparent', text:'' },
+    { pct:'25%',  color:'#ef4444',     text:'Muy débil' },
+    { pct:'45%',  color:'#f97316',     text:'Débil' },
+    { pct:'65%',  color:'#eab308',     text:'Aceptable' },
+    { pct:'85%',  color:'#22c55e',     text:'Fuerte' },
+    { pct:'100%', color:'#16a34a',     text:'Muy fuerte ✓' },
+  ];
+  const cfg = configs[Math.min(score, 5)];
+  bar.style.width      = cfg.pct;
+  bar.style.background = cfg.color;
+  label.textContent    = cfg.text;
+  label.style.color    = cfg.color;
+  checkResetMatch();
+}
+
+function checkResetMatch() {
+  const a = document.getElementById('rp-new')?.value;
+  const b = document.getElementById('rp-confirm')?.value;
+  const lbl = document.getElementById('rp-match-label');
+  if (!lbl || !b) return;
+  if (a === b) {
+    lbl.textContent = '✓ Las contraseñas coinciden';
+    lbl.style.color = 'var(--success)';
+  } else {
+    lbl.textContent = '✗ No coinciden';
+    lbl.style.color = 'var(--danger)';
+  }
+}
+
+function applyResetSuggestion(val) {
+  const a = document.getElementById('rp-new');
+  const b = document.getElementById('rp-confirm');
+  if (a) { a.value = val; a.type = 'text'; }
+  if (b) { b.value = val; b.type = 'text'; }
+  checkResetStrength(val);
+}
+
+function saveResetPassword(id) {
+  const newPass    = document.getElementById('rp-new')?.value;
+  const confirmPass= document.getElementById('rp-confirm')?.value;
+
+  if (!newPass || newPass.length < 6) {
+    showToast('⚠️ La contraseña debe tener al menos 6 caracteres', 'error');
+    return;
+  }
+  if (newPass !== confirmPass) {
+    showToast('⚠️ Las contraseñas no coinciden', 'error');
+    return;
+  }
+
+  const users = getUsers() || [];
+  const u = users.find(x=>x.id===id);
+  if (!u) return;
+
+  u.password = btoa(newPass);
   saveUsers(users);
-  showToast(`🔑 Contraseña reseteada para ${u.nombre}. Temp: tmlf2025`, 'success');
+  showToast(`✅ Contraseña actualizada para ${u.nombre}`, 'success');
+  closeModal();
   renderUsuarios();
 }
 
