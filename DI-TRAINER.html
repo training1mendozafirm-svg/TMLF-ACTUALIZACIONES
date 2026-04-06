@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Responsabilidades DI & Trainer — TMLF Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--navy:#1a2744;--navy-deep:#0f1a30;--gold:#c9a84c;--gold-light:#e8d5a0;
+--beige:#f5f0e8;--beige-dark:#e8e0d0;--white:#fff;--text:#2c2c2c;
+--accent-blue:#3a5a8c;--accent-green:#3a7c5c;--red-soft:#c44d4d;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--beige);color:var(--text);min-height:100vh}
+
+.page{max-width:900px;margin:0 auto;padding:40px 32px 60px}
+
+/* HEADER */
+.header{text-align:center;margin-bottom:48px;position:relative}
+.header::after{content:'';display:block;width:80px;height:3px;background:var(--gold);margin:20px auto 0;border-radius:2px}
+.badge{display:inline-block;background:var(--navy);color:var(--gold);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;padding:6px 18px;border-radius:20px;margin-bottom:16px;text-transform:uppercase}
+.header h1{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:clamp(28px,5vw,42px);color:var(--navy);line-height:1.15;margin-bottom:10px}
+.header p.subtitle{font-size:15px;color:#5a6374;max-width:640px;margin:0 auto;line-height:1.6}
+
+/* INTRO BOX */
+.intro{background:var(--navy);color:var(--beige);border-radius:16px;padding:28px 32px;margin-bottom:44px;position:relative;overflow:hidden}
+.intro::before{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;background:radial-gradient(circle,rgba(201,168,76,.15) 0%,transparent 70%);border-radius:50%}
+.intro p{font-size:15px;line-height:1.7;position:relative;z-index:1}
+.intro strong{color:var(--gold)}
+.pct{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:28px;color:var(--gold)}
+
+/* SECTIONS */
+.section{margin-bottom:40px}
+.section-label{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.section-num{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:20px;flex-shrink:0}
+.section-label h2{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:clamp(20px,3.5vw,26px);line-height:1.2}
+
+.di .section-num{background:var(--navy);color:var(--gold)}
+.di .section-label h2{color:var(--navy)}
+.trainer .section-num{background:var(--accent-green);color:#fff}
+.trainer .section-label h2{color:var(--accent-green)}
+
+/* CARDS */
+.card{background:var(--white);border-radius:14px;padding:26px 28px;box-shadow:0 2px 12px rgba(26,39,68,.06);margin-bottom:16px;border-left:4px solid transparent}
+.di .card{border-left-color:var(--gold)}
+.trainer .card{border-left-color:var(--accent-green)}
+
+.card h3{font-family:'DM Sans',sans-serif;font-weight:700;font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card h3 .icon{font-size:18px}
+
+.items{list-style:none;padding:0}
+.items li{position:relative;padding:6px 0 6px 22px;font-size:14px;line-height:1.6;color:#3d4654}
+.items li::before{content:'';position:absolute;left:0;top:13px;width:8px;height:8px;border-radius:50%;border:2px solid var(--gold);background:transparent}
+.trainer .items li::before{border-color:var(--accent-green)}
+
+.sub-items{list-style:none;padding:4px 0 2px 20px}
+.sub-items li{padding:3px 0 3px 18px;font-size:13px;color:#5a6374}
+.sub-items li::before{content:'';position:absolute;left:20px;top:11px;width:6px;height:6px;border-radius:2px;border:none;background:var(--gold-light)}
+
+/* EMAIL HIGHLIGHT */
+.email-box{background:linear-gradient(135deg,#f0ebe0,#f7f3eb);border-radius:10px;padding:16px 20px;margin-top:14px;display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.6;color:var(--navy)}
+.email-box .em-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.email-box code{font-family:'DM Mono',monospace;font-size:12.5px;background:var(--navy);color:var(--gold);padding:2px 8px;border-radius:4px}
+
+/* IMPORTANT CALLOUT */
+.callout{background:linear-gradient(135deg,#fff8e8,#fff4d6);border:1px solid var(--gold-light);border-radius:12px;padding:20px 24px;margin-top:16px;font-size:13.5px;line-height:1.65;color:#5a4e2a;display:flex;gap:10px;align-items:flex-start}
+.callout .c-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+
+/* LINK */
+.ref-link{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:13px;color:var(--accent-blue);text-decoration:none;font-weight:600;padding:8px 14px;border-radius:8px;background:rgba(58,90,140,.07);transition:background .2s}
+.ref-link:hover{background:rgba(58,90,140,.13)}
+
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:16px;margin:40px 0}
+.divider span{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:#9a9a9a;text-transform:uppercase;white-space:nowrap}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--beige-dark)}
+
+/* FLOW DIAGRAM */
+.flow{display:flex;align-items:center;justify-content:center;gap:0;margin:36px 0 10px;flex-wrap:wrap}
+.flow-step{text-align:center;padding:14px 20px;border-radius:12px;font-size:13px;font-weight:600;min-width:130px}
+.flow-step.di-step{background:var(--navy);color:var(--gold)}
+.flow-step.trainer-step{background:var(--accent-green);color:#fff}
+.flow-step.shared-step{background:var(--gold);color:var(--navy)}
+.flow-arrow{font-size:22px;color:#b0b0b0;padding:0 6px;flex-shrink:0}
+.flow-sub{font-size:11px;font-weight:400;opacity:.8;display:block;margin-top:3px}
+
+/* FOOTER */
+.footer{text-align:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--beige-dark)}
+.footer p{font-family:'DM Mono',monospace;font-size:11px;color:#999;letter-spacing:1px}
+
+@media(max-width:600px){
+  .page{padding:24px 16px 40px}
+  .card{padding:20px 18px}
+  .flow{flex-direction:column;gap:0}
+  .flow-arrow{transform:rotate(90deg);padding:4px 0}
+}
+@media print{
+  body{background:#fff}
+  .page{padding:20px}
+  .card{box-shadow:none;border:1px solid #e0e0e0}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="badge">TMLF Academy · Lineamientos</div>
+    <h1>Responsabilidades<br>DI & Trainer</h1>
+    <p class="subtitle">Guía para la correcta colaboración entre Diseño Instruccional y el equipo de Trainers en el desarrollo de materiales de capacitación.</p>
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro">
+    <p>El área de <strong>Diseño Instruccional (DI)</strong> desarrolla la base del training en su componente de diseño, cubriendo el <span class="pct">20%</span> <strong>teórico</strong>, estructurado en formato <strong>SCORM</strong> para Moodle. El Trainer es responsable del <span class="pct">70%</span> <strong>práctico</strong> (simuladores, ejercicios y actividades de aplicación).</p>
+  </div>
+
+  <!-- FLOW -->
+  <div class="flow">
+    <div class="flow-step trainer-step">Trainer<span class="flow-sub">Envía info a DI</span></div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step di-step">DI<span class="flow-sub">Desarrolla 20% teórico</span></div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step trainer-step">Trainer<span class="flow-sub">Revisa + crea 70%</span></div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step shared-step">DI<span class="flow-sub">Integración final</span></div>
+  </div>
+
+  <!-- SECTION 1: DI -->
+  <div class="divider"><span>Sección 1</span></div>
+
+  <div class="section di">
+    <div class="section-label">
+      <div class="section-num">1</div>
+      <h2>Responsabilidad de DI</h2>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">📧</span> Envío de información</h3>
+      <div class="email-box">
+        <span class="em-icon">✉️</span>
+        <div>Enviar vía correo a <code>bdominguezm@mendozafirm.com</code> con copia a <strong>Karen Reyna</strong>.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">📋</span> Lineamientos del documento (20% teórico)</h3>
+      <ul class="items">
+        <li>El título del documento debe ser el <strong>nombre del training</strong>.</li>
+        <li>Compartir un archivo en formato <strong>.doc (Google Docs)</strong> con la estructura del training.</li>
+        <li>Organizar el contenido por <strong>pestañas / módulos</strong>, identificando claramente la información de cada uno.</li>
+        <li>Los módulos deben presentarse de forma <strong>secuencial</strong>, conforme al orden del training.</li>
+        <li>Incluir indicaciones claras sobre recursos a integrar:
+          <ul class="sub-items">
+            <li>🎬 Videos</li>
+            <li>🔗 Enlaces</li>
+            <li>🖼️ Imágenes</li>
+            <li>🔊 Audios</li>
+          </ul>
+        </li>
+        <li>Incorporar <strong>preguntas de evaluación</strong> y/o actividades de refuerzo, especificando las respuestas correctas.</li>
+      </ul>
+    </div>
+
+    <div class="callout">
+      <span class="c-icon">⚠️</span>
+      <div><strong>Importante:</strong> Las imágenes y archivos incluidos en el documento deberán enviarse también <strong>adjuntos en el correo</strong>, para evitar pérdida de calidad en el proceso de diseño.</div>
+    </div>
+
+    <a class="ref-link" href="https://docs.google.com/document/d/14sReIvc-kBhaaEJgr8p_nP-dLZroLmJMx_pJIkMXZRU/edit?usp=sharing" target="_blank">📄 Ver documento de referencia para la estructuración</a>
+  </div>
+
+  <!-- SECTION 2: TRAINER -->
+  <div class="divider"><span>Sección 2</span></div>
+
+  <div class="section trainer">
+    <div class="section-label">
+      <div class="section-num">2</div>
+      <h2>Responsabilidad del Trainer</h2>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">🔍</span> Revisión exhaustiva del material de DI</h3>
+      <ul class="items">
+        <li>Precisión y calidad de la información.</li>
+        <li>Correcta estructura del contenido.</li>
+        <li>Validez de las respuestas en ejercicios y evaluaciones.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">🛠️</span> Desarrollo del 70% práctico</h3>
+      <ul class="items">
+        <li><strong>Simuladores</strong> — escenarios interactivos de práctica.</li>
+        <li><strong>Ejercicios prácticos</strong> — aplicación de conceptos.</li>
+        <li><strong>Actividades de aplicación</strong> — casos y dinámicas.</li>
+      </ul>
+      <div class="callout" style="background:linear-gradient(135deg,#eef6f1,#e2f0e9);border-color:#b5d6c4">
+        <span class="c-icon">🔄</span>
+        <div>Este material será posteriormente <strong>integrado por DI</strong> en la versión final del training.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>TMLF ACADEMY · DISEÑO INSTRUCCIONAL · 2026</p>
+  </div>
+
+</div>
+</body>
+</html>
