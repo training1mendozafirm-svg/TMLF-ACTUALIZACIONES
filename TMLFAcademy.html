@@ -682,6 +682,7 @@ header {
   <nav class="header-nav">
     <button class="nav-btn active" onclick="showSection('dashboard')" id="nav-dashboard">🎓 Academia</button>
     <button class="nav-btn" onclick="showSection('progress')" id="nav-progress">📊 Mi Progreso</button>
+    <button class="nav-btn" onclick="showSection('credits')" id="nav-credits">💳 Créditos</button>
   </nav>
   <div class="header-profile">
     <div class="profile-credits" id="header-credits">⭐ 240 créditos</div>
@@ -744,6 +745,9 @@ header {
 
   <!-- PAGE CONTENT -->
   <div class="page-container">
+    <!-- ASSIGNED AREA BANNER -->
+    <div id="assigned-area-banner" style="background:white;border-radius:var(--radius-lg);border:1.5px solid var(--beige-dark);padding:20px 24px;margin-bottom:20px;"></div>
+
     <!-- INSTRUCTIVO -->
     <div style="background:white;border-radius:24px;border:1px solid var(--beige-dark);padding:32px;margin-bottom:24px;">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
@@ -920,6 +924,66 @@ header {
 </div>
 
 <!-- ============================================================
+     SECTION: CREDITS
+     ============================================================ -->
+<div id="section-credits" class="section">
+  <div class="page-container">
+    <div id="cr-title" class="section-title">💳 Créditos por Área</div>
+    <p id="cr-sub" class="section-sub">Desglose completo de créditos disponibles por área y nivel. Acumula créditos completando módulos para avanzar.</p>
+
+    <!-- Summary bar -->
+    <div style="background:linear-gradient(135deg,var(--navy),#1a3a5f);border-radius:var(--radius-xl);padding:28px 36px;margin-bottom:32px;display:flex;flex-wrap:wrap;gap:32px;align-items:center;">
+      <div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:3px;text-transform:uppercase;margin-bottom:6px;" id="cr-total-label">CRÉDITOS TOTALES DISPONIBLES</div>
+        <div style="font-family:var(--font-display);font-size:52px;font-weight:900;color:var(--gold-light);line-height:1;" id="cr-total-num">—</div>
+      </div>
+      <div style="flex:1;display:flex;flex-wrap:wrap;gap:24px;justify-content:flex-end;">
+        <div style="text-align:center;">
+          <div style="font-family:var(--font-display);font-size:28px;font-weight:700;color:#6bb5ff;" id="cr-trainee-total">—</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px;font-family:var(--font-mono);">TRAINEE</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--gold-light);" id="cr-specialist-total">—</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px;font-family:var(--font-mono);">SPECIALIST</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:var(--font-display);font-size:28px;font-weight:700;color:#6bffa0;" id="cr-expert-total">—</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px;font-family:var(--font-mono);">EXPERT</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--gold);" id="cr-earned-total">—</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px;font-family:var(--font-mono);" id="cr-earned-label">GANADOS</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Area cards -->
+    <div id="credits-breakdown" style="display:flex;flex-direction:column;gap:16px;"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     ASSIGN AREA MODAL
+     ============================================================ -->
+<div id="assign-modal" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(13,27,42,0.6);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:24px;">
+  <div style="background:var(--cream);border-radius:var(--radius-xl);max-width:680px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow-lg);">
+    <div style="background:var(--navy);padding:28px 32px;border-radius:var(--radius-xl) var(--radius-xl) 0 0;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-family:var(--font-mono);font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:3px;text-transform:uppercase;margin-bottom:6px;">TMLF Learning Center</div>
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:white;">Selecciona tu Área de Especialización</div>
+      </div>
+      <button onclick="closeAssignModal()" style="background:rgba(255,255,255,0.1);border:none;color:white;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">×</button>
+    </div>
+    <div style="padding:24px 32px;">
+      <div style="background:var(--gold-pale);border:1px solid var(--gold);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:20px;font-size:13px;color:#8b6914;line-height:1.5;">
+        📌 <strong>Importante:</strong> Los créditos de <strong>Common Core</strong> se suman automáticamente a los créditos del área que selecciones. Solo podrás activar los módulos del área una vez que completes Common Core.
+      </div>
+      <div id="assign-modal-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
      JAVASCRIPT
      ============================================================ -->
 <script>
@@ -927,10 +991,12 @@ header {
 // DATA MODEL
 // ============================================================
 const state = {
-  credits: 240,
+  credits: 60,
   completedModules: ['cc-1','cc-2','cc-3'],
   activeArea: null,
   simulatorStep: 0,
+  assignedArea: null,          // área asignada al colaborador
+  commonCoreComplete: false,   // true cuando todos los módulos CC estén done
 };
 
 const SCHOOLS = [
@@ -1694,17 +1760,218 @@ function completeModule(schoolId, moduleId) {
 }
 
 // ============================================================
-// PROGRESS SECTION
+// COMPLETE MODULE
 // ============================================================
+function completeModule(schoolId, moduleId) {
+  const school = SCHOOLS.find(s => s.id === schoolId);
+  if (!school) return;
+  const mod = school.modules.find(m => m.id === moduleId);
+  if (!mod || mod.status !== 'active') return;
+
+  mod.status = 'done';
+  school.earnedCredits += mod.credits;
+  state.credits += mod.credits;
+  state.completedModules.push(moduleId);
+
+  // Unlock next module in sequence
+  const idx = school.modules.indexOf(mod);
+  if (idx + 1 < school.modules.length && school.modules[idx+1].status === 'locked') {
+    school.modules[idx+1].status = 'active';
+  }
+
+  // ── COMMON CORE COMPLETION CHECK ──────────────────────────
+  if (schoolId === 'common') {
+    const cc = SCHOOLS.find(s => s.id === 'common');
+    const allCCDone = cc.modules.every(m => m.status === 'done');
+    if (allCCDone && !state.commonCoreComplete) {
+      state.commonCoreComplete = true;
+      const ccCredits = cc.earnedCredits;
+
+      // If assigned area exists, inject CC credits into it
+      if (state.assignedArea && state.assignedArea !== 'common') {
+        const assigned = SCHOOLS.find(s => s.id === state.assignedArea);
+        if (assigned) {
+          // Mark first module as active
+          if (assigned.modules[0] && assigned.modules[0].status !== 'done') {
+            assigned.modules[0].status = 'active';
+          }
+          showToast(`🎓 ¡Common Core completado! Los créditos se suman a ${assigned.name}`);
+          setTimeout(() => showToast(`⭐ +${ccCredits} cr. de Common Core → ${assigned.name}`), 600);
+        }
+      } else {
+        showToast('🎓 ¡Common Core completado! Ahora puedes seleccionar tu área de especialización.');
+      }
+      updateAssignedAreaBanner();
+    }
+  }
+
+  // ── ASSIGNED AREA: carry Common Core credits forward ───────
+  if (schoolId !== 'common' && schoolId === state.assignedArea) {
+    // credits already added above, nothing extra needed
+  }
+
+  updateStats();
+  showToast(`⭐ +${mod.credits} créditos — Módulo "${mod.title}" completado!`);
+  openSchool(schoolId);
+}
+
+// ============================================================
+// ASSIGN AREA
+// ============================================================
+function assignArea(areaId) {
+  const school = SCHOOLS.find(s => s.id === areaId);
+  if (!school || areaId === 'common') return;
+
+  state.assignedArea = areaId;
+
+  const cc = SCHOOLS.find(s => s.id === 'common');
+  const ccDone = cc.modules.every(m => m.status === 'done');
+
+  if (ccDone) {
+    // CC complete → activate first module of assigned area
+    if (school.modules[0] && school.modules[0].status !== 'done') {
+      school.modules.forEach((m, i) => {
+        if (i === 0 && m.status !== 'done') m.status = 'active';
+      });
+    }
+    showToast(`✅ Área asignada: ${school.name}. ¡Los créditos de Common Core ya cuentan!`);
+  } else {
+    showToast(`📌 Área asignada: ${school.name}. Completa Common Core primero para desbloquear los módulos.`);
+  }
+
+  closeAssignModal();
+  updateAssignedAreaBanner();
+  renderSchools();
+}
+
+function openAssignModal() {
+  document.getElementById('assign-modal').style.display = 'flex';
+}
+function closeAssignModal() {
+  document.getElementById('assign-modal').style.display = 'none';
+}
+
+function updateAssignedAreaBanner() {
+  const banner = document.getElementById('assigned-area-banner');
+  if (!banner) return;
+  const cc = SCHOOLS.find(s => s.id === 'common');
+  const ccCredits = cc.earnedCredits;
+  const ccTotal = cc.totalCredits;
+  const ccDone = cc.modules.every(m => m.status === 'done');
+
+  if (!state.assignedArea) {
+    banner.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--navy);">📌 Sin área asignada</div>
+          <div style="font-size:13px;color:var(--text-soft);margin-top:4px;">Primero completa Common Core, luego selecciona tu área de especialización.</div>
+        </div>
+        <button onclick="openAssignModal()" style="background:var(--navy);color:var(--gold-light);border:none;border-radius:20px;padding:10px 24px;font-weight:600;font-family:var(--font-body);font-size:13px;cursor:pointer;">Asignar Área →</button>
+      </div>`;
+    return;
+  }
+
+  const assigned = SCHOOLS.find(s => s.id === state.assignedArea);
+  const areaCredits = assigned.earnedCredits;
+  const totalEarned = ccCredits + areaCredits;
+  const totalAvail = ccTotal + assigned.totalCredits;
+  const pct = Math.round((totalEarned / totalAvail) * 100);
+
+  banner.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <span style="font-size:32px;">${assigned.emoji}</span>
+        <div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-soft);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;">Área asignada</div>
+          <div style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--navy);">${assigned.name}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:center;">
+        <div style="text-align:center;">
+          <div style="font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--navy);">${ccCredits}<span style="font-size:13px;color:var(--text-soft);font-family:var(--font-body);"> cr.</span></div>
+          <div style="font-size:10px;color:var(--text-soft);font-family:var(--font-mono);letter-spacing:1px;">COMMON CORE</div>
+        </div>
+        <div style="font-size:20px;color:var(--beige-dark);">+</div>
+        <div style="text-align:center;">
+          <div style="font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--gold);">${areaCredits}<span style="font-size:13px;color:var(--text-soft);font-family:var(--font-body);"> cr.</span></div>
+          <div style="font-size:10px;color:var(--text-soft);font-family:var(--font-mono);letter-spacing:1px;">${assigned.name.toUpperCase()}</div>
+        </div>
+        <div style="font-size:20px;color:var(--beige-dark);">=</div>
+        <div style="text-align:center;">
+          <div style="font-family:var(--font-display);font-size:28px;font-weight:900;color:var(--navy);">${totalEarned}<span style="font-size:13px;color:var(--text-soft);font-family:var(--font-body);"> cr.</span></div>
+          <div style="font-size:10px;color:var(--text-soft);font-family:var(--font-mono);letter-spacing:1px;">TOTAL</div>
+        </div>
+        <div>
+          <div style="width:80px;">
+            <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-soft);margin-bottom:4px;text-align:right;">${pct}%</div>
+            <div style="height:6px;background:var(--beige-mid);border-radius:3px;overflow:hidden;">
+              <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:3px;transition:width 0.8s;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button onclick="openAssignModal()" style="background:var(--beige);color:var(--navy);border:1px solid var(--beige-dark);border-radius:20px;padding:8px 18px;font-size:12px;font-weight:600;font-family:var(--font-body);cursor:pointer;">Cambiar →</button>
+    </div>
+    ${!ccDone ? `<div style="margin-top:12px;padding:10px 14px;background:#fef8e7;border-radius:10px;border-left:3px solid var(--gold);font-size:12px;color:#8b6914;">⚠️ Completa todos los módulos de <strong>Common Core</strong> para activar los módulos de ${assigned.name}.</div>` : ''}`;
+}
+
+
+// ============================================================
+// RENDER ASSIGN MODAL GRID
+// ============================================================
+function renderAssignModal() {
+  const grid = document.getElementById('assign-modal-grid');
+  if (!grid) return;
+  const cc = SCHOOLS.find(s => s.id === 'common');
+  const ccDone = cc.modules.every(m => m.status === 'done');
+
+  grid.innerHTML = SCHOOLS.filter(s => s.id !== 'common').map(school => {
+    const isAssigned = state.assignedArea === school.id;
+    return `
+    <div onclick="assignArea('${school.id}')" style="
+      background:white;border-radius:var(--radius-md);
+      border:2px solid ${isAssigned ? 'var(--gold)' : 'var(--beige-dark)'};
+      padding:16px;cursor:pointer;transition:all 0.2s;
+      ${isAssigned ? 'background:var(--gold-pale);' : ''}
+    " onmouseover="this.style.borderColor='var(--gold)';this.style.transform='translateY(-2px)'"
+       onmouseout="this.style.borderColor='${isAssigned ? 'var(--gold)' : 'var(--beige-dark)'}'
+       ;this.style.transform='none'">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <span style="font-size:24px;">${school.emoji}</span>
+        <div style="flex:1;">
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-soft);letter-spacing:2px;text-transform:uppercase;">${school.area}</div>
+          <div style="font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--navy);">${school.name}</div>
+        </div>
+        ${isAssigned ? '<span style="font-size:16px;">✅</span>' : ''}
+      </div>
+      <div style="font-size:12px;color:var(--text-soft);line-height:1.4;margin-bottom:10px;">${school.desc}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--navy);">${school.totalCredits} cr.</span>
+        <span style="font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600;font-family:var(--font-mono);
+          background:${ccDone ? 'var(--success-bg)' : 'var(--beige-mid)'};
+          color:${ccDone ? 'var(--success)' : 'var(--text-soft)'};">
+          ${ccDone ? '🔓 Disponible' : '⏳ Requiere CC'}
+        </span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
 function renderProgressSection() {
-  // Total credits
-  const total = SCHOOLS.reduce((a,s) => a + s.earnedCredits, 0);
+  // Total credits = Common Core + assigned area
+  const cc = SCHOOLS.find(s => s.id === 'common');
+  const assigned = state.assignedArea ? SCHOOLS.find(s => s.id === state.assignedArea) : null;
+  const total = cc.earnedCredits + (assigned ? assigned.earnedCredits : 0);
   document.getElementById('p-total-credits').textContent = total;
 
-  // Area progress
+  // Area progress — show only CC + assigned area (or all if none assigned)
   const list = document.getElementById('areas-progress-list');
   const colors = ['#c9a84c','#2e7d5e','#1a3a5f','#4a7c3f','#9e3a5c','#2e7a9e','#9e6a38','#7b3a9e'];
-  list.innerHTML = SCHOOLS.map((s,i) => {
+  const displaySchools = assigned
+    ? SCHOOLS.filter(s => s.id === 'common' || s.id === state.assignedArea)
+    : SCHOOLS;
+
+  list.innerHTML = displaySchools.map((s,i) => {
     const pct = Math.round((s.earnedCredits / s.totalCredits) * 100);
     return `
     <div class="area-progress-row">
@@ -1718,8 +1985,213 @@ function renderProgressSection() {
 }
 
 // ============================================================
-// LOCKED MESSAGE
+// CREDITS SECTION — TABLA EJECUTIVA
 // ============================================================
+function renderCredits() {
+  let grandTotal = 0, grandTrainee = 0, grandSpecialist = 0, grandExpert = 0, grandMods = 0;
+
+  // Compute per-school totals
+  const rows = SCHOOLS.map(school => {
+    const byLevel = { Trainee:[], Specialist:[], Expert:[] };
+    school.modules.forEach(m => { if (byLevel[m.level]) byLevel[m.level].push(m); });
+    const tCr  = byLevel.Trainee.reduce((a,m)=>a+m.credits,0);
+    const sCr  = byLevel.Specialist.reduce((a,m)=>a+m.credits,0);
+    const eCr  = byLevel.Expert.reduce((a,m)=>a+m.credits,0);
+    grandTotal     += school.totalCredits;
+    grandTrainee   += tCr;
+    grandSpecialist+= sCr;
+    grandExpert    += eCr;
+    grandMods      += school.modules.length;
+    return { school, byLevel, tCr, sCr, eCr };
+  });
+
+  // Update summary bar
+  document.getElementById('cr-total-num').textContent       = grandTotal;
+  document.getElementById('cr-trainee-total').textContent   = grandTrainee;
+  document.getElementById('cr-specialist-total').textContent= grandSpecialist;
+  document.getElementById('cr-expert-total').textContent    = grandExpert;
+  document.getElementById('cr-earned-total').textContent    = grandMods + ' mód.';
+
+  // Build one master table per area
+  const tableStyle = `width:100%;border-collapse:collapse;font-family:var(--font-body);`;
+  const thBase = `padding:10px 14px;text-align:left;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid rgba(255,255,255,0.15);white-space:nowrap;`;
+  const tdBase = `padding:10px 14px;font-size:13px;border-bottom:1px solid var(--beige-mid);vertical-align:middle;`;
+
+  const levelPill = (lvl, credits, count) => {
+    const cfg = {
+      Trainee:    { bg:'#e8f0fe', color:'#1a3a9e', dot:'#6bb5ff' },
+      Specialist: { bg:'#fef8e7', color:'#8b6914', dot:'#c9a84c' },
+      Expert:     { bg:'#e8fdf2', color:'#1e6b45', dot:'#6bffa0' },
+    }[lvl] || { bg:'#f0f0f0', color:'#666', dot:'#ccc' };
+    if (!count) return `<span style="color:var(--beige-dark);font-size:12px;">—</span>`;
+    return `<div style="display:inline-flex;align-items:center;gap:6px;">
+      <span style="width:8px;height:8px;border-radius:50%;background:${cfg.dot};flex-shrink:0;display:inline-block;"></span>
+      <span style="background:${cfg.bg};color:${cfg.color};font-family:var(--font-mono);font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;">${credits} cr.</span>
+      <span style="color:var(--text-soft);font-size:11px;">${count} mód.</span>
+    </div>`;
+  };
+
+  const tablesHtml = rows.map(({ school, byLevel, tCr, sCr, eCr }) => {
+    const modRows = school.modules.map((m, i) => {
+      const lvlCfg = {
+        Trainee:    { bg:'#e8f0fe', color:'#1a3a9e' },
+        Specialist: { bg:'#fef8e7', color:'#8b6914' },
+        Expert:     { bg:'#e8fdf2', color:'#1e6b45' },
+      }[m.level] || {};
+      const statusCfg = {
+        done:    { icon:'✓', color:'#2e7d5e', bg:'#d4eddf', label:'Completado' },
+        active:  { icon:'▶', color:'#1a3a9e', bg:'#e8f0fe', label:'En curso' },
+        pending: { icon:'○', color:'#888',    bg:'#f0f0f0', label:'Pendiente' },
+        locked:  { icon:'🔒', color:'#aaa',   bg:'#f0f0f0', label:'Bloqueado' },
+      }[m.status] || {};
+      const rowBg = i % 2 === 0 ? 'white' : '#fdfaf5';
+      return `
+        <tr style="background:${rowBg};">
+          <td style="${tdBase}padding-left:20px;color:var(--text-soft);font-family:var(--font-mono);font-size:11px;">${i+1}</td>
+          <td style="${tdBase}font-weight:500;color:var(--navy);">${m.title}</td>
+          <td style="${tdBase}">
+            <span style="background:${lvlCfg.bg};color:${lvlCfg.color};font-family:var(--font-mono);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;">${m.level}</span>
+          </td>
+          <td style="${tdBase}text-align:center;">
+            <span style="font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--navy);">${m.credits}</span>
+          </td>
+          <td style="${tdBase}">
+            <span style="display:inline-flex;align-items:center;gap:5px;background:${statusCfg.bg};color:${statusCfg.color};font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;">
+              ${statusCfg.icon} ${statusCfg.label}
+            </span>
+          </td>
+        </tr>`;
+    }).join('');
+
+    // Subtotal row
+    const subtotalRow = `
+      <tr style="background:var(--navy);">
+        <td colspan="3" style="padding:10px 14px 10px 20px;font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--gold-light);">TOTAL ${school.name.toUpperCase()}</td>
+        <td style="padding:10px 14px;text-align:center;font-family:var(--font-mono);font-size:15px;font-weight:900;color:var(--gold-light);">${school.totalCredits}</td>
+        <td style="padding:10px 14px;font-family:var(--font-mono);font-size:11px;color:rgba(255,255,255,0.5);">${school.modules.length} módulos</td>
+      </tr>`;
+
+    return `
+    <div style="background:white;border-radius:var(--radius-lg);border:1px solid var(--beige-dark);overflow:hidden;margin-bottom:24px;box-shadow:var(--shadow-sm);">
+
+      <!-- Area Header -->
+      <div style="background:${school.color};padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="font-size:26px;">${school.emoji}</span>
+          <div>
+            <div style="font-family:var(--font-mono);font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:2px;text-transform:uppercase;">${school.area}</div>
+            <div style="font-family:var(--font-display);font-size:20px;font-weight:700;color:white;line-height:1.1;">${school.name}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+          ${levelPill('Trainee', tCr, byLevel.Trainee.length)}
+          <span style="color:rgba(255,255,255,0.3);font-size:16px;">·</span>
+          ${levelPill('Specialist', sCr, byLevel.Specialist.length)}
+          <span style="color:rgba(255,255,255,0.3);font-size:16px;">·</span>
+          ${levelPill('Expert', eCr, byLevel.Expert.length)}
+          <div style="background:rgba(255,255,255,0.15);border-radius:12px;padding:6px 16px;margin-left:8px;">
+            <span style="font-family:var(--font-display);font-size:18px;font-weight:900;color:white;">${school.totalCredits}</span>
+            <span style="font-size:10px;color:rgba(255,255,255,0.5);font-family:var(--font-mono);margin-left:4px;">CR. TOTAL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div style="overflow-x:auto;">
+        <table style="${tableStyle}">
+          <thead>
+            <tr style="background:var(--navy);">
+              <th style="${thBase}color:rgba(255,255,255,0.5);width:40px;">#</th>
+              <th style="${thBase}color:rgba(255,255,255,0.8);">Módulo</th>
+              <th style="${thBase}color:rgba(255,255,255,0.8);">Nivel</th>
+              <th style="${thBase}color:rgba(255,255,255,0.8);text-align:center;">Créditos</th>
+              <th style="${thBase}color:rgba(255,255,255,0.8);">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${modRows}
+            ${subtotalRow}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Grand total table
+  const grandHtml = `
+  <div style="background:var(--navy);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-lg);margin-bottom:24px;">
+    <div style="padding:20px 24px;border-bottom:1px solid rgba(255,255,255,0.1);">
+      <div style="font-family:var(--font-mono);font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:3px;text-transform:uppercase;margin-bottom:6px;">Resumen ejecutivo · TMLF Learning Center</div>
+      <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:white;">Tabla de Créditos — Todas las Áreas</div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table style="${tableStyle}">
+        <thead>
+          <tr style="background:rgba(255,255,255,0.05);">
+            <th style="${thBase}color:rgba(255,255,255,0.5);width:36px;"></th>
+            <th style="${thBase}color:rgba(255,255,255,0.7);">Área</th>
+            <th style="${thBase}color:#6bb5ff;text-align:center;">Trainee</th>
+            <th style="${thBase}color:var(--gold);text-align:center;">Specialist</th>
+            <th style="${thBase}color:#6bffa0;text-align:center;">Expert</th>
+            <th style="${thBase}color:rgba(255,255,255,0.7);text-align:center;">Módulos</th>
+            <th style="${thBase}color:var(--gold-light);text-align:center;">Total Créditos</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(({ school, byLevel, tCr, sCr, eCr }, i) => `
+          <tr style="background:${i%2===0?'rgba(255,255,255,0.03)':'rgba(255,255,255,0.06)'};cursor:pointer;"
+              onclick="showSection('credits')" title="Ver detalle de ${school.name}">
+            <td style="${tdBase}color:rgba(255,255,255,0.3);font-family:var(--font-mono);font-size:12px;border-bottom-color:rgba(255,255,255,0.06);">
+              ${school.emoji}
+            </td>
+            <td style="${tdBase}border-bottom-color:rgba(255,255,255,0.06);">
+              <div style="font-weight:600;color:white;font-size:13px;">${school.name}</div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.4);font-family:var(--font-mono);letter-spacing:1px;">${school.area}</div>
+            </td>
+            <td style="${tdBase}text-align:center;border-bottom-color:rgba(255,255,255,0.06);">
+              <span style="font-family:var(--font-mono);font-weight:700;color:#6bb5ff;font-size:13px;">${tCr || '—'}</span>
+              ${tCr?`<div style="font-size:10px;color:rgba(255,255,255,0.3);">${byLevel.Trainee.length} mód.</div>`:''}
+            </td>
+            <td style="${tdBase}text-align:center;border-bottom-color:rgba(255,255,255,0.06);">
+              <span style="font-family:var(--font-mono);font-weight:700;color:var(--gold);font-size:13px;">${sCr || '—'}</span>
+              ${sCr?`<div style="font-size:10px;color:rgba(255,255,255,0.3);">${byLevel.Specialist.length} mód.</div>`:''}
+            </td>
+            <td style="${tdBase}text-align:center;border-bottom-color:rgba(255,255,255,0.06);">
+              <span style="font-family:var(--font-mono);font-weight:700;color:#6bffa0;font-size:13px;">${eCr || '—'}</span>
+              ${eCr?`<div style="font-size:10px;color:rgba(255,255,255,0.3);">${byLevel.Expert.length} mód.</div>`:''}
+            </td>
+            <td style="${tdBase}text-align:center;font-family:var(--font-mono);font-size:13px;color:rgba(255,255,255,0.6);border-bottom-color:rgba(255,255,255,0.06);">${school.modules.length}</td>
+            <td style="${tdBase}text-align:center;border-bottom-color:rgba(255,255,255,0.06);">
+              <span style="font-family:var(--font-display);font-size:16px;font-weight:900;color:var(--gold-light);">${school.totalCredits}</span>
+            </td>
+          </tr>`).join('')}
+        </tbody>
+        <tfoot>
+          <tr style="background:rgba(201,168,76,0.15);border-top:2px solid var(--gold);">
+            <td style="padding:12px 14px;"></td>
+            <td style="padding:12px 14px;font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--gold-light);">TOTAL PLATAFORMA</td>
+            <td style="padding:12px 14px;text-align:center;font-family:var(--font-mono);font-size:14px;font-weight:700;color:#6bb5ff;">${grandTrainee}</td>
+            <td style="padding:12px 14px;text-align:center;font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--gold);">${grandSpecialist}</td>
+            <td style="padding:12px 14px;text-align:center;font-family:var(--font-mono);font-size:14px;font-weight:700;color:#6bffa0;">${grandExpert}</td>
+            <td style="padding:12px 14px;text-align:center;font-family:var(--font-mono);font-size:14px;font-weight:700;color:rgba(255,255,255,0.7);">${grandMods}</td>
+            <td style="padding:12px 14px;text-align:center;font-family:var(--font-display);font-size:22px;font-weight:900;color:var(--gold-light);">${grandTotal}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>`;
+
+  document.getElementById('credits-breakdown').innerHTML = grandHtml + tablesHtml;
+
+  document.getElementById('cr-total-num').textContent        = grandTotal;
+  document.getElementById('cr-trainee-total').textContent    = grandTrainee;
+  document.getElementById('cr-specialist-total').textContent = grandSpecialist;
+  document.getElementById('cr-expert-total').textContent     = grandExpert;
+  document.getElementById('cr-earned-total').textContent     = grandMods + ' mód.';
+}
+
+
+
 function showLockedMsg(schoolId) {
   const school = SCHOOLS.find(s => s.id === schoolId);
   if (!school) return;
@@ -1731,15 +2203,18 @@ function showLockedMsg(schoolId) {
 // STATS UPDATE
 // ============================================================
 function updateStats() {
-  const total = SCHOOLS.reduce((a,s) => a + s.earnedCredits, 0);
+  const cc = SCHOOLS.find(s => s.id === 'common');
+  const assigned = state.assignedArea ? SCHOOLS.find(s => s.id === state.assignedArea) : null;
+  const total = cc.earnedCredits + (assigned ? assigned.earnedCredits : 0);
   const completedMods = SCHOOLS.reduce((a,s) => a + s.modules.filter(m=>m.status==='done').length, 0);
-  const activeAreas = SCHOOLS.filter(s => s.earnedCredits > 0).length;
+  const activeAreas = state.assignedArea ? 1 : 0;
 
   document.getElementById('stat-credits').textContent = total;
   document.getElementById('stat-modules').textContent = completedMods;
   document.getElementById('stat-areas').textContent = activeAreas;
   document.getElementById('header-credits').textContent = `⭐ ${total} créditos`;
   document.getElementById('p-total-credits').textContent = total;
+  updateAssignedAreaBanner();
 }
 
 // ============================================================
@@ -1753,6 +2228,7 @@ function showSection(sectionId) {
   window.scrollTo({top:0, behavior:'smooth'});
   if (sectionId === 'progress') renderProgressSection();
   if (sectionId === 'dashboard') renderSchools();
+  if (sectionId === 'credits') renderCredits();
 }
 
 // ============================================================
@@ -1780,6 +2256,7 @@ const TRANSLATIONS = {
     // Header & Nav
     'nav-dashboard': '🎓 Academia',
     'nav-progress': '📊 Mi Progreso',
+    'nav-credits': '💳 Créditos',
     'header-credits-label': 'créditos',
     'lang-flag': '🇺🇸',
     'lang-label': 'EN',
@@ -1838,10 +2315,16 @@ const TRANSLATIONS = {
     'tip-title': '💡 Consejo del día',
     'tip-body': 'Cada módulo que completas te acerca más a tu siguiente nivel. ¡La constancia es la clave del éxito!',
     'your-progress': 'Tu Progreso',
+    // Credits tab
+    'cr-title': '💳 Créditos por Área',
+    'cr-sub': 'Desglose completo de créditos disponibles por área y nivel. Acumula créditos completando módulos para avanzar.',
+    'cr-total-label': 'CRÉDITOS TOTALES DISPONIBLES',
+    'cr-earned-label': 'GANADOS',
   },
   en: {
     'nav-dashboard': '🎓 Academy',
     'nav-progress': '📊 My Progress',
+    'nav-credits': '💳 Credits',
     'header-credits-label': 'credits',
     'lang-flag': '🇲🇽',
     'lang-label': 'ES',
@@ -1892,6 +2375,11 @@ const TRANSLATIONS = {
     'tip-title': '💡 Tip of the day',
     'tip-body': 'Every module you complete brings you closer to your next level. Consistency is the key to success!',
     'your-progress': 'Your Progress',
+    // Credits tab
+    'cr-title': '💳 Credits by Area',
+    'cr-sub': 'Full breakdown of available credits per area and level. Accumulate credits by completing modules to advance.',
+    'cr-total-label': 'TOTAL AVAILABLE CREDITS',
+    'cr-earned-label': 'EARNED',
   }
 };
 
@@ -1909,6 +2397,7 @@ function toggleLanguage() {
   // Header nav
   document.getElementById('nav-dashboard').innerHTML = t('nav-dashboard');
   document.getElementById('nav-progress').innerHTML = t('nav-progress');
+  document.getElementById('nav-credits').innerHTML = t('nav-credits');
 
   // Hero
   document.getElementById('hero-greeting').textContent = t('hero-greeting');
@@ -1967,6 +2456,8 @@ function toggleLanguage() {
 
   // Re-render schools grid to reflect language
   renderSchools();
+  // Re-render credits if active
+  if (document.getElementById('section-credits').classList.contains('active')) renderCredits();
 
   showToast(currentLang === 'en' ? '🇺🇸 Switched to English' : '🇲🇽 Cambiado a Español');
 }
@@ -1978,6 +2469,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('loader').classList.add('fade-out');
     renderSchools();
     renderProgressSection();
+    updateAssignedAreaBanner();
   }, 2000);
 });
 </script>
