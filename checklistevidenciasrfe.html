@@ -175,12 +175,195 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .cat-card:nth-child(4){animation-delay:.13s}.cat-card:nth-child(5){animation-delay:.16s}.cat-card:nth-child(6){animation-delay:.19s}
 .cat-card:nth-child(7){animation-delay:.22s}.cat-card:nth-child(8){animation-delay:.25s}.cat-card:nth-child(9){animation-delay:.28s}.cat-card:nth-child(10){animation-delay:.31s}
 
-/* Print */
-@media print{
-  .global-topbar,.summary-bar{position:static!important;}
-  .cat-card{break-inside:avoid;page-break-inside:avoid;}
-  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+
+/* CL BANNER */
+.cl-banner{background:var(--surface);border-bottom:2px solid var(--red-border);padding:0;}
+.cl-banner-inner{max-width:1280px;margin:0 auto;padding:16px 40px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.cl-banner-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--red);white-space:nowrap;flex-shrink:0;}
+.cl-input-wrap{flex:1;min-width:220px;max-width:400px;position:relative;}
+.cl-input{
+  width:100%;padding:9px 14px;
+  font-family:'Source Serif 4',serif;font-size:15px;font-weight:600;color:var(--text);
+  background:var(--card-alt);border:1.5px solid var(--border);border-radius:8px;
+  outline:none;transition:border-color .18s,background .18s;
 }
+.cl-input::placeholder{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:400;color:var(--muted2);}
+.cl-input:focus{border-color:var(--red-border);background:var(--surface);}
+.cl-meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.cl-meta-field{display:flex;align-items:center;gap:8px;}
+.cl-meta-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted2);white-space:nowrap;}
+.cl-meta-input{
+  padding:6px 10px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text2);
+  background:var(--card-alt);border:1px solid var(--border);border-radius:6px;
+  outline:none;transition:border-color .18s;width:130px;
+}
+.cl-meta-input:focus{border-color:var(--red-border);}
+.cl-banner-actions{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0;}
+.dl-btn{
+  display:flex;align-items:center;gap:7px;
+  padding:8px 18px;border-radius:8px;border:1px solid var(--red);
+  background:var(--red);color:#fff;
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+  cursor:pointer;transition:all .18s;white-space:nowrap;
+}
+.dl-btn:hover{background:var(--red-mid);border-color:var(--red-mid);}
+.dl-btn.secondary{background:transparent;color:var(--text2);border-color:var(--border2);}
+.dl-btn.secondary:hover{background:var(--card-alt);}
+.dl-btn.db{background:#1A3A6B;border-color:#1A3A6B;color:#fff;}
+.dl-btn.db:hover{background:#2952A3;border-color:#2952A3;}
+.dl-btn.db.saving{background:#807A72;border-color:#807A72;cursor:not-allowed;}
+.db-status{
+  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;
+  padding:4px 10px;border-radius:5px;border:1px solid;display:none;
+  white-space:nowrap;
+}
+.db-status.ok{background:#FFF8E0;color:#7A5500;border-color:#F0D060;display:inline-block;}
+.db-status.err{background:#FDE8EA;color:#8A0D1A;border-color:#F0B3BA;display:inline-block;}
+.db-status.saving{background:#E8EEF8;color:#1A3A6B;border-color:#A8BEDE;display:inline-block;}
+
+
+/* PRINT STYLES — diseño limpio igual al artefacto */
+@media print {
+  /* Ocultar toda la UI de navegación */
+  .global-topbar, .summary-bar, .cl-banner-actions,
+  .cat-arrow, .cat-foot-btns, .sb-actions,
+  .hero, .section-div, .site-footer,
+  .print-none { display: none !important; }
+
+  /* Reset de página */
+  @page {
+    size: A4 landscape;
+    margin: 12mm 14mm;
+  }
+
+  html, body {
+    background: #fff !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 10px !important;
+    color: #18140F !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Banner del CL — compacto en la parte superior */
+  .cl-banner {
+    border-bottom: 2px solid #B8202F !important;
+    padding: 6px 0 8px !important;
+    margin-bottom: 10px !important;
+    background: #fff !important;
+  }
+  .cl-banner-inner { padding: 0 !important; gap: 12px !important; flex-wrap: nowrap !important; }
+  .cl-banner-label { font-size: 9px !important; }
+  .cl-input { font-size: 13px !important; border: none !important; background: transparent !important; padding: 0 !important; font-weight: 700 !important; }
+  .cl-meta-input { border: none !important; background: transparent !important; padding: 0 !important; font-size: 10px !important; }
+  .cl-meta-lbl { font-size: 8px !important; }
+  .cl-input-wrap { max-width: none !important; }
+
+  /* Print header */
+  .print-header { display: block !important; margin-bottom: 12px !important; }
+
+  /* Acordeones — siempre visibles */
+  .cat-collapse {
+    max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+
+  /* Grid — 2 columnas en landscape */
+  .main-wrap { padding: 0 !important; }
+  .cat-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  /* Tarjetas */
+  .cat-card {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    border: 1px solid #DDD9D2 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    margin-bottom: 0 !important;
+    overflow: visible !important;
+  }
+  .cat-card::before {
+    display: block !important;
+    height: 3px !important;
+    width: 100% !important;
+    top: 0; left: 0; right: 0; bottom: auto !important;
+    border-radius: 7px 7px 0 0 !important;
+  }
+  .cat-card.has-some::before { background: #D42A3C !important; }
+  .cat-card.has-all::before  { background: #B87B00 !important; }
+
+  /* Header de tarjeta */
+  .cat-head {
+    padding: 8px 10px 6px !important;
+    background: #F9F8F5 !important;
+    border-bottom: 1px solid #DDD9D2 !important;
+  }
+  .cat-icon { width: 26px !important; height: 26px !important; font-size: 13px !important; }
+  .cat-num  { font-size: 7px !important; }
+  .cat-title { font-size: 11px !important; }
+  .cat-counter { font-size: 9px !important; }
+
+  /* Barra de progreso */
+  .cat-pbar { height: 2px !important; }
+  .cat-pbar-fill { background: #D42A3C !important; }
+
+  /* Evidencias */
+  .cat-body { padding: 6px 10px 0 !important; }
+  .ev-section-lbl { font-size: 7px !important; margin: 6px 0 4px !important; }
+  .ev-list { gap: 2px !important; }
+  .ev-item {
+    padding: 4px 7px !important;
+    border-radius: 4px !important;
+    border: 1px solid #DDD9D2 !important;
+    background: #F9F8F5 !important;
+  }
+  .ev-item.checked {
+    background: #FDE8EA !important;
+    border-color: #F0B3BA !important;
+  }
+  .ev-cb {
+    width: 11px !important; height: 11px !important;
+    border: 1.5px solid #C8C3BA !important;
+    border-radius: 2px !important;
+    background: #fff !important;
+    flex-shrink: 0 !important;
+  }
+  .ev-item.checked .ev-cb {
+    background: #D42A3C !important;
+    border-color: #D42A3C !important;
+  }
+  .ev-item.checked .ev-ck { display: block !important; color: #fff !important; font-size: 7px !important; }
+  .ev-lbl { font-size: 9.5px !important; line-height: 1.3 !important; }
+  .ev-item.checked .ev-lbl { color: #8A0D1A !important; font-weight: 600 !important; }
+
+  /* Notas */
+  .cat-notes { padding: 4px 10px 6px !important; }
+  .notes-ta {
+    min-height: 32px !important;
+    font-size: 9px !important;
+    border: 1px solid #DDD9D2 !important;
+    background: #F9F8F5 !important;
+    padding: 4px 7px !important;
+    resize: none !important;
+  }
+
+  /* Footer de tarjeta — oculto */
+  .cat-foot { display: none !important; }
+
+  /* Badge visible */
+  .cat-badge.visible { display: inline-block !important; font-size: 7px !important; }
+}
+.print-header { display: none; padding: 0 0 14px; border-bottom: 2px solid #B8202F; margin-bottom: 14px; }
+.print-header-title { font-family: 'Source Serif 4', serif; font-size: 20px; font-weight: 900; color: #18140F; }
+.print-header-title span { color: #B8202F; }
+.print-header-meta { font-size: 11px; color: #807A72; margin-top: 4px; }
+
 /* Responsive */
 @media(max-width:1100px){.cat-grid{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:640px){
@@ -219,9 +402,42 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         </svg>
         <div class="prog-label"><strong id="topPct">0%</strong> completado</div>
       </div>
-      <button class="btn btn-outline" onclick="window.print()">⎙ Imprimir</button>
     </div>
   </div>
+</div>
+
+
+<!-- CL BANNER -->
+<div class="cl-banner" id="clBanner">
+  <div class="cl-banner-inner">
+    <div class="cl-banner-label">📁 Caso — CL</div>
+    <div class="cl-input-wrap">
+      <input class="cl-input" id="clName" type="text" placeholder="Nombre completo del cliente (CL)…" oninput="saveCL()" autocomplete="off"/>
+    </div>
+    <div class="cl-meta">
+      <div class="cl-meta-field">
+        <span class="cl-meta-lbl">Fecha</span>
+        <input class="cl-meta-input" id="clDate" type="date" oninput="saveCL()"/>
+      </div>
+      <div class="cl-meta-field">
+        <span class="cl-meta-lbl">Caso #</span>
+        <input class="cl-meta-input" id="clCase" type="text" placeholder="Número de caso…" oninput="saveCL()"/>
+      </div>
+      <div class="cl-meta-field">
+        <span class="cl-meta-lbl">Revisado por</span>
+        <input class="cl-meta-input" id="clReviewer" type="text" placeholder="Nombre del revisor…" oninput="saveCL()"/>
+      </div>
+    </div>
+    <div class="cl-banner-actions">
+      <button class="dl-btn" id="dlPdfBtn" onclick="downloadPDF()">⬇ Descargar PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT HEADER (only visible when printing) -->
+<div class="print-header" id="printHeader">
+  <div class="print-header-title">Checklist de <span>Evidencias</span> — RFE</div>
+  <div class="print-header-meta" id="printMeta"></div>
 </div>
 
 <!-- HERO -->
@@ -273,7 +489,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <button class="sb-btn" onclick="expandAll()">⊞ Expandir</button>
       <button class="sb-btn" onclick="collapseAll()">⊟ Contraer</button>
       <button class="sb-btn danger" onclick="resetAll()">↺ Reiniciar</button>
-      <button class="sb-btn" onclick="window.print()">⎙ Imprimir</button>
+      <button class="sb-btn" onclick="printAndSave()">⎙ Imprimir</button>
     </div>
   </div>
 </div>
@@ -672,6 +888,76 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 <script>
 const STORAGE_KEY = 'rfe_checklist_v2';
+const CL_KEY = 'rfe_cl_info_v1';
+
+// ── CL info ──
+function saveCL() {
+  updatePrintHeader();
+}
+function loadCL() {
+  try {
+    const raw = localStorage.getItem(CL_KEY);
+    if (!raw) return;
+    const info = JSON.parse(raw);
+    document.getElementById('clName').value = info.name || '';
+    document.getElementById('clDate').value = info.date || '';
+    document.getElementById('clCase').value = info.caseNum || '';
+    document.getElementById('clReviewer').value = info.reviewer || '';
+    updatePrintHeader();
+  } catch(e){}
+}
+function updatePrintHeader() {
+  const name = document.getElementById('clName').value;
+  const date = document.getElementById('clDate').value;
+  const caseNum = document.getElementById('clCase').value;
+  const reviewer = document.getElementById('clReviewer').value;
+  const parts = [];
+  if (name) parts.push('CL: ' + name);
+  if (caseNum) parts.push('Caso #: ' + caseNum);
+  if (date) parts.push('Fecha: ' + date);
+  if (reviewer) parts.push('Revisado por: ' + reviewer);
+  document.getElementById('printMeta').textContent = parts.join('  ·  ');
+}
+
+// ── Descargar PDF ──
+function downloadPDF() {
+  const clName = document.getElementById('clName').value.trim();
+  if (!clName) {
+    alert('Ingresa el nombre del CL antes de descargar.');
+    document.getElementById('clName').focus();
+    return;
+  }
+
+  // Nombre del documento = nombre sugerido del PDF
+  const caseNum = document.getElementById('clCase').value.trim();
+  const date    = new Date().toISOString().slice(0,10);
+  const parts   = ['Checklist_Evidencias', clName.replace(/\s+/g,'_')];
+  if (caseNum) parts.push('Caso' + caseNum);
+  parts.push(date);
+  const originalTitle = document.title;
+  document.title = parts.join('_');
+
+  // Guardar estado de acordeones y expandir todo para impresión
+  const wasOpen = [...document.querySelectorAll('.cat-card')].map(c => c.classList.contains('open'));
+  document.querySelectorAll('.cat-card').forEach(c => c.classList.add('open'));
+
+  setTimeout(function() {
+    window.print();
+
+    // Restaurar estado de acordeones y título
+    setTimeout(function() {
+      document.querySelectorAll('.cat-card').forEach((c, i) => {
+        c.classList.toggle('open', wasOpen[i]);
+      });
+      document.title = originalTitle;
+    }, 500);
+  }, 200);
+
+  // Registrar en Sheets en paralelo — no bloquea el PDF
+  pingSheet();
+}
+
+function printAndSave() { downloadPDF(); }
 
 function toggleCard(head) {
   const card = head.closest('.cat-card');
@@ -717,7 +1003,11 @@ function resetAll() {
   document.querySelectorAll('.notes-ta').forEach(t => t.value = '');
   document.querySelectorAll('.cat-card').forEach(c => { c.classList.remove('open'); updateCard(c); });
   updateGlobals();
-  try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+  document.getElementById('clName').value='';
+  document.getElementById('clDate').value='';
+  document.getElementById('clCase').value='';
+  document.getElementById('clReviewer').value='';
+  try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(CL_KEY); } catch(e){}
 }
 function updateCard(card) {
   const all = card.querySelectorAll('.ev-item');
@@ -774,21 +1064,93 @@ function save() {
   } catch(e){}
 }
 function load() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
-    const state = JSON.parse(raw);
-    document.querySelectorAll('.cat-card').forEach(card => {
-      const s = state[card.dataset.cat];
-      if (!s) return;
-      card.querySelectorAll('.ev-item').forEach((item, i) => { if (s.checks[i]) item.classList.add('checked'); });
-      const ta = card.querySelector('.notes-ta');
-      if (ta && s.note) ta.value = s.note;
-      if (s.open) card.classList.add('open');
-    });
-  } catch(e){}
+  // No restaurar automáticamente — cada vez que se abre es un caso nuevo
+  // Los datos solo se restauran si el usuario explícitamente recarga la misma sesión
 }
+function loadCL() {
+  // No pre-cargar datos de CL de sesiones anteriores
+  // El campo de fecha sí lo ponemos al día de hoy por default
+  const today = new Date().toISOString().slice(0, 10);
+  const dateEl = document.getElementById('clDate');
+  if (dateEl && !dateEl.value) dateEl.value = today;
+}
+
+// ═══════════════════════════════════════════════════
+//  APPS SCRIPT — fire & forget via Image ping (sin CORS)
+// ═══════════════════════════════════════════════════
+
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYgzsqh2oJdPq7gRyplhAlMJj6VspjMLGNfi0HqDTt2VN_mw2_CmhLs-1MAdC_ePNlpA/exec';
+
+function collectPayload() {
+  const clName   = document.getElementById('clName').value.trim();
+  const clDate   = document.getElementById('clDate').value;
+  const caseNum  = document.getElementById('clCase').value.trim();
+  const reviewer = document.getElementById('clReviewer').value.trim();
+
+  // Solo conteos por categoría — no mandamos texto completo de evidencias
+  const catSummary = [];
+  document.querySelectorAll('.cat-card').forEach((card, idx) => {
+    const total   = card.querySelectorAll('.ev-item').length;
+    const checked = card.querySelectorAll('.ev-item.checked').length;
+    const note    = card.querySelector('.notes-ta')?.value.trim() || '';
+    catSummary.push(checked + '/' + total + (note ? '|' + note.substring(0,80) : ''));
+  });
+
+  let totalMarked = 0, totalPossible = 0;
+  document.querySelectorAll('.cat-card').forEach(card => {
+    totalPossible += card.querySelectorAll('.ev-item').length;
+    totalMarked   += card.querySelectorAll('.ev-item.checked').length;
+  });
+
+  return {
+    clName, clDate, caseNum, reviewer,
+    cats: catSummary.join(';'),          // ej: "3/11|nota...; 0/4; 2/7"
+    totalMarked, totalPossible,
+    pct: totalPossible > 0 ? Math.round((totalMarked / totalPossible) * 100) : 0
+  };
+}
+
+// Registra en Sheets via iframe oculto — completamente invisible, sin abrir pestañas
+function pingSheet() {
+  const clName = document.getElementById('clName').value.trim();
+  if (!clName) return;
+
+  const payload = collectPayload();
+
+  // Crear iframe oculto
+  const iframeName = 'sheet_ping_' + Date.now();
+  const iframe = document.createElement('iframe');
+  iframe.name  = iframeName;
+  iframe.style.cssText = 'display:none;width:0;height:0;border:0;position:absolute;';
+  document.body.appendChild(iframe);
+
+  // Crear form que envía al iframe (nunca visible)
+  const form = document.createElement('form');
+  form.method = 'GET';
+  form.action = APPS_SCRIPT_URL;
+  form.target = iframeName;
+  form.style.display = 'none';
+
+  for (const [k, v] of Object.entries(payload)) {
+    const input = document.createElement('input');
+    input.type  = 'hidden';
+    input.name  = k;
+    input.value = v;
+    form.appendChild(input);
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+
+  // Limpiar después de unos segundos
+  setTimeout(() => {
+    try { document.body.removeChild(form); } catch(e){}
+    try { document.body.removeChild(iframe); } catch(e){}
+  }, 5000);
+}
+
 document.querySelectorAll('.notes-ta').forEach(ta => ta.addEventListener('input', save));
+loadCL();
 load();
 document.querySelectorAll('.cat-card').forEach(c => updateCard(c));
 updateGlobals();
