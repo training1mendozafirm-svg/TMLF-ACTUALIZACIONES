@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Simulador Módulo 1 - Flujo de Compliance · TMLF</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', 'Segoe UI', sans-serif;
+            background: #dde4ee;
+            margin: 0;
+            padding: 20px;
+            color: #1e2a3e;
+            min-height: 100vh;
+        }
+
+        .simulator-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 16px 48px rgba(10,30,60,0.14);
+            overflow: hidden;
+            padding: 0 0 40px;
+        }
+
+        /* ─── HEADER ─── */
+        .simulator-header {
+            background: linear-gradient(130deg, #0d2b45 0%, #1a4a70 60%, #1f5c8a 100%);
+            padding: 0 36px;
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            min-height: 88px;
+            position: relative;
+            overflow: hidden;
+        }
+        .simulator-header::after {
+            content: '';
+            position: absolute;
+            right: -40px; top: -40px;
+            width: 220px; height: 220px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 50%;
+        }
+
+        /* SVG Logo container */
+        .header-logo-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .header-logo-wrap svg { display: block; }
+        .header-logo-text {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.62rem;
+            font-weight: 600;
+            letter-spacing: 0.28em;
+            color: rgba(255,255,255,0.55);
+            text-transform: uppercase;
+        }
+
+        .header-divider {
+            width: 1px;
+            height: 52px;
+            background: rgba(255,255,255,0.2);
+            flex-shrink: 0;
+        }
+
+        .header-text { flex: 1; }
+        .header-text h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin: 0 0 3px;
+            color: #ffffff;
+            letter-spacing: 0.01em;
+        }
+        .header-text .sub {
+            color: #8bb8d8;
+            font-size: 0.83rem;
+            margin: 0;
+            font-weight: 400;
+        }
+
+        /* ─── LAYOUT ─── */
+        .inner-pad { padding: 26px 32px 0; }
+
+        .score-board {
+            background: linear-gradient(90deg, #e6f2f9, #eef7ff);
+            border-radius: 60px;
+            padding: 8px 22px;
+            display: inline-block;
+            font-weight: 700;
+            margin-bottom: 22px;
+            color: #0a4b6e;
+            border: 1px solid #c0d8ea;
+            font-size: 0.88rem;
+            letter-spacing: 0.01em;
+        }
+
+        .scenario-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 26px;
+            border-bottom: 2px solid #e4edf5;
+            padding-bottom: 18px;
+        }
+        .scenario-btn {
+            background: #f0f5fc;
+            border: 1px solid #c0d4e4;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.18s;
+            color: #1e5a7a;
+            font-size: 0.8rem;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .scenario-btn:hover:not(.disabled) { background: #cce2f0; transform: translateY(-1px); }
+        .scenario-btn.active { background: #1a4f78; color: white; border-color: #1a4f78; box-shadow: 0 2px 8px rgba(26,79,120,0.3); }
+        .scenario-btn.done { background: #d0edd8; color: #1a5c36; border-color: #96cba4; }
+        .scenario-btn.disabled { opacity: 0.45; cursor: not-allowed; }
+
+        .card {
+            background: #ffffff;
+            border-radius: 22px;
+            padding: 24px 28px;
+            margin-bottom: 22px;
+            box-shadow: 0 3px 14px rgba(0,0,0,0.055);
+            border: 1px solid #e0ecf5;
+        }
+        .role-badge {
+            background: linear-gradient(135deg, #1a4f78, #2471a3);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 14px 20px;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: #ffffff;
+            letter-spacing: 0.01em;
+            line-height: 1.4;
+            border-left: 4px solid #f0b429;
+        }
+        .role-badge .role-emoji { font-size: 1.6rem; flex-shrink: 0; margin-top: 1px; }
+        .role-badge .role-text-wrap { display: flex; flex-direction: column; gap: 2px; }
+        .role-badge .role-intro { font-size: 0.72rem; font-weight: 500; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.1em; }
+        .role-badge .role-name { font-size: 1rem; font-weight: 800; letter-spacing: 0.01em; }
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 500;
+            margin: 10px 0 20px;
+            line-height: 1.55;
+            color: #0b2a40;
+        }
+        .scenario-context {
+            background: #f4f9fd;
+            border-left: 4px solid #5ba3cc;
+            border-radius: 0 12px 12px 0;
+            padding: 12px 16px;
+            margin-bottom: 18px;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: #2a4a60;
+            font-style: italic;
+        }
+        .options { display: flex; flex-direction: column; gap: 10px; margin: 18px 0 6px; }
+        .option-btn {
+            background: #f6fbff;
+            border: 1.5px solid #c4dced;
+            border-radius: 60px;
+            padding: 12px 22px;
+            text-align: left;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+            color: #1a4a68;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .option-btn:hover:not(:disabled) { background: #d8eef8; border-color: #80bbd4; transform: translateX(3px); }
+        .option-btn:disabled { opacity: 0.58; cursor: default; transform: none; }
+
+        .feedback {
+            background: #ecf6fd;
+            border-left: 5px solid #2471a3;
+            padding: 13px 18px;
+            border-radius: 0 14px 14px 0;
+            margin: 16px 0 8px;
+            font-size: 0.9rem;
+            line-height: 1.55;
+        }
+        .error-feedback { background: #fdeaea; border-left-color: #c0392b; }
+        .success-feedback { background: #d6f0e0; border-left-color: #1e8449; }
+
+        .next-btn, .continue-btn, .verify-btn {
+            background: #1a4f78;
+            border: none;
+            color: white;
+            padding: 10px 26px;
+            border-radius: 40px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 12px;
+            transition: 0.15s;
+            font-size: 0.88rem;
+            font-family: 'DM Sans', sans-serif;
+            letter-spacing: 0.02em;
+        }
+        .next-btn:hover, .verify-btn:hover { background: #0e3352; }
+        .continue-btn { background: #1a7a45; }
+        .continue-btn:hover { background: #145c34; }
+
+        .score-detail { text-align: right; font-weight: 700; margin-top: 10px; font-size: 0.85rem; color: #1a6640; }
+        .info-sis {
+            background: #fff8e6;
+            border-left: 4px solid #e0a82e;
+            padding: 11px 16px;
+            border-radius: 0 12px 12px 0;
+            font-size: 0.84rem;
+            margin-bottom: 16px;
+        }
+
+        /* ─── DRAG & DROP ─── */
+        .drag-drop-area { background: #f2f7fb; border: 2px dashed #8ab4cc; border-radius: 20px; padding: 22px; }
+        .drag-section-label {
+            font-size: 0.74rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #4a7a9a;
+            margin-bottom: 8px;
+        }
+        .drag-items-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 56px;
+            background: white;
+            border: 1.5px dashed #a8ccdb;
+            border-radius: 14px;
+            padding: 10px 12px;
+            margin-bottom: 20px;
+        }
+        .drag-item {
+            background: white;
+            border: 2px solid #2471a3;
+            border-radius: 40px;
+            padding: 8px 18px;
+            font-size: 0.87rem;
+            font-weight: 600;
+            color: #1a3f5c;
+            user-select: none;
+            transition: box-shadow 0.15s, transform 0.1s, opacity 0.1s;
+            white-space: nowrap;
+        }
+        .drag-item.is-dragging { opacity: 0.4; transform: scale(0.95); }
+        .drag-item.in-zone { background: #eaf3fb; border-color: #1a5276; }
+
+        .drop-zones-row { display: flex; gap: 10px; flex-wrap: wrap; }
+        .drop-zone-wrapper { display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; min-width: 120px; }
+        .drop-zone-label {
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: #1a5276;
+            background: #d0e8f5;
+            border-radius: 20px;
+            padding: 2px 10px;
+            letter-spacing: 0.04em;
+        }
+        .drop-zone {
+            background: #eef4fb;
+            border: 2px dashed #7ab0c8;
+            border-radius: 14px;
+            width: 100%;
+            min-height: 54px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.15s, border-color 0.15s;
+            padding: 6px;
+        }
+        .drop-zone.drag-over-zone { background: #cce3f2; border-color: #2471a3; border-style: solid; }
+        .drop-zone.correct { background: #d4edda; border-color: #1a7a45; border-style: solid; }
+        .drop-zone.incorrect { background: #fde8e8; border-color: #c0392b; border-style: solid; }
+
+        /* ─── RESULTS ─── */
+        .result-box { text-align: center; padding: 26px; background: linear-gradient(135deg, #e4f0fa 0%, #eaf7ee 100%); border-radius: 22px; }
+
+        /* ─── START ─── */
+        .start-screen { text-align: center; padding: 6px 0 0; }
+        .start-btn {
+            background: linear-gradient(135deg, #1a4f78 0%, #2471a3 100%);
+            color: white;
+            font-size: 1.05rem;
+            font-weight: 700;
+            padding: 13px 38px;
+            border-radius: 60px;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+            font-family: 'DM Sans', sans-serif;
+            box-shadow: 0 5px 18px rgba(26,79,120,0.35);
+            transition: 0.18s;
+            letter-spacing: 0.02em;
+        }
+        .start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,79,120,0.42); }
+
+        footer {
+            font-size: 0.74rem;
+            text-align: center;
+            margin-top: 30px;
+            color: #7090a8;
+            padding: 0 32px;
+        }
+
+        @media (max-width: 640px) {
+            .simulator-header { padding: 0 20px; min-height: 76px; }
+            .inner-pad { padding: 18px 18px 0; }
+            .question-text { font-size: 1.05rem; }
+            .drop-zone-wrapper { min-width: 90px; }
+            .drag-item { font-size: 0.82rem; padding: 7px 13px; }
+        }
+    </style>
+</head>
+<body>
+<div class="simulator-container" id="app">
+
+    <!-- ─── HEADER CON LOGO SVG ─── -->
+    <div class="simulator-header">
+        <div class="header-logo-wrap">
+            <!--
+              Logo TMLF Training — libro abierto 3D isométrico
+              Capas (de atrás hacia adelante):
+              1. Capa trasera izq: paralelogramo azul/lila inclinado
+              2. Capa trasera der: paralelogramo azul/lila inclinado
+              3. Corchetes base azules (U abierta en esquinas)
+              4. Página izquierda: cuadrilátero blanco (perspectiva)
+              5. Borde interior izquierdo (gris claro)
+              6. Página derecha: cuadrilátero blanco (perspectiva)
+              7. Borde interior derecho (gris claro)
+              8. Lomo central (línea blanca)
+            -->
+            <svg width="58" height="52" viewBox="0 0 58 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+              <!-- === CAPA TRASERA IZQUIERDA (azul/lila, desplazada +3px izq y -2px arriba) === -->
+              <!-- Página trasera izq: cuadrilátero inclinado hacia la izquierda -->
+              <path d="M6 42 L6 9 L22 4 L22 37 Z" fill="rgba(130,145,200,0.55)" stroke="none"/>
+
+              <!-- === CAPA TRASERA DERECHA === -->
+              <path d="M52 42 L52 9 L36 4 L36 37 Z" fill="rgba(130,145,200,0.55)" stroke="none"/>
+
+              <!-- === CORCHETE BASE IZQUIERDO (azul lila, forma de U invertida) === -->
+              <!-- Trazo vertical izq del corchete izq -->
+              <line x1="6" y1="42" x2="6" y2="36" stroke="#7b8ec8" stroke-width="3.5" stroke-linecap="round"/>
+              <!-- Trazo horizontal base del corchete izq -->
+              <line x1="6" y1="43" x2="15" y2="46" stroke="#7b8ec8" stroke-width="3.5" stroke-linecap="round"/>
+              <!-- Trazo vertical der del corchete izq -->
+              <line x1="15" y1="46" x2="15" y2="40" stroke="#7b8ec8" stroke-width="3.5" stroke-linecap="round"/>
+
+              <!-- === CORCHETE BASE DERECHO === -->
+              <line x1="52" y1="42" x2="52" y2="36" stroke="#7b8ec8" stroke-width="3.5" stroke-linecap="round"/>
+              <line x1="52" y1="43" x2="43" y2="46" stroke="#7b8ec8" stroke-width="3.5" stroke-linecap="round"/>
+              <line x1="43" y1="46" x2="43" y2="40" stroke="#7b8ec8" stroke-width="3.5" stroke-linecap="round"/>
+
+              <!-- === PÁGINA IZQUIERDA (blanca, primer plano) === -->
+              <path d="M10 40 L10 10 L22 6 L22 36 Z" fill="white" stroke="rgba(255,255,255,0.9)" stroke-width="1.2" stroke-linejoin="round"/>
+              <!-- Borde interior (página dentro de la página — efecto 3D) -->
+              <path d="M12.5 37.5 L12.5 12 L20.5 8.5 L20.5 34 Z" fill="none" stroke="rgba(200,210,230,0.7)" stroke-width="1"/>
+
+              <!-- === PÁGINA DERECHA (blanca, primer plano) === -->
+              <path d="M48 40 L48 10 L36 6 L36 36 Z" fill="white" stroke="rgba(255,255,255,0.9)" stroke-width="1.2" stroke-linejoin="round"/>
+              <!-- Borde interior derecho -->
+              <path d="M45.5 37.5 L45.5 12 L37.5 8.5 L37.5 34 Z" fill="none" stroke="rgba(200,210,230,0.7)" stroke-width="1"/>
+
+              <!-- === LOMO CENTRAL === -->
+              <line x1="29" y1="6" x2="29" y2="38" stroke="rgba(255,255,255,0.6)" stroke-width="1.2"/>
+
+            </svg>
+            <span class="header-logo-text">Training · TMLF</span>
+        </div>
+
+        <div class="header-divider"></div>
+
+        <div class="header-text">
+            <h1>Compliance Diligence · Módulo 1</h1>
+            <div class="sub">Flujo de Monitoreo, Escalamiento y Mejora Sistémica</div>
+        </div>
+        <button onclick="openAdminModal()" style="margin-left:auto; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); color:rgba(255,255,255,0.8); border-radius:30px; padding:6px 16px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.05em; transition:0.15s; flex-shrink:0;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.12)'">
+            ⚙️ Admin
+        </button>
+    </div>
+
+    <div class="inner-pad">
+        <div id="mainContent"></div>
+    </div>
+
+    <footer>
+        🌊 Basado en el flujo real de Compliance · Decisiones alineadas con estándares de objetividad, trazabilidad y mejora sistémica.
+    </footer>
+</div>
+
+<!-- ─── ADMIN MODAL ─── -->
+<div id="adminModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:9999; overflow-y:auto; padding:20px;">
+    <div style="max-width:780px; margin:30px auto; background:#fff; border-radius:20px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.35);">
+        <div style="background:#0d2b45; padding:18px 26px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#fff; font-weight:800; font-size:1rem;">⚙️ Vista Administrador
+                <span style="background:#f0b429; color:#0d2b45; border-radius:6px; padding:2px 10px; font-size:0.72rem; font-weight:800; letter-spacing:0.06em; margin-left:10px;">ADMIN</span>
+            </span>
+            <button onclick="closeAdminModal()" style="background:rgba(255,255,255,0.15); border:none; color:#fff; border-radius:8px; padding:6px 16px; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:700; font-size:0.88rem;">✕ Cerrar</button>
+        </div>
+        <div id="adminModalBody" style="padding:24px;"></div>
+    </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// ESCENARIOS — TODOS CON CONTEXTO NARRATIVO COMPLETO
+// ═══════════════════════════════════════════════════════════════
+const scenarios = [
+
+  // ── ESCENARIO 1 ──────────────────────────────────────────────
+  { id: 0, title: "Señal ambigua", startNodeId: "s1_q1", maxPoints: 4.0, nodes: {
+    "s1_q1": {
+      role: "Monitor de Compliance",
+      context: "Durante la revisión de una llamada grabada, el cliente menciona: \"No recuerdo si firmé ese documento… quizá alguien lo hizo por mí.\" No existe ningún registro adicional que corrobore irregularidad y el expediente no presenta otras alertas.",
+      text: "¿Cómo debes proceder según el flujo de Compliance?",
+      options: [
+        { text: "Registrar como 'no signal' y documentar la observación para análisis agregado",
+          nextId: "s1_q2", points: 1.2,
+          feedbackMsg: "✅ Correcto. Sin evidencia concreta, la acción es documentar la observación como 'no signal'. Elevar sin sustento genera ruido en el sistema y desvía recursos." },
+        { text: "Escalar directamente a un abogado para que determine si hay indicios de fraude",
+          nextId: "s1_error1", points: 0,
+          feedbackMsg: "❌ Error. La evaluación legal no es el primer paso; además, el flujo exige evidencia antes de involucrar a abogados. Escalaste sin fundamento." },
+        { text: "Clasificar la señal como HIGH porque la mención del cliente es sospechosa",
+          nextId: "s1_error2", points: 0,
+          feedbackMsg: "❌ Error. HIGH requiere evidencia concreta. Una declaración ambigua sin respaldo documental no es suficiente para esa clasificación." }
+      ]
+    },
+    "s1_error1": {
+      role: "Monitor",
+      context: "El abogado reporta que recibió un caso sin evidencia real y documenta la mala práctica de escalamiento prematuro.",
+      text: "¿Cómo corriges la situación?",
+      options: [
+        { text: "Reconocer el error, registrar el caso correctamente como 'no signal' y documentar la lección aprendida",
+          nextId: "s1_q2", points: 0.6,
+          feedbackMsg: "✅ Bien. Reconocer el error y corregir el registro mantiene la integridad del sistema." },
+        { text: "Justificar que actuaste por precaución y pedir que no se documente el incidente",
+          nextId: "s1_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. Ocultar errores viola directamente el principio de trazabilidad del flujo." }
+      ]
+    },
+    "s1_error2": {
+      role: "Monitor",
+      context: "Al clasificar como HIGH sin evidencia, se disparó un triaje completo. El equipo especialista detecta que la señal no cumple criterios y lo reporta.",
+      text: "¿Cómo enmiendas el error?",
+      options: [
+        { text: "Reconocer el error, reclasificar como 'no signal' y documentar el motivo del cambio",
+          nextId: "s1_q2", points: 0.6,
+          feedbackMsg: "✅ Correcto. Reclasificar y documentar el motivo mantiene la trazabilidad." },
+        { text: "Mantener la clasificación HIGH para no quedar mal ante el equipo",
+          nextId: "s1_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. Mantener una clasificación incorrecta por imagen personal corrompe el flujo y desperdicia recursos." }
+      ]
+    },
+    "s1_q2": {
+      role: "Especialista de Compliance",
+      context: "La señal llega al área de especialistas con la documentación del monitor. Tras revisarla, no se encuentra evidencia que respalde una señal significativa.",
+      text: "¿Cuál es la determinación correcta en esta etapa?",
+      options: [
+        { text: "Determinar la señal como NO significativa → non-admissible y archivar con datos agregados",
+          nextId: "s1_q3", points: 1.3,
+          feedbackMsg: "✅ Correcto. Sin evidencia que eleve la señal, la determinación es 'no significativa'. Los datos agregados se conservan para análisis de tendencias." },
+        { text: "Solicitar al monitor que investigue más antes de archivar",
+          nextId: "s1_error3", points: 0,
+          feedbackMsg: "❌ Error. El monitor ya agotó su función; no hay más evidencia disponible. Requerir más investigación sin base retrasa el flujo innecesariamente." },
+        { text: "Clasificarla como señal MEDIUM para dejarla en seguimiento",
+          nextId: "s1_error4", points: 0,
+          feedbackMsg: "❌ Error. Medium requiere evidencia de riesgo real. Clasificar sin sustento genera un triaje innecesario." }
+      ]
+    },
+    "s1_error3": {
+      role: "Especialista",
+      context: "El monitor confirma que no hay más evidencia disponible. El caso lleva días en espera y el equipo lo nota.",
+      text: "¿Qué acción tomas para resolver la situación?",
+      options: [
+        { text: "Rectificar la decisión y archivar la señal como no significativa",
+          nextId: "s1_q3", points: 0.6,
+          feedbackMsg: "✅ Correcto. Aceptar la información disponible y proceder con el archivo es la acción adecuada." },
+        { text: "Insistir en que el monitor busque más pruebas aunque no existan",
+          nextId: "s1_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. Exigir evidencia inexistente paraliza el flujo y genera presión indebida." }
+      ]
+    },
+    "s1_error4": {
+      role: "Especialista",
+      context: "Al clasificar como MEDIUM, se disparó un proceso de triaje que el equipo de coordinación ahora cuestiona por falta de fundamento.",
+      text: "¿Cómo corriges el rumbo?",
+      options: [
+        { text: "Reclasificar a no significativa, cancelar el triaje y documentar el error",
+          nextId: "s1_q3", points: 0.6,
+          feedbackMsg: "✅ Bien. Corregir y documentar es lo correcto para mantener la integridad del flujo." },
+        { text: "Argumentar que era mejor prevenir y mantener el triaje activo",
+          nextId: "s1_fatal", points: 0,
+          feedbackMsg: "❌ Error. 'Mejor prevenir' no justifica consumir recursos del triaje sin evidencia real." }
+      ]
+    },
+    "s1_q3": {
+      role: "Analista de Datos",
+      context: "La señal fue archivada como no admisible. Se generaron datos agregados del caso. Ahora debes decidir qué hacer con esa información.",
+      text: "¿Qué uso correcto se le da a los datos agregados de señales no admisibles?",
+      options: [
+        { text: "Incorporarlos al análisis retrospectivo de tendencias para alimentar la mejora sistémica",
+          nextId: "s1_final_good", points: 1.5,
+          feedbackMsg: "✅ Excelente. Los datos agregados son valiosos para detectar patrones aunque individualmente no sean señales significativas. Este es el corazón de la mejora continua." },
+        { text: "Archivarlos sin revisión posterior; no representan riesgo individual",
+          nextId: "s1_error5", points: 0,
+          feedbackMsg: "❌ Error. Archivar sin revisión pierde el valor de los datos para el análisis de tendencias." },
+        { text: "Eliminarlos para liberar espacio en el sistema y mantenerlo limpio",
+          nextId: "s1_error6", points: 0,
+          feedbackMsg: "❌ Error. Eliminar datos viola el principio de trazabilidad y puede encubrir patrones sistémicos." }
+      ]
+    },
+    "s1_error5": {
+      role: "Analista",
+      context: "Tres meses después, un auditor detecta que se perdió un patrón de señales similares que podría haber activado una mejora sistémica. El caso se documenta como omisión.",
+      text: "¿Qué acción correctiva tomas?",
+      options: [
+        { text: "Reactivar el registro agregado e incorporarlo al análisis de tendencias con nota explicativa",
+          nextId: "s1_final_good", points: 0.6,
+          feedbackMsg: "✅ Correcto. Rescatar los datos y documentar la causa de la omisión es la acción responsable." },
+        { text: "Echar la culpa a la falta de instrucciones claras sobre el manejo de datos",
+          nextId: "s1_fatal", points: 0,
+          feedbackMsg: "❌ Error. Transferir responsabilidad sin acción correctiva no resuelve el problema ni preserva la trazabilidad." }
+      ]
+    },
+    "s1_error6": {
+      role: "Analista",
+      context: "La eliminación de datos fue detectada en una auditoría. Se documenta como violación al principio de trazabilidad del sistema.",
+      text: "¿Cómo procedes para corregir la situación?",
+      options: [
+        { text: "Reconstruir el registro con base en fuentes secundarias, notificar el error y documentar la corrección",
+          nextId: "s1_final_good", points: 0.6,
+          feedbackMsg: "✅ Bien. La reconstrucción con documentación del error es la respuesta responsable ante una violación de trazabilidad." },
+        { text: "Negar que hubo eliminación y sugerir que fue un error del sistema",
+          nextId: "s1_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. Negar una acción documentada destruye la confianza en el sistema y puede tener consecuencias disciplinarias." }
+      ]
+    },
+    "s1_fatal": { final: true, error: true },
+    "s1_final_good": { final: true }
+  }},
+
+  // ── ESCENARIO 2 ──────────────────────────────────────────────
+  { id: 1, title: "Señal MEDIUM", startNodeId: "s2_q1", maxPoints: 4.0, nodes: {
+    "s2_q1": {
+      role: "Especialista de Compliance",
+      context: "Un monitor reporta que en el último mes se registraron 3 casos donde el checklist de verificación de identidad fue entregado incompleto. En cada caso, la firma del cliente estaba presente pero faltaban campos de validación documental. El monitor los clasificó como señales MEDIUM.",
+      text: "Como especialista que recibe estos 3 reportes, ¿cuál es tu primera acción?",
+      options: [
+        { text: "Evaluar si la recurrencia de los 3 casos hace que la señal sea SIGNIFICATIVA en conjunto",
+          nextId: "s2_q2", points: 1.2,
+          feedbackMsg: "✅ Correcto. La recurrencia es el criterio clave: 3 casos similares en un mes ameritan evaluación de significancia como patrón, no como señales aisladas." },
+        { text: "Devolver los casos al monitor solicitando evidencia adicional antes de evaluarlos",
+          nextId: "s2_error1", points: 0,
+          feedbackMsg: "❌ Error. El monitor ya documentó lo disponible. Solicitar más evidencia sin sustento estanca el flujo y consume tiempo del monitor innecesariamente." },
+        { text: "Escalar directamente al Director de Compliance dado el número de casos",
+          nextId: "s2_error2", points: 0,
+          feedbackMsg: "❌ Error. Escalar a dirección sin evaluación previa satura la alta dirección con casos que aún no han pasado por el filtro de significancia." }
+      ]
+    },
+    "s2_error1": {
+      role: "Especialista",
+      context: "El monitor responde que no tiene más información. Los 3 casos llevan 10 días en espera y el sistema muestra 2 casos nuevos similares que acaban de ingresar.",
+      text: "El estancamiento se agrava. ¿Qué haces?",
+      options: [
+        { text: "Proceder con la evidencia disponible y evaluar la significancia de los casos",
+          nextId: "s2_q2", points: 0.6,
+          feedbackMsg: "✅ Bien. Tomar decisión con la información disponible es la respuesta correcta. El sistema no puede quedarse paralizado esperando evidencia que no existe." },
+        { text: "Desestimar las señales por falta de evidencia completa",
+          nextId: "s2_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. Desestimar señales recurrentes sin evaluación viola el flujo y puede dejar pasar un problema sistémico real." }
+      ]
+    },
+    "s2_error2": {
+      role: "Especialista",
+      context: "El Director de Compliance responde que estos casos debieron pasar primero por el proceso estándar de evaluación de especialistas. Documenta la escalación prematura.",
+      text: "¿Cómo corriges la situación?",
+      options: [
+        { text: "Retirar el escalamiento, asumir la evaluación de los casos y seguir el flujo establecido",
+          nextId: "s2_q2", points: 0.6,
+          feedbackMsg: "✅ Correcto. Retomar la evaluación y seguir el flujo normal es lo adecuado tras una escalación prematura." },
+        { text: "Insistir en que el Director evalúe porque los 3 casos representan un riesgo alto",
+          nextId: "s2_fatal", points: 0,
+          feedbackMsg: "❌ Error. Insistir en saltarse el proceso no está justificado en este punto y genera fricción innecesaria con la dirección." }
+      ]
+    },
+    "s2_q2": {
+      role: "Especialista de Compliance",
+      context: "Tras revisar los 3 casos, confirmas que representan una señal SIGNIFICATIVA: el patrón de checklists incompletos es recurrente y sistemático, con el mismo campo faltante en los tres. Corresponde activar el Triage.",
+      text: "¿Qué tipo de análisis debe realizar el Triage para esta señal?",
+      options: [
+        { text: "Una evaluación basada en riesgo operativo y de cumplimiento (no una determinación legal)",
+          nextId: "s2_q3", points: 1.3,
+          feedbackMsg: "✅ Correcto. El Triage evalúa el riesgo operativo y de cumplimiento. La determinación legal es competencia de los abogados, no del especialista de Compliance." },
+        { text: "Una determinación legal para establecer si hay responsabilidad civil o penal",
+          nextId: "s2_error3", points: 0,
+          feedbackMsg: "❌ Error. El especialista de Compliance no emite opiniones legales. Hacer una determinación legal fuera de rol puede tener implicaciones serias." }
+      ]
+    },
+    "s2_error3": {
+      role: "Especialista",
+      context: "El área Legal recibe la determinación y advierte que emitir opinión legal desde Compliance es una práctica incorrecta que puede comprometer el privilegio legal del despacho.",
+      text: "¿Cómo rectificas la situación?",
+      options: [
+        { text: "Rehacer el triaje como evaluación de riesgo operativo, sin emitir opinión legal",
+          nextId: "s2_q3", points: 0.6,
+          feedbackMsg: "✅ Correcto. Reconocer el exceso de rol y corregir el análisis es lo adecuado." },
+        { text: "Defender que tu determinación es válida porque los hechos lo justifican",
+          nextId: "s2_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. Defender una opinión legal fuera de rol ignora las consecuencias institucionales y legales de esa acción." }
+      ]
+    },
+    "s2_q3": {
+      role: "Coordinador de Compliance",
+      context: "El Triage determinó que el riesgo es medio-alto: el patrón de checklists incompletos afecta la validez de los expedientes y puede ser fuente de disputas con clientes. Debes documentar el caso para cierre y para alimentar la mejora sistémica.",
+      text: "¿Qué nivel de documentación corresponde para este caso?",
+      options: [
+        { text: "Documentación completa: análisis de riesgo, patrón detectado, medidas recomendadas y registro en el Data Room",
+          nextId: "s2_final_good", points: 1.5,
+          feedbackMsg: "✅ Correcto. Un caso de riesgo medio-alto requiere documentación completa para garantizar trazabilidad y que la información alimente las mejoras de proceso." },
+        { text: "Solo una nota breve en el expediente; no amerita documentación extensa",
+          nextId: "s2_error4", points: 0,
+          feedbackMsg: "❌ Error. Una nota breve no es suficiente para un caso de riesgo medio-alto. La trazabilidad incompleta puede reabrir el caso en el futuro." }
+      ]
+    },
+    "s2_error4": {
+      role: "Coordinador",
+      context: "Seis semanas después, el mismo patrón reaparece con 2 casos nuevos. Al revisar el historial, no hay documentación útil para entender qué ocurrió antes. El caso debe reactivarse desde cero.",
+      text: "¿Cómo corriges el error de documentación?",
+      options: [
+        { text: "Completar la documentación del caso original con toda la información disponible, aunque sea retroactivamente",
+          nextId: "s2_final_good", points: 0.6,
+          feedbackMsg: "✅ Correcto. Documentar retroactivamente, aunque no es lo ideal, recupera la trazabilidad necesaria para atender el nuevo patrón." },
+        { text: "Esperar a que otro miembro del equipo tome la iniciativa de documentar",
+          nextId: "s2_fatal", points: 0,
+          feedbackMsg: "❌ Error. Delegar por omisión la responsabilidad de documentar no resuelve el problema y evidencia falta de ownership del proceso." }
+      ]
+    },
+    "s2_fatal": { final: true, error: true },
+    "s2_final_good": { final: true }
+  }},
+
+  // ── ESCENARIO 3 ──────────────────────────────────────────────
+  { id: 2, title: "Señales recurrentes", startNodeId: "s3_q1", maxPoints: 3.0, nodes: {
+    "s3_q1": {
+      role: "Coordinador de Compliance",
+      context: "En las últimas 6 semanas has acumulado 5 señales independientes, todas relacionadas con el mismo problema: los colaboradores del área de Pre-Case Review tienen interpretaciones distintas sobre qué documentos deben solicitarse cuando el cliente es residente temporal. La política vigente no lo especifica con claridad, y cada caso se resuelve de manera diferente.",
+      text: "Ante este patrón de 5 señales con la misma causa raíz, ¿qué acción priorizas?",
+      options: [
+        { text: "Activar el proceso de mejora sistémica: escalar el patrón a Enablement para que actualice la política",
+          nextId: "s3_q2", points: 1.4,
+          feedbackMsg: "✅ Correcto. Cuando 5 señales apuntan a la misma causa raíz (ambigüedad de política), la respuesta correcta es la mejora sistémica, no el manejo caso por caso." },
+        { text: "Tratar cada señal de forma individual con el colaborador responsable de cada caso",
+          nextId: "s3_error1", points: 0,
+          feedbackMsg: "❌ Error. Manejar individualmente lo que tiene una causa raíz común es ineficiente y no resuelve el problema de fondo. El flujo indica activar mejora sistémica." }
+      ]
+    },
+    "s3_error1": {
+      role: "Coordinador",
+      context: "Tres semanas después, llegan 4 casos más con el mismo patrón. Los colaboradores expresan frustración porque cada uno recibió instrucciones distintas del coordinador, generando más inconsistencia.",
+      text: "El manejo individual ha agravado el problema. ¿Cómo corriges el rumbo?",
+      options: [
+        { text: "Reunir los 9 casos como evidencia del patrón y activar el análisis de tendencias con Enablement",
+          nextId: "s3_q2", points: 0.6,
+          feedbackMsg: "✅ Bien. Aunque tardío, activar el proceso correcto con la evidencia acumulada es la acción adecuada." },
+        { text: "Continuar el manejo individual porque ya llevas parte del camino avanzado así",
+          nextId: "s3_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. Insistir en un enfoque equivocado para no retroceder es el sunk cost fallacy en acción. El daño crece con cada caso adicional." }
+      ]
+    },
+    "s3_q2": {
+      role: "Equipo de Enablement",
+      context: "Enablement recibe el reporte de Coordinación con 5 (o 9) casos documentados, todos apuntando a la misma laguna: la política de documentación para residentes temporales no especifica los requisitos mínimos. El equipo de Enablement debe definir la salida formal.",
+      text: "¿Cuál es la salida correcta que debe emitir Enablement ante esta situación?",
+      options: [
+        { text: "Actualización formal de la política + revisión del checklist + capacitación dirigida al área afectada",
+          nextId: "s3_final_good", points: 1.6,
+          feedbackMsg: "✅ Correcto. La mejora sistémica requiere los tres elementos: política actualizada (qué hacer), checklist revisado (cómo verificarlo) y capacitación (que el equipo lo sepa y lo aplique)." },
+        { text: "Enviar un correo informal al equipo aclarando cómo deben interpretar la política actual",
+          nextId: "s3_error2", points: 0,
+          feedbackMsg: "❌ Error. Un correo informal no actualiza la política, no queda en el sistema como referencia y no garantiza que todos lo vean ni lo apliquen uniformemente." }
+      ]
+    },
+    "s3_error2": {
+      role: "Enablement",
+      context: "Dos semanas después del correo, el área de Auditoría solicita el procedimiento vigente para documentación de residentes temporales. No existe ningún documento formal actualizado. El correo no tiene validez como política.",
+      text: "¿Qué haces para resolver la situación?",
+      options: [
+        { text: "Emitir la actualización formal de política, revisar el checklist y programar la capacitación pendiente",
+          nextId: "s3_final_good", points: 0.6,
+          feedbackMsg: "✅ Correcto. Formalizarlo ahora, aunque tardío, es la única forma de resolver el problema de raíz." },
+        { text: "Reenviar el correo original a Auditoría como evidencia de que el tema fue atendido",
+          nextId: "s3_fatal", points: 0,
+          feedbackMsg: "❌ Error. Un correo no es una política. Presentarlo como evidencia de cumplimiento ante Auditoría puede constituir una respuesta engañosa." }
+      ]
+    },
+    "s3_fatal": { final: true, error: true },
+    "s3_final_good": { final: true }
+  }},
+
+  // ── ESCENARIO 4 ──────────────────────────────────────────────
+  { id: 3, title: "Whistleblower HIGH", startNodeId: "s4_q1", maxPoints: 4.0, nodes: {
+    "s4_q1": {
+      role: "Especialista de Compliance",
+      context: "Recibes una denuncia anónima a través del canal de Compliance. La denuncia señala que un colaborador del área de gestión de casos habría estado ingresando información falsa en el sistema TramCase para aparentar avances en expedientes que en realidad no habían tenido movimiento. La denuncia incluye capturas de pantalla de 4 expedientes con fechas y notas inconsistentes.",
+      text: "Con base en la evidencia adjunta, ¿cómo clasificas esta señal?",
+      options: [
+        { text: "HIGH — hay evidencia documental concreta que señala una posible conducta sistemática",
+          nextId: "s4_q2", points: 1.2,
+          feedbackMsg: "✅ Correcto. La presencia de evidencia documental (capturas de pantalla de múltiples expedientes) y la naturaleza de la conducta señalada justifican la clasificación HIGH." },
+        { text: "MEDIUM — es una denuncia anónima y no hay certeza de que sea verdadera",
+          nextId: "s4_error1", points: 0,
+          feedbackMsg: "❌ Error. El nivel de clasificación no depende de la certeza de la denuncia, sino de la evidencia disponible y el riesgo potencial. Las capturas de pantalla son evidencia concreta." },
+        { text: "LOW — hasta no verificar la denuncia, no debe tratarse como algo serio",
+          nextId: "s4_error1", points: 0,
+          feedbackMsg: "❌ Error. LOW no aplica cuando hay evidencia adjunta. El anonimato no reduce el nivel de riesgo si la evidencia es sólida." }
+      ]
+    },
+    "s4_error1": {
+      role: "Especialista",
+      context: "Al clasificar como MEDIUM o LOW, el caso entró a un proceso de revisión estándar. Tres semanas después, el colaborador involucrado fue ascendido. Ahora la denuncia ha llegado a través de un segundo canal con evidencia adicional.",
+      text: "¿Cómo corriges la clasificación?",
+      options: [
+        { text: "Reclasificar como HIGH, iniciar el proceso de escalamiento urgente y documentar la corrección",
+          nextId: "s4_q2", points: 0.6,
+          feedbackMsg: "✅ Correcto. Reclasificar y escalar ahora es la acción adecuada, aunque el retraso ya tuvo consecuencias." },
+        { text: "Mantener la clasificación original para no generar confusión en el registro",
+          nextId: "s4_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. Mantener una clasificación incorrecta para preservar coherencia en el historial compromete la integridad de todo el proceso." }
+      ]
+    },
+    "s4_q2": {
+      role: "Especialista de Compliance",
+      context: "La señal HIGH está activa. Corresponde activar el proceso de Triage. El equipo espera tu definición del tipo de análisis a realizar antes de proceder.",
+      text: "¿Qué tipo de análisis debe hacer el Triage en esta señal HIGH?",
+      options: [
+        { text: "Una evaluación de riesgo: alcance del problema, áreas expuestas, impacto operativo y reputacional",
+          nextId: "s4_q3", points: 1.3,
+          feedbackMsg: "✅ Correcto. El Triage evalúa el riesgo operativo y de cumplimiento: qué tan grande es el problema, qué áreas toca y cuál es el impacto potencial. La determinación legal viene después." },
+        { text: "Una determinación de culpabilidad del colaborador señalado en la denuncia",
+          nextId: "s4_error2", points: 0,
+          feedbackMsg: "❌ Error. Determinar culpabilidad no es función del Triage ni de Compliance. Hacerlo puede comprometer un proceso legal posterior y viola el debido proceso." }
+      ]
+    },
+    "s4_error2": {
+      role: "Especialista",
+      context: "El área Legal advierte que al emitir una determinación de culpabilidad desde Compliance, se comprometió la cadena de custodia de la evidencia y se expone al despacho a una demanda por daño moral.",
+      text: "¿Cómo enmiendas el error?",
+      options: [
+        { text: "Rehacer el análisis del Triage como evaluación de riesgo y coordinar con Legal para el manejo de la evidencia",
+          nextId: "s4_q3", points: 0.6,
+          feedbackMsg: "✅ Correcto. Corregir el enfoque y trabajar con Legal para proteger la evidencia es la respuesta adecuada." },
+        { text: "Insistir en que la determinación es correcta porque la evidencia lo demuestra",
+          nextId: "s4_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. Insistir en una determinación fuera de rol, con advertencia del área Legal, puede escalar a consecuencias institucionales graves." }
+      ]
+    },
+    "s4_q3": {
+      role: "Coordinador de Compliance",
+      context: "El Triage determinó: riesgo alto, 4 expedientes potencialmente afectados, posible impacto en relaciones con clientes y riesgo reputacional. Es momento de documentar y cerrar la fase de Triage para escalar al proceso de manejo formal del caso.",
+      text: "¿Qué nivel de documentación corresponde en esta etapa?",
+      options: [
+        { text: "Documentación completa y trazable: análisis de riesgo detallado, evidencia catalogada, pasos seguidos y recomendaciones para el manejo formal",
+          nextId: "s4_final_good", points: 1.5,
+          feedbackMsg: "✅ Correcto. Un caso HIGH requiere documentación exhaustiva. Cada decisión y evidencia debe quedar registrada para el manejo formal y para cualquier proceso legal posterior." },
+        { text: "Una documentación mínima para no comprometer la confidencialidad del caso",
+          nextId: "s4_error3", points: 0,
+          feedbackMsg: "❌ Error. La confidencialidad se protege con controles de acceso, no con documentación insuficiente. Un registro mínimo en un caso HIGH deja al despacho expuesto." }
+      ]
+    },
+    "s4_error3": {
+      role: "Coordinador",
+      context: "El equipo Legal solicita el expediente completo del caso para preparar la defensa del despacho. La documentación mínima es insuficiente: faltan piezas clave de la cadena de custodia.",
+      text: "¿Cómo actúas ante esta situación?",
+      options: [
+        { text: "Reconstruir la documentación de manera urgente con todo lo disponible y coordinar con Legal para validar cada elemento",
+          nextId: "s4_final_good", points: 0.6,
+          feedbackMsg: "✅ Correcto. Reconstruir con urgencia y coordinación con Legal es la mejor respuesta posible ante la deficiencia documentaria." },
+        { text: "Entregar lo que hay y explicar que la confidencialidad justificó la documentación reducida",
+          nextId: "s4_fatal", points: 0,
+          feedbackMsg: "❌ Error. Argumentar que la confidencialidad justifica la falta de documentación no es aceptable ante Legal ni ante ningún proceso de revisión." }
+      ]
+    },
+    "s4_fatal": { final: true, error: true },
+    "s4_final_good": { final: true }
+  }},
+
+  // ── ESCENARIO 5 ──────────────────────────────────────────────
+  { id: 4, title: "Biblioteca de controles", startNodeId: "s5_q1", maxPoints: 2.7, nodes: {
+    "s5_q1": {
+      role: "Monitor de Compliance",
+      context: "Durante tu revisión semanal de expedientes, notas que en 3 casos consecutivos del área de Pre-Welcome Call, el campo de 'verificación de representante autorizado' aparece vacío en el checklist de apertura. El proceso de apertura ya fue completado en los 3 casos y los clientes ya firmaron contratos.",
+      text: "¿Qué acción debes tomar según el flujo de control?",
+      options: [
+        { text: "Documentar la desviación en el sistema con detalle del patrón y notificar al área correspondiente",
+          nextId: "s5_q2", points: 1.3,
+          feedbackMsg: "✅ Correcto. La función del monitor es documentar la desviación con precisión. Esto activa el análisis y permite que el área correcta tome acción." },
+        { text: "Ignorarlo porque los contratos ya están firmados y la desviación no causó daño evidente",
+          nextId: "s5_error1", points: 0,
+          feedbackMsg: "❌ Error. Una desviación documentada tiene valor aunque no haya causado daño visible. El sistema necesita esa información para detectar patrones y prevenir problemas futuros." },
+        { text: "Corregir manualmente los campos vacíos en los 3 casos sin dejar registro de la modificación",
+          nextId: "s5_error1", points: 0,
+          feedbackMsg: "❌ Error grave. Modificar registros sin documentación viola el principio de trazabilidad y puede constituir alteración de expedientes." }
+      ]
+    },
+    "s5_error1": {
+      role: "Monitor",
+      context: "En las siguientes 2 semanas aparecen 4 casos más con la misma desviación. Un cliente llama reclamando que el representante autorizado que firmó no tenía facultades para hacerlo. El área Legal necesita el historial de controles para manejar el reclamo.",
+      text: "La situación se ha complicado. ¿Cómo actúas ahora?",
+      options: [
+        { text: "Documentar todos los casos conocidos (incluidos los anteriores) y notificar el patrón a Coordinación y Enablement",
+          nextId: "s5_q2", points: 0.6,
+          feedbackMsg: "✅ Correcto. Aunque tardío, documentar todos los casos y activar el proceso correcto es la acción adecuada en este punto." },
+        { text: "Seguir ignorando los casos anteriores y reportar solo los nuevos para no crear más problemas",
+          nextId: "s5_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. Reportar de forma parcial para proteger la imagen personal viola la integridad del proceso y puede agravar las consecuencias legales." }
+      ]
+    },
+    "s5_q2": {
+      role: "Equipo de Enablement",
+      context: "Coordinación te pasa el reporte del monitor: entre 3 y 7 casos (según la ruta) con el mismo campo vacío en el checklist de verificación de representante autorizado. El análisis indica que el control existe en la política pero el checklist no lo refleja con claridad suficiente, lo que lleva a los colaboradores a omitirlo sin darse cuenta.",
+      text: "Como Enablement, ¿qué mecanismo correcto activas para resolver este problema de raíz?",
+      options: [
+        { text: "Refinar el checklist de Pre-Welcome Call para que el campo de verificación de representante sea obligatorio y visible",
+          nextId: "s5_final_good", points: 1.4,
+          feedbackMsg: "✅ Correcto. El problema está en la herramienta (el checklist no es claro), no en la política ni en los colaboradores. Ajustar el checklist elimina la causa raíz." },
+        { text: "Eliminar el checklist y pedir que los colaboradores usen su criterio profesional en cada caso",
+          nextId: "s5_error2", points: 0,
+          feedbackMsg: "❌ Error. Eliminar el control empeora el problema. La solución es mejorar la herramienta, no quitarla." }
+      ]
+    },
+    "s5_error2": {
+      role: "Enablement",
+      context: "Sin checklist, la inconsistencia en el proceso aumentó significativamente. Una auditoría trimestral detecta la ausencia de controles estandarizados en Pre-Welcome Call y emite una observación formal.",
+      text: "¿Cómo rectificas la situación?",
+      options: [
+        { text: "Restaurar el checklist con las mejoras necesarias para hacerlo claro y funcional, y comunicar el cambio al equipo",
+          nextId: "s5_final_good", points: 0.6,
+          feedbackMsg: "✅ Correcto. Restaurar con mejoras y comunicarlo es la respuesta adecuada ante la observación de auditoría." },
+        { text: "Argumentar ante Auditoría que el criterio profesional es superior a los checklists",
+          nextId: "s5_fatal", points: 0,
+          feedbackMsg: "❌ Error. Argumentar en contra de controles estandarizados ante Auditoría es insostenible desde cualquier marco de cumplimiento." }
+      ]
+    },
+    "s5_fatal": { final: true, error: true },
+    "s5_final_good": { final: true }
+  }},
+
+  // ── ESCENARIO 6 ──────────────────────────────────────────────
+  { id: 5, title: "Señal no admisible", startNodeId: "s6_q1", maxPoints: 2.6, nodes: {
+    "s6_q1": {
+      role: "Especialista de Compliance",
+      context: "Recibes una nota de un monitor indicando que 'escuchó en los pasillos' que un colaborador del equipo de abogados estaría cobrando honorarios adicionales directamente a clientes sin pasar por el sistema. La nota no incluye ningún expediente, ninguna fecha, ningún nombre del cliente afectado ni ningún registro de la conversación.",
+      text: "¿Cuál es la determinación correcta para esta señal?",
+      options: [
+        { text: "Clasificar como NO significativa (non-admissible): no hay evidencia que sustente la señal",
+          nextId: "s6_q2", points: 1.2,
+          feedbackMsg: "✅ Correcto. Un rumor de pasillo sin ningún elemento verificable no constituye una señal admisible. La clasificación correcta es no significativa." },
+        { text: "Clasificar como MEDIUM para tenerla 'en el radar' por si aparece más evidencia después",
+          nextId: "s6_error1", points: 0,
+          feedbackMsg: "❌ Error. MEDIUM requiere evidencia, aunque sea parcial. Clasificar como MEDIUM por precaución genera triaje sin fundamento y consume recursos." },
+        { text: "Pedir al monitor que interrogue a sus colegas para conseguir más información",
+          nextId: "s6_error1", points: 0,
+          feedbackMsg: "❌ Error. Pedir al monitor que investigue activamente sin una señal admisible excede su rol y puede generar un ambiente laboral negativo sin justificación." }
+      ]
+    },
+    "s6_error1": {
+      role: "Especialista",
+      context: "Al clasificar la señal como MEDIUM o iniciar una investigación informal, el colaborador señalado se entera. Presenta una queja formal por acoso laboral. El área de Recursos Humanos solicita el expediente del caso.",
+      text: "¿Cómo corriges la situación?",
+      options: [
+        { text: "Cerrar la señal como no admisible, documentar el error de clasificación y coordinar con RRHH para manejar la queja",
+          nextId: "s6_q2", points: 0.6,
+          feedbackMsg: "✅ Correcto. Rectificar la clasificación y atender las consecuencias con RRHH es la respuesta adecuada." },
+        { text: "Continuar la investigación informal para encontrar evidencia que justifique la clasificación",
+          nextId: "s6_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. Continuar buscando evidencia para justificar una acción ya cuestionada agrava el problema y puede convertir una mala práctica en una conducta sancionable." }
+      ]
+    },
+    "s6_q2": {
+      role: "Analista de Datos",
+      context: "La señal ha sido determinada como no admisible. Sin embargo, el sistema requiere que se tome una decisión sobre qué información conservar del caso antes de cerrarlo.",
+      text: "¿Qué datos se almacenan correctamente para una señal non-admissible?",
+      options: [
+        { text: "Datos agregados (tipología, fecha, área de origen) sin información personal identificable del colaborador señalado",
+          nextId: "s6_final_good", points: 1.4,
+          feedbackMsg: "✅ Correcto. Los datos agregados alimentan el análisis de tendencias (¿están llegando muchos rumores del mismo tipo? ¿del mismo área?) sin comprometer a personas de forma injusta." },
+        { text: "Eliminar todo registro del caso para proteger la privacidad del colaborador",
+          nextId: "s6_error2", points: 0,
+          feedbackMsg: "❌ Error. Eliminar todo viola la trazabilidad. El sistema necesita saber que esta señal existió y fue procesada, aunque no sea admisible." }
+      ]
+    },
+    "s6_error2": {
+      role: "Analista",
+      context: "La eliminación total del registro fue detectada en una revisión de calidad. Dado que el colaborador interpuso una queja formal, la ausencia de registro del caso original complica la defensa del proceso ante RRHH.",
+      text: "¿Qué acción correctiva tomas?",
+      options: [
+        { text: "Reconstruir el registro con datos agregados disponibles y notificar el error al Coordinador",
+          nextId: "s6_final_good", points: 0.6,
+          feedbackMsg: "✅ Correcto. Recuperar lo que se pueda y notificar el error es la respuesta responsable." },
+        { text: "Ignorar el hallazgo de calidad porque el caso ya está cerrado",
+          nextId: "s6_fatal", points: 0,
+          feedbackMsg: "❌ Error. Ignorar un hallazgo de calidad documentado es, en sí mismo, una violación al proceso." }
+      ]
+    },
+    "s6_fatal": { final: true, error: true },
+    "s6_final_good": { final: true }
+  }},
+
+  // ── ESCENARIO 7 ──────────────────────────────────────────────
+  { id: 6, title: "CSU Data Room", startNodeId: "s7_q1", maxPoints: 1.5, nodes: {
+    "s7_q1": {
+      role: "Especialista de Compliance",
+      context: "Terminaste de procesar un caso HIGH que involucró a 3 áreas del despacho. Toda la documentación está lista: el análisis de riesgo, la evidencia catalogada, el registro de decisiones del Triage y las recomendaciones de mejora. Debes ingresar todo esto al CSU Data Room antes de cerrar el caso.",
+      text: "¿Cuál es la forma correcta de ingresar la documentación al CSU Data Room?",
+      options: [
+        { text: "Usando las plantillas estandarizadas del Data Room para cada tipo de documento",
+          nextId: "s7_final_good", points: 1.5,
+          feedbackMsg: "✅ Correcto. Las plantillas garantizan que toda la información sea consistente, buscable y comparable entre casos. Son la base de la trazabilidad del sistema." },
+        { text: "En formato libre, organizando los documentos de la manera que resulte más clara para ti",
+          nextId: "s7_error1", points: 0,
+          feedbackMsg: "❌ Error. El formato libre genera inconsistencias que dificultan el análisis comparativo y la auditoría posterior. El sistema pierde valor cuando cada caso tiene estructura diferente." },
+        { text: "Subiendo solo un enlace al folder de Dropbox donde están guardados los archivos originales",
+          nextId: "s7_error1", points: 0,
+          feedbackMsg: "❌ Error. Un enlace externo no es documentación en el Data Room: el acceso puede romperse, los permisos pueden cambiar y no queda dentro del sistema de trazabilidad de Compliance." }
+      ]
+    },
+    "s7_error1": {
+      role: "Especialista",
+      context: "Un mes después, un auditor externo solicita el expediente del caso para una revisión de cumplimiento. La documentación en formato libre o el enlace roto impiden que pueda acceder a la información de manera estándar. El caso queda marcado como 'documentación deficiente'.",
+      text: "¿Cómo corriges la situación?",
+      options: [
+        { text: "Rehacer la documentación usando las plantillas del Data Room y registrar la corrección con fecha y motivo",
+          nextId: "s7_final_good", points: 0.6,
+          feedbackMsg: "✅ Correcto. Rehacerlo con plantillas y documentar la corrección es la única forma de reparar la deficiencia." },
+        { text: "Dejar la documentación como está y explicar al auditor cómo navegar el formato no estándar",
+          nextId: "s7_fatal", points: 0,
+          feedbackMsg: "❌ Error. Pedir a un auditor externo que adapte su proceso al error cometido no es aceptable." }
+      ]
+    },
+    "s7_fatal": { final: true, error: true },
+    "s7_final_good": { final: true }
+  }}
+];
+
+// ═══════════════════════════════════════════════════════════════
+// ESTADO GLOBAL
+// ═══════════════════════════════════════════════════════════════
+let currentScenarioIndex = 0;
+let currentNodeId = null;
+let scenarioPoints = 0;
+let finishedScenario = false;
+let scenarioScores = new Array(scenarios.length).fill(0);
+let completedScenarios = new Array(scenarios.length).fill(false);
+let globalMaxPoints = scenarios.reduce((s, sc) => s + sc.maxPoints, 0);
+let activityPoints = 0;
+let simulatorStarted = false;
+let participantName = '';
+
+const mainDiv = document.getElementById("mainContent");
+
+
+// ═══════════════════════════════════════════════════════════════
+// PERSISTENCIA — localStorage
+// Guardamos el estado completo cada vez que cambia algo relevante.
+// Al cargar la página, si hay un estado guardado lo restauramos.
+// ═══════════════════════════════════════════════════════════════
+const SAVE_KEY = "compliance_sim_v3_state";
+
+function saveState() {
+    const state = {
+        simulatorStarted,
+        participantName,
+        currentScenarioIndex,
+        currentNodeId,
+        scenarioPoints,
+        finishedScenario,
+        scenarioScores,
+        completedScenarios,
+        activityPoints,
+        attemptFinished,
+        savedAt: Date.now()
+    };
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function loadState() {
+    try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (!raw) return false;
+        const s = JSON.parse(raw);
+        if (!Array.isArray(s.scenarioScores) || s.scenarioScores.length !== scenarios.length) return false;
+        simulatorStarted     = s.simulatorStarted     || false;
+        participantName      = s.participantName      || '';
+        currentScenarioIndex = s.currentScenarioIndex || 0;
+        currentNodeId        = s.currentNodeId        || null;
+        scenarioPoints       = s.scenarioPoints       || 0;
+        finishedScenario     = s.finishedScenario      || false;
+        scenarioScores       = s.scenarioScores;
+        completedScenarios   = s.completedScenarios;
+        activityPoints       = s.activityPoints        || 0;
+        attemptFinished      = s.attemptFinished        || false;
+        return true;
+    } catch(e) { return false; }
+}
+
+function clearSavedState() {
+    try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INTENTO ÚNICO — Una vez completado, bloquear
+// ═══════════════════════════════════════════════════════════════
+let attemptFinished = false;
+
+// ═══════════════════════════════════════════════════════════════
+// INICIO — restaurar o mostrar pantalla inicial
+// ═══════════════════════════════════════════════════════════════
+function init() {
+    const restored = loadState();
+
+    if (restored && attemptFinished) {
+        // Ya completó el simulador — mostrar resultados directamente
+        showFinalResults();
+        return;
+    }
+
+    if (restored && simulatorStarted) {
+        // Retomar sesión en progreso
+        renderSimulatorUI();
+        return;
+    }
+
+    showStartScreen();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PANTALLA DE INICIO (reemplazada para incluir aviso de intento)
+// ═══════════════════════════════════════════════════════════════
+function showStartScreen() {
+    mainDiv.innerHTML = `
+        <div class="start-screen">
+            <div class="info-sis">
+                ⚙️ <strong>Signal Intake System (SIS)</strong> es una herramienta proyectada a futuro. Actualmente el flujo opera con Google Sheets + PMO.
+            </div>
+            <div style="background:#f0f5fc; border-radius:18px; padding:20px 24px; text-align:left; margin-bottom:14px;">
+                <h3 style="margin:0 0 12px; color:#1a4f78; font-size:1rem;">📌 Instrucciones</h3>
+                <ul style="line-height:1.8; margin:0; padding-left:20px; color:#1e2a3e; font-size:0.93rem;">
+                    <li>Simularás <strong>7 escenarios</strong> reales del flujo de Compliance del despacho.</li>
+                    <li>Cada decisión tiene consecuencias: si te equivocas, podrás enmendar <em>(con penalización de puntos)</em>.</li>
+                    <li>Un <strong>error grave</strong> cierra el escenario con 0 puntos.</li>
+                    <li>No puedes reiniciar escenarios; solo avanzar.</li>
+                    <li>Al terminar los 7 escenarios, una actividad de <strong>ordenamiento</strong> (drag & drop) suma hasta 2 puntos extra.</li>
+                    <li>Calificación mínima aprobatoria: <strong>85%</strong>.</li>
+                </ul>
+            </div>
+            <div style="background:#fff3cd; border-left:4px solid #e0a82e; border-radius:0 12px 12px 0; padding:11px 16px; font-size:0.85rem; margin-bottom:18px; text-align:left;">
+                ⚠️ <strong>Intento único:</strong> Este simulador permite <strong>un solo intento</strong>. Una vez que inicies, tu progreso se guardará automáticamente.
+            </div>
+            <div style="background:#f0f5fc; border-radius:16px; padding:18px 22px; margin-bottom:18px; text-align:left;">
+                <label style="display:block; font-size:0.88rem; font-weight:700; color:#1a4f78; margin-bottom:8px; letter-spacing:0.02em;">
+                    👤 Tu nombre completo <span style="color:#c0392b;">*</span>
+                </label>
+                <input
+                    type="text"
+                    id="participantNameInput"
+                    placeholder="Escribe tu nombre completo aquí..."
+                    style="width:100%; max-width:420px; border:2px solid #c0d4e4; border-radius:12px; padding:10px 16px; font-family:'DM Sans',sans-serif; font-size:0.95rem; color:#1e2a3e; outline:none; transition:border-color 0.15s;"
+                    onfocus="this.style.borderColor='#1a4f78'"
+                    onblur="this.style.borderColor='#c0d4e4'"
+                    onkeydown="if(event.key==='Enter') tryStart()"
+                >
+                <div id="nameError" style="color:#c0392b; font-size:0.8rem; margin-top:6px; display:none;">
+                    ⚠️ Por favor ingresa tu nombre antes de continuar.
+                </div>
+            </div>
+            <button class="start-btn" id="startSimulatorBtn" onclick="tryStart()">🚀 Comenzar simulador</button>
+        </div>
+    `;
+}
+
+function tryStart() {
+    const nameInput = document.getElementById('participantNameInput');
+    const nameVal = nameInput ? nameInput.value.trim() : '';
+    if (!nameVal) {
+        document.getElementById('nameError').style.display = 'block';
+        if (nameInput) nameInput.focus();
+        return;
+    }
+    document.getElementById('nameError').style.display = 'none';
+    participantName = nameVal;
+    simulatorStarted = true;
+    currentScenarioIndex = 0;
+    scenarioScores.fill(0);
+    completedScenarios.fill(false);
+    activityPoints = 0;
+    attemptFinished = false;
+    currentNodeId = scenarios[0].startNodeId;
+    finishedScenario = false;
+    scenarioPoints = 0;
+    saveState();
+    renderSimulatorUI();
+}
+
+function renderSimulatorUI() {
+    if (!simulatorStarted) return;
+    mainDiv.innerHTML = `
+        <div class="score-board" id="scoreDisplay">Puntuación: 0.00 / ${(globalMaxPoints+2).toFixed(2)} (0%)</div>
+        <div class="scenario-selector" id="scenarioSelector"></div>
+        <div id="scenarioContent"></div>
+    `;
+    updateGlobalScoreDisplay();
+    renderScenarioSelector();
+    renderCurrentScenario();
+}
+
+function updateGlobalScoreDisplay() {
+    const total = scenarioScores.reduce((a,b)=>a+b,0) + activityPoints;
+    const pct = (total / (globalMaxPoints + 2)) * 100;
+    const el = document.getElementById("scoreDisplay");
+    if (el) el.textContent = `Puntuación: ${total.toFixed(2)} / ${(globalMaxPoints+2).toFixed(2)} (${pct.toFixed(1)}%)`;
+}
+
+function renderScenarioSelector() {
+    const c = document.getElementById("scenarioSelector");
+    if (!c) return;
+    c.innerHTML = "";
+    scenarios.forEach((sc, idx) => {
+        const btn = document.createElement("button");
+        let cls = "scenario-btn";
+        if (idx === currentScenarioIndex) cls += " active";
+        else if (completedScenarios[idx]) cls += " done";
+        else if (idx > currentScenarioIndex) cls += " disabled";
+        btn.className = cls;
+        btn.textContent = `${completedScenarios[idx] ? "✓ " : ""}${idx+1}. ${sc.title}`;
+        btn.onclick = () => {
+            if (idx <= currentScenarioIndex || (idx === currentScenarioIndex+1 && completedScenarios[currentScenarioIndex])) {
+                currentScenarioIndex = idx;
+                resetScenarioState(idx);
+            }
+        };
+        c.appendChild(btn);
+    });
+}
+
+function resetScenarioState(idx) {
+    currentNodeId = scenarios[idx].startNodeId;
+    finishedScenario = false;
+    scenarioPoints = 0;
+    saveState();
+    renderCurrentScenario();
+}
+
+function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length-1; i > 0; i--) {
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+}
+
+function renderCurrentScenario() {
+    if (!simulatorStarted) return;
+    if (currentScenarioIndex >= scenarios.length) { showDragDrop(); return; }
+
+    const sc = scenarios[currentScenarioIndex];
+
+    if (finishedScenario) {
+        const isLast = currentScenarioIndex === scenarios.length - 1;
+        const contentDiv = document.getElementById("scenarioContent");
+        if (contentDiv) {
+            const earned = scenarioScores[currentScenarioIndex];
+            const pct = ((earned / sc.maxPoints) * 100).toFixed(0);
+            contentDiv.innerHTML = `
+                <div class="card">
+                    <div class="role-badge">✅ Escenario completado</div>
+                    <div class="feedback success-feedback" style="margin-top:8px;">
+                        <strong>Puntuación obtenida: ${earned.toFixed(2)} / ${sc.maxPoints.toFixed(2)} (${pct}%)</strong>
+                    </div>
+                    <button class="next-btn" id="nextScenarioBtn">
+                        ${isLast ? "🏁 Ir a actividad final" : "➡️ Siguiente escenario"}
+                    </button>
+                </div>
+            `;
+            document.getElementById("nextScenarioBtn").onclick = () => {
+                if (!isLast) {
+                    currentScenarioIndex++;
+                    resetScenarioState(currentScenarioIndex);
+                    renderScenarioSelector();
+                } else {
+                    saveState();
+                    showDragDrop();
+                }
+            };
+        }
+        return;
+    }
+
+    const node = sc.nodes[currentNodeId];
+    if (!node) return;
+
+    if (node.final) {
+        if (!completedScenarios[currentScenarioIndex]) {
+            // ── PUNTUACIÓN FRACCIONAL ──────────────────────────────
+            // node.error = true solo si es error GRAVE (0 puntos totales).
+            // Si llegamos a final SIN error grave, conservamos lo acumulado
+            // (puede ser parcial si hubo respuestas incorrectas en el camino).
+            scenarioScores[currentScenarioIndex] = node.error ? 0 : scenarioPoints;
+            completedScenarios[currentScenarioIndex] = true;
+            updateGlobalScoreDisplay();
+            saveState();
+        }
+        finishedScenario = true;
+        renderCurrentScenario();
+        return;
+    }
+
+    const opts = shuffle([...node.options]);
+    const contentDiv = document.getElementById("scenarioContent");
+    if (!contentDiv) return;
+
+    contentDiv.innerHTML = `
+        <div class="card">
+            <div class="role-badge">
+                <span class="role-emoji">🎭</span>
+                <div class="role-text-wrap">
+                    <span class="role-intro">Ahora imagina que eres</span>
+                    <span class="role-name">${node.role}</span>
+                </div>
+            </div>
+            ${node.context ? `<div class="scenario-context">${node.context}</div>` : ''}
+            <div class="question-text">${node.text}</div>
+            <div class="options">
+                ${opts.map((o,i) => `<button class="option-btn" data-idx="${i}">${o.text}</button>`).join('')}
+            </div>
+            <div id="dynamicFeedback"></div>
+            <div class="score-detail">Puntos en este escenario: ${scenarioPoints.toFixed(2)}</div>
+        </div>
+    `;
+
+    opts.forEach((opt, idx) => {
+        document.querySelector(`.option-btn[data-idx="${idx}"]`).onclick = () => {
+            const fb = document.getElementById("dynamicFeedback");
+            const ok = opt.points > 0;
+            fb.innerHTML = `<div class="feedback ${ok ? 'success-feedback' : 'error-feedback'}">${opt.feedbackMsg}</div>`;
+            document.querySelectorAll(".option-btn").forEach(b => b.disabled = true);
+            if (ok) {
+                scenarioPoints += opt.points;
+                const sd = document.querySelector(".score-detail");
+                if (sd) sd.textContent = `Puntos en este escenario: ${scenarioPoints.toFixed(2)}`;
+                saveState();
+                if (opt.nextId && sc.nodes[opt.nextId]) {
+                    setTimeout(() => { currentNodeId = opt.nextId; saveState(); renderCurrentScenario(); }, 1300);
+                } else { finishedScenario = true; renderCurrentScenario(); }
+            } else {
+                setTimeout(() => { currentNodeId = opt.nextId; saveState(); renderCurrentScenario(); }, 1600);
+            }
+        };
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DRAG & DROP — POINTER EVENTS
+// ═══════════════════════════════════════════════════════════════
+function showDragDrop() {
+    const stages = [
+        { id: "1", label: "Recepción de señales" },
+        { id: "2", label: "Signal Intake / clasificación" },
+        { id: "3", label: "Revisión por especialistas" },
+        { id: "4", label: "Triage y escalamiento" },
+        { id: "5", label: "Mejora sistémica" }
+    ];
+    const shuffled = shuffle(stages);
+
+    mainDiv.innerHTML = `
+        <div class="card">
+            <h3 style="margin-top:0; color:#1a4f78; font-size:1.1rem;">🧩 Actividad de cierre: Ordena el flujo</h3>
+            <p style="color:#4a6a80; font-size:0.9rem; margin-bottom:20px;">
+                Arrastra cada etapa desde el banco hacia la posición que le corresponde en el flujo de Compliance (Paso 1 al 5). Puedes reorganizarlas las veces que necesites antes de verificar.
+            </p>
+            <div class="drag-drop-area">
+                <div class="drag-section-label">📦 Banco de etapas</div>
+                <div id="bank" class="drag-items-bank">
+                    ${shuffled.map(s => `<div class="drag-item" data-stage="${s.id}" id="item-${s.id}">${s.label}</div>`).join('')}
+                </div>
+                <div class="drag-section-label" style="margin-top:4px;">🎯 Orden del flujo</div>
+                <div class="drop-zones-row" id="zonesRow">
+                    ${stages.map((_,i) => `
+                        <div class="drop-zone-wrapper">
+                            <span class="drop-zone-label">Paso ${i+1}</span>
+                            <div class="drop-zone" data-pos="${i+1}" id="zone-${i+1}"></div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            <button id="verifyBtn" class="verify-btn" style="margin-top:18px;">🔍 Verificar orden</button>
+            <div id="ddFeedback" style="margin-top:12px;"></div>
+        </div>
+    `;
+
+    initPointerDragDrop();
+    document.getElementById("verifyBtn").onclick = verifyOrder;
+}
+
+function initPointerDragDrop() {
+    let active = null;
+    const BANK_ID = "bank";
+
+    function getParentId(el) { return el.parentElement ? el.parentElement.id : null; }
+
+    function onPointerDown(e) {
+        if (e.button !== undefined && e.button !== 0) return;
+        const item = e.currentTarget;
+        e.preventDefault();
+        const rect = item.getBoundingClientRect();
+        const ghost = item.cloneNode(true);
+        ghost.style.cssText = `
+            position:fixed; left:${rect.left}px; top:${rect.top}px;
+            width:${rect.width}px; z-index:9999; pointer-events:none;
+            opacity:0.85; box-shadow:0 6px 20px rgba(0,0,0,0.2);
+            background:#daeef8; border-color:#1a5276; border-radius:40px;
+            padding:8px 18px; font-size:0.87rem; font-weight:600;
+            color:#1a3f5c; border:2px solid #1a5276;
+        `;
+        document.body.appendChild(ghost);
+        item.classList.add('is-dragging');
+        active = { el: item, offsetX: e.clientX - rect.left, offsetY: e.clientY - rect.top, ghost, fromId: getParentId(item) };
+    }
+
+    function onPointerMove(e) {
+        if (!active) return;
+        active.ghost.style.left = (e.clientX - active.offsetX) + 'px';
+        active.ghost.style.top  = (e.clientY - active.offsetY) + 'px';
+        document.querySelectorAll('.drop-zone, #bank').forEach(z => z.classList.remove('drag-over-zone'));
+        const target = getDropTarget(e.clientX, e.clientY);
+        if (target) target.classList.add('drag-over-zone');
+    }
+
+    function onPointerUp(e) {
+        if (!active) return;
+        document.querySelectorAll('.drop-zone, #bank').forEach(z => z.classList.remove('drag-over-zone'));
+        const target = getDropTarget(e.clientX, e.clientY);
+        const item = active.el;
+        const fromId = active.fromId;
+        if (target) {
+            const existing = target.querySelector('.drag-item');
+            if (existing && existing !== item) {
+                const fromEl = document.getElementById(fromId);
+                if (fromEl) fromEl.appendChild(existing);
+            }
+            target.appendChild(item);
+        }
+        item.classList.remove('is-dragging');
+        active.ghost.remove();
+        active = null;
+        attachItemEvents();
+    }
+
+    function getDropTarget(cx, cy) {
+        for (const z of document.querySelectorAll('.drop-zone')) {
+            const r = z.getBoundingClientRect();
+            if (cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom) return z;
+        }
+        const bank = document.getElementById(BANK_ID);
+        if (bank) {
+            const r = bank.getBoundingClientRect();
+            if (cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom) return bank;
+        }
+        return null;
+    }
+
+    function attachItemEvents() {
+        document.querySelectorAll('.drag-item').forEach(item => {
+            item.onpointerdown = onPointerDown;
+        });
+    }
+
+    document.addEventListener('pointermove', onPointerMove);
+    document.addEventListener('pointerup', onPointerUp);
+    mainDiv._cleanupDnD = () => {
+        document.removeEventListener('pointermove', onPointerMove);
+        document.removeEventListener('pointerup', onPointerUp);
+    };
+    attachItemEvents();
+}
+
+function verifyOrder() {
+    if (mainDiv._cleanupDnD) { mainDiv._cleanupDnD(); mainDiv._cleanupDnD = null; }
+    const zones = document.querySelectorAll('.drop-zone');
+    let allFilled = true, allCorrect = true;
+    zones.forEach(zone => {
+        zone.classList.remove('correct', 'incorrect');
+        const child = zone.querySelector('.drag-item');
+        if (!child) { allFilled = false; allCorrect = false; return; }
+        const ok = child.getAttribute('data-stage') === zone.getAttribute('data-pos');
+        zone.classList.add(ok ? 'correct' : 'incorrect');
+        if (!ok) allCorrect = false;
+    });
+    const fb = document.getElementById("ddFeedback");
+    if (!allFilled) {
+        fb.innerHTML = `<div class="feedback error-feedback">⚠️ Coloca todas las etapas en las posiciones antes de verificar.</div>`;
+        initPointerDragDrop();
+        document.getElementById("verifyBtn").onclick = verifyOrder;
+        return;
+    }
+    if (allCorrect) {
+        activityPoints = 2;
+        updateGlobalScoreDisplay();
+        saveState();
+        fb.innerHTML = `<div class="feedback success-feedback">✅ ¡Orden correcto! Sumaste <strong>2 puntos</strong> a tu calificación final.</div>`;
+        if (!document.getElementById("continueBtn")) {
+            const btn = document.createElement("button");
+            btn.id = "continueBtn"; btn.className = "continue-btn";
+            btn.textContent = "➡️ Ver resultados finales";
+            btn.onclick = () => { attemptFinished = true; saveState(); showFinalResults(); };
+            fb.appendChild(btn);
+        }
+    } else {
+        fb.innerHTML = `<div class="feedback error-feedback">❌ Hay posiciones incorrectas (marcadas en rojo). Reorganiza las etapas y vuelve a verificar.</div>`;
+        initPointerDragDrop();
+        document.getElementById("verifyBtn").onclick = verifyOrder;
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RESULTADOS FINALES + BOTÓN GUARDAR
+// ═══════════════════════════════════════════════════════════════
+function showFinalResults() {
+    attemptFinished = true;
+    saveState();
+
+    const scenariosEarned = scenarioScores.reduce((a,b)=>a+b,0);
+    const scenariosMax    = globalMaxPoints;
+    const scenariosPct    = (scenariosEarned / scenariosMax) * 100;
+
+    const ddEarned = activityPoints;
+    const ddMax    = 2;
+    const ddPct    = (ddEarned / ddMax) * 100;
+
+    const totalEarned = scenariosEarned + ddEarned;
+    const maxTotal    = scenariosMax + ddMax;
+    const pct         = (totalEarned / maxTotal) * 100;
+    const passed      = pct >= 85;
+
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('es-MX', { year:'numeric', month:'long', day:'numeric' });
+    const timeStr = now.toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit' });
+
+    const rows = scenarios.map((sc, i) => {
+        const scPct = ((scenarioScores[i]/sc.maxPoints)*100).toFixed(0);
+        const color = scenarioScores[i] >= sc.maxPoints*0.85
+            ? '#1a7a45'
+            : (scenarioScores[i] > 0 ? '#9a5c00' : '#c0392b');
+        return `<tr style="border-bottom:1px solid #e4edf5;">
+            <td style="padding:8px 14px; text-align:left;">${sc.title}</td>
+            <td style="padding:8px 14px; text-align:center;">${scenarioScores[i].toFixed(2)}</td>
+            <td style="padding:8px 14px; text-align:center;">${sc.maxPoints.toFixed(2)}</td>
+            <td style="padding:8px 14px; text-align:center; font-weight:700; color:${color};">${scPct}%</td>
+        </tr>`;
+    }).join('');
+
+    mainDiv.innerHTML = `
+        <div class="card">
+            <h3 style="margin-top:0; color:#1a4f78;">📊 Resultado final del simulador</h3>
+            ${participantName ? `<p style="font-size:0.88rem; color:#5a7a8a; margin-bottom:16px;">👤 Participante: <strong>${participantName}</strong></p>` : ''}
+            <div class="result-box">
+                <div style="font-size:2.6rem; margin-bottom:6px;">${passed ? "🏆" : "📘"}</div>
+                <p style="font-size:1.5rem; font-weight:800; margin:0 0 4px; color:${passed?'#1a7a45':'#b05010'};">
+                    ${passed ? "APROBADO" : "NO APROBADO"}
+                </p>
+                <p style="font-size:2rem; font-weight:800; margin:0 0 4px; color:#1a4f78;">${pct.toFixed(1)}%</p>
+                <p style="color:#5a7a8a; margin:0 0 20px; font-size:0.88rem;">
+                    ${totalEarned.toFixed(2)} / ${maxTotal.toFixed(2)} puntos &nbsp;·&nbsp; Mínimo aprobatorio: 85%
+                </p>
+                <p style="font-size:0.93rem; color:#2a4a5a; max-width:520px; margin:0 auto 24px;">
+                    ${passed
+                        ? "¡Excelente trabajo! Tu comprensión del flujo de Compliance es sólida."
+                        : "Necesitas reforzar algunos conceptos clave del flujo. Revisa los criterios de clasificación de señales y los principios de trazabilidad y documentación."}
+                </p>
+
+                <!-- DESGLOSE POR SECCIÓN -->
+                <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-bottom:24px;">
+                    <div style="background:white; border-radius:16px; padding:16px 22px; min-width:180px; border:2px solid #d0e8f5;">
+                        <div style="font-size:0.72rem; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; color:#5a7a8a; margin-bottom:6px;">📋 Escenarios</div>
+                        <div style="font-size:1.6rem; font-weight:800; color:#1a4f78;">${scenariosPct.toFixed(1)}%</div>
+                        <div style="font-size:0.82rem; color:#7090a8; margin-top:2px;">${scenariosEarned.toFixed(2)} / ${scenariosMax.toFixed(2)} pts</div>
+                    </div>
+                    <div style="background:white; border-radius:16px; padding:16px 22px; min-width:180px; border:2px solid ${ddPct===100?'#a3d4b0':'#f0d4a0'};">
+                        <div style="font-size:0.72rem; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; color:#5a7a8a; margin-bottom:6px;">🧩 Ordenamiento</div>
+                        <div style="font-size:1.6rem; font-weight:800; color:${ddPct===100?'#1a7a45':'#9a5c00'};">${ddPct.toFixed(0)}%</div>
+                        <div style="font-size:0.82rem; color:#7090a8; margin-top:2px;">${ddEarned.toFixed(2)} / ${ddMax.toFixed(2)} pts</div>
+                    </div>
+                </div>
+
+                <!-- TABLA DE ESCENARIOS -->
+                <table style="width:100%; border-collapse:collapse; font-size:0.87rem; background:white; border-radius:14px; overflow:hidden; margin-bottom:18px; text-align:center;">
+                    <thead>
+                        <tr style="background:#1a4f78; color:white;">
+                            <th style="padding:10px 14px; text-align:left;">Escenario</th>
+                            <th style="padding:10px 14px;">Obtenido</th>
+                            <th style="padding:10px 14px;">Máximo</th>
+                            <th style="padding:10px 14px;">%</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}
+                        <tr style="background:#eef4fb; font-weight:700;">
+                            <td style="padding:9px 14px; text-align:left;">🧩 Ordenamiento (drag & drop)</td>
+                            <td style="padding:9px 14px;">${ddEarned.toFixed(2)}</td>
+                            <td style="padding:9px 14px;">${ddMax.toFixed(2)}</td>
+                            <td style="padding:9px 14px; color:${ddPct===100?'#1a7a45':'#c0392b'};">${ddPct.toFixed(0)}%</td>
+                        </tr>
+                        <tr style="background:#1a4f78; color:white; font-weight:800;">
+                            <td style="padding:10px 14px; text-align:left;">🏁 TOTAL</td>
+                            <td style="padding:10px 14px;">${totalEarned.toFixed(2)}</td>
+                            <td style="padding:10px 14px;">${maxTotal.toFixed(2)}</td>
+                            <td style="padding:10px 14px;">${pct.toFixed(1)}%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- BOTONES -->
+                <div style="margin-top:8px; display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
+                    <button id="saveResultsBtn" class="next-btn" style="background:#1a4f78;">
+                        💾 Guardar resultados
+                    </button>
+                    <button id="newAttemptBtn" class="next-btn" style="background:#6c757d;">
+                        🔄 Nuevo intento
+                    </button>
+                </div>
+                <div id="saveConfirmMsg" style="font-size:0.83rem; color:#1a6640; margin-top:10px; display:none;"></div>
+
+                <p style="font-size:0.75rem; color:#8a9aaa; margin-top:16px;">
+                    Completado el ${dateStr} a las ${timeStr}
+                    ${participantName ? `&nbsp;·&nbsp; ${participantName}` : ''}
+                    &nbsp;·&nbsp; Modo de prueba activo
+                </p>
+            </div>
+        </div>
+    `;
+
+    // ── Botón guardar resultados ──────────────────────────────
+    document.getElementById("saveResultsBtn").onclick = () => {
+        const result = {
+            alumno: participantName || "—",
+            fecha: `${dateStr} ${timeStr}`,
+            escenarios_pts: scenariosEarned.toFixed(2),
+            escenarios_max: scenariosMax.toFixed(2),
+            escenarios_pct: scenariosPct.toFixed(1) + "%",
+            dd_pts: ddEarned.toFixed(2),
+            dd_max: ddMax.toFixed(2),
+            dd_pct: ddPct.toFixed(0) + "%",
+            total: totalEarned.toFixed(2),
+            maximo: maxTotal.toFixed(2),
+            porcentaje: pct.toFixed(1) + "%",
+            aprobado: passed ? "Sí" : "No",
+            escenarios: scenarios.map((sc, i) => ({
+                escenario: sc.title,
+                obtenido: scenarioScores[i].toFixed(2),
+                maximo: sc.maxPoints.toFixed(2),
+                porcentaje: ((scenarioScores[i]/sc.maxPoints)*100).toFixed(0) + "%"
+            }))
+        };
+        try { localStorage.setItem("compliance_sim_RESULT_" + Date.now(), JSON.stringify(result)); } catch(e) {}
+        const msg = document.getElementById("saveConfirmMsg");
+        msg.style.display = "block";
+        msg.textContent = `✅ Resultados guardados — ${participantName ? participantName + ' · ' : ''}${pct.toFixed(1)}% (${passed ? "APROBADO" : "NO APROBADO"})`;
+    };
+
+    // ── Botón nuevo intento (modo prueba) ─────────────────────
+    document.getElementById("newAttemptBtn").onclick = () => {
+        clearSavedState();
+        simulatorStarted     = false;
+        participantName      = '';
+        currentScenarioIndex = 0;
+        currentNodeId        = null;
+        scenarioPoints       = 0;
+        finishedScenario     = false;
+        scenarioScores       = new Array(scenarios.length).fill(0);
+        completedScenarios   = new Array(scenarios.length).fill(false);
+        activityPoints       = 0;
+        attemptFinished      = false;
+        showStartScreen();
+    };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// VISTA DE ADMINISTRADOR
+// ═══════════════════════════════════════════════════════════════
+const ADMIN_PASSWORD = 'Adminmoodle26';
+let adminUnlocked = false;
+
+function openAdminModal() {
+    document.getElementById('adminModal').style.display = 'block';
+    renderAdminModal();
+}
+function closeAdminModal() {
+    document.getElementById('adminModal').style.display = 'none';
+}
+
+function renderAdminModal() {
+    const body = document.getElementById('adminModalBody');
+    if (!adminUnlocked) {
+        body.innerHTML = `
+            <div style="max-width:340px; margin:0 auto; text-align:center;">
+                <div style="font-size:2rem; margin-bottom:12px;">🔐</div>
+                <h3 style="color:#0d2b45; font-size:1rem; margin-bottom:8px;">Acceso restringido</h3>
+                <p style="font-size:0.85rem; color:#5a7a8a; margin-bottom:18px;">Ingresa la contraseña de administrador para ver los registros.</p>
+                <input type="password" id="adminPassInput"
+                    placeholder="Contraseña..."
+                    style="width:100%; border:2px solid #c0d4e4; border-radius:12px; padding:10px 16px; font-family:'DM Sans',sans-serif; font-size:0.95rem; margin-bottom:12px; outline:none; transition:0.15s; text-align:center;"
+                    onfocus="this.style.borderColor='#1a4f78'" onblur="this.style.borderColor='#c0d4e4'"
+                    onkeydown="if(event.key==='Enter') checkAdminPass()">
+                <button onclick="checkAdminPass()" style="width:100%; background:#1a4f78; border:none; color:#fff; padding:10px; border-radius:12px; font-family:'DM Sans',sans-serif; font-weight:700; font-size:0.9rem; cursor:pointer;">
+                    Ingresar
+                </button>
+                <div id="adminPassError" style="color:#c0392b; font-size:0.8rem; margin-top:8px; display:none;">⚠️ Contraseña incorrecta.</div>
+            </div>`;
+        return;
+    }
+    renderAdminDashboard(body);
+}
+
+function checkAdminPass() {
+    const val = (document.getElementById('adminPassInput')?.value || '').trim();
+    if (val === ADMIN_PASSWORD) {
+        adminUnlocked = true;
+        renderAdminModal();
+    } else {
+        document.getElementById('adminPassError').style.display = 'block';
+    }
+}
+
+function renderAdminDashboard(body) {
+    // Collect all saved results from localStorage
+    const results = [];
+    try {
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('compliance_sim_RESULT_')) {
+                const r = JSON.parse(localStorage.getItem(key));
+                if (r) results.push({ key, ...r });
+            }
+        }
+    } catch(e) {}
+
+    // Current session summary
+    const sessionEarned = scenarioScores.reduce((a,b)=>a+b,0) + activityPoints;
+    const sessionMax = globalMaxPoints + 2;
+    const sessionPct = (sessionEarned / sessionMax) * 100;
+    const sessionScEarned = scenarioScores.reduce((a,b)=>a+b,0);
+    const sessionScPct = (sessionScEarned / globalMaxPoints) * 100;
+    const sessionDdPct = (activityPoints / 2) * 100;
+
+    const savedRecordsHTML = results.length === 0
+        ? `<p style="color:#7090a8; font-size:0.87rem; padding:12px 0;">No hay resultados guardados aún. Los resultados aparecen aquí cuando los participantes presionan "💾 Guardar resultados".</p>`
+        : results.map((r, i) => `
+            <div style="background:#f8fafc; border:1px solid #dde8f2; border-radius:14px; padding:16px 20px; margin-bottom:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+                    <div>
+                        <span style="font-weight:800; font-size:0.95rem; color:#0d2b45;">👤 ${r.alumno || '—'}</span>
+                        <span style="font-size:0.78rem; color:#7090a8; margin-left:10px;">${r.fecha || ''}</span>
+                    </div>
+                    <span style="font-weight:800; font-size:1rem; color:${parseFloat(r.porcentaje)>=85?'#1a7a45':'#b05010'};">
+                        ${r.porcentaje} — ${r.aprobado==='Sí'?'APROBADO':'NO APROBADO'}
+                    </span>
+                </div>
+                <div style="display:flex; gap:12px; flex-wrap:wrap; font-size:0.83rem; color:#5a7a8a;">
+                    <span>📋 Escenarios: <strong>${r.escenarios_pts||'—'} / ${r.escenarios_max||'—'} (${r.escenarios_pct||'—'})</strong></span>
+                    <span>🧩 Ordenamiento: <strong>${r.dd_pts||'—'} / ${r.dd_max||'—'} (${r.dd_pct||'—'})</strong></span>
+                    <span>🏁 Total: <strong>${r.total} / ${r.maximo}</strong></span>
+                </div>
+                ${r.escenarios ? `
+                <details style="margin-top:10px;">
+                    <summary style="cursor:pointer; font-size:0.8rem; color:#2471a3; font-weight:600;">Ver desglose por escenario</summary>
+                    <table style="width:100%; border-collapse:collapse; font-size:0.8rem; margin-top:8px;">
+                        <thead><tr style="background:#eef4fb;"><th style="padding:6px 10px; text-align:left;">Escenario</th><th style="padding:6px 10px;">Obtenido</th><th style="padding:6px 10px;">Máximo</th><th style="padding:6px 10px;">%</th></tr></thead>
+                        <tbody>${r.escenarios.map(e=>`<tr style="border-bottom:1px solid #e4edf5;"><td style="padding:5px 10px;">${e.escenario}</td><td style="padding:5px 10px; text-align:center;">${e.obtenido}</td><td style="padding:5px 10px; text-align:center;">${e.maximo}</td><td style="padding:5px 10px; text-align:center; font-weight:700;">${e.porcentaje}</td></tr>`).join('')}</tbody>
+                    </table>
+                </details>` : ''}
+                <button onclick="deleteAdminRecord('${r.key}')" style="margin-top:10px; background:none; border:1px solid #e0aaaa; color:#c0392b; border-radius:8px; padding:4px 12px; font-size:0.75rem; cursor:pointer; font-family:'DM Sans',sans-serif;">🗑 Eliminar registro</button>
+            </div>`).join('');
+
+    body.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:8px;">
+            <h3 style="margin:0; color:#0d2b45; font-size:0.95rem;">Panel de administrador</h3>
+            <button onclick="adminUnlocked=false; renderAdminModal()" style="background:#fee2e2; border:none; color:#c0392b; border-radius:8px; padding:6px 14px; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:700; font-size:0.78rem;">🔒 Cerrar sesión admin</button>
+        </div>
+
+        <!-- SESIÓN ACTUAL -->
+        <div style="background:#f0f5fc; border-radius:14px; padding:16px 20px; margin-bottom:22px;">
+            <h4 style="margin:0 0 10px; color:#1a4f78; font-size:0.88rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em;">📍 Sesión actual</h4>
+            <div style="font-size:0.88rem; color:#1e2a3e;">
+                <strong>Participante:</strong> ${participantName || '(no iniciado)'} &nbsp;·&nbsp;
+                <strong>Progreso:</strong> ${completedScenarios.filter(Boolean).length} / ${scenarios.length} escenarios completados
+            </div>
+            ${simulatorStarted ? `
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:10px; font-size:0.83rem; color:#5a7a8a;">
+                <span>📋 Escenarios: <strong style="color:#1a4f78">${sessionScEarned.toFixed(2)} / ${globalMaxPoints.toFixed(2)} (${sessionScPct.toFixed(1)}%)</strong></span>
+                <span>🧩 Ordenamiento: <strong style="color:#1a4f78">${activityPoints.toFixed(2)} / 2.00 (${sessionDdPct.toFixed(0)}%)</strong></span>
+                <span>🏁 Total: <strong style="color:${sessionPct>=85?'#1a7a45':'#b05010'}">${sessionEarned.toFixed(2)} / ${sessionMax.toFixed(2)} (${sessionPct.toFixed(1)}%)</strong></span>
+            </div>` : ''}
+        </div>
+
+        <!-- REGISTROS GUARDADOS -->
+        <h4 style="margin:0 0 12px; color:#0d2b45; font-size:0.88rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em;">💾 Resultados guardados (${results.length})</h4>
+        ${savedRecordsHTML}`;
+}
+
+function deleteAdminRecord(key) {
+    if (!confirm('¿Eliminar este registro permanentemente?')) return;
+    try { localStorage.removeItem(key); } catch(e) {}
+    renderAdminModal();
+}
+
+init();
+</script>
+</body>
+</html>
