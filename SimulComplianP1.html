@@ -1609,7 +1609,7 @@ function showFinalResults() {
     `;
 
     // ── Botón guardar resultados ──────────────────────────────
-    document.getElementById("saveResultsBtn").onclick = async () => {
+    document.getElementById("saveResultsBtn").onclick = () => {
         const result = {
             alumno: participantName || "—",
             fecha: `${dateStr} ${timeStr}`,
@@ -1631,72 +1631,45 @@ function showFinalResults() {
             }))
         };
 
-        const msg = document.getElementById("saveConfirmMsg");
-        const btn = document.getElementById("saveResultsBtn");
-
-        // Guardar en localStorage como respaldo
+        // Guardar en localStorage
         try { localStorage.setItem("compliance_sim_RESULT_" + Date.now(), JSON.stringify(result)); } catch(e) {}
 
-        // Guardar en Google Sheets si está configurado
-        if (isGasConfigured()) {
-            btn.disabled = true;
-            btn.textContent = "⏳ Guardando...";
-            msg.style.display = "block";
-            msg.style.color = "#1a4f78";
-            msg.textContent = "⏳ Enviando resultados al servidor...";
-            try {
-                await gasPost(result);
-                msg.style.color = "#1a6640";
-                msg.textContent = `✅ Resultados guardados en servidor — ${participantName ? participantName + ' · ' : ''}${pct.toFixed(1)}% (${passed ? "APROBADO" : "NO APROBADO"})`;
-                btn.textContent = "✅ Guardado";
-            } catch(err) {
-                msg.style.color = "#b05010";
-                msg.textContent = `⚠️ Guardado local OK, pero hubo un error al enviar al servidor. Contacta al administrador.`;
-                btn.disabled = false;
-                btn.textContent = "💾 Reintentar envío";
-            }
-        } else {
-            msg.style.display = "block";
-            msg.style.color = "#b05010";
-            msg.textContent = `⚠️ Backend no configurado — resultado guardado solo localmente. ${participantName ? participantName + ' · ' : ''}${pct.toFixed(1)}%`;
-        }
+        // Enviar a GAS en silencio
+        if (isGasConfigured()) { try { gasPost(result); } catch(e) {} }
+
+        var msg = document.getElementById("saveConfirmMsg");
+        var btn = document.getElementById("saveResultsBtn");
+        msg.style.display = "block";
+        msg.style.color = "#1a6640";
+        msg.textContent = `✅ Resultados guardados — ${participantName ? participantName + ' · ' : ''}${pct.toFixed(1)}% (${passed ? "APROBADO" : "NO APROBADO"})`;
+        btn.textContent = "✅ Guardado";
+        btn.disabled = true;
     };
 
-    // ── AUTO-SAVE: enviar automáticamente al servidor al terminar ──
+    // ── AUTO-SAVE silencioso al servidor ──
     if (isGasConfigured()) {
-        const autoResult = {
-            alumno: participantName || "—",
-            fecha: `${dateStr} ${timeStr}`,
-            escenarios_pts: scenariosEarned.toFixed(2),
-            escenarios_max: scenariosMax.toFixed(2),
-            escenarios_pct: scenariosPct.toFixed(1) + "%",
-            dd_pts: ddEarned.toFixed(2),
-            dd_max: ddMax.toFixed(2),
-            dd_pct: ddPct.toFixed(0) + "%",
-            total: totalEarned.toFixed(2),
-            maximo: maxTotal.toFixed(2),
-            porcentaje: pct.toFixed(1) + "%",
-            aprobado: passed ? "Sí" : "No",
-            escenarios: scenarios.map((sc, i) => ({
-                escenario: sc.title,
-                obtenido: scenarioScores[i].toFixed(2),
-                maximo: sc.maxPoints.toFixed(2),
-                porcentaje: ((scenarioScores[i]/sc.maxPoints)*100).toFixed(0) + "%"
-            }))
-        };
-        gasPost(autoResult).then(() => {
-            const msg = document.getElementById("saveConfirmMsg");
-            if (msg && msg.style.display === 'none') {
-                msg.style.display = "block";
-                msg.style.color = "#1a6640";
-                msg.textContent = `✅ Resultados enviados automáticamente al servidor.`;
-            }
-            const btn = document.getElementById("saveResultsBtn");
-            if (btn && !btn.disabled) {
-                btn.textContent = "✅ Ya enviado";
-                btn.disabled = true;
-            }
-        }).catch(() => {});
+        try {
+            gasPost({
+                alumno: participantName || "—",
+                fecha: `${dateStr} ${timeStr}`,
+                escenarios_pts: scenariosEarned.toFixed(2),
+                escenarios_max: scenariosMax.toFixed(2),
+                escenarios_pct: scenariosPct.toFixed(1) + "%",
+                dd_pts: ddEarned.toFixed(2),
+                dd_max: ddMax.toFixed(2),
+                dd_pct: ddPct.toFixed(0) + "%",
+                total: totalEarned.toFixed(2),
+                maximo: maxTotal.toFixed(2),
+                porcentaje: pct.toFixed(1) + "%",
+                aprobado: passed ? "Sí" : "No",
+                escenarios: scenarios.map((sc, i) => ({
+                    escenario: sc.title,
+                    obtenido: scenarioScores[i].toFixed(2),
+                    maximo: sc.maxPoints.toFixed(2),
+                    porcentaje: ((scenarioScores[i]/sc.maxPoints)*100).toFixed(0) + "%"
+                }))
+            });
+        } catch(e) {}
     }
 
     // ── Botón nuevo intento (modo prueba) ─────────────────────
