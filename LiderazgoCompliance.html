@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Simulador Módulo 5 - Liderazgo y Cultura de Cumplimiento · TMLF</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', 'Segoe UI', sans-serif;
+            background: #dde4ee;
+            margin: 0;
+            padding: 20px;
+            color: #1e2a3e;
+            min-height: 100vh;
+        }
+
+        .simulator-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 16px 48px rgba(10,30,60,0.14);
+            overflow: hidden;
+            padding: 0 0 40px;
+        }
+
+        /* ─── HEADER ─── */
+        .simulator-header {
+            background: linear-gradient(130deg, #0d2b45 0%, #1a4a70 60%, #1f5c8a 100%);
+            padding: 0 36px;
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            min-height: 88px;
+            position: relative;
+        }
+        .simulator-header::after {
+            content: '';
+            position: absolute;
+            right: -40px; top: -40px;
+            width: 220px; height: 220px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .header-logo-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .header-logo-wrap svg { display: block; }
+        .header-logo-text {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.62rem;
+            font-weight: 600;
+            letter-spacing: 0.28em;
+            color: rgba(255,255,255,0.55);
+            text-transform: uppercase;
+        }
+        .header-divider {
+            width: 1px;
+            height: 52px;
+            background: rgba(255,255,255,0.2);
+            flex-shrink: 0;
+        }
+        .header-text { flex: 1; }
+        .header-text h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin: 0 0 3px;
+            color: #ffffff;
+            letter-spacing: 0.01em;
+        }
+        .header-text .sub {
+            color: #8bb8d8;
+            font-size: 0.83rem;
+            margin: 0;
+            font-weight: 400;
+        }
+
+        /* ─── LAYOUT ─── */
+        .inner-pad { padding: 26px 32px 0; }
+
+        .score-board {
+            background: linear-gradient(90deg, #e6f2f9, #eef7ff);
+            border-radius: 60px;
+            padding: 8px 22px;
+            display: inline-block;
+            font-weight: 700;
+            margin-bottom: 22px;
+            color: #0a4b6e;
+            border: 1px solid #c0d8ea;
+            font-size: 0.88rem;
+            letter-spacing: 0.01em;
+        }
+
+        .scenario-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 26px;
+            border-bottom: 2px solid #e4edf5;
+            padding-bottom: 18px;
+        }
+        .scenario-btn {
+            background: #f0f5fc;
+            border: 1px solid #c0d4e4;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.18s;
+            color: #1e5a7a;
+            font-size: 0.8rem;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .scenario-btn:hover:not(.disabled) { background: #cce2f0; transform: translateY(-1px); }
+        .scenario-btn.active { background: #1a4f78; color: white; border-color: #1a4f78; box-shadow: 0 2px 8px rgba(26,79,120,0.3); }
+        .scenario-btn.done { background: #d0edd8; color: #1a5c36; border-color: #96cba4; }
+        .scenario-btn.disabled { opacity: 0.45; cursor: not-allowed; }
+
+        .card {
+            background: #ffffff;
+            border-radius: 22px;
+            padding: 24px 28px;
+            margin-bottom: 22px;
+            box-shadow: 0 3px 14px rgba(0,0,0,0.055);
+            border: 1px solid #e0ecf5;
+        }
+
+        /* ─── ROLE BADGE ─── */
+        .role-badge {
+            background: linear-gradient(135deg, #1a4f78, #2471a3);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 14px 20px;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: #ffffff;
+            letter-spacing: 0.01em;
+            line-height: 1.4;
+            border-left: 4px solid #f0b429;
+        }
+        .role-badge .role-emoji { font-size: 1.6rem; flex-shrink: 0; margin-top: 1px; }
+        .role-badge .role-text-wrap { display: flex; flex-direction: column; gap: 2px; }
+        .role-badge .role-intro { font-size: 0.72rem; font-weight: 500; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.1em; }
+        .role-badge .role-name { font-size: 1rem; font-weight: 800; letter-spacing: 0.01em; }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 500;
+            margin: 10px 0 20px;
+            line-height: 1.55;
+            color: #0b2a40;
+        }
+        .scenario-context {
+            background: #f4f9fd;
+            border-left: 4px solid #5ba3cc;
+            border-radius: 0 12px 12px 0;
+            padding: 12px 16px;
+            margin-bottom: 18px;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: #2a4a60;
+            font-style: italic;
+        }
+        .options { display: flex; flex-direction: column; gap: 10px; margin: 18px 0 6px; }
+        .option-btn {
+            background: #f6fbff;
+            border: 1.5px solid #c4dced;
+            border-radius: 60px;
+            padding: 12px 22px;
+            text-align: left;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+            color: #1a4a68;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .option-btn:hover:not(:disabled) { background: #d8eef8; border-color: #80bbd4; transform: translateX(3px); }
+        .option-btn:disabled { opacity: 0.58; cursor: default; transform: none; }
+
+        /* ─── FEEDBACK ─── */
+        .feedback {
+            background: #ecf6fd;
+            border-left: 5px solid #2471a3;
+            padding: 13px 18px;
+            border-radius: 0 14px 14px 0;
+            margin: 16px 0 8px;
+            font-size: 0.9rem;
+            line-height: 1.55;
+            max-height: 220px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+        .feedback::-webkit-scrollbar { width: 6px; }
+        .feedback::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 3px; }
+        .feedback::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.18); border-radius: 3px; }
+        .error-feedback { background: #fdeaea; border-left-color: #c0392b; }
+        .success-feedback { background: #d6f0e0; border-left-color: #1e8449; }
+        .fb-correct { font-weight: 700; color: #1a5c36; margin-bottom: 6px; font-size: 0.92rem; }
+        .fb-explain { color: #2a4a5a; }
+
+        .next-btn, .continue-btn, .verify-btn {
+            background: #1a4f78;
+            border: none;
+            color: white;
+            padding: 10px 26px;
+            border-radius: 40px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 12px;
+            transition: 0.15s;
+            font-size: 0.88rem;
+            font-family: 'DM Sans', sans-serif;
+            letter-spacing: 0.02em;
+        }
+        .next-btn:hover, .verify-btn:hover { background: #0e3352; }
+        .continue-btn { background: #1a7a45; }
+        .continue-btn:hover { background: #145c34; }
+
+        .score-detail { text-align: right; font-weight: 700; margin-top: 10px; font-size: 0.85rem; color: #1a6640; }
+        .info-sis {
+            background: #fff8e6;
+            border-left: 4px solid #e0a82e;
+            padding: 11px 16px;
+            border-radius: 0 12px 12px 0;
+            font-size: 0.84rem;
+            margin-bottom: 16px;
+        }
+
+        /* ─── MATCHING ACTIVITY ─── */
+        .matching-area {
+            background: #f4f8fc;
+            border: 2px dashed #8ab4cc;
+            border-radius: 20px;
+            padding: 22px;
+            margin-top: 18px;
+        }
+        .matching-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 16px;
+            align-items: center;
+            background: white;
+            border-radius: 14px;
+            padding: 14px 18px;
+            border: 1px solid #e0ecf5;
+        }
+        .concept-label {
+            flex: 1;
+            min-width: 160px;
+            background: linear-gradient(135deg, #1a4f78, #2471a3);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            letter-spacing: 0.02em;
+        }
+        .definition-select {
+            flex: 2;
+            min-width: 200px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1.5px solid #c0d4e4;
+            background: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            color: #1a4a68;
+            cursor: pointer;
+            transition: border-color 0.15s;
+        }
+        .definition-select:focus { outline: none; border-color: #1a4f78; }
+        .definition-select.correct { border-color: #1a7a45; background: #f0faf4; }
+        .definition-select.incorrect { border-color: #c0392b; background: #fdeaea; }
+
+        /* ─── RESULTS ─── */
+        .result-box { text-align: center; padding: 26px; background: linear-gradient(135deg, #e4f0fa 0%, #eaf7ee 100%); border-radius: 22px; }
+
+        /* ─── START ─── */
+        .start-screen { text-align: center; padding: 6px 0 0; }
+        .start-btn {
+            background: linear-gradient(135deg, #1a4f78 0%, #2471a3 100%);
+            color: white;
+            font-size: 1.05rem;
+            font-weight: 700;
+            padding: 13px 38px;
+            border-radius: 60px;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+            font-family: 'DM Sans', sans-serif;
+            box-shadow: 0 5px 18px rgba(26,79,120,0.35);
+            transition: 0.18s;
+            letter-spacing: 0.02em;
+        }
+        .start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,79,120,0.42); }
+
+        footer {
+            font-size: 0.74rem;
+            text-align: center;
+            margin-top: 30px;
+            color: #7090a8;
+            padding: 0 32px;
+        }
+
+        @media (max-width: 640px) {
+            .simulator-header { padding: 0 20px; min-height: 76px; }
+            .inner-pad { padding: 18px 18px 0; }
+            .question-text { font-size: 1.05rem; }
+            .concept-label { min-width: 120px; }
+        }
+    </style>
+</head>
+<body>
+<div class="simulator-container" id="app">
+
+    <!-- ─── HEADER ─── -->
+    <div class="simulator-header">
+        <div class="header-logo-wrap">
+            <svg width="58" height="52" viewBox="0 0 58 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 42 L6 9 L22 4 L22 37 Z" fill="rgba(130,145,200,0.55)" stroke="none"/>
+              <path d="M52 42 L52 9 L36 4 L36 37 Z" fill="rgba(130,145,200,0.55)" stroke="none"/>
+              <line x1="6" y1="42" x2="6" y2="36" stroke="#7b8ec8" stroke-width="3.5" stroke-linecap="round"/>
+              <line x1="6" y1="43" x2="15" y2="46" stroke="#7b8ec8" stroke-width="3.5" stroke-linecap="round"/>
+              <line x1="15" y1="46" x2="15" y2="40" stroke="#7b8ec8" stroke-width="3.5" stroke-linecap="round"/>
+              <line x1="52" y1="42" x2="52" y2="36" stroke="#7b8ec8" stroke-width="3.5" stroke-linecap="round"/>
+              <line x1="52" y1="43" x2="43" y2="46" stroke="#7b8ec8" stroke-width="3.5" stroke-linecap="round"/>
+              <line x1="43" y1="46" x2="43" y2="40" stroke="#7b8ec8" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M10 40 L10 10 L22 6 L22 36 Z" fill="white" stroke="rgba(255,255,255,0.9)" stroke-width="1.2" stroke-linejoin="round"/>
+              <path d="M12.5 37.5 L12.5 12 L20.5 8.5 L20.5 34 Z" fill="none" stroke="rgba(200,210,230,0.7)" stroke-width="1"/>
+              <path d="M48 40 L48 10 L36 6 L36 36 Z" fill="white" stroke="rgba(255,255,255,0.9)" stroke-width="1.2" stroke-linejoin="round"/>
+              <path d="M45.5 37.5 L45.5 12 L37.5 8.5 L37.5 34 Z" fill="none" stroke="rgba(200,210,230,0.7)" stroke-width="1"/>
+              <line x1="29" y1="6" x2="29" y2="38" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"/>
+            </svg>
+            <span class="header-logo-text">Training · TMLF</span>
+        </div>
+        <div class="header-divider"></div>
+        <div class="header-text">
+            <h1>Liderazgo en Compliance · Módulo 5</h1>
+            <div class="sub">Cultura de Cumplimiento y Toma de Decisiones Éticas</div>
+        </div>
+        <button onclick="openAdminModal()" style="margin-left:auto; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); color:rgba(255,255,255,0.8); border-radius:30px; padding:6px 16px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.05em; transition:0.15s; flex-shrink:0;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.12)'">
+            ⚙️ Admin
+        </button>
+    </div>
+
+    <div class="inner-pad">
+        <div id="mainContent"></div>
+    </div>
+
+    <footer>🌟 Liderazgo y Cultura de Cumplimiento · Decisiones basadas en integridad, coherencia y mejora continua.</footer>
+</div>
+
+<!-- ─── ADMIN MODAL ─── -->
+<div id="adminModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:9999; overflow-y:auto; padding:20px;">
+    <div style="max-width:780px; margin:30px auto; background:#fff; border-radius:20px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.35);">
+        <div style="background:#0d2b45; padding:18px 26px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#fff; font-weight:800; font-size:1rem;">⚙️ Vista Administrador
+                <span style="background:#f0b429; color:#0d2b45; border-radius:6px; padding:2px 10px; font-size:0.72rem; font-weight:800; letter-spacing:0.06em; margin-left:10px;">ADMIN</span>
+            </span>
+            <button onclick="closeAdminModal()" style="background:rgba(255,255,255,0.15); border:none; color:#fff; border-radius:8px; padding:6px 16px; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:700; font-size:0.88rem;">✕ Cerrar</button>
+        </div>
+        <div id="adminModalBody" style="padding:24px;"></div>
+    </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// ESCENARIOS — MÓDULO 5: LIDERAZGO Y CULTURA DE CUMPLIMIENTO
+// ═══════════════════════════════════════════════════════════════
+const scenarios = [
+
+  // ── ESCENARIO 1 ──────────────────────────────────────────────
+  { id: 0, title: "Modelar transparencia", startNodeId: "l1_q1", maxPoints: 5.0, nodes: {
+    "l1_q1": {
+      role: "Gerente de Compliance",
+      context: "Durante una reunión de equipo, uno de tus colaboradores señala que tú mismo incumpliste un procedimiento de documentación la semana pasada. Lo olvidaste. El equipo te observa en silencio, esperando tu reacción.",
+      text: "¿Cómo respondes ante esta situación?",
+      options: [
+        { text: "Agradeces la observación, reconoces el error públicamente y documentas retroactivamente, destacando la importancia del feedback",
+          nextId: "l1_final_good", points: 5.0,
+          feedbackMsg: "✅ Respuesta óptima: Agradecer la observación y reconocer el error públicamente. Modelas humildad y transparencia: exactamente la conducta que exiges a tu equipo. Documentar retroactivamente demuestra que las reglas aplican para todos por igual." },
+        { text: "Señalas que fue un caso aislado y pides que se enfoquen en temas más importantes",
+          nextId: "l1_error1", points: 0,
+          feedbackMsg: "❌ Error. La respuesta correcta era reconocer el error públicamente. Minimizarlo daña tu credibilidad y envía el mensaje de que hay estándares distintos según el rango." },
+        { text: "Aceptas el error pero pides que no se mencione en público para no perder autoridad",
+          nextId: "l1_error2", points: 0,
+          feedbackMsg: "❌ Error. La respuesta correcta era reconocer el error públicamente. La transparencia selectiva es contraproducente: el equipo ya lo sabe, y tu silencio público valida el doble estándar." }
+      ]
+    },
+    "l1_error1": {
+      role: "Gerente de Compliance",
+      context: "El equipo percibe que existen dobles estándares. La confianza comienza a deteriorarse y algunos colaboradores empiezan a aplicar el mismo criterio: minimizar sus propios errores.",
+      text: "¿Cómo repararas el daño generado?",
+      options: [
+        { text: "Convocas una reunión, reconoces tu actitud defensiva anterior y corriges el error documental abiertamente ante el equipo",
+          nextId: "l1_final_good", points: 2.5,
+          feedbackMsg: "✅ Correcto. Reconocer públicamente la actitud defensiva previa y corregir el error restaura parcialmente la confianza. Es más difícil hacerlo después, pero es la acción correcta." },
+        { text: "Implementas una política más estricta de documentación para el equipo sin cambiar tu propia conducta",
+          nextId: "l1_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. La respuesta correcta era reconocer tu actitud. Exigir más al equipo sin cambiar tú primero consolida la hipocresía y puede desencadenar una crisis de liderazgo." }
+      ]
+    },
+    "l1_error2": {
+      role: "Gerente de Compliance",
+      context: "El equipo empieza a ocultar sus propios errores, asumiendo que eso es lo que se espera. Una auditoría detecta múltiples omisiones documentales que estuvieron ocultas durante semanas.",
+      text: "¿Qué haces ante este escenario?",
+      options: [
+        { text: "Asumes tu responsabilidad por no haber dado el ejemplo, implementas una revisión colectiva y creas un espacio de mejora sin culpas",
+          nextId: "l1_final_good", points: 2.5,
+          feedbackMsg: "✅ Correcto. Reconocer la relación causal entre tu conducta inicial y el comportamiento del equipo es el primer paso del liderazgo responsable. Crear un espacio seguro para reportar errores es la solución sistémica adecuada." },
+        { text: "Sancionas a los que ocultaron errores sin reconocer tu parte en el problema",
+          nextId: "l1_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. La respuesta correcta era asumir tu responsabilidad. Sancionar sin reconocer tu parte agrava el clima de temor y destruye la posibilidad de una cultura de transparencia real." }
+      ]
+    },
+    "l1_fatal": { final: true, error: true },
+    "l1_final_good": { final: true }
+  }},
+
+  // ── ESCENARIO 2 ──────────────────────────────────────────────
+  { id: 1, title: "Comunicar propósito", startNodeId: "l2_q1", maxPoints: 5.0, nodes: {
+    "l2_q1": {
+      role: "Director de Compliance",
+      context: "En una reunión de socios, uno de ellos te dice directamente: 'El compliance es una traba para los negocios, solo nos ralentiza y genera costos sin valor real.' El resto de los socios escucha atentamente tu respuesta.",
+      text: "¿Cómo respondes?",
+      options: [
+        { text: "Presentas un caso real donde el compliance evitó una multa significativa y protegiste la reputación, ofreciendo revisar procesos para mayor agilidad operativa",
+          nextId: "l2_final_good", points: 5.0,
+          feedbackMsg: "✅ Respuesta óptima: Conectar el valor del compliance con resultados concretos del negocio. Usar datos y casos reales convierte una percepción negativa en una conversación estratégica. Ofrecer revisar procesos para mayor agilidad muestra orientación al negocio." },
+        { text: "Reconoces que a veces puede ser pesado, pero son reglas que hay que cumplir sin excepción",
+          nextId: "l2_error1", points: 0,
+          feedbackMsg: "❌ Error. La respuesta correcta era conectar el compliance con valor de negocio concreto. Confirmar la percepción de 'traba obligatoria' solo genera acatamiento sin compromiso real." },
+        { text: "Propones una reunión con su equipo para identificar puntos de fricción y co-diseñar soluciones juntos",
+          nextId: "l2_final_good", points: 5.0,
+          feedbackMsg: "✅ También válido. Involucrar al socio en la co-creación de soluciones transforma la relación de adversarial a colaborativa, generando compromiso real con el compliance." }
+      ]
+    },
+    "l2_error1": {
+      role: "Director de Compliance",
+      context: "El socio presiona a su equipo para saltarse ciertos controles bajo el argumento de que 'ya lo habló con Compliance y son reglas sin sentido'. Semanas después se produce un incidente de incumplimiento que genera una alerta regulatoria.",
+      text: "¿Cómo actúas ante el incidente?",
+      options: [
+        { text: "Investigas el incidente, presentas al socio las consecuencias regulatorias concretas y refuerzas la formación del equipo con ejemplos basados en hechos",
+          nextId: "l2_final_good", points: 2.5,
+          feedbackMsg: "✅ Correcto. Usar el incidente como punto de inflexión para un aprendizaje basado en hechos reales es más efectivo que cualquier argumento teórico previo. Las consecuencias concretas cambian perspectivas." },
+        { text: "Impones sanciones duras al equipo del socio sin iniciar ningún diálogo adicional",
+          nextId: "l2_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. La respuesta correcta era usar el incidente como oportunidad de aprendizaje. Sancionar sin diálogo no resuelve la causa raíz: la percepción del socio sobre el compliance sigue intacta." }
+      ]
+    },
+    "l2_fatal": { final: true, error: true },
+    "l2_final_good": { final: true }
+  }},
+
+  // ── ESCENARIO 3 ──────────────────────────────────────────────
+  { id: 2, title: "Consistencia y justicia", startNodeId: "l3_q1", maxPoints: 5.0, nodes: {
+    "l3_q1": {
+      role: "Coordinador de Compliance",
+      context: "Tu especialista más productivo —el mejor del equipo en resultados— incumplió una norma de documentación porque 'no tuvo tiempo'. La semana pasada, un compañero menos productivo cometió exactamente el mismo error y fue amonestado formalmente.",
+      text: "¿Qué haces?",
+      options: [
+        { text: "Aplicas la misma amonestación formal al especialista productivo y luego reconoces su buen trabajo, ayudándole a organizarse para evitar el error",
+          nextId: "l3_final_good", points: 5.0,
+          feedbackMsg: "✅ Respuesta óptima: Aplicar el mismo estándar independientemente del desempeño. La consistencia es la base de la credibilidad del liderazgo. Reconocer el buen trabajo por separado distingue la amonestación del juicio personal." },
+        { text: "Hablas con ambos en privado y les pides que mejoren, sin aplicar ninguna medida formal",
+          nextId: "l3_error1", points: 0,
+          feedbackMsg: "❌ Error. La respuesta correcta era aplicar la misma amonestación formal. No aplicar consecuencias porque el infractor es valioso normaliza el incumplimiento para todo el equipo." },
+        { text: "Aumentas la carga de trabajo del colaborador menos productivo como medida correctiva adicional",
+          nextId: "l3_error2", points: 0,
+          feedbackMsg: "❌ Error. La respuesta correcta era aplicar la misma amonestación formal a ambos. Agravar la situación del colaborador menos productivo es injusticia y arbitrariedad, no liderazgo." }
+      ]
+    },
+    "l3_error1": {
+      role: "Coordinador",
+      context: "El equipo percibe que no hay consecuencias reales para los errores de nadie. La disciplina y el rigor en la documentación caen notablemente en las siguientes semanas.",
+      text: "¿Cómo corriges la situación?",
+      options: [
+        { text: "Comunicas una política clara de consecuencias graduales y la aplicas a partir de ahora a todos por igual, sin importar su nivel de desempeño",
+          nextId: "l3_final_good", points: 2.5,
+          feedbackMsg: "✅ Correcto. Restablecer el orden con justicia clara y aplicación uniforme es la reparación adecuada. La transparencia sobre las consecuencias previene futuros malentendidos." },
+        { text: "Sancionas ejemplarmente al siguiente colaborador que cometa cualquier error, como señal de que las cosas cambian",
+          nextId: "l3_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. La respuesta correcta era establecer consecuencias claras y aplicarlas de forma consistente. Sancionar 'ejemplarmente' a una persona al azar genera temor injusto, no cultura de cumplimiento." }
+      ]
+    },
+    "l3_error2": {
+      role: "Coordinador",
+      context: "El colaborador menos productivo se siente víctima de acoso por la carga adicional y presenta una queja formal ante Recursos Humanos.",
+      text: "¿Cómo actúas?",
+      options: [
+        { text: "Reconoces el error de la medida injusta, la retiras y estableces un plan de mejora equitativo para ambos colaboradores",
+          nextId: "l3_final_good", points: 2.5,
+          feedbackMsg: "✅ Correcto. Reconocer que la medida fue injusta y repararla directamente es la respuesta adecuada. Un plan de mejora equitativo restaura la percepción de justicia en el equipo." },
+        { text: "Dices que fue una prueba de resiliencia para motivarlo a mejorar",
+          nextId: "l3_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. La respuesta correcta era reconocer el error y retirarlo. Justificar retroactivamente una medida injusta como 'prueba' agrava la falta y daña irremediablemente la relación." }
+      ]
+    },
+    "l3_fatal": { final: true, error: true },
+    "l3_final_good": { final: true }
+  }},
+
+  // ── ESCENARIO 4 ──────────────────────────────────────────────
+  { id: 3, title: "Empoderar con límites", startNodeId: "l4_q1", maxPoints: 5.0, nodes: {
+    "l4_q1": {
+      role: "Especialista Senior (liderazgo informal)",
+      context: "Un monitor novato te pide que revises cada una de sus decisiones antes de registrarlas porque tiene miedo a equivocarse. Tiene buen criterio potencial pero aún no confía en sí mismo. Tú tienes tu propia carga de trabajo.",
+      text: "¿Cómo actúas?",
+      options: [
+        { text: "Le enseñas los criterios clave, le pides que intente solo y revisas sus primeras 3 decisiones con feedback específico sobre cada una",
+          nextId: "l4_final_good", points: 5.0,
+          feedbackMsg: "✅ Respuesta óptima: Enseñar criterios, luego dejar actuar y revisar con feedback. Este acompañamiento gradual construye criterio propio sin generar dependencia ni abandono." },
+        { text: "Aceptas revisar todo para evitar errores por ahora, explicándole el porqué de cada corrección que haces",
+          nextId: "l4_error1", points: 0,
+          feedbackMsg: "❌ Error. La respuesta correcta era enseñar criterios y supervisar sus primeras decisiones. Revisar todo genera dependencia estructural aunque expliques el porqué; el aprendizaje real requiere que él tome decisiones propias." },
+        { text: "Le asignas un compañero más experimentado para que le guíe mientras tú te mantienes disponible si surge algo grave",
+          nextId: "l4_error2", points: 0,
+          feedbackMsg: "❌ Error. La respuesta correcta era acompañarlo tú directamente en sus primeras decisiones. Delegar la mentoría sin verificar la capacidad del compañero designado transfiere el problema sin resolverlo." }
+      ]
+    },
+    "l4_error1": {
+      role: "Especialista Senior",
+      context: "Tres semanas después, el monitor sigue sin tomar decisiones sin consultarte. Tu carga se duplicó y los tiempos del equipo se están afectando. El monitor no ha desarrollado criterio propio.",
+      text: "¿Cómo corriges la situación?",
+      options: [
+        { text: "Te reúnes con él, estableces un plan de acompañamiento decreciente y le asignas casos sencillos para que gane confianza progresivamente",
+          nextId: "l4_final_good", points: 2.5,
+          feedbackMsg: "✅ Correcto. Un plan de acompañamiento decreciente es la transición correcta: de apoyo total a autonomía gradual. Empezar con casos sencillos genera confianza real antes de enfrentar casos complejos." },
+        { text: "Dejas de revisar sus decisiones de golpe para que aprenda por las malas",
+          nextId: "l4_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. La respuesta correcta era un plan de transición gradual. El abandono abrupto después de una dependencia total no genera aprendizaje, genera errores reales y pérdida de confianza." }
+      ]
+    },
+    "l4_error2": {
+      role: "Especialista Senior",
+      context: "El compañero designado también tiene experiencia limitada y el monitor novato está recibiendo orientación incorrecta. Se acumularon errores de clasificación que ahora necesitan corrección.",
+      text: "¿Qué haces?",
+      options: [
+        { text: "Reconoces tu error de delegación y ahora capacitas a ambos juntos con ejemplos prácticos, asumiendo la mentoría directamente",
+          nextId: "l4_final_good", points: 2.5,
+          feedbackMsg: "✅ Correcto. Reconocer el error de delegación y asumir la responsabilidad directa es el camino correcto. Capacitar a ambos juntos además aprovecha el momento para elevar el nivel de todo el equipo." },
+        { text: "Señalas al compañero designado que no enseñó bien y le pides que corrija los errores generados",
+          nextId: "l4_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. La respuesta correcta era asumir tu error de delegación. Transferir la culpa a quien asignaste sin verificar su capacidad es irresponsable y daña la relación con ambos colaboradores." }
+      ]
+    },
+    "l4_fatal": { final: true, error: true },
+    "l4_final_good": { final: true }
+  }},
+
+  // ── ESCENARIO 5 ──────────────────────────────────────────────
+  { id: 4, title: "Reconocer y corregir", startNodeId: "l5_q1", maxPoints: 5.0, nodes: {
+    "l5_q1": {
+      role: "Gerente de Compliance",
+      context: "Un equipo completo cometió el mismo error en la clasificación de señales durante semanas. Al investigarlo, descubres que la directriz que emitiste era ambigua: todos la interpretaron de la misma forma incorrecta, de buena fe.",
+      text: "¿Cómo abordas la situación?",
+      options: [
+        { text: "Reconoces que la directriz era confusa, corriges el proceso con el equipo y celebras que hayan documentado los casos a tiempo para poder detectarlo",
+          nextId: "l5_final_good", points: 5.0,
+          feedbackMsg: "✅ Respuesta óptima: Asumir la responsabilidad de la directriz ambigua y convertir el error en aprendizaje colectivo. Celebrar que documentaron es clave para reforzar la cultura de trazabilidad." },
+        { text: "Reúnes al equipo, muestras los errores y les preguntas cómo creen que debería corregirse la directriz",
+          nextId: "l5_final_good", points: 5.0,
+          feedbackMsg: "✅ También válido. Involucrar al equipo en la corrección de una directriz que los afectó genera compromiso real con el nuevo proceso y aprovecha su conocimiento práctico." },
+        { text: "Señalas que la directriz era clara y que deben leer con más atención antes de aplicar cualquier instrucción",
+          nextId: "l5_error1", points: 0,
+          feedbackMsg: "❌ Error. La respuesta correcta era reconocer que la directriz era ambigua. Cuando todo el equipo interpreta igual, el problema está en la directriz, no en el equipo. Culpar a todos genera resistencia y miedo a reportar futuros errores." }
+      ]
+    },
+    "l5_error1": {
+      role: "Gerente",
+      context: "El equipo se siente injustamente tratado. Semanas después, se detecta un problema mayor porque los colaboradores dejaron de documentar y reportar errores para evitar consecuencias.",
+      text: "¿Cómo actúas?",
+      options: [
+        { text: "Reconoces tu reacción excesiva, revisas la directriz con el equipo y estableces un canal seguro para reportar errores sin temor a consecuencias injustas",
+          nextId: "l5_final_good", points: 2.5,
+          feedbackMsg: "✅ Correcto. Reconocer la reacción excesiva y crear un canal seguro son los dos pasos esenciales para reconstruir la cultura de transparencia después de haberla dañado." },
+        { text: "Mantienes tu postura original y aumentas las sanciones por ocultamiento de errores",
+          nextId: "l5_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. La respuesta correcta era reconocer la reacción excesiva. Aumentar sanciones cuando el problema es el miedo que tú generaste agrava el ciclo y destruye definitivamente la cultura de reporte." }
+      ]
+    },
+    "l5_fatal": { final: true, error: true },
+    "l5_final_good": { final: true }
+  }},
+
+  // ── ESCENARIO 6 ──────────────────────────────────────────────
+  { id: 5, title: "Rendir cuentas", startNodeId: "l6_q1", maxPoints: 5.0, nodes: {
+    "l6_q1": {
+      role: "Director de Compliance",
+      context: "Un proyecto de mejora de procesos que tú lideraste personalmente fracasó. La causa fue una mala estimación de recursos que realizaste al inicio. El comité directivo te solicita un informe formal sobre lo ocurrido.",
+      text: "¿Cómo respondes?",
+      options: [
+        { text: "Presentas un informe detallado asumiendo la responsabilidad de la estimación incorrecta, incluyendo lecciones aprendidas y un plan correctivo concreto",
+          nextId: "l6_final_good", points: 5.0,
+          feedbackMsg: "✅ Respuesta óptima: Rendición de cuentas integral. Asumir la responsabilidad, documentar las lecciones y presentar un plan correctivo es el estándar de liderazgo maduro ante el fracaso de un proyecto propio." },
+        { text: "Explicas que hubo factores externos imprevistos que nadie pudo anticipar, y propones un nuevo plan con más recursos",
+          nextId: "l6_error1", points: 0,
+          feedbackMsg: "❌ Error. La respuesta correcta era asumir la responsabilidad directamente. Atribuir el fracaso a factores externos sin reconocer la estimación incorrecta es una evasión que daña tu credibilidad ante el comité." },
+        { text: "Reconoces el error de estimación pero señalas que el equipo no te alertó a tiempo de las desviaciones durante la ejecución",
+          nextId: "l6_error2", points: 0,
+          feedbackMsg: "❌ Error. La respuesta correcta era asumir la responsabilidad íntegramente. Distribuir la culpa al equipo en un proyecto que tú liderabas deriva la responsabilidad y daña la relación con tus colaboradores." }
+      ]
+    },
+    "l6_error1": {
+      role: "Director",
+      context: "El comité directivo desconfía de tu análisis y pide una revisión externa independiente del proyecto fallido. Percibes que su confianza en tu liderazgo se debilitó.",
+      text: "¿Qué haces?",
+      options: [
+        { text: "Aceptas la revisión externa sin resistencia, colaboras abiertamente con los revisores e implementas todas sus recomendaciones asumiendo tu parte",
+          nextId: "l6_final_good", points: 2.5,
+          feedbackMsg: "✅ Correcto. Aceptar la revisión externa sin resistencia y colaborar activamente recupera la credibilidad de manera tangible. Implementar todas las recomendaciones demuestra compromiso real con la mejora." },
+        { text: "Te resistes a la revisión y señalas que el comité no brindó el apoyo necesario durante el proyecto",
+          nextId: "l6_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. La respuesta correcta era aceptar y colaborar. Resistirse a la revisión externa y acusar al comité de falta de apoyo confirma la percepción de que no rindes cuentas." }
+      ]
+    },
+    "l6_error2": {
+      role: "Director",
+      context: "El equipo se siente traicionado públicamente. La moral cae y varios colaboradores clave empiezan a distanciarse. El proyecto queda abandonado sin plan de continuidad.",
+      text: "¿Qué haces?",
+      options: [
+        { text: "Convocas al equipo, asumes públicamente tu error al derivar la culpa y pides disculpas; luego trabajan juntos en un nuevo plan",
+          nextId: "l6_final_good", points: 2.5,
+          feedbackMsg: "✅ Correcto. Asumir públicamente la responsabilidad ante el equipo y pedir disculpas es el único camino para reconstruir la confianza rota. Hacerlo antes de plantear el nuevo plan demuestra que la relación importa más que el resultado." },
+        { text: "Reorganizas el equipo con nuevas asignaciones sin hacer mención pública de lo ocurrido",
+          nextId: "l6_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. La respuesta correcta era asumir el error y pedir disculpas. Reorganizar sin disculparse comunica que lo ocurrido no importó, perpetuando el daño a la relación y a la moral del equipo." }
+      ]
+    },
+    "l6_fatal": { final: true, error: true },
+    "l6_final_good": { final: true }
+  }},
+
+  // ── ESCENARIO 7 ──────────────────────────────────────────────
+  { id: 6, title: "Liderazgo informal", startNodeId: "l7_q1", maxPoints: 5.0, nodes: {
+    "l7_q1": {
+      role: "Analista de Datos",
+      context: "Observas que los reportes de cumplimiento del equipo tienen métricas inconsistentes porque cada monitor usa su propio criterio al medirlas. Esto genera ruido en los datos y dificulta el análisis. Nadie te ha pedido que lo resuelvas; no es formalmente tu responsabilidad.",
+      text: "¿Qué haces?",
+      options: [
+        { text: "Propones una reunión voluntaria para estandarizar métricas y presentas una propuesta de dashboard unificado como solución concreta",
+          nextId: "l7_final_good", points: 5.0,
+          feedbackMsg: "✅ Respuesta óptima: Liderazgo proactivo sin autoridad formal. Identificar un problema sistémico, convocar a las personas correctas y llegar con una propuesta de solución es el perfil del líder informal que genera impacto real." },
+        { text: "Elaboras un documento con la propuesta de estandarización y se lo envías al coordinador para que decida si actúa",
+          nextId: "l7_error1", points: 0,
+          feedbackMsg: "❌ Error. La respuesta correcta era liderar la solución directamente. Documentar y esperar a que otro decida es pasividad disfrazada de iniciativa; el problema puede quedar sin atención indefinidamente." },
+        { text: "Hablas uno a uno con cada monitor para que ajusten su criterio sin formalizar ningún proceso",
+          nextId: "l7_error2", points: 0,
+          feedbackMsg: "❌ Error. La respuesta correcta era convocar a todos y proponer una solución formal. Las conversaciones individuales sin estandarización formal producen ajustes diferentes en cada persona, empeorando la inconsistencia." }
+      ]
+    },
+    "l7_error1": {
+      role: "Analista",
+      context: "El coordinador recibe tu documento pero no le da prioridad dado su carga de trabajo. Las inconsistencias persisten durante meses. Un cliente presenta una queja formal basada en datos que no concuerdan entre reportes.",
+      text: "¿Cómo actúas ahora?",
+      options: [
+        { text: "Reconoces que debiste ser más proactivo y ahora lideras directamente la estandarización con el equipo usando la queja del cliente como caso de aprendizaje",
+          nextId: "l7_final_good", points: 2.5,
+          feedbackMsg: "✅ Correcto. Usar la queja del cliente como catalizador y asumir el liderazgo que evitaste antes es la respuesta adecuada. La conciencia de que tu pasividad contribuyó al problema es el aprendizaje clave." },
+        { text: "Insistes con el coordinador para que actúe, presentándole la queja del cliente como evidencia de urgencia",
+          nextId: "l7_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. La respuesta correcta era asumir el liderazgo directamente. Seguir esperando que otra persona actúe ante una queja ya documentada prolonga innecesariamente el problema." }
+      ]
+    },
+    "l7_error2": {
+      role: "Analista",
+      context: "Cada monitor aplicó tu orientación de manera diferente según su propia interpretación. La inconsistencia aumentó en lugar de disminuir. El coordinador nota el empeoramiento y te pregunta qué ocurrió.",
+      text: "¿Qué haces?",
+      options: [
+        { text: "Reconoces que el enfoque informal no funcionó y ahora organizas una sesión estructurada con todos los monitores para estandarizar formalmente",
+          nextId: "l7_final_good", points: 2.5,
+          feedbackMsg: "✅ Correcto. Reconocer que la informalidad fue insuficiente y transitar a un proceso estructurado es la corrección adecuada. Una sesión grupal garantiza que todos partan del mismo punto y entiendan el mismo criterio." },
+        { text: "Le explicas al coordinador que hiciste lo que pudiste y le pides que él resuelva el desorden",
+          nextId: "l7_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. La respuesta correcta era asumir el liderazgo de la corrección. Transferir el problema al coordinador después de haberlo agravado con tu intervención informal es irresponsable." }
+      ]
+    },
+    "l7_fatal": { final: true, error: true },
+    "l7_final_good": { final: true }
+  }},
+
+  // ── ESCENARIO 8 ──────────────────────────────────────────────
+  { id: 7, title: "Resistencia cultural", startNodeId: "l8_q1", maxPoints: 5.0, nodes: {
+    "l8_q1": {
+      role: "Gerente de Compliance",
+      context: "La firma adopta nuevos estándares de documentación. Un equipo veterano con más de 10 años en la organización se resiste abiertamente: 'Siempre lo hicimos así y nunca tuvimos problemas.' Su resistencia está influyendo en equipos más nuevos que los ven como referentes.",
+      text: "¿Cómo lideras el cambio?",
+      options: [
+        { text: "Organizas talleres donde los veteranos comparten su experiencia y co-diseñan contigo la nueva forma de documentar",
+          nextId: "l8_final_good", points: 5.0,
+          feedbackMsg: "✅ Respuesta óptima: Cambio cultural participativo. Involucrar a los resistentes como co-creadores del nuevo proceso transforma su resistencia en sentido de propiedad. Los veteranos que co-diseñan se convierten en embajadores del cambio." },
+        { text: "Implementas los nuevos estándares de forma gradual, mostrando primero beneficios rápidos con equipos piloto que los veteranos puedan observar",
+          nextId: "l8_final_good", points: 5.0,
+          feedbackMsg: "✅ También válido. La adopción progresiva con evidencia de resultados positivos reduce la resistencia mejor que cualquier argumento racional. Ver funcionar el cambio en un equipo piloto convence más que explicarlo." },
+        { text: "Explicas las razones del cambio con detalle, das un plazo razonable para adaptarse y ofreces capacitación de apoyo",
+          nextId: "l8_error1", points: 0,
+          feedbackMsg: "❌ Insuficiente. La respuesta correcta era involucrar a los veteranos activamente. La explicación y la capacitación son necesarias pero no suficientes ante una resistencia cultural arraigada; no abordan el problema de raíz: la identidad del equipo." }
+      ]
+    },
+    "l8_error1": {
+      role: "Gerente",
+      context: "Los veteranos cumplen mínimamente en papel pero sabotean el proceso de forma pasiva: no comparten el conocimiento nuevo con sus compañeros, hacen comentarios negativos en pasillos y la calidad de la documentación no mejora realmente.",
+      text: "¿Qué ajustas en tu estrategia?",
+      options: [
+        { text: "Incorporas a los veteranos como líderes formales del cambio, reconociendo públicamente su experiencia como activo valioso para el nuevo proceso",
+          nextId: "l8_final_good", points: 2.5,
+          feedbackMsg: "✅ Correcto. Transformar a los resistentes en líderes del cambio es la estrategia más efectiva. El reconocimiento de su experiencia convierte el amenazante cambio en una oportunidad para que ellos sean los referentes del nuevo estándar." },
+        { text: "Aumentas la supervisión y las auditorías para forzar el cumplimiento real de los nuevos estándares",
+          nextId: "l8_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. La respuesta correcta era convertir a los veteranos en líderes del cambio. Aumentar la vigilancia ante el sabotaje pasivo intensifica la resistencia y confirma que el cambio es una imposición, no una mejora compartida." }
+      ]
+    },
+    "l8_fatal": { final: true, error: true },
+    "l8_final_good": { final: true }
+  }},
+
+  // ── ESCENARIO 9 ──────────────────────────────────────────────
+  { id: 8, title: "Ética bajo presión", startNodeId: "l9_q1", maxPoints: 5.0, nodes: {
+    "l9_q1": {
+      role: "Director de Compliance",
+      context: "Un socio de la firma te presiona directamente para que 'olvides' un hallazgo de incumplimiento que afectaría a uno de los clientes más importantes de la firma. A cambio, te ofrece un presupuesto significativo para tu departamento que llevas años solicitando.",
+      text: "¿Cómo actúas?",
+      options: [
+        { text: "Rechazas firmemente, documentas la presión recibida en el canal de ética y escalas el caso al comité de cumplimiento de inmediato",
+          nextId: "l9_final_good", points: 5.0,
+          feedbackMsg: "✅ Respuesta óptima: Integridad no negociable. Rechazar, documentar y escalar son los tres pasos inseparables. Documentar la presión protege tanto a ti como a la firma ante futuras investigaciones. No hacerlo deja tu versión sin respaldo." },
+        { text: "Aceptas el intercambio pero pides que el incumplimiento quede documentado como 'error menor sin consecuencias'",
+          nextId: "l9_error1", points: 0,
+          feedbackMsg: "❌ Error grave. La respuesta correcta era rechazar, documentar y escalar. Aceptar el intercambio, aunque sea con documentación reducida, constituye un conflicto de intereses que puede terminar en responsabilidad legal personal." },
+        { text: "Dices que lo estudiarás con cuidado, pero luego aplicas la sanción correspondiente sin aceptar los recursos ofrecidos",
+          nextId: "l9_error2", points: 0,
+          feedbackMsg: "❌ Error. La respuesta correcta era rechazar y documentar inmediatamente. La ambigüedad inicial puede interpretarse como negociación o apertura, y no queda documentada la presión recibida, dejándote vulnerable." }
+      ]
+    },
+    "l9_error1": {
+      role: "Director",
+      context: "Meses después, el encubrimiento es descubierto por una auditoría externa. La firma enfrenta una sanción regulatoria significativa y tú apareces en la investigación como parte del esquema.",
+      text: "¿Qué haces en este punto?",
+      options: [
+        { text: "Confiesas tu participación, colaboras activamente con la investigación y aceptas las consecuencias de tu decisión",
+          nextId: "l9_final_good", points: 2.5,
+          feedbackMsg: "✅ Correcto. Aunque tardío, asumir la responsabilidad y colaborar con la investigación es la única respuesta ética posible en este punto. La cooperación activa puede mitigar pero no eliminar las consecuencias de la decisión original." },
+        { text: "Intentas ocultar tu participación en el acuerdo con el socio",
+          nextId: "l9_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. La respuesta correcta era confesar y colaborar. Intentar ocultar la participación en una investigación activa convierte el error original en obstrucción de justicia, agravando exponencialmente las consecuencias." }
+      ]
+    },
+    "l9_error2": {
+      role: "Director",
+      context: "El socio interpreta tu respuesta ambigua como apertura a negociar. Aumenta la presión e incluye a otros miembros de la dirección en conversaciones sobre 'flexibilizar' el hallazgo. El problema escala.",
+      text: "¿Qué haces?",
+      options: [
+        { text: "Mantienes tu postura ética, documentas todo lo ocurrido desde el inicio y solicitas una mediación formal con el comité de cumplimiento",
+          nextId: "l9_final_good", points: 2.5,
+          feedbackMsg: "✅ Correcto. Mantener la postura ética aunque la situación haya escalado, documentar retroactivamente todo y formalizarlo ante el comité es la recuperación adecuada de una situación que se complicó por la ambigüedad inicial." },
+        { text: "Cedes parcialmente para preservar la relación con el socio y evitar un conflicto mayor",
+          nextId: "l9_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. La respuesta correcta era mantener la postura y documentar todo. Ceder parcialmente para preservar la relación normaliza la presión y convierte el incidente en un precedente de que la ética es negociable." }
+      ]
+    },
+    "l9_fatal": { final: true, error: true },
+    "l9_final_good": { final: true }
+  }},
+
+  // ── ESCENARIO 10 ─────────────────────────────────────────────
+  { id: 9, title: "Liderazgo en crisis", startNodeId: "l10_q1", maxPoints: 5.0, nodes: {
+    "l10_q1": {
+      role: "Gerente de Compliance",
+      context: "Se descubre que cientos de expedientes tienen errores sistemáticos en la documentación. La causa fue una mala interpretación de una norma nueva que nadie detectó durante semanas. El equipo está en pánico, la alta dirección exige respuestas urgentes y los plazos regulatorios presionan.",
+      text: "¿Cómo lideras?",
+      options: [
+        { text: "Calmas al equipo, organizas un plan de corrección por fases, comunicas a dirección con transparencia total y solicitas los recursos adicionales necesarios",
+          nextId: "l10_final_good", points: 5.0,
+          feedbackMsg: "✅ Respuesta óptima: Los tres elementos del liderazgo en crisis — calma, planificación estructurada y comunicación transparente hacia arriba. Pedir recursos demuestra que estás siendo realista, no evasivo." },
+        { text: "Priorizas los casos más críticos regulatoriamente, asignas responsables específicos e informas a dirección con actualizaciones semanales",
+          nextId: "l10_final_good", points: 5.0,
+          feedbackMsg: "✅ También válido. El enfoque práctico de priorización por criticidad y asignación clara de responsables es igualmente efectivo. La cadencia de comunicación semanal mantiene a dirección informada sin saturarla." },
+        { text: "Contratas consultoría externa especializada para resolver rápido, manteniendo a dirección informada del progreso",
+          nextId: "l10_error1", points: 0,
+          feedbackMsg: "❌ Insuficiente. La respuesta correcta era liderar internamente la solución. Delegar una crisis al exterior sin liderarla internamente muestra que evitas la responsabilidad; además, una consultoría requiere tiempo de adaptación que no tienes." }
+      ]
+    },
+    "l10_error1": {
+      role: "Gerente",
+      context: "La consultoría externa tarda dos semanas en entender el contexto de la firma. Mientras tanto, el problema se agrava y dirección empieza a cuestionar tu capacidad para gestionar la situación.",
+      text: "¿Qué haces?",
+      options: [
+        { text: "Reconoces que delegaste lo que debías liderar, ahora tomas el control interno con tu equipo y usas a la consultoría solo como apoyo técnico puntual",
+          nextId: "l10_final_good", points: 2.5,
+          feedbackMsg: "✅ Correcto. Reconocer la delegación excesiva y retomar el liderazgo interno es la corrección adecuada. Reasignar a la consultoría como apoyo en lugar de protagonista aprovecha el recurso sin ceder la responsabilidad." },
+        { text: "Mantienes el enfoque externo y solicitas presupuesto adicional para ampliar el equipo consultor",
+          nextId: "l10_fatal", points: 0,
+          feedbackMsg: "❌ Error grave. La respuesta correcta era retomar el liderazgo interno. Ampliar la apuesta en la consultoría cuando ya está fallando confirma la percepción de que evitas la responsabilidad y desperdicia recursos en un momento crítico." }
+      ]
+    },
+    "l10_fatal": { final: true, error: true },
+    "l10_final_good": { final: true }
+  }}
+
+];
+
+// ═══════════════════════════════════════════════════════════════
+// ACTIVIDAD FINAL — RELACIONAR CONCEPTOS
+// ═══════════════════════════════════════════════════════════════
+const MATCHING_CONCEPTS = [
+    "Modelar conducta",
+    "Comunicar propósito",
+    "Consistencia y justicia",
+    "Empoderar con límites",
+    "Reconocer y corregir",
+    "Rendir cuentas"
+];
+const MATCHING_EXAMPLES = [
+    "Un gerente que documenta su propio error ante todo el equipo y lo usa como oportunidad de aprendizaje colectivo.",
+    "Un director que explica cómo un control evitó una multa millonaria, conectando el compliance con la protección real del negocio.",
+    "Un coordinador que aplica exactamente la misma sanción a su especialista estrella que al colaborador con menor desempeño por el mismo incumplimiento.",
+    "Un especialista que enseña los criterios de decisión a un monitor novato y solo revisa sus primeras tres decisiones con feedback específico.",
+    "Un líder que, ante un error colectivo generado por una directriz ambigua, revisa el proceso con el equipo sin buscar culpables y mejora la instrucción.",
+    "Un gerente que presenta al comité un informe asumiendo íntegramente la responsabilidad del fracaso del proyecto, con lecciones aprendidas y plan correctivo."
+];
+
+// ═══════════════════════════════════════════════════════════════
+// ESTADO GLOBAL
+// ═══════════════════════════════════════════════════════════════
+const SAVE_KEY = "compliance_mod5_state";
+let currentScenarioIndex = 0;
+let currentNodeId = null;
+let scenarioPoints = 0;
+let finishedScenario = false;
+let scenarioScores = new Array(scenarios.length).fill(0);
+let completedScenarios = new Array(scenarios.length).fill(false);
+let globalMaxPoints = scenarios.reduce((s, sc) => s + sc.maxPoints, 0);
+let activityPoints = 0;
+let activityDone = false;
+let simulatorStarted = false;
+let participantName = '';
+let attemptFinished = false;
+
+const mainDiv = document.getElementById("mainContent");
+
+// ═══════════════════════════════════════════════════════════════
+// PERSISTENCIA
+// ═══════════════════════════════════════════════════════════════
+function saveState() {
+    const st = { simulatorStarted, participantName, currentScenarioIndex, currentNodeId,
+        scenarioPoints, finishedScenario, scenarioScores, completedScenarios,
+        activityPoints, activityDone, attemptFinished, savedAt: Date.now() };
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(st)); } catch(e) {}
+}
+function loadState() {
+    try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (!raw) return false;
+        const s = JSON.parse(raw);
+        if (!Array.isArray(s.scenarioScores) || s.scenarioScores.length !== scenarios.length) return false;
+        simulatorStarted = s.simulatorStarted || false;
+        participantName = s.participantName || '';
+        currentScenarioIndex = s.currentScenarioIndex || 0;
+        currentNodeId = s.currentNodeId || null;
+        scenarioPoints = s.scenarioPoints || 0;
+        finishedScenario = s.finishedScenario || false;
+        scenarioScores = s.scenarioScores;
+        completedScenarios = s.completedScenarios;
+        activityPoints = s.activityPoints || 0;
+        activityDone = s.activityDone || false;
+        attemptFinished = s.attemptFinished || false;
+        return true;
+    } catch(e) { return false; }
+}
+function clearSavedState() { try { localStorage.removeItem(SAVE_KEY); } catch(e) {} }
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+function init() {
+    const restored = loadState();
+    if (restored && attemptFinished) { showFinalResults(); return; }
+    if (restored && simulatorStarted) { renderSimulatorUI(); return; }
+    showStartScreen();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PANTALLA DE INICIO
+// ═══════════════════════════════════════════════════════════════
+function showStartScreen() {
+    mainDiv.innerHTML = `
+        <div class="start-screen">
+            <div class="info-sis">
+                🧭 <strong>Módulo 5 — Liderazgo y Cultura de Cumplimiento.</strong> Simulador avanzado de decisiones para líderes formales e informales en contextos de Compliance.
+            </div>
+            <div style="background:#f0f5fc; border-radius:18px; padding:20px 24px; text-align:left; margin-bottom:14px;">
+                <h3 style="margin:0 0 12px; color:#1a4f78; font-size:1rem;">📌 Instrucciones</h3>
+                <ul style="line-height:1.8; margin:0; padding-left:20px; color:#1e2a3e; font-size:0.93rem;">
+                    <li>Enfrentarás <strong>10 situaciones complejas</strong> de liderazgo en Compliance.</li>
+                    <li>Cada situación tiene una ruta óptima (puntaje completo) y ramas de error con posibilidad de enmienda (puntaje parcial).</li>
+                    <li>Un <strong>error grave</strong> cierra el escenario con 0 puntos.</li>
+                    <li>No puedes reiniciar escenarios; solo avanzar.</li>
+                    <li>Al finalizar los 10 escenarios, realizarás una actividad de <strong>relacionar conceptos</strong> (hasta 2 puntos extra).</li>
+                    <li>Calificación mínima aprobatoria: <strong>85%</strong>.</li>
+                </ul>
+            </div>
+            <div style="background:#fff3cd; border-left:4px solid #e0a82e; border-radius:0 12px 12px 0; padding:11px 16px; font-size:0.85rem; margin-bottom:18px; text-align:left;">
+                ⚠️ <strong>Intento único:</strong> Este simulador permite <strong>un solo intento</strong>. Tu progreso se guarda automáticamente.
+            </div>
+            <div style="background:#f0f5fc; border-radius:16px; padding:18px 22px; margin-bottom:18px; text-align:left;">
+                <label style="display:block; font-size:0.88rem; font-weight:700; color:#1a4f78; margin-bottom:8px; letter-spacing:0.02em;">
+                    👤 Tu nombre completo <span style="color:#c0392b;">*</span>
+                </label>
+                <input type="text" id="participantNameInput"
+                    placeholder="Escribe tu nombre completo aquí..."
+                    style="width:100%; max-width:420px; border:2px solid #c0d4e4; border-radius:12px; padding:10px 16px; font-family:'DM Sans',sans-serif; font-size:0.95rem; color:#1e2a3e; outline:none; transition:border-color 0.15s;"
+                    onfocus="this.style.borderColor='#1a4f78'"
+                    onblur="this.style.borderColor='#c0d4e4'"
+                    onkeydown="if(event.key==='Enter') tryStart()">
+                <div id="nameError" style="color:#c0392b; font-size:0.8rem; margin-top:6px; display:none;">
+                    ⚠️ Por favor ingresa tu nombre antes de continuar.
+                </div>
+            </div>
+            <button class="start-btn" onclick="tryStart()">🚀 Comenzar simulador</button>
+        </div>`;
+}
+
+function tryStart() {
+    const nameInput = document.getElementById('participantNameInput');
+    const nameVal = nameInput ? nameInput.value.trim() : '';
+    if (!nameVal) { document.getElementById('nameError').style.display = 'block'; if (nameInput) nameInput.focus(); return; }
+    document.getElementById('nameError').style.display = 'none';
+    participantName = nameVal;
+    simulatorStarted = true;
+    currentScenarioIndex = 0;
+    scenarioScores.fill(0);
+    completedScenarios.fill(false);
+    activityPoints = 0; activityDone = false; attemptFinished = false;
+    currentNodeId = scenarios[0].startNodeId;
+    finishedScenario = false; scenarioPoints = 0;
+    saveState();
+    renderSimulatorUI();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// UI PRINCIPAL
+// ═══════════════════════════════════════════════════════════════
+function renderSimulatorUI() {
+    if (!simulatorStarted) return;
+    mainDiv.innerHTML = `
+        <div class="score-board" id="scoreDisplay">Puntuación: 0.00 / ${(globalMaxPoints+2).toFixed(2)} (0%)</div>
+        <div class="scenario-selector" id="scenarioSelector"></div>
+        <div id="scenarioContent"></div>`;
+    updateGlobalScoreDisplay();
+    renderScenarioSelector();
+    renderCurrentScenario();
+}
+
+function updateGlobalScoreDisplay() {
+    const total = scenarioScores.reduce((a,b)=>a+b,0) + activityPoints;
+    const pct = (total / (globalMaxPoints + 2)) * 100;
+    const el = document.getElementById("scoreDisplay");
+    if (el) el.textContent = `Puntuación: ${total.toFixed(2)} / ${(globalMaxPoints+2).toFixed(2)} (${pct.toFixed(1)}%)`;
+}
+
+function renderScenarioSelector() {
+    const c = document.getElementById("scenarioSelector");
+    if (!c) return;
+    c.innerHTML = "";
+    scenarios.forEach((sc, idx) => {
+        const btn = document.createElement("button");
+        let cls = "scenario-btn";
+        if (idx === currentScenarioIndex) cls += " active";
+        else if (completedScenarios[idx]) cls += " done";
+        else if (idx > currentScenarioIndex) cls += " disabled";
+        btn.className = cls;
+        btn.textContent = `${completedScenarios[idx] ? "✓ " : ""}${idx+1}. ${sc.title}`;
+        btn.onclick = () => {
+            if (idx <= currentScenarioIndex || (idx === currentScenarioIndex+1 && completedScenarios[currentScenarioIndex])) {
+                currentScenarioIndex = idx; resetScenarioState(idx);
+            }
+        };
+        c.appendChild(btn);
+    });
+}
+
+function resetScenarioState(idx) {
+    currentNodeId = scenarios[idx].startNodeId;
+    finishedScenario = false; scenarioPoints = 0;
+    saveState(); renderCurrentScenario();
+}
+
+function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+    return a;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER ESCENARIO
+// ═══════════════════════════════════════════════════════════════
+function renderCurrentScenario() {
+    if (!simulatorStarted) return;
+    if (currentScenarioIndex >= scenarios.length) { showMatchingActivity(); return; }
+
+    const sc = scenarios[currentScenarioIndex];
+
+    if (finishedScenario) {
+        const isLast = currentScenarioIndex === scenarios.length - 1;
+        const contentDiv = document.getElementById("scenarioContent");
+        if (contentDiv) {
+            const earned = scenarioScores[currentScenarioIndex];
+            const pct = ((earned / sc.maxPoints)*100).toFixed(0);
+            contentDiv.innerHTML = `
+                <div class="card">
+                    <div class="role-badge">
+                        <span class="role-emoji">✅</span>
+                        <div class="role-text-wrap">
+                            <span class="role-intro">Escenario completado</span>
+                            <span class="role-name">${sc.title}</span>
+                        </div>
+                    </div>
+                    <div class="feedback success-feedback" style="max-height:none;">
+                        <strong>Puntuación obtenida: ${earned.toFixed(2)} / ${sc.maxPoints.toFixed(2)} (${pct}%)</strong>
+                    </div>
+                    <button class="next-btn" id="nextScenarioBtn" style="margin-top:14px;">
+                        ${isLast ? "🏁 Ir a actividad final" : "➡️ Siguiente escenario"}
+                    </button>
+                </div>`;
+            document.getElementById("nextScenarioBtn").onclick = () => {
+                if (!isLast) { currentScenarioIndex++; resetScenarioState(currentScenarioIndex); renderScenarioSelector(); }
+                else { saveState(); showMatchingActivity(); }
+            };
+        }
+        return;
+    }
+
+    const node = sc.nodes[currentNodeId];
+    if (!node) return;
+
+    if (node.final) {
+        if (!completedScenarios[currentScenarioIndex]) {
+            scenarioScores[currentScenarioIndex] = node.error ? 0 : scenarioPoints;
+            completedScenarios[currentScenarioIndex] = true;
+            updateGlobalScoreDisplay(); saveState();
+        }
+        finishedScenario = true; renderCurrentScenario(); return;
+    }
+
+    const opts = shuffle([...node.options]);
+    const contentDiv = document.getElementById("scenarioContent");
+    if (!contentDiv) return;
+
+    contentDiv.innerHTML = `
+        <div class="card">
+            <div class="role-badge">
+                <span class="role-emoji">🎭</span>
+                <div class="role-text-wrap">
+                    <span class="role-intro">Ahora imagina que eres</span>
+                    <span class="role-name">${node.role}</span>
+                </div>
+            </div>
+            ${node.context ? `<div class="scenario-context">${node.context}</div>` : ''}
+            <div class="question-text">${node.text}</div>
+            <div class="options">
+                ${opts.map((o,i) => `<button class="option-btn" data-idx="${i}">${o.text}</button>`).join('')}
+            </div>
+            <div id="dynamicFeedback"></div>
+            <div class="score-detail">Puntos en este escenario: ${scenarioPoints.toFixed(2)}</div>
+        </div>`;
+
+    opts.forEach((opt, idx) => {
+        document.querySelector(`.option-btn[data-idx="${idx}"]`).onclick = () => {
+            const fb = document.getElementById("dynamicFeedback");
+            const ok = opt.points > 0;
+
+            // La respuesta correcta siempre aparece primero
+            const correctOpt = opts.find(o => o.points > 0) || opts[0];
+
+            // Determinar texto del botón según a dónde va
+            const isNextFinal = !opt.nextId || !sc.nodes[opt.nextId] || sc.nodes[opt.nextId].final;
+            const btnLabel = isNextFinal ? "➡️ Continuar" : "➡️ Continuar";
+
+            fb.innerHTML = `
+                <div class="feedback ${ok ? 'success-feedback' : 'error-feedback'}">
+                    <div class="fb-correct">✅ Respuesta correcta: "${correctOpt.text}"</div>
+                    <div class="fb-explain" style="margin-top:8px;">${opt.feedbackMsg}</div>
+                </div>
+                <button id="continueBtn" class="next-btn" style="margin-top:12px;">${btnLabel}</button>`;
+
+            document.querySelectorAll(".option-btn").forEach(b => b.disabled = true);
+
+            if (ok) {
+                scenarioPoints += opt.points;
+                const sd = document.querySelector(".score-detail");
+                if (sd) sd.textContent = `Puntos en este escenario: ${scenarioPoints.toFixed(2)}`;
+                saveState();
+            }
+
+            document.getElementById("continueBtn").onclick = () => {
+                if (opt.nextId && sc.nodes[opt.nextId]) {
+                    currentNodeId = opt.nextId; saveState(); renderCurrentScenario();
+                } else {
+                    finishedScenario = true; renderCurrentScenario();
+                }
+            };
+        };
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ACTIVIDAD DE MATCHING
+// ═══════════════════════════════════════════════════════════════
+function showMatchingActivity() {
+    const shuffledExamples = shuffle([...MATCHING_EXAMPLES]);
+
+    mainDiv.innerHTML = `
+        <div class="card">
+            <div class="role-badge">
+                <span class="role-emoji">📌</span>
+                <div class="role-text-wrap">
+                    <span class="role-intro">Actividad de cierre</span>
+                    <span class="role-name">Relaciona cada concepto con su ejemplo</span>
+                </div>
+            </div>
+            <div style="background:#f0f5fc; border-radius:14px; padding:14px 18px; margin-bottom:18px; font-size:0.88rem; color:#1e2a3e;">
+                <strong>📋 Instrucciones:</strong> Para cada característica de liderazgo en Compliance, selecciona el ejemplo que mejor la ilustra. Cada ejemplo corresponde a exactamente un concepto. Al terminar de seleccionar todos, presiona <strong>Verificar respuestas</strong>.
+            </div>
+            <div class="matching-area" id="matchingArea">
+                ${MATCHING_CONCEPTS.map((concept, idx) => `
+                    <div class="matching-row">
+                        <div class="concept-label">${concept}</div>
+                        <select class="definition-select" data-concept-idx="${idx}" id="sel_${idx}">
+                            <option value="">— Selecciona un ejemplo —</option>
+                            ${shuffledExamples.map((ex, exIdx) => `<option value="${exIdx}">${ex}</option>`).join('')}
+                        </select>
+                    </div>`).join('')}
+                <div style="margin-top:18px;">
+                    <button id="checkMatchingBtn" class="verify-btn">🔍 Verificar respuestas</button>
+                </div>
+                <div id="matchingFeedback" style="margin-top:14px;"></div>
+            </div>
+        </div>`;
+
+    document.getElementById("checkMatchingBtn").addEventListener("click", () => verifyMatching(shuffledExamples));
+}
+
+function verifyMatching(shuffledExamples) {
+    const selects = document.querySelectorAll(".definition-select");
+    let allSelected = true;
+    selects.forEach(sel => { if (!sel.value) allSelected = false; });
+
+    const fb = document.getElementById("matchingFeedback");
+    if (!allSelected) {
+        fb.innerHTML = `<div class="feedback error-feedback"><div class="fb-correct">⚠️ Completa todos los campos antes de verificar</div><div class="fb-explain">Selecciona un ejemplo para cada concepto.</div></div>`;
+        return;
+    }
+
+    let correctCount = 0;
+    selects.forEach((sel, idx) => {
+        const selectedExample = shuffledExamples[parseInt(sel.value)];
+        const isCorrect = selectedExample === MATCHING_EXAMPLES[idx];
+        sel.classList.remove('correct', 'incorrect');
+        sel.classList.add(isCorrect ? 'correct' : 'incorrect');
+        if (isCorrect) correctCount++;
+    });
+
+    const total = MATCHING_CONCEPTS.length;
+    if (correctCount === total) {
+        activityPoints = 2; activityDone = true;
+        updateGlobalScoreDisplay(); saveState();
+        fb.innerHTML = `<div class="feedback success-feedback" style="max-height:none;"><div class="fb-correct">✅ ¡Perfecto! Relacionaste todos los conceptos correctamente.</div><div class="fb-explain" style="margin-top:6px;">Sumaste <strong>2 puntos extra</strong> a tu calificación final.</div></div>`;
+        if (!document.getElementById("continueResultsBtn")) {
+            const btn = document.createElement("button");
+            btn.id = "continueResultsBtn"; btn.className = "continue-btn";
+            btn.style.marginTop = "14px";
+            btn.textContent = "➡️ Ver resultados finales";
+            btn.onclick = () => { attemptFinished = true; saveState(); showFinalResults(); };
+            fb.appendChild(btn);
+        }
+    } else {
+        fb.innerHTML = `
+            <div class="feedback error-feedback">
+                <div class="fb-correct">✅ Respuestas correctas por concepto:</div>
+                <div class="fb-explain" style="margin-top:8px;">
+                    ${MATCHING_CONCEPTS.map((c,i) => `<div style="margin-bottom:4px;"><strong>${c}:</strong> ${MATCHING_EXAMPLES[i]}</div>`).join('')}
+                    <div style="margin-top:10px; font-weight:600;">Tienes ${correctCount} de ${total} correctas. Los incorrectos están marcados en rojo — corrígelos y vuelve a verificar.</div>
+                </div>
+            </div>`;
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RESULTADOS FINALES
+// ═══════════════════════════════════════════════════════════════
+function showFinalResults() {
+    attemptFinished = true; saveState();
+
+    const scenariosEarned = scenarioScores.reduce((a,b)=>a+b,0);
+    const scenariosMax = globalMaxPoints;
+    const scenariosPct = (scenariosEarned / scenariosMax) * 100;
+    const ddEarned = activityPoints;
+    const ddPct = (ddEarned / 2) * 100;
+    const totalEarned = scenariosEarned + ddEarned;
+    const maxTotal = scenariosMax + 2;
+    const pct = (totalEarned / maxTotal) * 100;
+    const passed = pct >= 85;
+
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('es-MX', { year:'numeric', month:'long', day:'numeric' });
+    const timeStr = now.toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit' });
+
+    const rows = scenarios.map((sc, i) => {
+        const scPct = ((scenarioScores[i]/sc.maxPoints)*100).toFixed(0);
+        const color = scenarioScores[i] >= sc.maxPoints*0.85 ? '#1a7a45' : (scenarioScores[i] > 0 ? '#9a5c00' : '#c0392b');
+        return `<tr style="border-bottom:1px solid #e4edf5;">
+            <td style="padding:8px 14px; text-align:left;">${sc.title}</td>
+            <td style="padding:8px 14px; text-align:center;">${scenarioScores[i].toFixed(2)}</td>
+            <td style="padding:8px 14px; text-align:center;">${sc.maxPoints.toFixed(2)}</td>
+            <td style="padding:8px 14px; text-align:center; font-weight:700; color:${color};">${scPct}%</td>
+        </tr>`;
+    }).join('');
+
+    mainDiv.innerHTML = `
+        <div class="card">
+            <h3 style="margin-top:0; color:#1a4f78;">📊 Resultado final — Módulo 5</h3>
+            ${participantName ? `<p style="font-size:0.88rem; color:#5a7a8a; margin-bottom:16px;">👤 Participante: <strong>${participantName}</strong></p>` : ''}
+            <div class="result-box">
+                <div style="font-size:2.6rem; margin-bottom:6px;">${passed ? "🏆" : "📘"}</div>
+                <p style="font-size:1.5rem; font-weight:800; margin:0 0 4px; color:${passed?'#1a7a45':'#b05010'};">${passed ? "APROBADO" : "NO APROBADO"}</p>
+                <p style="font-size:2rem; font-weight:800; margin:0 0 4px; color:#1a4f78;">${pct.toFixed(1)}%</p>
+                <p style="color:#5a7a8a; margin:0 0 20px; font-size:0.88rem;">${totalEarned.toFixed(2)} / ${maxTotal.toFixed(2)} puntos &nbsp;·&nbsp; Mínimo aprobatorio: 85%</p>
+                <p style="font-size:0.93rem; color:#2a4a5a; max-width:520px; margin:0 auto 24px;">
+                    ${passed ? "¡Excelente! Demuestras un liderazgo alineado con la cultura de cumplimiento del despacho." : "Necesitas reforzar algunas habilidades de liderazgo en Compliance. Revisa los escenarios donde obtuviste menor puntaje."}
+                </p>
+
+                <!-- DESGLOSE POR SECCIÓN -->
+                <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-bottom:24px;">
+                    <div style="background:white; border-radius:16px; padding:16px 22px; min-width:180px; border:2px solid #d0e8f5;">
+                        <div style="font-size:0.72rem; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; color:#5a7a8a; margin-bottom:6px;">📋 Escenarios</div>
+                        <div style="font-size:1.6rem; font-weight:800; color:#1a4f78;">${scenariosPct.toFixed(1)}%</div>
+                        <div style="font-size:0.82rem; color:#7090a8; margin-top:2px;">${scenariosEarned.toFixed(2)} / ${scenariosMax.toFixed(2)} pts</div>
+                    </div>
+                    <div style="background:white; border-radius:16px; padding:16px 22px; min-width:180px; border:2px solid ${ddPct===100?'#a3d4b0':'#f0d4a0'};">
+                        <div style="font-size:0.72rem; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; color:#5a7a8a; margin-bottom:6px;">📌 Relacionar conceptos</div>
+                        <div style="font-size:1.6rem; font-weight:800; color:${ddPct===100?'#1a7a45':'#9a5c00'};">${ddPct.toFixed(0)}%</div>
+                        <div style="font-size:0.82rem; color:#7090a8; margin-top:2px;">${ddEarned.toFixed(2)} / 2.00 pts</div>
+                    </div>
+                </div>
+
+                <!-- TABLA DE ESCENARIOS -->
+                <table style="width:100%; border-collapse:collapse; font-size:0.87rem; background:white; border-radius:14px; overflow:hidden; margin-bottom:18px; text-align:center;">
+                    <thead>
+                        <tr style="background:#1a4f78; color:white;">
+                            <th style="padding:10px 14px; text-align:left;">Escenario</th>
+                            <th style="padding:10px 14px;">Obtenido</th>
+                            <th style="padding:10px 14px;">Máximo</th>
+                            <th style="padding:10px 14px;">%</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}
+                        <tr style="background:#eef4fb; font-weight:700;">
+                            <td style="padding:9px 14px; text-align:left;">📌 Relacionar conceptos</td>
+                            <td style="padding:9px 14px;">${ddEarned.toFixed(2)}</td>
+                            <td style="padding:9px 14px;">2.00</td>
+                            <td style="padding:9px 14px; color:${ddPct===100?'#1a7a45':'#c0392b'};">${ddPct.toFixed(0)}%</td>
+                        </tr>
+                        <tr style="background:#1a4f78; color:white; font-weight:800;">
+                            <td style="padding:10px 14px; text-align:left;">🏁 TOTAL</td>
+                            <td style="padding:10px 14px;">${totalEarned.toFixed(2)}</td>
+                            <td style="padding:10px 14px;">${maxTotal.toFixed(2)}</td>
+                            <td style="padding:10px 14px;">${pct.toFixed(1)}%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="margin-top:8px; display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
+                    <button id="saveResultsBtn" class="next-btn" style="background:#1a4f78;">💾 Guardar resultados</button>
+                    <button id="newAttemptBtn" class="next-btn" style="background:#6c757d;">🔄 Nuevo intento</button>
+                </div>
+                <div id="saveConfirmMsg" style="font-size:0.83rem; color:#1a6640; margin-top:10px; display:none;"></div>
+                <p style="font-size:0.75rem; color:#8a9aaa; margin-top:16px;">
+                    Completado el ${dateStr} a las ${timeStr}
+                    ${participantName ? `&nbsp;·&nbsp; ${participantName}` : ''}
+                    &nbsp;·&nbsp; Modo de prueba activo
+                </p>
+            </div>
+        </div>`;
+
+    document.getElementById("saveResultsBtn").onclick = () => {
+        const result = {
+            alumno: participantName || "—",
+            fecha: `${dateStr} ${timeStr}`,
+            modulo: "Módulo 5 — Liderazgo y Cultura de Cumplimiento",
+            escenarios_pts: scenariosEarned.toFixed(2),
+            escenarios_max: scenariosMax.toFixed(2),
+            escenarios_pct: scenariosPct.toFixed(1) + "%",
+            dd_pts: ddEarned.toFixed(2),
+            dd_max: "2.00",
+            dd_pct: ddPct.toFixed(0) + "%",
+            total: totalEarned.toFixed(2),
+            maximo: maxTotal.toFixed(2),
+            porcentaje: pct.toFixed(1) + "%",
+            aprobado: passed ? "Sí" : "No",
+            escenarios: scenarios.map((sc, i) => ({
+                escenario: sc.title,
+                obtenido: scenarioScores[i].toFixed(2),
+                maximo: sc.maxPoints.toFixed(2),
+                porcentaje: ((scenarioScores[i]/sc.maxPoints)*100).toFixed(0) + "%"
+            }))
+        };
+        try { localStorage.setItem("mod5_RESULT_" + Date.now(), JSON.stringify(result)); } catch(e) {}
+        sendToSheets(result);
+        const msg = document.getElementById("saveConfirmMsg");
+        msg.style.display = "block";
+        msg.textContent = `✅ Resultados guardados y enviados al registro — ${participantName ? participantName + ' · ' : ''}${pct.toFixed(1)}% (${passed ? "APROBADO" : "NO APROBADO"})`;
+    };
+
+    document.getElementById("newAttemptBtn").onclick = () => {
+        clearSavedState();
+        simulatorStarted = false; participantName = ''; currentScenarioIndex = 0;
+        currentNodeId = null; scenarioPoints = 0; finishedScenario = false;
+        scenarioScores = new Array(scenarios.length).fill(0);
+        completedScenarios = new Array(scenarios.length).fill(false);
+        activityPoints = 0; activityDone = false; attemptFinished = false;
+        showStartScreen();
+    };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// GOOGLE SHEETS
+// ═══════════════════════════════════════════════════════════════
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxPzGJhUknGV20M2SaCYxt77YinSKiavKrUQPdHrf6Bbg4f9sdpkRugp3vYmgGCJQUj/exec';
+
+function sendToSheets(data) {
+    fetch(SHEETS_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    }).catch(() => {});
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════════════════════════════════
+const ADMIN_PASSWORD = 'Adminmoodle26';
+let adminUnlocked = false;
+
+function openAdminModal() { document.getElementById('adminModal').style.display = 'block'; renderAdminModal(); }
+function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
+
+function renderAdminModal() {
+    const body = document.getElementById('adminModalBody');
+    if (!adminUnlocked) {
+        body.innerHTML = `
+            <div style="max-width:340px; margin:0 auto; text-align:center;">
+                <div style="font-size:2rem; margin-bottom:12px;">🔐</div>
+                <h3 style="color:#0d2b45; font-size:1rem; margin-bottom:8px;">Acceso restringido</h3>
+                <p style="font-size:0.85rem; color:#5a7a8a; margin-bottom:18px;">Ingresa la contraseña de administrador para ver los registros.</p>
+                <input type="password" id="adminPassInput" placeholder="Contraseña..."
+                    style="width:100%; border:2px solid #c0d4e4; border-radius:12px; padding:10px 16px; font-family:'DM Sans',sans-serif; font-size:0.95rem; margin-bottom:12px; outline:none; transition:0.15s; text-align:center;"
+                    onfocus="this.style.borderColor='#1a4f78'" onblur="this.style.borderColor='#c0d4e4'"
+                    onkeydown="if(event.key==='Enter') checkAdminPass()">
+                <button onclick="checkAdminPass()" style="width:100%; background:#1a4f78; border:none; color:#fff; padding:10px; border-radius:12px; font-family:'DM Sans',sans-serif; font-weight:700; font-size:0.9rem; cursor:pointer;">Ingresar</button>
+                <div id="adminPassError" style="color:#c0392b; font-size:0.8rem; margin-top:8px; display:none;">⚠️ Contraseña incorrecta.</div>
+            </div>`;
+        return;
+    }
+    renderAdminDashboard(body);
+}
+
+function checkAdminPass() {
+    const val = (document.getElementById('adminPassInput')?.value || '').trim();
+    if (val === ADMIN_PASSWORD) { adminUnlocked = true; renderAdminModal(); }
+    else { document.getElementById('adminPassError').style.display = 'block'; }
+}
+
+function renderAdminDashboard(body) {
+    const results = [];
+    try {
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('mod5_RESULT_')) {
+                const r = JSON.parse(localStorage.getItem(key));
+                if (r) results.push({ key, ...r });
+            }
+        }
+    } catch(e) {}
+
+    const sessionEarned = scenarioScores.reduce((a,b)=>a+b,0) + activityPoints;
+    const sessionMax = globalMaxPoints + 2;
+    const sessionPct = (sessionEarned / sessionMax) * 100;
+
+    const savedRecordsHTML = results.length === 0
+        ? `<p style="color:#7090a8; font-size:0.87rem; padding:12px 0;">No hay resultados guardados aún. Los resultados aparecen aquí cuando los participantes presionan "💾 Guardar resultados".</p>`
+        : results.map(r => `
+            <div style="background:#f8fafc; border:1px solid #dde8f2; border-radius:14px; padding:16px 20px; margin-bottom:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+                    <div>
+                        <span style="font-weight:800; font-size:0.95rem; color:#0d2b45;">👤 ${r.alumno || '—'}</span>
+                        <span style="font-size:0.78rem; color:#7090a8; margin-left:10px;">${r.fecha || ''}</span>
+                    </div>
+                    <span style="font-weight:800; font-size:1rem; color:${parseFloat(r.porcentaje)>=85?'#1a7a45':'#b05010'};">
+                        ${r.porcentaje} — ${r.aprobado==='Sí'?'APROBADO':'NO APROBADO'}
+                    </span>
+                </div>
+                <div style="display:flex; gap:12px; flex-wrap:wrap; font-size:0.83rem; color:#5a7a8a;">
+                    <span>📋 Escenarios: <strong>${r.escenarios_pts||'—'} / ${r.escenarios_max||'—'} (${r.escenarios_pct||'—'})</strong></span>
+                    <span>📌 Conceptos: <strong>${r.dd_pts||'—'} / ${r.dd_max||'—'} (${r.dd_pct||'—'})</strong></span>
+                    <span>🏁 Total: <strong>${r.total} / ${r.maximo}</strong></span>
+                </div>
+                ${r.escenarios ? `
+                <details style="margin-top:10px;">
+                    <summary style="cursor:pointer; font-size:0.8rem; color:#2471a3; font-weight:600;">Ver desglose por escenario</summary>
+                    <table style="width:100%; border-collapse:collapse; font-size:0.8rem; margin-top:8px;">
+                        <thead><tr style="background:#eef4fb;"><th style="padding:6px 10px; text-align:left;">Escenario</th><th style="padding:6px 10px;">Obtenido</th><th style="padding:6px 10px;">Máximo</th><th style="padding:6px 10px;">%</th></tr></thead>
+                        <tbody>${r.escenarios.map(e=>`<tr style="border-bottom:1px solid #e4edf5;"><td style="padding:5px 10px;">${e.escenario}</td><td style="padding:5px 10px;text-align:center;">${e.obtenido}</td><td style="padding:5px 10px;text-align:center;">${e.maximo}</td><td style="padding:5px 10px;text-align:center;font-weight:700;">${e.porcentaje}</td></tr>`).join('')}</tbody>
+                    </table>
+                </details>` : ''}
+                <button onclick="deleteAdminRecord('${r.key}')" style="margin-top:10px; background:none; border:1px solid #e0aaaa; color:#c0392b; border-radius:8px; padding:4px 12px; font-size:0.75rem; cursor:pointer; font-family:'DM Sans',sans-serif;">🗑 Eliminar registro</button>
+            </div>`).join('');
+
+    body.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:8px;">
+            <h3 style="margin:0; color:#0d2b45; font-size:0.95rem;">Panel de administrador — Módulo 5</h3>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                <a href="${SHEETS_URL}" target="_blank" style="background:#1a7a45; border:none; color:#fff; border-radius:8px; padding:6px 14px; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:700; font-size:0.78rem; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">📊 Abrir Google Sheets</a>
+                <button onclick="adminUnlocked=false; renderAdminModal()" style="background:#fee2e2; border:none; color:#c0392b; border-radius:8px; padding:6px 14px; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:700; font-size:0.78rem;">🔒 Cerrar sesión admin</button>
+            </div>
+        </div>
+        <div style="background:#f0faf4; border-left:4px solid #1a7a45; border-radius:0 12px 12px 0; padding:10px 16px; margin-bottom:20px; font-size:0.83rem; color:#1a5c36;">
+            📤 Los resultados se envían automáticamente a Google Sheets cuando el participante presiona <strong>"💾 Guardar resultados"</strong>.
+        </div>
+        <div style="background:#f0f5fc; border-radius:14px; padding:16px 20px; margin-bottom:22px;">
+            <h4 style="margin:0 0 10px; color:#1a4f78; font-size:0.88rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em;">📍 Sesión actual</h4>
+            <div style="font-size:0.88rem; color:#1e2a3e;">
+                <strong>Participante:</strong> ${participantName || '(no iniciado)'} &nbsp;·&nbsp;
+                <strong>Progreso:</strong> ${completedScenarios.filter(Boolean).length} / ${scenarios.length} escenarios
+            </div>
+            ${simulatorStarted ? `
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:10px; font-size:0.83rem; color:#5a7a8a;">
+                <span>📋 Escenarios: <strong style="color:#1a4f78">${scenarioScores.reduce((a,b)=>a+b,0).toFixed(2)} / ${globalMaxPoints.toFixed(2)}</strong></span>
+                <span>📌 Conceptos: <strong style="color:#1a4f78">${activityPoints.toFixed(2)} / 2.00</strong></span>
+                <span>🏁 Total: <strong style="color:${sessionPct>=85?'#1a7a45':'#b05010'}">${sessionEarned.toFixed(2)} / ${sessionMax.toFixed(2)} (${sessionPct.toFixed(1)}%)</strong></span>
+            </div>` : ''}
+        </div>
+        <h4 style="margin:0 0 12px; color:#0d2b45; font-size:0.88rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em;">💾 Resultados guardados (${results.length})</h4>
+        ${savedRecordsHTML}`;
+}
+
+function deleteAdminRecord(key) {
+    if (!confirm('¿Eliminar este registro permanentemente?')) return;
+    try { localStorage.removeItem(key); } catch(e) {}
+    renderAdminModal();
+}
+
+init();
+</script>
+</body>
+</html>
