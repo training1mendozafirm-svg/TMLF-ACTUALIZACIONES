@@ -45,6 +45,7 @@
             width: 220px; height: 220px;
             background: rgba(255,255,255,0.03);
             border-radius: 50%;
+            pointer-events: none;
         }
 
         /* SVG Logo container */
@@ -397,7 +398,7 @@
             <h1>Compliance Diligence · Módulo 1</h1>
             <div class="sub">Flujo de Monitoreo, Escalamiento y Mejora Sistémica</div>
         </div>
-        <button onclick="openAdminModal()" style="margin-left:auto; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); color:rgba(255,255,255,0.8); border-radius:30px; padding:6px 16px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.05em; transition:0.15s; flex-shrink:0;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.12)'">
+        <button id="adminToggleBtn" style="margin-left:auto; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); color:rgba(255,255,255,0.8); border-radius:30px; padding:6px 16px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.05em; transition:0.15s; flex-shrink:0;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.12)'">
             ⚙️ Admin
         </button>
     </div>
@@ -418,13 +419,62 @@
             <span style="color:#fff; font-weight:800; font-size:1rem;">⚙️ Vista Administrador
                 <span style="background:#f0b429; color:#0d2b45; border-radius:6px; padding:2px 10px; font-size:0.72rem; font-weight:800; letter-spacing:0.06em; margin-left:10px;">ADMIN</span>
             </span>
-            <button onclick="closeAdminModal()" style="background:rgba(255,255,255,0.15); border:none; color:#fff; border-radius:8px; padding:6px 16px; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:700; font-size:0.88rem;">✕ Cerrar</button>
+            <button id="adminCloseBtn" style="background:rgba(255,255,255,0.15); border:none; color:#fff; border-radius:8px; padding:6px 16px; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:700; font-size:0.88rem;">✕ Cerrar</button>
         </div>
         <div id="adminModalBody" style="padding:24px;"></div>
     </div>
 </div>
 
 <script>
+// ═══════════════════════════════════════════════════════════════
+// BACKEND — Google Apps Script (CAMBIAR POR TU URL DESPLEGADA)
+// ═══════════════════════════════════════════════════════════════
+const GAS_URL = 'https://script.google.com/a/macros/supportmendoza.com/s/AKfycbwUqJfe0wO3Sq3-23IQvb2VsAtyEqplv8il0UnFnQbVuSgehGBFSmruAf5q9X379ITo/exec';
+
+// ── JSONP helper ─────────────────────────────────────────────
+function jsonpFetch(url) {
+    return new Promise((resolve, reject) => {
+        const cbName = '_cb_' + Date.now() + '_' + Math.floor(Math.random()*1e6);
+        const timeout = setTimeout(() => {
+            delete window[cbName];
+            if (script.parentNode) script.parentNode.removeChild(script);
+            reject(new Error('JSONP timeout'));
+        }, 12000);
+        window[cbName] = (data) => {
+            clearTimeout(timeout);
+            delete window[cbName];
+            if (script.parentNode) script.parentNode.removeChild(script);
+            resolve(data);
+        };
+        const script = document.createElement('script');
+        const sep = url.includes('?') ? '&' : '?';
+        script.src = url + sep + 'callback=' + cbName;
+        script.onerror = () => {
+            clearTimeout(timeout);
+            delete window[cbName];
+            reject(new Error('JSONP error'));
+        };
+        document.body.appendChild(script);
+    });
+}
+
+function gasPost(payload) {
+    // Usar JSONP (GET) para escritura — más fiable en iframes de Moodle
+    // que fetch POST con redirects de GAS en dominio Workspace
+    const encoded = encodeURIComponent(JSON.stringify(payload));
+    return jsonpFetch(GAS_URL + '?action=write&data=' + encoded);
+}
+
+function gasGet(action, params) {
+    let url = GAS_URL + '?action=' + (action || 'read');
+    if (params) Object.keys(params).forEach(k => { url += '&' + k + '=' + encodeURIComponent(params[k]); });
+    return jsonpFetch(url);
+}
+
+function isGasConfigured() {
+    return GAS_URL && !GAS_URL.includes('PEGA_AQUI');
+}
+
 // ═══════════════════════════════════════════════════════════════
 // ESCENARIOS — TODOS CON CONTEXTO NARRATIVO COMPLETO
 // ═══════════════════════════════════════════════════════════════
@@ -1062,9 +1112,6 @@ function init() {
 function showStartScreen() {
     mainDiv.innerHTML = `
         <div class="start-screen">
-            <div class="info-sis">
-                ⚙️ <strong>Signal Intake System (SIS)</strong> es una herramienta proyectada a futuro. Actualmente el flujo opera con Google Sheets + PMO.
-            </div>
             <div style="background:#f0f5fc; border-radius:18px; padding:20px 24px; text-align:left; margin-bottom:14px;">
                 <h3 style="margin:0 0 12px; color:#1a4f78; font-size:1rem;">📌 Instrucciones</h3>
                 <ul style="line-height:1.8; margin:0; padding-left:20px; color:#1e2a3e; font-size:0.93rem;">
@@ -1555,14 +1602,14 @@ function showFinalResults() {
                 <p style="font-size:0.75rem; color:#8a9aaa; margin-top:16px;">
                     Completado el ${dateStr} a las ${timeStr}
                     ${participantName ? `&nbsp;·&nbsp; ${participantName}` : ''}
-                    &nbsp;·&nbsp; Modo de prueba activo
+                    &nbsp;·&nbsp; ${isGasConfigured() ? '☁️ Conectado al servidor' : '⚠️ Solo almacenamiento local'}
                 </p>
             </div>
         </div>
     `;
 
     // ── Botón guardar resultados ──────────────────────────────
-    document.getElementById("saveResultsBtn").onclick = () => {
+    document.getElementById("saveResultsBtn").onclick = async () => {
         const result = {
             alumno: participantName || "—",
             fecha: `${dateStr} ${timeStr}`,
@@ -1583,11 +1630,74 @@ function showFinalResults() {
                 porcentaje: ((scenarioScores[i]/sc.maxPoints)*100).toFixed(0) + "%"
             }))
         };
-        try { localStorage.setItem("compliance_sim_RESULT_" + Date.now(), JSON.stringify(result)); } catch(e) {}
+
         const msg = document.getElementById("saveConfirmMsg");
-        msg.style.display = "block";
-        msg.textContent = `✅ Resultados guardados — ${participantName ? participantName + ' · ' : ''}${pct.toFixed(1)}% (${passed ? "APROBADO" : "NO APROBADO"})`;
+        const btn = document.getElementById("saveResultsBtn");
+
+        // Guardar en localStorage como respaldo
+        try { localStorage.setItem("compliance_sim_RESULT_" + Date.now(), JSON.stringify(result)); } catch(e) {}
+
+        // Guardar en Google Sheets si está configurado
+        if (isGasConfigured()) {
+            btn.disabled = true;
+            btn.textContent = "⏳ Guardando...";
+            msg.style.display = "block";
+            msg.style.color = "#1a4f78";
+            msg.textContent = "⏳ Enviando resultados al servidor...";
+            try {
+                await gasPost(result);
+                msg.style.color = "#1a6640";
+                msg.textContent = `✅ Resultados guardados en servidor — ${participantName ? participantName + ' · ' : ''}${pct.toFixed(1)}% (${passed ? "APROBADO" : "NO APROBADO"})`;
+                btn.textContent = "✅ Guardado";
+            } catch(err) {
+                msg.style.color = "#b05010";
+                msg.textContent = `⚠️ Guardado local OK, pero hubo un error al enviar al servidor. Contacta al administrador.`;
+                btn.disabled = false;
+                btn.textContent = "💾 Reintentar envío";
+            }
+        } else {
+            msg.style.display = "block";
+            msg.style.color = "#b05010";
+            msg.textContent = `⚠️ Backend no configurado — resultado guardado solo localmente. ${participantName ? participantName + ' · ' : ''}${pct.toFixed(1)}%`;
+        }
     };
+
+    // ── AUTO-SAVE: enviar automáticamente al servidor al terminar ──
+    if (isGasConfigured()) {
+        const autoResult = {
+            alumno: participantName || "—",
+            fecha: `${dateStr} ${timeStr}`,
+            escenarios_pts: scenariosEarned.toFixed(2),
+            escenarios_max: scenariosMax.toFixed(2),
+            escenarios_pct: scenariosPct.toFixed(1) + "%",
+            dd_pts: ddEarned.toFixed(2),
+            dd_max: ddMax.toFixed(2),
+            dd_pct: ddPct.toFixed(0) + "%",
+            total: totalEarned.toFixed(2),
+            maximo: maxTotal.toFixed(2),
+            porcentaje: pct.toFixed(1) + "%",
+            aprobado: passed ? "Sí" : "No",
+            escenarios: scenarios.map((sc, i) => ({
+                escenario: sc.title,
+                obtenido: scenarioScores[i].toFixed(2),
+                maximo: sc.maxPoints.toFixed(2),
+                porcentaje: ((scenarioScores[i]/sc.maxPoints)*100).toFixed(0) + "%"
+            }))
+        };
+        gasPost(autoResult).then(() => {
+            const msg = document.getElementById("saveConfirmMsg");
+            if (msg && msg.style.display === 'none') {
+                msg.style.display = "block";
+                msg.style.color = "#1a6640";
+                msg.textContent = `✅ Resultados enviados automáticamente al servidor.`;
+            }
+            const btn = document.getElementById("saveResultsBtn");
+            if (btn && !btn.disabled) {
+                btn.textContent = "✅ Ya enviado";
+                btn.disabled = true;
+            }
+        }).catch(() => {});
+    }
 
     // ── Botón nuevo intento (modo prueba) ─────────────────────
     document.getElementById("newAttemptBtn").onclick = () => {
@@ -1607,21 +1717,27 @@ function showFinalResults() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// VISTA DE ADMINISTRADOR
+// VISTA DE ADMINISTRADOR — CON BACKEND GAS
 // ═══════════════════════════════════════════════════════════════
 const ADMIN_PASSWORD = 'Adminmoodle26';
 let adminUnlocked = false;
+let adminCachedResults = [];
 
 function openAdminModal() {
-    document.getElementById('adminModal').style.display = 'block';
-    renderAdminModal();
+    const modal = document.getElementById('adminModal');
+    if (modal) {
+        modal.style.display = 'block';
+        renderAdminModal();
+    }
 }
 function closeAdminModal() {
-    document.getElementById('adminModal').style.display = 'none';
+    const modal = document.getElementById('adminModal');
+    if (modal) modal.style.display = 'none';
 }
 
 function renderAdminModal() {
     const body = document.getElementById('adminModalBody');
+    if (!body) return;
     if (!adminUnlocked) {
         body.innerHTML = `
             <div style="max-width:340px; margin:0 auto; text-align:center;">
@@ -1631,42 +1747,57 @@ function renderAdminModal() {
                 <input type="password" id="adminPassInput"
                     placeholder="Contraseña..."
                     style="width:100%; border:2px solid #c0d4e4; border-radius:12px; padding:10px 16px; font-family:'DM Sans',sans-serif; font-size:0.95rem; margin-bottom:12px; outline:none; transition:0.15s; text-align:center;"
-                    onfocus="this.style.borderColor='#1a4f78'" onblur="this.style.borderColor='#c0d4e4'"
-                    onkeydown="if(event.key==='Enter') checkAdminPass()">
-                <button onclick="checkAdminPass()" style="width:100%; background:#1a4f78; border:none; color:#fff; padding:10px; border-radius:12px; font-family:'DM Sans',sans-serif; font-weight:700; font-size:0.9rem; cursor:pointer;">
+                    onfocus="this.style.borderColor='#1a4f78'" onblur="this.style.borderColor='#c0d4e4'">
+                <button id="adminPassSubmitBtn" style="width:100%; background:#1a4f78; border:none; color:#fff; padding:10px; border-radius:12px; font-family:'DM Sans',sans-serif; font-weight:700; font-size:0.9rem; cursor:pointer;">
                     Ingresar
                 </button>
                 <div id="adminPassError" style="color:#c0392b; font-size:0.8rem; margin-top:8px; display:none;">⚠️ Contraseña incorrecta.</div>
             </div>`;
+        // Bind events after innerHTML
+        const passInput = document.getElementById('adminPassInput');
+        const passBtn   = document.getElementById('adminPassSubmitBtn');
+        if (passInput) passInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') checkAdminPass(); });
+        if (passBtn)   passBtn.addEventListener('click', checkAdminPass);
         return;
     }
     renderAdminDashboard(body);
 }
 
 function checkAdminPass() {
-    const val = (document.getElementById('adminPassInput')?.value || '').trim();
+    var inp = document.getElementById('adminPassInput');
+    var val = (inp ? inp.value : '').trim();
     if (val === ADMIN_PASSWORD) {
         adminUnlocked = true;
         renderAdminModal();
     } else {
-        document.getElementById('adminPassError').style.display = 'block';
+        const err = document.getElementById('adminPassError');
+        if (err) err.style.display = 'block';
     }
 }
 
-function renderAdminDashboard(body) {
-    // Collect all saved results from localStorage
-    const results = [];
-    try {
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && key.startsWith('compliance_sim_RESULT_')) {
-                const r = JSON.parse(localStorage.getItem(key));
-                if (r) results.push({ key, ...r });
-            }
-        }
-    } catch(e) {}
+async function renderAdminDashboard(body) {
+    // Show loading first
+    body.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:8px;">
+            <h3 style="margin:0; color:#0d2b45; font-size:0.95rem;">Panel de administrador</h3>
+            <div style="display:flex; gap:8px;">
+                <button id="adminRefreshBtn" style="background:#e8f4fd; border:1px solid #b0cfe0; color:#1a4f78; border-radius:8px; padding:6px 14px; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:700; font-size:0.78rem;">🔄 Actualizar</button>
+                <button id="adminLogoutBtn" style="background:#fee2e2; border:none; color:#c0392b; border-radius:8px; padding:6px 14px; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:700; font-size:0.78rem;">🔒 Cerrar sesión</button>
+            </div>
+        </div>
+        <div id="adminDataArea" style="text-align:center; padding:30px 0; color:#7090a8;">
+            <div style="font-size:1.3rem; margin-bottom:8px;">⏳</div>
+            <p style="font-size:0.88rem;">Cargando resultados del servidor...</p>
+        </div>`;
 
-    // Current session summary
+    var refreshBtn = document.getElementById('adminRefreshBtn');
+    var logoutBtn  = document.getElementById('adminLogoutBtn');
+    if (refreshBtn) refreshBtn.addEventListener('click', function() { renderAdminDashboard(body); });
+    if (logoutBtn)  logoutBtn.addEventListener('click', function() { adminUnlocked = false; renderAdminModal(); });
+
+    const dataArea = document.getElementById('adminDataArea');
+
+    // ── Current session summary ──
     const sessionEarned = scenarioScores.reduce((a,b)=>a+b,0) + activityPoints;
     const sessionMax = globalMaxPoints + 2;
     const sessionPct = (sessionEarned / sessionMax) * 100;
@@ -1674,6 +1805,59 @@ function renderAdminDashboard(body) {
     const sessionScPct = (sessionScEarned / globalMaxPoints) * 100;
     const sessionDdPct = (activityPoints / 2) * 100;
 
+    const sessionHTML = `
+        <div style="background:#f0f5fc; border-radius:14px; padding:16px 20px; margin-bottom:22px;">
+            <h4 style="margin:0 0 10px; color:#1a4f78; font-size:0.88rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em;">📍 Sesión actual (este navegador)</h4>
+            <div style="font-size:0.88rem; color:#1e2a3e;">
+                <strong>Participante:</strong> ${participantName || '(no iniciado)'} &nbsp;·&nbsp;
+                <strong>Progreso:</strong> ${completedScenarios.filter(Boolean).length} / ${scenarios.length} escenarios completados
+            </div>
+            ${simulatorStarted ? `
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:10px; font-size:0.83rem; color:#5a7a8a;">
+                <span>📋 Escenarios: <strong style="color:#1a4f78">${sessionScEarned.toFixed(2)} / ${globalMaxPoints.toFixed(2)} (${sessionScPct.toFixed(1)}%)</strong></span>
+                <span>🧩 Ordenamiento: <strong style="color:#1a4f78">${activityPoints.toFixed(2)} / 2.00 (${sessionDdPct.toFixed(0)}%)</strong></span>
+                <span>🏁 Total: <strong style="color:${sessionPct>=85?'#1a7a45':'#b05010'}">${sessionEarned.toFixed(2)} / ${sessionMax.toFixed(2)} (${sessionPct.toFixed(1)}%)</strong></span>
+            </div>` : ''}
+        </div>`;
+
+    // ── Fetch remote results ──
+    let results = [];
+    let sourceLabel = '';
+    let fetchError = false;
+
+    if (isGasConfigured()) {
+        try {
+            const resp = await gasGet('read');
+            if (resp && resp.status === 'ok' && Array.isArray(resp.data)) {
+                results = resp.data;
+                sourceLabel = `☁️ Fuente: Google Sheets (${results.length} registros)`;
+            } else {
+                fetchError = true;
+            }
+        } catch(err) {
+            fetchError = true;
+        }
+    }
+
+    // Fallback: localStorage
+    if (!isGasConfigured() || fetchError) {
+        try {
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('compliance_sim_RESULT_')) {
+                    const r = JSON.parse(localStorage.getItem(key));
+                    if (r) results.push({ rowId: key, ...r });
+                }
+            }
+        } catch(e) {}
+        sourceLabel = fetchError
+            ? `⚠️ Error al conectar con el servidor — mostrando datos locales (${results.length} registros)`
+            : `💾 Fuente: localStorage (solo datos de este navegador — ${results.length} registros)`;
+    }
+
+    adminCachedResults = results;
+
+    // ── Build saved records HTML ──
     const savedRecordsHTML = results.length === 0
         ? `<p style="color:#7090a8; font-size:0.87rem; padding:12px 0;">No hay resultados guardados aún. Los resultados aparecen aquí cuando los participantes presionan "💾 Guardar resultados".</p>`
         : results.map((r, i) => `
@@ -1692,7 +1876,7 @@ function renderAdminDashboard(body) {
                     <span>🧩 Ordenamiento: <strong>${r.dd_pts||'—'} / ${r.dd_max||'—'} (${r.dd_pct||'—'})</strong></span>
                     <span>🏁 Total: <strong>${r.total} / ${r.maximo}</strong></span>
                 </div>
-                ${r.escenarios ? `
+                ${r.escenarios && Array.isArray(r.escenarios) ? `
                 <details style="margin-top:10px;">
                     <summary style="cursor:pointer; font-size:0.8rem; color:#2471a3; font-weight:600;">Ver desglose por escenario</summary>
                     <table style="width:100%; border-collapse:collapse; font-size:0.8rem; margin-top:8px;">
@@ -1700,42 +1884,71 @@ function renderAdminDashboard(body) {
                         <tbody>${r.escenarios.map(e=>`<tr style="border-bottom:1px solid #e4edf5;"><td style="padding:5px 10px;">${e.escenario}</td><td style="padding:5px 10px; text-align:center;">${e.obtenido}</td><td style="padding:5px 10px; text-align:center;">${e.maximo}</td><td style="padding:5px 10px; text-align:center; font-weight:700;">${e.porcentaje}</td></tr>`).join('')}</tbody>
                     </table>
                 </details>` : ''}
-                <button onclick="deleteAdminRecord('${r.key}')" style="margin-top:10px; background:none; border:1px solid #e0aaaa; color:#c0392b; border-radius:8px; padding:4px 12px; font-size:0.75rem; cursor:pointer; font-family:'DM Sans',sans-serif;">🗑 Eliminar registro</button>
+                <button class="admin-delete-btn" data-row-id="${r.rowId || ''}" data-index="${i}" style="margin-top:10px; background:none; border:1px solid #e0aaaa; color:#c0392b; border-radius:8px; padding:4px 12px; font-size:0.75rem; cursor:pointer; font-family:'DM Sans',sans-serif;">🗑 Eliminar registro</button>
             </div>`).join('');
 
-    body.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:8px;">
-            <h3 style="margin:0; color:#0d2b45; font-size:0.95rem;">Panel de administrador</h3>
-            <button onclick="adminUnlocked=false; renderAdminModal()" style="background:#fee2e2; border:none; color:#c0392b; border-radius:8px; padding:6px 14px; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:700; font-size:0.78rem;">🔒 Cerrar sesión admin</button>
-        </div>
-
-        <!-- SESIÓN ACTUAL -->
-        <div style="background:#f0f5fc; border-radius:14px; padding:16px 20px; margin-bottom:22px;">
-            <h4 style="margin:0 0 10px; color:#1a4f78; font-size:0.88rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em;">📍 Sesión actual</h4>
-            <div style="font-size:0.88rem; color:#1e2a3e;">
-                <strong>Participante:</strong> ${participantName || '(no iniciado)'} &nbsp;·&nbsp;
-                <strong>Progreso:</strong> ${completedScenarios.filter(Boolean).length} / ${scenarios.length} escenarios completados
+    // ── Render ──
+    if (dataArea) {
+        dataArea.innerHTML = `
+            ${sessionHTML}
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:6px;">
+                <h4 style="margin:0; color:#0d2b45; font-size:0.88rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em;">💾 Resultados guardados (${results.length})</h4>
+                <span style="font-size:0.75rem; color:#7090a8;">${sourceLabel}</span>
             </div>
-            ${simulatorStarted ? `
-            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:10px; font-size:0.83rem; color:#5a7a8a;">
-                <span>📋 Escenarios: <strong style="color:#1a4f78">${sessionScEarned.toFixed(2)} / ${globalMaxPoints.toFixed(2)} (${sessionScPct.toFixed(1)}%)</strong></span>
-                <span>🧩 Ordenamiento: <strong style="color:#1a4f78">${activityPoints.toFixed(2)} / 2.00 (${sessionDdPct.toFixed(0)}%)</strong></span>
-                <span>🏁 Total: <strong style="color:${sessionPct>=85?'#1a7a45':'#b05010'}">${sessionEarned.toFixed(2)} / ${sessionMax.toFixed(2)} (${sessionPct.toFixed(1)}%)</strong></span>
+            ${!isGasConfigured() ? `
+            <div style="background:#fff3cd; border-left:4px solid #e0a82e; border-radius:0 12px 12px 0; padding:11px 16px; font-size:0.82rem; margin-bottom:16px; text-align:left; color:#6b4e00;">
+                ⚠️ <strong>Backend no configurado.</strong> Los resultados solo se guardan en cada navegador individual. Para ver todos los participantes en tiempo real, configura la URL de Google Apps Script en la variable <code>GAS_URL</code>.
             </div>` : ''}
-        </div>
+            ${savedRecordsHTML}`;
 
-        <!-- REGISTROS GUARDADOS -->
-        <h4 style="margin:0 0 12px; color:#0d2b45; font-size:0.88rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em;">💾 Resultados guardados (${results.length})</h4>
-        ${savedRecordsHTML}`;
+        // Bind delete buttons
+        dataArea.querySelectorAll('.admin-delete-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const rowId = e.target.getAttribute('data-row-id');
+                if (!confirm('¿Eliminar este registro permanentemente?')) return;
+                if (isGasConfigured() && rowId && !rowId.startsWith('compliance_sim_')) {
+                    try {
+                        e.target.textContent = '⏳ Eliminando...';
+                        await gasGet('delete', { rowId: rowId });
+                    } catch(err) {}
+                } else if (rowId) {
+                    try { localStorage.removeItem(rowId); } catch(e) {}
+                }
+                renderAdminDashboard(body);
+            });
+        });
+    }
 }
 
-function deleteAdminRecord(key) {
-    if (!confirm('¿Eliminar este registro permanentemente?')) return;
-    try { localStorage.removeItem(key); } catch(e) {}
-    renderAdminModal();
-}
+// ── Bind admin buttons via addEventListener (Moodle-safe) ──
+// IMPORTANTE: estos bindings van ANTES de init() para que funcionen
+// incluso si init() falla por restricciones de localStorage en iframe
+(function bindAdminButtons() {
+    var adminBtn = document.getElementById('adminToggleBtn');
+    var closeBtn = document.getElementById('adminCloseBtn');
+    var modal    = document.getElementById('adminModal');
 
-init();
+    if (adminBtn) {
+        adminBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            openAdminModal();
+        });
+    }
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            closeAdminModal();
+        });
+    }
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeAdminModal();
+        });
+    }
+})();
+
+try { init(); } catch(e) { console.error('Init error:', e); showStartScreen(); }
 </script>
 </body>
 </html>
