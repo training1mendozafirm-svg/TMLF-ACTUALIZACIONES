@@ -1717,7 +1717,7 @@
 const STORAGE_KEY = 'compliance_v4';
 const ADMIN_PASSWORD = 'CEU2026';
 // Google Sheets Web App URL — replace with your deployed Apps Script URL
-const SHEETS_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+const SHEETS_URL = 'https://script.google.com/a/macros/supportmendoza.com/s/AKfycbyq8i-vnie0JaBx8CEW7pkjbap9fiWTMsTlYoQQaeAf2MtIv1F9ZkkTjFYw-aNQbXZH/exec';
 
 // ════════════════════════════════════════════════════
 // STORAGE
@@ -1834,7 +1834,15 @@ function showParticipantBadge() {
 // GOOGLE SHEETS INTEGRATION
 // ════════════════════════════════════════════════════
 function sendToSheets(type, payload) {
-  const body = { type, timestamp: new Date().toISOString(), participant: participantName || 'Anónimo', ...payload };
+  const body = {
+    type,
+    timestamp: new Date().toISOString(),
+    participant: participantName || 'Anónimo',
+    participantId: progress.participantId || '',
+    currentScore: globalScore || 0,
+    lastTab: progress.lastTab || 'portada',
+    ...payload
+  };
   fetch(SHEETS_URL, {
     method: 'POST',
     mode: 'no-cors',
@@ -2287,7 +2295,10 @@ function buildResumen() {
       score: score,
       maxScore: maxScore,
       pct: pct,
-      wrongCount: (p.wrongAnswers || []).length
+      wrongCount: (p.wrongAnswers || []).length,
+      m2Count: p.m2Answers ? Object.keys(p.m2Answers).filter(k=>!k.includes('_scored')&&!k.includes('open')&&!k.includes('_logged')&&p.m2Answers[k]!==undefined).length : 0,
+      mod3Antonia: p.case_antonia && Object.keys(p.case_antonia).length > 0 ? 'Sí' : 'No',
+      mod3Cristian: p.case_cristian && Object.keys(p.case_cristian).length > 0 ? 'Sí' : 'No'
     });
     p.completionSent = true;
     saveProgress(p);
@@ -2480,6 +2491,20 @@ function showM2FeedbackInSlide(caseId, ansIdx, slideIdx) {
   if (isCorrect && !m2Answers[caseId + '_scored']) {
     addScore(5); m2Answers[caseId + '_scored'] = true; progress.m2Answers = m2Answers; saveProgress(progress);
   }
+
+  // Log to Sheets
+  sendToSheets('m2_answer', {
+    caseId: caseId,
+    caseName: cas.label + ': ' + cas.heading,
+    correctProfile: correctProfile,
+    selectedProfile: selectedProfile,
+    isCorrect: isCorrect,
+    firstAttempt: !m2Answers[caseId + '_logged'],
+    m2Count: Object.keys(m2Answers).filter(k=>!k.includes('_scored')&&!k.includes('open')&&!k.includes('_logged')).length
+  });
+  m2Answers[caseId + '_logged'] = true;
+  progress.m2Answers = m2Answers;
+  saveProgress(progress);
 }
 
 function showM2OpenQuestion() {
@@ -3052,6 +3077,20 @@ function checkRiskFactors() {
   saveCaseProgress({ 'fb-risk': { cls: fb.className, html: fb.innerHTML } });
   const cKey = Object.keys(CASES).find(k=>CASES[k]===currentCase)+'_scored_risk';
   if (isGood && !progress[cKey]) { progress[cKey]=true; addScore(10); }
+
+  // Log to Sheets
+  const caseKeyRisk = Object.keys(CASES).find(k=>CASES[k]===currentCase);
+  sendToSheets('m3_risk', {
+    caseName: currentCase.name,
+    caseKey: caseKeyRisk,
+    correctCount: tp,
+    totalCorrect: correctIds.size,
+    falsePositives: fp,
+    missed: missingIds.length,
+    passed: isGood,
+    mod3Antonia: caseKeyRisk==='antonia' ? 'Parte A' : undefined,
+    mod3Cristian: caseKeyRisk==='cristian' ? 'Parte A' : undefined
+  });
 }
 
 function renderDilatoryMatch() {
@@ -3142,6 +3181,16 @@ function checkDilatoryMatch() {
   saveCaseProgress({'fb-dilatory':{cls:fb.className,html:fb.innerHTML}});
   const cKey=Object.keys(CASES).find(k=>CASES[k]===currentCase)+'_scored_dil';
   if(isGood&&!progress[cKey]){progress[cKey]=true;addScore(10);}
+
+  // Log to Sheets
+  const caseKeyDil=Object.keys(CASES).find(k=>CASES[k]===currentCase);
+  sendToSheets('m3_dilatory', {
+    caseName: currentCase.name,
+    caseKey: caseKeyDil,
+    correct: correct,
+    total: total,
+    passed: isGood
+  });
 }
 
 function renderRutaQuestions() {
@@ -3216,7 +3265,18 @@ function checkSingleRuta(i){
 
   // Check if all answered — show next button
   const allVerified=currentCase.rutaQ.every((_,idx)=>rutaVerified[idx]);
-  if(allVerified) document.getElementById('next-to-d').style.display='block';
+  if(allVerified) {
+    document.getElementById('next-to-d').style.display='block';
+    // Log all ruta results to Sheets
+    const caseKeyRuta=Object.keys(CASES).find(k=>CASES[k]===currentCase);
+    const correctCount=currentCase.rutaQ.filter((_,idx)=>rutaAnswers[idx]===currentCase.rutaQ[idx].correct).length;
+    sendToSheets('m3_ruta', {
+      caseName: currentCase.name,
+      caseKey: caseKeyRuta,
+      correctCount: correctCount,
+      totalQuestions: currentCase.rutaQ.length
+    });
+  }
 }
 
 function renderCharGrid(){
@@ -3300,6 +3360,20 @@ function checkScore(){
   saveCaseProgress({'fb-score':{cls:fb.className,html:fb.innerHTML}});
   const cKey=Object.keys(CASES).find(k=>CASES[k]===currentCase)+'_scored_score';
   if(isGood&&!progress[cKey]){progress[cKey]=true;addScore(10);}
+
+  // Log to Sheets
+  const caseKeyScore=Object.keys(CASES).find(k=>CASES[k]===currentCase);
+  sendToSheets('m3_client_type', {
+    caseName: currentCase.name,
+    caseKey: caseKeyScore,
+    correctCategory: currentCase.correctCategory,
+    selectedCategory: selectedCategory,
+    categoryCorrect: catOk,
+    charsCorrect: charTP,
+    charsTotal: correctChars.size,
+    charsFP: charFP,
+    passed: isGood
+  });
 }
 
 function submitOpenM3(){
