@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Status Call Guide · TMLF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:     #1a2a4a;
+    --mid:      #4a6fa5;
+    --gold:     #c9a84c;
+    --gold-lt:  #f5e9c6;
+    --red:      #c0392b;
+    --red-lt:   #fdf0ee;
+    --green:    #1a7a4a;
+    --green-lt: #edfaf3;
+    --yellow:   #d4860a;
+    --yellow-lt:#fff8e8;
+    --blue-lt:  #eef3fb;
+    --white:    #ffffff;
+    --ink:      #1c2333;
+    --gray:     #64748b;
+    --border:   #dde4ef;
+    --bg:       #f4f6fb;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 1.5rem 1rem 4rem;
+  }
+
+  .page { max-width: 900px; margin: 0 auto; }
+
+  /* ── HEADER ── */
+  .header-card {
+    background: var(--navy);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 1.6rem;
+    position: relative;
+    box-shadow: 0 8px 40px rgba(26,42,74,0.22);
+  }
+  .header-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 320px; height: 100%;
+    background: linear-gradient(135deg, transparent 30%, rgba(74,111,165,0.18));
+    pointer-events: none;
+  }
+  .header-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), #e8d28a, var(--gold));
+  }
+  .header-inner {
+    padding: 1.8rem 2.4rem;
+    display: flex;
+    align-items: center;
+    gap: 1.8rem;
+    position: relative;
+    z-index: 1;
+    flex-wrap: wrap;
+  }
+  .header-text { flex: 1; min-width: 200px; }
+  .header-badge {
+    display: inline-block;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    border: 1px solid rgba(201,168,76,0.4);
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 0.6rem;
+  }
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 0.35rem;
+  }
+  .header-sub {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.5);
+    font-weight: 300;
+  }
+  .header-actions {
+    display: flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .mode-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1.2rem;
+    border-radius: 7px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .mode-btn.agent {
+    background: var(--gold);
+    color: var(--navy);
+    border-color: var(--gold);
+  }
+  .mode-btn.agent:hover { background: #e8d28a; transform: translateY(-1px); }
+  .mode-btn.client {
+    background: transparent;
+    color: var(--gold);
+    border-color: rgba(201,168,76,0.5);
+  }
+  .mode-btn.client:hover { background: rgba(201,168,76,0.12); }
+  .mode-btn.active-mode {
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.35);
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mid);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    padding-left: 0.8rem;
+    border-left: 3px solid var(--gold);
+  }
+
+  /* ── INPUT PANEL ── */
+  .input-panel {
+    background: var(--white);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 12px rgba(26,42,74,0.06);
+    padding: 1.6rem 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.2rem;
+    margin-bottom: 1.2rem;
+  }
+  @media(max-width:640px){ .input-grid { grid-template-columns: 1fr; } }
+  .input-group label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 0.45rem;
+  }
+  .input-group input,
+  .input-group select {
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.85rem;
+    color: var(--ink);
+    background: var(--bg);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .input-group input:focus,
+  .input-group select:focus { border-color: var(--mid); background: var(--white); }
+  .calc-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1.8rem;
+    background: var(--navy);
+    color: var(--gold);
+    border: 2px solid var(--gold);
+    border-radius: 8px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(26,42,74,0.15);
+  }
+  .calc-btn:hover { background: var(--gold); color: var(--navy); transform: translateY(-1px); box-shadow: 0 8px 28px rgba(201,168,76,0.3); }
+
+  /* ── PROGRESS SECTION ── */
+  .progress-panel {
+    background: var(--white);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 12px rgba(26,42,74,0.06);
+    padding: 1.6rem 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .progress-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  @media(max-width:600px){ .progress-stats { grid-template-columns: 1fr; } }
+  .stat-chip {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 1rem 1.1rem;
+    text-align: center;
+  }
+  .stat-chip.green-chip { background: var(--green-lt); border-color: #a8dfc3; }
+  .stat-chip.yellow-chip { background: var(--yellow-lt); border-color: #f5c97a; }
+  .stat-chip.red-chip { background: var(--red-lt); border-color: #e8b4af; }
+  .stat-label {
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray);
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+  .stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 0.2rem;
+  }
+  .stat-chip.green-chip .stat-val { color: var(--green); }
+  .stat-chip.yellow-chip .stat-val { color: var(--yellow); }
+  .stat-chip.red-chip .stat-val { color: var(--red); }
+  .stat-note { font-size: 0.72rem; color: var(--gray); }
+
+  /* ── TIMELINE BAR ── */
+  .timeline-wrap {
+    margin-bottom: 1.5rem;
+  }
+  .timeline-label-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: var(--gray);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .timeline-bar-outer {
+    height: 22px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    overflow: visible;
+    position: relative;
+  }
+  .timeline-bar-fill {
+    height: 100%;
+    border-radius: 50px;
+    transition: width 1s ease;
+    position: relative;
+  }
+  .timeline-bar-fill.green-bar  { background: linear-gradient(90deg, #2ecc71, var(--green)); }
+  .timeline-bar-fill.yellow-bar { background: linear-gradient(90deg, #f5c97a, var(--yellow)); }
+  .timeline-bar-fill.red-bar    { background: linear-gradient(90deg, #e87a6a, var(--red)); }
+
+  .timeline-dot {
+    position: absolute;
+    right: -12px; top: 50%;
+    transform: translateY(-50%);
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    border: 3px solid var(--white);
+    box-shadow: 0 2px 8px rgba(26,42,74,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.6rem;
+    color: white;
+    font-weight: 700;
+  }
+  .timeline-dot.green-dot  { background: var(--green); }
+  .timeline-dot.yellow-dot { background: var(--yellow); }
+  .timeline-dot.red-dot    { background: var(--red); }
+
+  .timeline-avg-marker {
+    position: absolute;
+    top: -6px; bottom: -6px;
+    width: 2px;
+    background: rgba(26,42,74,0.3);
+    border-radius: 2px;
+  }
+  .timeline-avg-marker::after {
+    content: 'Promedio';
+    position: absolute;
+    top: -18px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.6rem;
+    color: var(--gray);
+    white-space: nowrap;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .timeline-milestones {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.7rem;
+  }
+  .milestone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    flex: 1;
+  }
+  .milestone-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+  .milestone-dot.done { background: var(--green); }
+  .milestone-label { font-size: 0.62rem; color: var(--gray); text-align: center; font-weight: 600; }
+
+  /* ── STATUS VERDICT ── */
+  .status-verdict {
+    border-radius: 10px;
+    padding: 1.2rem 1.4rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .status-verdict.verde { background: var(--green-lt); border: 1.5px solid #a8dfc3; }
+  .status-verdict.amarillo { background: var(--yellow-lt); border: 1.5px solid #f5c97a; }
+  .status-verdict.rojo { background: var(--red-lt); border: 1.5px solid #e8b4af; }
+  .verdict-icon { font-size: 2rem; flex-shrink: 0; line-height: 1; }
+  .verdict-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .verde .verdict-title { color: var(--green); }
+  .amarillo .verdict-title { color: var(--yellow); }
+  .rojo .verdict-title { color: var(--red); }
+  .verdict-body { font-size: 0.82rem; line-height: 1.65; color: var(--ink); }
+
+  /* ── CALL GUIDE STEPS ── */
+  .steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .step-item {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 1.1rem 1.3rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 1px 6px rgba(26,42,74,0.04);
+  }
+  .step-item:hover { box-shadow: 0 4px 20px rgba(26,42,74,0.10); transform: translateX(2px); }
+  .step-item.done {
+    background: linear-gradient(135deg, #edfaf3, #f4fbf7);
+    border-color: #a8dfc3;
+  }
+  .step-item.active {
+    border-color: var(--mid);
+    background: var(--blue-lt);
+    box-shadow: 0 4px 20px rgba(74,111,165,0.12);
+  }
+  .step-check {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    margin-top: 2px;
+  }
+  .step-item.done .step-check {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+  }
+  .step-item.active .step-check {
+    border-color: var(--mid);
+    background: var(--mid);
+    color: white;
+  }
+  .step-num-badge {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 2px;
+    transition: all 0.2s;
+  }
+  .step-item.done .step-num-badge { background: var(--green); color: white; }
+  .step-item.active .step-num-badge { background: var(--mid); color: white; }
+
+  .step-content { flex: 1; }
+  .step-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    color: var(--navy);
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+  .step-item.done .step-title { color: var(--green); }
+  .step-desc {
+    font-size: 0.8rem;
+    color: var(--gray);
+    line-height: 1.6;
+  }
+  .step-item.done .step-desc { color: #3a8a5a; }
+  .step-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    margin-right: 0.4rem;
+    padding: 0.38rem 0.95rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--white);
+    background: var(--mid);
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(74,111,165,0.25);
+  }
+  .step-link:hover {
+    background: var(--navy);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(26,42,74,0.22);
+  }
+  .step-link.gold-link {
+    background: var(--navy);
+    color: var(--gold);
+    border: 1.5px solid rgba(201,168,76,0.5);
+  }
+  .step-link.gold-link:hover {
+    background: var(--gold);
+    color: var(--navy);
+    border-color: var(--gold);
+  }
+  .step-tag {
+    display: inline-block;
+    background: var(--blue-lt);
+    color: var(--mid);
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin: 3px 2px 0 0;
+    letter-spacing: 0.04em;
+  }
+  .step-complete-btn {
+    flex-shrink: 0;
+    padding: 0.35rem 0.85rem;
+    border-radius: 6px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    color: var(--gray);
+    transition: all 0.2s;
+    white-space: nowrap;
+    align-self: center;
+  }
+  .step-complete-btn:hover { background: var(--green); color: white; border-color: var(--green); }
+  .step-item.done .step-complete-btn { background: var(--green); color: white; border-color: var(--green); cursor: default; }
+
+  /* Progress bar for call */
+  .call-progress-wrap {
+    background: var(--white);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    padding: 1rem 1.4rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    box-shadow: 0 2px 8px rgba(26,42,74,0.05);
+  }
+  .call-progress-label { font-size: 0.72rem; font-weight: 700; color: var(--navy); white-space: nowrap; }
+  .call-bar-outer {
+    flex: 1;
+    height: 8px;
+    background: var(--bg);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .call-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--mid), var(--navy));
+    border-radius: 20px;
+    transition: width 0.5s ease;
+  }
+  .call-pct { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--navy); white-space: nowrap; }
+
+  /* ── MANDAMUS CARD ── */
+  .mandamus-card {
+    background: linear-gradient(135deg, #1a2a4a 0%, #2c4070 100%);
+    border-radius: 12px;
+    padding: 1.8rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 8px 32px rgba(26,42,74,0.2);
+    position: relative;
+    overflow: hidden;
+  }
+  .mandamus-card::before {
+    content: '⚖';
+    position: absolute;
+    right: 1.5rem; top: 50%;
+    transform: translateY(-50%);
+    font-size: 6rem;
+    opacity: 0.05;
+    color: white;
+    pointer-events: none;
+  }
+  .mandamus-badge {
+    display: inline-block;
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    border: 1px solid rgba(201,168,76,0.4);
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 0.7rem;
+  }
+  .mandamus-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+  .mandamus-body {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.75;
+    margin-bottom: 1.2rem;
+  }
+  .mandamus-body strong { color: var(--gold); }
+  .mandamus-points {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.7rem;
+  }
+  @media(max-width:600px){ .mandamus-points { grid-template-columns: 1fr; } }
+  .mpt {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+  }
+  .mpt-icon { font-size: 1.1rem; margin-bottom: 0.35rem; }
+  .mpt-title { font-size: 0.74rem; font-weight: 700; color: var(--gold); margin-bottom: 0.2rem; letter-spacing: 0.05em; text-transform: uppercase; }
+  .mpt-text { font-size: 0.77rem; color: rgba(255,255,255,0.65); line-height: 1.55; }
+
+  /* ── EMOTIONAL SUPPORT CARD ── */
+  .emotional-card {
+    background: linear-gradient(135deg, #fff8e8 0%, #fef3cd 100%);
+    border: 1.5px solid var(--gold);
+    border-radius: 12px;
+    padding: 1.5rem 1.8rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 14px rgba(201,168,76,0.12);
+  }
+  .emotional-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+  }
+  .emotional-icon { font-size: 1.6rem; }
+  .emotional-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: #7a5500;
+    font-weight: 700;
+  }
+  .emotional-sub { font-size: 0.75rem; color: #9a6a00; }
+  .emotional-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .emsg {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    background: rgba(255,255,255,0.6);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    border-left: 3px solid var(--gold);
+  }
+  .emsg-icon { font-size: 1.1rem; flex-shrink: 0; }
+  .emsg-text { font-size: 0.82rem; color: #5a4000; line-height: 1.6; }
+  .emsg-text strong { color: #3a2a00; }
+
+  /* ── CLIENT VIEW OVERRIDES ── */
+  body.client-mode .agent-only { display: none !important; }
+  body.client-mode .client-view { display: block !important; }
+  .client-view { display: none; }
+  body.client-mode .input-panel { display: none; }
+
+  /* Client big display */
+  .client-big-display {
+    display: none;
+    background: var(--navy);
+    border-radius: 14px;
+    padding: 2.5rem 2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(26,42,74,0.25);
+    position: relative;
+    overflow: hidden;
+  }
+  .client-big-display::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), #e8d28a, var(--gold));
+  }
+  .cbd-label { font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.5); font-weight: 700; margin-bottom: 0.6rem; }
+  .cbd-value { font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 700; color: var(--gold); line-height: 1; margin-bottom: 0.3rem; }
+  .cbd-sub { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
+  .cbd-status { display: inline-block; margin-top: 1rem; padding: 0.5rem 1.6rem; border-radius: 30px; font-size: 0.82rem; font-weight: 700; }
+  .cbd-status.verde { background: var(--green); color: white; }
+  .cbd-status.amarillo { background: var(--yellow); color: white; }
+  .cbd-status.rojo { background: var(--red); color: white; }
+
+  /* ── RESET / FOOTER ── */
+  .guide-footer {
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--gray);
+    margin-top: 2rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--border);
+  }
+  .guide-footer strong { color: var(--navy); }
+
+  /* ── PDF VIEWER ── */
+  .pdf-viewer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--navy);
+    padding: 0.5rem 1rem;
+    border-radius: 8px 8px 0 0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.06em;
+  }
+  .pdf-ext-link {
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.55);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .pdf-ext-link:hover { color: var(--gold); }
+  .pdf-iframe {
+    width: 100%;
+    height: 600px;
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    background: #fff;
+    display: block;
+  }
+
+  /* ── RECEIPT PANEL ── */
+  .receipt-panel-title {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--gold);
+  }
+  .receipt-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    overflow: hidden;
+    margin-bottom: 0.8rem;
+  }
+  .receipt-card-header {
+    background: var(--navy);
+    padding: 0.55rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .receipt-badge {
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .receipt-date {
+    font-size: 0.66rem;
+    color: rgba(255,255,255,0.5);
+  }
+  .receipt-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    padding: 0.3rem 0;
+  }
+  @media(max-width:500px){ .receipt-grid { grid-template-columns: 1fr; } }
+  .receipt-field {
+    padding: 0.45rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .receipt-field:nth-last-child(-n+2) { border-bottom: none; }
+  .receipt-field-label {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--gray);
+    font-weight: 700;
+    margin-bottom: 0.15rem;
+  }
+  .receipt-field-val {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .receipt-green { color: var(--green) !important; }
+  .receipt-footer {
+    background: var(--blue-lt);
+    padding: 0.4rem 1rem;
+    font-size: 0.68rem;
+    color: var(--gray);
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── LINK BUTTONS ── */
+  .link-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+  .link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.5rem 1rem;
+    border-radius: 7px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .link-btn.primary {
+    background: var(--navy);
+    color: var(--gold);
+    border: 1.5px solid var(--gold);
+    box-shadow: 0 2px 8px rgba(26,42,74,0.15);
+  }
+  .link-btn.primary:hover {
+    background: var(--gold);
+    color: var(--navy);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 16px rgba(201,168,76,0.3);
+  }
+  .link-btn.secondary {
+    background: var(--blue-lt);
+    color: var(--mid);
+    border: 1.5px solid #b8cde8;
+  }
+  .link-btn.secondary:hover {
+    background: var(--mid);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(74,111,165,0.25);
+  }
+  .link-btn.green-btn {
+    background: var(--green-lt);
+    color: var(--green);
+    border: 1.5px solid #a8dfc3;
+  }
+  .link-btn.green-btn:hover {
+    background: var(--green);
+    color: white;
+    transform: translateY(-1px);
+  }
+  .link-btn-icon { font-size: 0.9rem; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .animate-in { animation: fadeSlideIn 0.35s ease forwards; }
+
+  @keyframes pulse-ring {
+    0%   { box-shadow: 0 0 0 0 rgba(201,168,76,0.4); }
+    70%  { box-shadow: 0 0 0 10px rgba(201,168,76,0); }
+    100% { box-shadow: 0 0 0 0 rgba(201,168,76,0); }
+  }
+  .active .step-num-badge { animation: pulse-ring 1.5s infinite; }
+
+  /* Responsive */
+  @media(max-width:640px){
+    .header-inner { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .header-actions { flex-direction: row; }
+    .call-progress-wrap { flex-wrap: wrap; }
+    .mandamus-card::before { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header-card">
+    <div class="header-inner">
+      <div class="header-text">
+        <div class="header-badge">TMLF · Herramienta de Videollamada</div>
+        <div class="header-title">Case Status Call Guide</div>
+        <div class="header-sub">Guía interactiva para agentes · Reducción de ansiedad · Claridad del proceso migratorio</div>
+      </div>
+      <div class="header-actions">
+        <button class="mode-btn agent active-mode" id="btnAgent" onclick="setMode('agent')">
+          🎧 Modo Agente
+        </button>
+        <button class="mode-btn client" id="btnClient" onclick="setMode('client')">
+          👤 Modo Cliente
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ INPUT PANEL ════ -->
+  <div class="input-panel agent-only animate-in">
+    <p class="section-title">Datos del Caso</p>
+    <div class="input-grid">
+      <div class="input-group">
+        <label>Nombre del Cliente</label>
+        <input type="text" id="clientName" placeholder="Ej: María González" />
+      </div>
+      <div class="input-group">
+        <label>Tipo de Caso</label>
+        <select id="caseType">
+          <option value="VAWA">VAWA</option>
+          <option value="Visa T">Visa T</option>
+          <option value="Visa U">Visa U</option>
+          <option value="Asylum">Asylum</option>
+          <option value="I-485">I-485 (Adjustment)</option>
+          <option value="I-130">I-130 (Family Petition)</option>
+          <option value="DACA">DACA Renewal</option>
+          <option value="Other">Other / Otro</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Fecha de Recibo (Receipt Date)</label>
+        <input type="date" id="receiptDate" />
+      </div>
+      <div class="input-group">
+        <label>Tiempo Promedio USCIS (meses)</label>
+        <input type="number" id="avgMonths" value="24" min="1" max="120" placeholder="24" />
+      </div>
+      <div class="input-group">
+        <label>Receipt Number</label>
+        <input type="text" id="receiptNumber" placeholder="Ej: WAC2112345678" />
+      </div>
+      <div class="input-group">
+        <label>Estado del Caso (Opcional)</label>
+        <select id="caseStatus">
+          <option value="">— Seleccionar —</option>
+          <option value="Case Received">Case Received</option>
+          <option value="RFE Sent">RFE Sent</option>
+          <option value="RFE Received">RFE Response Received</option>
+          <option value="Under Review">Under Review</option>
+          <option value="Interview Scheduled">Interview Scheduled</option>
+          <option value="Decision Made">Decision Made</option>
+          <option value="Approved">Approved</option>
+        </select>
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()" style="margin-top:0.5rem;">
+      📊 Calcular Avance del Caso
+    </button>
+  </div>
+
+  <!-- ════ CLIENT BIG DISPLAY ════ -->
+  <div class="client-big-display client-view animate-in" id="clientBigDisplay">
+    <div class="cbd-label">Tu caso ha avanzado</div>
+    <div class="cbd-value" id="cbdPct">—</div>
+    <div class="cbd-sub" id="cbdSub">Ingresa los datos del caso para ver el avance</div>
+    <div id="cbdStatus" class="cbd-status verde" style="display:none;"></div>
+  </div>
+
+
+
+
+
+  <!-- ════ CALL GUIDE STEPS ════ -->
+  <div class="agent-only">
+    <p class="section-title">Guía Paso a Paso · Videollamada</p>
+
+    <div class="call-progress-wrap">
+      <div class="call-progress-label">Progreso de la Llamada</div>
+      <div class="call-bar-outer">
+        <div class="call-bar-fill" id="callBar" style="width:0%"></div>
+      </div>
+      <div class="call-pct" id="callPct">0 / 3</div>
+    </div>
+
+    <div class="steps-list" id="stepsList">
+
+      <div class="step-item" id="step-1" onclick="toggleStep(1)">
+        <div class="step-num-badge">1</div>
+        <div class="step-content">
+          <div class="step-title">Mostrar Recibos (Receipts)</div>
+          <div class="step-desc">
+            Confirma el Receipt Notice del cliente — número de caso, nombre y fecha de recibo.
+            <div class="link-btns">
+              <a href="https://egov.uscis.gov/" target="_blank" class="link-btn primary" onclick="markDone(event,1)">
+                <span class="link-btn-icon">🔍</span> Buscar en eGov
+              </a>
+            </div>
+            <span class="step-tag">Pantalla Compartida</span><span class="step-tag">Receipt Notice</span>
+          </div>
+
+
+
+        </div>
+      </div>
+
+      <div class="step-item" id="step-2" onclick="toggleStep(2)">
+        <div class="step-num-badge">2</div>
+        <div class="step-content">
+          <div class="step-title">Mostrar Estado del Caso en eGov</div>
+          <div class="step-desc">
+            Abre el portal oficial de USCIS y muestra el estatus actual del caso en tiempo real.
+            <div class="link-btns">
+              <a href="https://egov.uscis.gov/" target="_blank" class="link-btn primary" onclick="markDone(event,2)">
+                <span class="link-btn-icon">🔗</span> Abrir eGov USCIS
+              </a>
+            </div>
+            <span class="step-tag">Portal Oficial</span><span class="step-tag">Status Live</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item" id="step-3" onclick="toggleStep(3)">
+        <div class="step-num-badge">3</div>
+        <div class="step-content">
+          <div class="step-title">Mostrar Tiempos de Procesamiento</div>
+          <div class="step-desc">
+            Accede al portal de tiempos oficiales. <strong>Explica que son promedios</strong> — algunos casos tardan menos, otros más. No son fechas garantizadas.
+            <div class="link-btns">
+              <a href="https://egov.uscis.gov/processing-times/" target="_blank" class="link-btn primary" onclick="markDone(event,3)">
+                <span class="link-btn-icon">⏱️</span> Ver Tiempos de Procesamiento
+              </a>
+            </div>
+            <span class="step-tag">⚠️ Son promedios</span><span class="step-tag">No garantizados</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Reset steps -->
+    <button onclick="resetSteps()" style="background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:0.45rem 1rem;font-size:0.75rem;color:var(--gray);cursor:pointer;font-family:'Source Sans 3',sans-serif;font-weight:600;">
+      ↺ Reiniciar Pasos
+    </button>
+  </div>
+
+
+
+  <!-- FOOTER -->
+  <div class="guide-footer">
+    <strong>TMLF · The Migrant Law Firm</strong> · Herramienta de uso interno · Case Status Call Guide<br>
+    Datos ingresados en esta herramienta no se almacenan ni se transmiten.
+  </div>
+
+</div>
+
+<script>
+  // ── STATE ──
+  let completedSteps = new Set();
+  let currentMode = 'agent';
+  let calcData = null;
+
+  // ── MODE TOGGLE ──
+  function setMode(mode) {
+    currentMode = mode;
+    const body = document.body;
+    const btnAgent = document.getElementById('btnAgent');
+    const btnClient = document.getElementById('btnClient');
+
+    if (mode === 'client') {
+      body.classList.add('client-mode');
+      btnAgent.classList.remove('active-mode');
+      btnClient.classList.add('active-mode');
+      btnClient.classList.add('agent');
+      btnClient.classList.remove('client');
+      document.getElementById('clientBigDisplay').style.display = 'block';
+      updateClientDisplay();
+    } else {
+      body.classList.remove('client-mode');
+      btnClient.classList.remove('active-mode');
+      btnAgent.classList.add('active-mode');
+      btnClient.classList.remove('agent');
+      btnClient.classList.add('client');
+      document.getElementById('clientBigDisplay').style.display = 'none';
+    }
+  }
+
+  // ── CALCULATE ──
+  function calculate() {
+    const name        = document.getElementById('clientName').value.trim();
+    const caseType    = document.getElementById('caseType').value;
+    const receiptDate = document.getElementById('receiptDate').value;
+    const avgMonths   = parseFloat(document.getElementById('avgMonths').value) || 24;
+
+    if (!receiptDate) {
+      alert('Por favor ingresa la fecha de recibo (Receipt Date).');
+      return;
+    }
+
+    const start = new Date(receiptDate);
+    const now   = new Date();
+    const diffMs = now - start;
+    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+    const elapsed  = diffDays / 30.437; // months
+
+    const pct = Math.min((elapsed / avgMonths) * 100, 105);
+    const diff = avgMonths - elapsed;
+
+    calcData = { elapsed, avgMonths, pct, diff, name, caseType };
+
+    // Hide placeholder text
+    const ph = document.getElementById('progressPlaceholder');
+    if (ph) ph.style.display = 'none';
+
+    // Scroll to progress panel
+    document.getElementById('progressPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('elapsedMonths').textContent = elapsed.toFixed(1) + ' m';
+    document.getElementById('avgMonthsDisplay').textContent = avgMonths + ' m';
+
+    // Color logic
+    let colorClass, verdictClass, verdictIcon, verdictTitle, verdictBody;
+    const chip3 = document.getElementById('chip3');
+
+    if (elapsed <= avgMonths * 0.8) {
+      // Green — within range
+      colorClass   = 'green';
+      verdictClass = 'verde';
+      verdictIcon  = '✅';
+      verdictTitle = 'Dentro del Rango Normal';
+      verdictBody  = `El caso de ${name || 'tu cliente'} lleva <strong>${elapsed.toFixed(1)} meses</strong> desde el recibo. El promedio para ${caseType} es <strong>${avgMonths} meses</strong>. Hay aproximadamente <strong>${Math.abs(diff).toFixed(1)} meses restantes</strong> dentro del rango esperado. El caso está avanzando normalmente.`;
+      document.getElementById('diffDisplay').textContent = Math.abs(diff).toFixed(1) + ' m';
+      chip3.className = 'stat-chip green-chip';
+      document.getElementById('diffNote').textContent = 'faltan para el promedio';
+    } else if (elapsed <= avgMonths * 1.1) {
+      // Yellow — approaching
+      colorClass   = 'yellow';
+      verdictClass = 'amarillo';
+      verdictIcon  = '⚠️';
+      verdictTitle = 'Acercándose al Límite';
+      verdictBody  = `El caso lleva <strong>${elapsed.toFixed(1)} meses</strong>, acercándose al promedio de <strong>${avgMonths} meses</strong> para ${caseType}. Es momento de revisar el estado del caso activamente y evaluar opciones adicionales si no hay movimiento pronto.`;
+      document.getElementById('diffDisplay').textContent = Math.abs(diff).toFixed(1) + ' m';
+      chip3.className = 'stat-chip yellow-chip';
+      document.getElementById('diffNote').textContent = diff > 0 ? 'faltan para el promedio' : 'sobre el promedio';
+    } else {
+      // Red — over time
+      colorClass   = 'red';
+      verdictClass = 'rojo';
+      verdictIcon  = '🔴';
+      verdictTitle = 'Fuera del Tiempo Promedio';
+      verdictBody  = `El caso lleva <strong>${elapsed.toFixed(1)} meses</strong>, superando el promedio de <strong>${avgMonths} meses</strong> para ${caseType} por <strong>${(elapsed - avgMonths).toFixed(1)} meses</strong>. Se recomienda evaluar opciones como el Writ of Mandamus. Comunica esto con claridad y empatía al cliente.`;
+      document.getElementById('diffDisplay').textContent = (elapsed - avgMonths).toFixed(1) + ' m';
+      chip3.className = 'stat-chip red-chip';
+      document.getElementById('diffNote').textContent = 'por encima del promedio';
+    }
+
+    // Timeline
+    const fill = document.getElementById('timelineFill');
+    const dot  = document.getElementById('timelineDot');
+    fill.className = `timeline-bar-fill ${colorClass}-bar`;
+    dot.className  = `timeline-dot ${colorClass}-dot`;
+    fill.style.width = Math.min(pct, 100) + '%';
+
+    // Avg marker
+    document.getElementById('avgMarker').style.left = '85%'; // fixed visual
+
+    // Milestones
+    document.getElementById('ms2').className = 'milestone-dot' + (elapsed > 0 ? ' done' : '');
+    document.getElementById('ms3').className = 'milestone-dot' + (pct >= 75 ? ' done' : '');
+    document.getElementById('ms4').className = 'milestone-dot' + (pct >= 100 ? ' done' : '');
+
+    // Verdict
+    const verdictBox = document.getElementById('verdictBox');
+    verdictBox.className = `status-verdict ${verdictClass} animate-in`;
+    document.getElementById('verdictIcon').textContent  = verdictIcon;
+    document.getElementById('verdictTitle').textContent = verdictTitle;
+    document.getElementById('verdictBody').innerHTML    = verdictBody;
+
+    // Show verdict, hide inline button
+    document.getElementById('verdictBox').style.display = 'flex';
+
+    // Client display
+    updateClientDisplay();
+  }
+
+  function updateClientDisplay() {
+    if (!calcData) return;
+    const { elapsed, avgMonths, pct, diff, name, caseType } = calcData;
+    document.getElementById('cbdPct').textContent = Math.round(Math.min(pct, 100)) + '%';
+    document.getElementById('cbdSub').textContent =
+      `${elapsed.toFixed(1)} meses transcurridos · Promedio ${caseType}: ${avgMonths} meses`;
+    const cbdStatus = document.getElementById('cbdStatus');
+    cbdStatus.style.display = 'inline-block';
+    if (elapsed <= avgMonths * 0.8) {
+      cbdStatus.className = 'cbd-status verde';
+      cbdStatus.textContent = '✅ Dentro del rango normal';
+    } else if (elapsed <= avgMonths * 1.1) {
+      cbdStatus.className = 'cbd-status amarillo';
+      cbdStatus.textContent = '⚠️ Acercándose al tiempo promedio';
+    } else {
+      cbdStatus.className = 'cbd-status rojo';
+      cbdStatus.textContent = '🔴 Por encima del tiempo promedio';
+    }
+  }
+
+  function togglePdfViewer(event, id) {
+    event.stopPropagation();
+    const viewer = document.getElementById(id);
+    if (!viewer) return;
+
+    const labelMap = {
+      'pdfViewer1':      'Ver Receipts (PDF)',
+      'approvalViewer1': 'I-360 Approval · Carmen G.B.',
+      'redcardViewer':   'Ver Red Card',
+      'rfeViewer':       'Ver Ejemplo de RFE'
+    };
+    const textIdMap = {
+      'pdfViewer1':      'pdfBtn1Text',
+      'approvalViewer1': 'approvalBtn1Text',
+      'redcardViewer':   'redcardBtnText',
+      'rfeViewer':       'rfeBtnText'
+    };
+
+    const btnText = document.getElementById(textIdMap[id]);
+    if (viewer.style.display === 'none') {
+      viewer.style.display = 'block';
+      viewer.style.animation = 'fadeSlideIn 0.3s ease forwards';
+      if (btnText) btnText.textContent = 'Ocultar PDF';
+    } else {
+      viewer.style.display = 'none';
+      if (btnText) btnText.textContent = labelMap[id] || 'Ver PDF';
+    }
+  }
+
+  function toggleMandamus(event) {
+    event.stopPropagation();
+    const panel = document.getElementById('mandamusExpand');
+    const btnText = document.getElementById('mandamusBtnText');
+    if (panel.style.display === 'none') {
+      panel.style.display = 'block';
+      panel.style.animation = 'fadeSlideIn 0.3s ease forwards';
+      btnText.textContent = 'Ocultar Mandamus';
+    } else {
+      panel.style.display = 'none';
+      btnText.textContent = 'Ver Explicación Mandamus';
+    }
+  }
+
+  function toggleReceipt(event) {
+    event.stopPropagation();
+  }
+
+  // ── STEPS ──
+  function toggleStep(num) {
+    const item = document.getElementById(`step-${num}`);
+    if (completedSteps.has(num)) return;
+    // Set active
+    document.querySelectorAll('.step-item').forEach(el => el.classList.remove('active'));
+    item.classList.add('active');
+  }
+
+  function markDone(event, num) {
+    // Don't stop propagation — link opens normally in new tab
+    completedSteps.add(num);
+    const item = document.getElementById(`step-${num}`);
+    item.classList.remove('active');
+    item.classList.add('done');
+    updateCallProgress();
+    // Auto-activate next step
+    const next = document.getElementById(`step-${num + 1}`);
+    if (next && !completedSteps.has(num + 1)) {
+      setTimeout(() => {
+        next.classList.add('active');
+        next.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 300);
+    }
+  }
+
+  function updateCallProgress() {
+    const total = 3;
+    const done  = completedSteps.size;
+    const pct   = (done / total) * 100;
+    document.getElementById('callBar').style.width = pct + '%';
+    document.getElementById('callPct').textContent = `${done} / ${total}`;
+  }
+
+  function resetSteps() {
+    completedSteps.clear();
+    for (let i = 1; i <= 3; i++) {
+      const item = document.getElementById(`step-${i}`);
+      if (item) item.classList.remove('done', 'active');
+    }
+    updateCallProgress();
+    document.getElementById('step-1').classList.add('active');
+    // Restore calc button
+    document.getElementById('verdictBox').style.display = 'none';
+  }
+
+  // ── INIT ──
+  window.addEventListener('DOMContentLoaded', () => {
+    // Set today as default receipt date minus 18 months for demo feel
+    const today = new Date();
+    const defaultDate = new Date(today);
+    defaultDate.setMonth(defaultDate.getMonth() - 18);
+    document.getElementById('receiptDate').value = defaultDate.toISOString().split('T')[0];
+
+    // Activate first step
+    document.getElementById('step-1').classList.add('active');
+  });
+</script>
+</body>
+</html>
