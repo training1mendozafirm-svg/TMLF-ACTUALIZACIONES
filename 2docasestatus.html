@@ -296,6 +296,30 @@
     color: white;
     font-weight: 700;
   }
+  .caso-aqui-label {
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--navy);
+    color: var(--gold);
+    font-size: 0.62rem;
+    font-weight: 700;
+    white-space: nowrap;
+    padding: 3px 8px;
+    border-radius: 5px;
+    letter-spacing: 0.05em;
+    box-shadow: 0 2px 6px rgba(26,42,74,0.2);
+    pointer-events: none;
+  }
+  .caso-aqui-label::after {
+    content: '';
+    position: absolute;
+    top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: var(--navy);
+  }
   .timeline-dot.green-dot  { background: var(--green); }
   .timeline-dot.yellow-dot { background: var(--yellow); }
   .timeline-dot.red-dot    { background: var(--red); }
@@ -935,6 +959,80 @@
       📊 Calcular Avance del Caso
     </button>
   </div>
+
+  <!-- ════ PROGRESS PANEL ════ -->
+    <div class="progress-panel animate-in" id="progressPanel" style="margin-top:1.5rem;">
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.8rem;">
+        <p class="section-title" style="margin-bottom:0;">Línea de Tiempo del Caso</p>
+        <span id="progressPlaceholder" style="font-size:0.74rem;color:var(--gray);font-style:italic;">Presiona "Calcular" en Datos del Caso para ver el avance</span>
+      </div>
+
+      <!-- Stats -->
+      <div class="progress-stats" id="statsRow">
+        <div class="stat-chip" id="chip1">
+          <div class="stat-label">Meses Transcurridos</div>
+          <div class="stat-val" id="elapsedMonths">—</div>
+          <div class="stat-note">desde la fecha de recibo</div>
+        </div>
+        <div class="stat-chip" id="chip2">
+          <div class="stat-label">Promedio USCIS</div>
+          <div class="stat-val" id="avgMonthsDisplay">—</div>
+          <div class="stat-note">tiempo promedio del proceso</div>
+        </div>
+        <div class="stat-chip" id="chip3">
+          <div class="stat-label">Diferencia</div>
+          <div class="stat-val" id="diffDisplay">—</div>
+          <div class="stat-note" id="diffNote">—</div>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="timeline-wrap">
+        <div class="timeline-label-row">
+          <span>📋 Receipt Recibido</span>
+          <span id="tlCenter">⚙️ Proceso en USCIS</span>
+          <span>🏆 Resolución</span>
+        </div>
+        <div class="timeline-bar-outer">
+          <div class="timeline-bar-fill green-bar" id="timelineFill" style="width:0%;">
+            <div class="timeline-dot green-dot" id="timelineDot">
+              <span class="caso-aqui-label" id="casoAquiLabel">📍 Su caso está aquí</span>
+            </div>
+          </div>
+          <div class="timeline-avg-marker" id="avgMarker" style="left:85%;"></div>
+        </div>
+        <div class="timeline-milestones">
+          <div class="milestone">
+            <div class="milestone-dot done" id="ms1"></div>
+            <div class="milestone-label">Recibo</div>
+          </div>
+          <div class="milestone">
+            <div class="milestone-dot" id="ms2"></div>
+            <div class="milestone-label">Revisión USCIS</div>
+          </div>
+          <div class="milestone">
+            <div class="milestone-dot" id="ms3"></div>
+            <div class="milestone-label">Decisión</div>
+          </div>
+          <div class="milestone">
+            <div class="milestone-dot" id="ms4"></div>
+            <div class="milestone-label">Resolución</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verdict -->
+      <div id="verdictBox" class="status-verdict verde animate-in" style="display:none;margin-bottom:0;">
+        <div class="verdict-icon" id="verdictIcon">📋</div>
+        <div>
+          <div class="verdict-title" id="verdictTitle">Estado del Caso</div>
+          <div class="verdict-body" id="verdictBody">Calcula el avance para ver el estado del caso aquí.</div>
+        </div>
+      </div>
+
+    </div>
+
 
   <!-- ════ CLIENT BIG DISPLAY ════ -->
   <div class="client-big-display client-view animate-in" id="clientBigDisplay">
