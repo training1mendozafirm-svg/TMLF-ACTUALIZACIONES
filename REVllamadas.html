@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revisión de Llamadas</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F2EC;
+    --surface: #FFFFFF;
+    --text: #1A1916;
+    --text-muted: #6B6860;
+    --border: #E0DCCE;
+    --teal: #0F7A65;
+    --teal-light: #E0F2EC;
+    --teal-mid: #5DCAA5;
+    --purple: #4A3B9C;
+    --purple-light: #EDEAFE;
+    --client-bg: #E6F4EF;
+    --client-text: #0A5040;
+    --agent-bg: #EDEAFE;
+    --agent-text: #3A2D85;
+    --hi-red: #FDECEA;
+    --hi-red-border: #E57373;
+    --hi-red-text: #8B1A1A;
+    --hi-amber: #FEF6E4;
+    --hi-amber-border: #F0A500;
+    --hi-amber-text: #7A4F00;
+    --hi-blue: #E8F2FD;
+    --hi-blue-border: #4A90D9;
+    --hi-blue-text: #1A3F6F;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* HEADER */
+  .header { background: var(--text); color: #F5F2EC; padding: 28px 40px 24px; }
+  .header-eyebrow { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal-mid); font-weight: 500; margin-bottom: 6px; }
+  .header h1 { font-family: 'DM Serif Display', serif; font-size: 28px; font-weight: 400; line-height: 1.2; }
+  .header-sub { font-size: 13px; color: #A09D95; margin-top: 4px; }
+
+  /* TABS */
+  .tab-bar { background: var(--surface); border-bottom: 1.5px solid var(--border); display: flex; padding: 0 40px; }
+  .tab-btn { padding: 16px 28px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--text-muted); border: none; background: none; cursor: pointer; border-bottom: 2.5px solid transparent; margin-bottom: -1.5px; transition: color 0.2s, border-color 0.2s; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--teal); border-bottom-color: var(--teal); }
+
+  /* MAIN */
+  .container { max-width: 880px; margin: 0 auto; padding: 36px 24px 60px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* MODE SWITCHER */
+  .mode-switcher { display: flex; gap: 0; margin-bottom: 24px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; padding: 5px; width: fit-content; }
+  .mode-btn { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 8px 22px; border: none; border-radius: 7px; cursor: pointer; transition: all 0.2s; background: none; color: var(--text-muted); }
+  .mode-btn.active { background: var(--text); color: #fff; }
+  .mode-btn:not(.active):hover { background: var(--bg); color: var(--text); }
+
+  /* LEGEND */
+  .legend { display: none; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+  .legend.show { display: flex; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; padding: 5px 14px; border-radius: 999px; border: 1.5px solid; }
+  .legend-item.red { background: var(--hi-red); border-color: var(--hi-red-border); color: var(--hi-red-text); }
+  .legend-item.amber { background: var(--hi-amber); border-color: var(--hi-amber-border); color: var(--hi-amber-text); }
+  .legend-item.blue { background: var(--hi-blue); border-color: var(--hi-blue-border); color: var(--hi-blue-text); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .legend-item.red .legend-dot { background: var(--hi-red-border); }
+  .legend-item.amber .legend-dot { background: var(--hi-amber-border); }
+  .legend-item.blue .legend-dot { background: var(--hi-blue-border); }
+
+  /* CONVERSATION */
+  .conv-wrapper { background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 28px; }
+  .conv-header { padding: 12px 20px; background: var(--bg); border-bottom: 1.5px solid var(--border); display: flex; gap: 24px; font-size: 12px; font-weight: 500; color: var(--text-muted); }
+  .conv-header span { display: flex; align-items: center; gap: 6px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+  .dot-c { background: var(--teal-mid); }
+  .dot-a { background: #8B7FD4; }
+  .conv-body { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+
+  /* MESSAGES */
+  .msg { display: flex; gap: 10px; align-items: flex-start; }
+  .msg-who { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; min-width: 52px; padding-top: 5px; flex-shrink: 0; }
+  .msg.client .msg-who { color: var(--teal); }
+  .msg.agent .msg-who { color: var(--purple); }
+  .msg-text { font-size: 14px; line-height: 1.7; padding: 10px 14px; border-radius: 10px; max-width: 84%; transition: all 0.2s ease; }
+  .msg.client .msg-text { background: var(--client-bg); color: var(--client-text); }
+  .msg.agent .msg-text { background: var(--agent-bg); color: var(--agent-text); }
+
+  /* HIGHLIGHTED */
+  .msg-text.hi-red { background: var(--hi-red) !important; color: var(--hi-red-text) !important; border: 1.5px solid var(--hi-red-border); cursor: pointer; }
+  .msg-text.hi-amber { background: var(--hi-amber) !important; color: var(--hi-amber-text) !important; border: 1.5px solid var(--hi-amber-border); cursor: pointer; }
+  .msg-text.hi-blue { background: var(--hi-blue) !important; color: var(--hi-blue-text) !important; border: 1.5px solid var(--hi-blue-border); cursor: pointer; }
+  .msg-text[class*="hi-"]::after { content: "▾ ver análisis"; display: block; margin-top: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; opacity: 0.65; }
+  .msg-text.hi-red::after { color: var(--hi-red-text); }
+  .msg-text.hi-amber::after { color: var(--hi-amber-text); }
+  .msg-text.hi-blue::after { color: var(--hi-blue-text); }
+
+  /* POPUP */
+  .analysis-popup { display: none; margin: 2px 0 6px 62px; border-radius: 10px; padding: 14px 16px; font-size: 13.5px; line-height: 1.6; animation: slideIn 0.2s ease; }
+  .analysis-popup.open { display: block; }
+  @keyframes slideIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+  .analysis-popup.red { background: var(--hi-red); border: 1.5px solid var(--hi-red-border); color: var(--hi-red-text); }
+  .analysis-popup.amber { background: var(--hi-amber); border: 1.5px solid var(--hi-amber-border); color: var(--hi-amber-text); }
+  .analysis-popup.blue { background: var(--hi-blue); border: 1.5px solid var(--hi-blue-border); color: var(--hi-blue-text); }
+  .popup-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .popup-body { font-size: 13.5px; line-height: 1.6; }
+
+  /* INSIGHT */
+  .insight-box { background: var(--text); color: #F5F2EC; border-radius: 12px; padding: 20px 24px; margin-top: 8px; }
+  .insight-box h4 { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--teal-mid); font-weight: 600; margin-bottom: 10px; }
+  .insight-box p { font-size: 14px; line-height: 1.7; color: #D8D4CC; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-eyebrow">Herramienta de capacitación</div>
+  <h1>Revisión de Llamadas<br>de Atención al Cliente</h1>
+  <div class="header-sub">3 llamadas · Empatía · Claridad · Comunicación</div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showTab(0)">Llamada 1</button>
+  <button class="tab-btn" onclick="showTab(1)">Llamada 2</button>
+  <button class="tab-btn" onclick="showTab(2)">Llamada 3</button>
+</div>
+
+<div class="container">
+
+<!-- ══════════════════════ LLAMADA 1 ══════════════════════ -->
+<div id="tab-0" class="panel active">
+  <div class="mode-switcher">
+    <button class="mode-btn active" onclick="setMode(0,'read')">Leer llamada</button>
+    <button class="mode-btn" onclick="setMode(0,'analyze')">Ver áreas de oportunidad</button>
+  </div>
+  <div id="legend-0" class="legend">
+    <div class="legend-item red"><span class="legend-dot"></span> Empatía</div>
+    <div class="legend-item amber"><span class="legend-dot"></span> Claridad</div>
+    <div class="legend-item blue"><span class="legend-dot"></span> Comunicación automática</div>
+  </div>
+
+  <div class="conv-wrapper">
+    <div class="conv-header">
+      <span><span class="dot dot-c"></span>Cliente</span>
+      <span><span class="dot dot-a"></span>Agente</span>
+    </div>
+    <div class="conv-body">
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text" id="c1-a1">Perfecto, en ese caso dígame, ¿en qué puedo apoyarle el día de hoy?</div>
+      </div>
+      <div class="analysis-popup" id="pop-c1-a1"></div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Este, estimado, nada más quería saber, y me imagino que se están tardando, pero no quiero asumir, quiero más bien preguntar. No he recibido el que le llaman el recibo. Ya se mandó mi caso a migración desde febrero, ya lo aceptaron. Quería saber si en algún momento podría, vaya, o si lo tienen, una copia para yo tener conmigo.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text" id="c1-a2">Ok, entonces comenta directamente que el motivo de la llamada es debido a que quiere saber si a estas alturas nosotros ya contamos con lo que vendría siendo un recibo inicial de la aplicación, ¿correcto? Para que usted tenga una copia. Ok, en ese caso, ¿me podría regalar solamente unos tres minutitos para verificar esta información, determinar si tenemos algún recibo para que podamos ver la posibilidad de proporcionárselo? Ya que me aparece en el sistema que en sí el formulario cuenta con varios recibos iniciales, pero ahorita estamos dando un poquito de tiempo a migración porque hemos visto que han tardado un poquito más en proporcionar esos documentos por varias circunstancias. Pero veo que, de hecho, hace poquito recibimos un recibo inicial, hace un par de días aproximadamente, que constituye al formulario I-485, que pues básicamente es el formulario de la residencia. Entonces, que de hecho veo también se le notificó a usted que tiene un par de citas de biométricos próximas, ¿correcto?</div>
+      </div>
+      <div class="analysis-popup" id="pop-c1-a2"></div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Sí, y de hecho ya fui hoy en la mañana, ya me presenté, ya me tomaron las huellas.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text" id="c1-a3">Ok, perfecto. En ese caso, punto uno, estaré solicitando que se le pueda proporcionar lo que vendría siendo dicho recibo inicial de la aplicación a su correo electrónico para que lo pueda tener a la mano, ya que a la fecha de hoy es el único que hemos recibido. Pero esto ya después... y básicamente también el tener ya las citas de biométricos es prueba de que el proceso está en migración. Entonces, en lo que respecta a los recibos iniciales, a la fecha solamente tenemos uno, el cual pediré que le proporcionen a su correo electrónico.</div>
+      </div>
+      <div class="analysis-popup" id="pop-c1-a3"></div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Correcto. ¿Y qué es lo que puedo esperar? ¿No sé, tres días, una semana para recibirlo en mi correo? Yo sé que no soy la única, yo entiendo, pero para darme una idea, vaya, <strong>vivo con ansias.</strong></div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text" id="c1-a4">Sí, no se preocupe. Como tal, debería de tomar lo que viene siendo al menos el día de hoy o el día de mañana, ya que pues estamos intentando ponernos al corriente justamente con estos recibos para que no exista ningún tipo de detalle. Pero entre hoy y mañana debería de estarle llegando.</div>
+      </div>
+      <div class="analysis-popup" id="pop-c1-a4"></div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Perfecto, muy bien. Entonces yo espero. Yo espero y ya con la respuesta, pues ya me calmo, vaya.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text" id="c1-a5">Ok, claro que sí, ya estoy haciendo la notificación para que se lo puedan proporcionar. Y de hecho, también recuperando lo que mencionó, comenta que ya fue a su cita de biométricos, ¿correcto?</div>
+      </div>
+      <div class="analysis-popup" id="pop-c1-a5"></div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Así es, sí, fui esta mañana.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text">Perfecto. En ese caso, justamente, ¿le sellaron lo que viene siendo el documento?</div>
+      </div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Sí.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text">Ok, perfecto. En ese caso, le enviaré un mensajito de texto que dice "Buenas tardes" para que, cuando usted tenga tiempo, nos pueda proporcionar una fotografía justamente del documento sellado para que nosotros lo podamos tener en el sistema.</div>
+      </div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">De hecho, lo tengo aquí en mi escritorio, estoy aquí en mi casa, puedo mandárselo. ¿Por texto es lo que me quiere decir? ¿Se lo puedo mandar por texto?</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text">Sí, ahorita le envío un mensajito de texto que dice "Buenas tardes". ¿Sí lo recibió?</div>
+      </div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Sí, sí, lo miro aquí. Ya aquí mismo le mando los recibos, o sea, el documento que tiene el sello de la oficina.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text">Ok.</div>
+      </div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Están allá muy bien guardados debajo de mi bolsa, que no quieren salir.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text" id="c1-a6">No se preocupe.</div>
+      </div>
+      <div class="analysis-popup" id="pop-c1-a6"></div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Y mire, como fueron tres documentos, este, le voy a mandar lo mejor que me puedan salir. Ok, muy bien. Ahí mismo le voy a responder. Son tres diferentes. Hágame saber, por favor, si los recibió.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text">Sí, regáleme un momento en lo que carga en el sistema. Regáleme un momento. Ok, perfecto. Le confirmo de recibido. Muy bien, perfecto. En ese caso ya solamente queda pendiente que le llegue su respectivo recibo inicial a su correo electrónico. ¿Es correcto?</div>
+      </div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Eso es correcto, sí.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text">Perfecto. En ese caso, no sé si hay algo más en lo que pueda apoyarle en este momento, de casualidad.</div>
+      </div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">No, eso es todo y ha sido muy amable, gracias.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text" id="c1-a7">Perfecto, entonces por mi parte de igual forma sería todo, no sin antes comentarle que estará recibiendo un par de mensajitos. Uno de ellos es una encuesta para que nos dé su opinión acerca del servicio que se le ha estado dando, y el segundo para que nos pueda apoyar a confirmar que la información que se le haya proporcionado el día de hoy ha sido más que suficiente, y pues nos apoyaría con un "acepto". Y pues por mi parte de igual forma sería todo. Gracias por comunicarse y que tenga un buen día.</div>
+      </div>
+      <div class="analysis-popup" id="pop-c1-a7"></div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Muy amable, gracias. Buen día.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text">Buen día, hasta luego.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <h4>Aprendizaje clave</h4>
+    <p>Esta llamada resuelve el problema operativo de manera eficiente, pero deja la emoción de la clienta sin atender. La clienta expresa con claridad que "vive con ansias" y el agente responde con "no se preocupe" sin validar lo que ella siente. En procesos de migración, donde la incertidumbre es alta, reconocer la emoción antes de dar la solución marca una diferencia importante en la percepción del servicio.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════ LLAMADA 2 ══════════════════════ -->
+<div id="tab-1" class="panel">
+  <div class="mode-switcher">
+    <button class="mode-btn active" onclick="setMode(1,'read')">Leer llamada</button>
+    <button class="mode-btn" onclick="setMode(1,'analyze')">Ver áreas de oportunidad</button>
+  </div>
+  <div id="legend-1" class="legend">
+    <div class="legend-item red"><span class="legend-dot"></span> Empatía</div>
+    <div class="legend-item amber"><span class="legend-dot"></span> Claridad</div>
+    <div class="legend-item blue"><span class="legend-dot"></span> Comunicación automática</div>
+  </div>
+
+  <div class="conv-wrapper">
+    <div class="conv-header">
+      <span><span class="dot dot-c"></span>Cliente</span>
+      <span><span class="dot dot-a"></span>Agente</span>
+    </div>
+    <div class="conv-body">
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Buenas tardes. Tengo un caso con ustedes, pues ya terminé de pagar todo, pero estoy esperando. Dijeron que me iban a mandar los papeles para los trámites de migración, el permiso y todo eso, pero no me ha llegado nada. ¿Qué tanto tiempo podría esperar más?</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text" id="c2-a1">Ok, le agradezco bastante lo que es el tiempo que me ha regalado el día de hoy. Mire, visualizando lo que es la información, recordemos que como usted ya mencionaba, ya cuenta con lo que son sus recibos iniciales a partir de la fecha que usted tiene, que esto lo recibió justamente el 1 de agosto de 2024. Se tiene lo que es como tal una espera prolongada, así lo estima lo que es Inmigración, de 24 a 28 meses para tener lo que es algún tipo de notificación o actualización como tal. El tiempo como tal que se está trasladando referente es por parte de Inmigración; en estos momentos le recuerdo que hemos tenido lo que son afectaciones directamente a lo que son los tiempos de procesamiento. Anteriormente recordemos que le habíamos mencionado un estipulado de cuándo se iba a obtener lo que era una respuesta y había variado: era de 8 a 14 meses para tener lo que es algún tipo de notificación, después aumentó la cifra de 16 a 18 meses y desafortunadamente ahorita se ha prolongado a más tiempo. Esperemos como tal ya no tenerlo. Y justamente por eso, la abogada ha tenido lo que es algún tipo de seguimiento referente y está armando lo que es una estrategia por los tiempos que está haciendo, ya que como usted sabrá es injusto tener lo que es este tipo de espera si ya se estipulaba un tiempo estimado para obtener una respuesta. En este caso, no sé si había escuchado de la propuesta de la estrategia de la abogada, donde planea tener lo que es una estrategia ante Inmigración para que se obtenga lo que es algún tipo de respuesta. En este caso pues apenas se está armando lo que es la información. Esperemos florezca esta estrategia para que futuramente usted tenga lo que es algún tipo de respuesta.</div>
+      </div>
+      <div class="analysis-popup" id="pop-c2-a1"></div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Entonces, ¿cuánto tiempo más tengo que esperar?</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text" id="c2-a2">En este caso le digo, déjeme calcular cuánto tiempo exactamente tiene. Actualmente usted cumple con lo que son los 20 meses de espera. El tiempo que se dice es de 24 a 28 meses. Esperemos pues que ya en este mes que está iniciando obtenga lo que es una respuesta, y si es así, pues créame que rápidamente nosotros le estaríamos dando lo que es la notificación.</div>
+      </div>
+      <div class="analysis-popup" id="pop-c2-a2"></div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Sí, lo que pasa que ya ves cómo está la situación aquí, entonces, ay no, ok, pues ya esperar a ver qué Dios dice.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text" id="c2-a3">Claro que sí, pues le agradezco bastante por haberse comunicado.</div>
+      </div>
+      <div class="analysis-popup" id="pop-c2-a3"></div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Por favor, cualquier cosa comuníqueme la porque pues <strong>estoy desesperada</strong>, ya ves cómo anda la situación aquí.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text" id="c2-a4">Claro que sí, créame que en cuanto tengamos lo que es alguna actualización, nosotros le estaremos dando lo que es la información.</div>
+      </div>
+      <div class="analysis-popup" id="pop-c2-a4"></div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Ok, muchas gracias, hasta luego.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <h4>Aprendizaje clave</h4>
+    <p>Esta es la llamada con mayor carga emocional no atendida. La clienta dice "estoy desesperada" de forma directa y el cierre del agente se limita a un agradecimiento genérico. El cierre de una llamada difícil es tan importante como la información que se da: reconocer la situación con una sola frase genuina habría cambiado cómo la clienta se fue de la llamada.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════ LLAMADA 3 ══════════════════════ -->
+<div id="tab-2" class="panel">
+  <div class="mode-switcher">
+    <button class="mode-btn active" onclick="setMode(2,'read')">Leer llamada</button>
+    <button class="mode-btn" onclick="setMode(2,'analyze')">Ver áreas de oportunidad</button>
+  </div>
+  <div id="legend-2" class="legend">
+    <div class="legend-item red"><span class="legend-dot"></span> Empatía</div>
+    <div class="legend-item amber"><span class="legend-dot"></span> Claridad</div>
+    <div class="legend-item blue"><span class="legend-dot"></span> Comunicación automática</div>
+  </div>
+
+  <div class="conv-wrapper">
+    <div class="conv-header">
+      <span><span class="dot dot-c"></span>Cliente</span>
+      <span><span class="dot dot-a"></span>Agente</span>
+    </div>
+    <div class="conv-body">
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Lo que pasa es que estaba, estoy llamando porque quería saber cómo va, cómo es que va mi caso.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text" id="c3-a1">De acuerdo. Mire, primeramente, para yo poderle apoyar y poderle brindar información, es importante que me proporcione su nombre correcto y completo, su número de cliente y el número telefónico que tenemos registrado en el sistema, por favor.</div>
+      </div>
+      <div class="analysis-popup" id="pop-c3-a1"></div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Mi nombre completo es… y el número es 60-31-73.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text">Ok, ¿tiene a la mano su número telefónico?</div>
+      </div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Es 847-809-0090.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text">De acuerdo, muchas gracias. Entonces me comenta que el motivo de su llamada es porque quiere saber cómo va su caso, ¿es correcto?</div>
+      </div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Sí.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text" id="c3-a2">De acuerdo. Mire, ¿me puede regalar tres minutitos en la línea? Verifico esta información y regreso con usted para darle una respuesta, ¿de acuerdo? No me vaya a colgar, por favor… ¿sigue usted conmigo en la línea? Sigo verificando esta información… por favor regáleme dos minutos más… listo, ¿sigue usted conmigo? Le agradezco mucho su tiempo de espera. Mire, le voy a explicar, su caso todavía no está enviado a migración. Para que un caso sea enviado a migración debe de pasar por tres revisiones importantes. La primera revisión se hace con usted, la segunda revisión de caso es por parte de los abogados que trabajan aquí en la firma, y la última revisión es por parte de la abogada María Mendoza. Pues ningún caso se envía a migración si la abogada María Mendoza no lo revisa y no lo aprueba, ok. Con usted tengo entendido, perdón, que ya se llevó a cabo esta revisión de caso, ¿es correcto? Ok, bueno, ahorita justamente su caso, señora ___, está en esta parte en que lo están revisando los abogados. De acuerdo, entonces todavía falta la revisión por parte de la abogada María Mendoza y posteriormente el caso es enviado a Migración. Una vez que el caso ya esté listo para ser enviado a Migración, señora ___, se le notifica a usted, se le comparte por mensaje de texto un número de seguimiento de que el caso ya fue enviado a Migración. Entonces, básicamente pues estamos en esta etapa de las revisiones. Como le comento, una vez que el caso ya esté listo, esté revisado y aprobado por parte de la abogada María Mendoza, pues será enviado a Migración y a usted se le estará notificando, ¿de acuerdo?</div>
+      </div>
+      <div class="analysis-popup" id="pop-c3-a2"></div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text"><strong>Pero o sea, mi pregunta es cuánto tiempo más falta, porque ya tienen mucho diciéndome desde el otro año que está con manos de los otros abogados y de los abogados, pero no sé, todavía les falta mucho. ¿Cuánto tiempo más falta?</strong></div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text" id="c3-a3">Ok, mire, tenemos un tiempo aproximado que por cada revisión, señora Olga, son de 6 a 12 semanas aproximadamente por cada una de estas revisiones. Entonces, por favor regáleme dos minutos en lo que verifico esta información de la revisión por parte de los abogados y regreso con usted, ¿vale?</div>
+      </div>
+      <div class="analysis-popup" id="pop-c3-a3"></div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Sí, porque ya siempre desde el otro año me traen así, que están en manos de los abogados, de los abogados, pero no sé cuánto tiempo más, cuánto les falta más para que terminen de revisar. Y pues yo quiero saber, porque ahorita ya van, ya ahorita ya van tres, ya prácticamente son cuatro meses de este año, y así me tienen desde el otro año.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text" id="c3-a4">Claro, señora ___, no se preocupe. Entonces, por favor, regáleme tres minutitos más y regreso con usted, ¿de acuerdo?</div>
+      </div>
+      <div class="analysis-popup" id="pop-c3-a4"></div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Muchas gracias.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text">Listo, señora ___, ¿sigue usted conmigo en la línea? Ok, mire, ya estoy reportando esta situación, señora Olga, y van a escalar esta situación para que se haga más ágil.</div>
+      </div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Me dijeron desde hace unas ocho semanas, de seis a ocho semanas, que ya íbamos a saber una cosa y otra. Pero desde el otro año, como en... ¿qué sería? No sé en qué mes fue cuando les estuve también llamando y me dicen: "No, ya en este tiempo". Pero ahora digo, ok, de este año ya empezó y ya van casi cuatro meses y yo no sé nada. Y me traen así que los abogados, con los abogados revisando mi caso, y yo sé, digo yo, pues no veo que avance así.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text" id="c3-a5">Claro, señora, entiendo esta parte que puede ser frustrante para usted, pero mire, le voy a explicar algo. Derivado de esta nueva administración, señora Olga, justamente han estado pasando dos cosas: una es que Migración se ha puesto muchísimo más exigente con las solicitudes, y otra justamente es que los tiempos se han alargado un poquito más. Entonces, el objetivo de estas revisiones es justamente verificar y asegurarnos de que toda la información y todo lo que Migración solicita esté correcto y completo, justamente para evitar una respuesta negativa por parte de ellos. De acuerdo, entonces, si bien es cierto, estas revisiones son un poquito tardadas, pero es por esto, porque justamente son revisiones minuciosas en donde el objetivo es que todo esté bien, que esté correcto y completo para poder evitar una respuesta negativa por parte de Migración. Pero como le comento, ya estoy reportando la situación, señora Olga, para que se escale y se pueda agilizar esta parte, ¿de acuerdo?</div>
+      </div>
+      <div class="analysis-popup" id="pop-c3-a5"></div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Sí, por favor, porque me contestan diferentes personas cuando yo llamo y me dicen lo mismo: "Voy a hacer esto, voy a hacer aquello". Pero ya te digo, o sea, ya dejé pasar otros cuatro meses y yo no veo que como que me llamen o me digan: "¿Sabe qué? Ya avanzó un poco esto o aquello". O sea, nada. Y digo yo, pues les voy a llamar porque, o sea, digo, ¿qué está pasando? Yo necesito saber cómo va mi caso.</div>
+      </div>
+
+      <div class="msg agent">
+        <span class="msg-who">Agente</span>
+        <div class="msg-text" id="c3-a6">Claro, señora ___, y usted está en todo su derecho. Entonces, mire, ya reporté la situación para que se pueda escalar y se pueda agilizar esta parte, ¿de acuerdo?</div>
+      </div>
+      <div class="analysis-popup" id="pop-c3-a6"></div>
+
+      <div class="msg client">
+        <span class="msg-who">Cliente</span>
+        <div class="msg-text">Ok, pues muchas gracias.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <h4>Aprendizaje clave</h4>
+    <p>La clienta pregunta cuánto tiempo falta con evidencia concreta: lleva más de un año escuchando la misma respuesta. El agente da un rango (6 a 12 semanas) sin contextualizarlo ni reconocer que ese mismo rango ya fue prometido antes. Cuando el cliente tiene historial de promesas no cumplidas, repetir el mismo dato sin reconocer lo que vivió no genera confianza, la erosiona.</p>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+const highlights = {
+  // ── LLAMADA 1 ──
+  'c1-a1': { type: 'blue', tag: 'Comunicación automática', text: '"Perfecto" es la primera palabra de la llamada. A lo largo de toda la conversación se repite más de ocho veces. Cuando una palabra de afirmación se usa tan seguido pierde su impacto y suena a respuesta de guion, no a escucha genuina.' },
+  'c1-a2': { type: 'blue', tag: 'Comunicación automática', text: '"Comenta directamente que el motivo de la llamada es…" es una paráfrasis en tercera persona que alarga el intercambio. El agente puede confirmar el motivo de forma más directa y natural sin reformularlo como si estuviera leyendo un resumen.' },
+  'c1-a3': { type: 'blue', tag: 'Comunicación automática', text: '"Estaré solicitando que se le pueda proporcionar lo que vendría siendo dicho recibo inicial de la aplicación" es una forma muy indirecta de decir "le enviaré el recibo a su correo". El lenguaje burocrático genera distancia cuando el cliente lo que necesita es claridad y cercanía.' },
+  'c1-a4': { type: 'red',  tag: 'Empatía — respuesta automática ante emoción', text: 'La clienta acaba de decir "vivo con ansias". El agente responde "no se preocupe" de inmediato y pasa a la información operativa. Decir "no se preocupe" sin reconocer primero la emoción puede sentirse como una invalidación. Una frase como "entiendo perfectamente, tiene todo el sentido sentirse así en un proceso como este" habría abierto espacio antes de dar la respuesta.' },
+  'c1-a5': { type: 'blue', tag: 'Comunicación automática', text: '"Recuperando lo que mencionó, comenta que ya fue a su cita de biométricos, ¿correcto?" Es una forma redundante de retomar un dato que la clienta ya confirmó. Basta con ir directo: "Y ya que fue a biométricos esta mañana, ¿le sellaron el documento?"' },
+  'c1-a6': { type: 'red',  tag: 'Empatía — respuesta automática ante emoción', text: 'La clienta hace un comentario ligero y humano ("están muy bien guardados debajo de mi bolsa, que no quieren salir") y el agente responde "no se preocupe". Es la misma frase automática de antes. Un comentario espontáneo de la clienta era una oportunidad para conectar con ella con algo más genuino, incluso una pequeña respuesta cálida.' },
+  'c1-a7': { type: 'blue', tag: 'Comunicación automática', text: '"No sin antes comentarle…" es una muletilla de cierre que alarga el mensaje. La información sobre la encuesta y el mensaje de confirmación es válida, pero puede comunicarse de forma más directa y menos formulaica.' },
+
+  // ── LLAMADA 2 ──
+  'c2-a1': { type: 'amber', tag: 'Claridad', text: 'La clienta pregunta cuánto tiempo más tiene que esperar. La respuesta empieza con el historial completo de cambios de tiempos (8-14, 16-18, 24-28 meses) antes de responder la pregunta directa. El cliente tuvo que preguntar de nuevo porque la información más relevante quedó enterrada. El orden importa: primero la respuesta, después el contexto.' },
+  'c2-a2': { type: 'blue', tag: 'Comunicación automática', text: '"Lo que es", "lo que son", "lo que viene siendo" aparecen repetidamente en toda la llamada. Estas muletillas no añaden información y hacen el mensaje más difícil de seguir, especialmente cuando el cliente ya está estresado y buscando una respuesta concreta.' },
+  'c2-a3': { type: 'red',  tag: 'Empatía', text: 'La clienta dice "a ver qué Dios dice" — una señal clara de resignación. El agente responde únicamente "le agradezco bastante por haberse comunicado". Este es el momento más crítico de la llamada y se cierra con una fórmula de despedida. Un reconocimiento breve como "entiendo que ha sido una espera muy larga y frustrante" habría marcado una diferencia real.' },
+  'c2-a4': { type: 'red',  tag: 'Empatía', text: 'La clienta dice "estoy desesperada" de forma directa. El agente responde con una promesa genérica de notificar cuando haya actualización. La desesperación no fue reconocida. En este punto ya no era suficiente información: la clienta necesitaba sentir que alguien la escuchó.' },
+
+  // ── LLAMADA 3 ──
+  'c3-a1': { type: 'blue', tag: 'Comunicación automática', text: '"Para yo poderle apoyar y poderle brindar información, es importante que me proporcione su nombre correcto y completo…" La verificación es necesaria pero el lenguaje puede ser más directo: "Claro, con gusto. Para buscar su caso, ¿me puede dar su nombre y número de cliente?"' },
+  'c3-a2': { type: 'amber', tag: 'Claridad', text: 'El agente explica el proceso de tres revisiones con detalle, pero en ningún momento dice en qué etapa está el caso actualmente ni cuánto tiempo podría tomar lo que falta. La clienta escucha el proceso completo pero no sabe dónde está parada ni cuándo podría terminar.' },
+  'c3-a3': { type: 'amber', tag: 'Claridad — falta de respuesta directa', text: 'La clienta pregunta cuánto tiempo más falta y menciona que llevan diciéndole lo mismo desde el año pasado. El agente da el rango de 6 a 12 semanas por revisión sin reconocer que ese mismo rango ya fue prometido antes. No se contextualiza cuántas revisiones faltan ni cuánto tiempo en total. La respuesta no responde la pregunta real de la clienta.' },
+  'c3-a4': { type: 'red',  tag: 'Empatía', text: 'La clienta lleva más de un año escuchando que su caso "está en manos de los abogados". Su frustración es válida y documentada. El agente responde "no se preocupe" y pide más tiempo de espera. En este punto esa frase automática genera el efecto contrario: la clienta siente que su historia no fue escuchada.' },
+  'c3-a5': { type: 'amber', tag: 'Claridad', text: 'La explicación sobre la nueva administración y los tiempos más exigentes es valiosa, pero llega tarde — después de que la clienta ya expresó su frustración varias veces. Además, la palabra "poquito" ("se han alargado un poquito más", "revisiones son un poquito tardadas") minimiza una espera que para la clienta ha sido de más de un año.' },
+  'c3-a6': { type: 'red',  tag: 'Empatía', text: 'La clienta describe una experiencia de abandono: nadie la llama, siempre le dicen lo mismo, no ve avance. El agente responde "usted está en todo su derecho" y repite que ya escaló la situación. No hay reconocimiento de que esa experiencia es frustrante ni una promesa concreta de seguimiento diferente a lo que le han dicho antes.' },
+};
+
+const modes = {0:'read', 1:'read', 2:'read'};
+
+function showTab(idx) {
+  document.querySelectorAll('.panel').forEach((p,i) => p.classList.toggle('active', i===idx));
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+}
+
+function setMode(tabIdx, mode) {
+  modes[tabIdx] = mode;
+  const panel = document.getElementById('tab-' + tabIdx);
+  const btns = panel.querySelectorAll('.mode-btn');
+  btns[0].classList.toggle('active', mode==='read');
+  btns[1].classList.toggle('active', mode==='analyze');
+  const legend = document.getElementById('legend-' + tabIdx);
+
+  if (mode === 'read') {
+    legend.classList.remove('show');
+    panel.querySelectorAll('.msg-text[id]').forEach(el => {
+      el.className = el.className.replace(/\bhi-\w+\b/g,'').trim();
+      el.onclick = null;
+    });
+    panel.querySelectorAll('.analysis-popup').forEach(p => {
+      p.classList.remove('open');
+      p.className = 'analysis-popup';
+      p.innerHTML = '';
+    });
+  } else {
+    legend.classList.add('show');
+    panel.querySelectorAll('.msg-text[id]').forEach(el => {
+      const h = highlights[el.id];
+      if (h) {
+        el.classList.add('hi-' + h.type);
+        el.onclick = () => togglePopup(el.id, h);
+      }
+    });
+  }
+}
+
+function togglePopup(msgId, h) {
+  const popup = document.getElementById('pop-' + msgId);
+  if (popup.classList.contains('open')) {
+    popup.classList.remove('open');
+    setTimeout(() => { popup.innerHTML = ''; popup.className = 'analysis-popup'; }, 200);
+    return;
+  }
+  const panel = popup.closest('.panel');
+  panel.querySelectorAll('.analysis-popup.open').forEach(p => {
+    p.classList.remove('open');
+    setTimeout(() => { p.innerHTML=''; p.className='analysis-popup'; }, 200);
+  });
+  const labels = { red: '● Empatía', amber: '● Claridad', blue: '● Comunicación automática' };
+  popup.className = 'analysis-popup ' + h.type;
+  popup.innerHTML = `<div class="popup-tag">${labels[h.type]}</div><div class="popup-body">${h.text}</div>`;
+  popup.classList.add('open');
+}
+</script>
+</body>
+</html>
