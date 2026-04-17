@@ -1,0 +1,3511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programa de Capacitación — Paralegal Callbacks · Mendoza Law Firm</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f1e3a;
+    --ink-soft: #1e3158;
+    --ink-muted: #5a6e8a;
+    --paper: #f5f2ed;
+    --paper-warm: #ede9e2;
+    --paper-mid: #e0dbd2;
+    --red: #c0392b;
+    --red-light: #f9eae8;
+    --red-mid: #e8a09a;
+    --amber: #b5651d;
+    --amber-light: #fdf3e7;
+    --amber-mid: #e8c49a;
+    --teal: #1a6b5a;
+    --teal-light: #e4f0ed;
+    --teal-mid: #8cbfb4;
+    --purple: #4a3b7c;
+    --purple-light: #edeaf5;
+    --purple-mid: #a89dcc;
+    --navy: #0f1e3a;
+    --accent: #c0392b;
+    --border: rgba(15,30,58,0.12);
+    --border-strong: rgba(15,30,58,0.25);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  /* ── SIDEBAR NAV ── */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 260px;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    overflow-y: auto;
+  }
+
+  .sidebar-brand {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .sidebar-brand .firm {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(245,242,237,0.5);
+    margin-bottom: 4px;
+  }
+
+  .sidebar-brand .title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--paper);
+    line-height: 1.3;
+  }
+
+  .sidebar-brand .subtitle {
+    font-size: 11px;
+    color: rgba(245,242,237,0.4);
+    margin-top: 6px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  .nav-section {
+    padding: 16px 0 8px;
+  }
+
+  .nav-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(245,242,237,0.3);
+    padding: 0 24px;
+    margin-bottom: 6px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 24px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    color: rgba(245,242,237,0.6);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--paper); }
+
+  .nav-item.active {
+    background: rgba(192,57,43,0.2);
+    color: var(--paper);
+    border-left: 2px solid var(--red);
+  }
+
+  .nav-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(245,242,237,0.3);
+    margin-top: 2px;
+    min-width: 18px;
+  }
+
+  .nav-item.active .nav-num { color: var(--red-mid); }
+
+  .nav-eje {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 24px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    color: rgba(245,242,237,0.5);
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .nav-eje:hover { background: rgba(255,255,255,0.04); color: var(--paper); }
+
+  .nav-eje.active { color: var(--paper); }
+
+  .eje-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    margin-left: 260px;
+    min-height: 100vh;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 80px 60px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 400px; height: 400px;
+    border: 1px solid rgba(245,242,237,0.06);
+    border-radius: 50%;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; right: 80px;
+    width: 240px; height: 240px;
+    border: 1px solid rgba(245,242,237,0.04);
+    border-radius: 50%;
+  }
+
+  .hero-kicker {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--red-mid);
+    margin-bottom: 16px;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.15;
+    max-width: 560px;
+    margin-bottom: 20px;
+  }
+
+  .hero-sub {
+    color: rgba(245,242,237,0.55);
+    font-size: 15px;
+    max-width: 500px;
+    line-height: 1.7;
+    margin-bottom: 40px;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 40px;
+  }
+
+  .hero-stat .n {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--paper);
+  }
+
+  .hero-stat .l {
+    font-size: 11px;
+    color: rgba(245,242,237,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 2px;
+  }
+
+  .analogy-banner {
+    margin: 0 60px;
+    background: var(--amber-light);
+    border-left: 3px solid var(--amber);
+    padding: 20px 28px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+  }
+
+  .analogy-item {
+    padding: 0 20px;
+    border-right: 1px solid rgba(181,101,29,0.2);
+  }
+
+  .analogy-item:first-child { padding-left: 0; }
+  .analogy-item:last-child { border-right: none; }
+
+  .analogy-role {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 3px;
+  }
+
+  .analogy-val {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  /* ── CONTENT AREA ── */
+  .content {
+    padding: 0 60px 80px;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    padding: 48px 0 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .section-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 56px;
+    font-weight: 700;
+    color: var(--paper-mid);
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: -4px;
+  }
+
+  .section-meta {}
+
+  .section-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 6px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .section-desc {
+    color: var(--ink-muted);
+    font-size: 14px;
+    max-width: 600px;
+  }
+
+  /* ── OBJETIVO BOX ── */
+  .objetivo {
+    background: var(--teal-light);
+    border-left: 3px solid var(--teal);
+    padding: 18px 24px;
+    margin-bottom: 32px;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .objetivo-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 6px;
+  }
+
+  .objetivo p {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+  }
+
+  /* ── EJE BADGE ── */
+  .eje-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+
+  .eje-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── CONCEPT CARDS ── */
+  .concepts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .concept-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px;
+  }
+
+  .concept-card .c-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+
+  .concept-card p {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+  }
+
+  .concept-card.full { grid-column: 1 / -1; }
+
+  /* ── CASO REAL ── */
+  .caso {
+    background: var(--ink);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+
+  .caso-header {
+    background: var(--red);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .caso-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(245,242,237,0.7);
+  }
+
+  .caso-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--paper);
+  }
+
+  .caso-body {
+    padding: 24px;
+    color: rgba(245,242,237,0.8);
+    font-size: 13.5px;
+    line-height: 1.75;
+    font-style: italic;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .caso-preguntas {
+    padding: 20px 24px;
+  }
+
+  .caso-preguntas-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(245,242,237,0.35);
+    margin-bottom: 12px;
+  }
+
+  .caso-q {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+    color: rgba(245,242,237,0.7);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .caso-q-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--red-mid);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ── ACTIVIDADES ── */
+  .actividades { margin-bottom: 40px; }
+
+  .actividad {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .actividad-header {
+    background: var(--paper-warm);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .actividad-header:hover { background: var(--paper-mid); }
+
+  .act-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    min-width: 20px;
+  }
+
+  .act-title {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--ink);
+    flex: 1;
+  }
+
+  .act-meta {
+    font-size: 11px;
+    color: var(--ink-muted);
+    font-family: 'DM Mono', monospace;
+    white-space: nowrap;
+  }
+
+  .act-toggle {
+    font-size: 12px;
+    color: var(--ink-muted);
+    transition: transform 0.2s;
+  }
+
+  .actividad.open .act-toggle { transform: rotate(180deg); }
+
+  .actividad-body {
+    display: none;
+    padding: 20px;
+    border-top: 1px solid var(--border);
+    background: white;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+  }
+
+  .actividad.open .actividad-body { display: block; }
+
+  /* ── CHECKLIST ── */
+  .checklist-section { margin-bottom: 40px; }
+
+  .checklist-group {
+    margin-bottom: 24px;
+  }
+
+  .checklist-group-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 7px 0;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+
+  .check-item:last-child { border-bottom: none; }
+
+  .check-item input[type="checkbox"] {
+    margin-top: 3px;
+    flex-shrink: 0;
+    accent-color: var(--teal);
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+  }
+
+  .check-item.checked { text-decoration: line-through; color: var(--ink-muted); }
+
+  /* ── FRAMEWORK ── */
+  .framework {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .fw-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .fw-header {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .fw-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .fw-name {
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  .fw-body {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    background: white;
+  }
+
+  .fw-body ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .fw-body li {
+    padding: 3px 0;
+    padding-left: 14px;
+    position: relative;
+  }
+
+  .fw-body li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--ink-muted);
+    font-size: 11px;
+  }
+
+  /* ── RUTINA ── */
+  .rutina-blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 40px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .rutina-block {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rutina-block:last-child { border-bottom: none; }
+
+  .rutina-time {
+    background: var(--paper-warm);
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid var(--border);
+  }
+
+  .rt-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+
+  .rt-dur {
+    font-size: 11px;
+    color: var(--ink-muted);
+    margin-top: 3px;
+  }
+
+  .rutina-content {
+    padding: 20px;
+    background: white;
+  }
+
+  .rutina-content h4 {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .rutina-content ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .rutina-content li {
+    font-size: 13px;
+    color: var(--ink-soft);
+    padding: 4px 0;
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  .rutina-content li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--ink-muted);
+  }
+
+  /* ── KPI TABLE ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .kpi-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    background: white;
+  }
+
+  .kpi-label {
+    font-size: 11px;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 6px;
+  }
+
+  .kpi-formula {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--purple);
+    background: var(--purple-light);
+    padding: 6px 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    display: inline-block;
+  }
+
+  .kpi-desc {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+
+  /* ── EJES OVERVIEW (home) ── */
+  .ejes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .eje-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow 0.15s, transform 0.15s;
+  }
+
+  .eje-card:hover {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+  }
+
+  .eje-card-header {
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .eje-num-big {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .eje-card-title {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .eje-card-body {
+    padding: 12px 18px 16px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    background: white;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── MODULOS OVERVIEW ── */
+  .modulos-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 40px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .modulo-row {
+    display: grid;
+    grid-template-columns: 48px 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.12s;
+    background: white;
+  }
+
+  .modulo-row:last-child { border-bottom: none; }
+  .modulo-row:hover { background: var(--paper-warm); }
+
+  .modulo-row-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--paper-mid);
+    text-align: center;
+  }
+
+  .modulo-row-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+
+  .modulo-row-sub {
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+
+  .modulo-row-dur {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    position: sticky;
+    top: 0;
+    background: var(--paper);
+    padding: 12px 60px;
+    border-bottom: 1px solid var(--border);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .progress-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .progress-bar {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--red);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    min-width: 32px;
+    text-align: right;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 36px 0;
+  }
+
+  /* ── ROLE PLAY ── */
+  .roleplay {
+    border: 1px solid var(--purple-mid);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .roleplay-header {
+    background: var(--purple-light);
+    padding: 12px 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .roleplay-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--purple);
+  }
+
+  .roleplay-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--purple);
+  }
+
+  .roleplay-body {
+    padding: 20px;
+    background: white;
+  }
+
+  .roleplay-roles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .role-pill {
+    background: var(--paper-warm);
+    border-radius: 6px;
+    padding: 10px 12px;
+  }
+
+  .role-pill .rp-label {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    margin-bottom: 3px;
+  }
+
+  .role-pill .rp-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .roleplay-instrucciones {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+  }
+
+  /* ── ESCALERA VISUAL ── */
+  .escalera {
+    margin: 0 0 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .peldano {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin-bottom: 2px;
+  }
+
+  .peldano-indent {
+    display: flex;
+    align-items: center;
+  }
+
+  .peldano-content {
+    flex: 1;
+    padding: 14px 20px;
+    border-radius: 6px;
+    position: relative;
+  }
+
+  .peldano-label {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  .peldano-sub {
+    font-size: 12px;
+    opacity: 0.75;
+  }
+
+  .peldano-arrow {
+    text-align: center;
+    color: var(--ink-muted);
+    font-size: 14px;
+    padding: 4px 0;
+    margin-left: 32px;
+  }
+
+  /* ── PILLS / TAGS ── */
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.03em;
+  }
+
+  .tag-red { background: var(--red-light); color: var(--red); }
+  .tag-amber { background: var(--amber-light); color: var(--amber); }
+  .tag-teal { background: var(--teal-light); color: var(--teal); }
+  .tag-purple { background: var(--purple-light); color: var(--purple); }
+
+  /* ── RESPONSABILIDADES TABLE ── */
+  .resp-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 32px;
+    font-size: 13px;
+  }
+
+  .resp-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    background: var(--paper-warm);
+    border-bottom: 1px solid var(--border);
+    font-weight: 400;
+  }
+
+  .resp-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink-soft);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+
+  .resp-table tr:last-child td { border-bottom: none; }
+
+  .resp-table tr:hover td { background: var(--paper); }
+
+  /* ── SECTION NAV DOTS ── */
+  .section-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 28px 60px 0;
+  }
+
+  .snav-btn {
+    padding: 7px 16px;
+    border: 1px solid var(--border-strong);
+    background: white;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    transition: background 0.12s;
+  }
+
+  .snav-btn:hover { background: var(--paper-warm); }
+
+  .snav-sep { color: var(--border-strong); }
+
+  /* ── TOOLTIP / NOTA ── */
+  .nota {
+    background: var(--paper-warm);
+    border-left: 3px solid var(--ink-muted);
+    padding: 14px 18px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+  }
+
+  .nota strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* ── SCROLL TO TOP ── */
+  .scroll-top {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 40px; height: 40px;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 200;
+  }
+
+  .scroll-top.visible { opacity: 1; }
+
+  /* ── OVERVIEW HERO ── */
+  .overview-intro {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin-bottom: 32px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.8;
+  }
+
+  .overview-intro p + p { margin-top: 12px; }
+
+  .big-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink);
+    line-height: 1.5;
+    border-left: 3px solid var(--red);
+    padding-left: 20px;
+    margin: 28px 0;
+  }
+  /* ── INTERACTIVE ACTIVITIES ── */
+  .sit-card, .tier-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 14px;
+    transition: border-color 0.2s;
+  }
+
+  .sit-card.correct { border-color: var(--teal); }
+  .sit-card.incorrect { border-color: var(--red); }
+  .tier-card.correct { border-color: var(--teal); }
+  .tier-card.incorrect { border-color: var(--red); }
+
+  .sit-header {
+    background: var(--paper-warm);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .sit-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+  }
+
+  .sit-score {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .sit-body {
+    padding: 14px 16px;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sit-controls {
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .sit-btn {
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1.5px solid var(--red);
+    background: white;
+    color: var(--red);
+    transition: all 0.15s;
+  }
+
+  .sit-btn:hover { background: var(--red-light); }
+
+  .sit-btn.sit-btn-legal {
+    border-color: var(--teal);
+    color: var(--teal);
+  }
+
+  .sit-btn.sit-btn-legal:hover { background: var(--teal-light); }
+
+  .sit-btn.selected-admin { background: var(--red); color: white; }
+  .sit-btn.selected-legal { background: var(--teal); color: white; }
+
+  .sit-feedback {
+    padding: 0 16px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    font-size: 13px;
+    line-height: 1.65;
+  }
+
+  .sit-feedback.visible {
+    max-height: 200px;
+    padding: 14px 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .sit-feedback.fb-correct { background: var(--teal-light); color: var(--teal); }
+  .sit-feedback.fb-incorrect { background: var(--red-light); color: var(--red); }
+
+  /* Tier exercise */
+  .tier-btn {
+    padding: 7px 18px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1.5px solid var(--border-strong);
+    background: white;
+    color: var(--ink-muted);
+    transition: all 0.15s;
+  }
+
+  .tier-btn:hover { border-color: var(--navy); color: var(--navy); }
+  .tier-btn.t-selected-1 { background: var(--amber); border-color: var(--amber); color: white; }
+  .tier-btn.t-selected-2 { background: var(--red); border-color: var(--red); color: white; }
+
+  .just-opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--paper);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    transition: background 0.12s, border-color 0.12s;
+  }
+
+  .just-opt:hover { background: var(--paper-warm); border-color: var(--border-strong); }
+  .just-opt input[type="radio"] { margin-top: 2px; flex-shrink: 0; accent-color: var(--navy); }
+  .just-opt.j-correct { background: var(--teal-light); border-color: var(--teal); color: var(--teal); }
+  .just-opt.j-incorrect { background: var(--red-light); border-color: var(--red); color: var(--red); text-decoration: line-through; opacity: 0.7; }
+
+  .confirmar-btn {
+    align-self: flex-start;
+    padding: 9px 22px;
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    margin-bottom: 4px;
+  }
+
+  .confirmar-btn:hover { opacity: 0.88; }
+
+  .tier-feedback {
+    padding: 0 16px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, padding 0.3s ease;
+    font-size: 13px;
+    line-height: 1.65;
+  }
+
+  .tier-feedback.visible {
+    max-height: 300px;
+    padding: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .tier-feedback.fb-correct { background: var(--teal-light); color: var(--teal); }
+  .tier-feedback.fb-incorrect { background: var(--red-light); color: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- ═══════ SIDEBAR ═══════ -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="firm">Mendoza Law Firm</div>
+    <div class="title">Programa Paralegal Callbacks</div>
+    <div class="subtitle">v1.0 · Feb 2026 · 7 hrs</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Inicio</div>
+    <button class="nav-item active" onclick="showSection('overview')">
+      <span class="nav-num">00</span>
+      <span>Visión general</span>
+    </button>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Módulos</div>
+    <button class="nav-item" onclick="showSection('m1')">
+      <span class="nav-num">01</span>
+      <span>El paralegal como enfermero de ICU</span>
+    </button>
+    <button class="nav-item" onclick="showSection('m2')">
+      <span class="nav-num">02</span>
+      <span>Diagnóstico antes de la cirugía</span>
+    </button>
+    <button class="nav-item" onclick="showSection('m3')">
+      <span class="nav-num">03</span>
+      <span>Preparar al doctor para operar</span>
+    </button>
+    <button class="nav-item" onclick="showSection('m4')">
+      <span class="nav-num">04</span>
+      <span>En el quirófano — la llamada</span>
+    </button>
+    <button class="nav-item" onclick="showSection('m5')">
+      <span class="nav-num">05</span>
+      <span>Alta médica y seguimiento</span>
+    </button>
+    <button class="nav-item" onclick="showSection('m6')">
+      <span class="nav-num">06</span>
+      <span>Simulación final y certificación</span>
+    </button>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">6 Ejes críticos</div>
+    <button class="nav-eje" onclick="showSection('eje1')">
+      <span class="eje-dot" style="background:#c0392b"></span>
+      <span>Percepción de abandono</span>
+    </button>
+    <button class="nav-eje" onclick="showSection('eje2')">
+      <span class="eje-dot" style="background:#b5651d"></span>
+      <span>Sentido de urgencia</span>
+    </button>
+    <button class="nav-eje" onclick="showSection('eje3')">
+      <span class="eje-dot" style="background:#4a3b7c"></span>
+      <span>Revisión de plataformas</span>
+    </button>
+    <button class="nav-eje" onclick="showSection('eje4')">
+      <span class="eje-dot" style="background:#993c1d"></span>
+      <span>Diligencia y responsabilidades</span>
+    </button>
+    <button class="nav-eje" onclick="showSection('eje5')">
+      <span class="eje-dot" style="background:#1a6b5a"></span>
+      <span>Perspectiva legal</span>
+    </button>
+    <button class="nav-eje" onclick="showSection('eje6')">
+      <span class="eje-dot" style="background:#3b6d11"></span>
+      <span>Rutina operativa</span>
+    </button>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Referencia</div>
+    <button class="nav-item" onclick="showSection('deadlines')">
+      <span class="nav-num">→</span>
+      <span>Deadlines críticos</span>
+    </button>
+    <button class="nav-item" onclick="showSection('buenas')">
+      <span class="nav-num">→</span>
+      <span>Buenas prácticas</span>
+    </button>
+    <button class="nav-item" onclick="showSection('kpis')">
+      <span class="nav-num">→</span>
+      <span>KPIs y evaluación</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ═══════ MAIN ═══════ -->
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-kicker">Programa de Capacitación · Callbacks Department</div>
+    <h1>El paralegal que prepara la cirugía</h1>
+    <p class="hero-sub">Un programa práctico para paralegales que entienden que cada callback es un paciente en UCI — no una llamada de rutina.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="n">6</div><div class="l">Módulos</div></div>
+      <div class="hero-stat"><div class="n">7h</div><div class="l">Duración total</div></div>
+      <div class="hero-stat"><div class="n">6</div><div class="l">Ejes críticos</div></div>
+      <div class="hero-stat"><div class="n">80%</div><div class="l">Práctica</div></div>
+    </div>
+  </div>
+
+  <!-- ANALOGÍA BANNER -->
+  <div class="analogy-banner">
+    <div class="analogy-item">
+      <div class="analogy-role">Hospital</div>
+      <div class="analogy-val">Firma legal</div>
+    </div>
+    <div class="analogy-item">
+      <div class="analogy-role">Paciente en crisis</div>
+      <div class="analogy-val">Cliente en callback</div>
+    </div>
+    <div class="analogy-item">
+      <div class="analogy-role">Doctor</div>
+      <div class="analogy-val">Attorney</div>
+    </div>
+    <div class="analogy-item">
+      <div class="analogy-role">Enfermero de UCI</div>
+      <div class="analogy-val">Paralegal</div>
+    </div>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-wrap">
+    <span class="progress-label">Progreso del programa</span>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <span class="progress-pct" id="progressPct">0%</span>
+  </div>
+
+  <div class="content">
+
+    <!-- ═══ OVERVIEW ═══ -->
+    <div class="section active" id="section-overview">
+      <div class="section-header">
+        <div class="section-num">00</div>
+        <div class="section-meta">
+          <div class="section-tag">Visión general del programa</div>
+          <h2 class="section-title">Lo que este programa construye</h2>
+          <p class="section-desc">Antes de entrar a los módulos, entiende por qué este training existe y qué cambia cuando termina.</p>
+        </div>
+      </div>
+
+      <div class="overview-intro">
+        <p>Un callback no es una llamada de seguimiento. Es un evento de riesgo activo. El cliente que llega ahí ya tiene una narrativa de abandono parcialmente construida. Lo que ocurra en los próximos 48 horas — la preparación, el análisis, el briefing al abogado, la llamada, el seguimiento — determina si esa narrativa se interrumpe o se confirma.</p>
+        <p>El paralegal es el único actor que puede intervenir antes de que el daño ocurra. No el abogado, que entra cuando ya está en la llamada. No el cliente, que reacciona a lo que recibe. El paralegal — con su análisis, su preparación, su presencia en la llamada y su seguimiento — es el escudo de la firma.</p>
+      </div>
+
+      <div style="background:var(--navy);border-radius:10px;padding:28px 32px;margin-bottom:32px;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(245,242,237,0.45);margin-bottom:12px;">Objetivo del training</div>
+        <p style="font-family:'Playfair Display',serif;font-size:18px;color:#f5f2ed;line-height:1.6;margin-bottom:16px;">Desarrollar en los paralegales la capacidad de ejecutar el ciclo completo de un callback con criterio legal, sentido de urgencia y responsabilidad end-to-end — desde el análisis del expediente hasta el cierre formal de los acuerdos.</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px;">
+          <div style="border-left:2px solid rgba(245,242,237,0.2);padding-left:14px;">
+            <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(245,242,237,0.4);margin-bottom:4px;">Conocimiento</div>
+            <div style="font-size:13px;color:rgba(245,242,237,0.8);line-height:1.5;">Entender el rol real del paralegal y la urgencia de cada caso</div>
+          </div>
+          <div style="border-left:2px solid rgba(245,242,237,0.2);padding-left:14px;">
+            <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(245,242,237,0.4);margin-bottom:4px;">Habilidad</div>
+            <div style="font-size:13px;color:rgba(245,242,237,0.8);line-height:1.5;">Analizar expedientes, preparar al abogado y tomar notas accionables</div>
+          </div>
+          <div style="border-left:2px solid rgba(245,242,237,0.2);padding-left:14px;">
+            <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(245,242,237,0.4);margin-bottom:4px;">Comportamiento</div>
+            <div style="font-size:13px;color:rgba(245,242,237,0.8);line-height:1.5;">Ejecutar con diligencia, hacer seguimiento sin que nadie lo pida y escalar con criterio</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="big-quote">"La percepción de abandono no nace de un error legal. Nace de lo que el cliente sintió. Y lo que el cliente siente lo determina el paralegal."</div>
+
+      <h3 style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:16px;font-weight:700;">Estructura del programa</h3>
+      <p style="font-size:13px;color:var(--ink-muted);margin-bottom:16px;">7 sesiones de 1 hora. Módulos 1 al 6: un tema por sesión. Sesión 7: revisión integrada de los 6 ejes críticos.</p>
+      <div class="modulos-list">
+        <div class="modulo-row" onclick="showSection('m1')">
+          <div class="modulo-row-num">1</div>
+          <div>
+            <div class="modulo-row-title">El paralegal como enfermero de ICU</div>
+            <div class="modulo-row-sub">Mentalidad · Urgencia · Identidad del rol</div>
+          </div>
+          <div class="modulo-row-dur">1 hr</div>
+        </div>
+        <div class="modulo-row" onclick="showSection('m2')">
+          <div class="modulo-row-num">2</div>
+          <div>
+            <div class="modulo-row-title">Diagnóstico antes de la cirugía</div>
+            <div class="modulo-row-sub">Análisis de expediente · STAR Legal · Detección de riesgos</div>
+          </div>
+          <div class="modulo-row-dur">1 hr</div>
+        </div>
+        <div class="modulo-row" onclick="showSection('m3')">
+          <div class="modulo-row-num">3</div>
+          <div>
+            <div class="modulo-row-title">Preparar al doctor para operar</div>
+            <div class="modulo-row-sub">CB Checklist · Risk Assessment · Briefing al abogado</div>
+          </div>
+          <div class="modulo-row-dur">1 hr</div>
+        </div>
+        <div class="modulo-row" onclick="showSection('m4')">
+          <div class="modulo-row-num">4</div>
+          <div>
+            <div class="modulo-row-title">En el quirófano — la llamada en vivo</div>
+            <div class="modulo-row-sub">Conducción · Notas · Manejo de crisis · TramCase</div>
+          </div>
+          <div class="modulo-row-dur">1 hr</div>
+        </div>
+        <div class="modulo-row" onclick="showSection('m5')">
+          <div class="modulo-row-num">5</div>
+          <div>
+            <div class="modulo-row-title">Alta médica y seguimiento del tratamiento</div>
+            <div class="modulo-row-sub">Acuerdos · PMO · Cierre formal · Coordinación</div>
+          </div>
+          <div class="modulo-row-dur">1 hr</div>
+        </div>
+        <div class="modulo-row" onclick="showSection('m6')">
+          <div class="modulo-row-num">6</div>
+          <div>
+            <div class="modulo-row-title">Simulación final y certificación</div>
+            <div class="modulo-row-sub">Ciclo completo · Rúbrica · Plan de desarrollo individual</div>
+          </div>
+          <div class="modulo-row-dur">1 hr</div>
+        </div>
+        <div class="modulo-row" onclick="showSection('eje1')" style="background:var(--paper-warm);">
+          <div class="modulo-row-num" style="color:var(--red);">7</div>
+          <div>
+            <div class="modulo-row-title">Revisión integrada de los 6 ejes críticos</div>
+            <div class="modulo-row-sub">Percepción de abandono · Urgencia · Plataformas · Diligencia · Perspectiva legal · Rutina</div>
+          </div>
+          <div class="modulo-row-dur">1 hr</div>
+        </div>
+      </div>
+
+      <h3 style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:16px;font-weight:700;">Los 6 ejes críticos</h3>
+      <p style="color:var(--ink-muted);font-size:13.5px;margin-bottom:20px;">No son temas separados — son hilos que cruzan todos los módulos. Haz clic en cada uno para ver su desarrollo completo.</p>
+      <div class="ejes-grid">
+        <div class="eje-card" onclick="showSection('eje1')">
+          <div class="eje-card-header" style="background:var(--red-light);">
+            <span class="eje-num-big" style="color:var(--red);">1</span>
+            <span class="eje-card-title" style="color:var(--red);">Percepción de abandono</span>
+          </div>
+          <div class="eje-card-body">Lo que el cliente siente construye su realidad. La comunicación proactiva y el pre a la llamada son las dos intervenciones que interrumpen la escalera. Peso máximo en M1 y M3.</div>
+        </div>
+        <div class="eje-card" onclick="showSection('eje2')">
+          <div class="eje-card-header" style="background:var(--amber-light);">
+            <span class="eje-num-big" style="color:var(--amber);">2</span>
+            <span class="eje-card-title" style="color:var(--amber);">Sentido de urgencia — identificar y actuar a tiempo</span>
+          </div>
+          <div class="eje-card-body">Tier 1 vs Tier 2 no es burocracia — es velocidad de respuesta. Transversal a todos los módulos.</div>
+        </div>
+        <div class="eje-card" onclick="showSection('eje3')">
+          <div class="eje-card-header" style="background:var(--purple-light);">
+            <span class="eje-num-big" style="color:var(--purple);">3</span>
+            <span class="eje-card-title" style="color:var(--purple);">Revisión de notas y plataformas — TramCase + Dropbox</span>
+          </div>
+          <div class="eje-card-body">Sin revisión real del expediente no hay preparación — solo apariencia. Peso máximo en M2 y M3.</div>
+        </div>
+        <div class="eje-card" onclick="showSection('eje4')">
+          <div class="eje-card-header" style="background:var(--red-light);">
+            <span class="eje-num-big" style="color:#993c1d;">4</span>
+            <span class="eje-card-title" style="color:#993c1d;">Diligencia y responsabilidades de los involucrados</span>
+          </div>
+          <div class="eje-card-body">El paralegal es dueño del seguimiento — no mensajero entre áreas. Peso máximo en M5.</div>
+        </div>
+        <div class="eje-card" onclick="showSection('eje5')">
+          <div class="eje-card-header" style="background:var(--teal-light);">
+            <span class="eje-num-big" style="color:var(--teal);">5</span>
+            <span class="eje-card-title" style="color:var(--teal);">Perspectiva legal — leer el caso como el abogado</span>
+          </div>
+          <div class="eje-card-body">No opinan legalmente, pero sí leen el caso con criterio de riesgo y estrategia. Peso máximo en M2.</div>
+        </div>
+        <div class="eje-card" onclick="showSection('eje6')">
+          <div class="eje-card-header" style="background:#eaf3de;">
+            <span class="eje-num-big" style="color:#3b6d11;">6</span>
+            <span class="eje-card-title" style="color:#3b6d11;">Rutina operativa diaria</span>
+          </div>
+          <div class="eje-card-body">Sin hábito operativo, el conocimiento se pierde en el volumen de trabajo. Peso máximo en M6.</div>
+        </div>
+      </div>
+
+      <h3 style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:16px;font-weight:700;">Apartados de referencia</h3>
+      <div class="modulos-list" style="margin-bottom:40px;">
+        <div class="modulo-row" onclick="showSection('deadlines')">
+          <div class="modulo-row-num" style="color:var(--red);">DL</div>
+          <div>
+            <div class="modulo-row-title">Deadlines críticos</div>
+            <div class="modulo-row-sub">Externo (USCIS: recibo, RFE, NOD) · Interno (cliente con otra firma, quiere hablar con María)</div>
+          </div>
+          <div class="modulo-row-dur">Referencia</div>
+        </div>
+        <div class="modulo-row" onclick="showSection('buenas')">
+          <div class="modulo-row-num" style="color:var(--teal);">BP</div>
+          <div>
+            <div class="modulo-row-title">Buenas prácticas</div>
+            <div class="modulo-row-sub">Antes, durante y después de la llamada · Actitud y criterio operativo</div>
+          </div>
+          <div class="modulo-row-dur">Referencia</div>
+        </div>
+        <div class="modulo-row" onclick="showSection('kpis')">
+          <div class="modulo-row-num" style="color:var(--purple);">KP</div>
+          <div>
+            <div class="modulo-row-title">KPIs y evaluación</div>
+            <div class="modulo-row-sub">Indicadores del proceso · Métricas post-training a 30 y 60 días</div>
+          </div>
+          <div class="modulo-row-dur">Referencia</div>
+        </div>
+      </div>
+
+      <h3 style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:16px;font-weight:700;">Brechas que este programa atiende</h3>
+      <table class="resp-table">
+        <thead>
+          <tr><th>Tipo</th><th>Brecha detectada</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="tag tag-red">Conocimiento</span></td><td>No entienden la urgencia real del callback. No distinguen su rol de soporte legal vs. coordinación administrativa.</td></tr>
+          <tr><td><span class="tag tag-amber">Habilidad</span></td><td>No analizan expedientes. No identifican temas clave. No preparan información estructurada para el abogado.</td></tr>
+          <tr><td><span class="tag tag-red">Actitud</span></td><td>Falta de responsabilidad end-to-end. Delegan sin verificar. Falta de proactividad en comunicación.</td></tr>
+          <tr><td><span class="tag tag-purple">Operación</span></td><td>Mala gestión de agenda. Falta de seguimiento a acuerdos. Comunicación deficiente con attorneys y áreas.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══ MÓDULO 1 ═══ -->
+    <div class="section" id="section-m1">
+      <div class="section-header">
+        <div class="section-num">01</div>
+        <div class="section-meta">
+          <div class="section-tag">Módulo 1 · 1 hora</div>
+          <h2 class="section-title">El paralegal como enfermero de ICU</h2>
+          <p class="section-desc">Mentalidad, urgencia e identidad del rol. El punto de partida que cambia todo lo demás.</p>
+        </div>
+      </div>
+
+      <div class="eje-badges">
+        <span class="eje-badge" style="background:var(--red-light);color:var(--red);">● Eje 1: Percepción de abandono</span>
+        <span class="eje-badge" style="background:var(--amber-light);color:var(--amber);">● Eje 2: Sentido de urgencia</span>
+        <span class="eje-badge" style="background:#eaf3de;color:#3b6d11;">● Eje 4: Diligencia</span>
+      </div>
+
+      <div class="objetivo">
+        <div class="objetivo-label">Objetivo del módulo</div>
+        <p>Al terminar este módulo, el paralegal sabrá exactamente qué significa su rol, por qué los callbacks son UCI (no rutina), y qué comportamientos concretos se esperan de él — distintos de un coordinador administrativo.</p>
+      </div>
+
+      <div class="concepts">
+        <div class="concept-card">
+          <div class="c-title">ICU vs. consulta externa</div>
+          <p>Un callback no es una llamada de seguimiento. Es un caso que ya escaló porque algo salió mal o el cliente lo percibe así. Cada callback es un evento de riesgo activo. Tratarlo como rutina es el primer error.</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">Enfermero, no recepcionista</div>
+          <p>El paralegal no agenda citas — prepara al paciente, toma los signos vitales del caso, organiza el expediente, asiste al médico en la operación y da seguimiento al tratamiento. Sin él, el médico opera a ciegas.</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">Tier 1 vs Tier 2 — velocidad, no categoría</div>
+          <p>Tier 1 es un paciente en sala de espera: importante, atendible en el proceso normal. Tier 2 es un paciente en cirugía: NTA, amenaza de demanda, Bar Complaint, ICE activo, crisis emocional severa. Eso no espera — y el paralegal debe saberlo antes de revisar la primera nota.</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">El silencio tiene costo legal</div>
+          <p>Cuando un cliente pasa semanas sin noticias y recibe una callback sin preparación, el mensaje implícito es "no importas lo suficiente para haber revisado tu caso." Esa percepción acumula. La percepción de abandono alimenta la queja — no el error legal.</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin-bottom:20px;font-weight:700;">Caso real · La escalera del abandono</h3>
+
+      <div class="caso">
+        <div class="caso-header">
+          <span class="caso-tag">Caso 01</span>
+          <span class="caso-title">El abandono que no fue abandono — pero costó como si lo fuera</span>
+        </div>
+        <div class="caso-body">
+          Una cliente lleva 6 meses sin noticias de su caso de asilo. Llama muy alterada. El agente la tranquiliza y agenda un callback. El paralegal recibe el caso, ve que técnicamente está en proceso normal (esperando respuesta del USCIS), y entra a la callback sin preparar nada adicional. El abogado tampoco fue briefeado. Durante la llamada, el abogado improvisa, dice que "el caso va bien", pero no puede dar detalles concretos. La cliente cuelga sin certeza. Al día siguiente, contacta a otro abogado para una segunda opinión. Tres semanas después, presenta una queja formal.
+        </div>
+        <div class="caso-preguntas">
+          <div class="caso-preguntas-label">Para reflexión en grupos de 3</div>
+          <div class="caso-q"><span class="caso-q-num">01</span><span>¿Cometió la firma un error legal? ¿Y uno operativo? ¿Cuál de los dos detonó la queja?</span></div>
+          <div class="caso-q"><span class="caso-q-num">02</span><span>¿En qué momento específico pudo haberse evitado la queja? Identifica el punto exacto en el timeline.</span></div>
+          <div class="caso-q"><span class="caso-q-num">03</span><span>Si el paralegal hubiera preparado la llamada con el timeline completo del caso, ¿qué habría podido decir el abogado diferente?</span></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin-bottom:20px;font-weight:700;">Actividades del módulo</h3>
+
+      <div class="actividades">
+        <div class="actividad" id="act-1-1">
+          <div class="actividad-header" onclick="toggleAct('act-1-1')">
+            <span class="act-num">1.1</span>
+            <span class="act-title">¿Administrativo o paralegal? — votación individual</span>
+            
+            <span class="act-toggle">▼</span>
+          </div>
+          <div class="actividad-body">
+            <p style="margin-bottom:6px;font-size:13.5px;color:var(--ink-soft);">Lee cada situación y selecciona cómo clasificas ese comportamiento. Al confirmar tu respuesta verás el feedback.</p>
+            <p style="margin-bottom:20px;font-size:12px;color:var(--ink-muted);">Después de responder las 3, se discute en plenaria qué hace diferente cada una.</p>
+
+            <!-- SITUACIÓN A -->
+            <div class="sit-card" id="sit-a">
+              <div class="sit-header">
+                <span class="sit-label">Situación A</span>
+                <span class="sit-score" id="sit-a-score"></span>
+              </div>
+              <div class="sit-body">Un cliente llama muy alterado porque lleva 4 meses sin noticias de su caso de DACA. El paralegal lo escucha, le dice "entiendo su preocupación, el abogado le llamará pronto" y agenda el callback para la siguiente semana disponible. No revisa el expediente, no informa al abogado del motivo de la llamada.</div>
+              <div class="sit-controls" id="sit-a-controls">
+                <button class="sit-btn" onclick="votarSit('a','admin')">Administrativo</button>
+                <button class="sit-btn sit-btn-legal" onclick="votarSit('a','legal')">Paralegal</button>
+              </div>
+              <div class="sit-feedback" id="sit-a-feedback"></div>
+            </div>
+
+            <!-- SITUACIÓN B -->
+            <div class="sit-card" id="sit-b">
+              <div class="sit-header">
+                <span class="sit-label">Situación B</span>
+                <span class="sit-score" id="sit-b-score"></span>
+              </div>
+              <div class="sit-body">El paralegal recibe un caso para callback. Antes de confirmar la cita, abre TramCase, lee las últimas notas, identifica que hace 3 semanas el abogado dejó una instrucción sin seguimiento, y detecta que el caso tiene un RFE pendiente con plazo próximo. Clasifica el caso como Tier 2, escala al supervisor ese mismo día y prepara el CB Checklist con la información encontrada.</div>
+              <div class="sit-controls" id="sit-b-controls">
+                <button class="sit-btn" onclick="votarSit('b','admin')">Administrativo</button>
+                <button class="sit-btn sit-btn-legal" onclick="votarSit('b','legal')">Paralegal</button>
+              </div>
+              <div class="sit-feedback" id="sit-b-feedback"></div>
+            </div>
+
+            <!-- SITUACIÓN C -->
+            <div class="sit-card" id="sit-c">
+              <div class="sit-header">
+                <span class="sit-label">Situación C</span>
+                <span class="sit-score" id="sit-c-score"></span>
+              </div>
+              <div class="sit-body">Termina una callback en la que el abogado acordó con el cliente que en 5 días recibiría confirmación de avance. El paralegal registra en TramCase: "Se realizó llamada con cliente. El abogado hablará con el área correspondiente." Cierra la sheet como completado y sigue con el siguiente caso.</div>
+              <div class="sit-controls" id="sit-c-controls">
+                <button class="sit-btn" onclick="votarSit('c','admin')">Administrativo</button>
+                <button class="sit-btn sit-btn-legal" onclick="votarSit('c','legal')">Paralegal</button>
+              </div>
+              <div class="sit-feedback" id="sit-c-feedback"></div>
+            </div>
+
+            <div id="sit-plenaria" style="display:none;background:var(--navy);border-radius:8px;padding:16px 20px;margin-top:4px;">
+              <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(245,242,237,0.45);margin-bottom:10px;">Para discusión en plenaria</div>
+              <p style="font-size:13px;color:rgba(245,242,237,0.85);line-height:1.65;">A y C parecen diferentes — una ignora el caso, la otra "lo registró." Pero tienen algo en común: ninguna dejó al caso en mejores condiciones que antes. El paralegal no solo actúa — actúa de forma que el caso avanza y queda trazable.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="actividad" id="act-1-3">
+          <div class="actividad-header" onclick="toggleAct('act-1-3')">
+            <span class="act-num">1.3</span>
+            <span class="act-title">Tier 1 o Tier 2 — clasifica y justifica</span>
+            
+            <span class="act-toggle">▼</span>
+          </div>
+          <div class="actividad-body">
+            <p style="margin-bottom:6px;font-size:13.5px;color:var(--ink-soft);">Lee cada caso. Selecciona la clasificación y la justificación que mejor describe por qué. Al confirmar verás el análisis completo.</p>
+            <p style="margin-bottom:20px;font-size:12px;color:var(--ink-muted);">El objetivo no es acertar siempre — es aprender a detectar señales de urgencia que no son obvias a primera vista.</p>
+
+            <!-- CASO 1 -->
+            <div class="tier-card" id="tier-1">
+              <div class="sit-header">
+                <span class="sit-label">Caso 1 — Sra. Hernández</span>
+                <span class="sit-score" id="tier-1-score"></span>
+              </div>
+              <div class="sit-body">La señora Hernández lleva 14 meses esperando respuesta de USCIS para su solicitud de residencia familiar. Llama porque "ya no aguanta la angustia" y quiere saber si su caso avanza. En TramCase hay una nota del abogado de hace 8 meses: "considerar Mandamus si no hay respuesta en los próximos 3 meses." No hay notas posteriores de seguimiento. El caso no tiene NTA activo, pero el tiempo de procesamiento triplica el promedio para este tipo de solicitud.</div>
+              <div style="padding:16px 16px 0;display:flex;flex-direction:column;gap:10px;">
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                  <span style="font-size:12px;color:var(--ink-muted);min-width:100px;">Clasificación:</span>
+                  <div style="display:flex;gap:8px;">
+                    <button class="tier-btn" id="t1-tier1" onclick="selTier(1,'tier1')">Tier 1</button>
+                    <button class="tier-btn" id="t1-tier2" onclick="selTier(1,'tier2')">Tier 2</button>
+                  </div>
+                </div>
+                <div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;">
+                  <span style="font-size:12px;color:var(--ink-muted);min-width:100px;margin-top:8px;">¿Por qué?</span>
+                  <div style="display:flex;flex-direction:column;gap:6px;flex:1;">
+                    <label class="just-opt" id="t1-j1"><input type="radio" name="t1just" value="j1" onchange="selJust(1,'j1')"> El cliente está angustiado pero no hay NTA ni plazo federal urgente</label>
+                    <label class="just-opt" id="t1-j2"><input type="radio" name="t1just" value="j2" onchange="selJust(1,'j2')"> Hay una instrucción del abogado sin ejecutar y el tiempo supera el promedio — posible Mandamus</label>
+                    <label class="just-opt" id="t1-j3"><input type="radio" name="t1just" value="j3" onchange="selJust(1,'j3')"> La emoción del cliente define la urgencia del caso</label>
+                    <label class="just-opt" id="t1-j4"><input type="radio" name="t1just" value="j4" onchange="selJust(1,'j4')"> Sin NTA no puede ser Tier 2</label>
+                  </div>
+                </div>
+                <button class="confirmar-btn" id="t1-confirm" onclick="confirmarTier(1,'tier2','j2')" style="display:none;">Confirmar respuesta</button>
+              </div>
+              <div class="tier-feedback" id="tier-1-feedback"></div>
+            </div>
+
+            <!-- CASO 2 -->
+            <div class="tier-card" id="tier-2">
+              <div class="sit-header">
+                <span class="sit-label">Caso 2 — Sr. Ramos</span>
+                <span class="sit-score" id="tier-2-score"></span>
+              </div>
+              <div class="sit-body">El señor Ramos llama tranquilo, sin señales de crisis emocional. Dice que quiere "hablar con alguien porque ya consultó con otro abogado de otra firma" y que le explicaron cosas diferentes a lo que Mendoza le dijo. Pregunta si puede hablar con María para "ver qué le dice a él." En TramCase hay una nota de hace 2 semanas: "cliente satisfecho con el avance, próxima actualización en 30 días." No hay NTA ni plazo federal próximo.</div>
+              <div style="padding:16px 16px 0;display:flex;flex-direction:column;gap:10px;">
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                  <span style="font-size:12px;color:var(--ink-muted);min-width:100px;">Clasificación:</span>
+                  <div style="display:flex;gap:8px;">
+                    <button class="tier-btn" id="t2-tier1" onclick="selTier(2,'tier1')">Tier 1</button>
+                    <button class="tier-btn" id="t2-tier2" onclick="selTier(2,'tier2')">Tier 2</button>
+                  </div>
+                </div>
+                <div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;">
+                  <span style="font-size:12px;color:var(--ink-muted);min-width:100px;margin-top:8px;">¿Por qué?</span>
+                  <div style="display:flex;flex-direction:column;gap:6px;flex:1;">
+                    <label class="just-opt" id="t2-j1"><input type="radio" name="t2just" value="j1" onchange="selJust(2,'j1')"> El cliente está tranquilo, no hay urgencia legal visible</label>
+                    <label class="just-opt" id="t2-j2"><input type="radio" name="t2just" value="j2" onchange="selJust(2,'j2')"> Consultar con otra firma y pedir hablar con María es un deadline interno activo — ventana de 24-48 horas</label>
+                    <label class="just-opt" id="t2-j3"><input type="radio" name="t2just" value="j3" onchange="selJust(2,'j3')"> TramCase dice que el cliente estaba satisfecho, no hay razón de urgencia</label>
+                    <label class="just-opt" id="t2-j4"><input type="radio" name="t2just" value="j4" onchange="selJust(2,'j4')"> Es Tier 2 solo si menciona que quiere cambiar de firma explícitamente</label>
+                  </div>
+                </div>
+                <button class="confirmar-btn" id="t2-confirm" onclick="confirmarTier(2,'tier2','j2')" style="display:none;">Confirmar respuesta</button>
+              </div>
+              <div class="tier-feedback" id="tier-2-feedback"></div>
+            </div>
+
+            <!-- CASO 3 -->
+            <div class="tier-card" id="tier-3">
+              <div class="sit-header">
+                <span class="sit-label">Caso 3 — Sra. López</span>
+                <span class="sit-score" id="tier-3-score"></span>
+              </div>
+              <div class="sit-body">La señora López llama al call center muy alterada. Dice que recibió una carta de USCIS ayer pero no la entiende bien — cree que "le están pidiendo más papeles." Menciona de pasada que hace 3 semanas fue parada en un control vehicular y que "le preguntaron sobre sus papeles" pero que "todo estuvo bien y la dejaron ir." El agente le asegura que probablemente solo es un trámite de rutina y la agenda como callback estándar.</div>
+              <div style="padding:16px 16px 0;display:flex;flex-direction:column;gap:10px;">
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                  <span style="font-size:12px;color:var(--ink-muted);min-width:100px;">Clasificación:</span>
+                  <div style="display:flex;gap:8px;">
+                    <button class="tier-btn" id="t3-tier1" onclick="selTier(3,'tier1')">Tier 1</button>
+                    <button class="tier-btn" id="t3-tier2" onclick="selTier(3,'tier2')">Tier 2</button>
+                  </div>
+                </div>
+                <div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;">
+                  <span style="font-size:12px;color:var(--ink-muted);min-width:100px;margin-top:8px;">¿Por qué?</span>
+                  <div style="display:flex;flex-direction:column;gap:6px;flex:1;">
+                    <label class="just-opt" id="t3-j1"><input type="radio" name="t3just" value="j1" onchange="selJust(3,'j1')"> El agente ya evaluó que es rutina — confiar en esa primera impresión</label>
+                    <label class="just-opt" id="t3-j2"><input type="radio" name="t3just" value="j2" onchange="selJust(3,'j2')"> La carta de USCIS puede ser RFE con plazo, y el contacto con autoridades afecta elegibilidad — dos alertas simultáneas</label>
+                    <label class="just-opt" id="t3-j3"><input type="radio" name="t3just" value="j3" onchange="selJust(3,'j3')"> La cliente está alterada emocionalmente, eso sí lo clasifica como Tier 2</label>
+                    <label class="just-opt" id="t3-j4"><input type="radio" name="t3just" value="j4" onchange="selJust(3,'j4')"> Sin confirmación de que la carta sea un RFE, no se puede clasificar Tier 2</label>
+                  </div>
+                </div>
+                <button class="confirmar-btn" id="t3-confirm" onclick="confirmarTier(3,'tier2','j2')" style="display:none;">Confirmar respuesta</button>
+              </div>
+              <div class="tier-feedback" id="tier-3-feedback"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══ MÓDULO 2 ═══ -->
+    <div class="section" id="section-m2">
+      <div class="section-header">
+        <div class="section-num">02</div>
+        <div class="section-meta">
+          <div class="section-tag">Módulo 2 · 1 hora</div>
+          <h2 class="section-title">Diagnóstico antes de la cirugía</h2>
+          <p class="section-desc">Análisis de expediente, identificación de riesgos y perspectiva legal básica.</p>
+        </div>
+      </div>
+
+      <div class="eje-badges">
+        <span class="eje-badge" style="background:var(--purple-light);color:var(--purple);">● Eje 3: Revisión de plataformas</span>
+        <span class="eje-badge" style="background:var(--teal-light);color:var(--teal);">● Eje 5: Perspectiva legal</span>
+        <span class="eje-badge" style="background:var(--amber-light);color:var(--amber);">● Eje 2: Urgencia</span>
+      </div>
+
+      <div class="objetivo">
+        <div class="objetivo-label">Objetivo del módulo</div>
+        <p>El paralegal será capaz de revisar un expediente completo en TramCase y Dropbox, identificar los elementos jurídicamente relevantes, detectar inconsistencias o riesgos, y construir el framework STAR Legal antes de la callback.</p>
+      </div>
+
+      <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin-bottom:16px;font-weight:700;">Framework STAR Legal</h3>
+      <div class="framework">
+        <div class="fw-card">
+          <div class="fw-header" style="background:var(--teal-light);">
+            <span class="fw-letter" style="color:var(--teal);">S</span>
+            <span class="fw-name" style="color:var(--teal);">Status actual</span>
+          </div>
+          <div class="fw-body">
+            <ul>
+              <li>¿Dónde está el caso en este momento?</li>
+              <li>¿Qué trámite está activo?</li>
+              <li>¿Hay respuesta pendiente de USCIS u otra autoridad?</li>
+            </ul>
+          </div>
+        </div>
+        <div class="fw-card" style="grid-column:1/-1;">
+          <div class="fw-header" style="background:var(--amber-light);">
+            <span class="fw-letter" style="color:var(--amber);">T</span>
+            <span class="fw-name" style="color:var(--amber);">Timeline</span>
+          </div>
+          <div class="fw-body">
+            <ul>
+              <li>¿Qué pasó y cuándo? Orden cronológico desde la primera gestión</li>
+              <li>¿Hay plazos vencidos o próximos?</li>
+              <li>¿El tiempo transcurrido es normal para este tipo de caso?</li>
+            </ul>
+            <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="background:var(--red-light);border-left:3px solid var(--red);border-radius:0 6px 6px 0;padding:10px 14px;">
+                <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--red);margin-bottom:6px;">Deadline externo — USCIS</div>
+                <p style="font-size:12.5px;color:var(--ink-soft);line-height:1.6;">El caso ya está en proceso federal. El reloj corre desde que se recibió el <strong>recibo inicial</strong>. Plazos dependen del tiempo transcurrido desde ese recibo: un RFE tiene fecha límite de respuesta; un NOD activa acción inmediata. Si el tiempo excede el promedio para ese tipo de caso → señalar al abogado como posible Mandamus.</p>
+              </div>
+              <div style="background:var(--purple-light);border-left:3px solid var(--purple);border-radius:0 6px 6px 0;padding:10px 14px;">
+                <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--purple);margin-bottom:6px;">Deadline interno — cliente complicado</div>
+                <p style="font-size:12.5px;color:var(--ink-soft);line-height:1.6;">El cliente ya consultó con otro abogado y quiere hablar con MGM. No hay plazo federal — pero la ventana es de <strong>24 a 48 horas</strong>. Si no se responde en ese tiempo, el cliente tomó su decisión. Este deadline lo detecta el paralegal en el primer contacto, no el abogado en la llamada.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="fw-card">
+          <div class="fw-header" style="background:var(--red-light);">
+            <span class="fw-letter" style="color:var(--red);">A</span>
+            <span class="fw-name" style="color:var(--red);">Alertas</span>
+          </div>
+          <div class="fw-body">
+            <ul>
+              <li>¿Qué riesgos hay? NTA, inconsistencias, vacíos</li>
+              <li>¿Hay promesas al cliente sin registro de cumplimiento?</li>
+              <li>¿Hay instrucciones del abogado sin ejecución?</li>
+            </ul>
+          </div>
+        </div>
+        <div class="fw-card">
+          <div class="fw-header" style="background:var(--purple-light);">
+            <span class="fw-letter" style="color:var(--purple);">R</span>
+            <span class="fw-name" style="color:var(--purple);">Razón del callback</span>
+          </div>
+          <div class="fw-body">
+            <ul>
+              <li>¿Por qué está aquí este caso?</li>
+              <li>¿Qué detonó el contacto del cliente?</li>
+              <li>¿Qué narrativa tiene el cliente sobre su situación?</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="nota">
+        <strong>Regla de revisión no negociable:</strong> Ningún CB Checklist puede considerarse completo si el paralegal no revisó TramCase desde la primera nota del caso y Dropbox desde la última carga de documentos. La revisión superficial es peor que no revisar — da falsa seguridad.
+      </div>
+
+      <div class="divider"></div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin-bottom:20px;font-weight:700;">Caso real · El riesgo que nadie vio</h3>
+
+      <div class="caso">
+        <div class="caso-header">
+          <span class="caso-tag">Caso 02</span>
+          <span class="caso-title">El contacto con autoridades que nadie siguió</span>
+        </div>
+        <div class="caso-body">
+          Un paralegal recibe el caso de un cliente cuya solicitud de DACA fue denegada. Revisa TramCase superficialmente — ve que hay notas, que el expediente existe, que hay documentos. No nota que en la última nota del abogado dice: "cliente mencionó contacto con autoridades en 2023 — pendiente verificar." En la callback, el abogado descubre este dato por primera vez. El caso tiene implicaciones de elegibilidad que cambian toda la estrategia. El abogado improvisa. El cliente queda confundido. El attorney necesita una segunda callback para corregir el rumbo.
+        </div>
+        <div class="caso-preguntas">
+          <div class="caso-preguntas-label">Análisis del caso</div>
+          <div class="caso-q"><span class="caso-q-num">01</span><span>¿Qué debió encontrar el paralegal en la revisión del expediente? ¿En qué parte específica de TramCase?</span></div>
+          <div class="caso-q"><span class="caso-q-num">02</span><span>¿Cómo afecta ese dato a la estrategia que el abogado habría presentado?</span></div>
+          <div class="caso-q"><span class="caso-q-num">03</span><span>¿Qué pregunta estratégica debía estar preparada para el cliente sobre ese contacto?</span></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin-bottom:20px;font-weight:700;">Actividades del módulo</h3>
+
+      <div class="actividades">
+        <div class="actividad" id="act-2-1">
+          <div class="actividad-header" onclick="toggleAct('act-2-1')">
+            <span class="act-num">2.1</span>
+            <span class="act-title">Aplica el STAR Legal al Caso 02 — el contacto con autoridades</span>
+            
+            <span class="act-toggle">▼</span>
+          </div>
+          <div class="actividad-body">
+            <p style="margin-bottom:16px;">Usa el caso que acabas de leer (Caso 02 — El contacto con autoridades que nadie siguió) para completar el framework STAR Legal. Este es el mismo expediente que el paralegal original revisó superficialmente. Tu trabajo es hacer la revisión que él no hizo.</p>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+              <div style="border:1.5px solid var(--teal);border-radius:8px;overflow:hidden;">
+                <div style="background:var(--teal);padding:10px 16px;display:flex;align-items:center;gap:10px;">
+                  <span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:white;">S</span>
+                  <span style="font-size:13px;font-weight:500;color:white;">Status actual</span>
+                </div>
+                <div style="padding:14px 16px;background:white;">
+                  <p style="font-size:12.5px;color:var(--ink-muted);margin-bottom:8px;">¿Dónde está el caso? ¿Qué trámite activo hay?</p>
+                  <div style="background:var(--paper);border-radius:4px;padding:10px;font-size:12.5px;color:var(--ink-soft);line-height:1.6;"><em>El caso es una solicitud de DACA denegada. El paralegal debe verificar: ¿hubo apelación? ¿Está en espera de una nueva solicitud? ¿Hay un trámite alternativo activo?</em></div>
+                  <div style="margin-top:10px;border-bottom:1px dashed var(--border);padding-bottom:4px;font-size:12px;color:var(--ink-muted);">Tu respuesta:</div>
+                  <div style="height:40px;"></div>
+                </div>
+              </div>
+
+              <div style="border:1.5px solid var(--amber);border-radius:8px;overflow:hidden;">
+                <div style="background:var(--amber);padding:10px 16px;display:flex;align-items:center;gap:10px;">
+                  <span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:white;">T</span>
+                  <span style="font-size:13px;font-weight:500;color:white;">Timeline</span>
+                </div>
+                <div style="padding:14px 16px;background:white;">
+                  <p style="font-size:12.5px;color:var(--ink-muted);margin-bottom:8px;">¿Cuándo fue la denegación? ¿Hay plazos próximos?</p>
+                  <div style="background:var(--paper);border-radius:4px;padding:10px;font-size:12.5px;color:var(--ink-soft);line-height:1.6;"><em>Fecha de denegación, fecha del contacto con autoridades (2023), tiempo transcurrido desde entonces. ¿Hay plazo de apelación vencido o próximo?</em></div>
+                  <div style="margin-top:10px;border-bottom:1px dashed var(--border);padding-bottom:4px;font-size:12px;color:var(--ink-muted);">Tu respuesta:</div>
+                  <div style="height:40px;"></div>
+                </div>
+              </div>
+
+              <div style="border:1.5px solid var(--red);border-radius:8px;overflow:hidden;">
+                <div style="background:var(--red);padding:10px 16px;display:flex;align-items:center;gap:10px;">
+                  <span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:white;">A</span>
+                  <span style="font-size:13px;font-weight:500;color:white;">Alertas</span>
+                </div>
+                <div style="padding:14px 16px;background:white;">
+                  <p style="font-size:12.5px;color:var(--ink-muted);margin-bottom:8px;">¿Qué riesgos hay? ¿Qué no se siguió?</p>
+                  <div style="background:var(--paper);border-radius:4px;padding:10px;font-size:12.5px;color:var(--ink-soft);line-height:1.6;"><em>Alerta principal: nota del abogado "contacto con autoridades en 2023 — pendiente verificar." Esto es una instrucción sin ejecución. Puede afectar elegibilidad. Debe verificarse antes de la callback.</em></div>
+                  <div style="margin-top:10px;border-bottom:1px dashed var(--border);padding-bottom:4px;font-size:12px;color:var(--ink-muted);">Tu respuesta:</div>
+                  <div style="height:40px;"></div>
+                </div>
+              </div>
+
+              <div style="border:1.5px solid var(--purple);border-radius:8px;overflow:hidden;">
+                <div style="background:var(--purple);padding:10px 16px;display:flex;align-items:center;gap:10px;">
+                  <span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:white;">R</span>
+                  <span style="font-size:13px;font-weight:500;color:white;">Razón del callback</span>
+                </div>
+                <div style="padding:14px 16px;background:white;">
+                  <p style="font-size:12.5px;color:var(--ink-muted);margin-bottom:8px;">¿Por qué llegó este caso a callback?</p>
+                  <div style="background:var(--paper);border-radius:4px;padding:10px;font-size:12.5px;color:var(--ink-soft);line-height:1.6;"><em>La denegación de DACA generó inconformidad o dudas sobre estrategia. El cliente necesita entender qué opciones tiene. El abogado necesita saber del contacto con autoridades para dar un consejo preciso.</em></div>
+                  <div style="margin-top:10px;border-bottom:1px dashed var(--border);padding-bottom:4px;font-size:12px;color:var(--ink-muted);">Tu respuesta:</div>
+                  <div style="height:40px;"></div>
+                </div>
+              </div>
+            </div>
+
+            <div style="background:var(--navy);border-radius:6px;padding:14px 16px;">
+              <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(245,242,237,0.45);margin-bottom:8px;">Pregunta de cierre</div>
+              <p style="font-size:13px;color:rgba(245,242,237,0.8);line-height:1.6;">Con el STAR completo frente a ti: ¿cambiaría la clasificación Tier del caso? ¿Qué le dirías al abogado en el briefing que el paralegal original no le dijo? ¿Qué pregunta específica debía estar preparada para el cliente antes de la llamada?</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══ MÓDULO 3 ═══ -->
+    <div class="section" id="section-m3">
+      <div class="section-header">
+        <div class="section-num">03</div>
+        <div class="section-meta">
+          <div class="section-tag">Módulo 3 · 1 hora</div>
+          <h2 class="section-title">Preparar al doctor para operar</h2>
+          <p class="section-desc">CB Checklist, Risk Assessment Report y briefing al abogado.</p>
+        </div>
+      </div>
+
+      <div class="eje-badges">
+        <span class="eje-badge" style="background:var(--red-light);color:var(--red);">● Eje 1: Percepción de abandono</span>
+        <span class="eje-badge" style="background:var(--purple-light);color:var(--purple);">● Eje 3: Revisión de plataformas</span>
+        <span class="eje-badge" style="background:var(--teal-light);color:var(--teal);">● Eje 5: Perspectiva legal</span>
+      </div>
+
+      <div class="objetivo">
+        <div class="objetivo-label">Objetivo del módulo</div>
+        <p>El paralegal dominará el CB Checklist completo, el Risk Assessment Report, y sabrá estructurar un briefing pre-callback al abogado — verbal y por escrito — que permita al abogado entrar a la llamada sabiendo exactamente qué va a encontrar.</p>
+      </div>
+
+      <div class="nota">
+        <strong>La analogía en este módulo:</strong> Un cirujano que entra al quirófano confía en que el enfermero ya revisó que todos los instrumentos están listos, el paciente está preparado y el expediente actualizado. El abogado confía exactamente en lo mismo. Preparar no es "mandar el checklist" — es asegurarse de que el abogado entiende el caso, los riesgos y lo que necesita clarificar.
+      </div>
+
+      <div class="caso">
+        <div class="caso-header">
+          <span class="caso-tag">Caso 03</span>
+          <span class="caso-title">El abogado que no sabía que venía una queja formal</span>
+        </div>
+        <div class="caso-body">
+          El abogado entra a una callback. El cliente lleva 10 minutos hablando cuando el abogado se da cuenta de que la llamada no era sobre el avance del caso — era sobre una queja formal que el cliente presentó ante el Bar. El paralegal sabía esto desde el agendamiento pero no lo incluyó en ningún briefing. El abogado tuvo que improvisar en una situación de altísimo riesgo reputacional y legal. La llamada terminó sin estrategia clara.
+        </div>
+        <div class="caso-preguntas">
+          <div class="caso-preguntas-label">Análisis</div>
+          <div class="caso-q"><span class="caso-q-num">01</span><span>¿Qué información omitió el paralegal y en qué parte del proceso de preparación?</span></div>
+          <div class="caso-q"><span class="caso-q-num">02</span><span>¿Cómo se clasifica este caso (Tier 1 o Tier 2) y por qué cambia completamente la preparación requerida?</span></div>
+          <div class="caso-q"><span class="caso-q-num">03</span><span>¿Qué habría incluido un briefing correcto para este caso?</span></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin-bottom:20px;font-weight:700;">Actividades del módulo</h3>
+
+      <div class="actividades">
+        <div class="actividad" id="act-3-1">
+          <div class="actividad-header" onclick="toggleAct('act-3-1')">
+            <span class="act-num">3.1</span>
+            <span class="act-title">Llenado de CB Checklist — caso completo</span>
+            
+            <span class="act-toggle">▼</span>
+          </div>
+          <div class="actividad-body">
+            <p>Los participantes reciben un expediente y llenan el CB Checklist completo sección por sección. Se revisa en pares. El facilitador selecciona 2-3 checklists para retroalimentación en plenaria.</p>
+            <p style="margin-top:10px;font-size:13px;color:var(--ink-muted);">Criterio: ¿Puede el abogado entrar a la llamada con este checklist y saber exactamente de qué se trata el caso, cuáles son los riesgos y qué necesita aclarar?</p>
+          </div>
+        </div>
+
+        <div class="actividad" id="act-3-2">
+          <div class="actividad-header" onclick="toggleAct('act-3-2')">
+            <span class="act-num">3.2</span>
+            <span class="act-title">Evalúa este briefing — ¿sirve para entrar a la llamada?</span>
+            
+            <span class="act-toggle">▼</span>
+          </div>
+          <div class="actividad-body">
+            <p style="margin-bottom:14px;font-size:13.5px;color:var(--ink-soft);">Lee cada briefing. Evalúa si le permite al abogado entrar preparado a la llamada o no. Selecciona tu respuesta y explica qué falta.</p>
+
+            <!-- BRIEFING 1 -->
+            <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:20px;">
+              <div style="background:var(--paper-warm);padding:10px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--ink-muted);">Briefing A</span>
+                <span id="bf1-score" style="font-family:'DM Mono',monospace;font-size:11px;font-weight:500;"></span>
+              </div>
+              <div style="padding:16px;font-size:13.5px;color:var(--ink-soft);line-height:1.75;font-style:italic;background:white;">
+                "El cliente llama porque quiere saber cómo va su caso. Lleva varios meses esperando. Es un caso de asilo. El abogado debe hablar con él y explicarle la situación."
+              </div>
+              <div style="padding:12px 16px;display:flex;gap:8px;" id="bf1-btns">
+                <button class="sit-btn" onclick="votarBF(1,'no')">No sirve</button>
+                <button class="sit-btn sit-btn-legal" onclick="votarBF(1,'si')">Sí sirve</button>
+              </div>
+              <div class="sit-feedback" id="bf1-fb"></div>
+            </div>
+
+            <!-- BRIEFING 2 -->
+            <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:20px;">
+              <div style="background:var(--paper-warm);padding:10px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--ink-muted);">Briefing B</span>
+                <span id="bf2-score" style="font-family:'DM Mono',monospace;font-size:11px;font-weight:500;"></span>
+              </div>
+              <div style="padding:16px;font-size:13.5px;color:var(--ink-soft);line-height:1.75;font-style:italic;background:white;">
+                "Cliente: Sr. Martínez · Caso: DACA, denegado en octubre 2024 · Motivo de callback: inconformidad por falta de respuesta sobre opciones tras la denegación · Tier 2 — hay un NTA emitido en enero 2025 sin nota de seguimiento en TramCase · Última nota del abogado (hace 6 meses): evaluar posibilidad de cambio de vía · Riesgo: cliente sin claridad sobre su estatus actual, posible decisión de cambiar de firma · Pregunta clave para el cliente: ¿ha tenido algún contacto con autoridades desde la denegación?"
+              </div>
+              <div style="padding:12px 16px;display:flex;gap:8px;" id="bf2-btns">
+                <button class="sit-btn" onclick="votarBF(2,'no')">No sirve</button>
+                <button class="sit-btn sit-btn-legal" onclick="votarBF(2,'si')">Sí sirve</button>
+              </div>
+              <div class="sit-feedback" id="bf2-fb"></div>
+            </div>
+
+            <!-- BRIEFING 3 -->
+            <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:20px;">
+              <div style="background:var(--paper-warm);padding:10px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--ink-muted);">Briefing C</span>
+                <span id="bf3-score" style="font-family:'DM Mono',monospace;font-size:11px;font-weight:500;"></span>
+              </div>
+              <div style="padding:16px;font-size:13.5px;color:var(--ink-soft);line-height:1.75;font-style:italic;background:white;">
+                "La señora López tiene un caso de residencia familiar. Lleva 14 meses en espera de USCIS. El procesamiento excede el tiempo promedio. El abogado lo revisó hace 8 meses. Está enojada."
+              </div>
+              <div style="padding:12px 16px;display:flex;gap:8px;" id="bf3-btns">
+                <button class="sit-btn" onclick="votarBF(3,'no')">No sirve</button>
+                <button class="sit-btn sit-btn-legal" onclick="votarBF(3,'si')">Sí sirve</button>
+              </div>
+              <div class="sit-feedback" id="bf3-fb"></div>
+            </div>
+
+            <!-- BRIEFING 4 -->
+            <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:20px;">
+              <div style="background:var(--paper-warm);padding:10px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--ink-muted);">Briefing D</span>
+                <span id="bf4-score" style="font-family:'DM Mono',monospace;font-size:11px;font-weight:500;"></span>
+              </div>
+              <div style="padding:16px;font-size:13.5px;color:var(--ink-soft);line-height:1.75;font-style:italic;background:white;">
+                "Cliente: Sra. Ramírez · Caso: T Visa — screening pendiente desde hace 3 semanas · Motivo: cliente llama alterada porque no ha recibido confirmación de que el screening se activó · Tier 2 — hay una instrucción del abogado de hace 3 semanas: 'activar screening urgente', sin nota de ejecución en TramCase · Riesgo operativo y reputacional: la firma prometió activar el proceso y no hay registro de que se haya hecho · Riesgo legal: el retraso puede afectar la elegibilidad si el evento de abuso se aleja en el tiempo · Pregunta clave: verificar con Fulfillment si el screening fue activado antes de iniciar la llamada."
+              </div>
+              <div style="padding:12px 16px;display:flex;gap:8px;" id="bf4-btns">
+                <button class="sit-btn" onclick="votarBF(4,'no')">No sirve</button>
+                <button class="sit-btn sit-btn-legal" onclick="votarBF(4,'si')">Sí sirve</button>
+              </div>
+              <div class="sit-feedback" id="bf4-fb"></div>
+            </div>
+
+            <div id="bf-text-section" style="display:none;">
+              <div style="background:var(--paper-warm);border-radius:8px;padding:16px 20px;margin-bottom:16px;">
+                <p style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:4px;">¿Qué elementos distinguen un briefing que sirve de uno que no sirve?</p>
+                <p style="font-size:12px;color:var(--ink-muted);">Mínimo 90 caracteres</p>
+              </div>
+              <textarea id="brief-text" placeholder="Escribe aquí qué información específica le falta a los briefings deficientes para que el abogado pueda entrar preparado..." style="width:100%;min-height:100px;padding:12px 14px;border:1.5px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);line-height:1.6;resize:vertical;background:var(--paper);" oninput="checkBriefLen()"></textarea>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+                <span id="brief-char-count" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-muted);">0 / 90 mínimo</span>
+                <button id="brief-submit" onclick="submitBriefing()" disabled style="padding:8px 20px;background:var(--navy);color:white;border:none;border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;opacity:0.4;cursor:not-allowed;">Enviar respuesta</button>
+              </div>
+              <div id="brief-final-feedback" style="display:none;margin-top:16px;padding:14px 16px;background:var(--teal-light);border-left:3px solid var(--teal);border-radius:0 6px 6px 0;font-size:13px;color:var(--teal);line-height:1.65;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ MÓDULO 4 ═══ -->
+    <div class="section" id="section-m4">
+      <div class="section-header">
+        <div class="section-num">04</div>
+        <div class="section-meta">
+          <div class="section-tag">Módulo 4 · 1 hora</div>
+          <h2 class="section-title">En el quirófano — la llamada en vivo</h2>
+          <p class="section-desc">Conducción activa, toma de notas estructuradas y manejo de crisis durante la callback.</p>
+        </div>
+      </div>
+
+      <div class="eje-badges">
+        <span class="eje-badge" style="background:var(--amber-light);color:var(--amber);">● Eje 2: Urgencia</span>
+        <span class="eje-badge" style="background:#eaf3de;color:#3b6d11;">● Eje 4: Diligencia</span>
+        <span class="eje-badge" style="background:var(--red-light);color:var(--red);">● Eje 1: Percepción de abandono</span>
+      </div>
+
+      <div class="objetivo">
+        <div class="objetivo-label">Objetivo del módulo</div>
+        <p>El paralegal sabrá exactamente cuál es su función durante la callback, cómo tomar notas estructuradas, cómo apoyar activamente al abogado, y cómo mantener el registro correcto incluso en situaciones de alta tensión emocional.</p>
+      </div>
+
+      <div class="concepts">
+        <div class="concept-card full">
+          <div class="c-title">Lo que hace el paralegal durante la llamada — no es observar</div>
+          <p>Durante la cirugía, el enfermero no observa pasivamente. Mantiene el campo operatorio organizado, pasa los instrumentos al médico en el momento correcto, monitorea al paciente y toma registro de todo. Si algo cambia, lo dice de inmediato.</p>
+        </div>
+      </div>
+
+      <h3 style="font-family:'Playfair Display',serif;font-size:16px;margin-bottom:14px;font-weight:700;">Estructura de notas durante la llamada</h3>
+      <table class="resp-table" style="margin-bottom:32px;">
+        <thead>
+          <tr><th>Categoría</th><th>Qué anotar</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="tag tag-purple">Información nueva</span></td><td>Datos que el cliente menciona que NO están en el expediente. Cualquier dato nuevo es potencialmente relevante.</td></tr>
+          <tr><td><span class="tag tag-amber">Cambios de estrategia</span></td><td>Decisiones del abogado que modifican la ruta del caso. Deben quedar registradas con exactitud.</td></tr>
+          <tr><td><span class="tag tag-teal">Acuerdos</span></td><td>Compromisos concretos: quién, qué, para cuándo. Si no quedó claro, preguntar antes de terminar la llamada.</td></tr>
+          <tr><td><span class="tag tag-red">Alertas</span></td><td>Contradicciones con el expediente, riesgos emergentes, emociones críticas que puedan escalar.</td></tr>
+          <tr><td><span class="tag" style="background:var(--paper-mid);color:var(--ink-soft);">Pendientes internos</span></td><td>Acciones que quedan a cargo de la firma — con área y plazo desde la llamada.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="caso">
+        <div class="caso-header">
+          <span class="caso-tag">Caso 04</span>
+          <span class="caso-title">La callback sin notas — acuerdos que desaparecieron</span>
+        </div>
+        <div class="caso-body">
+          Al terminar una callback importante donde el abogado definió una estrategia de Mandamus con plazos específicos, el paralegal no tiene notas claras de los acuerdos. Intenta recordar. Anota algo vago en TramCase: "se habló de opciones legales, el abogado dará seguimiento." A los 3 días, nadie sabe qué acordó el abogado, con qué plazo ni quién era el responsable de cada acción. El cliente llama preguntando por el siguiente paso. Nadie puede responderle.
+        </div>
+        <div class="caso-preguntas">
+          <div class="caso-preguntas-label">Análisis</div>
+          <div class="caso-q"><span class="caso-q-num">01</span><span>¿Qué información específica debieron haber capturado las notas? ¿En qué formato?</span></div>
+          <div class="caso-q"><span class="caso-q-num">02</span><span>¿Cómo impacta esto al cliente y a la firma? ¿Qué responsabilidad operativa y legal se activa?</span></div>
+          <div class="caso-q"><span class="caso-q-num">03</span><span>¿Cuáles son los 30 minutos más importantes después de que termina la llamada?</span></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin-bottom:20px;font-weight:700;">Actividades del módulo</h3>
+
+      <div class="actividades">
+        <div class="actividad" id="act-4-1">
+          <div class="actividad-header" onclick="toggleAct('act-4-1')">
+            <span class="act-num">4.1</span>
+            <span class="act-title">Simulación de callback Tier 1 — en tríos</span>
+            
+            <span class="act-toggle">▼</span>
+          </div>
+          <div class="actividad-body">
+            <div class="roleplay">
+              <div class="roleplay-header">
+                <span class="roleplay-tag">Simulación · Tier 1</span>
+                <span class="roleplay-title">Inconformidad por tiempos de procesamiento</span>
+              </div>
+              <div class="roleplay-body">
+                <div class="roleplay-roles">
+                  <div class="role-pill"><div class="rp-label">Rol 1</div><div class="rp-name">Attorney</div></div>
+                  <div class="role-pill"><div class="rp-label">Rol 2</div><div class="rp-name">Paralegal</div></div>
+                  <div class="role-pill"><div class="rp-label">Rol 3</div><div class="rp-name">Cliente</div></div>
+                </div>
+                <p class="roleplay-instrucciones">El "cliente" presenta inconformidades sobre tiempos de procesamiento. El "abogado" necesita apoyo del paralegal con datos específicos del caso durante la llamada. Al terminar: el paralegal presenta sus notas. El grupo evalúa si son suficientes para hacer seguimiento.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="actividad" id="act-4-2">
+          <div class="actividad-header" onclick="toggleAct('act-4-2')">
+            <span class="act-num">4.2</span>
+            <span class="act-title">Simulación Tier 2 — cliente en crisis por NTA</span>
+            
+            <span class="act-toggle">▼</span>
+          </div>
+          <div class="actividad-body">
+            <div class="roleplay">
+              <div class="roleplay-header">
+                <span class="roleplay-tag">Simulación · Tier 2 · Alta complejidad</span>
+                <span class="roleplay-title">Cliente con NTA activo — estado emocional severo</span>
+              </div>
+              <div class="roleplay-body">
+                <div class="roleplay-roles">
+                  <div class="role-pill"><div class="rp-label">Escenario</div><div class="rp-name">NTA recibido hace 3 días</div></div>
+                  <div class="role-pill"><div class="rp-label">Estado cliente</div><div class="rp-name">Crisis emocional severa</div></div>
+                  <div class="role-pill"><div class="rp-label">Riesgo</div><div class="rp-name">Deportación familiar</div></div>
+                </div>
+                <p class="roleplay-instrucciones">El cliente recibió un NTA hace 3 días y está en estado emocional severo. La llamada puede escalar. El paralegal debe: apoyar al abogado con información del expediente en tiempo real, tomar notas precisas en un ambiente de alta tensión, y mantener el registro correcto aunque el cliente esté alterado.</p>
+              </div>
+            </div>
+            <p style="margin-top:12px;font-size:13px;color:var(--ink-muted);">Retroalimentación enfocada en: ¿Qué información crítica se perdió en las notas? ¿El paralegal mantuvo su rol operativo o se absorbió en la emoción del momento?</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══ MÓDULO 5 ═══ -->
+    <div class="section" id="section-m5">
+      <div class="section-header">
+        <div class="section-num">05</div>
+        <div class="section-meta">
+          <div class="section-tag">Módulo 5 · 1 hora</div>
+          <h2 class="section-title">Alta médica y seguimiento del tratamiento</h2>
+          <p class="section-desc">Registro de acuerdos, coordinación con PMO y cierre formal del ciclo.</p>
+        </div>
+      </div>
+
+      <div class="eje-badges">
+        <span class="eje-badge" style="background:#eaf3de;color:#3b6d11;">● Eje 4: Diligencia y responsabilidades</span>
+        <span class="eje-badge" style="background:var(--red-light);color:var(--red);">● Eje 1: Percepción de abandono</span>
+        <span class="eje-badge" style="background:#eaf3de;color:#3b6d11;">● Eje 6: Rutina operativa</span>
+      </div>
+
+      <div class="objetivo">
+        <div class="objetivo-label">Objetivo del módulo</div>
+        <p>El paralegal entenderá que su responsabilidad no termina cuando termina la llamada — termina cuando todos los acuerdos están ejecutados y cerrados formalmente. "Ya avisé a otra área" no es seguimiento.</p>
+      </div>
+
+      <div class="big-quote">"Ya le avisé a PMO" no es seguimiento.<br>Seguimiento es: "PMO confirmó, el área ejecutó, el acuerdo está cerrado en TramCase."</div>
+
+      <div class="caso">
+        <div class="caso-header">
+          <span class="caso-tag">Caso 05</span>
+          <span class="caso-title">El paralegal que delegó y olvidó</span>
+        </div>
+        <div class="caso-body">
+          El abogado acordó con el cliente que en 5 días recibiría confirmación del avance de su caso. El paralegal avisó a otra área y asumió que lo resolverían. No hizo seguimiento. No verificó. No anotó en la sheet. A los 7 días, el cliente llama furioso porque nadie lo contactó. El paralegal responde: "yo ya lo mandé con ellos." El cliente amenaza con dejar la firma y menciona que consultará con otro abogado.
+        </div>
+        <div class="caso-preguntas">
+          <div class="caso-preguntas-label">Análisis</div>
+          <div class="caso-q"><span class="caso-q-num">01</span><span>¿Quién tiene la responsabilidad de que el acuerdo se cumpla? ¿Cambia si el paralegal ya avisó a otra área?</span></div>
+          <div class="caso-q"><span class="caso-q-num">02</span><span>¿Qué debió hacer el paralegal en los 5 días posteriores a la callback?</span></div>
+          <div class="caso-q"><span class="caso-q-num">03</span><span>¿En qué momento exacto debió escalar y a quién?</span></div>
+        </div>
+      </div>
+
+      <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin:32px 0 16px;font-weight:700;">Mapa de responsabilidades</h3>
+      <table class="resp-table">
+        <thead>
+          <tr><th>Rol</th><th>Le pertenece al 100%</th><th>Comparte con otra área</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Paralegal</strong></td>
+            <td>Preparación pre-llamada, notas, registro de acuerdos, seguimiento hasta cierre, verificación de ejecución</td>
+            <td>Ejecución de acciones que corresponden a PMO o FU</td>
+          </tr>
+          <tr>
+            <td><strong>PMO</strong></td>
+            <td>Registro en tracker, notificación al área, monitoreo de plazo</td>
+            <td>Activación del paralegal cuando hay bloqueos</td>
+          </tr>
+          <tr>
+            <td><strong>Área receptora</strong></td>
+            <td>Ejecución dentro de su flujo, confirmación de cumplimiento</td>
+            <td>Comunicar retrasos al paralegal antes del plazo</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="divider"></div>
+      <div class="actividades">
+        <div class="actividad" id="act-5-1">
+          <div class="actividad-header" onclick="toggleAct('act-5-1')">
+            <span class="act-num">5.1</span>
+            <span class="act-title">Del acuerdo al cierre — mapeo de acciones post-callback</span>
+            
+            <span class="act-toggle">▼</span>
+          </div>
+          <div class="actividad-body">
+            <p>Se dan los resultados de una callback ficticia (notas de lo que acordó el abogado). Los participantes deben: identificar todos los acuerdos derivados, asignar responsable y área a cada uno, establecer fecha compromiso razonable, y escribir la nota de TramCase.</p>
+            <p style="margin-top:10px;font-size:13px;color:var(--ink-muted);">Se revisa en plenaria. Se evalúa si algún acuerdo quedó sin asignar o con información ambigua.</p>
+          </div>
+        </div>
+
+        <div class="actividad" id="act-5-2">
+          <div class="actividad-header" onclick="toggleAct('act-5-2')">
+            <span class="act-num">5.2</span>
+            <span class="act-title">Role play — escalación interna correcta</span>
+            
+            <span class="act-toggle">▼</span>
+          </div>
+          <div class="actividad-body">
+            <div class="roleplay">
+              <div class="roleplay-header">
+                <span class="roleplay-tag">Role Play · Escalación</span>
+                <span class="roleplay-title">Acción en riesgo — plazo vence mañana</span>
+              </div>
+              <div class="roleplay-body">
+                <p class="roleplay-instrucciones">El paralegal detecta que una acción asignada a otra área no ha avanzado y el plazo vence mañana. Practica: ¿cómo escala? ¿A quién? ¿En qué tono? ¿Qué documenta? Se practica el mensaje de escalación correcto: urgente pero profesional, con contexto y plazo claro.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══ MÓDULO 6 ═══ -->
+    <div class="section" id="section-m6">
+      <div class="section-header">
+        <div class="section-num">06</div>
+        <div class="section-meta">
+          <div class="section-tag">Módulo 6 · 1 hora</div>
+          <h2 class="section-title">Simulación final y certificación</h2>
+          <p class="section-desc">Demostración integral del ciclo completo — desde expediente hasta cierre de acuerdos.</p>
+        </div>
+      </div>
+
+      <div class="eje-badges">
+        <span class="eje-badge" style="background:#eaf3de;color:#3b6d11;">● Todos los ejes integrados</span>
+        <span class="eje-badge" style="background:var(--paper-mid);color:var(--ink-soft);">● Certificación</span>
+      </div>
+
+      <div class="objetivo">
+        <div class="objetivo-label">Objetivo del módulo</div>
+        <p>El paralegal demostrará dominio completo del ciclo — recepción del caso, análisis, preparación, callback, registro y seguimiento — en una simulación integral con retroalimentación estructurada.</p>
+      </div>
+
+      <div class="nota">
+        <strong>Dinámica:</strong> Cada participante recibe un caso nuevo (no visto antes). Tiene 30 minutos para analizarlo, completar el CB Checklist, preparar el briefing y estar listo. Luego simulación en tiempo real con un evaluador como abogado y otro como cliente.
+      </div>
+
+      <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin-bottom:16px;font-weight:700;">Rúbrica de certificación</h3>
+      <table class="resp-table">
+        <thead>
+          <tr><th>Dimensión</th><th>Indicadores</th><th>Peso</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Análisis de expediente</strong></td>
+            <td>Identificó información relevante, detectó riesgos, completó STAR Legal correctamente</td>
+            <td><strong>25%</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Preparación del abogado</strong></td>
+            <td>Briefing claro, CB Checklist completo, información organizada con criterio legal</td>
+            <td><strong>25%</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Conducción en llamada</strong></td>
+            <td>Notas estructuradas por categoría, apoyo activo al abogado, registro en TramCase</td>
+            <td><strong>25%</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Seguimiento post-callback</strong></td>
+            <td>Todos los acuerdos registrados, asignados con responsable y plazo, sheet actualizada</td>
+            <td><strong>25%</strong></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:13px;color:var(--ink-muted);margin-bottom:32px;">Mínimo para certificación: <strong>70% en cada dimensión</strong>. Quienes no alcancen el mínimo en alguna dimensión reciben una sesión de refuerzo enfocada específicamente en esa área.</p>
+
+    </div>
+
+    <!-- ═══ EJE 1 ═══ -->
+    <div class="section" id="section-eje1">
+      <div class="section-header">
+        <div class="section-num" style="color:var(--red-mid);">E1</div>
+        <div class="section-meta">
+          <div class="section-tag" style="color:var(--red);">Eje crítico 1 — Presente en M1, M3, M5</div>
+          <h2 class="section-title">Percepción de abandono</h2>
+          <p class="section-desc">Lo que el cliente siente construye su realidad. El paralegal es el único actor que puede cambiarlo antes de que escale.</p>
+        </div>
+      </div>
+
+      <div class="nota">
+        <strong>La idea central:</strong> El cliente que llega a un callback ya construyó una narrativa. No es una narrativa sobre el estatus legal de su caso — es una narrativa sobre si la firma se preocupa por él. El paralegal no puede cambiar los tiempos del USCIS. Sí puede cambiar lo que el cliente percibe durante ese tiempo.
+      </div>
+
+      <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin-bottom:16px;font-weight:700;">Cómo se construye la percepción de abandono</h3>
+      <p style="font-size:13.5px;color:var(--ink-muted);margin-bottom:20px;">No es un evento — es una acumulación. Cada peldaño es una señal que el cliente interpreta sobre si importa o no.</p>
+
+      <div class="escalera">
+        <div class="peldano">
+          <div class="peldano-content" style="background:var(--teal-light);margin-left:0px;">
+            <div class="peldano-label" style="color:var(--teal);">Silencio prolongado</div>
+            <div class="peldano-sub" style="color:var(--teal);">Semanas sin noticias — el cliente empieza a preguntarse si lo olvidaron</div>
+          </div>
+        </div>
+        <div class="peldano-arrow">↓</div>
+        <div class="peldano">
+          <div class="peldano-content" style="background:var(--amber-light);margin-left:20px;">
+            <div class="peldano-label" style="color:var(--amber);">Callback sin preparación</div>
+            <div class="peldano-sub" style="color:var(--amber);">El abogado no sabe los detalles del caso — el cliente siente que nadie lo revisó</div>
+          </div>
+        </div>
+        <div class="peldano-arrow">↓</div>
+        <div class="peldano">
+          <div class="peldano-content" style="background:var(--amber-light);margin-left:40px;">
+            <div class="peldano-label" style="color:var(--amber);">Promesas sin seguimiento</div>
+            <div class="peldano-sub" style="color:var(--amber);">Acordaron algo — no llegó — el cliente ahora tiene evidencia concreta</div>
+          </div>
+        </div>
+        <div class="peldano-arrow">↓</div>
+        <div class="peldano">
+          <div class="peldano-content" style="background:var(--red-light);margin-left:60px;">
+            <div class="peldano-label" style="color:var(--red);">El cliente persigue a la firma</div>
+            <div class="peldano-sub" style="color:var(--red);">Llama, escribe, no obtiene respuesta clara — la narrativa queda confirmada</div>
+          </div>
+        </div>
+        <div class="peldano-arrow">↓</div>
+        <div class="peldano">
+          <div class="peldano-content" style="background:var(--red);margin-left:80px;">
+            <div class="peldano-label" style="color:white;">Desconfianza total — busca otra firma o queja formal</div>
+            <div class="peldano-sub" style="color:rgba(255,255,255,0.8);">Ya no es recuperable con una buena llamada</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nota">
+        <strong>El paralegal controla los peldaños 1, 2 y 3.</strong> Si los interrumpe, el cliente nunca llega al 4 ni al 5. El peldaño más fácil de cortar es el primero: la comunicación proactiva. El más difícil es el tercero: el seguimiento real de los acuerdos.
+      </div>
+
+      <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin:28px 0 16px;font-weight:700;">Las 3 acciones que interrumpen la escalera</h3>
+      <div class="concepts">
+        <div class="concept-card">
+          <div class="c-title">1. Comunicación proactiva</div>
+          <p>No esperar a que el cliente llame. Si llevan 3 semanas sin contacto y el proceso es normal, enviar una actualización breve — aunque no haya novedades. El mensaje no informa sobre el caso: informa sobre la presencia de la firma. "Estamos aquí, tu caso está activo."</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">2. Pre a la llamada real — no simbólico</div>
+          <p>Cuando el abogado habla con precisión sobre el caso — fechas, estatus, próximos pasos — el mensaje implícito al cliente es: "aquí sí estudiaron mi situación antes de llamarme." Eso por sí solo cambia el registro emocional de la interacción completa.</p>
+        </div>
+        <div class="concept-card full">
+          <div class="c-title">3. Seguimiento post-callback sin excepción</div>
+          <p>Si en la llamada se acordó algo — cualquier cosa, por pequeña que sea — ese acuerdo tiene que cumplirse en el plazo prometido. Un acuerdo incumplido no solo frustra al cliente: le da evidencia concreta de que "ni lo que prometieron cumplieron." Eso convierte la percepción en certeza.</p>
+        </div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-header">
+          <span class="caso-tag">Caso Eje 1</span>
+          <span class="caso-title">El abandono que no fue abandono — pero el cliente lo vivió como si lo fuera</span>
+        </div>
+        <div class="caso-body">
+          Una cliente lleva 6 meses sin noticias de su caso de asilo. Llama muy alterada. El agente la tranquiliza y agenda un callback. El paralegal ve que el caso está en proceso normal (esperando USCIS) y entra sin preparar nada. El abogado dice que "va bien", no puede dar detalles. La cliente cuelga sin certeza. Al día siguiente contacta a otro abogado. Tres semanas después deja la firma.
+        </div>
+        <div class="caso-preguntas">
+          <div class="caso-preguntas-label">Ejercicio — leer el caso desde los ojos del cliente</div>
+          <div class="caso-q"><span class="caso-q-num">→</span><span>Mes 1-2: ¿Qué recibió el cliente? ¿Qué esperaba recibir?</span></div>
+          <div class="caso-q"><span class="caso-q-num">→</span><span>Mes 3-4: ¿Qué empezó a pensar cuando no llegaron noticias?</span></div>
+          <div class="caso-q"><span class="caso-q-num">→</span><span>Mes 5-6: ¿Qué decisión tomó y qué la detonó?</span></div>
+          <div class="caso-q"><span class="caso-q-num">→</span><span>En la callback: ¿qué necesitaba escuchar para no irse con otra firma?</span></div>
+          <div class="caso-q"><span class="caso-q-num">→</span><span>¿En cuál de los 3 peldaños pudo el paralegal haber interrumpido la escalera?</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ EJE 2 ═══ -->
+    <div class="section" id="section-eje2">
+      <div class="section-header">
+        <div class="section-num" style="color:var(--amber-mid);">E2</div>
+        <div class="section-meta">
+          <div class="section-tag" style="color:var(--amber);">Eje crítico 2 — Transversal a todos los módulos · Ver también: Deadlines críticos</div>
+          <h2 class="section-title">Sentido de urgencia — identificar y actuar a tiempo</h2>
+          <p class="section-desc">La urgencia no se declara — se detecta. Detectarla requiere saber qué señales buscar.</p>
+        </div>
+      </div>
+
+      <div class="nota">
+        <strong>El punto clave:</strong> Saber que Tier 2 es urgente (conocimiento) no es lo mismo que saber identificar cuándo un caso que parece Tier 1 en realidad tiene elementos Tier 2 (habilidad de lectura). Esa habilidad se practica — no se aprende de memoria.
+      </div>
+
+      <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin-bottom:16px;font-weight:700;">Framework de detección de urgencia — 3 preguntas</h3>
+      <div class="concepts">
+        <div class="concept-card">
+          <div class="c-title">Pregunta 1 — ¿Hay un plazo legal activo?</div>
+          <p>Fecha de audiencia, NTA, vencimiento de documentos, plazos de respuesta a autoridades. Si la respuesta es "sí" o "no sé" — el caso sube de urgencia automáticamente.</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">Pregunta 2 — ¿El cliente está en riesgo inmediato?</div>
+          <p>Detención, deportación, amenaza de violencia, estado emocional severo. Cualquier respuesta que no sea "no" — escala antes de continuar.</p>
+        </div>
+        <div class="concept-card full">
+          <div class="c-title">Pregunta 3 — ¿Hay algo en el expediente que contradiga lo reportado?</div>
+          <p>Inconsistencias entre lo que dice el cliente y lo que dice TramCase. Una nota sin seguimiento que menciona "contacto con autoridades". Un documento vencido sin que nadie lo haya notado. Estas inconsistencias son señales de urgencia ocultas — y solo las detecta quien realmente revisó el expediente.</p>
+        </div>
+      </div>
+
+      <div class="nota" style="border-color:var(--amber);">
+        <strong>Regla instalada:</strong> Si cualquiera de las tres respuestas es "sí" o "no sé" — el caso sube de urgencia y se escala al supervisor antes de continuar. El paralegal no decide solo en la zona de incertidumbre.
+      </div>
+
+      <div class="caso">
+        <div class="caso-header" style="background:var(--amber);">
+          <span class="caso-tag">Caso Eje 2</span>
+          <span class="caso-title">El Tier 1 que en realidad era Tier 2</span>
+        </div>
+        <div class="caso-body">
+          Un caso llega etiquetado como Tier 1: el cliente tiene dudas sobre el avance de su solicitud de residencia. El paralegal lo procesa como rutina. Al revisar superficialmente TramCase, nota que hay un mensaje del cliente de 3 semanas atrás que dice "fui detenido brevemente en un retén pero me dejaron ir." Nadie siguió ese dato. El paralegal no lo identifica como relevante. En la callback, el cliente menciona de pasada que "le preguntaron sobre su estatus." El abogado descubre por primera vez que hay un antecedente de contacto con autoridades que puede afectar toda la elegibilidad del caso.
+        </div>
+        <div class="caso-preguntas">
+          <div class="caso-preguntas-label">Para reflexión</div>
+          <div class="caso-q"><span class="caso-q-num">01</span><span>¿Cuál de las 3 preguntas del framework habría detectado esto antes de la callback?</span></div>
+          <div class="caso-q"><span class="caso-q-num">02</span><span>¿Qué señal específica en TramCase debió detener al paralegal y hacerlo escalar?</span></div>
+          <div class="caso-q"><span class="caso-q-num">03</span><span>¿Cómo cambia la preparación del abogado si el caso se reclasifica a Tier 2 antes de la llamada?</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ EJE 3 ═══ -->
+    <div class="section" id="section-eje3">
+      <div class="section-header">
+        <div class="section-num" style="color:var(--purple-mid);">E3</div>
+        <div class="section-meta">
+          <div class="section-tag" style="color:var(--purple);">Eje crítico 3 — Peso máximo en M2 y M3</div>
+          <h2 class="section-title">Revisión de notas y plataformas — TramCase + Dropbox</h2>
+          <p class="section-desc">La revisión superficial es peor que no revisar — da falsa seguridad.</p>
+        </div>
+      </div>
+
+      <div class="nota">
+        <strong>El error más común:</strong> El paralegal que "revisó" el expediente en 5 minutos, vio que había notas, y asumió que sabía lo que necesitaba. Sin leer las notas en orden cronológico. Sin buscar los gaps. Sin verificar que las instrucciones del abogado se ejecutaron. Eso no es revisión — es apariencia de revisión.
+      </div>
+
+      <div class="concepts">
+        <div class="concept-card">
+          <div class="c-title">Qué buscar en TramCase</div>
+          <p>No solo leer la última nota. Leer en orden cronológico buscando: instrucciones del abogado sin ejecución, promesas al cliente sin registro de cumplimiento, notas de otras áreas que cambian el contexto, y gaps de semanas sin documentación.</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">Los gaps son información</div>
+          <p>Si hay 3 semanas sin notas en un caso activo, eso no significa que no pasó nada — significa que algo no se documentó. El paralegal debe investigar ese gap antes de la callback, no ignorarlo.</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">Qué buscar en Dropbox</div>
+          <p>¿El documento más reciente es el que el cliente dice que entregó? ¿Hay documentos vencidos o con fechas críticas? ¿Hay discrepancia entre lo que dice TramCase y los documentos que realmente existen?</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">Estándar mínimo no negociable</div>
+          <p>Ningún CB Checklist puede considerarse completo si el paralegal no revisó TramCase desde la primera nota del caso y Dropbox desde la última carga de documentos. Sin excepción.</p>
+        </div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-header" style="background:var(--purple);">
+          <span class="caso-tag">Caso Eje 3</span>
+          <span class="caso-title">La instrucción del abogado que nadie ejecutó</span>
+        </div>
+        <div class="caso-body">
+          El paralegal recibe un caso con 18 meses de historial en TramCase. Revisa las últimas 3 notas — todo parece en orden. No lee en orden cronológico. No ve que en el mes 8, el abogado dejó una nota que dice: "solicitar al cliente evidencia adicional de residencia — crítico antes de siguiente audiencia." Esa solicitud nunca se hizo. La audiencia es en 6 semanas. El cliente nunca fue contactado para esa evidencia. En la callback, el abogado descubre que la evidencia no existe y que el plazo es inminente.
+        </div>
+        <div class="caso-preguntas">
+          <div class="caso-preguntas-label">Ejercicio de auditoría</div>
+          <div class="caso-q"><span class="caso-q-num">01</span><span>¿En qué parte de TramCase estaba el dato crítico? ¿Cómo se habría encontrado con una revisión cronológica?</span></div>
+          <div class="caso-q"><span class="caso-q-num">02</span><span>¿Cuánto tiempo tienen ahora para remediar la situación? ¿Es suficiente?</span></div>
+          <div class="caso-q"><span class="caso-q-num">03</span><span>¿Qué cambió en la clasificación de urgencia del caso cuando se descubrió este dato?</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ EJE 4 ═══ -->
+    <div class="section" id="section-eje4">
+      <div class="section-header">
+        <div class="section-num" style="color:#f5c4b3;">E4</div>
+        <div class="section-meta">
+          <div class="section-tag" style="color:#993c1d;">Eje crítico 4 — Peso máximo en M5</div>
+          <h2 class="section-title">Diligencia y responsabilidades de los involucrados</h2>
+          <p class="section-desc">El paralegal es dueño del seguimiento — no mensajero entre áreas.</p>
+        </div>
+      </div>
+
+      <div class="nota">
+        <strong>La confusión más común:</strong> Muchos paralegales creen que su responsabilidad termina cuando avisan a otra área. No termina. Termina cuando la acción está ejecutada y cerrada. La diferencia entre notificar y resolver es la diferencia entre ser mensajero y ser responsable.
+      </div>
+
+      <div class="big-quote">"Soy dueño del resultado,<br>no solo del proceso de notificación."</div>
+
+      <div class="concepts">
+        <div class="concept-card">
+          <div class="c-title">Dueño del resultado, no del proceso</div>
+          <p>El paralegal puede delegar la ejecución a PMO o a otra área. No puede delegar la verificación de que la ejecución ocurrió. Esa distinción es fundamental y define la diferencia entre un paralegal promedio y uno excelente.</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">Qué cierra un acuerdo formalmente</div>
+          <p>No "ya lo mandé." No "ya les avisé." Cierra cuando: el área confirmó recepción, la acción está documentada en TramCase, la sheet está actualizada con fecha de cierre, y el cliente recibió lo que se le prometió.</p>
+        </div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-header" style="background:#993c1d;">
+          <span class="caso-tag">Caso Eje 4</span>
+          <span class="caso-title">El paralegal que delegó y olvidó</span>
+        </div>
+        <div class="caso-body">
+          El abogado acordó con el cliente que en 5 días recibiría confirmación. El paralegal avisó a otra área y "asumió que lo resolverían." No hizo seguimiento. No verificó. No actualizó la sheet. A los 7 días el cliente llama furioso. El paralegal responde: "yo ya lo mandé con ellos." El cliente amenaza con irse a otra firma.
+        </div>
+        <div class="caso-preguntas">
+          <div class="caso-preguntas-label">Ejercicio — ¿De quién es esto?</div>
+          <div class="caso-q"><span class="caso-q-num">01</span><span>¿Cambió la responsabilidad del paralegal cuando le "avisó" a otra área? Argumenta.</span></div>
+          <div class="caso-q"><span class="caso-q-num">02</span><span>¿En qué día exacto debió haber hecho seguimiento? ¿Qué acción concreta debió tomar?</span></div>
+          <div class="caso-q"><span class="caso-q-num">03</span><span>¿Cómo documentas en TramCase que el seguimiento se hizo — incluso cuando el resultado aún es pendiente?</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ EJE 5 ═══ -->
+    <div class="section" id="section-eje5">
+      <div class="section-header">
+        <div class="section-num" style="color:var(--teal-mid);">E5</div>
+        <div class="section-meta">
+          <div class="section-tag" style="color:var(--teal);">Eje crítico 5 — Peso máximo en M2</div>
+          <h2 class="section-title">Perspectiva legal del paralegal</h2>
+          <p class="section-desc">No opinan legalmente — pero sí leen el caso con criterio de riesgo y estrategia.</p>
+        </div>
+      </div>
+
+      <div class="nota">
+        <strong>La distinción crítica:</strong> El paralegal no es abogado y no debe actuar como tal. Pero sí debe leer el caso con criterio legal, no con criterio administrativo. No dice qué hacer — dice "hay algo aquí que el abogado necesita ver." Esa es su contribución legal.
+      </div>
+
+      <div class="concepts">
+        <div class="concept-card">
+          <div class="c-title">Lectura administrativa</div>
+          <p style="color:var(--red);">"El caso tiene documentos entregados, hay notas en TramCase, hay fecha de seguimiento."</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">Lectura con perspectiva legal</div>
+          <p style="color:var(--teal);">"El caso está en etapa de respuesta USCIS. Han pasado 8 meses — excede el tiempo promedio. Hay un NTA de 2022 sin registro de respuesta. Esto puede ser material para un Writ of Mandamus."</p>
+        </div>
+      </div>
+
+      <h3 style="font-family:'Playfair Display',serif;font-size:16px;margin:24px 0 14px;font-weight:700;">Conceptos legales básicos que el paralegal debe leer — no decidir</h3>
+      <table class="resp-table">
+        <thead>
+          <tr><th>Concepto</th><th>Lo que el paralegal debe reconocer</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>NTA</strong></td><td>Qué es, qué implica procesalmente, por qué convierte el caso en Tier 2 automáticamente</td></tr>
+          <tr><td><strong>Writ of Mandamus</strong></td><td>Qué condiciones lo activan — tiempo excedido, inacción de autoridad. No si procede, sino si hay señales para que el abogado lo evalúe</td></tr>
+          <tr><td><strong>Tiempo de procesamiento</strong></td><td>Cuándo un período es normal vs. cuándo excede el promedio y debe señalarse</td></tr>
+          <tr><td><strong>Elegibilidad</strong></td><td>Qué tipos de datos en el expediente pueden afectarla — contacto con autoridades, inconsistencias en documentos, fechas problemáticas</td></tr>
+          <tr><td><strong>Screening T Visa</strong></td><td>Qué situaciones del cliente pueden activar esta vía — para señalársela al abogado, no para evaluarla</td></tr>
+        </tbody>
+      </table>
+
+      <div class="caso">
+        <div class="caso-header" style="background:var(--teal);">
+          <span class="caso-tag">Caso Eje 5</span>
+          <span class="caso-title">El paralegal que vio los datos pero no leyó el caso</span>
+        </div>
+        <div class="caso-body">
+          Un expediente muestra: solicitud de residencia presentada hace 14 meses, último contacto de USCIS hace 9 meses, sin respuesta. El paralegal revisa todo y escribe en el briefing: "caso en proceso, sin novedades." El abogado entra a la llamada. El cliente pregunta "¿cuánto tiempo más puede tardar?" El abogado no sabe que 14 meses excede el tiempo promedio para este tipo de caso y que hay elementos para evaluar un Mandamus. El abogado improvisa. La oportunidad estratégica se pierde.
+        </div>
+        <div class="caso-preguntas">
+          <div class="caso-preguntas-label">Análisis</div>
+          <div class="caso-q"><span class="caso-q-num">01</span><span>¿Qué dato específico debió haber señalado el paralegal en su briefing? ¿En qué términos?</span></div>
+          <div class="caso-q"><span class="caso-q-num">02</span><span>¿Cómo redactarías el briefing con perspectiva legal para este caso?</span></div>
+          <div class="caso-q"><span class="caso-q-num">03</span><span>¿Qué pregunta estratégica debía estar preparada para el cliente?</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ EJE 6 ═══ -->
+    <div class="section" id="section-eje6">
+      <div class="section-header">
+        <div class="section-num" style="color:#c0dd97;">E6</div>
+        <div class="section-meta">
+          <div class="section-tag" style="color:#3b6d11;">Eje crítico 6 — Base de sostenibilidad</div>
+          <h2 class="section-title">Rutina operativa diaria</h2>
+          <p class="section-desc">Sin hábito operativo, el conocimiento se pierde en el volumen de trabajo.</p>
+        </div>
+      </div>
+
+      <div class="nota">
+        <strong>Por qué existe este eje:</strong> Un paralegal puede salir del training con todas las habilidades y perderlas en la primera semana de trabajo real si no tiene una estructura diaria que las sostenga. La rutina convierte el conocimiento en comportamiento automático.
+      </div>
+
+      <div class="rutina-blocks">
+        <div class="rutina-block">
+          <div class="rutina-time">
+            <div class="rt-label">8:00 – 8:30</div>
+            <div class="rt-dur">30 min</div>
+          </div>
+          <div class="rutina-content">
+            <h4>Revisión del inventario — saber qué tienes hoy</h4>
+            <ul>
+              <li>Abrir la sheet "Callbacks Department Opp" — ¿qué callbacks hay hoy y mañana?</li>
+              <li>Revisar acuerdos pendientes con vencimiento próximo — ¿alguno en riesgo?</li>
+              <li>Identificar prioridades: Tier 2 activos van primero, siempre</li>
+              <li>Si hay Tier 2 sin checklist y la llamada es en menos de 48h — escalar al supervisor de inmediato</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rutina-block">
+          <div class="rutina-time">
+            <div class="rt-label">8:30 – 10:30</div>
+            <div class="rt-dur">2 hrs</div>
+          </div>
+          <div class="rutina-content">
+            <h4>Bloque de análisis — pre-callback del día siguiente</h4>
+            <ul>
+              <li>Abrir TramCase — leer todas las notas en orden cronológico. Marcar gaps, promesas sin seguimiento, instrucciones sin ejecución</li>
+              <li>Abrir Dropbox — revisar últimos documentos. Verificar fechas y vencimientos</li>
+              <li>Completar framework STAR Legal</li>
+              <li>Iniciar o completar CB Checklist</li>
+              <li>Redactar briefing para el abogado (máx. 1 página)</li>
+              <li>Si aparece algo que cambia la urgencia del caso — detener y escalar antes de continuar</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rutina-block">
+          <div class="rutina-time">
+            <div class="rt-label">10:30 – 11:00</div>
+            <div class="rt-dur">30 min</div>
+          </div>
+          <div class="rutina-content">
+            <h4>Bloque de comunicación — briefings y confirmaciones</h4>
+            <ul>
+              <li>Enviar briefing escrito al abogado para callbacks del día siguiente. Confirmar lectura</li>
+              <li>Confirmar con el cliente: hora, plataforma, instrucciones. Si no responde — registrar intento en TramCase y definir plan B</li>
+              <li>Responder preguntas del abogado sobre el caso antes de la llamada</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rutina-block">
+          <div class="rutina-time">
+            <div class="rt-label">Horario variable</div>
+            <div class="rt-dur">Por caso</div>
+          </div>
+          <div class="rutina-content">
+            <h4>Callbacks del día — ejecución</h4>
+            <ul>
+              <li>CB Checklist abierto en pantalla durante toda la llamada</li>
+              <li>Template de notas activo desde el primer minuto</li>
+              <li>TramCase abierto para consulta en tiempo real</li>
+              <li>Máximo 30 minutos post-llamada para registrar notas y actualizar sheet</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rutina-block">
+          <div class="rutina-time">
+            <div class="rt-label">4:00 – 4:45</div>
+            <div class="rt-dur">45 min</div>
+          </div>
+          <div class="rutina-content">
+            <h4>Bloque de seguimiento — cierre del día</h4>
+            <ul>
+              <li>Verificar que todos los acuerdos del día estén registrados en TramCase y la sheet</li>
+              <li>¿Algún acuerdo anterior vence mañana y está en riesgo? Contactar al responsable ahora</li>
+              <li>¿Alguna área no confirmó recepción? Escalar antes de cerrar el día</li>
+              <li>Actualizar el inventario con el estado real de cada caso</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rutina-block" style="border-bottom:none;">
+          <div class="rutina-time">
+            <div class="rt-label">Viernes</div>
+            <div class="rt-dur">30 min</div>
+          </div>
+          <div class="rutina-content">
+            <h4>Auditoría personal semanal</h4>
+            <ul>
+              <li>¿Cuántos acuerdos de la semana se cerraron en plazo?</li>
+              <li>¿Hubo algún caso donde el abogado pidió información que debía estar ya lista?</li>
+              <li>¿Algún cliente llamó proactivamente para preguntar por su caso? (señal de falla en comunicación proactiva)</li>
+              <li>¿Qué patrón se repite? ¿En qué área específica necesito mejorar?</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ DEADLINES ═══ -->
+    <div class="section" id="section-deadlines">
+      <div class="section-header">
+        <div class="section-num" style="color:var(--red-mid);">DL</div>
+        <div class="section-meta">
+          <div class="section-tag" style="color:var(--red);">Referencia operativa — integrada en M2 y Eje 2</div>
+          <h2 class="section-title">Deadlines críticos</h2>
+          <p class="section-desc">Dos tipos de plazo que el paralegal debe reconocer, registrar y monitorear desde el primer momento.</p>
+        </div>
+      </div>
+
+      <div class="nota">
+        <strong>Por qué importa este apartado:</strong> Un deadline que no se detecta a tiempo no es un dato perdido — es un riesgo activo. El paralegal que entiende la diferencia entre los dos tipos de plazo sabe cuándo urgir internamente, cuándo escalar al abogado y cuándo el cliente necesita ser contactado antes de que lo haga él primero.
+      </div>
+
+      <!-- DEADLINE EXTERNO -->
+      <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:24px;">
+        <div style="background:var(--red);padding:14px 24px;display:flex;align-items:center;gap:14px;">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:white;">E</span>
+          </div>
+          <div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:2px;">Deadline externo</div>
+            <div style="font-size:15px;font-weight:500;color:white;">Proceso ante el USCIS</div>
+          </div>
+        </div>
+        <div style="background:white;padding:24px;">
+          <p style="font-size:14px;color:var(--ink-soft);line-height:1.75;margin-bottom:20px;">Comienza en el momento en que se recibe el <strong>recibo inicial</strong> de la solicitud ante USCIS. Desde ese instante el reloj está corriendo — y el cliente lo sabe, aunque la firma no siempre lo monitorea con la misma intensidad.</p>
+
+          <div class="concepts" style="margin-bottom:0;">
+            <div class="concept-card">
+              <div class="c-title">Punto de inicio</div>
+              <p>Recepción del recibo inicial de USCIS (Receipt Notice). Este documento es la evidencia de que el caso está activo en el sistema federal. Desde aquí empieza el conteo.</p>
+            </div>
+            <div class="concept-card">
+              <div class="c-title">Derivaciones posibles</div>
+              <p>El proceso puede generar dos tipos de respuesta que requieren acción inmediata por parte de la firma: un <strong>RFE</strong> (Request for Evidence — solicitud de evidencia adicional) o un <strong>NOD</strong> (Notice of Decision — resolución del caso, positiva o negativa).</p>
+            </div>
+            <div class="concept-card">
+              <div class="c-title">RFE — Request for Evidence</div>
+              <p>USCIS solicita documentación adicional. Tiene un plazo de respuesta estricto definido en el propio documento — generalmente entre 87 y 87 días. Si no se responde en plazo, el caso puede ser denegado automáticamente. El paralegal debe detectarlo en TramCase el mismo día que llega y escalar al abogado de inmediato.</p>
+            </div>
+            <div class="concept-card">
+              <div class="c-title">NOD — Notice of Decision</div>
+              <p>USCIS emite su resolución. Si es aprobatoria, el paralegal coordina los siguientes pasos con Fulfillment. Si es denegatoria, el caso escala automáticamente al abogado para evaluar opciones de apelación o estrategia alternativa — y el cliente necesita ser contactado ese mismo día.</p>
+            </div>
+          </div>
+
+          <div style="margin-top:20px;background:var(--red-light);border-left:3px solid var(--red);padding:14px 18px;border-radius:0 6px 6px 0;">
+            <p style="font-size:13px;color:var(--ink-soft);line-height:1.65;"><strong style="color:var(--red);">Lo que el paralegal debe hacer:</strong> Al revisar TramCase en el bloque de análisis diario, verificar si hay algún documento de USCIS reciente — especialmente RFEs. Si el caso tiene más de 8 meses desde el recibo inicial sin respuesta de USCIS, señalarlo en el briefing como posible elemento para que el abogado evalúe un Writ of Mandamus.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEADLINE INTERNO -->
+      <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:32px;">
+        <div style="background:var(--purple);padding:14px 24px;display:flex;align-items:center;gap:14px;">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:white;">I</span>
+          </div>
+          <div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:2px;">Deadline interno</div>
+            <div style="font-size:15px;font-weight:500;color:white;">Clientes que ya consultaron con otra firma — quieren hablar con María</div>
+          </div>
+        </div>
+        <div style="background:white;padding:24px;">
+          <p style="font-size:14px;color:var(--ink-soft);line-height:1.75;margin-bottom:20px;">Cuando un cliente complicado ya consultó con otro abogado y solicita hablar directamente con María, el caso entra en una categoría de urgencia interna que no depende de ningún plazo federal — depende de la velocidad con que la firma responda. La ventana es corta. Si el cliente no obtiene respuesta en 24-48 horas, ya tomó la decisión de irse.</p>
+
+          <div class="concepts" style="margin-bottom:0;">
+            <div class="concept-card">
+              <div class="c-title">Por qué es un deadline, no solo una solicitud</div>
+              <p>Un cliente que ya consultó con otro abogado está comparando activamente. Cada hora que pasa sin una respuesta de la firma es una hora en que el otro abogado construye confianza. No es una solicitud de callback — es una cuenta regresiva.</p>
+            </div>
+            <div class="concept-card">
+              <div class="c-title">Señales de que este deadline está activo</div>
+              <p>El cliente menciona que "ya habló con alguien más", solicita expresamente hablar con un abogado específico (María), tiene un tono evaluativo en lugar de simplemente inconformidad, o pregunta comparativamente sobre estrategias.</p>
+            </div>
+            <div class="concept-card">
+              <div class="c-title">Lo que el paralegal hace de inmediato</div>
+              <p>Clasifica el caso como Tier 2 interno. No lo pone en cola normal. Escala al supervisor antes de que termine la hora y solicita agenda de María con prioridad. Prepara el caso completo — incluyendo qué consultó el cliente con el otro abogado si se sabe — antes de que la llamada ocurra.</p>
+            </div>
+            <div class="concept-card">
+              <div class="c-title">Lo que el paralegal NO hace</div>
+              <p>No agenda para "la próxima disponibilidad". No trata el caso como rutina. No espera al día siguiente para revisar si María tiene espacio. El cliente que ya consultó con otra firma y no recibe respuesta en 24 horas, probablemente ya se fue.</p>
+            </div>
+          </div>
+
+          <div style="margin-top:20px;background:var(--purple-light);border-left:3px solid var(--purple);padding:14px 18px;border-radius:0 6px 6px 0;">
+            <p style="font-size:13px;color:var(--ink-soft);line-height:1.65;"><strong style="color:var(--purple);">Regla operativa:</strong> Cuando el cliente menciona otro abogado o pide hablar con María, el paralegal no registra como callback estándar. Lo escala ese mismo día con la etiqueta "cliente en evaluación activa" y confirma agenda con el supervisor antes de cerrar el turno.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin-bottom:16px;font-weight:700;">Comparación de los dos deadlines</h3>
+      <table class="resp-table">
+        <thead>
+          <tr><th>Elemento</th><th>Deadline externo (USCIS)</th><th>Deadline interno (cliente con otra firma)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Origen</strong></td><td>Proceso federal — USCIS establece el plazo</td><td>Comportamiento del cliente — él decide cuándo se va</td></tr>
+          <tr><td><strong>Punto de inicio</strong></td><td>Recibo inicial de USCIS</td><td>Momento en que el cliente menciona otra consulta o pide a María</td></tr>
+          <tr><td><strong>Consecuencia si se pierde</strong></td><td>RFE sin responder → denegación. NOD → escala estratégica inmediata</td><td>El cliente se va a otra firma sin aviso</td></tr>
+          <tr><td><strong>Ventana de respuesta</strong></td><td>Definida en el documento de USCIS (varía por tipo de caso)</td><td>24-48 horas desde el momento del contacto</td></tr>
+          <tr><td><strong>Acción del paralegal</strong></td><td>Detectar en TramCase, escalar al abogado ese día</td><td>Clasificar Tier 2, escalar a supervisor antes de cerrar el turno, preparar caso completo</td></tr>
+        </tbody>
+      </table>
+
+      <div class="caso">
+        <div class="caso-header" style="background:var(--purple);">
+          <span class="caso-tag">Caso — Deadline interno</span>
+          <span class="caso-title">El cliente que ya habló con otro abogado y quería hablar con María</span>
+        </div>
+        <div class="caso-body">
+          Un cliente con un caso de residencia complicado llama al call center. Menciona que "ya consultó con un abogado de otra firma" y que quiere hablar directamente con María para "ver qué le dice ella." El agente registra la solicitud como callback estándar y la pone en la cola normal para la siguiente semana. Tres días después, cuando el paralegal intenta confirmar la cita, el cliente ya firmó contrato con la otra firma.
+        </div>
+        <div class="caso-preguntas">
+          <div class="caso-preguntas-label">Para análisis</div>
+          <div class="caso-q"><span class="caso-q-num">01</span><span>¿En qué momento exacto el agente debió reconocer que este era un deadline interno activo?</span></div>
+          <div class="caso-q"><span class="caso-q-num">02</span><span>¿Qué debió haber hecho diferente el paralegal cuando recibió este caso en la cola?</span></div>
+          <div class="caso-q"><span class="caso-q-num">03</span><span>¿Qué información específica debía prepararse antes de la llamada con María — considerando que el cliente ya consultó con otra firma?</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ BUENAS PRÁCTICAS ═══ -->
+    <div class="section" id="section-buenas">
+      <div class="section-header">
+        <div class="section-num" style="color:var(--teal-mid);">BP</div>
+        <div class="section-meta">
+          <div class="section-tag" style="color:var(--teal);">Referencia — comportamientos que distinguen al paralegal excelente</div>
+          <h2 class="section-title">Buenas prácticas</h2>
+          <p class="section-desc">No son reglas adicionales — son los comportamientos que los mejores paralegales hacen de forma natural y consistente.</p>
+        </div>
+      </div>
+
+      <div class="nota">
+        Este apartado no describe el mínimo esperado — describe el estándar al que se aspira. La diferencia entre un paralegal que cumple y uno que es indispensable está exactamente aquí.
+      </div>
+
+      <!-- GRUPO 1: Antes de la llamada -->
+      <div style="background:var(--teal);border-radius:8px;padding:12px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+        <span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:white;line-height:1;">01</span>
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.55);">Grupo 1</div>
+          <div style="font-size:15px;font-weight:500;color:white;">Antes de la llamada</div>
+        </div>
+      </div>
+      <div class="concepts" style="margin-bottom:32px;">
+        <div class="concept-card">
+          <div class="c-title">Revisar como si fueras a presentar el caso en corte</div>
+          <p>No como si fueras a "ponerte al día." El estándar de revisión es: ¿podría yo explicarle este caso a alguien que nunca lo ha visto? Si no, la revisión no está completa.</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">Anticipar las preguntas del cliente, no solo las del abogado</div>
+          <p>El briefing que prepara el paralegal excelente incluye: "El cliente probablemente preguntará sobre X — el abogado debe saber que la respuesta está en la nota del 14 de enero." Eso no es trabajo del abogado — es trabajo del paralegal.</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">Confirmar al abogado — no asumirlo</div>
+          <p>Enviar el briefing no es suficiente. La práctica correcta es confirmar que el abogado lo leyó — con un mensaje directo, no esperando que responda si tiene dudas. Un abogado que no leyó el briefing es responsabilidad del paralegal, no del abogado.</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">Leer los documentos — no solo saber que existen</div>
+          <p>Hay una diferencia entre "el cliente tiene evidencia en Dropbox" y "revisé la evidencia — el documento de residencia que subió está vencido desde hace 3 meses." El primer dato es un inventario. El segundo es análisis.</p>
+        </div>
+      </div>
+
+      <!-- GRUPO 2: Durante la llamada -->
+      <div style="background:var(--purple);border-radius:8px;padding:12px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+        <span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:white;line-height:1;">02</span>
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.55);">Grupo 2</div>
+          <div style="font-size:15px;font-weight:500;color:white;">Durante la llamada</div>
+        </div>
+      </div>
+      <div class="concepts" style="margin-bottom:32px;">
+        <div class="concept-card">
+          <div class="c-title">Notas en tiempo real — sin excepción</div>
+          <p>El paralegal que dice "lo anoto después" es el paralegal que pierde el 30% de la información crítica. Las notas se toman mientras ocurre la llamada, por categoría, desde el primer minuto — no en el resumen de cierre.</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">Ser la memoria activa del abogado durante la llamada</div>
+          <p>Si el cliente dice algo que contradice el expediente, el paralegal lo señala de inmediato — con discreción, pero sin dudar. "Abogado, según las notas de enero, el cliente había dicho X" es una intervención que puede salvar la estrategia de la llamada.</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">Verificar que los acuerdos se anuncian claramente</div>
+          <p>Antes de que termine la llamada, el paralegal verifica mentalmente: ¿quedó claro para el cliente qué sigue, quién lo hace y para cuándo? Si no quedó claro, es momento de pedirle al abogado que lo confirme — antes de colgar, no después.</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">Mantener el rol operativo en casos de crisis</div>
+          <p>Cuando el cliente está en crisis emocional, el rol del paralegal no cambia — sigue siendo el operativo de la llamada. Toma notas aunque el ambiente sea tenso. Esto requiere práctica deliberada — por eso la simulación Tier 2 es parte del training.</p>
+        </div>
+      </div>
+
+      <!-- GRUPO 3: Después de la llamada -->
+      <div style="background:var(--amber);border-radius:8px;padding:12px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+        <span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:white;line-height:1;">03</span>
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.55);">Grupo 3</div>
+          <div style="font-size:15px;font-weight:500;color:white;">Después de la llamada</div>
+        </div>
+      </div>
+      <div class="concepts" style="margin-bottom:32px;">
+        <div class="concept-card">
+          <div class="c-title">Los 30 minutos post-llamada son parte de la llamada</div>
+          <p>El paralegal excelente no considera que la callback terminó cuando se cuelga. Termina cuando la nota está en TramCase, los acuerdos están en la sheet, y los responsables fueron notificados. Ese bloque de 30 minutos es no negociable.</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">Documentar incluso lo que "ya se sabe"</div>
+          <p>La nota de TramCase no es para el paralegal que estuvo en la llamada — es para el abogado que la lea en 3 semanas, para PMO que da seguimiento, para quien tome el caso si hay una ausencia. Si no está escrito, no ocurrió.</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">Seguimiento proactivo — antes de que pidan reportar</div>
+          <p>El paralegal excelente no espera a que PMO le pregunte por el estatus de un acuerdo. Lo verifica antes del plazo y lo reporta sin que nadie se lo pida. Eso es accountability real.</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">Comunicación proactiva con el cliente post-callback</div>
+          <p>Si en la llamada se acordó algo que tomará tiempo, el cliente no debería tener que llamar para saber si avanzó. El paralegal envía una actualización breve cuando hay movimiento — aunque el movimiento sea "seguimos en proceso, todo va bien." El silencio después de una callback reconstruye la percepción de abandono.</p>
+        </div>
+      </div>
+
+      <!-- GRUPO 4: Actitud y criterio -->
+      <div style="background:var(--navy);border-radius:8px;padding:12px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+        <span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:white;line-height:1;">04</span>
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.55);">Grupo 4</div>
+          <div style="font-size:15px;font-weight:500;color:white;">Actitud y criterio operativo</div>
+        </div>
+      </div>
+      <div class="concepts" style="margin-bottom:32px;">
+        <div class="concept-card">
+          <div class="c-title">Escalar con contexto — no solo con el problema</div>
+          <p>Cuando el paralegal escala algo al supervisor o al abogado, lleva ya hecha la mitad del trabajo: "Esto ocurrió, esto es lo que encontré en el expediente, esto es lo que creo que implica — necesito tu validación." Escalar sin contexto transfiere el problema. Escalar con contexto acelera la solución.</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">La duda también se documenta</div>
+          <p>Si el paralegal no sabe si un dato es relevante, lo anota de todas formas y lo marca como "pendiente de validar." La omisión de un dato incierto es peor que incluirlo con una nota de incertidumbre. El abogado decide su relevancia — no el paralegal.</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">Tratar cada caso como si fuera el primero del día</div>
+          <p>El quinto caso del día merece la misma revisión que el primero. La fatiga operativa es real, pero el cliente no sabe que hubo cuatro casos antes que el suyo. El estándar de preparación no baja a mitad de la jornada.</p>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">Conocer el proceso lo suficiente para anticipar preguntas legales</div>
+          <p>El paralegal que conoce qué activa un RFE, qué condiciones sugieren un Mandamus, y qué implica un NTA puede preparar al abogado con un nivel de especificidad que transforma la calidad de la callback. Ese conocimiento no requiere ser abogado — requiere atención y estudio deliberado del proceso.</p>
+        </div>
+      </div>
+
+      <div class="big-quote">"El paralegal excelente no espera instrucciones para cada paso. Entiende el destino y encuentra el camino."</div>
+    </div>
+
+    <!-- ═══ KPIS ═══ -->
+    <div class="section" id="section-kpis">
+      <div class="section-header">
+        <div class="section-num">KP</div>
+        <div class="section-meta">
+          <div class="section-tag">Medición de impacto</div>
+          <h2 class="section-title">KPIs y evaluación</h2>
+          <p class="section-desc">Cómo medir si el training funcionó — durante y después del programa.</p>
+        </div>
+      </div>
+
+      <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin-bottom:16px;font-weight:700;">Indicadores del proceso</h3>
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Precisión del Risk Assessment</div>
+          <div class="kpi-formula">Riesgos confirmados ÷ Riesgos identificados</div>
+          <div class="kpi-desc">¿Cuántos riesgos identificados en el CB Checklist se confirmaron efectivamente durante la callback? Mide la calidad del análisis previo.</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Cumplimiento post-callback</div>
+          <div class="kpi-formula">Acciones cerradas en plazo ÷ Total de acciones</div>
+          <div class="kpi-desc">¿Qué porcentaje de acuerdos se ejecutaron dentro del plazo comprometido? El indicador más directo de diligencia.</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Solicitudes adicionales del abogado</div>
+          <div class="kpi-formula">Solicitudes adicionales ÷ Total callbacks revisadas</div>
+          <div class="kpi-desc">¿El abogado tuvo que pedir información que debía estar ya preparada? Mide la calidad del briefing pre-callback.</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Tiempo promedio por etapa</div>
+          <div class="kpi-formula">Fecha final − Fecha inicio</div>
+          <div class="kpi-desc">Cuánto toma cada etapa del proceso. Permite identificar cuellos de botella y ajustar la carga operativa.</div>
+        </div>
+      </div>
+
+      <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin:32px 0 16px;font-weight:700;">Métrica cualitativa post-callback</h3>
+      <div class="nota">
+        Al final de cada callback, el abogado responde una sola pregunta de 1 a 5: <strong>"¿El paralegal estuvo listo?"</strong> Un promedio sostenido por debajo de 4 es señal de que se necesita refuerzo específico en ese paralegal. Esta métrica es simple, rápida y directamente conectada con el comportamiento que el training busca instalar.
+      </div>
+
+      <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin:32px 0 16px;font-weight:700;">Evaluación post-training — 30 y 60 días</h3>
+      <table class="resp-table">
+        <thead>
+          <tr><th>Momento</th><th>Método</th><th>Qué se evalúa</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="tag tag-teal">Día 30</span></td><td>Observación de 3 callbacks reales por paralegal</td><td>Aplicación de los 4 pasos del ciclo usando la misma rúbrica del training</td></tr>
+          <tr><td><span class="tag tag-amber">Día 60</span></td><td>Auditoría de KPIs individuales</td><td>Cumplimiento post-callback, solicitudes adicionales del abogado, reincidencia de errores</td></tr>
+          <tr><td><span class="tag" style="background:var(--paper-mid);color:var(--ink-soft);">Mensual</span></td><td>Revisión de patrones del supervisor</td><td>¿El mismo paralegal repite errores del mismo tipo? → Señal de brecha estructural, no puntual</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  const SECTIONS = ['overview','m1','m2','m3','m4','m5','m6','eje1','eje2','eje3','eje4','eje5','eje6','deadlines','buenas','kpis'];
+  const MODULE_SECTIONS = ['m1','m2','m3','m4','m5','m6'];
+
+  function showSection(id) {
+    SECTIONS.forEach(s => {
+      const el = document.getElementById('section-' + s);
+      if (el) el.classList.remove('active');
+    });
+    const target = document.getElementById('section-' + id);
+    if (target) target.classList.add('active');
+
+    document.querySelectorAll('.nav-item, .nav-eje').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.nav-item, .nav-eje').forEach(b => {
+      if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + id + "'")) {
+        b.classList.add('active');
+      }
+    });
+
+    updateProgress();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+
+  function updateProgress() {
+    const visited = JSON.parse(localStorage.getItem('visited') || '[]');
+    const current = document.querySelector('.section.active');
+    if (current) {
+      const id = current.id.replace('section-', '');
+      if (!visited.includes(id)) visited.push(id);
+      localStorage.setItem('visited', JSON.stringify(visited));
+    }
+    const pct = Math.round((visited.length / SECTIONS.length) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressPct').textContent = pct + '%';
+  }
+
+  function toggleAct(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('open');
+  }
+
+  let checkCount = 0;
+  const totalChecks = 0;
+
+  function updateCheck(id) {}
+  function resetChecklist() {}
+
+  window.addEventListener('scroll', () => {
+    const btn = document.getElementById('scrollTop');
+    if (window.scrollY > 300) btn.classList.add('visible');
+    else btn.classList.remove('visible');
+  });
+
+
+  /* ── ACTIVIDAD 1.1 — Situaciones ── */
+  const sitData = {
+    a: {
+      correct: 'admin',
+      fbCorrect: '✓ Correcto. Aunque el paralegal fue amable, el caso quedó exactamente igual que antes de la llamada — sin análisis, sin briefing, sin estrategia. Ser cordial no es ser paralegal.',
+      fbIncorrect: '✗ Este es comportamiento administrativo. El paralegal agendó sin revisar el expediente ni informar al abogado. La amabilidad no reemplaza el análisis previo.'
+    },
+    b: {
+      correct: 'legal',
+      fbCorrect: '✓ Correcto. Antes de agendar, el paralegal hizo exactamente lo que corresponde: revisó, identificó la urgencia, escaló y preparó. Eso es soporte legal estratégico.',
+      fbIncorrect: '✗ Este es comportamiento de paralegal. Revisó TramCase, detectó el RFE, clasificó correctamente como Tier 2 y escaló sin esperar que alguien se lo pidiera.'
+    },
+    c: {
+      correct: 'admin',
+      fbCorrect: '✓ Correcto — aunque no es obvio. El registro en TramCase da apariencia de haber documentado, pero no hay responsable, no hay plazo, no hay acuerdo trazable. El acuerdo con el cliente quedó en el aire.',
+      fbIncorrect: '✗ Parece que el paralegal actuó, pero no quedó nada trazable. Sin responsable y sin plazo, el acuerdo con el cliente existe solo en su recuerdo — no en el expediente.'
+    }
+  };
+
+  const sitVotes = {};
+
+  function votarSit(sit, vote) {
+    if (sitVotes[sit]) return;
+    sitVotes[sit] = vote;
+
+    const data = sitData[sit];
+    const isCorrect = vote === data.correct;
+    const card = document.getElementById('sit-' + sit);
+    const controls = document.getElementById('sit-' + sit + '-controls');
+    const feedback = document.getElementById('sit-' + sit + '-feedback');
+    const score = document.getElementById('sit-' + sit + '-score');
+
+    controls.querySelectorAll('.sit-btn').forEach(b => {
+      b.disabled = true;
+      if (vote === 'admin' && b.textContent.includes('Administrativo')) b.classList.add('selected-admin');
+      if (vote === 'legal' && b.textContent.includes('Paralegal')) b.classList.add('selected-legal');
+    });
+
+    card.classList.add(isCorrect ? 'correct' : 'incorrect');
+    score.textContent = isCorrect ? '✓ Correcto' : '✗ Revisa';
+    score.style.color = isCorrect ? 'var(--teal)' : 'var(--red)';
+
+    feedback.textContent = isCorrect ? data.fbCorrect : data.fbIncorrect;
+    feedback.className = 'sit-feedback visible ' + (isCorrect ? 'fb-correct' : 'fb-incorrect');
+
+    if (Object.keys(sitVotes).length === 3) {
+      document.getElementById('sit-plenaria').style.display = 'block';
+    }
+  }
+
+  /* ── ACTIVIDAD 1.3 — Tier ── */
+  const tierSelections = {};
+
+  const tierData = {
+    1: {
+      correctTier: 'tier2',
+      correctJust: 'j2',
+      fbCorrect: '✓ Tier 2 correcto. La instrucción del abogado sobre Mandamus lleva 8 meses sin seguimiento — lo que debía hacerse hace 5 meses no se hizo. El tiempo triplicado es una señal de riesgo estratégico aunque no haya NTA. Este caso necesita análisis urgente antes de la callback.',
+      fbIncorrect: '✗ Es Tier 2. La urgencia no siempre grita — a veces está en una nota olvidada de hace 8 meses. Un Mandamus no ejecutado en tiempo puede costarle el caso al cliente.',
+      fbJustWrong: 'La justificación correcta es: hay una instrucción del abogado sin ejecutar y el tiempo supera el promedio. La emoción del cliente y la ausencia de NTA no definen el Tier — los riesgos estratégicos sí.'
+    },
+    2: {
+      correctTier: 'tier2',
+      correctJust: 'j2',
+      fbCorrect: '✓ Tier 2 correcto. Un cliente que ya consultó con otra firma y pide hablar con María tiene un deadline interno activo. La ventana es de 24-48 horas. El tono tranquilo es la trampa — no indica que no haya urgencia.',
+      fbIncorrect: '✗ Es Tier 2 — aunque suene contradictorio con el tono tranquilo. Cuando un cliente ya está comparando firmas, cada hora sin respuesta es una hora que el otro abogado gana terreno.',
+      fbJustWrong: 'La justificación correcta es: consultar con otra firma y pedir a María específicamente activa el deadline interno. TramCase puede decir que estaba satisfecho — eso era hace 2 semanas.'
+    },
+    3: {
+      correctTier: 'tier2',
+      correctJust: 'j2',
+      fbCorrect: '✓ Tier 2 correcto. Dos alertas simultáneas: carta de USCIS que puede ser RFE (plazo federal estricto) y contacto con autoridades que puede afectar elegibilidad. El agente cometió el error clásico de calmar sin analizar. Este caso necesita revisión urgente del abogado.',
+      fbIncorrect: '✗ Es Tier 2. La carta de USCIS tiene plazo potencial y el contacto con autoridades es un dato de elegibilidad crítico. "Estuvo bien" lo dijo el cliente — el paralegal debe verificarlo, no asumirlo.',
+      fbJustWrong: 'La justificación correcta combina dos alertas: la carta (posible RFE con plazo) y el contacto con autoridades (riesgo de elegibilidad). La emoción del cliente no es el criterio — los datos del caso sí.'
+    }
+  };
+
+  function selTier(caseNum, tier) {
+    if (tierSelections['t' + caseNum + '-locked']) return;
+    tierSelections['t' + caseNum + '-tier'] = tier;
+
+    ['tier1','tier2'].forEach(t => {
+      const btn = document.getElementById('t' + caseNum + '-' + t);
+      if (btn) {
+        btn.classList.remove('t-selected-1','t-selected-2');
+        if (t === tier) btn.classList.add(tier === 'tier1' ? 't-selected-1' : 't-selected-2');
+      }
+    });
+    showConfirm(caseNum);
+  }
+
+  function selJust(caseNum, just) {
+    if (tierSelections['t' + caseNum + '-locked']) return;
+    tierSelections['t' + caseNum + '-just'] = just;
+    showConfirm(caseNum);
+  }
+
+  function showConfirm(caseNum) {
+    const btn = document.getElementById('t' + caseNum + '-confirm');
+    if (!btn) return;
+    const hasTier = tierSelections['t' + caseNum + '-tier'];
+    const hasJust = tierSelections['t' + caseNum + '-just'];
+    btn.style.display = (hasTier && hasJust) ? 'block' : 'none';
+  }
+
+  function confirmarTier(caseNum, correctTier, correctJust) {
+    const selTierVal = tierSelections['t' + caseNum + '-tier'];
+    const selJustVal = tierSelections['t' + caseNum + '-just'];
+    if (!selTierVal || !selJustVal) return;
+
+    tierSelections['t' + caseNum + '-locked'] = true;
+    const data = tierData[caseNum];
+    const tierOk = selTierVal === correctTier;
+    const justOk = selJustVal === correctJust;
+
+    const card = document.getElementById('tier-' + caseNum);
+    const feedback = document.getElementById('tier-' + caseNum + '-feedback');
+    const score = document.getElementById('tier-' + caseNum + '-score');
+    const confirmBtn = document.getElementById('t' + caseNum + '-confirm');
+
+    card.classList.add(tierOk ? 'correct' : 'incorrect');
+    confirmBtn.style.display = 'none';
+
+    ['tier1','tier2'].forEach(t => {
+      const btn = document.getElementById('t' + caseNum + '-' + t);
+      if (btn) btn.disabled = true;
+    });
+
+    document.querySelectorAll('input[name="t' + caseNum + 'just"]').forEach(r => { r.disabled = true; });
+
+    for (let j = 1; j <= 4; j++) {
+      const opt = document.getElementById('t' + caseNum + '-j' + j);
+      if (!opt) continue;
+      if ('j' + j === correctJust) opt.classList.add('j-correct');
+      else if ('j' + j === selJustVal) opt.classList.add('j-incorrect');
+    }
+
+    let msg = '';
+    if (tierOk && justOk) {
+      msg = data.fbCorrect;
+    } else if (!tierOk) {
+      msg = data.fbIncorrect;
+    } else {
+      msg = '✓ Clasificación correcta. ' + data.fbJustWrong;
+    }
+
+    score.textContent = tierOk ? (justOk ? '✓ Perfecto' : '✓ Tier correcto') : '✗ Revisa';
+    score.style.color = tierOk ? 'var(--teal)' : 'var(--red)';
+    feedback.textContent = msg;
+    feedback.className = 'tier-feedback visible ' + (tierOk ? 'fb-correct' : 'fb-incorrect');
+  }
+
+
+  /* ── ACTIVIDAD 3.2 — Evaluación de briefings ── */
+  const bfData = {
+    1: {
+      correct: 'no',
+      fbOk:   '✓ Correcto. Sin estatus, sin tier, sin fechas, sin riesgos — el abogado improvisa desde el minuto uno.',
+      fbFail: '✗ Este briefing no sirve. No hay estatus actual, ni Tier, ni fechas, ni riesgos, ni preguntas estratégicas. El abogado entraría completamente a ciegas.'
+    },
+    2: {
+      correct: 'si',
+      fbOk:   '✓ Correcto. Tiene nombre, tipo de caso, motivo específico, Tier justificado, alerta de NTA, riesgo identificado y pregunta estratégica preparada. El abogado puede entrar a operar.',
+      fbFail: '✗ Este briefing sí sirve. Tiene todos los elementos: caso identificado, motivo concreto, Tier con justificación, alerta activa (NTA sin seguimiento), riesgo y pregunta clave. Es el estándar.'
+    },
+    3: {
+      correct: 'no',
+      fbOk:   '✓ Correcto. Tiene algunos datos pero falta el Tier, las alertas concretas (la instrucción del abogado de hace 8 meses sin ejecutar), los riesgos específicos y las preguntas estratégicas. "Está enojada" no es análisis.',
+      fbFail: '✗ Este briefing no sirve. Aunque menciona el tiempo de procesamiento, le falta el Tier, las alertas del expediente, los riesgos y las preguntas que el abogado debe hacer. Es un resumen, no un briefing.'
+    },
+    4: {
+      correct: 'si',
+      fbOk:   '✓ Correcto. Identifica el caso, el motivo, el Tier, la instrucción del abogado sin ejecutar, los riesgos operativo y legal, y la acción que el paralegal debe tomar antes de la llamada. Modelo completo.',
+      fbFail: '✗ Este briefing sí sirve. Tiene motivo específico, Tier con instrucción del abogado sin ejecutar, doble riesgo identificado y una acción concreta pre-llamada. El abogado entra con todo el contexto.'
+    }
+  };
+
+  const bfVotes = {};
+
+  function votarBF(num, voto) {
+    if (bfVotes[num]) return;
+    bfVotes[num] = voto;
+
+    const data = bfData[num];
+    const isOk = voto === data.correct;
+    const btns = document.getElementById('bf' + num + '-btns');
+    const fb = document.getElementById('bf' + num + '-fb');
+    const score = document.getElementById('bf' + num + '-score');
+
+    btns.querySelectorAll('button').forEach(b => {
+      b.disabled = true;
+      if (voto === 'no' && b.textContent.includes('No')) b.classList.add('selected-admin');
+      if (voto === 'si' && b.textContent.includes('Sí')) b.classList.add('selected-legal');
+    });
+
+    score.textContent = isOk ? '✓ Correcto' : '✗ Revisa';
+    score.style.color = isOk ? 'var(--teal)' : 'var(--red)';
+    fb.textContent = isOk ? data.fbOk : data.fbFail;
+    fb.className = 'sit-feedback visible ' + (isOk ? 'fb-correct' : 'fb-incorrect');
+
+    if (Object.keys(bfVotes).length === 4) {
+      document.getElementById('bf-text-section').style.display = 'block';
+    }
+  }
+
+  function checkBriefLen() {
+    const ta = document.getElementById('brief-text');
+    const counter = document.getElementById('brief-char-count');
+    const btn = document.getElementById('brief-submit');
+    const len = ta.value.trim().length;
+    counter.textContent = len + ' / 90 mínimo';
+    counter.style.color = len >= 90 ? 'var(--teal)' : 'var(--ink-muted)';
+    btn.disabled = len < 90;
+    btn.style.opacity = len >= 90 ? '1' : '0.4';
+    btn.style.cursor = len >= 90 ? 'pointer' : 'not-allowed';
+  }
+
+  function submitBriefing() {
+    const ta = document.getElementById('brief-text');
+    if (ta.value.trim().length < 90) return;
+    ta.disabled = true;
+    document.getElementById('brief-submit').disabled = true;
+    document.getElementById('brief-submit').style.opacity = '0.5';
+    const finalFb = document.getElementById('brief-final-feedback');
+    finalFb.innerHTML = '<strong>Los 9 elementos de un briefing completo:</strong><br><br>1. Nombre del cliente y número de caso · 2. Tipo de caso y etapa procesal actual · 3. Fecha de inicio y tiempo transcurrido — ¿es normal para este tipo? · 4. Motivo específico de la callback (qué detonó el contacto) · 5. Clasificación Tier 1 o Tier 2 con justificación · 6. Alertas: NTA, RFE, instrucciones del abogado sin ejecutar, contacto con autoridades · 7. Riesgos operativos, legales o reputacionales · 8. Preguntas estratégicas que el abogado debe hacer · 9. Acción concreta que el paralegal debe tomar antes o durante la llamada.';
+    finalFb.style.display = 'block';
+  }
+
+  updateProgress();
+</script>
+</body>
+</html>
