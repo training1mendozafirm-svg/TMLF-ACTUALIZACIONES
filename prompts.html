@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cómo Pedirme Prompts para Claude · TMLF Learning Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&family=Barlow+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:        #1C2B3A;
+    --navy-mid:    #243447;
+    --navy-light:  #2E4160;
+    --gold:        #C49A3C;
+    --gold-light:  #E8C96A;
+    --gold-pale:   #F5E9C8;
+    --amber-bg:    #FBF0D9;
+    --amber-mid:   #D4920A;
+    --amber-text:  #3D2400;
+    --teal-bg:     #E0F5EE;
+    --teal-mid:    #1A9070;
+    --teal-dark:   #0C5C48;
+    --teal-text:   #063527;
+    --coral-bg:    #FAE9E4;
+    --coral-mid:   #C85030;
+    --coral-text:  #42130A;
+    --sand:        #F7F3EC;
+    --sand-dark:   #EDE7DB;
+    --warm-white:  #FDFBF8;
+    --text-dark:   #1A1714;
+    --text-mid:    #4A443C;
+    --text-muted:  #7A746A;
+    --border:      rgba(28,43,58,0.12);
+    --border-mid:  rgba(28,43,58,0.20);
+    --radius-sm:   6px;
+    --radius-md:   10px;
+    --radius-lg:   16px;
+    --radius-xl:   22px;
+  }
+
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--sand);
+    color: var(--text-dark);
+    min-height: 100vh;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  /* ── HEADER ────────────────────────────────────────── */
+  .hdr {
+    background: var(--navy);
+    border-radius: var(--radius-xl);
+    padding: 3rem 3rem 2.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hdr::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.08;
+  }
+  .hdr::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 40px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: var(--teal-mid);
+    opacity: 0.06;
+  }
+  .hdr-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 1rem;
+  }
+  .hdr-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 500;
+    color: #FFFFFF;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+  }
+  .hdr-title span { color: var(--gold-light); }
+  .hdr-sub {
+    font-size: 15px;
+    color: rgba(255,255,255,0.60);
+    line-height: 1.6;
+    max-width: 520px;
+  }
+  .hdr-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 1.75rem;
+  }
+  .hdr-badge {
+    background: rgba(255,255,255,0.10);
+    border: 0.5px solid rgba(255,255,255,0.20);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.75);
+  }
+
+  /* ── SECTION LABEL ─────────────────────────────────── */
+  .section { margin-bottom: 2rem; }
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    padding-left: 2px;
+  }
+
+  /* ── FORMULA BANNER ────────────────────────────────── */
+  .formula-banner {
+    background: var(--teal-bg);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    border-left: 3px solid var(--teal-mid);
+    margin-bottom: 1.25rem;
+  }
+  .formula-banner h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--teal-dark);
+    margin-bottom: 5px;
+  }
+  .formula-banner p {
+    font-size: 13px;
+    color: var(--teal-text);
+    line-height: 1.6;
+    opacity: 0.9;
+  }
+
+  /* ── STEPS GRID ────────────────────────────────────── */
+  .steps-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 600px) { .steps-grid { grid-template-columns: 1fr; } }
+
+  .step {
+    background: var(--warm-white);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.1rem 1.25rem;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    transition: box-shadow 0.2s;
+  }
+  .step:hover { box-shadow: 0 4px 20px rgba(28,43,58,0.08); }
+  .step.wide { grid-column: 1 / -1; border-color: var(--gold); border-width: 1px; }
+  .step.wide .step-n { background: var(--gold-pale); color: var(--amber-text); }
+
+  .step-n {
+    min-width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .step-n.a { background: var(--amber-bg); color: var(--amber-text); }
+  .step-n.t { background: var(--teal-bg); color: var(--teal-dark); }
+
+  .step-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 5px;
+    line-height: 1.3;
+  }
+  .step-body {
+    font-size: 13px;
+    color: var(--text-mid);
+    line-height: 1.55;
+  }
+  .step-body em { font-style: italic; color: var(--text-muted); }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 8px;
+  }
+  .tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 400;
+  }
+  .tag.a { background: var(--amber-bg); color: var(--amber-text); }
+  .tag.t { background: var(--teal-bg); color: var(--teal-dark); }
+  .tag.g { background: var(--sand-dark); color: var(--text-mid); }
+
+  /* ── DIVIDER ───────────────────────────────────────── */
+  .divider {
+    height: 0.5px;
+    background: var(--border);
+    margin: 0.5rem 0 2rem;
+  }
+
+  /* ── ERRORS ────────────────────────────────────────── */
+  .errors-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  @media (max-width: 500px) { .errors-grid { grid-template-columns: 1fr; } }
+
+  .error-item {
+    background: var(--coral-bg);
+    border-radius: var(--radius-md);
+    padding: 0.7rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .error-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--coral-mid);
+    flex-shrink: 0;
+  }
+  .error-text {
+    font-size: 13px;
+    color: var(--coral-text);
+    line-height: 1.4;
+  }
+
+  /* ── TEMPLATE ──────────────────────────────────────── */
+  .template-box {
+    background: var(--navy);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .template-box::before {
+    content: '{ }';
+    position: absolute;
+    top: 1rem; right: 1.5rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 48px;
+    color: rgba(255,255,255,0.05);
+    font-weight: 600;
+    letter-spacing: -2px;
+  }
+  .template-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 0.5px solid rgba(255,255,255,0.07);
+    flex-wrap: wrap;
+  }
+  .template-row:last-child { border-bottom: none; }
+  .template-key {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--gold-light);
+    min-width: 160px;
+    flex-shrink: 0;
+    text-transform: uppercase;
+  }
+  .template-val {
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+    font-style: italic;
+    line-height: 1.5;
+  }
+  .template-val.fixed {
+    color: rgba(255,255,255,0.85);
+    font-style: normal;
+  }
+
+  /* ── SUMMARY PILLS ─────────────────────────────────── */
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+  .pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--warm-white);
+    border: 0.5px solid var(--border);
+    border-radius: 30px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-dark);
+    white-space: nowrap;
+  }
+  .pill-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── MAGIC ─────────────────────────────────────────── */
+  .magic {
+    background: var(--navy);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .magic::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.10;
+  }
+  .magic-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(196,154,60,0.20);
+    border: 1.5px solid rgba(196,154,60,0.40);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .magic-icon svg { width: 22px; height: 22px; }
+  .magic-inner {}
+  .magic-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    opacity: 0.75;
+    margin-bottom: 6px;
+  }
+  .magic-phrase {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: #FFFFFF;
+    line-height: 1.4;
+    font-style: italic;
+  }
+  .magic-phrase strong {
+    font-style: normal;
+    color: var(--gold-light);
+  }
+
+  /* ── FOOTER ────────────────────────────────────────── */
+  .footer {
+    margin-top: 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .footer-brand {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .footer-brand span { color: var(--gold); }
+  .footer-date {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-eyebrow">Guía práctica · TMLF Learning Center · Instructional Design</div>
+    <div class="hdr-title">Cómo pedirme prompts<br><span>para Claude</span></div>
+    <div class="hdr-sub">Mejores resultados · Menos créditos · Artefactos de alta calidad listos para usar.</div>
+    <div class="hdr-badges">
+      <span class="hdr-badge">Training HTML</span>
+      <span class="hdr-badge">Infografías</span>
+      <span class="hdr-badge">Simuladores</span>
+      <span class="hdr-badge">Portales internos</span>
+      <span class="hdr-badge">SCORM / Moodle</span>
+      <span class="hdr-badge">Dashboards</span>
+      <span class="hdr-badge">Evaluaciones</span>
+    </div>
+  </div>
+
+  <!-- FÓRMULA GANADORA -->
+  <div class="section">
+    <div class="section-label">Fórmula ganadora · 11 pasos</div>
+    <div class="formula-banner">
+      <h3>Cómo trabajamos juntos</h3>
+      <p>Cada paso que incluyas mejora la calidad del artefacto y reduce el retrabajo. Cuanto más contexto des, menos créditos gastas en correcciones.</p>
+    </div>
+
+    <div class="steps-grid">
+
+      <div class="step">
+        <div class="step-n a">1</div>
+        <div>
+          <div class="step-title">Di qué quieres crear</div>
+          <div class="step-body">Empieza con el tipo de artefacto.</div>
+          <div class="tags">
+            <span class="tag a">Training HTML</span>
+            <span class="tag a">Infografía</span>
+            <span class="tag a">Simulador</span>
+            <span class="tag a">Portal interno</span>
+            <span class="tag a">Checklist</span>
+            <span class="tag a">Dashboard</span>
+            <span class="tag a">SCORM</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-n a">2</div>
+        <div>
+          <div class="step-title">Da el nombre exacto</div>
+          <div class="step-body">El título final del proyecto tal como aparecerá en el artefacto. Ejemplo: <em>TMLF LEARNING CENTER — Training Operativo Formas Visa T</em></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-n a">3</div>
+        <div>
+          <div class="step-title">Explica el objetivo</div>
+          <div class="step-body">¿Qué debe lograr el colaborador al terminar? Sé concreto. Ejemplo: <em>Que el colaborador entienda cómo llenar formas y detectar errores.</em></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-n a">4</div>
+        <div>
+          <div class="step-title">Entrega tu base de contenido</div>
+          <div class="step-body">Sin fuente real, Claude inventa. Siempre proporciona el documento.</div>
+          <div class="tags">
+            <span class="tag t">PDF</span>
+            <span class="tag t">Word</span>
+            <span class="tag t">Texto</span>
+            <span class="tag t">Imagen</span>
+            <span class="tag t">Proceso interno</span>
+            <span class="tag t">Diagrama</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-n a">5</div>
+        <div>
+          <div class="step-title">Da una referencia visual</div>
+          <div class="step-body">Esto mejora drásticamente el resultado.</div>
+          <div class="tags">
+            <span class="tag t">HTML base</span>
+            <span class="tag t">Artefacto previo</span>
+            <span class="tag t">Imagen de diseño</span>
+            <span class="tag t">Web de referencia</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-n t">6</div>
+        <div>
+          <div class="step-title">Define el estilo visual</div>
+          <div class="step-body">Siempre indica colores, sensación y tipo de diseño.<br>Ejemplo ganador: <em>verde pálido, salvia, beige, café claro, arena y blanco cálido. Estilo premium, limpio, corporativo.</em></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-n t">7</div>
+        <div>
+          <div class="step-title">Pide la estructura</div>
+          <div class="step-body">Claude trabaja mejor cuando le das bloques claros.</div>
+          <div class="tags">
+            <span class="tag t">Header</span>
+            <span class="tag t">Sidebar</span>
+            <span class="tag t">Overview</span>
+            <span class="tag t">Módulos</span>
+            <span class="tag t">Actividades</span>
+            <span class="tag t">Evaluación</span>
+            <span class="tag t">Cierre</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-n t">8</div>
+        <div>
+          <div class="step-title">Define los módulos</div>
+          <div class="step-body">En vez de "haz un training", divide el contenido. Ejemplo: <em>1. Introducción · 2. Formularios · 3. Errores frecuentes · 4. Casos prácticos · 5. Evaluación final</em></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-n t">9</div>
+        <div>
+          <div class="step-title">Pide experiencia visual</div>
+          <div class="step-body">Solicita elementos interactivos explícitamente.</div>
+          <div class="tags">
+            <span class="tag t">Tarjetas</span>
+            <span class="tag t">Grids</span>
+            <span class="tag t">Tabs</span>
+            <span class="tag t">Accordions</span>
+            <span class="tag t">Timelines</span>
+            <span class="tag t">Quizzes</span>
+            <span class="tag t">Progress bars</span>
+            <span class="tag t">Hover effects</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-n t">10</div>
+        <div>
+          <div class="step-title">Si hay imágenes, indícalo claro</div>
+          <div class="step-body"><em>"Usa las imágenes del documento. Colócalas donde corresponden. No las cambies de lugar. Mantén buena calidad."</em><br>Esto evita errores y retrabajo.</div>
+        </div>
+      </div>
+
+      <div class="step wide">
+        <div class="step-n a">11</div>
+        <div style="flex: 1;">
+          <div class="step-title">Para gastar menos créditos — siempre agrega esto</div>
+          <div class="tags" style="margin-top: 8px;">
+            <span class="tag t">Sé eficiente</span>
+            <span class="tag t">No expliques tu proceso</span>
+            <span class="tag t">No repitas instrucciones</span>
+            <span class="tag t">No des versiones alternativas</span>
+            <span class="tag t">Entrega solo el HTML final</span>
+            <span class="tag t">Reutiliza la estructura base</span>
+            <span class="tag t">No inventes contenido</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ERRORES -->
+  <div class="section">
+    <div class="section-label">Errores que hacen gastar más créditos</div>
+    <div class="errors-grid">
+      <div class="error-item"><div class="error-dot"></div><div class="error-text">"Haz algo bonito" / "Sorpréndeme"</div></div>
+      <div class="error-item"><div class="error-dot"></div><div class="error-text">Sin módulos ni estructura definida</div></div>
+      <div class="error-item"><div class="error-dot"></div><div class="error-text">Sin objetivo claro para el training</div></div>
+      <div class="error-item"><div class="error-dot"></div><div class="error-text">Sin colores ni paleta de diseño</div></div>
+      <div class="error-item"><div class="error-dot"></div><div class="error-text">Sin documento base de contenido</div></div>
+      <div class="error-item"><div class="error-dot"></div><div class="error-text">Sin estructura de secciones</div></div>
+      <div class="error-item"><div class="error-dot"></div><div class="error-text">Pedir cambios uno por uno</div></div>
+      <div class="error-item"><div class="error-dot"></div><div class="error-text">No indicar qué hacer con las imágenes</div></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- TEMPLATE -->
+  <div class="section">
+    <div class="section-label">Plantilla rápida · Prompt ideal</div>
+    <div class="template-box">
+      <div class="template-row">
+        <span class="template-key">Actúa como</span>
+        <span class="template-val fixed">experto en diseño instruccional y HTML.</span>
+      </div>
+      <div class="template-row">
+        <span class="template-key">Necesito crear</span>
+        <span class="template-val">[tipo de artefacto]</span>
+      </div>
+      <div class="template-row">
+        <span class="template-key">Nombre</span>
+        <span class="template-val">[título]</span>
+      </div>
+      <div class="template-row">
+        <span class="template-key">Objetivo</span>
+        <span class="template-val">[qué debe lograr]</span>
+      </div>
+      <div class="template-row">
+        <span class="template-key">Usa como contenido</span>
+        <span class="template-val">[documento / texto / PDF cargado]</span>
+      </div>
+      <div class="template-row">
+        <span class="template-key">Usa como base visual</span>
+        <span class="template-val">[HTML / imagen / artefacto previo]</span>
+      </div>
+      <div class="template-row">
+        <span class="template-key">Paleta</span>
+        <span class="template-val">[colores]</span>
+      </div>
+      <div class="template-row">
+        <span class="template-key">Estructura</span>
+        <span class="template-val">[módulos / secciones]</span>
+      </div>
+      <div class="template-row">
+        <span class="template-key">Quiero</span>
+        <span class="template-val fixed">cards, tabs, interacción, UX/UI profesional</span>
+      </div>
+      <div class="template-row">
+        <span class="template-key">Importante</span>
+        <span class="template-val fixed" style="color: rgba(232,201,106,0.85);">No inventes · Sé eficiente · No expliques · Solo el HTML final</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- UX/UI PROFESIONAL -->
+  <div class="section">
+    <div class="section-label">¿Qué significa UX/UI profesional?</div>
+    <div style="background: var(--navy); border-radius: var(--radius-lg); padding: 1.75rem 2rem; margin-bottom: 12px; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; border-radius: 50%; background: var(--gold); opacity: 0.06;"></div>
+      <div style="font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 500; color: #FFFFFF; margin-bottom: 0.5rem; line-height: 1.3;">UX — <em style="color: var(--gold-light);">User Experience</em></div>
+      <div style="font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.7; margin-bottom: 1.25rem;">Es cómo <strong style="color: rgba(255,255,255,0.85); font-weight: 500;">siente y vive</strong> el colaborador el artefacto. Un buen UX significa que la persona sabe exactamente qué hacer, no se pierde, avanza sin fricción y completa el training sin confusión. Incluye la lógica de navegación, el orden del contenido, los flujos de interacción y la retroalimentación en tiempo real (mensajes de error, confirmaciones, progreso visible).</div>
+      <div style="font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 500; color: #FFFFFF; margin-bottom: 0.5rem; line-height: 1.3;">UI — <em style="color: var(--gold-light);">User Interface</em></div>
+      <div style="font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.7;">Es cómo <strong style="color: rgba(255,255,255,0.85); font-weight: 500;">se ve</strong> el artefacto. Un buen UI tiene jerarquía visual clara, tipografía legible, colores coherentes, espaciado generoso y componentes bien construidos. Transmite credibilidad institucional y refuerza la identidad de TMLF.</div>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+      <div style="background: var(--warm-white); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.1rem;">
+        <div style="font-size: 11px; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal-dark); margin-bottom: 8px;">Navegación clara</div>
+        <div style="font-size: 12px; color: var(--text-mid); line-height: 1.6;">El usuario siempre sabe en qué módulo está, qué sigue y cuánto falta. Barra de progreso, breadcrumbs y botones consistentes.</div>
+      </div>
+      <div style="background: var(--warm-white); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.1rem;">
+        <div style="font-size: 11px; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal-dark); margin-bottom: 8px;">Feedback inmediato</div>
+        <div style="font-size: 12px; color: var(--text-mid); line-height: 1.6;">Respuesta visual a cada acción: respuestas correctas/incorrectas, confirmaciones, animaciones de transición y estados activos.</div>
+      </div>
+      <div style="background: var(--warm-white); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.1rem;">
+        <div style="font-size: 11px; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal-dark); margin-bottom: 8px;">Jerarquía visual</div>
+        <div style="font-size: 12px; color: var(--text-mid); line-height: 1.6;">Lo más importante se ve primero. Títulos, subtítulos, cuerpo y notas tienen tamaños y pesos diferenciados. Nada compite visualmente.</div>
+      </div>
+      <div style="background: var(--warm-white); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.1rem;">
+        <div style="font-size: 11px; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal-dark); margin-bottom: 8px;">Consistencia</div>
+        <div style="font-size: 12px; color: var(--text-mid); line-height: 1.6;">Mismo estilo de botones, mismos colores de acción, misma tipografía en todo el artefacto. Sin sorpresas visuales de módulo a módulo.</div>
+      </div>
+      <div style="background: var(--warm-white); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.1rem;">
+        <div style="font-size: 11px; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal-dark); margin-bottom: 8px;">Espaciado generoso</div>
+        <div style="font-size: 12px; color: var(--text-mid); line-height: 1.6;">Márgenes, paddings y separación entre elementos que permiten respirar. Un diseño apretado cansa y dificulta la lectura.</div>
+      </div>
+      <div style="background: var(--warm-white); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.1rem;">
+        <div style="font-size: 11px; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal-dark); margin-bottom: 8px;">Identidad TMLF</div>
+        <div style="font-size: 12px; color: var(--text-mid); line-height: 1.6;">Paleta, tipografía y tono alineados con la firma. El artefacto se ve institucional, confiable y coherente con la marca.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- RESUMEN -->
+  <div class="section">
+    <div class="section-label">Resumen final</div>
+    <div class="pills">
+      <div class="pill"><div class="pill-dot" style="background: var(--teal-mid);"></div>Sé específico</div>
+      <div class="pill"><div class="pill-dot" style="background: var(--amber-mid);"></div>Da contenido real</div>
+      <div class="pill"><div class="pill-dot" style="background: var(--teal-mid);"></div>Define el estilo</div>
+      <div class="pill"><div class="pill-dot" style="background: var(--amber-mid);"></div>Divide en módulos</div>
+      <div class="pill"><div class="pill-dot" style="background: var(--teal-mid);"></div>Pide eficiencia</div>
+      <div class="pill"><div class="pill-dot" style="background: var(--coral-mid);"></div>Prohíbe inventar</div>
+      <div class="pill"><div class="pill-dot" style="background: var(--teal-mid);"></div>Controla imágenes</div>
+      <div class="pill"><div class="pill-dot" style="background: var(--amber-mid);"></div>Solicita entrega directa</div>
+    </div>
+
+    <!-- FRASE MÁGICA -->
+    <div class="magic">
+      <div class="magic-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L14.5 9H22L16 13.5L18.5 20.5L12 16L5.5 20.5L8 13.5L2 9H9.5L12 2Z" stroke="#C49A3C" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="magic-inner">
+        <div class="magic-label">Frase mágica</div>
+        <div class="magic-phrase">Hazlo <strong>funcional</strong>, <strong>profesional</strong>, claro, visual, eficiente y <strong>listo para usar</strong>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-brand"><span>TMLF</span> Learning Center · Training & Instructional Design</div>
+    <div class="footer-date">2025</div>
+  </div>
+
+</div>
+</body>
+</html>
