@@ -1,0 +1,1670 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Bar Complaints | TMLF Learning Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f1923;--slate:#5a6a7a;--steel:#6b8fa8;--ice:#8db8d8;
+  --gold:#c9a84c;--gold-bg:rgba(201,168,76,.09);
+  --white:#fff;--bg:#eef1f5;--shadow:0 8px 28px rgba(15,25,35,.11);--radius:16px;
+  --nav-h:56px;--sidebar-w:272px;
+  --green:#1e6641;--green-bg:rgba(30,102,65,.08);
+  --red:#8b2c2c;--red-bg:rgba(180,50,50,.08);
+  --amber:#7a5200;--amber-bg:rgba(180,130,0,.09);
+  --accent:#1a3a5c;--accent2:#2e5c8a;
+  --sidebar-bg:#0d1e2e;
+  --blue1:#1e3a6e;--blue2:#2563eb;--blue3:#3b82f6;--blue-ice:#dbeafe;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65}
+
+/* NAV */
+.topnav{position:fixed;top:0;left:0;right:0;z-index:300;height:var(--nav-h);background:rgba(10,18,28,.97);backdrop-filter:blur(16px);border-bottom:1px solid rgba(201,168,76,.12);display:flex;align-items:center;padding:0 18px;gap:10px}
+.topnav .brand{font-family:'Cormorant Garamond',serif;font-size:19px;color:#fff;white-space:nowrap;letter-spacing:.3px;display:flex;align-items:center;gap:10px}
+.topnav .brand .seal{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,rgba(201,168,76,.3),rgba(201,168,76,.08));border:1px solid rgba(201,168,76,.3);display:flex;align-items:center;justify-content:center;font-size:14px}
+.topnav .brand span{color:var(--gold)}
+.topnav-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.topnav-pill{padding:5px 14px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.28);color:rgba(201,168,76,.9)}
+.sidebar-toggle{display:none;background:none;border:none;color:#fff;font-size:20px;cursor:pointer;padding:4px 8px}
+@media(max-width:900px){.sidebar-toggle{display:block}}
+
+/* SHELL */
+.app-shell{display:flex;min-height:100vh;padding-top:var(--nav-h)}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--sidebar-bg);position:fixed;top:var(--nav-h);bottom:0;left:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.08) transparent;border-right:1px solid rgba(201,168,76,.07);z-index:200;transition:transform .3s ease}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.09);border-radius:3px}
+.sidebar-header{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.05)}
+.sidebar-header .sh-label{font-size:9px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:3px}
+.sidebar-header .sh-title{font-family:'Cormorant Garamond',serif;font-size:15px;color:rgba(255,255,255,.88);font-weight:600;line-height:1.3}
+.sb-group{padding:8px 0}
+.sb-group-label{padding:6px 16px 3px;font-size:8.5px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:rgba(255,255,255,.25)}
+.sb-divider{margin:4px 14px 6px;height:1px;background:linear-gradient(90deg,rgba(201,168,76,.18),transparent)}
+.sb-item{display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;transition:all .18s;position:relative;user-select:none}
+.sb-item:hover{background:rgba(255,255,255,.045)}
+.sb-item.active{background:rgba(141,184,216,.09)}
+.sb-item.active::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:3px;background:var(--gold);border-radius:0 3px 3px 0}
+.sb-item.completed .sb-num{background:var(--green)!important;color:#fff!important}
+.sb-num{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;background:rgba(255,255,255,.06);color:rgba(255,255,255,.45);transition:all .18s}
+.sb-item.active .sb-num{background:var(--gold);color:var(--ink)}
+.sb-item:hover:not(.locked) .sb-num{background:rgba(255,255,255,.1);color:rgba(255,255,255,.75)}
+.sb-text{flex:1;min-width:0}
+.sb-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.55);line-height:1.3;transition:color .18s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-item.active .sb-name{color:rgba(255,255,255,.92)}
+.sb-item:hover:not(.locked) .sb-name{color:rgba(255,255,255,.82)}
+.sb-sub{font-size:10px;color:rgba(255,255,255,.28);margin-top:1px}
+.sb-item.overview .sb-num{background:rgba(141,184,216,.13);color:var(--ice)}
+.sb-item.overview.active .sb-num{background:var(--ice);color:var(--ink)}
+.sb-spec-banner{margin:6px 12px 2px;padding:7px 11px;border-radius:9px;background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(201,168,76,.03));border:1px solid rgba(201,168,76,.16);display:flex;align-items:center;gap:7px}
+.sb-spec-banner .sbb-text{font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:rgba(201,168,76,.75)}
+.sb-item.exam .sb-num{background:rgba(201,168,76,.14);color:var(--gold)}
+.sb-item.exam.active .sb-num{background:var(--gold);color:var(--ink)}
+.sb-item.exam .sb-name{color:rgba(255,210,80,.55)}
+.sb-item.exam.active .sb-name{color:rgba(255,210,80,.92)}
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0);box-shadow:8px 0 32px rgba(0,0,0,.45)}
+  .sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199}
+  .sb-overlay.show{display:block}
+}
+
+/* PROGRESS BAR */
+.progress-bar-wrap{position:fixed;top:var(--nav-h);left:0;right:0;z-index:299;height:3px;background:rgba(255,255,255,.06)}
+.progress-bar-fill{height:3px;background:linear-gradient(90deg,var(--gold),var(--ice));transition:width .5s ease;width:0%}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);flex:1;padding:26px 26px 60px;max-width:100%}
+@media(max-width:900px){.main{margin-left:0}}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#0d1e32 0%,#1a3a5c 60%,#213f6b 100%);border-radius:var(--radius);padding:30px 34px;color:#fff;margin-bottom:22px;position:relative;overflow:hidden;box-shadow:0 12px 40px rgba(15,25,35,.22)}
+.header::after{content:'';position:absolute;bottom:-70px;right:90px;width:180px;height:180px;border:1.5px solid rgba(37,99,235,.08);border-radius:50%;animation:pulse 6s ease-in-out infinite .8s}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.04);opacity:.85}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.header-seal{position:absolute;top:26px;right:34px;width:62px;height:62px;border:1.5px solid rgba(201,168,76,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;opacity:.5;animation:pulse 4s ease-in-out infinite}
+.header-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;margin-bottom:12px}
+.header-badge .dot{width:5px;height:5px;background:var(--gold);border-radius:50%}
+h1{font-family:'Cormorant Garamond',serif;font-size:36px;letter-spacing:.4px;position:relative;z-index:1;font-weight:700;line-height:1.15}
+.subtitle{font-size:14px;opacity:.76;max-width:52ch;position:relative;z-index:1;margin-top:6px}
+.header-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;position:relative;z-index:1}
+.header-meta-item{display:flex;align-items:center;gap:6px;padding:5px 13px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;font-size:11.5px}
+.header-meta-item span:first-child{opacity:.58}
+.header-meta-item strong{font-weight:700}
+
+/* PANELS */
+.panel{display:none;animation:fadeUp .28s ease both}
+.panel.active{display:block}
+
+/* PAGE TITLE */
+.page-title{margin-bottom:20px}
+.pt-label{font-size:9.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--slate);margin-bottom:5px}
+.page-title h2{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:var(--ink);line-height:1.2}
+.pt-sub{font-size:14px;color:var(--slate);margin-top:4px}
+
+/* BLOCKS */
+.block{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(107,143,168,.15);overflow:hidden;margin-bottom:14px}
+.block .btitle{display:flex;align-items:center;gap:10px;padding:15px 18px;background:linear-gradient(180deg,rgba(141,184,216,.16),rgba(141,184,216,.02));border-bottom:1px solid rgba(107,143,168,.13)}
+.block .btitle .bicon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px}
+.block .btitle h3{font-size:15.5px;color:var(--ink);font-family:'Cormorant Garamond',serif;font-weight:700;letter-spacing:.2px;flex:1}
+.block .btitle .mod-badge{margin-left:auto;padding:3px 10px;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;flex-shrink:0}
+.badge-core{background:rgba(26,58,92,.09);color:#1a3a5c;border:1px solid rgba(26,58,92,.17)}
+.badge-warn{background:rgba(139,44,44,.08);color:#8b2c2c;border:1px solid rgba(139,44,44,.17)}
+.badge-green{background:rgba(30,102,65,.08);color:#1e6641;border:1px solid rgba(30,102,65,.17)}
+.badge-gold{background:rgba(201,168,76,.09);color:#7a5200;border:1px solid rgba(201,168,76,.2)}
+.badge-blue{background:rgba(37,99,235,.09);color:#1e3a6e;border:1px solid rgba(37,99,235,.2)}
+.block .bbody{padding:18px}
+.block .bbody p{margin:0 0 10px;font-size:13.5px}
+.block .bbody p:last-child{margin-bottom:0}
+.block.b-error{border-color:rgba(139,44,44,.18);background:#fff5f5}
+.block.b-error .btitle{background:rgba(139,44,44,.06);border-bottom-color:rgba(139,44,44,.12)}
+.block.b-error .btitle h3{color:#8b2c2c}
+.block.b-caso{border-color:rgba(30,102,65,.18);background:#f0fbf5}
+.block.b-caso .btitle{background:rgba(30,102,65,.07);border-bottom-color:rgba(30,102,65,.12)}
+.block.b-caso .btitle h3{color:#1e5c3a}
+.block.b-flujo{border-color:rgba(37,99,235,.18);background:#f0f6ff}
+.block.b-flujo .btitle{background:rgba(37,99,235,.07);border-bottom-color:rgba(37,99,235,.12)}
+.block.b-flujo .btitle h3{color:#1a3a8f}
+.block.b-concepto{border-color:rgba(201,168,76,.22);background:#fffdf0}
+.block.b-concepto .btitle{background:rgba(201,168,76,.08);border-bottom-color:rgba(201,168,76,.15)}
+.block.b-concepto .btitle h3{color:#7a5200}
+
+/* ALERTS */
+.alert{margin-top:10px;padding:10px 13px;border-radius:10px;font-size:12.5px;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.alert.warn{background:var(--amber-bg);border:1px solid rgba(180,130,0,.19);color:var(--amber)}
+.alert.danger{background:var(--red-bg);border:1px solid rgba(180,50,50,.17);color:var(--red)}
+.alert.success{background:var(--green-bg);border:1px solid rgba(30,102,65,.17);color:var(--green)}
+.alert.info{background:rgba(107,143,168,.08);border:1px solid rgba(107,143,168,.18);color:var(--ink)}
+.alert.blue{background:rgba(37,99,235,.07);border:1px solid rgba(37,99,235,.18);color:#1a3a5c}
+.alert.gold{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.28);color:var(--amber)}
+.alert-icon{flex-shrink:0;margin-top:1px}
+.alert strong{font-weight:700}
+
+/* CRITICAL RULE */
+.critical-rule{background:linear-gradient(135deg,rgba(15,25,35,.96),rgba(26,58,92,.97));border-radius:14px;padding:18px 22px;margin:16px 0;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(15,25,35,.18)}
+.critical-rule::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--gold)}
+.critical-rule-label{font-size:9px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:rgba(201,168,76,.7);margin-bottom:8px}
+.critical-rule-text{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:800;color:#fff;line-height:1.3;letter-spacing:.1px;text-transform:uppercase}
+.critical-rule-text em{font-style:normal;color:rgba(201,168,76,.95)}
+.critical-rule-sub{font-size:12px;color:rgba(255,255,255,.58);margin-top:8px;line-height:1.55}
+.critical-rule-sub strong{color:rgba(255,255,255,.82)}
+
+/* PRINCIPLE */
+.principle{margin-top:13px;padding:14px 17px;border-radius:11px;background:linear-gradient(135deg,rgba(15,25,35,.03),rgba(141,184,216,.06));border:1px solid rgba(107,143,168,.17);border-left:3px solid var(--accent)}
+.principle p{margin:0;font-size:14px;font-weight:600;font-style:italic;font-family:'Cormorant Garamond',serif;line-height:1.55;color:var(--ink)}
+.principle .principle-sub{font-weight:500;color:var(--slate);margin-top:4px;font-style:normal;font-family:'DM Sans',sans-serif;font-size:12px}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.chip{padding:4px 10px;border-radius:7px;font-size:11px;font-weight:600;background:rgba(141,184,216,.13);border:1px solid rgba(107,143,168,.17);color:var(--ink)}
+.chip.red{background:rgba(180,50,50,.08);border-color:rgba(180,50,50,.18);color:#8b2c2c}
+.chip.blue{background:rgba(37,99,235,.09);border-color:rgba(37,99,235,.18);color:#1a3a5c}
+.chip.green{background:var(--green-bg);border-color:rgba(30,102,65,.17);color:var(--green)}
+.chip.amber{background:var(--amber-bg);border-color:rgba(180,130,0,.19);color:var(--amber)}
+
+/* INFO TABLE */
+.info-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:12.5px;border-radius:11px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.info-table th{background:var(--accent);color:#fff;padding:11px 14px;text-align:left;font-weight:700;font-size:11.5px}
+.info-table td{padding:10px 14px;border-bottom:1px solid rgba(107,143,168,.12)}
+.info-table tr:nth-child(even) td{background:rgba(107,143,168,.04)}
+.info-table tr:last-child td{border-bottom:none}
+.info-table tr:hover td{background:rgba(141,184,216,.08)}
+
+/* TWO/THREE COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:10px}
+@media(max-width:700px){.three-col{grid-template-columns:1fr}}
+@media(max-width:600px){.two-col{grid-template-columns:1fr}}
+.mini-card{padding:14px;border-radius:11px;border:1px solid rgba(107,143,168,.15);background:rgba(107,143,168,.04)}
+.mini-card h4{font-size:12.5px;margin-bottom:7px;display:flex;align-items:center;gap:6px;color:var(--ink);font-weight:700}
+.mini-card p,.mini-card li{font-size:12px;color:var(--slate);line-height:1.6}
+.mini-card ul{padding-left:15px}
+
+/* DIVIDERS */
+.sdiv{display:flex;align-items:center;gap:11px;margin:20px 0 13px}
+.sdiv .l{flex:1;height:1px;background:linear-gradient(90deg,rgba(107,143,168,.28),transparent)}
+.sdiv .l:last-child{background:linear-gradient(270deg,rgba(107,143,168,.28),transparent)}
+.sdiv .t{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--slate);white-space:nowrap}
+
+/* STAT CARDS */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:9px;margin-bottom:18px}
+.stat-card{background:var(--white);border-radius:13px;padding:15px;border:1px solid rgba(107,143,168,.16);text-align:center}
+.stat-card .stat-val{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--accent);line-height:1}
+.stat-card .stat-label{font-size:11px;color:var(--slate);margin-top:4px;font-weight:600}
+
+/* OB LIST */
+.ob-list{display:grid;grid-template-columns:1fr;gap:6px;margin-top:9px}
+@media(min-width:600px){.ob-list{grid-template-columns:1fr 1fr}}
+.ob-item{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;border-radius:10px;background:rgba(141,184,216,.08);border:1px solid rgba(107,143,168,.16);transition:all .2s}
+.ob-item:hover{transform:translateX(3px);background:rgba(141,184,216,.16)}
+.ob-num{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10.5px;flex-shrink:0;margin-top:1px}
+.ob-item span{font-size:12.5px;font-weight:600;line-height:1.4}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:28px;margin-top:12px}
+.timeline::before{content:'';position:absolute;left:8px;top:8px;bottom:8px;width:2px;background:linear-gradient(180deg,var(--accent2),rgba(37,99,235,.1))}
+.tl-step{position:relative;margin-bottom:18px}
+.tl-step:last-child{margin-bottom:0}
+.tl-dot{position:absolute;left:-24px;top:4px;width:16px;height:16px;border-radius:50%;background:var(--accent);border:2.5px solid var(--bg);display:flex;align-items:center;justify-content:center}
+.tl-dot span{font-size:8px;font-weight:800;color:#fff}
+.tl-step .tl-label{font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--slate);margin-bottom:3px}
+.tl-step .tl-title{font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.tl-step .tl-body{font-size:12.5px;color:var(--slate);line-height:1.6}
+
+/* PROFILE CARDS */
+.profile-card{border-radius:13px;padding:16px;border:2px solid transparent;background:var(--white);margin-bottom:0;box-shadow:0 2px 10px rgba(15,25,35,.06)}
+.profile-card.loud{border-color:rgba(37,99,235,.3);background:rgba(37,99,235,.03)}
+.profile-card.silent{border-color:rgba(139,44,44,.35);background:rgba(139,44,44,.03)}
+.profile-card.demanding{border-color:rgba(201,168,76,.35);background:rgba(201,168,76,.03)}
+.profile-card .pc-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.profile-card .pc-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.loud .pc-icon{background:rgba(37,99,235,.1)}
+.silent .pc-icon{background:rgba(139,44,44,.1)}
+.demanding .pc-icon{background:rgba(201,168,76,.12)}
+.profile-card .pc-name{font-size:14px;font-weight:800;color:var(--ink);line-height:1.2}
+.profile-card .pc-sub{font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-top:1px}
+.loud .pc-sub{color:rgba(37,99,235,.7)}
+.silent .pc-sub{color:rgba(139,44,44,.7)}
+.demanding .pc-sub{color:rgba(122,82,0,.7)}
+.profile-card .pc-risk{display:inline-block;padding:2px 10px;border-radius:999px;font-size:10px;font-weight:700;margin-bottom:8px}
+.loud .pc-risk{background:rgba(37,99,235,.1);color:#1a3a5c;border:1px solid rgba(37,99,235,.2)}
+.silent .pc-risk{background:rgba(139,44,44,.1);color:#8b2c2c;border:1px solid rgba(139,44,44,.2)}
+.demanding .pc-risk{background:rgba(201,168,76,.1);color:#7a5200;border:1px solid rgba(201,168,76,.2)}
+.profile-card ul{padding-left:14px;font-size:12px;color:var(--slate);line-height:1.65}
+.profile-card li{margin-bottom:2px}
+
+/* PCM SCORING */
+.pcm-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.pcm-table th{padding:9px 13px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#fff;background:var(--blue1)}
+.pcm-table td{padding:11px 13px;border-bottom:1px solid rgba(107,143,168,.1);vertical-align:middle}
+.pcm-table tr:nth-child(even) td{background:rgba(37,99,235,.03)}
+.pcm-table tr:last-child td{border-bottom:none}
+.pcm-table tr:hover td{background:rgba(141,184,216,.08)}
+.pcm-weight{display:inline-block;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:800}
+.w-35{background:rgba(139,44,44,.12);color:#8b2c2c;border:1px solid rgba(139,44,44,.2)}
+.w-20{background:rgba(180,100,0,.1);color:#7a3a00;border:1px solid rgba(180,100,0,.2)}
+.w-15{background:rgba(180,130,0,.1);color:var(--amber);border:1px solid rgba(180,130,0,.2)}
+.w-10{background:rgba(37,99,235,.1);color:#1a3a5c;border:1px solid rgba(37,99,235,.2)}
+.w-5{background:rgba(107,143,168,.1);color:var(--slate);border:1px solid rgba(107,143,168,.2)}
+.w-4{background:rgba(107,143,168,.1);color:var(--slate);border:1px solid rgba(107,143,168,.2)}
+.w-2{background:rgba(107,143,168,.1);color:var(--slate);border:1px solid rgba(107,143,168,.2)}
+
+/* RISK LEVELS */
+.risk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-top:12px}
+.risk-card{border-radius:12px;padding:14px;border:2px solid transparent;text-align:center}
+.risk-card.low{background:rgba(30,102,65,.06);border-color:rgba(30,102,65,.25)}
+.risk-card.mild{background:rgba(180,130,0,.06);border-color:rgba(180,130,0,.25)}
+.risk-card.high{background:rgba(180,50,50,.06);border-color:rgba(180,50,50,.25)}
+.risk-card.critical{background:rgba(100,0,0,.06);border-color:rgba(100,0,0,.35)}
+.risk-card .rc-dot{width:14px;height:14px;border-radius:50%;margin:0 auto 6px}
+.low .rc-dot{background:#22c55e}
+.mild .rc-dot{background:#f59e0b}
+.high .rc-dot{background:#ef4444}
+.critical .rc-dot{background:#7f1d1d}
+.risk-card .rc-pts{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--ink);line-height:1}
+.risk-card .rc-label{font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin:4px 0}
+.low .rc-label{color:var(--green)}
+.mild .rc-label{color:var(--amber)}
+.high .rc-label{color:var(--red)}
+.critical .rc-label{color:#7f1d1d}
+.risk-card .rc-action{font-size:10.5px;color:var(--slate);line-height:1.4;margin-top:5px}
+
+/* RED FLAGS */
+.redflag-grid{display:grid;grid-template-columns:1fr;gap:7px;margin-top:10px}
+.rf-item{display:flex;align-items:flex-start;gap:10px;padding:10px 13px;border-radius:10px;background:rgba(180,50,50,.04);border:1px solid rgba(180,50,50,.16)}
+.rf-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.rf-text{font-size:12.5px;color:var(--ink);font-weight:600;line-height:1.45}
+
+/* CASE BOXES */
+.case-box{background:linear-gradient(135deg,#f8f9fb,#f2f4f8);border:1px solid rgba(15,25,35,.1);border-radius:14px;padding:20px 22px;margin-bottom:16px;position:relative}
+.case-box::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--gold);border-radius:14px 0 0 14px}
+.case-label{font-size:9.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.case-box.resolved::before{background:var(--green)}
+.case-box.resolved .case-label{color:var(--green)}
+.case-narrative{font-size:13.5px;color:var(--ink);line-height:1.7}
+.case-meta{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.case-signals{margin-top:10px;padding:10px 13px;border-radius:9px;background:rgba(139,44,44,.05);border:1px solid rgba(139,44,44,.15)}
+.case-signals .cs-label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--red);margin-bottom:6px}
+.case-signals ul{padding-left:14px;font-size:12px;color:var(--slate);line-height:1.65}
+.case-result{margin-top:10px;padding:10px 13px;border-radius:9px;font-size:12.5px;font-weight:600}
+.case-result.negative{background:rgba(139,44,44,.06);border:1px solid rgba(139,44,44,.15);color:var(--red)}
+.case-result.positive{background:var(--green-bg);border:1px solid rgba(30,102,65,.17);color:var(--green)}
+
+/* TRIGGERS COMPARISON */
+.triggers-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+@media(max-width:600px){.triggers-grid{grid-template-columns:1fr}}
+.trigger-col{border-radius:12px;padding:16px}
+.trigger-col.primary{background:rgba(139,44,44,.05);border:2px solid rgba(139,44,44,.2)}
+.trigger-col.secondary{background:rgba(180,130,0,.05);border:2px solid rgba(180,130,0,.2)}
+.trigger-col .tc-header{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(107,143,168,.15)}
+.primary .tc-header{color:var(--red)}
+.secondary .tc-header{color:var(--amber)}
+.trigger-col ul{padding-left:14px;font-size:12.5px;color:var(--slate);line-height:1.7}
+
+/* COMPLIANCE PILLARS */
+.pillar-card{border-radius:12px;padding:16px;border:1px solid rgba(37,99,235,.18);background:rgba(37,99,235,.04)}
+.pillar-card .pillar-icon{font-size:24px;margin-bottom:8px}
+.pillar-card h4{font-size:13.5px;font-weight:700;color:var(--blue1);margin-bottom:6px}
+.pillar-card p{font-size:12px;color:var(--slate);line-height:1.55;margin-bottom:6px}
+.pillar-card .pillar-action{font-size:11.5px;font-weight:700;color:var(--blue1);line-height:1.5}
+
+/* STATUS TABLE */
+.status-table{width:100%;border-collapse:collapse;font-size:12.5px;border-radius:11px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);margin-top:12px}
+.status-table th{background:#1a3a5c;color:#fff;padding:11px 14px;text-align:left;font-weight:700;font-size:11.5px}
+.status-table td{padding:10px 14px;border-bottom:1px solid rgba(107,143,168,.12)}
+.status-table tr:nth-child(even) td{background:rgba(37,99,235,.03)}
+.status-table tr:last-child td{border-bottom:none}
+.status-table td:first-child{font-weight:700;color:var(--blue1)}
+
+/* MOD NAV */
+.mod-nav-bar{display:flex;justify-content:space-between;align-items:center;margin-top:22px;padding-top:16px;border-top:1px solid rgba(107,143,168,.15)}
+.mod-nav-btn{padding:10px 22px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s;font-family:'DM Sans',sans-serif}
+.mod-nav-prev{background:rgba(107,143,168,.1);color:var(--slate);border:1px solid rgba(107,143,168,.2)}
+.mod-nav-prev:hover{background:rgba(107,143,168,.2)}
+.mod-nav-next{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 14px rgba(26,58,92,.2)}
+.mod-nav-next:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(26,58,92,.3)}
+
+/* ACCORDIONS */
+details.block-accordion{border:none;background:none;padding:0;margin:8px 0 0}
+details.block-accordion+details.block-accordion{margin-top:7px}
+.block-accordion-header{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-radius:11px;background:linear-gradient(135deg,rgba(15,25,35,.04),rgba(107,143,168,.08));border:1px solid rgba(107,143,168,.15);transition:all .2s;user-select:none}
+.block-accordion-header::-webkit-details-marker{display:none}
+details.block-accordion[open] .block-accordion-header{border-radius:11px 11px 0 0;border-bottom-color:transparent}
+.bac-left{display:flex;align-items:center;gap:11px}
+.bac-num{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bac-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--slate);margin-bottom:2px}
+.bac-title{font-size:13.5px;font-weight:700;color:var(--ink)}
+.bac-arrow{font-size:11px;color:var(--slate);transition:transform .2s;flex-shrink:0}
+details.block-accordion[open] .bac-arrow{transform:rotate(90deg)}
+.bac-body{padding:14px 16px 16px;border:1px solid rgba(107,143,168,.15);border-top:none;border-radius:0 0 11px 11px;background:rgba(242,244,247,.45)}
+.ev-list{margin:8px 0 0;padding:0 0 0 15px;font-size:13px;line-height:1.7}
+.ev-list li{margin-bottom:6px}
+
+/* HIGHLIGHTS */
+mark.hi{background:rgba(201,168,76,.22);color:#5a3e00;border-radius:3px;padding:1px 5px;font-weight:700;border-bottom:2px solid rgba(201,168,76,.5)}
+mark.hi-red{background:rgba(180,40,40,.12);color:#7a1a1a;border-radius:3px;padding:1px 5px;font-weight:700;border-bottom:2px solid rgba(180,40,40,.4)}
+mark.hi-blue{background:rgba(37,99,235,.1);color:#1a3a8f;border-radius:3px;padding:1px 5px;font-weight:700;border-bottom:2px solid rgba(37,99,235,.35)}
+
+/* QUIZ/EXAM */
+.q-item{background:rgba(242,244,247,.6);border:1px solid rgba(107,143,168,.16);border-radius:11px;padding:14px 16px;margin-bottom:12px}
+.q-num{font-size:9.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--slate);margin-bottom:6px}
+.q-text{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px;line-height:1.5}
+.q-opts{display:flex;flex-direction:column;gap:7px}
+.q-opt{display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:8px;border:1.5px solid rgba(107,143,168,.18);background:var(--white);cursor:pointer;font-size:12.5px;transition:all .18s;color:var(--ink)}
+.q-opt:hover{border-color:var(--accent2);background:rgba(26,58,92,.04)}
+.q-opt.selected{border-color:var(--accent2);background:rgba(26,58,92,.06)}
+.q-opt.correct{border-color:#1e6641;background:#d1fae5;pointer-events:none}
+.q-opt.incorrect{border-color:#8b2c2c;background:#fee2e2;pointer-events:none}
+.q-opt.disabled{pointer-events:none;opacity:.7}
+.q-radio{width:18px;height:18px;border-radius:50%;border:2px solid rgba(107,143,168,.3);flex-shrink:0;transition:all .18s}
+.q-opt.selected .q-radio{border-color:var(--accent2);background:var(--accent2)}
+.q-feedback{display:none;margin-top:8px;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:600}
+.q-feedback.show.ok{display:block;background:var(--green-bg);color:var(--green);border:1px solid rgba(30,102,65,.2)}
+.q-feedback.show.fail{display:block;background:var(--red-bg);color:var(--red);border:1px solid rgba(139,44,44,.2)}
+
+/* EXAM RESULT */
+.exam-result{display:none;background:var(--white);border:2px solid rgba(107,143,168,.2);border-radius:16px;padding:28px;text-align:center;margin-top:20px}
+.exam-result.show{display:block;animation:fadeUp .4s ease}
+.result-score{font-family:'Cormorant Garamond',serif;font-size:64px;font-weight:700;line-height:1}
+.result-score.pass{color:var(--green)}
+.result-score.warn{color:var(--amber)}
+.result-score.fail{color:var(--red)}
+.result-label{font-size:16px;font-weight:800;margin:8px 0 4px;text-transform:uppercase;letter-spacing:.5px}
+.result-msg{font-size:13.5px;color:var(--slate);max-width:50ch;margin:0 auto 16px}
+.result-stats{display:flex;justify-content:center;gap:20px;margin-top:14px}
+.rs-item{text-align:center}
+.rs-val{font-size:22px;font-weight:700}
+.rs-label{font-size:11px;color:var(--slate);font-weight:600}
+
+/* EXAM BTNS */
+.exam-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.btn-submit{padding:12px 28px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;box-shadow:0 4px 14px rgba(26,58,92,.2)}
+.btn-submit:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(26,58,92,.3)}
+.btn-retry{padding:12px 28px;background:var(--bg);color:var(--slate);border:1.5px solid rgba(107,143,168,.25);border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;display:none}
+.btn-retry:hover{background:#e2e6eb}
+
+/* OVERVIEW CARDS */
+.overview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:2px}
+.ov-card{background:var(--white);border-radius:12px;padding:14px;border:1px solid rgba(107,143,168,.15);cursor:pointer;transition:all .22s;display:flex;flex-direction:column;gap:4px}
+.ov-card:hover{transform:translateY(-3px);box-shadow:0 7px 20px rgba(15,25,35,.1);border-color:var(--ice)}
+.ov-card .ov-icon{font-size:22px;margin-bottom:3px}
+.ov-card strong{font-size:12px;font-weight:700;color:var(--ink);line-height:1.3}
+.ov-card small{font-size:10.5px;color:var(--slate)}
+.ov-card.exam-card{background:linear-gradient(135deg,rgba(201,168,76,.05),rgba(201,168,76,.02));border-color:rgba(201,168,76,.18)}
+
+/* ACTION LIST */
+.do-dont{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+@media(max-width:600px){.do-dont{grid-template-columns:1fr}}
+.dont-col,.do-col{border-radius:12px;padding:14px}
+.dont-col{background:rgba(139,44,44,.04);border:1.5px solid rgba(139,44,44,.18)}
+.do-col{background:rgba(30,102,65,.04);border:1.5px solid rgba(30,102,65,.18)}
+.do-dont-header{font-size:10.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid rgba(107,143,168,.15)}
+.dont-col .do-dont-header{color:var(--red)}
+.do-col .do-dont-header{color:var(--green)}
+.do-dont ul{padding-left:14px;font-size:12px;color:var(--slate);line-height:1.7}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+  <div class="brand">
+    <div class="seal">⚖️</div>
+    TMLF <span>Learning Center</span>
+  </div>
+  <div class="topnav-right">
+    <div class="topnav-pill">Compliance Training</div>
+    <div class="topnav-pill" id="progress-pill">0%</div>
+  </div>
+</nav>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar-wrap"><div class="progress-bar-fill" id="main-progress"></div></div>
+
+<div class="sb-overlay" id="sb-overlay" onclick="toggleSidebar()"></div>
+
+<div class="app-shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="main-sidebar">
+  <div class="sidebar-header">
+    <div class="sh-label">Compliance Training</div>
+    <div class="sh-title">Bar Complaints — Señales, Prevención y Manejo</div>
+  </div>
+  <div class="sb-group">
+    <div class="sb-group-label">Inicio</div>
+    <div class="sb-item overview active" id="nav-overview" onclick="showPanel('overview')">
+      <div class="sb-num">📋</div>
+      <div class="sb-text"><div class="sb-name">Overview</div><div class="sb-sub">Objetivos y estructura</div></div>
+    </div>
+  </div>
+  <div class="sb-divider"></div>
+  <div class="sb-group">
+    <div class="sb-group-label">Módulos del Training</div>
+    <div class="sb-item" id="nav-mod1" onclick="showPanel('mod1')">
+      <div class="sb-num">1</div>
+      <div class="sb-text"><div class="sb-name">Señales y Perfiles de Riesgo</div><div class="sb-sub">Definición · Tipos · PCM-002</div></div>
+    </div>
+    <div class="sb-item" id="nav-mod2" onclick="showPanel('mod2')">
+      <div class="sb-num">2</div>
+      <div class="sb-text"><div class="sb-name">Herramientas de Compliance</div><div class="sb-sub">Proceso · Casos · Protocolo</div></div>
+    </div>
+  </div>
+  <div class="sb-divider"></div>
+  <div class="sb-spec-banner">
+    <span style="font-size:14px">⭐</span>
+    <div class="sbb-text">Cierre del Training</div>
+  </div>
+  <div class="sb-group">
+    <div class="sb-item exam" id="nav-eval" onclick="showPanel('eval')">
+      <div class="sb-num">✦</div>
+      <div class="sb-text"><div class="sb-name">Evaluación Final</div><div class="sb-sub">15 preguntas · 80% aprobatorio</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-seal">⚖️</div>
+  <div class="header-badge"><div class="dot"></div>TMLF Learning Center · Compliance Training</div>
+  <h1>Bar Complaints</h1>
+  <p class="subtitle">Señales de alerta · Prevención · Identificación · Manejo · Compliance</p>
+  <div class="header-meta">
+    <div class="header-meta-item"><span>📚</span><strong>2 Módulos</strong></div>
+    <div class="header-meta-item"><span>📊</span><strong>Nivel: Intermedio</strong></div>
+    <div class="header-meta-item"><span>⏱️</span><strong>2 horas estimadas</strong></div>
+    <div class="header-meta-item"><span>🖥️</span><strong>E-Learning</strong></div>
+    <div class="header-meta-item"><span>📅</span><strong>v1.0 · 2025</strong></div>
+  </div>
+</div>
+
+<!-- ════ PANEL OVERVIEW ════ -->
+<div class="panel active" id="panel-overview">
+  <div class="page-title">
+    <div class="pt-label">Inicio</div>
+    <h2>Overview del Training</h2>
+    <p class="pt-sub">Competencias preventivas frente al riesgo de Bar Complaints.</p>
+  </div>
+
+  <div class="critical-rule">
+    <div class="critical-rule-label">⚡ Por qué esta capacitación es crítica</div>
+    <div class="critical-rule-text">Un Bar Complaint no es solo un problema legal. Es una <em>crisis de comunicación.</em></div>
+    <div class="critical-rule-sub">En TMLF trabajamos con clientes en situaciones de alta vulnerabilidad. La mayoría de quejas NO ocurren por errores legales graves — ocurren porque el cliente siente que fue <strong>abandonado, engañado o ignorado.</strong></div>
+  </div>
+
+  <div class="block">
+    <div class="btitle"><div class="bicon">🎯</div><h3>Objetivo General</h3></div>
+    <div class="bbody">
+      <p>Fortalecer las <mark class="hi-blue">competencias preventivas</mark> del equipo frente a posibles Bar Complaints mediante el dominio de señales de alerta y la implementación de protocolos de Compliance que aseguren un <strong>manejo proactivo</strong> de los riesgos que tiene cada caso, sean éticos, de procesamiento o por su naturaleza.</p>
+    </div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-val">3</div><div class="stat-label">Tipos de riesgo</div></div>
+    <div class="stat-card"><div class="stat-val">3</div><div class="stat-label">Perfiles de cliente</div></div>
+    <div class="stat-card"><div class="stat-val">9</div><div class="stat-label">Categorías PCM-002</div></div>
+    <div class="stat-card"><div class="stat-val">11</div><div class="stat-label">Red Flags críticas</div></div>
+    <div class="stat-card"><div class="stat-val">4</div><div class="stat-label">Casos prácticos</div></div>
+  </div>
+
+  <div class="block">
+    <div class="btitle"><div class="bicon">🗺️</div><h3>Estructura del Training</h3></div>
+    <div class="bbody">
+      <div class="overview-grid">
+        <div class="ov-card" onclick="showPanel('mod1')">
+          <div class="ov-icon">🔍</div>
+          <strong>Módulo 1</strong>
+          <small>Señales y perfiles de riesgo</small>
+        </div>
+        <div class="ov-card" onclick="showPanel('mod2')">
+          <div class="ov-icon">🛡️</div>
+          <strong>Módulo 2</strong>
+          <small>Herramientas de Compliance</small>
+        </div>
+        <div class="ov-card exam-card" onclick="showPanel('eval')">
+          <div class="ov-icon">✦</div>
+          <strong>Evaluación Final</strong>
+          <small>15 preguntas · 80%</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <table class="info-table">
+    <thead><tr><th>Módulo</th><th>Objetivo específico</th><th>Contenidos clave</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Módulo 1</strong></td><td>Comprender qué es un Bar Complaint, cómo ocurre y cuáles son las señales de alerta.</td><td>Definición · Jurisdicción · Tipos de clientes · Perfiles de riesgo · Señales y Red Flags · Disparadores</td></tr>
+      <tr><td><strong>Módulo 2</strong></td><td>Manejar situaciones de riesgo con herramientas concretas de Compliance.</td><td>Proceso disciplinario · Casos prácticos · Protocolo de defensa · PCM-002 · Flujo operativo</td></tr>
+    </tbody>
+  </table>
+
+  <div class="mod-nav-bar">
+    <div></div>
+    <button class="mod-nav-btn mod-nav-next" onclick="showPanel('mod1')">Comenzar Módulo 1 →</button>
+  </div>
+</div>
+
+<!-- ════ PANEL MÓDULO 1 ════ -->
+<div class="panel" id="panel-mod1">
+  <div class="page-title">
+    <div class="pt-label">Módulo 1 · Teoría</div>
+    <h2>Comprender qué es un Bar Complaint, cómo ocurre y cuáles son sus señales de alerta</h2>
+    <p class="pt-sub">Construye competencias preventivas ante los riesgos éticos, procesales y de naturaleza del caso.</p>
+  </div>
+
+  <!-- 1.1 Definición -->
+  <div class="block">
+    <div class="btitle"><div class="bicon">📋</div><h3>1.1 ¿Qué es un Bar Complaint?</h3><span class="mod-badge badge-core">Definición</span></div>
+    <div class="bbody">
+      <p>Un Bar Complaint es una <mark class="hi-blue">denuncia formal</mark> presentada por un cliente —o cualquier persona— ante el organismo regulatorio estatal que supervisa la conducta profesional de los abogados en Estados Unidos. Su presentación activa una <strong>investigación disciplinaria</strong> con consecuencias reales para el abogado y para la firma.</p>
+
+      <table class="info-table" style="margin-top:14px">
+        <thead><tr><th>¿Qué desencadena?</th><th>Sanción posible</th><th>Carácter</th></tr></thead>
+        <tbody>
+          <tr><td>Amonestación privada (Letter of Admonition)</td><td>Permanece en expediente</td><td>Confidencial</td></tr>
+          <tr><td>Reprimenda pública (Public Reprimand)</td><td>Se publica en registros oficiales del Bar</td><td>Público</td></tr>
+          <tr><td>Suspensión temporal de licencia</td><td>El abogado no puede ejercer por tiempo determinado</td><td>Público</td></tr>
+          <tr><td>Inhabilitación permanente (Disbarment)</td><td>Cancelación de licencia; puede reaplicarse en 5–7 años</td><td>Público</td></tr>
+        </tbody>
+      </table>
+
+      <div class="critical-rule" style="margin-top:16px">
+        <div class="critical-rule-label">⚡ La verdad más importante</div>
+        <div class="critical-rule-text">La mayoría de las quejas NO ocurren por <em>errores legales graves.</em></div>
+        <div class="critical-rule-sub">Ocurren porque el cliente siente que fue <strong>abandonado, engañado o ignorado.</strong> El problema casi siempre es de comunicación, no de derecho.</div>
+      </div>
+
+      <div class="sdiv"><div class="l"></div><div class="t">¿Quién puede presentarlo?</div><div class="l"></div></div>
+      <p style="font-size:13px;margin-bottom:8px">Cualquier persona puede presentar una queja, lo que amplía el riesgo más allá del cliente directo:</p>
+      <div class="chips">
+        <span class="chip">Clientes actuales o anteriores</span>
+        <span class="chip">Familiares o terceros del cliente</span>
+        <span class="chip">Abogados que retomen el caso</span>
+        <span class="chip red">Otros abogados o jueces</span>
+        <span class="chip">Immigration Judges</span>
+        <span class="chip">Instituciones bancarias / público en general</span>
+      </div>
+
+      <div class="sdiv"><div class="l"></div><div class="t">Doble jurisdicción — riesgo específico del abogado de migración</div><div class="l"></div></div>
+      <table class="info-table">
+        <thead><tr><th>Jurisdicción</th><th>Organismo</th><th>Sanciones posibles</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Estatal (State Bar)</strong></td><td>State Bar del estado donde el abogado está licenciado. Rige conducta general bajo las Rules of Professional Conduct.</td><td>Amonestación · Suspensión · Inhabilitación</td></tr>
+          <tr><td><strong>Federal (EOIR)</strong></td><td>Executive Office for Immigration Review — Depto. de Justicia. Regula práctica ante BIA, cortes de inmigración y DHS.</td><td>Suspensión o exclusión de práctica ante tribunales migratorios</td></tr>
+        </tbody>
+      </table>
+      <div class="alert blue" style="margin-top:12px">
+        <span class="alert-icon">⚠️</span>
+        <div><strong>Doble frente:</strong> Los abogados de migración pueden ser investigados en dos frentes simultáneamente — State Bar y EOIR — lo que multiplica el impacto de cualquier queja.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.2 Tipos de riesgo -->
+  <div class="block">
+    <div class="btitle"><div class="bicon">⚡</div><h3>1.2 ¿Por qué ocurre un Bar Complaint? Tipos de riesgo</h3><span class="mod-badge badge-warn">Crítico</span></div>
+    <div class="bbody">
+      <p>Para construir competencias preventivas reales es necesario entender los <mark class="hi">tres tipos de riesgo</mark> que pueden desencadenar una queja formal.</p>
+      <div class="three-col" style="margin-top:14px">
+        <div class="mini-card" style="border:2px solid rgba(26,58,92,.2);background:rgba(26,58,92,.04)">
+          <h4>⚖️ Riesgo Ético</h4>
+          <p>Conductas que violan las Rules of Professional Conduct, independientemente de si el caso avanza bien.</p>
+          <ul>
+            <li>Prometer resultados garantizados</li>
+            <li>No devolver el expediente</li>
+            <li>Cobrar honorarios no ganados</li>
+            <li>Delegar sin supervisar</li>
+            <li>Fraude o tergiversación al cliente</li>
+          </ul>
+        </div>
+        <div class="mini-card" style="border:2px solid rgba(180,130,0,.2);background:rgba(180,130,0,.04)">
+          <h4>⏱️ Riesgo de Procesamiento</h4>
+          <p>Fallas operativas que generan percepción de abandono, negligencia o desorganización.</p>
+          <ul>
+            <li>No notificar un RFE a tiempo</li>
+            <li>Lapsos de meses sin comunicación</li>
+            <li>Documentación errónea al cliente</li>
+            <li>Pérdida de deadlines críticos</li>
+          </ul>
+        </div>
+        <div class="mini-card" style="border:2px solid rgba(107,143,168,.25);background:rgba(107,143,168,.05)">
+          <h4>🧬 Riesgo por Naturaleza del Caso</h4>
+          <p>Características del tipo de visa o del cliente que elevan la probabilidad de queja aunque la firma no haya fallado.</p>
+          <ul>
+            <li>Visa T con RFE (cliente lo interpreta como error)</li>
+            <li>Clientes víctimas de fraude previo</li>
+            <li>Clientes con miedo extremo a autoridades</li>
+            <li>Casos reclasificados a otras visas</li>
+          </ul>
+        </div>
+      </div>
+      <div class="alert blue" style="margin-top:14px">
+        <span class="alert-icon">💡</span>
+        <div><strong>Clave:</strong> Identificar cuál tipo de riesgo está presente en cada caso permite actuar <mark class="hi-blue">antes de que se convierta en una queja formal.</mark></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.3 Perfiles de cliente -->
+  <div class="block">
+    <div class="btitle"><div class="bicon">👥</div><h3>1.3 Tipos de clientes con riesgo de Bar Complaint</h3><span class="mod-badge badge-core">Perfiles</span></div>
+    <div class="bbody">
+      <p>La firma ha identificado <mark class="hi">tres perfiles conductuales</mark> a partir del análisis histórico de casos. Reconocer el perfil desde el inicio del caso es la primera competencia preventiva.</p>
+      <div class="three-col" style="margin-top:14px">
+        <div class="profile-card loud">
+          <div class="pc-header">
+            <div class="pc-icon">🔊</div>
+            <div><div class="pc-name">LOUD</div><div class="pc-sub">Cliente ruidoso</div></div>
+          </div>
+          <div class="pc-risk">Riesgo: Visible pero manejable</div>
+          <p style="font-size:12px;color:var(--slate);margin-bottom:6px">Escala de forma progresiva y visible. Su escalada es predecible y rastreable.</p>
+          <ul>
+            <li>Alta frecuencia de contacto por múltiples canales</li>
+            <li>Solicita hablar con el abogado o MGM repetidamente</li>
+            <li>Expresa frustración de forma explícita</li>
+            <li>Amenazas directas: "Voy a poner una queja"</li>
+            <li>Pide cancelar o solicita reembolso abiertamente</li>
+          </ul>
+        </div>
+        <div class="profile-card silent">
+          <div class="pc-header">
+            <div class="pc-icon">💀</div>
+            <div><div class="pc-name">SILENT BUT DEADLY</div><div class="pc-sub">Silencioso pero letal</div></div>
+          </div>
+          <div class="pc-risk">⚠️ MAYOR RIESGO PARA LA FIRMA</div>
+          <p style="font-size:12px;color:var(--slate);margin-bottom:6px">No expresa su insatisfacción. Los períodos de silencio terminan en queja formal sin señal previa.</p>
+          <ul>
+            <li>Mínima comunicación por meses, luego aparición abrupta</li>
+            <li>Ha buscado contactar a USCIS directamente</li>
+            <li>Ha consultado en secreto a otra firma</li>
+            <li>Un tercero aparece pidiendo el expediente</li>
+            <li>No muestra emociones ni quejas — solo desaparece</li>
+          </ul>
+        </div>
+        <div class="profile-card demanding">
+          <div class="pc-header">
+            <div class="pc-icon">🎯</div>
+            <div><div class="pc-name">DEMANDING / PROACTIVE</div><div class="pc-sub">Exigente y proactivo</div></div>
+          </div>
+          <div class="pc-risk">Manejable con límites claros</div>
+          <p style="font-size:12px;color:var(--slate);margin-bottom:6px">Alto involucramiento. Escala cuando sus expectativas superan la realidad procesal.</p>
+          <ul>
+            <li>Comunicación frecuente por múltiples canales</li>
+            <li>Usa terminología legal y cita plazos de USCIS</li>
+            <li>Presiona sobre la estrategia legal del caso</li>
+            <li>Solicita actualizaciones y documentación constante</li>
+            <li>Establece expectativas que pueden superar lo garantizable</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="sdiv"><div class="l"></div><div class="t">¿Cómo manejar cada perfil?</div><div class="l"></div></div>
+      <table class="info-table">
+        <thead><tr><th>Perfil</th><th>❌ Lo que NO debes hacer</th><th>✅ Lo que SÍ debes hacer</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>🔊 LOUD</strong></td>
+            <td>Ignorar sus llamadas · Responder defensivo · Transferirlo sin resolución · Prometer sin documentar</td>
+            <td>Responder en ≤24 hrs · Escalar a supervisor o abogado · Escuchar sin admitir culpa · Documentar cada contacto · Enviar resumen escrito post-llamada</td>
+          </tr>
+          <tr>
+            <td><strong>💀 SILENT</strong></td>
+            <td>Asumir que silencio = satisfacción · No llamarlo porque "no ha llamado" · Dejar pasar 6+ meses sin contacto</td>
+            <td>Comunicación proactiva obligatoria · Revisar periódicamente en CRM · Activar alerta si no hay contacto documentado · Tratar cualquier contacto tardío como señal crítica</td>
+          </tr>
+          <tr>
+            <td><strong>🎯 DEMANDING</strong></td>
+            <td>Responder vagamente · Evadir preguntas técnicas · No documentar sus solicitudes · Dejar expectativas sin corregir</td>
+            <td>Establecer límites claros de comunicación · Usar mensajes estándar sobre tiempos USCIS · Explicar qué controla y qué NO controla la firma · Documentar todo</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="principle">
+        <p>💡 Regla de oro para cualquier perfil: Si pasan demasiados días sin que la firma haya contactado al cliente, ese cliente está construyendo en su cabeza una historia de abandono — aunque el caso esté avanzando perfectamente.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.4 PCM-002 -->
+  <div class="block b-flujo">
+    <div class="btitle"><div class="bicon" style="background:linear-gradient(135deg,#1e3a6e,#2563eb)">📊</div><h3>1.4 Sistema de Scoring PCM-002 — Las 9 Categorías de Señales</h3><span class="mod-badge badge-blue">Sistema</span></div>
+    <div class="bbody">
+      <p>La firma ha desarrollado un modelo de scoring basado en el análisis de casos históricos de Bar Complaints. Las señales se agrupan en <mark class="hi-blue">9 categorías con pesos ponderados</mark>. A mayor puntaje, mayor riesgo y más urgente la intervención.</p>
+
+      <table class="pcm-table" style="margin-top:14px;border-radius:11px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)">
+        <thead>
+          <tr><th>#</th><th>Categoría</th><th>Peso Global</th><th>Señales incluidas</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>1</strong></td><td>🔴 Amenazas implícitas y explícitas</td><td><span class="pcm-weight w-35">35%</span></td><td>Solicita número de barra · Amenaza Bar Complaint · Solicita cancelación · Amenaza contra la firma</td></tr>
+          <tr><td><strong>2</strong></td><td>🟠 Intervención de terceros</td><td><span class="pcm-weight w-20">20%</span></td><td>Consulta a otra firma · Terceros piden expediente · Terceros contactan en nombre del cliente</td></tr>
+          <tr><td><strong>3</strong></td><td>🟡 Dudas sin aclarar</td><td><span class="pcm-weight w-15">15%</span></td><td>Contacto por múltiples canales el mismo día · Busca contactar USCIS directo · Se rehúsa a hablar con alguien más que MGM</td></tr>
+          <tr><td><strong>4</strong></td><td>🔵 Financiero</td><td><span class="pcm-weight w-10">10%</span></td><td>Solicita reembolso · Quejas por cargos adicionales · Sin recibos de pago</td></tr>
+          <tr><td><strong>5</strong></td><td>⚪ Seguimiento y actualización</td><td><span class="pcm-weight w-5">5%</span></td><td>Detenido por autoridad migratoria durante el proceso</td></tr>
+          <tr><td><strong>6</strong></td><td>⚪ Procesos</td><td><span class="pcm-weight w-5">5%</span></td><td>Caso reclasificado · Promesas incumplidas (tiempos, garantías, representación)</td></tr>
+          <tr><td><strong>7</strong></td><td>⚪ Documentación</td><td><span class="pcm-weight w-4">4%</span></td><td>Pide expediente completo · Sin recibos de USCIS · Documentación errónea recibida</td></tr>
+          <tr><td><strong>8</strong></td><td>⚪ Tiempos</td><td><span class="pcm-weight w-4">4%</span></td><td>Quejas por tiempos · Caso abierto +1 año · +6 meses sin comunicación de la firma</td></tr>
+          <tr><td><strong>9</strong></td><td>⚪ Emocional</td><td><span class="pcm-weight w-2">2%</span></td><td>Víctima de fraude previo · Miedo a autoridades · Ha escuchado cosas malas de la firma</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sdiv"><div class="l"></div><div class="t">Escala de riesgo del Monitor (0–240 puntos)</div><div class="l"></div></div>
+      <div class="risk-grid">
+        <div class="risk-card low">
+          <div class="rc-dot"></div>
+          <div class="rc-pts">0–60</div>
+          <div class="rc-label">🟢 Low Risk</div>
+          <div class="rc-action">Registrar en SIS + nota en TramCase. Si hay Red Flag o perfil Silent: escalar a supervisión.</div>
+        </div>
+        <div class="risk-card mild">
+          <div class="rc-dot"></div>
+          <div class="rc-pts">61–120</div>
+          <div class="rc-label">🟡 Mild Risk</div>
+          <div class="rc-action">Registrar en SIS + nota en TramCase. Si hay Red Flag o perfil Silent: escalar a supervisión con prioridad.</div>
+        </div>
+        <div class="risk-card high">
+          <div class="rc-dot"></div>
+          <div class="rc-pts">121–180</div>
+          <div class="rc-label">🔴 High Risk</div>
+          <div class="rc-action">Registro en SIS + Protocolo de Intervención High Risk + Evidence Checklist + Especialistas.</div>
+        </div>
+        <div class="risk-card critical">
+          <div class="rc-dot"></div>
+          <div class="rc-pts">181–240</div>
+          <div class="rc-label">🚨 Critical</div>
+          <div class="rc-action">Registro en SIS + Protocolo Critical + Evidence Checklist + Especialistas de inmediato.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.5 Red Flags -->
+  <div class="block b-error">
+    <div class="btitle"><div class="bicon" style="background:linear-gradient(135deg,#8b2c2c,#c0392b)">🚩</div><h3>1.5 Red Flags — Escalada directa a Especialistas</h3><span class="mod-badge badge-warn">Escalada Inmediata</span></div>
+    <div class="bbody">
+      <div class="alert danger" style="margin-bottom:14px">
+        <span class="alert-icon">🚨</span>
+        <div><strong>Independientemente del puntaje total:</strong> si se detecta CUALQUIERA de estas señales, el caso va <mark class="hi-red">directo a Especialistas.</mark></div>
+      </div>
+      <div class="redflag-grid">
+        <div class="rf-item"><div class="rf-icon">🚩</div><div class="rf-text">Ha solicitado reembolso (señal financiera crítica)</div></div>
+        <div class="rf-item"><div class="rf-icon">🚩</div><div class="rf-text">Ha contactado la firma por múltiples canales el mismo día</div></div>
+        <div class="rf-item"><div class="rf-icon">🚩</div><div class="rf-text">Ha buscado contactar a USCIS directamente sin pasar por la firma</div></div>
+        <div class="rf-item"><div class="rf-icon">🚩</div><div class="rf-text">Se rehúsa a hablar con alguien más que no sea MGM</div></div>
+        <div class="rf-item"><div class="rf-icon">🚩</div><div class="rf-text">Han pasado más de 6 meses sin comunicación documentada de la firma</div></div>
+        <div class="rf-item"><div class="rf-icon">🚩</div><div class="rf-text">Ha pedido su expediente completo (File Request en TramCase)</div></div>
+        <div class="rf-item"><div class="rf-icon">🚩</div><div class="rf-text">Ha consultado a otra firma o abogado para asesoramiento legal</div></div>
+        <div class="rf-item"><div class="rf-icon">🚩</div><div class="rf-text">Un tercero (familiar o abogado) ha pedido el expediente del cliente</div></div>
+        <div class="rf-item"><div class="rf-icon">🚩</div><div class="rf-text">Ha solicitado el número de barra del abogado (MGM)</div></div>
+        <div class="rf-item"><div class="rf-icon">🚩</div><div class="rf-text">Ha amenazado con poner un Bar Complaint</div></div>
+        <div class="rf-item"><div class="rf-icon">🚩</div><div class="rf-text">Ha solicitado la cancelación de su caso</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Disparadores -->
+  <div class="block">
+    <div class="btitle"><div class="bicon">🔎</div><h3>1.6 Análisis de Disparadores — ¿Cómo se pudo haber detenido?</h3><span class="mod-badge badge-core">Prevención</span></div>
+    <div class="bbody">
+      <p>Los disparadores <mark class="hi">se acumulan</mark>. Rara vez es un único evento el que lleva al cliente a presentar una queja. Comprender este patrón es la base para la prevención proactiva.</p>
+      <div class="triggers-grid">
+        <div class="trigger-col primary">
+          <div class="tc-header">🔴 Disparadores Primarios<br><span style="font-weight:500;font-size:10px">(Desencadenan la queja)</span></div>
+          <ul>
+            <li>Percepción de abandono: meses sin noticias de la firma</li>
+            <li>El cliente cree que la firma controla los tiempos de USCIS</li>
+            <li>La firma solo respondía cuando el cliente llamaba — nunca fue proactiva</li>
+            <li>Semanas o meses sin ningún contacto documentado en el CRM</li>
+            <li>Promesas incumplidas: tiempos, resultados, representación fuera del alcance</li>
+          </ul>
+        </div>
+        <div class="trigger-col secondary">
+          <div class="tc-header">🟡 Disparadores Secundarios<br><span style="font-weight:500;font-size:10px">(La preparan con el tiempo)</span></div>
+          <ul>
+            <li>El cliente no recuerda lo que firmó en el contrato (expectativas no calibradas)</li>
+            <li>El cliente revisó USCIS.gov, vio un estatus raro y se asustó sin contexto</li>
+            <li>El cliente no contó todo su historial al firmar (riesgo de naturaleza del caso)</li>
+            <li>Se cobraron cargos que el cliente no esperaba o no recibió recibo de pago</li>
+            <li>No se comunicaron los hitos del proceso (RFE, receipts, cambios legales)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="sdiv"><div class="l"></div><div class="t">Análisis: qué NO se hizo vs. qué SÍ se debió hacer</div><div class="l"></div></div>
+      <div class="do-dont">
+        <div class="dont-col">
+          <div class="do-dont-header">❌ Lo que NO se hizo — y que llevó al Bar Complaint</div>
+          <ul>
+            <li>La firma solo respondía cuando el cliente llamaba — sin comunicación proactiva</li>
+            <li>No se documentaron las conversaciones telefónicas importantes en el CRM</li>
+            <li>Se hicieron promesas verbales de resultados sin que quedaran por escrito</li>
+            <li>Los consentimientos informados no cubrían escenarios clave (RFEs, tiempos variables, costos adicionales)</li>
+            <li>No se detectó a tiempo el perfil Silent But Deadly (el sistema asumió que sin quejas = sin problemas)</li>
+            <li>En casos de Visa T, se presentaron peticiones sin verificar la evidencia mínima indispensable</li>
+          </ul>
+        </div>
+        <div class="do-col">
+          <div class="do-dont-header">✅ Lo que SÍ se debió haber hecho</div>
+          <ul>
+            <li>Contactar al cliente proactivamente, especialmente en etapas de espera larga</li>
+            <li>Explicar desde el intake que USCIS —no la firma— controla los tiempos y decisiones</li>
+            <li>Documentar cada promesa, acuerdo y comunicación en TramCase/CRM</li>
+            <li>Entregar al cliente una guía de estatus de USCIS al inicio del caso</li>
+            <li>Registrar cualquier cambio en el tono o frecuencia del cliente como señal de alarma</li>
+            <li>Nunca dejar pasar más de 30 días sin un contacto documentado con el cliente</li>
+            <li>En casos de Visa T: verificar evidencia mínima con checklist antes de presentar</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="critical-rule" style="margin-top:16px">
+        <div class="critical-rule-label">🔑 Conclusión del Módulo 1</div>
+        <div class="critical-rule-text">El problema casi nunca es solo <em>legal.</em></div>
+        <div class="critical-rule-sub">Es una mezcla de <strong>expectativas mal puestas, comunicación que no existió y documentación que faltó.</strong> Desarrollar competencias preventivas sobre los tres tipos de riesgo (ético, de procesamiento y por naturaleza del caso) es la respuesta estructural a este patrón.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actividad M1 -->
+  <div class="block b-concepto" style="margin-top:18px">
+    <div class="btitle"><div class="bicon" style="background:linear-gradient(135deg,#7a5200,#c9a84c)">✏️</div><h3>Actividad: Identifica el perfil y el riesgo</h3><span class="mod-badge badge-gold">Práctica</span></div>
+    <div class="bbody">
+      <p style="margin-bottom:14px;font-size:13.5px">Lee cada situación e identifica el perfil de cliente y el tipo de riesgo presente.</p>
+
+      <div class="q-item" id="a1q1">
+        <div class="q-num">Situación 1</div>
+        <div class="q-text">Una clienta con caso de Visa U lleva 14 meses sin llamar. No hay quejas registradas. El equipo no ha generado ningún contacto proactivo en ese período. ¿Cuál es el perfil de cliente y cuál es el tipo de riesgo más probable?</div>
+        <div class="q-opts">
+          <div class="q-opt" onclick="actSel(this,'a1q1',false)"><div class="q-radio"></div> LOUD — Riesgo ético por falta de comunicación</div>
+          <div class="q-opt" onclick="actSel(this,'a1q1',true)"><div class="q-radio"></div> Silent But Deadly — Riesgo de procesamiento (abandono percibido)</div>
+          <div class="q-opt" onclick="actSel(this,'a1q1',false)"><div class="q-radio"></div> Demanding — Riesgo por naturaleza del caso (Visa U)</div>
+          <div class="q-opt" onclick="actSel(this,'a1q1',false)"><div class="q-radio"></div> LOUD — Riesgo financiero por falta de recibos</div>
+        </div>
+        <div class="q-feedback" id="fb-a1q1"></div>
+      </div>
+
+      <div class="q-item" id="a1q2">
+        <div class="q-num">Situación 2</div>
+        <div class="q-text">Un cliente con caso de Visa T llama diariamente desde el mes 8. Pregunta siempre lo mismo: "¿por qué no hay noticias?". El staff responde con mensajes genéricos sin escalar a Compliance. ¿Cuál Red Flag es más urgente en este momento?</div>
+        <div class="q-opts">
+          <div class="q-opt" onclick="actSel(this,'a1q2',false)"><div class="q-radio"></div> Ha solicitado la cancelación de su caso</div>
+          <div class="q-opt" onclick="actSel(this,'a1q2',true)"><div class="q-radio"></div> Ha contactado la firma por múltiples canales el mismo día</div>
+          <div class="q-opt" onclick="actSel(this,'a1q2',false)"><div class="q-radio"></div> Han pasado más de 6 meses sin comunicación documentada de la firma</div>
+          <div class="q-opt" onclick="actSel(this,'a1q2',false)"><div class="q-radio"></div> Ha solicitado reembolso</div>
+        </div>
+        <div class="q-feedback" id="fb-a1q2"></div>
+      </div>
+
+      <div class="q-item" id="a1q3">
+        <div class="q-num">Situación 3 — Verdadero o Falso</div>
+        <div class="q-text">FALSO o VERDADERO: "Si un cliente con perfil Silent no ha llamado en 5 meses, es señal de que está conforme con el avance del caso."</div>
+        <div class="q-opts">
+          <div class="q-opt" onclick="actSel(this,'a1q3',false)"><div class="q-radio"></div> VERDADERO — El silencio indica conformidad.</div>
+          <div class="q-opt" onclick="actSel(this,'a1q3',true)"><div class="q-radio"></div> FALSO — El silencio prolongado es la señal de mayor riesgo en el perfil Silent But Deadly.</div>
+        </div>
+        <div class="q-feedback" id="fb-a1q3"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mod-nav-bar">
+    <button class="mod-nav-btn mod-nav-prev" onclick="showPanel('overview')">← Overview</button>
+    <button class="mod-nav-btn mod-nav-next" onclick="showPanel('mod2')">Módulo 2 →</button>
+  </div>
+</div>
+
+<!-- ════ PANEL MÓDULO 2 ════ -->
+<div class="panel" id="panel-mod2">
+  <div class="page-title">
+    <div class="pt-label">Módulo 2 · Herramientas de Compliance</div>
+    <h2>Manejar situaciones de riesgo con herramientas concretas de Compliance</h2>
+    <p class="pt-sub">Este módulo convierte el conocimiento del Módulo 1 en acción.</p>
+  </div>
+
+  <!-- 2.1 Proceso disciplinario -->
+  <div class="block">
+    <div class="btitle"><div class="bicon">⚖️</div><h3>2.1 ¿Cómo funciona un Bar Complaint? El proceso disciplinario</h3><span class="mod-badge badge-core">Proceso</span></div>
+    <div class="bbody">
+      <p>El equipo necesita conocer el proceso para poder actuar correctamente cuando se recibe una queja. Entender las etapas es también entender <mark class="hi-blue">cuánto tiempo tiene la firma para preparar su defensa.</mark></p>
+
+      <div class="timeline" style="margin-top:16px">
+        <div class="tl-step">
+          <div class="tl-dot"><span>1</span></div>
+          <div class="tl-label">0–30 días</div>
+          <div class="tl-title">Presentación y clasificación inicial</div>
+          <div class="tl-body">El cliente presenta la queja por escrito al State Bar mediante formulario oficial o carta. El Bar determina si la conducta alegada constituye posible violación ética. Si se clasifica como 'inquiry': se desestima. Si se clasifica como 'complaint': procede a investigación formal.</div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-dot"><span>2</span></div>
+          <div class="tl-label">6+ meses típicamente</div>
+          <div class="tl-title">Investigación formal</div>
+          <div class="tl-body">El abogado recibe notificación y tiene <mark class="hi-red">15–30 días para responder</mark> (según jurisdicción). <strong>FALLAR EN RESPONDER es en sí misma una violación ética disciplinable.</strong> Se realizan entrevistas, se recopilan documentos, expedientes y comunicaciones del CRM.</div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-dot"><span>3</span></div>
+          <div class="tl-label">Plazo variable</div>
+          <div class="tl-title">Revisión por Grievance Committee</div>
+          <div class="tl-body">Paneles de 2/3 abogados + 1/3 público. Determinan: no hay causa probable → se cierra; violación menor → carta de advertencia; causa probable → medidas disciplinarias formales.</div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-dot"><span>4</span></div>
+          <div class="tl-label">Resultado</div>
+          <div class="tl-title">Medidas disciplinarias</div>
+          <div class="tl-body"><strong>Confidenciales:</strong> carta de advertencia, reprimenda privada (permanecen en expediente). <strong>Públicas:</strong> amonestación pública, probation, suspensión, inhabilitación (disbarment). También puede ordenarse restitución monetaria al cliente.</div>
+        </div>
+      </div>
+
+      <div class="alert warn" style="margin-top:14px">
+        <span class="alert-icon">⚠️</span>
+        <div><strong>Punto crítico — Waiver del privilegio:</strong> Cuando se presenta una queja, el cliente firma un waiver del privilegio abogado-cliente. Esto significa que toda la información de la representación — conversaciones, notas de TramCase, documentos internos — puede ser revisada por el organismo disciplinario. <mark class="hi-red">Lo que no está documentado no puede defenderse.</mark></div>
+      </div>
+
+      <div class="sdiv"><div class="l"></div><div class="t">Violaciones éticas más frecuentes en práctica migratoria</div><div class="l"></div></div>
+      <table class="info-table">
+        <thead><tr><th>Tipo de riesgo</th><th>Violación</th><th>Señal temprana en la firma</th></tr></thead>
+        <tbody>
+          <tr><td>⚖️ Ético</td><td>Falta de comunicación con el cliente</td><td>El cliente llama varias veces sin respuesta en 24 hrs · Tono de mensajes cambia a frustración</td></tr>
+          <tr><td>⚖️ Ético</td><td>Promesas de resultados o fechas garantizadas</td><td>El cliente cita "me dijeron que mi caso saldría en X tiempo" · Solicita reembolso por incumplimiento</td></tr>
+          <tr><td>⚖️ Ético</td><td>Abandono del cliente</td><td>+6 meses sin contacto documentado · Tercero pide expediente · Cliente consulta otra firma</td></tr>
+          <tr><td>⚖️ Ético</td><td>Honorarios no razonables o sin claridad</td><td>Queja por cargos adicionales · Sin recibos de pago · Solicitud de reembolso</td></tr>
+          <tr><td>⏱️ Procesamiento</td><td>Incompetencia / falta de diligencia</td><td>Pérdida de deadlines · RFE no notificado a tiempo · Documentación errónea enviada</td></tr>
+          <tr><td>🧬 Naturaleza</td><td>Casos de Visa T con RFE o rechazo</td><td>Cliente interpreta RFE como error de la firma · Pánico post-consulta de USCIS.gov</td></tr>
+          <tr><td>🧬 Naturaleza</td><td>Reclasificación de visados</td><td>Cliente siente que "cambiaron su caso" sin explicación · Queja por promesas incumplidas</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 2.2 Casos prácticos -->
+  <div class="block b-caso">
+    <div class="btitle"><div class="bicon" style="background:linear-gradient(135deg,#1e6641,#2d9d62)">📋</div><h3>2.2 Casos prácticos — Identificación de riesgo en situaciones reales</h3><span class="mod-badge badge-green">Casos</span></div>
+    <div class="bbody">
+      <p>Los siguientes casos están basados en los patrones más frecuentes identificados en la firma. Cada uno ilustra cómo los disparadores se acumulan y cuál es el momento en que la intervención debió ocurrir.</p>
+
+      <div class="case-box" style="margin-top:16px">
+        <div class="case-label">📋 Caso 1 — La cliente que desapareció y volvió con un abogado nuevo</div>
+        <div class="case-meta">
+          <span class="chip">Silent But Deadly</span>
+          <span class="chip red">Intervención de terceros (20%)</span>
+          <span class="chip red">Amenazas implícitas (35%)</span>
+        </div>
+        <div class="case-narrative">Una clienta con caso de Visa U llevaba 18 meses sin llamar. No había quejas registradas. El equipo asumió que estaba conforme. Un día, un abogado externo contactó a la firma solicitando el expediente completo.</div>
+        <div class="case-signals">
+          <div class="cs-label">🚩 Señales ignoradas</div>
+          <ul>
+            <li>+6 meses sin comunicación proactiva de la firma</li>
+            <li>Caso abierto más de un año sin actualizaciones documentadas</li>
+            <li>Perfil Silent no fue identificado ni marcado en el CRM</li>
+            <li>No hubo alerta de seguimiento activa</li>
+          </ul>
+        </div>
+        <div class="case-result negative">❌ Bar Complaint presentado. La firma no tenía registros suficientes de comunicación proactiva para defenderse. El silencio fue interpretado como abandono.</div>
+      </div>
+
+      <div class="case-box">
+        <div class="case-label">📋 Caso 2 — El cliente que llamaba todos los días y nadie lo escaló</div>
+        <div class="case-meta">
+          <span class="chip">LOUD</span>
+          <span class="chip amber">Dudas sin aclarar (15%)</span>
+          <span class="chip">Tiempos (4%)</span>
+          <span class="chip blue">Financiero (10%)</span>
+        </div>
+        <div class="case-narrative">Un cliente con caso de Visa T comenzó a llamar diariamente desde el mes 8. Preguntaba siempre lo mismo: "¿por qué no hay noticias?". El staff respondía con respuestas genéricas sin escalar a Compliance ni a un abogado. Nadie identificó el patrón.</div>
+        <div class="case-signals">
+          <div class="cs-label">🚩 Señales ignoradas</div>
+          <ul>
+            <li>Contacto por múltiples canales el mismo día (Red Flag activo)</li>
+            <li>Solicitudes repetidas de hablar con MGM sin escalada</li>
+            <li>No se le explicó el proceso de USCIS Case Status</li>
+            <li>Promesas verbales de resolución sin documentar</li>
+          </ul>
+        </div>
+        <div class="case-result negative">❌ El cliente solicitó el número de barra de MGM y presentó queja formal. La firma tuvo que demostrar que el caso avanzaba, pero sin registros de comunicación proactiva, la defensa fue insuficiente.</div>
+      </div>
+
+      <div class="case-box resolved">
+        <div class="case-label">📋 Caso 3 — La cliente de Visa T con un RFE que nadie le explicó</div>
+        <div class="case-meta">
+          <span class="chip">DEMANDING</span>
+          <span class="chip amber">Naturaleza del caso</span>
+          <span class="chip">Procesamiento</span>
+        </div>
+        <div class="case-narrative">USCIS emitió un RFE en un caso de Visa T. La firma no notificó a la cliente de inmediato. Dos semanas después, la cliente —quien revisaba USCIS.gov regularmente— vio el estatus 'Request for Evidence' y entró en pánico, llamando varias veces sin recibir explicación clara.</div>
+        <div class="case-signals">
+          <div class="cs-label">🚩 Señales presentes</div>
+          <ul>
+            <li>No se entregó guía de estatus de USCIS al inicio del caso</li>
+            <li>No se notificó el RFE de inmediato al cliente</li>
+            <li>No había evidencia mínima completamente verificada antes de presentar la petición</li>
+          </ul>
+        </div>
+        <div class="case-result positive">✅ CASO RESUELTO — Se activó el protocolo correctivo a tiempo: un abogado llamó, explicó el RFE, envió resumen escrito y recalibró expectativas. No hubo queja formal. Este caso muestra que la intervención oportuna funciona.</div>
+      </div>
+
+      <div class="case-box">
+        <div class="case-label">📋 Caso 4 — El cliente cuyo familiar llamó exigiendo el expediente</div>
+        <div class="case-meta">
+          <span class="chip">Silent But Deadly</span>
+          <span class="chip red">Intervención de terceros (20% — Red Flag)</span>
+          <span class="chip red">Amenazas implícitas (35%)</span>
+        </div>
+        <div class="case-narrative">Una cliente no había tenido contacto con la firma en 4 meses. Un día, su esposo llamó diciendo que la cliente estaba "considerando contratar otro abogado" y exigió el expediente completo. La firma no tenía registros de contacto previo en ese período.</div>
+        <div class="case-signals">
+          <div class="cs-label">🚩 Señales ignoradas</div>
+          <ul>
+            <li>Perfil Silent no identificado</li>
+            <li>Sin comunicación proactiva en 4 meses</li>
+            <li>La solicitud de expediente por tercero (Red Flag directo) no fue escalada de inmediato a Compliance</li>
+            <li>No se activó el protocolo de intervención</li>
+          </ul>
+        </div>
+        <div class="case-result negative">❌ La cliente presentó una queja por 'abandono del caso'. La firma no pudo demostrar gestión activa del caso durante el período de silencio.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.3 Protocolo de defensa -->
+  <div class="block b-flujo">
+    <div class="btitle"><div class="bicon" style="background:linear-gradient(135deg,#1e3a6e,#2563eb)">🛡️</div><h3>2.3 Protocolo de respuesta ante un Bar Complaint</h3><span class="mod-badge badge-blue">6 Pasos</span></div>
+    <div class="bbody">
+      <div class="alert danger" style="margin-bottom:14px">
+        <span class="alert-icon">🚨</span>
+        <div><strong>Regla absoluta: NUNCA ignorar la notificación del State Bar.</strong> Fallar en responder una queja es en sí misma una violación ética disciplinable. El plazo estándar de respuesta es <mark class="hi-red">15–30 días según la jurisdicción.</mark></div>
+      </div>
+
+      <div class="timeline" style="margin-top:14px">
+        <div class="tl-step">
+          <div class="tl-dot"><span>1</span></div>
+          <div class="tl-label">Primeras horas</div>
+          <div class="tl-title">Notificación inmediata</div>
+          <div class="tl-body">Notificar a MGM y al equipo de liderazgo. Activar revisión inmediata en PCM-002. Reunir toda la documentación del caso: file completo, comunicaciones, notas de TramCase, billing records, consentimientos informados firmados.</div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-dot"><span>2</span></div>
+          <div class="tl-label">24–48 hrs</div>
+          <div class="tl-title">Asesoría legal especializada</div>
+          <div class="tl-body">Contratar a un abogado especializado en defensa de Bar (Bar defense attorney). NO responder al State Bar sin asesoría legal — las respuestas inadecuadas pueden empeorar la situación. Notificar al seguro de malpractice si aplica.</div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-dot"><span>3</span></div>
+          <div class="tl-label">Revisión completa</div>
+          <div class="tl-title">Revisión integral del caso</div>
+          <div class="tl-body">Revisar historial completo: fechas de presentación, receipts, RFEs, notas CRM. Identificar si hay un incumplimiento real de la firma o si el problema es de percepción y comunicación. Esta distinción es clave para la estrategia de respuesta.</div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-dot"><span>4</span></div>
+          <div class="tl-label">Auditoría</div>
+          <div class="tl-title">Auditoría de comunicaciones</div>
+          <div class="tl-body">Revisar todas las notas del CRM, emails y llamadas documentadas. Buscar: ¿hubo períodos sin contacto? ¿Se prometió algo que no se cumplió? ¿Hubo respuestas que pudieron malinterpretarse? Esta auditoría define la defensa.</div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-dot"><span>5</span></div>
+          <div class="tl-label">Respuesta</div>
+          <div class="tl-title">Preparación de la respuesta</div>
+          <div class="tl-body">Abordar cada alegación específicamente con contexto y documentación de soporte. Si hubo error: mostrar los pasos de remediación tomados. Tono: profesional, no defensivo. NO contactar al quejoso directamente.</div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-dot"><span>6</span></div>
+          <div class="tl-label">Investigación</div>
+          <div class="tl-title">Cooperación total</div>
+          <div class="tl-body">Proporcionar todos los documentos solicitados de manera oportuna. Estar disponible para entrevistas. Mantener profesionalismo en todas las interacciones con los investigadores del Bar. La cooperación es obligatoria.</div>
+        </div>
+      </div>
+
+      <div class="sdiv"><div class="l"></div><div class="t">La documentación como escudo defensivo</div><div class="l"></div></div>
+      <p style="font-size:13px;margin-bottom:10px">Si el protocolo PCM-002 se ha aplicado correctamente, la firma cuenta con las herramientas para defenderse:</p>
+      <div class="ob-list">
+        <div class="ob-item"><div class="ob-num">✅</div><span>Consentimientos informados firmados cubriendo tiempos, RFEs, cambios legales y costos adicionales</span></div>
+        <div class="ob-item"><div class="ob-num">✅</div><span>Registros de cada contacto con el cliente en TramCase/CRM (fecha, canal, contenido, responsable)</span></div>
+        <div class="ob-item"><div class="ob-num">✅</div><span>Correos resumen enviados después de cada conversación importante (el más poderoso escudo defensivo)</span></div>
+        <div class="ob-item"><div class="ob-num">✅</div><span>Notas de TramCase actualizadas, trazables y auditables</span></div>
+        <div class="ob-item"><div class="ob-num">✅</div><span>Evidencia de que el cliente fue informado sobre el estado y las implicaciones de su caso</span></div>
+        <div class="ob-item"><div class="ob-num">✅</div><span>Registro de intervenciones de Compliance que demuestran diligencia profesional activa</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.4 Estrategias de Compliance -->
+  <div class="block">
+    <div class="btitle"><div class="bicon">🎯</div><h3>2.4 Estrategias de Compliance — Flujo operativo PCM-002</h3><span class="mod-badge badge-core">Operativo</span></div>
+    <div class="bbody">
+      <div class="sdiv"><div class="l"></div><div class="t">Los 3 pilares preventivos de la firma</div><div class="l"></div></div>
+      <div class="three-col">
+        <div class="pillar-card">
+          <div class="pillar-icon">📝</div>
+          <h4>Gestión documental sólida</h4>
+          <p>Todo lo que se promete, explica o acuerda debe quedar por escrito y firmado. Sin documentación, no existe.</p>
+          <div class="pillar-action">Consentimientos informados en el intake · Resumen escrito post-llamada · Registro en TramCase de cada contacto</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-icon">📞</div>
+          <h4>Comunicación proactiva</h4>
+          <p>El silencio prolongado es interpretado como negligencia, independientemente del estado real del caso.</p>
+          <div class="pillar-action">Contacto obligatorio cada 30 días aunque no haya novedades · Alerta automática en CRM si no hay registro de contacto</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-icon">🎯</div>
+          <h4>Expectativas calibradas</h4>
+          <p>Ningún plazo debe comunicarse como garantía. USCIS adjudica; la firma gestiona.</p>
+          <div class="pillar-action">Guía de estatus USCIS entregada al inicio · Mensaje estándar para preguntas sobre tiempos · Cláusula de tiempos en contrato</div>
+        </div>
+      </div>
+
+      <div class="sdiv"><div class="l"></div><div class="t">Flujo operativo completo del PCM-002</div><div class="l"></div></div>
+      <table class="info-table">
+        <thead><tr><th>Etapa</th><th>Responsable</th><th>Input</th><th>Output / Acción</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1. Selección del pool</strong></td><td>Supervisores / CEU</td><td>Escaladas de CS, operaciones, MGM, casos post-filing</td><td>Lista de casos a revisar bajo PCM-002</td></tr>
+          <tr><td><strong>2. Análisis IA (RDA)</strong></td><td>IA Intelligence Analyst</td><td>Notas TramCase + historial de interacción documentada</td><td>Risk Data Analysis: % de riesgo + Red Flags preliminares</td></tr>
+          <tr><td><strong>3. Validación Monitor (Dual Scoring)</strong></td><td>Monitor</td><td>RDA de la IA + Checklist PCM-002</td><td>Score validado (0–240 pts) + nivel de riesgo + perfil de cliente</td></tr>
+          <tr><td><strong>4. Registro en SIS</strong></td><td>Monitor</td><td>Evaluación completada</td><td>Todos los casos registrados en SIS + nota estándar en TramCase</td></tr>
+          <tr><td><strong>5. Triage Specialist</strong></td><td>Specialist</td><td>Casos High (121–180) y Critical (181–240) + Red Flags</td><td>Diagnóstico causa raíz + Plan de Intervención + Preventive Communication Action Plan</td></tr>
+          <tr><td><strong>6. Calibración CEU</strong></td><td>CEU</td><td>Datos agregados de monitores y specialists</td><td>Recalibración de umbrales, ajuste de checklist, actualización de políticas</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sdiv"><div class="l"></div><div class="t">Protocolo de contención activa — 6 pasos (Política Correctiva)</div><div class="l"></div></div>
+      <details class="block-accordion">
+        <summary class="block-accordion-header">
+          <div class="bac-left"><div class="bac-num">1</div><div><div class="bac-label">Paso</div><div class="bac-title">Revisión integral del caso</div></div></div>
+          <div class="bac-arrow">▶</div>
+        </summary>
+        <div class="bac-body">Revisar historial completo: fechas, receipts, RFEs, notas CRM. ¿Hay incumplimiento real de la firma o es solo percepción y comunicación?</div>
+      </details>
+      <details class="block-accordion">
+        <summary class="block-accordion-header">
+          <div class="bac-left"><div class="bac-num">2</div><div><div class="bac-label">Paso</div><div class="bac-title">Auditoría de comunicaciones previas</div></div></div>
+          <div class="bac-arrow">▶</div>
+        </summary>
+        <div class="bac-body">Revisar todas las notas del CRM, emails y llamadas. ¿Hubo lapsos? ¿Se prometió algo que no se cumplió? ¿Respuestas que pudieron malinterpretarse?</div>
+      </details>
+      <details class="block-accordion">
+        <summary class="block-accordion-header">
+          <div class="bac-left"><div class="bac-num">3</div><div><div class="bac-label">Paso</div><div class="bac-title">Verificación de checklist</div></div></div>
+          <div class="bac-arrow">▶</div>
+        </summary>
+        <div class="bac-body">¿El consentimiento informado está completo y firmado con todas las cláusulas requeridas? ¿Los receipts y actualizaciones llegaron al cliente en tiempo?</div>
+      </details>
+      <details class="block-accordion">
+        <summary class="block-accordion-header">
+          <div class="bac-left"><div class="bac-num">4</div><div><div class="bac-label">Paso</div><div class="bac-title">Llamada de contención estratégica</div></div></div>
+          <div class="bac-arrow">▶</div>
+        </summary>
+        <div class="bac-body">Realizada por abogado o supervisor. Escuchar activamente, validar la frustración del cliente sin admitir culpa, ofrecer opciones concretas. Tono: empático, nunca defensivo.</div>
+      </details>
+      <details class="block-accordion">
+        <summary class="block-accordion-header">
+          <div class="bac-left"><div class="bac-num">5</div><div><div class="bac-label">Paso</div><div class="bac-title">Re-documentación de expectativas</div></div></div>
+          <div class="bac-arrow">▶</div>
+        </summary>
+        <div class="bac-body">Actualizar con el cliente el estado real del caso, los siguientes pasos y los plazos realistas. Identificar y corregir expectativas incorrectas.</div>
+      </details>
+      <details class="block-accordion">
+        <summary class="block-accordion-header">
+          <div class="bac-left"><div class="bac-num">6</div><div><div class="bac-label">Paso más crítico</div><div class="bac-title">Confirmación escrita post-llamada</div></div></div>
+          <div class="bac-arrow">▶</div>
+        </summary>
+        <div class="bac-body">El email resumen de lo acordado es el documento más importante. Si el cliente presenta queja de todas formas, este correo es la <strong>principal defensa de la firma.</strong></div>
+      </details>
+
+      <div class="sdiv"><div class="l"></div><div class="t">Mensajes estándar del equipo</div><div class="l"></div></div>
+      <div class="alert blue" style="margin-bottom:10px">
+        <span class="alert-icon">💬</span>
+        <div><strong>Para preguntas sobre tiempos — cualquier miembro del equipo puede usar:</strong><br><em style="display:block;margin-top:5px;font-size:12.5px">"USCIS adjudica los casos con base en su volumen interno y criterios propios de procesamiento. El tiempo transcurrido no implica error, descuido o abandono del caso por parte de nuestra firma. Si hubiera alguna acción requerida de su parte o del caso, usted sería notificado de inmediato."</em></div>
+      </div>
+
+      <div class="sdiv"><div class="l"></div><div class="t">Guía de estatus USCIS.gov para explicar al cliente</div><div class="l"></div></div>
+      <table class="status-table">
+        <thead><tr><th>Estatus en USCIS.gov</th><th>Explicación para el cliente</th></tr></thead>
+        <tbody>
+          <tr><td>Case Was Received</td><td>USCIS confirmó que recibió la petición. El caso está en cola. Es una etapa normal; no requiere ninguna acción.</td></tr>
+          <tr><td>Case Remains Pending</td><td>El caso está en proceso dentro de los tiempos normales de USCIS. El silencio del portal no indica error ni abandono.</td></tr>
+          <tr><td>Case Is Being Actively Reviewed</td><td>Un oficial de USCIS está evaluando el caso. Puede mantenerse así por semanas; es parte del proceso normal.</td></tr>
+          <tr><td>RFE (Request for Evidence)</td><td>USCIS solicita documentación adicional. NO significa rechazo. La firma lo atenderá de inmediato y le notificará.</td></tr>
+          <tr><td>Sin cambios en el portal</td><td>No indica inacción de la firma. Los tiempos de USCIS son independientes de las acciones del bufete.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Actividad M2 -->
+  <div class="block b-concepto">
+    <div class="btitle"><div class="bicon" style="background:linear-gradient(135deg,#7a5200,#c9a84c)">✏️</div><h3>Actividad: Escenarios de decisión</h3><span class="mod-badge badge-gold">Práctica</span></div>
+    <div class="bbody">
+      <div class="q-item" id="a2q1">
+        <div class="q-num">Escenario 1</div>
+        <div class="q-text">Recibes una notificación del State Bar sobre una queja presentada contra el abogado de tu firma. ¿Cuál es el primer paso correcto según el protocolo?</div>
+        <div class="q-opts">
+          <div class="q-opt" onclick="actSel(this,'a2q1',false)"><div class="q-radio"></div> Responder inmediatamente al State Bar explicando la situación desde tu perspectiva.</div>
+          <div class="q-opt" onclick="actSel(this,'a2q1',false)"><div class="q-radio"></div> Esperar a que el Bar envíe más detalles antes de actuar.</div>
+          <div class="q-opt" onclick="actSel(this,'a2q1',true)"><div class="q-radio"></div> Notificar a MGM y equipo de liderazgo, activar revisión en PCM-002 y reunir toda la documentación del caso.</div>
+          <div class="q-opt" onclick="actSel(this,'a2q1',false)"><div class="q-radio"></div> Contactar directamente al cliente que presentó la queja para resolver el malentendido.</div>
+        </div>
+        <div class="q-feedback" id="fb-a2q1"></div>
+      </div>
+
+      <div class="q-item" id="a2q2">
+        <div class="q-num">Escenario 2</div>
+        <div class="q-text">Un cliente llama preguntando por qué su portal de USCIS.gov muestra "Case Remains Pending" desde hace 4 meses. Está preocupado y dice que cree que la firma "olvidó su caso". ¿Qué respuesta es más correcta?</div>
+        <div class="q-opts">
+          <div class="q-opt" onclick="actSel(this,'a2q2',false)"><div class="q-radio"></div> "No se preocupe, todo está bien, llámenos si hay algo."</div>
+          <div class="q-opt" onclick="actSel(this,'a2q2',false)"><div class="q-radio"></div> "Ese estatus significa que hay un problema con su caso que debemos revisar."</div>
+          <div class="q-opt" onclick="actSel(this,'a2q2',true)"><div class="q-radio"></div> Explicar que 'Case Remains Pending' es un estatus normal, que el silencio del portal no indica error ni abandono, y que si se requiere alguna acción, él sería notificado de inmediato. Documentar el contacto en TramCase.</div>
+          <div class="q-opt" onclick="actSel(this,'a2q2',false)"><div class="q-radio"></div> Transferir la llamada al abogado sin dar ninguna explicación previa.</div>
+        </div>
+        <div class="q-feedback" id="fb-a2q2"></div>
+      </div>
+
+      <div class="q-item" id="a2q3">
+        <div class="q-num">Verdadero / Falso</div>
+        <div class="q-text">"Si no hay registros en el CRM de comunicaciones con el cliente durante 7 meses, la firma puede igualmente defenderse de un Bar Complaint argumentando que el caso estaba avanzando."</div>
+        <div class="q-opts">
+          <div class="q-opt" onclick="actSel(this,'a2q3',false)"><div class="q-radio"></div> VERDADERO — El avance del caso es evidencia suficiente.</div>
+          <div class="q-opt" onclick="actSel(this,'a2q3',true)"><div class="q-radio"></div> FALSO — Lo que no está documentado no puede defenderse. La ausencia de registros de comunicación es la debilidad más crítica en una defensa.</div>
+        </div>
+        <div class="q-feedback" id="fb-a2q3"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mod-nav-bar">
+    <button class="mod-nav-btn mod-nav-prev" onclick="showPanel('mod1')">← Módulo 1</button>
+    <button class="mod-nav-btn mod-nav-next" onclick="showPanel('eval')">Evaluación Final →</button>
+  </div>
+</div>
+
+<!-- ════ PANEL EVALUACIÓN FINAL ════ -->
+<div class="panel" id="panel-eval">
+  <div class="page-title">
+    <div class="pt-label">Evaluación Final</div>
+    <h2>Evaluación Final — Bar Complaints</h2>
+    <p class="pt-sub">15 preguntas · Aprobatorio: 80% (12 respuestas correctas)</p>
+  </div>
+
+  <div class="alert blue" style="margin-bottom:16px">
+    <span class="alert-icon">📋</span>
+    <div><strong>Instrucciones:</strong> Responde todas las preguntas. Al finalizar, presiona "Verificar Evaluación". Necesitas un mínimo de 80% para aprobar. Puedes intentarlo múltiples veces.</div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="q-item" id="exam-q1">
+    <div class="q-num">Pregunta 1 de 15</div>
+    <div class="q-text">¿Qué es un Bar Complaint?</div>
+    <div class="q-opts">
+      <div class="q-opt" data-val="1" onclick="examSel(this,'q1')"><div class="q-radio"></div>Un reporte interno de la firma sobre errores del abogado</div>
+      <div class="q-opt" data-val="2" onclick="examSel(this,'q1')"><div class="q-radio"></div>Una denuncia formal presentada ante el organismo regulatorio estatal que supervisa la conducta profesional de los abogados</div>
+      <div class="q-opt" data-val="3" onclick="examSel(this,'q1')"><div class="q-radio"></div>Una queja presentada directamente al juez de inmigración</div>
+      <div class="q-opt" data-val="4" onclick="examSel(this,'q1')"><div class="q-radio"></div>Un formulario de insatisfacción del cliente ante USCIS</div>
+    </div>
+    <div class="q-feedback" id="exam-fb-q1"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-item" id="exam-q2">
+    <div class="q-num">Pregunta 2 de 15</div>
+    <div class="q-text">¿Cuál es la razón MÁS frecuente por la que un cliente presenta un Bar Complaint?</div>
+    <div class="q-opts">
+      <div class="q-opt" data-val="1" onclick="examSel(this,'q2')"><div class="q-radio"></div>Errores legales graves en la presentación de la petición</div>
+      <div class="q-opt" data-val="2" onclick="examSel(this,'q2')"><div class="q-radio"></div>Porque el cliente siente que fue abandonado, engañado o ignorado — problema de comunicación</div>
+      <div class="q-opt" data-val="3" onclick="examSel(this,'q2')"><div class="q-radio"></div>Porque el abogado cobró más de lo acordado</div>
+      <div class="q-opt" data-val="4" onclick="examSel(this,'q2')"><div class="q-radio"></div>Porque USCIS rechazó el caso</div>
+    </div>
+    <div class="q-feedback" id="exam-fb-q2"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-item" id="exam-q3">
+    <div class="q-num">Pregunta 3 de 15</div>
+    <div class="q-text">Los abogados de migración enfrentan doble jurisdicción. ¿Qué organismo federal regula la práctica ante tribunales de inmigración?</div>
+    <div class="q-opts">
+      <div class="q-opt" data-val="1" onclick="examSel(this,'q3')"><div class="q-radio"></div>USCIS</div>
+      <div class="q-opt" data-val="2" onclick="examSel(this,'q3')"><div class="q-radio"></div>State Bar del estado</div>
+      <div class="q-opt" data-val="3" onclick="examSel(this,'q3')"><div class="q-radio"></div>EOIR — Executive Office for Immigration Review</div>
+      <div class="q-opt" data-val="4" onclick="examSel(this,'q3')"><div class="q-radio"></div>BIA únicamente</div>
+    </div>
+    <div class="q-feedback" id="exam-fb-q3"></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-item" id="exam-q4">
+    <div class="q-num">Pregunta 4 de 15</div>
+    <div class="q-text">¿Cuál de los siguientes es un ejemplo de Riesgo Ético (no de procesamiento ni de naturaleza del caso)?</div>
+    <div class="q-opts">
+      <div class="q-opt" data-val="1" onclick="examSel(this,'q4')"><div class="q-radio"></div>Prometer resultados garantizados al cliente</div>
+      <div class="q-opt" data-val="2" onclick="examSel(this,'q4')"><div class="q-radio"></div>No notificar un RFE a tiempo</div>
+      <div class="q-opt" data-val="3" onclick="examSel(this,'q4')"><div class="q-radio"></div>Cliente con miedo extremo a las autoridades</div>
+      <div class="q-opt" data-val="4" onclick="examSel(this,'q4')"><div class="q-radio"></div>Caso de Visa T con RFE emitido por USCIS</div>
+    </div>
+    <div class="q-feedback" id="exam-fb-q4"></div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q-item" id="exam-q5">
+    <div class="q-num">Pregunta 5 de 15</div>
+    <div class="q-text">¿Qué perfil de cliente representa el MAYOR riesgo para la firma porque no expresa su insatisfacción directamente?</div>
+    <div class="q-opts">
+      <div class="q-opt" data-val="1" onclick="examSel(this,'q5')"><div class="q-radio"></div>LOUD — Cliente ruidoso</div>
+      <div class="q-opt" data-val="2" onclick="examSel(this,'q5')"><div class="q-radio"></div>DEMANDING / PROACTIVE — Cliente exigente</div>
+      <div class="q-opt" data-val="3" onclick="examSel(this,'q5')"><div class="q-radio"></div>SILENT BUT DEADLY — Cliente silencioso pero letal</div>
+      <div class="q-opt" data-val="4" onclick="examSel(this,'q5')"><div class="q-radio"></div>Todos los perfiles representan el mismo nivel de riesgo</div>
+    </div>
+    <div class="q-feedback" id="exam-fb-q5"></div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="q-item" id="exam-q6">
+    <div class="q-num">Pregunta 6 de 15</div>
+    <div class="q-text">En el Sistema PCM-002, ¿qué categoría de señales tiene el mayor peso ponderado (35%)?</div>
+    <div class="q-opts">
+      <div class="q-opt" data-val="1" onclick="examSel(this,'q6')"><div class="q-radio"></div>Intervención de terceros</div>
+      <div class="q-opt" data-val="2" onclick="examSel(this,'q6')"><div class="q-radio"></div>Financiero</div>
+      <div class="q-opt" data-val="3" onclick="examSel(this,'q6')"><div class="q-radio"></div>Amenazas implícitas y explícitas</div>
+      <div class="q-opt" data-val="4" onclick="examSel(this,'q6')"><div class="q-radio"></div>Dudas sin aclarar</div>
+    </div>
+    <div class="q-feedback" id="exam-fb-q6"></div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="q-item" id="exam-q7">
+    <div class="q-num">Pregunta 7 de 15</div>
+    <div class="q-text">Un cliente obtiene un puntaje de 155 puntos en el sistema PCM-002. ¿Qué nivel de riesgo es ese y qué acción se activa?</div>
+    <div class="q-opts">
+      <div class="q-opt" data-val="1" onclick="examSel(this,'q7')"><div class="q-radio"></div>Mild Risk — Registrar en SIS y nota en TramCase</div>
+      <div class="q-opt" data-val="2" onclick="examSel(this,'q7')"><div class="q-radio"></div>High Risk — Protocolo de Intervención High Risk + Evidence Checklist + Especialistas</div>
+      <div class="q-opt" data-val="3" onclick="examSel(this,'q7')"><div class="q-radio"></div>Critical — Activar Protocolo Critical de inmediato</div>
+      <div class="q-opt" data-val="4" onclick="examSel(this,'q7')"><div class="q-radio"></div>Low Risk — Solo monitoreo pasivo</div>
+    </div>
+    <div class="q-feedback" id="exam-fb-q7"></div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="q-item" id="exam-q8">
+    <div class="q-num">Pregunta 8 de 15</div>
+    <div class="q-text">¿Cuál de las siguientes es una Red Flag que activa escalada directa a Especialistas, independientemente del puntaje total PCM-002?</div>
+    <div class="q-opts">
+      <div class="q-opt" data-val="1" onclick="examSel(this,'q8')"><div class="q-radio"></div>El cliente envía un correo preguntando el estatus de su caso</div>
+      <div class="q-opt" data-val="2" onclick="examSel(this,'q8')"><div class="q-radio"></div>El cliente solicita el número de barra del abogado (MGM)</div>
+      <div class="q-opt" data-val="3" onclick="examSel(this,'q8')"><div class="q-radio"></div>El cliente pide una actualización de su caso después de 2 semanas</div>
+      <div class="q-opt" data-val="4" onclick="examSel(this,'q8')"><div class="q-radio"></div>El cliente cambia su número de teléfono</div>
+    </div>
+    <div class="q-feedback" id="exam-fb-q8"></div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="q-item" id="exam-q9">
+    <div class="q-num">Pregunta 9 de 15</div>
+    <div class="q-text">¿Qué ocurre cuando el cliente firma un waiver del privilegio abogado-cliente al presentar un Bar Complaint?</div>
+    <div class="q-opts">
+      <div class="q-opt" data-val="1" onclick="examSel(this,'q9')"><div class="q-radio"></div>El abogado pierde automáticamente su licencia</div>
+      <div class="q-opt" data-val="2" onclick="examSel(this,'q9')"><div class="q-radio"></div>El caso queda archivado sin investigación</div>
+      <div class="q-opt" data-val="3" onclick="examSel(this,'q9')"><div class="q-radio"></div>Toda la información de la representación — conversaciones, notas de TramCase, documentos internos — puede ser revisada por el organismo disciplinario</div>
+      <div class="q-opt" data-val="4" onclick="examSel(this,'q9')"><div class="q-radio"></div>El cliente puede cancelar la queja en cualquier momento sin consecuencias</div>
+    </div>
+    <div class="q-feedback" id="exam-fb-q9"></div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="q-item" id="exam-q10">
+    <div class="q-num">Pregunta 10 de 15</div>
+    <div class="q-text">En el proceso disciplinario, ¿cuánto tiempo tiene el abogado para responder una notificación del State Bar?</div>
+    <div class="q-opts">
+      <div class="q-opt" data-val="1" onclick="examSel(this,'q10')"><div class="q-radio"></div>48 horas</div>
+      <div class="q-opt" data-val="2" onclick="examSel(this,'q10')"><div class="q-radio"></div>7 días hábiles</div>
+      <div class="q-opt" data-val="3" onclick="examSel(this,'q10')"><div class="q-radio"></div>15–30 días según la jurisdicción</div>
+      <div class="q-opt" data-val="4" onclick="examSel(this,'q10')"><div class="q-radio"></div>60 días naturales</div>
+    </div>
+    <div class="q-feedback" id="exam-fb-q10"></div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="q-item" id="exam-q11">
+    <div class="q-num">Pregunta 11 de 15</div>
+    <div class="q-text">¿Qué establece la "Regla de Oro" de comunicación del Módulo 1?</div>
+    <div class="q-opts">
+      <div class="q-opt" data-val="1" onclick="examSel(this,'q11')"><div class="q-radio"></div>Si el cliente no llama, no es necesario contactarlo</div>
+      <div class="q-opt" data-val="2" onclick="examSel(this,'q11')"><div class="q-radio"></div>Si pasan demasiados días sin que la firma contacte al cliente, ese cliente está construyendo una historia de abandono — aunque el caso esté avanzando perfectamente</div>
+      <div class="q-opt" data-val="3" onclick="examSel(this,'q11')"><div class="q-radio"></div>La comunicación debe limitarse a momentos de novedades importantes del caso</div>
+      <div class="q-opt" data-val="4" onclick="examSel(this,'q11')"><div class="q-radio"></div>Solo el abogado debe comunicarse directamente con el cliente</div>
+    </div>
+    <div class="q-feedback" id="exam-fb-q11"></div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="q-item" id="exam-q12">
+    <div class="q-num">Pregunta 12 de 15</div>
+    <div class="q-text">¿Cuál es el paso más crítico en el Protocolo de Contención Activa, según el documento?</div>
+    <div class="q-opts">
+      <div class="q-opt" data-val="1" onclick="examSel(this,'q12')"><div class="q-radio"></div>La llamada de contención estratégica realizada por el abogado</div>
+      <div class="q-opt" data-val="2" onclick="examSel(this,'q12')"><div class="q-radio"></div>La auditoría de comunicaciones previas en el CRM</div>
+      <div class="q-opt" data-val="3" onclick="examSel(this,'q12')"><div class="q-radio"></div>La confirmación escrita post-llamada (email resumen de lo acordado)</div>
+      <div class="q-opt" data-val="4" onclick="examSel(this,'q12')"><div class="q-radio"></div>La verificación del checklist de consentimiento informado</div>
+    </div>
+    <div class="q-feedback" id="exam-fb-q12"></div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="q-item" id="exam-q13">
+    <div class="q-num">Pregunta 13 de 15</div>
+    <div class="q-text">¿Cuánto tiempo máximo puede pasar sin que haya un contacto documentado con el cliente, según los pilares preventivos de la firma?</div>
+    <div class="q-opts">
+      <div class="q-opt" data-val="1" onclick="examSel(this,'q13')"><div class="q-radio"></div>60 días</div>
+      <div class="q-opt" data-val="2" onclick="examSel(this,'q13')"><div class="q-radio"></div>45 días</div>
+      <div class="q-opt" data-val="3" onclick="examSel(this,'q13')"><div class="q-radio"></div>30 días</div>
+      <div class="q-opt" data-val="4" onclick="examSel(this,'q13')"><div class="q-radio"></div>No hay un límite establecido</div>
+    </div>
+    <div class="q-feedback" id="exam-fb-q13"></div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="q-item" id="exam-q14">
+    <div class="q-num">Pregunta 14 de 15</div>
+    <div class="q-text">Según el documento, en los Casos Prácticos, ¿cuál fue el único caso que se resolvió exitosamente sin llegar a Bar Complaint?</div>
+    <div class="q-opts">
+      <div class="q-opt" data-val="1" onclick="examSel(this,'q14')"><div class="q-radio"></div>La cliente que desapareció y volvió con un abogado nuevo (Visa U, 18 meses)</div>
+      <div class="q-opt" data-val="2" onclick="examSel(this,'q14')"><div class="q-radio"></div>El cliente que llamaba todos los días y nadie lo escaló (Visa T)</div>
+      <div class="q-opt" data-val="3" onclick="examSel(this,'q14')"><div class="q-radio"></div>La cliente de Visa T con un RFE que nadie le explicó — donde se activó el protocolo correctivo a tiempo</div>
+      <div class="q-opt" data-val="4" onclick="examSel(this,'q14')"><div class="q-radio"></div>El cliente cuyo familiar llamó exigiendo el expediente</div>
+    </div>
+    <div class="q-feedback" id="exam-fb-q14"></div>
+  </div>
+
+  <!-- Q15 -->
+  <div class="q-item" id="exam-q15">
+    <div class="q-num">Pregunta 15 de 15</div>
+    <div class="q-text">¿Qué significa el estatus "Case Remains Pending" en USCIS.gov, según el mensaje estándar que debe usar el equipo?</div>
+    <div class="q-opts">
+      <div class="q-opt" data-val="1" onclick="examSel(this,'q15')"><div class="q-radio"></div>El caso tiene un problema que la firma debe resolver de inmediato</div>
+      <div class="q-opt" data-val="2" onclick="examSel(this,'q15')"><div class="q-radio"></div>El caso fue rechazado por USCIS</div>
+      <div class="q-opt" data-val="3" onclick="examSel(this,'q15')"><div class="q-radio"></div>El caso está en proceso dentro de los tiempos normales de USCIS; el silencio del portal no indica error ni abandono</div>
+      <div class="q-opt" data-val="4" onclick="examSel(this,'q15')"><div class="q-radio"></div>El cliente debe contactar directamente a USCIS para obtener información</div>
+    </div>
+    <div class="q-feedback" id="exam-fb-q15"></div>
+  </div>
+
+  <div class="exam-actions">
+    <button class="btn-submit" id="exam-submit" onclick="examSubmit()">Verificar Evaluación →</button>
+    <button class="btn-retry" id="exam-retry" onclick="examReset()">↺ Intentar de nuevo</button>
+  </div>
+
+  <div class="exam-result" id="exam-result">
+    <div class="result-score" id="exam-score-val">—</div>
+    <div class="result-label" id="exam-result-label"></div>
+    <p class="result-msg" id="exam-result-msg"></p>
+    <div class="result-stats">
+      <div class="rs-item"><div class="rs-val" id="exam-correct" style="color:var(--green)">—</div><div class="rs-label">Correctas</div></div>
+      <div class="rs-item"><div class="rs-val" id="exam-incorrect" style="color:var(--red)">—</div><div class="rs-label">Incorrectas</div></div>
+      <div class="rs-item"><div class="rs-val">15</div><div class="rs-label">Total</div></div>
+    </div>
+  </div>
+
+  <div class="mod-nav-bar">
+    <button class="mod-nav-btn mod-nav-prev" onclick="showPanel('mod2')">← Módulo 2</button>
+    <div></div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+/* ═══════════ STATE ═══════════ */
+var state = { panels: ['overview','mod1','mod2','eval'], completed: {} };
+
+/* ═══════════ NAVIGATION ═══════════ */
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.sb-item').forEach(function(i){ i.classList.remove('active'); });
+  var panel = document.getElementById('panel-' + id);
+  var nav = document.getElementById('nav-' + id);
+  if (panel) panel.classList.add('active');
+  if (nav) nav.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  var sidebar = document.getElementById('main-sidebar');
+  if (sidebar.classList.contains('open')) toggleSidebar();
+  updateProgress();
+}
+
+function toggleSidebar() {
+  var sidebar = document.getElementById('main-sidebar');
+  var overlay = document.getElementById('sb-overlay');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('show');
+}
+
+/* ═══════════ PROGRESS ═══════════ */
+function updateProgress() {
+  var panels = ['mod1','mod2','eval'];
+  var done = 0;
+  panels.forEach(function(p) {
+    if (state.completed[p]) done++;
+  });
+  var pct = Math.round(done / panels.length * 100);
+  document.getElementById('main-progress').style.width = pct + '%';
+  document.getElementById('progress-pill').textContent = pct + '%';
+}
+
+/* ═══════════ ACTIVIDADES ═══════════ */
+var actFB = {
+  a1q1: { ok: '✅ Correcto. El perfil Silent But Deadly se caracteriza por silencio prolongado seguido de una queja formal sin señal previa. El riesgo principal es de procesamiento por abandono percibido.', fail: '❌ Incorrecto. Una clienta que no llama durante meses y cuyo caso lleva 14 meses abierto sin contacto proactivo corresponde al perfil Silent But Deadly, con riesgo de procesamiento (abandono).' },
+  a1q2: { ok: '✅ Correcto. Contacto por múltiples canales el mismo día es una Red Flag que activa escalada directa a Especialistas, independientemente del puntaje PCM-002.', fail: '❌ Incorrecto. La señal más urgente y activa en este escenario es el contacto por múltiples canales el mismo día, que es una Red Flag directa en el sistema PCM-002.' },
+  a1q3: { ok: '✅ Correcto. El silencio prolongado NO indica conformidad. En el perfil Silent But Deadly, la ausencia de comunicación es la señal de mayor riesgo para la firma.', fail: '❌ Incorrecto. El silencio es la señal MÁS peligrosa en el perfil Silent But Deadly. La firma NUNCA debe asumir que silencio = satisfacción.' },
+  a2q1: { ok: '✅ Correcto. El primer paso siempre es notificar a MGM y el equipo de liderazgo, activar revisión en PCM-002 y reunir toda la documentación del caso.', fail: '❌ Incorrecto. El primer paso correcto es notificar a MGM y equipo de liderazgo, activar revisión en PCM-002 y reunir documentación. NUNCA responder al State Bar sin asesoría legal, y NUNCA contactar directamente al quejoso.' },
+  a2q2: { ok: '✅ Correcto. El mensaje estándar es explicar que "Case Remains Pending" es normal, documentar el contacto en TramCase y asegurar al cliente que sería notificado si se requiere alguna acción.', fail: '❌ Incorrecto. La respuesta correcta incluye explicar el estatus con el mensaje estándar aprobado, gestionar la expectativa y documentar el contacto en TramCase.' },
+  a2q3: { ok: '✅ Correcto. Lo que no está documentado no puede defenderse. Sin registros en el CRM, la firma no puede demostrar gestión activa del caso durante ese período.', fail: '❌ Incorrecto. La ausencia de registros es la debilidad más crítica. Sin documentación en el CRM, la firma no puede demostrar que gestionó activamente el caso.' }
+};
+
+function actSel(el, qId, isCorrect) {
+  var container = document.getElementById(qId);
+  if (!container) return;
+  var opts = container.querySelectorAll('.q-opt');
+  opts.forEach(function(o) {
+    o.classList.remove('selected','correct','incorrect');
+    o.style.pointerEvents = 'none';
+  });
+  el.classList.add(isCorrect ? 'correct' : 'incorrect');
+  var fb = document.getElementById('fb-' + qId);
+  if (fb) {
+    fb.className = 'q-feedback show ' + (isCorrect ? 'ok' : 'fail');
+    fb.textContent = isCorrect ? actFB[qId].ok : actFB[qId].fail;
+  }
+}
+
+/* ═══════════ EVALUACIÓN ═══════════ */
+var examCorrect = { q1:2, q2:2, q3:3, q4:1, q5:3, q6:3, q7:2, q8:2, q9:3, q10:3, q11:2, q12:3, q13:3, q14:3, q15:3 };
+var examFB = {
+  q1:  { ok:'✅ Correcto. Un Bar Complaint es una denuncia formal ante el organismo regulatorio estatal.', fail:'❌ Incorrecto. Es una denuncia formal presentada ante el organismo regulatorio estatal (State Bar) que supervisa la conducta profesional de los abogados.' },
+  q2:  { ok:'✅ Correcto. La mayoría de quejas ocurren por problemas de comunicación, no por errores legales graves.', fail:'❌ Incorrecto. La razón más frecuente es que el cliente siente que fue abandonado, engañado o ignorado. Es un problema de comunicación.' },
+  q3:  { ok:'✅ Correcto. EOIR — Executive Office for Immigration Review — regula la práctica ante tribunales de inmigración.', fail:'❌ Incorrecto. El EOIR (Executive Office for Immigration Review) del Departamento de Justicia regula la práctica ante BIA, cortes de inmigración y DHS.' },
+  q4:  { ok:'✅ Correcto. Prometer resultados garantizados es una violación ética directa de las Rules of Professional Conduct.', fail:'❌ Incorrecto. Prometer resultados garantizados es el ejemplo clásico de Riesgo Ético. Los otros ejemplos son de Riesgo de Procesamiento o Naturaleza del Caso.' },
+  q5:  { ok:'✅ Correcto. El perfil Silent But Deadly es el de MAYOR riesgo porque no hay señales visibles hasta que aparece la queja formal.', fail:'❌ Incorrecto. El perfil de mayor riesgo es Silent But Deadly, porque no hay señales de alerta visibles y la queja llega sin advertencia.' },
+  q6:  { ok:'✅ Correcto. Las Amenazas implícitas y explícitas tienen el peso más alto con 35% en el sistema PCM-002.', fail:'❌ Incorrecto. La categoría con mayor peso (35%) es Amenazas implícitas y explícitas, que incluye solicitar el número de barra y amenazar con un Bar Complaint.' },
+  q7:  { ok:'✅ Correcto. 155 puntos se ubica en el rango High Risk (121–180), que activa el Protocolo de Intervención High Risk + Evidence Checklist + Especialistas.', fail:'❌ Incorrecto. 155 puntos cae en el rango High Risk (121–180), lo que activa el Protocolo de Intervención High Risk + Evidence Checklist + Especialistas.' },
+  q8:  { ok:'✅ Correcto. Solicitar el número de barra del abogado es una Red Flag que activa escalada directa a Especialistas sin importar el puntaje PCM-002.', fail:'❌ Incorrecto. Solicitar el número de barra del abogado (MGM) es una de las 11 Red Flags que activan escalada directa a Especialistas, independientemente del puntaje.' },
+  q9:  { ok:'✅ Correcto. El waiver permite que toda la información del caso — TramCase, comunicaciones, documentos — sea revisada por el organismo disciplinario.', fail:'❌ Incorrecto. El waiver del privilegio permite que el organismo disciplinario acceda a toda la información de la representación, incluyendo notas de TramCase y comunicaciones internas.' },
+  q10: { ok:'✅ Correcto. El abogado tiene 15–30 días para responder según la jurisdicción. Fallar en responder es en sí misma una violación ética.', fail:'❌ Incorrecto. El plazo es 15–30 días según la jurisdicción. Fallar en responder es una violación ética adicional disciplinable.' },
+  q11: { ok:'✅ Correcto. La Regla de Oro establece que el silencio crea percepción de abandono aunque el caso avance correctamente.', fail:'❌ Incorrecto. La Regla de Oro indica que si pasan demasiados días sin contacto, el cliente construye una historia de abandono aunque el caso esté avanzando perfectamente.' },
+  q12: { ok:'✅ Correcto. El email resumen post-llamada es el paso más crítico porque se convierte en la principal evidencia defensiva si el cliente presenta queja de todas formas.', fail:'❌ Incorrecto. El paso más crítico es la confirmación escrita post-llamada (email resumen), que es la principal defensa de la firma si el cliente presenta queja de todas formas.' },
+  q13: { ok:'✅ Correcto. El pilar de comunicación proactiva establece contacto obligatorio cada 30 días aunque no haya novedades.', fail:'❌ Incorrecto. Los pilares preventivos establecen contacto obligatorio cada 30 días aunque no haya novedades del caso.' },
+  q14: { ok:'✅ Correcto. El Caso 3 (cliente de Visa T con RFE) fue el único que se resolvió exitosamente porque se activó el protocolo correctivo a tiempo.', fail:'❌ Incorrecto. El único caso resuelto exitosamente fue el Caso 3: la cliente de Visa T con RFE, donde el protocolo correctivo se activó a tiempo.' },
+  q15: { ok:'✅ Correcto. "Case Remains Pending" indica que el caso está en proceso dentro de los tiempos normales de USCIS y no implica error ni abandono.', fail:'❌ Incorrecto. "Case Remains Pending" significa que el caso está dentro de los tiempos normales. El silencio del portal no indica error ni abandono de la firma.' }
+};
+
+var examAnswers = {};
+
+function examSel(el, qId) {
+  if (el.classList.contains('disabled')) return;
+  document.querySelectorAll('#exam-' + qId + ' .q-opt').forEach(function(o){ o.classList.remove('selected'); });
+  el.classList.add('selected');
+  examAnswers[qId] = parseInt(el.dataset.val);
+}
+
+function examSubmit() {
+  var total = 15, correct = 0;
+  for (var i = 1; i <= total; i++) {
+    var qId = 'q' + i;
+    var ua = examAnswers[qId], ca = examCorrect[qId];
+    var fb = document.getElementById('exam-fb-' + qId);
+    document.querySelectorAll('#exam-' + qId + ' .q-opt').forEach(function(o) {
+      o.classList.add('disabled');
+      var v = parseInt(o.dataset.val);
+      if (v === ca) o.classList.add('correct');
+      else if (v === ua && ua !== ca) o.classList.add('incorrect');
+    });
+    if (fb) {
+      fb.className = 'q-feedback show ' + (ua === ca ? 'ok' : 'fail');
+      fb.textContent = ua === ca ? examFB[qId].ok : examFB[qId].fail;
+    }
+    if (ua === ca) correct++;
+  }
+  var pct = Math.round(correct / total * 100);
+  var pass = pct >= 80;
+  var resultCard = document.getElementById('exam-result');
+  resultCard.classList.add('show');
+  var scoreEl = document.getElementById('exam-score-val');
+  scoreEl.textContent = pct + '%';
+  scoreEl.className = 'result-score ' + (pass ? 'pass' : pct >= 60 ? 'warn' : 'fail');
+  document.getElementById('exam-result-label').textContent = pass ? '✅ APROBADO' : '❌ NO APROBADO';
+  document.getElementById('exam-result-msg').textContent = pass ?
+    '¡Felicidades! Has superado la evaluación con ' + pct + '%. Has demostrado dominio de los contenidos de Compliance sobre Bar Complaints.' :
+    'Tu puntaje es ' + pct + '%. Necesitas al menos 80% para aprobar. Te recomendamos repasar los módulos e intentarlo nuevamente.';
+  document.getElementById('exam-correct').textContent = correct;
+  document.getElementById('exam-incorrect').textContent = total - correct;
+  document.getElementById('exam-submit').style.display = 'none';
+  document.getElementById('exam-retry').style.display = 'inline-block';
+  if (pass) {
+    state.completed['eval'] = true;
+    var navEval = document.getElementById('nav-eval');
+    if (navEval) navEval.classList.add('completed');
+  }
+  updateProgress();
+  resultCard.scrollIntoView({ behavior: 'smooth' });
+}
+
+function examReset() {
+  examAnswers = {};
+  document.getElementById('exam-result').classList.remove('show');
+  for (var i = 1; i <= 15; i++) {
+    var qId = 'q' + i;
+    document.querySelectorAll('#exam-' + qId + ' .q-opt').forEach(function(o){ o.className = 'q-opt'; });
+    var fb = document.getElementById('exam-fb-' + qId);
+    if (fb) fb.className = 'q-feedback';
+  }
+  document.getElementById('exam-submit').style.display = 'inline-block';
+  document.getElementById('exam-retry').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+updateProgress();
+</script>
+</body>
+</html>
