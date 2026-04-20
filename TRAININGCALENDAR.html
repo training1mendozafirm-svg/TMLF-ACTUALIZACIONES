@@ -131,6 +131,10 @@
       grid-template-columns: 252px 1fr;
       height: calc(100vh - 60px);
       overflow: hidden;
+      transition: grid-template-columns .25s ease;
+    }
+    .layout.sidebar-hidden {
+      grid-template-columns: 0px 1fr;
     }
 
     /* =========================================================
@@ -1008,6 +1012,126 @@
     .di-status-btn.active-proceso    { border-color: #7c3aed; background: #ede9fe; color: #5b21b6; }
     .di-status-btn.active-revision   { border-color: #ea580c; background: #fff7ed; color: #c2410c; }
     .di-status-btn.active-confirmado { border-color: #16a34a; background: #d1fae5; color: #065f46; }
+
+    /* Correos institucionales */
+    .correo-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 8px; border-radius: 7px;
+      transition: background .15s; cursor: default;
+    }
+    .correo-item:hover { background: var(--bg); }
+    .correo-dot {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .correo-nombre { font-size: 12px; font-weight: 700; color: var(--text-1); }
+    .correo-email  {
+      font-size: 11px; color: var(--accent); cursor: pointer;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .correo-email:hover { text-decoration: underline; }
+    .correo-copied {
+      font-size: 10px; color: var(--success); font-weight: 600;
+      opacity: 0; transition: opacity .2s;
+    }
+    .correo-copied.show { opacity: 1; }
+
+    /* ── Sidebar colapsable ── */
+    .sidebar {
+      transition: width .25s ease, min-width .25s ease;
+    }
+    .sidebar.collapsed {
+      width: 0 !important;
+      min-width: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+      overflow: hidden !important;
+    }
+    .sidebar-toggle {
+      position: absolute;
+      top: 70px;
+      left: 252px;
+      z-index: 200;
+      width: 22px; height: 44px;
+      background: white;
+      border: 1px solid var(--border);
+      border-left: none;
+      border-radius: 0 8px 8px 0;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); font-size: 12px;
+      box-shadow: 2px 0 6px rgba(0,0,0,.07);
+      transition: left .25s ease;
+    }
+    .sidebar-toggle:hover { background: var(--bg); color: var(--text-1); }
+    .sidebar-toggle.collapsed { left: 0; }
+
+    /* ── Tabs del sidebar ── */
+    .sb-tabs {
+      display: flex;
+      gap: 2px;
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 3px;
+      margin-bottom: 10px;
+      flex-shrink: 0;
+    }
+    .sb-tab {
+      flex: 1;
+      padding: 5px 2px;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-3);
+      text-align: center;
+      transition: all .15s;
+      line-height: 1.2;
+    }
+    .sb-tab.active {
+      background: white;
+      color: var(--accent);
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    }
+    .sb-tab span { display: block; font-size: 14px; margin-bottom: 1px; }
+
+    /* ── Sección colapsable ── */
+    .sb-section { border-bottom: 1px solid var(--border); }
+    .sb-section:last-child { border-bottom: none; }
+    .sb-section-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 4px;
+      cursor: pointer;
+      user-select: none;
+      border-radius: 6px;
+      transition: background .12s;
+    }
+    .sb-section-head:hover { background: var(--bg); }
+    .sb-section-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .04em; color: var(--text-3);
+      display: flex; align-items: center; gap: 5px;
+    }
+    .sb-section-actions { display: flex; align-items: center; gap: 4px; }
+    .sb-chevron {
+      font-size: 10px; color: var(--text-3);
+      transition: transform .2s;
+    }
+    .sb-section.open .sb-chevron { transform: rotate(180deg); }
+    .sb-section-body {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height .25s ease;
+    }
+    .sb-section.open .sb-section-body { max-height: 600px; }
+    .sb-section-body-inner { padding: 0 2px 10px; }
+
+    /* ── Panel de tab ── */
+    .sb-panel { display: none; flex-direction: column; gap: 0; }
+    .sb-panel.active { display: flex; }
 </style>
 </head>
 <body>
@@ -1022,12 +1146,12 @@
     <span class="badge">TMLF</span>
   </div>
   <div class="topbar-sep"></div>
-  <span class="topbar-sub" id="topbar-sub-text">Coordinación del equipo de capacitación</span>
+  <span class="topbar-sub">Coordinación del equipo de capacitación</span>
   <div class="topbar-actions">
-    <button class="btn btn-ghost btn-sm" id="todayBtn" style="display:none">Hoy</button>
+    <button class="btn btn-ghost btn-sm" id="todayBtn">Hoy</button>
     <button class="btn btn-primary" id="openFormBtn">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      <span id="openFormBtnLabel">Agregar actividad</span>
+      Agregar actividad
     </button>
   </div>
 </div>
@@ -1038,112 +1162,206 @@
 <div class="layout">
 
   <!-- SIDEBAR -->
-  <aside class="sidebar">
+  <!-- Botón para colapsar sidebar -->
+  <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Ocultar/mostrar panel">‹</button>
 
-    <!-- KPIs -->
-    <div>
-      <div class="sidebar-section-title">Resumen del mes</div>
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-num" id="kpi-total">—</div>
-          <div class="kpi-label">Total actividades</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-num" id="kpi-trainings">—</div>
-          <div class="kpi-label">Trainings</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-num" id="kpi-pendientes">—</div>
-          <div class="kpi-label">Pendientes</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-num" id="kpi-proximas">—</div>
-          <div class="kpi-label">Próx. 7 días</div>
-        </div>
-      </div>
+  <aside class="sidebar" id="mainSidebar">
+
+    <!-- Pestañas -->
+    <div class="sb-tabs">
+      <button class="sb-tab active" id="sbtab-resumen" onclick="switchSbTab('resumen')">
+        <span>📊</span>Resumen
+      </button>
+      <button class="sb-tab" id="sbtab-equipo" onclick="switchSbTab('equipo')">
+        <span>👥</span>Equipo
+      </button>
+      <button class="sb-tab" id="sbtab-agenda" onclick="switchSbTab('agenda')">
+        <span>📅</span>Agenda
+      </button>
     </div>
 
-    <!-- Carga + Leyenda combinadas -->
-    <div>
-      <div class="sidebar-section-title">Trainers · Carga del mes</div>
-      <div id="workloadList"></div>
-    </div>
+    <!-- ══ PANEL: RESUMEN ══ -->
+    <div class="sb-panel active" id="sbpanel-resumen">
 
-    <!-- Filtros -->
-    <div>
-      <div class="sidebar-section-title">Filtros rápidos</div>
-      <div class="filter-group">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;align-items:end">
-          <div>
-            <div class="filter-label" style="margin-bottom:4px">Trainer</div>
-            <select class="filter-select" id="f-trainer" style="font-size:12px;padding:6px 28px 6px 8px">
-              <option value="">Todos</option>
-            </select>
-          </div>
-          <div>
-            <div class="filter-label" style="margin-bottom:4px">Tipo</div>
-            <select class="filter-select" id="f-tipo" style="font-size:12px;padding:6px 28px 6px 8px">
-              <option value="">Todos</option>
-            </select>
-          </div>
-          <div>
-            <div class="filter-label" style="margin-bottom:4px">Estatus</div>
-            <select class="filter-select" id="f-estatus" style="font-size:12px;padding:6px 28px 6px 8px">
-              <option value="">Todos</option>
-              <option>Planeado</option>
-              <option>Confirmado</option>
-              <option>En curso</option>
-              <option>Completado</option>
-              <option>Cancelado</option>
-            </select>
-          </div>
-          <div>
-            <div class="filter-label" style="margin-bottom:4px">Modalidad</div>
-            <select class="filter-select" id="f-modalidad" style="font-size:12px;padding:6px 28px 6px 8px">
-              <option value="">Todas</option>
-              <option>Presencial</option>
-              <option>Online</option>
-              <option>Híbrido</option>
-            </select>
+      <!-- KPIs -->
+      <div class="sb-section open">
+        <div class="sb-section-head" onclick="toggleSection(this)">
+          <div class="sb-section-label">📊 Resumen del mes</div>
+          <span class="sb-chevron">▼</span>
+        </div>
+        <div class="sb-section-body">
+          <div class="sb-section-body-inner">
+            <div class="kpi-grid">
+              <div class="kpi-card"><div class="kpi-num" id="kpi-total">—</div><div class="kpi-label">Total</div></div>
+              <div class="kpi-card"><div class="kpi-num" id="kpi-trainings">—</div><div class="kpi-label">Trainings</div></div>
+              <div class="kpi-card"><div class="kpi-num" id="kpi-pendientes">—</div><div class="kpi-label">Pendientes</div></div>
+              <div class="kpi-card"><div class="kpi-num" id="kpi-proximas">—</div><div class="kpi-label">Próx. 7d</div></div>
+            </div>
           </div>
         </div>
-        <button class="sidebar-btn-clear" id="clearFiltersBtn">✕ Limpiar filtros</button>
-        <button class="sidebar-btn-clear" id="resetDataBtn" style="margin-top:4px" title="Recargar eventos desde la base de datos">🔄 Recargar datos</button>
       </div>
+
+      <!-- Carga del mes -->
+      <div class="sb-section open">
+        <div class="sb-section-head" onclick="toggleSection(this)">
+          <div class="sb-section-label">⚖️ Carga del mes</div>
+          <span class="sb-chevron">▼</span>
+        </div>
+        <div class="sb-section-body">
+          <div class="sb-section-body-inner">
+            <div id="workloadList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filtros -->
+      <div class="sb-section">
+        <div class="sb-section-head" onclick="toggleSection(this)">
+          <div class="sb-section-label">🔍 Filtros rápidos</div>
+          <span class="sb-chevron">▼</span>
+        </div>
+        <div class="sb-section-body">
+          <div class="sb-section-body-inner">
+            <div class="filter-group">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+                <div><div class="filter-label" style="margin-bottom:4px">Trainer</div>
+                  <select class="filter-select" id="f-trainer" style="font-size:12px;padding:6px 28px 6px 8px"><option value="">Todos</option></select></div>
+                <div><div class="filter-label" style="margin-bottom:4px">Tipo</div>
+                  <select class="filter-select" id="f-tipo" style="font-size:12px;padding:6px 28px 6px 8px"><option value="">Todos</option></select></div>
+                <div><div class="filter-label" style="margin-bottom:4px">Estatus</div>
+                  <select class="filter-select" id="f-estatus" style="font-size:12px;padding:6px 28px 6px 8px">
+                    <option value="">Todos</option><option>Planeado</option><option>Confirmado</option>
+                    <option>En curso</option><option>Completado</option><option>Cancelado</option>
+                  </select></div>
+                <div><div class="filter-label" style="margin-bottom:4px">Modalidad</div>
+                  <select class="filter-select" id="f-modalidad" style="font-size:12px;padding:6px 28px 6px 8px">
+                    <option value="">Todas</option><option>Presencial</option><option>Online</option><option>Híbrido</option>
+                  </select></div>
+              </div>
+              <button class="sidebar-btn-clear" id="clearFiltersBtn">✕ Limpiar filtros</button>
+              <button class="sidebar-btn-clear" id="resetDataBtn" style="margin-top:4px">🔄 Recargar datos</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Próximas actividades -->
-    <div>
-      <div class="sidebar-section-title">Próximas actividades</div>
-      <div id="upcomingList"></div>
+    <!-- ══ PANEL: EQUIPO ══ -->
+    <div class="sb-panel" id="sbpanel-equipo">
+
+      <!-- Correos Support -->
+      <div class="sb-section open">
+        <div class="sb-section-head" onclick="toggleSection(this)">
+          <div class="sb-section-label">📧 Correos Support</div>
+          <span class="sb-chevron">▼</span>
+        </div>
+        <div class="sb-section-body">
+          <div class="sb-section-body-inner">
+            <div style="font-size:10.5px;color:var(--text-3);margin-bottom:6px">Clic para copiar el correo</div>
+            <div class="correo-item" onclick="copiarCorreo(this,'djuarez@supportmendoza.com')">
+              <div class="correo-dot" style="background:#22b4d6">D</div>
+              <div style="min-width:0;flex:1"><div class="correo-nombre">Diego</div><div class="correo-email">djuarez@supportmendoza.com</div></div>
+              <span class="correo-copied">✓</span>
+            </div>
+            <div class="correo-item" onclick="copiarCorreo(this,'jburgos@supportmendoza.com')">
+              <div class="correo-dot" style="background:#9f6ef5">J</div>
+              <div style="min-width:0;flex:1"><div class="correo-nombre">Joham</div><div class="correo-email">jburgos@supportmendoza.com</div></div>
+              <span class="correo-copied">✓</span>
+            </div>
+            <div class="correo-item" onclick="copiarCorreo(this,'azendejas@supportmendoza.com')">
+              <div class="correo-dot" style="background:#34c471">A</div>
+              <div style="min-width:0;flex:1"><div class="correo-nombre">Andrea</div><div class="correo-email">azendejas@supportmendoza.com</div></div>
+              <span class="correo-copied">✓</span>
+            </div>
+            <div class="correo-item" onclick="copiarCorreo(this,'nnava@supportmendoza.com')">
+              <div class="correo-dot" style="background:#f5823e">N</div>
+              <div style="min-width:0;flex:1"><div class="correo-nombre">Nidia</div><div class="correo-email">nnava@supportmendoza.com</div></div>
+              <span class="correo-copied">✓</span>
+            </div>
+            <div class="correo-item" onclick="copiarCorreo(this,'svazquezc@supportmendoza.com')">
+              <div class="correo-dot" style="background:#84cc16">S</div>
+              <div style="min-width:0;flex:1"><div class="correo-nombre">Sofia</div><div class="correo-email">svazquezc@supportmendoza.com</div></div>
+              <span class="correo-copied">✓</span>
+            </div>
+            <div class="correo-item" onclick="copiarCorreo(this,'bdominguez@supportmendoza.com')">
+              <div class="correo-dot" style="background:#f59e0b">B</div>
+              <div style="min-width:0;flex:1"><div class="correo-nombre">Brenda</div><div class="correo-email">bdominguez@supportmendoza.com</div></div>
+              <span class="correo-copied">✓</span>
+            </div>
+            <div class="correo-item" onclick="copiarCorreo(this,'mdiazf@supportmendoza.com')">
+              <div class="correo-dot" style="background:#5b8ff9">M</div>
+              <div style="min-width:0;flex:1"><div class="correo-nombre">Mariana</div><div class="correo-email">mdiazf@supportmendoza.com</div></div>
+              <span class="correo-copied">✓</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Vacaciones próximas -->
-    <div>
-      <div class="sidebar-section-title" style="display:flex;align-items:center;justify-content:space-between">
-        🏖️ Vacaciones
-        <button onclick="openSpecialModal('vac')" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--text-3)" title="Agregar vacaciones">＋</button>
-      </div>
-      <div id="vacList"><div style="font-size:12px;color:var(--text-3);padding:4px">Sin vacaciones registradas.</div></div>
-    </div>
+    <!-- ══ PANEL: AGENDA ══ -->
+    <div class="sb-panel" id="sbpanel-agenda">
 
-    <!-- Cumpleaños próximos -->
-    <div>
-      <div class="sidebar-section-title" style="display:flex;align-items:center;justify-content:space-between">
-        🎂 Cumpleaños
-        <button onclick="openSpecialModal('bday')" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--text-3)" title="Agregar cumpleaños">＋</button>
+      <!-- Próximas actividades -->
+      <div class="sb-section open">
+        <div class="sb-section-head" onclick="toggleSection(this)">
+          <div class="sb-section-label">📋 Próximas actividades</div>
+          <span class="sb-chevron">▼</span>
+        </div>
+        <div class="sb-section-body">
+          <div class="sb-section-body-inner"><div id="upcomingList"></div></div>
+        </div>
       </div>
-      <div id="bdayList"><div style="font-size:12px;color:var(--text-3);padding:4px">Sin cumpleaños registrados.</div></div>
-    </div>
 
-    <!-- Días OFF -->
-    <div>
-      <div class="sidebar-section-title" style="display:flex;align-items:center;justify-content:space-between">
-        🚫 Días OFF
-        <button onclick="openSpecialModal('off')" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--text-3)" title="Agregar día OFF">＋</button>
+      <!-- Vacaciones -->
+      <div class="sb-section open">
+        <div class="sb-section-head" onclick="toggleSection(this)">
+          <div class="sb-section-label">🏖️ Vacaciones</div>
+          <div class="sb-section-actions">
+            <button onclick="event.stopPropagation();openSpecialModal('vac')" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--text-3)">＋</button>
+            <span class="sb-chevron">▼</span>
+          </div>
+        </div>
+        <div class="sb-section-body">
+          <div class="sb-section-body-inner">
+            <div id="vacList"><div style="font-size:12px;color:var(--text-3)">Sin vacaciones próximas.</div></div>
+          </div>
+        </div>
       </div>
-      <div style="font-size:11px;color:var(--text-3);padding:2px 4px 6px;line-height:1.4">Días sin actividades programadas. Se pueden agregar actividades si es forzoso.</div>
-      <div id="offList"><div style="font-size:12px;color:var(--text-3);padding:4px">Sin días OFF registrados.</div></div>
+
+      <!-- Cumpleaños -->
+      <div class="sb-section open">
+        <div class="sb-section-head" onclick="toggleSection(this)">
+          <div class="sb-section-label">🎂 Cumpleaños</div>
+          <div class="sb-section-actions">
+            <button onclick="event.stopPropagation();openSpecialModal('bday')" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--text-3)">＋</button>
+            <span class="sb-chevron">▼</span>
+          </div>
+        </div>
+        <div class="sb-section-body">
+          <div class="sb-section-body-inner">
+            <div id="bdayList"><div style="font-size:12px;color:var(--text-3)">Sin cumpleaños registrados.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Días OFF -->
+      <div class="sb-section open">
+        <div class="sb-section-head" onclick="toggleSection(this)">
+          <div class="sb-section-label">🚫 Días OFF</div>
+          <div class="sb-section-actions">
+            <button onclick="event.stopPropagation();openSpecialModal('off')" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--text-3)">＋</button>
+            <span class="sb-chevron">▼</span>
+          </div>
+        </div>
+        <div class="sb-section-body">
+          <div class="sb-section-body-inner">
+            <div id="offList"><div style="font-size:12px;color:var(--text-3)">Sin días OFF registrados.</div></div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
   </aside>
@@ -1151,20 +1369,8 @@
   <!-- MAIN CONTENT -->
   <main class="main">
 
-    <!-- View Tabs -->
-    <div class="view-tabs">
-      <button class="view-tab active" id="tab-cal" onclick="switchView('cal')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        Calendario
-      </button>
-      <button class="view-tab el" id="tab-el" onclick="switchView('el')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-        Revisión E-Learning
-      </button>
-    </div>
-
     <!-- Vista Calendario -->
-    <div id="calPanel">
+    <div id="calPanel" style="flex:1;min-height:0;display:flex;flex-direction:column;">
       <div class="calendar-card">
         <div id="calendar"></div>
       </div>
@@ -2766,7 +2972,6 @@ function selectPriority(el, cls) {
 }
 
 document.getElementById('openFormBtn').addEventListener('click', () => {
-  if (vistaActiva === 'el') { openElModal(); return; }
   resetForm();
   document.getElementById('f-form-date').value = new Date().toISOString().slice(0, 10);
   openModal('formModal');
@@ -3188,65 +3393,9 @@ function renderElCalendar() {
 
 // ── Cambio de vista ────────────────────────────────────────
 function switchView(vista) {
-  vistaActiva = vista;
-  document.getElementById('calPanel').style.display = vista === 'cal' ? '' : 'none';
-  document.getElementById('elPanel').style.display  = vista === 'el'  ? '' : 'none';
-  // FullCalendar necesita updateSize al volver a ser visible
-  if (vista === 'cal') {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        try { calendar.updateSize(); } catch(e){}
-        setTimeout(() => { try { calendar.updateSize(); } catch(e){}}, 200);
-      });
-    });
-  }
-  document.getElementById('tab-cal').className = 'view-tab' + (vista === 'cal' ? ' active' : '');
-  document.getElementById('tab-el').className  = 'view-tab el' + (vista === 'el'  ? ' active' : '');
-  document.getElementById('todayBtn').style.display = vista === 'cal' ? '' : 'none';
-  document.getElementById('openFormBtn').style.display = '';
-
-  if (vista === 'cal') {
-    document.getElementById('topbar-sub-text').textContent = 'Coordinación del equipo de capacitación';
-    document.getElementById('openFormBtnLabel').textContent = 'Agregar actividad';
-    document.getElementById('openFormBtn').style.background = '';
-    document.getElementById('openFormBtn').style.borderColor = '';
-    document.getElementById('openFormBtn').onclick = null;
-    document.getElementById('openFormBtn').onclick = () => {
-      resetForm();
-      document.getElementById('f-form-date').value = new Date().toISOString().slice(0,10);
-      openModal('formModal');
-    };
-  } else {
-    document.getElementById('topbar-sub-text').textContent = 'Revisión E-Learning';
-    document.getElementById('openFormBtnLabel').textContent = 'Nueva sesión';
-    document.getElementById('openFormBtn').style.background = '#6366f1';
-    document.getElementById('openFormBtn').style.borderColor = '#6366f1';
-    document.getElementById('openFormBtn').onclick = () => openElModal();
-
-    // Esperar 3 frames para que el panel sea visible y tenga dimensiones
-    const initEL = () => {
-      if (!elCalendar) {
-        initElCalendar();
-      } else {
-        elCalendar.updateSize();
-        renderElCalendar();
-      }
-      if (!elSesiones.length) cargarElSesiones();
-      else { renderElTable(); updateElKpis(); }
-      if (!diTickets.length) cargarDiTickets();
-      else renderDiPipeline();
-    };
-
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() => {
-          initEL();
-          setTimeout(() => { try { if(elCalendar) elCalendar.updateSize(); } catch(e){} }, 150);
-          setTimeout(() => { try { if(elCalendar) elCalendar.updateSize(); } catch(e){} }, 500);
-        })
-      )
-    );
-  }
+  // Función mantenida por compatibilidad — vista única de calendario
+  vistaActiva = 'cal';
+  try { calendar.updateSize(); } catch(e) {}
 }
 
 // ── CRUD E-Learning ───────────────────────────────────────
@@ -3703,6 +3852,52 @@ function renderDiPipeline() {
   });
 }
 
+
+function copiarCorreo(el, email) {
+  navigator.clipboard.writeText(email).then(() => {
+    const chip = el.querySelector('.correo-copied');
+    chip.classList.add('show');
+    setTimeout(() => chip.classList.remove('show'), 1800);
+  }).catch(() => {
+    // Fallback para navegadores sin clipboard API
+    const ta = document.createElement('textarea');
+    ta.value = email; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    const chip = el.querySelector('.correo-copied');
+    chip.classList.add('show');
+    setTimeout(() => chip.classList.remove('show'), 1800);
+  });
+}
+
+/* ── Sidebar: tabs + colapso ──────────────────────────── */
+function switchSbTab(tab) {
+  ['resumen','equipo','agenda'].forEach(t => {
+    document.getElementById('sbtab-' + t).classList.toggle('active', t === tab);
+    document.getElementById('sbpanel-' + t).classList.toggle('active', t === tab);
+  });
+  // Actualizar calendario si se activa agenda (por si cambió tamaño)
+  setTimeout(() => { try { calendar.updateSize(); } catch(e){} }, 260);
+}
+
+function toggleSection(head) {
+  const section = head.closest('.sb-section');
+  section.classList.toggle('open');
+}
+
+function toggleSidebar() {
+  const sb     = document.getElementById('mainSidebar');
+  const btn    = document.getElementById('sidebarToggle');
+  const layout = document.querySelector('.layout');
+  const isCollapsed = sb.classList.toggle('collapsed');
+  layout.classList.toggle('sidebar-hidden', isCollapsed);
+  btn.classList.toggle('collapsed', isCollapsed);
+  btn.textContent = isCollapsed ? '›' : '‹';
+  btn.style.left  = isCollapsed ? '0px' : '252px';
+  // Forzar re-render del calendario tras la animación
+  setTimeout(() => { try { calendar.updateSize(); } catch(e){} }, 280);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const calendarEl = document.getElementById('calendar');
 
@@ -3904,13 +4099,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Forzar vista Calendario al inicio
   document.getElementById('calPanel').style.display = 'flex';
   document.getElementById('elPanel').style.display  = 'none';
-  document.getElementById('tab-cal').classList.add('active');
-  document.getElementById('tab-el').classList.remove('active');
-  document.getElementById('topbar-sub-text').textContent = 'Coordinación del equipo de capacitación';
-  document.getElementById('openFormBtnLabel').textContent = 'Agregar actividad';
-  document.getElementById('openFormBtn').style.background = '';
-  document.getElementById('openFormBtn').style.borderColor = '';
-  document.getElementById('todayBtn').style.display = '';
   vistaActiva = 'cal';
 
   // Renderizar FullCalendar tras dos frames para asegurar dimensiones
