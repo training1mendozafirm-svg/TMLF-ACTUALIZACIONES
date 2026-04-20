@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seguimiento de Caso — The Mendoza Law Firm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:      #0f172a;
+    --navy-800:  #1e293b;
+    --navy-700:  #334155;
+    --navy-600:  #475569;
+    --blue:      #2563eb;
+    --blue-light:#3b82f6;
+    --blue-pale: #93c5fd;
+    --blue-bg:   #eff6ff;
+    --green:     #059669;
+    --green-bg:  #ecfdf5;
+    --green-pale:#6ee7b7;
+    --amber:     #d97706;
+    --amber-bg:  #fffbeb;
+    --gray:      #94a3b8;
+    --gray-bg:   #f8fafc;
+    --gray-100:  #f1f5f9;
+    --gray-200:  #e2e8f0;
+    --white:     #ffffff;
+    --gold:      #c9a84c;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.07);
+    --shadow-lg: 0 10px 30px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.08);
+    --radius:    12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--gray-bg);
+    color: var(--navy);
+    min-height: 100vh;
+  }
+
+  /* ═══════════════════════════════════════════════
+     HEADER
+  ═══════════════════════════════════════════════ */
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--gold);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 64px;
+  }
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .brand-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--gold), #e8c56a);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: 0.02em;
+  }
+  .brand-sub {
+    font-size: 0.65rem;
+    color: var(--gray);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .header-title {
+    text-align: center;
+  }
+  .header-title h1 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.01em;
+  }
+  .header-title p {
+    font-size: 0.7rem;
+    color: var(--gray);
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .btn-ghost {
+    background: rgba(255,255,255,0.08);
+    color: var(--white);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,0.15); }
+  .btn-primary {
+    background: var(--blue);
+    color: var(--white);
+  }
+  .btn-primary:hover { background: var(--blue-light); transform: translateY(-1px); }
+
+  /* ═══════════════════════════════════════════════
+     CONTROL PANEL
+  ═══════════════════════════════════════════════ */
+  .controls {
+    background: var(--navy-800);
+    padding: 1rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    align-items: end;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .ctrl-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .ctrl-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .ctrl-select {
+    background: rgba(255,255,255,0.07);
+    color: var(--white);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    padding-right: 36px;
+  }
+  .ctrl-select:focus {
+    outline: none;
+    border-color: var(--blue-pale);
+  }
+  .ctrl-select option { background: var(--navy-800); color: var(--white); }
+
+  /* View tabs */
+  .view-tabs {
+    display: flex;
+    gap: 4px;
+    background: rgba(0,0,0,0.25);
+    border-radius: 10px;
+    padding: 3px;
+  }
+  .view-tab {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 7px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: all 0.2s ease;
+    text-align: center;
+    color: var(--gray);
+    background: transparent;
+  }
+  .view-tab.active {
+    background: var(--white);
+    color: var(--navy);
+    box-shadow: var(--shadow-sm);
+  }
+  .view-tab.active.ext {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: var(--white);
+  }
+
+  /* ═══════════════════════════════════════════════
+     PROGRESS BAR SECTION
+  ═══════════════════════════════════════════════ */
+  .progress-section {
+    background: var(--navy-800);
+    padding: 0.75rem 2rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .progress-label {
+    font-size: 0.72rem;
+    color: var(--gray);
+    font-weight: 500;
+  }
+  .progress-stats {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .stat-chip {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--gray);
+  }
+  .stat-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+  .stat-dot.done { background: var(--green); }
+  .stat-dot.current { background: var(--blue-light); }
+  .stat-dot.pending { background: var(--navy-600); }
+  .progress-pct {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--white);
+  }
+  .progress-bar-track {
+    height: 8px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #1d4ed8, #3b82f6, #60a5fa);
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+    position: relative;
+    overflow: hidden;
+  }
+  .progress-bar-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%);
+    animation: shimmer 2s infinite;
+  }
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* ═══════════════════════════════════════════════
+     SEARCH & CASE HEADER
+  ═══════════════════════════════════════════════ */
+  .main-header {
+    padding: 1.25rem 2rem 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .case-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .case-type-pill {
+    background: var(--blue);
+    color: var(--white);
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 99px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .case-desc {
+    font-size: 0.8rem;
+    color: var(--navy-600);
+    font-weight: 400;
+    max-width: 480px;
+  }
+  .view-label-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 8px;
+  }
+  .view-label-badge.internal {
+    background: rgba(5,150,105,0.1);
+    color: var(--green);
+    border: 1px solid rgba(5,150,105,0.2);
+  }
+  .view-label-badge.external {
+    background: rgba(37,99,235,0.1);
+    color: var(--blue);
+    border: 1px solid rgba(37,99,235,0.2);
+  }
+
+  .search-wrap {
+    position: relative;
+    width: 240px;
+    flex-shrink: 0;
+  }
+  .search-icon {
+    position: absolute;
+    left: 10px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray);
+    font-size: 14px;
+    pointer-events: none;
+  }
+  .search-input {
+    width: 100%;
+    padding: 8px 12px 8px 32px;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.82rem;
+    background: var(--white);
+    color: var(--navy);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-input:focus {
+    outline: none;
+    border-color: var(--blue-pale);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+  }
+  .search-input::placeholder { color: var(--gray); }
+
+  /* ═══════════════════════════════════════════════
+     TIMELINE
+  ═══════════════════════════════════════════════ */
+  .timeline-container {
+    padding: 1rem 2rem 1.5rem;
+    max-width: 900px;
+  }
+
+  .transition-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    border: 1px solid #fcd34d;
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    margin-bottom: 1rem;
+    font-size: 0.78rem;
+    color: #92400e;
+    font-weight: 500;
+  }
+  .transition-banner-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 48px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 16px;
+    top: 20px;
+    bottom: 20px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--green-pale), var(--blue-pale), var(--gray-200));
+    border-radius: 2px;
+  }
+
+  .stage-card {
+    position: relative;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+  }
+  .stage-card.hidden { display: none; }
+
+  .stage-dot {
+    position: absolute;
+    left: -40px;
+    top: 18px;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    z-index: 2;
+    transition: all 0.3s ease;
+    border: 3px solid var(--gray-bg);
+  }
+  .stage-dot.done {
+    background: var(--green);
+    color: var(--white);
+    box-shadow: 0 0 0 3px rgba(5,150,105,0.2);
+  }
+  .stage-dot.current {
+    background: var(--blue);
+    color: var(--white);
+    box-shadow: 0 0 0 5px rgba(37,99,235,0.2), 0 0 0 8px rgba(37,99,235,0.08);
+    animation: pulseGlow 2s infinite;
+  }
+  .stage-dot.pending {
+    background: var(--gray-200);
+    color: var(--navy-600);
+    border-color: var(--gray-bg);
+  }
+  .stage-dot.transition-dot {
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+    color: var(--white);
+    box-shadow: 0 0 0 4px rgba(217,119,6,0.2);
+    width: 28px; height: 28px;
+    left: -42px;
+  }
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 0 5px rgba(37,99,235,0.2), 0 0 0 8px rgba(37,99,235,0.08); }
+    50% { box-shadow: 0 0 0 7px rgba(37,99,235,0.25), 0 0 0 12px rgba(37,99,235,0.06); }
+  }
+
+  .stage-inner {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-200);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .stage-card.done .stage-inner {
+    border-left: 3px solid var(--green);
+    opacity: 0.85;
+  }
+  .stage-card.current .stage-inner {
+    border-left: 3px solid var(--blue);
+    box-shadow: var(--shadow-md), 0 0 0 1px rgba(37,99,235,0.15);
+    background: linear-gradient(135deg, #ffffff, #f0f7ff);
+    opacity: 1;
+    transform: translateX(4px);
+  }
+  .stage-card.pending .stage-inner {
+    border-left: 3px solid var(--gray-200);
+    opacity: 0.6;
+  }
+  .stage-card.transition-stage .stage-inner {
+    border-left: 3px solid var(--amber);
+    background: linear-gradient(135deg, #fffdf7, #fffbeb);
+    box-shadow: 0 4px 16px rgba(217,119,6,0.12);
+    opacity: 0.9;
+  }
+  .stage-card.transition-stage.current .stage-inner {
+    opacity: 1;
+  }
+  .stage-inner:hover { transform: translateX(2px); box-shadow: var(--shadow-md); }
+  .stage-card.current .stage-inner:hover { transform: translateX(5px); }
+
+  .stage-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .stage-name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.3;
+  }
+  .stage-card.pending .stage-name { color: var(--navy-600); }
+  .stage-card.done .stage-name { color: var(--navy-700); }
+  .stage-card.current .stage-name { color: var(--navy); }
+
+  .stage-status-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 99px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .badge-done { background: var(--green-bg); color: var(--green); }
+  .badge-current { background: var(--blue-bg); color: var(--blue); }
+  .badge-pending { background: var(--gray-100); color: var(--navy-600); }
+  .badge-transition { background: var(--amber-bg); color: var(--amber); }
+
+  .stage-time {
+    font-size: 0.73rem;
+    color: var(--navy-600);
+    font-weight: 500;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .stage-time-icon { font-size: 11px; opacity: 0.7; }
+  .stage-desc {
+    font-size: 0.78rem;
+    color: var(--navy-700);
+    line-height: 1.55;
+    font-weight: 400;
+  }
+  .stage-card.pending .stage-desc { color: var(--gray); }
+
+  /* Transition stage special */
+  .stage-card.transition-stage .stage-name { color: #92400e; }
+  .stage-card.transition-stage.done .stage-name { color: #78350f; }
+
+  /* ═══════════════════════════════════════════════
+     EMPTY / NO RESULTS
+  ═══════════════════════════════════════════════ */
+  .no-results {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--gray);
+    display: none;
+  }
+  .no-results-icon { font-size: 2.5rem; margin-bottom: 0.5rem; opacity: 0.5; }
+  .no-results p { font-size: 0.85rem; }
+
+  /* ═══════════════════════════════════════════════
+     INFO BANNER
+  ═══════════════════════════════════════════════ */
+  .info-section {
+    padding: 0 2rem 2rem;
+    max-width: 900px;
+  }
+  .info-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    box-shadow: var(--shadow-sm);
+  }
+  .info-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    opacity: 0.85;
+    margin-top: 1px;
+  }
+  .info-content h3 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .info-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .info-list li {
+    font-size: 0.77rem;
+    color: var(--navy-700);
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+  .info-list li::before {
+    content: '·';
+    color: var(--blue);
+    font-weight: 800;
+    flex-shrink: 0;
+    margin-top: -1px;
+  }
+
+  /* ═══════════════════════════════════════════════
+     PRINT STYLES
+  ═══════════════════════════════════════════════ */
+  @media print {
+    body { background: white !important; }
+    header {
+      background: var(--navy) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      position: static !important;
+    }
+    .controls, .progress-section {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      position: static !important;
+      break-inside: avoid;
+    }
+    .header-actions { display: none !important; }
+    .search-wrap { display: none !important; }
+    .stage-card.pending .stage-inner { opacity: 0.5; }
+    .stage-card { break-inside: avoid; }
+    .view-tabs { display: none !important; }
+    .progress-bar-fill::after { display: none !important; }
+  }
+
+  /* ═══════════════════════════════════════════════
+     ANIMATIONS
+  ═══════════════════════════════════════════════ */
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .stage-card {
+    animation: fadeSlideIn 0.3s ease both;
+  }
+
+  /* Stagger children */
+  .stage-card:nth-child(1)  { animation-delay: 0.03s; }
+  .stage-card:nth-child(2)  { animation-delay: 0.06s; }
+  .stage-card:nth-child(3)  { animation-delay: 0.09s; }
+  .stage-card:nth-child(4)  { animation-delay: 0.12s; }
+  .stage-card:nth-child(5)  { animation-delay: 0.15s; }
+  .stage-card:nth-child(6)  { animation-delay: 0.18s; }
+  .stage-card:nth-child(7)  { animation-delay: 0.21s; }
+  .stage-card:nth-child(8)  { animation-delay: 0.24s; }
+  .stage-card:nth-child(9)  { animation-delay: 0.27s; }
+  .stage-card:nth-child(10) { animation-delay: 0.30s; }
+  .stage-card:nth-child(11) { animation-delay: 0.33s; }
+  .stage-card:nth-child(12) { animation-delay: 0.36s; }
+  .stage-card:nth-child(13) { animation-delay: 0.39s; }
+  .stage-card:nth-child(14) { animation-delay: 0.42s; }
+
+  /* ═══════════════════════════════════════════════
+     RESPONSIVE
+  ═══════════════════════════════════════════════ */
+  @media (max-width: 768px) {
+    header { padding: 0 1rem; }
+    .header-title { display: none; }
+    .controls {
+      grid-template-columns: 1fr 1fr;
+      padding: 0.75rem 1rem;
+      gap: 0.75rem;
+    }
+    .progress-section { padding: 0.75rem 1rem; }
+    .main-header { padding: 1rem 1rem 0.5rem; flex-wrap: wrap; }
+    .case-desc { display: none; }
+    .timeline-container { padding: 1rem 1rem 1.5rem; }
+    .info-section { padding: 0 1rem 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ HEADER -->
+<header>
+  <div class="header-brand">
+    <div class="brand-icon">⚖️</div>
+    <div>
+      <div class="brand-name">The Mendoza Law Firm</div>
+      <div class="brand-sub">Immigration Legal Services</div>
+    </div>
+  </div>
+  <div class="header-title">
+    <h1>Seguimiento de Proceso de Caso</h1>
+    <p>Visualiza claramente la etapa actual del cliente</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-ghost" onclick="resetAll()">↺ Reiniciar</button>
+    <button class="btn btn-primary" onclick="exportPDF()">⬇ Exportar PDF</button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════ CONTROLS -->
+<div class="controls">
+  <div class="ctrl-group">
+    <span class="ctrl-label">Tipo de Caso</span>
+    <select id="caseTypeSelect" class="ctrl-select" onchange="onCaseTypeChange()">
+      <option value="VAWA">VAWA</option>
+      <option value="VISA T">Visa T</option>
+      <option value="REG AOS">Reg AOS</option>
+      <option value="VISA U">Visa U</option>
+      <option value="PROCESO CONSULAR">Proceso Consular</option>
+      <option value="PIP ARMY">PIP Army</option>
+      <option value="PIP BIDEN">PIP Biden</option>
+      <option value="K1">K1</option>
+      <option value="DACA">DACA</option>
+      <option value="FOIA">FOIA</option>
+      <option value="I-751">I-751</option>
+      <option value="I-90">I-90</option>
+      <option value="N-400">N-400</option>
+      <option value="N-600">N-600</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <span class="ctrl-label">Vista</span>
+    <div class="view-tabs">
+      <button class="view-tab active" id="tabInt" onclick="switchView('internal')">🏢 Internos</button>
+      <button class="view-tab ext" id="tabExt" onclick="switchView('external')">🌐 Externos</button>
+    </div>
+  </div>
+  <div class="ctrl-group">
+    <span class="ctrl-label">Etapa Actual</span>
+    <select id="stageSelect" class="ctrl-select" onchange="onStageChange()"></select>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ PROGRESS -->
+<div class="progress-section">
+  <div class="progress-header">
+    <div class="progress-stats">
+      <span class="stat-chip"><span class="stat-dot done"></span> <span id="doneCount">0</span> completadas</span>
+      <span class="stat-chip"><span class="stat-dot current"></span> Etapa actual</span>
+      <span class="stat-chip"><span class="stat-dot pending"></span> <span id="pendingCount">0</span> pendientes</span>
+    </div>
+    <span class="progress-pct" id="progressPct">0%</span>
+  </div>
+  <div class="progress-bar-track">
+    <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ MAIN HEADER -->
+<div class="main-header">
+  <div class="case-badge">
+    <span class="case-type-pill" id="caseTypePill">VAWA</span>
+    <span class="case-desc" id="caseDescText"></span>
+    <span class="view-label-badge internal" id="viewBadge">🏢 Procesos Internos</span>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-input" id="searchInput" placeholder="Buscar etapa…" oninput="onSearch()">
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ TIMELINE -->
+<div class="timeline-container">
+  <div id="transitionBanner" class="transition-banner" style="display:none">
+    <span class="transition-banner-icon">🌐</span>
+    <span>Estos procesos inician después de que el paquete es enviado a USCIS. Los tiempos dependen de USCIS y están fuera del control del despacho.</span>
+  </div>
+  <div class="timeline" id="timeline"></div>
+  <div class="no-results" id="noResults">
+    <div class="no-results-icon">🔎</div>
+    <p>No se encontraron etapas con ese término.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ INFO -->
+<div class="info-section">
+  <div class="info-card">
+    <div class="info-icon">ℹ️</div>
+    <div class="info-content">
+      <h3>Importante — Información para el Cliente</h3>
+      <ul class="info-list">
+        <li>Los tiempos indicados son <strong>aproximados</strong> y pueden variar según cada caso particular.</li>
+        <li>USCIS puede modificar sus tiempos de procesamiento en cualquier momento sin previo aviso.</li>
+        <li>Algunas etapas pueden <strong>omitirse o reordenarse</strong> según las circunstancias del caso.</li>
+        <li>Las etapas externas dependen completamente de USCIS y entidades externas al despacho.</li>
+        <li>Para consultas sobre el estatus de su caso, comuníquese directamente con su asesor.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  CASE DATA
+// ══════════════════════════════════════════════════════════════
+const CASE_DATA = {
+  'VAWA': {
+    label: 'VAWA',
+    desc: 'Violencia Contra la Mujer — Visa humanitaria para víctimas de violencia doméstica.',
+    internal: [
+      { name: 'Inicio del Caso', time: 'Al pago del Retainer (Enganche)', desc: 'Se formaliza el inicio del caso al recibir el pago del retainer.', isTransition: false },
+      { name: 'Collecting Documents', time: 'Tiempo indefinido', desc: 'Follow Up reúne los documentos hasta estar Fully (ya están completos).' },
+      { name: 'RFA — Ready for Assembly', time: '1–2 meses aprox.', desc: 'Caso listo para iniciar el ensamblado del paquete (first draft).' },
+      { name: 'VAWA Interview (Entrevista VAWA)', time: '1–3 meses aprox.', desc: 'Entrevista con psicólogos, realizada simultáneamente a la recolección de documentos.' },
+      { name: 'Declaración', time: '1–3 meses aprox.', desc: 'Se trabaja en la declaración. Después de 4 meses se escala.' },
+      { name: 'Packet Assembled', time: '6–12 semanas aprox.', desc: 'Se junta el First Draft y la declaración para generar el paquete del Case Review. Después de 4 meses se escala.' },
+      { name: 'Case Review', time: '6–12 semanas aprox.', desc: 'Revisión de la declaración con el cliente. Después de 5 meses de Ready for Case Review se escala.' },
+      { name: 'Attorney Review', time: '6–12 semanas aprox.', desc: 'Los abogados asistentes revisan el caso y se generan correcciones. Después de 4 meses se escala.' },
+      { name: 'Final Review', time: '6–12 semanas aprox.', desc: 'Revisión final por la abogada. Después de 4 meses se escala.' },
+      { name: 'Ready to Print', time: '1 mes aprox.', desc: 'Se imprime el paquete. Después de 2 meses se escala. La abogada puede enviarlo a declaración para correcciones.' },
+      { name: 'Send to USCIS', time: 'Posterior a Ready to Print', desc: '📤 Envío a inmigración. Este es el punto de transición entre procesos internos y externos.', isTransition: true }
+    ],
+    external: [
+      { name: 'Recibos Iniciales', time: '120 días hábiles aprox.', desc: 'AOS y COR: I-360 / I-765 / I-131 / I-485 DA I-360. Primeros recibos de USCIS. Pasando 180 días naturales se puede solicitar Missing Receipts (Tier 2).' },
+      { name: 'Prima Facie', time: '3–4 meses después de recibos', desc: 'Puede demorar más de lo aproximado o no llegar.' },
+      { name: 'Biométricos', time: '3–4 meses después de recibos', desc: 'Queda a consideración de USCIS; puede que no den cita.' },
+      { name: 'Permiso de Trabajo', time: '8–14 meses después de recibos', desc: 'Correr números de recibo en la página de USCIS. Pasando los 15 meses se puede solicitar E-Request (Tier 2).' },
+      { name: 'SSN (Núm. de Seguro Social)', time: '4 meses después del EAD', desc: 'Puede llegar al mismo tiempo que el EAD. Pasando 4 meses el cliente puede acercarse a las oficinas del Social.' },
+      { name: 'Permiso de Viaje', time: '8–14 meses después de recibos', desc: 'Correr números de recibo en USCIS. Pasando los 15 meses se puede solicitar E-Request (Tier 2).' },
+      { name: 'Información sobre Visa VAWA', time: '36–47.5 meses después de recibos', desc: 'Correr números de recibo en la página de USCIS. El despacho informa al cliente sobre el avance.' },
+      { name: 'RFE / Exámenes Médicos', time: '~47.5 meses', desc: 'Se solicitan exámenes médicos (RFE). Puede haber diferencia de 4 meses de la Visa VAWA. Se escala al área de RFE.' },
+      { name: 'Entrevista para Residencia', time: '47.5+ meses', desc: 'Información sobre la entrevista para la residencia. Puede haber diferencia de 5 meses.' }
+    ]
+  },
+  'VISA T': {
+    label: 'Visa T',
+    desc: 'Visa humanitaria para víctimas de trata humana. Requiere cooperar con agencias del orden público.',
+    internal: [
+      { name: 'Inicio del Caso — Visa T', time: 'Al pago del Retainer', desc: 'Visa humanitaria para víctimas de trata humana (*Coyote / Cónyuge / Trato de mano de obra). Requiere cooperar con agencias del orden público.' },
+      { name: 'Collecting Documents', time: 'Tiempo indefinido', desc: 'Follow Up reúne los documentos hasta estar Fully (ya están completos).' },
+      { name: 'RFA — Ready for Assembly', time: '1–2 meses aprox.', desc: 'Caso listo para iniciar el ensamblado del paquete (first draft).' },
+      { name: 'Visa T Interview (Entrevista Visa T)', time: '1–3 meses aprox.', desc: 'Entrevista con psicólogos, realizada simultáneamente a la recolección de documentos.' },
+      { name: 'Declaración', time: '1–3 meses', desc: 'Se trabaja en la declaración. Después de 4 meses se escala.' },
+      { name: 'LEA', time: '1 mes desde que está Fully', desc: 'Se comunica para preguntar si el cliente va a cooperar con las autoridades correspondientes.' },
+      { name: 'Packet Assembled', time: '1 mes desde Fully', desc: 'Se realiza el paquete mientras se trabajan: entrevista, declaración y LEA.' },
+      { name: 'Case Review', time: '6–12 semanas aprox.', desc: 'Revisión de la declaración con el cliente. Después de 5 meses de Ready for Case Review.' },
+      { name: 'Attorney Review', time: '6–12 semanas aprox.', desc: 'Los abogados asistentes revisan el caso. Después de 4 meses se escala.' },
+      { name: 'Final Review', time: '6–12 semanas aprox.', desc: 'Revisión final por la abogada. Después de 4 meses se escala.' },
+      { name: 'Ready to Print', time: '1 mes aprox.', desc: 'Se imprime el paquete. Después de 2 meses se escala.' },
+      { name: 'Send to USCIS', time: 'Posterior a Ready to Print', desc: '📤 Envío a inmigración. Punto de transición entre procesos internos y externos.', isTransition: true }
+    ],
+    external: [
+      { name: 'Recibos Iniciales', time: '120 días hábiles aprox.', desc: 'I-914 / I-192 / I-765 (Derivado: I-914A / I-192 / I-765). Primeros recibos de USCIS. Pasando 180 días se puede solicitar Missing Receipts (Tier 2).' },
+      { name: 'Biométricos', time: '3–4 meses después de recibos', desc: 'Queda a consideración de USCIS; puede que no den cita.' },
+      { name: 'Bona Fide', time: '12–14 meses después de recibos', desc: 'Respuesta de la I-765. Documento que indica que enviarán un EAD de buena fe mientras el caso es aprobado (no implica aprobación del caso).' },
+      { name: 'Permiso de Trabajo', time: '16–18 meses después del Bona Fide', desc: 'Respuesta de la I-914. Correr números en USCIS. El EAD llega por 4 años. Pasando los 18 meses se puede solicitar E-Request (Tier 2).' },
+      { name: 'SSN (Núm. de Seguro Social)', time: '4 meses después del EAD', desc: 'El cliente puede acercarse a las oficinas del Social Security después de 4 meses.' },
+      { name: 'Residencia', time: 'Después de 3 años de aprobación', desc: 'Abrir Reg. AOS después de 3 años de aprobada la visa para llegar a la residencia (solo I-485).' }
+    ]
+  },
+  'REG AOS': {
+    label: 'Reg AOS',
+    desc: 'Ajuste de Estatus — Arreglar papeles sin salir de EE. UU. (245-I: entrada ilegal / 245-A: entrada legal).',
+    internal: [
+      { name: 'Inicio del Caso — Reg AOS', time: 'Al pago del Retainer', desc: 'Ajuste de estatus para arreglar papeles sin salir de EE. UU. 245-I: personas que entraron ilegalmente con petición antes del 30/04/2001. 245-A: personas que entraron legalmente.' },
+      { name: 'Collecting Documents', time: 'Tiempo indefinido', desc: 'Follow Up reúne los documentos hasta estar Fully (ya están completos).' },
+      { name: 'RFA — Ready for Assembly', time: 'Al llegar a Fully', desc: 'Caso listo para iniciar el ensamblado del paquete (first draft).' },
+      { name: 'Packet Assembly', time: '1 mes desde Fully', desc: 'Se realiza el paquete. Si hay nota de Missing Info 1st Draft (forms), se pasa a Diego Lara.' },
+      { name: 'Case Review', time: '6–12 semanas aprox.', desc: 'Revisión de la declaración con el cliente. Después de 5 meses de Ready for Case Review.' },
+      { name: 'Attorney Review', time: '6–12 semanas aprox.', desc: 'Los abogados asistentes revisan el caso. Después de 4 meses se escala.' },
+      { name: 'Final Review', time: '6–12 semanas aprox.', desc: 'Revisión final por la abogada. Después de 4 meses se escala.' },
+      { name: 'Ready to Print', time: '1 mes aprox.', desc: 'Se imprime el paquete. Después de 2 meses se escala.' },
+      { name: 'Send to USCIS', time: 'Posterior a Ready to Print', desc: '📤 Envío a inmigración. Punto de transición entre procesos internos y externos.', isTransition: true }
+    ],
+    external: [
+      { name: 'Recibos Iniciales', time: '120 días hábiles aprox.', desc: 'I-130 / I-765 / I-131 / I-485. Primeros recibos de USCIS. Pasando 180 días se puede solicitar Missing Receipts (Tier 2).' },
+      { name: 'Biométricos', time: '3–4 meses después de recibos', desc: 'Queda a consideración de USCIS; puede que no den cita.' },
+      { name: 'Permiso de Trabajo', time: '13.5–14 meses después de recibos', desc: 'Correr números en USCIS. Pasando los 14 meses se puede solicitar E-Request (Tier 2).' },
+      { name: 'Permiso de Viaje', time: '13.5–14 meses después de recibos', desc: 'Correr números en USCIS.' },
+      { name: 'SSN (Núm. de Seguro Social)', time: 'Con el EAD aprox.', desc: 'Pasando 4 meses el cliente puede acercarse a las oficinas del Social Security.' },
+      { name: 'Petición Aprobada (I-130)', time: '14 meses aprox. después de recibos', desc: 'Solo para Reg. 245-A. La petición I-130 es aprobada por USCIS.' },
+      { name: 'Residencia', time: '~24 meses después de recibos', desc: 'Correr números de recibo en la página de USCIS.' }
+    ]
+  },
+  'VISA U': {
+    label: 'Visa U',
+    desc: 'Visa humanitaria para víctimas de crímenes físicos o mentales. Requiere reporte policial. (Verificar Deadline).',
+    internal: [
+      { name: 'Certificación SUP B — Inicio', time: 'Inicio del proceso', desc: 'Collecting Documents: Follow Up reúne los documentos necesarios para la certificación SUP B (I-918B).' },
+      { name: 'Envío del SUP B', time: 'Al tener documentos', desc: 'Se envía el Sup B (I-918B) al departamento de policía donde se levantó el reporte. Puede tomar hasta 1 mes recibir respuesta.' },
+      { name: 'Respuesta del DPT', time: '90–180 días hábiles', desc: 'El Departamento responde con la firma del Sup B. Después de los 90 días se escala con Denisse Olivera.' },
+      { name: 'Cita con DVS', time: '1 semana aprox.', desc: 'Con la respuesta del Sup B se genera una cita con DVS para iniciar formalmente el caso de Visa U.' },
+      { name: 'Inicio del Caso — Visa U', time: 'Post cita DVS', desc: 'Se inicia formalmente el caso de Visa U.' },
+      { name: 'Collecting Documents', time: 'Tiempo indefinido', desc: 'Follow Up reúne los documentos hasta estar Fully (ya están completos) y RFA.' },
+      { name: 'Visa U Interview (Entrevista Visa U)', time: '1 mes', desc: 'Los psicólogos le marcan para una entrevista y generar la declaración.' },
+      { name: 'Declaración', time: '2–3 semanas después de la entrevista', desc: 'Se trabaja en la declaración. Después de 4 semanas se escala.' },
+      { name: 'Packet Assembled', time: '1–3 meses', desc: 'Se junta el First Draft y la declaración para el Case Review.' },
+      { name: 'Case Review', time: '6–12 semanas aprox.', desc: 'Revisión de la declaración con el cliente. Después de 5 meses de Ready for Case Review.' },
+      { name: 'Attorney Review', time: '6–12 semanas aprox.', desc: 'Los abogados asistentes revisan el caso. Después de 4 meses se escala.' },
+      { name: 'Final Review', time: '6–12 semanas aprox.', desc: 'Revisión final por la abogada.' },
+      { name: 'Ready to Print', time: '1 mes aprox.', desc: 'Se imprime el paquete.' },
+      { name: 'Send to USCIS', time: 'Posterior a Ready to Print', desc: '📤 Envío a inmigración. Punto de transición entre procesos internos y externos.', isTransition: true }
+    ],
+    external: [
+      { name: 'Recibos Iniciales', time: '120 días hábiles aprox.', desc: 'I-918 / I-192 (Derivado: I-918A / I-192 / I-765). Primeros recibos de USCIS. Pasando 180 días se puede solicitar Missing Receipts (Tier 2).' },
+      { name: 'Biométricos', time: '3–12 meses después de recibos', desc: 'Queda a consideración de USCIS; puede que no den cita.' },
+      { name: 'Bona Fide', time: 'Varía según el caso', desc: 'Documento que indica que enviarán EAD de buena fe mientras el caso es analizado. No significa aprobación del caso.' },
+      { name: 'Permiso de Trabajo', time: '~30 meses después de recibos', desc: 'Correr números en USCIS. Pasando los 30 meses se puede solicitar E-Request (Tier 2).' },
+      { name: 'SSN (Núm. de Seguro Social)', time: 'Con el EAD aprox.', desc: 'Pasando 4 meses el cliente puede acercarse a las oficinas del Social Security.' },
+      { name: 'Aprobación de Visa U', time: '60–63 meses después de recibos', desc: 'Correr números en USCIS. Pasando los 63 meses se puede solicitar E-Request (Tier 2).' },
+      { name: 'Residencia', time: 'Después de 3 años de aprobación', desc: 'Abrir Reg. AOS después de 3 años de aprobada la visa (solo I-485).' }
+    ]
+  },
+  'PROCESO CONSULAR': {
+    label: 'Proceso Consular',
+    desc: 'Proceso para obtener visa de inmigrante desde el extranjero mediante entrevista en embajada o consulado.',
+    internal: [
+      { name: 'Inicio del Caso — Proceso Consular', time: 'Al pago del Retainer', desc: 'Permite obtener una visa de inmigrante para residir en EE. UU. a través de entrevista en embajada o consulado. Requiere salir de USA si el cliente está en el país.' },
+      { name: 'Collecting Documents', time: 'Tiempo indefinido', desc: 'Follow Up reúne los documentos hasta estar Fully (ya están completos).' },
+      { name: 'RFA — Ready for Assembly', time: 'Al llegar a Fully', desc: 'Caso listo para iniciar el ensamblado del paquete (first draft).' },
+      { name: 'Packet Assembled', time: '1–3 meses', desc: 'Se junta el First Draft y la declaración para el Case Review.' },
+      { name: 'Case Review', time: '6–12 semanas aprox.', desc: 'Revisión con el cliente. Después de 5 meses de Ready for Case Review.' },
+      { name: 'Attorney Review', time: '6–12 semanas aprox.', desc: 'Los abogados asistentes revisan el caso. Después de 4 meses se escala.' },
+      { name: 'Final Review', time: '6–12 semanas aprox.', desc: 'Revisión final por la abogada.' },
+      { name: 'Ready to Print', time: '1 mes aprox.', desc: 'Se imprime el paquete.' },
+      { name: 'Send to USCIS', time: 'Posterior a Ready to Print', desc: '📤 Envío a inmigración. Punto de transición entre procesos internos y externos.', isTransition: true }
+    ],
+    external: [
+      { name: 'Recibo Inicial (I-130)', time: '120 días hábiles aprox.', desc: 'Primeros recibos de USCIS. Pasando 180 días se puede solicitar Missing Receipts (Tier 2).' },
+      { name: 'Biométricos', time: '3–4 meses después de recibos', desc: 'Queda a consideración de USCIS; puede que no den cita.' },
+      { name: 'Aprobación I-130', time: '16 meses aprox. después de recibos', desc: 'Si pasa los 16 meses se puede solicitar a BO.' },
+      { name: 'Perdón I-601A (si aplica)', time: 'Si es necesario', desc: 'Si no procede pasar a NVC, se solicita el perdón I-601 o I-601A. Aprobación en ~42.5 meses. Se puede turnar después de los 43 meses.' },
+      { name: 'NVC — Centro Nacional de Visas', time: 'Post aprobación', desc: 'Se notifica a la NVC que se tiene una I-130 aprobada e I-601 (si aplica).' },
+      { name: 'DS-260', time: 'Post NVC', desc: 'Llenar formulario DS-260 en línea.' },
+      { name: 'Cita en Embajada', time: '17 meses después de envío a NVC', desc: 'Información sobre la cita en la embajada. Si pasa de 17 meses el cliente debe esperar.' },
+      { name: 'Residencia', time: '90 días después de aprobada la entrada', desc: 'Residencia. Si pasaron los 90 días se puede turnar.' }
+    ]
+  },
+  'PIP ARMY': {
+    label: 'PIP Army',
+    desc: 'Parole in Place para personas ilegales con vínculo con un militar de EE. UU.',
+    internal: [
+      { name: 'Inicio del Caso — PIP Army', time: 'Al pago del Retainer', desc: 'Permite a una persona ilegal que tiene un vínculo con un militar regularizar su estatus migratorio.' },
+      { name: 'Collecting Documents', time: 'Tiempo indefinido', desc: 'Follow Up reúne los documentos hasta estar Fully.' },
+      { name: 'RFA — Ready for Assembly', time: 'Al llegar a Fully', desc: 'Caso listo para iniciar el ensamblado del paquete.' },
+      { name: 'Packet Assembled', time: '1–3 meses', desc: 'Se junta el First Draft para el Case Review.' },
+      { name: 'Case Review', time: '6–12 semanas aprox.', desc: 'Revisión con el cliente. Después de 5 meses se escala.' },
+      { name: 'Attorney Review', time: '6–12 semanas aprox.', desc: 'Los abogados asistentes revisan el caso.' },
+      { name: 'Final Review', time: '6–12 semanas aprox.', desc: 'Revisión final por la abogada.' },
+      { name: 'Ready to Print', time: '1 mes aprox.', desc: 'Se imprime el paquete.' },
+      { name: 'Send to USCIS', time: 'Posterior a Ready to Print', desc: '📤 Envío a inmigración. Punto de transición entre procesos internos y externos.', isTransition: true }
+    ],
+    external: [
+      { name: 'Recibo Inicial (I-131)', time: '120 días hábiles aprox.', desc: 'Primeros recibos de USCIS. Pasando 180 días se puede solicitar Missing Receipts (Tier 2).' },
+      { name: 'Biométricos', time: '3–12 meses después de recibos', desc: 'Queda a consideración de USCIS; puede que no den cita.' },
+      { name: 'Aprobación — I-94 (Entrada Legal)', time: '14.5 meses aprox. después de recibos', desc: 'Si pasa los 15 meses se puede solicitar a BO.' },
+      { name: 'Inicia Reg AOS', time: 'Post I-94', desc: 'Ajuste de estatus a través de una 245-A.' }
+    ]
+  },
+  'PIP BIDEN': {
+    label: 'PIP Biden',
+    desc: 'Parole in Place para personas ilegales con vínculo con ciudadano americano antes del 17/06/24 y 10 años de estancia.',
+    internal: [
+      { name: 'Inicio del Caso — PIP Biden', time: 'Al pago del Retainer', desc: 'Permite a una persona ilegal obtener residencia por tener vínculo con un ciudadano americano (USC) antes del 17/06/24, pudiendo comprobar 10 años de estancia en EE. UU.' },
+      { name: 'Collecting Documents', time: 'Tiempo indefinido', desc: 'Follow Up reúne los documentos hasta estar Fully.' },
+      { name: 'RFA — Ready for Assembly', time: 'Al llegar a Fully', desc: 'Caso listo para iniciar el ensamblado del paquete.' },
+      { name: 'Packet Assembled', time: '1–3 meses', desc: 'Se junta el First Draft para el Case Review.' },
+      { name: 'Case Review', time: '6–12 semanas aprox.', desc: 'Revisión con el cliente. Después de 5 meses se escala.' },
+      { name: 'Attorney Review', time: '6–12 semanas aprox.', desc: 'Los abogados asistentes revisan el caso.' },
+      { name: 'Final Review', time: '6–12 semanas aprox.', desc: 'Revisión final por la abogada.' },
+      { name: 'Ready to Print', time: '1 mes aprox.', desc: 'Se imprime el paquete.' },
+      { name: 'Send to USCIS', time: 'Posterior a Ready to Print', desc: '📤 Envío a inmigración. Punto de transición entre procesos internos y externos.', isTransition: true }
+    ],
+    external: [
+      { name: 'Recibo Inicial (I-131F)', time: '120 días hábiles aprox.', desc: 'Primeros recibos de USCIS. Pasando 180 días se puede solicitar Missing Receipts (Tier 2).' },
+      { name: 'Biométricos', time: '3–12 meses después de recibos', desc: 'Queda a consideración de USCIS; puede que no den cita.' },
+      { name: 'Decisión + I-94 (Entrada Legal)', time: '14.5 meses aprox. después de recibos', desc: 'Si pasa los 15 meses se puede solicitar a BO. La I-94 funge como entrada legal.' },
+      { name: 'Inicia Reg AOS', time: 'Post I-94', desc: 'Ajuste de estatus a través de una 245-A. La I-94 funge como entrada legal.' }
+    ]
+  },
+  'K1': {
+    label: 'Visa K1',
+    desc: 'Permite que el/la prometido(a) extranjero(a) de un ciudadano americano ingrese a EE. UU. para casarse en 90 días.',
+    internal: [
+      { name: 'Inicio del Caso — Visa K1', time: 'Al pago del Retainer', desc: 'Permite que el/la prometido(a) extranjero(a) de un ciudadano americano ingrese a EE. UU. para casarse dentro de los 90 días posteriores a su llegada.' },
+      { name: 'Collecting Documents', time: 'Tiempo indefinido', desc: 'Follow Up reúne los documentos hasta estar Fully.' },
+      { name: 'RFA — Ready for Assembly', time: 'Al llegar a Fully', desc: 'Caso listo para iniciar el ensamblado del paquete.' },
+      { name: 'Entrevista K1', time: '1–2 meses aprox.', desc: 'Entrevista con psicólogos, simultánea a la recolección de documentos.' },
+      { name: 'Declaración', time: '1–3 meses', desc: 'Se trabaja en la declaración. Después de 4 meses se escala.' },
+      { name: 'Packet Assembled', time: '1–3 meses', desc: 'Se junta el First Draft y la declaración para el Case Review.' },
+      { name: 'Case Review', time: '6–12 semanas aprox.', desc: 'Revisión con el cliente.' },
+      { name: 'Attorney Review', time: '6–12 semanas aprox.', desc: 'Los abogados asistentes revisan el caso.' },
+      { name: 'Final Review', time: '6–12 semanas aprox.', desc: 'Revisión final por la abogada.' },
+      { name: 'Ready to Print', time: '1 mes aprox.', desc: 'Se imprime el paquete.' },
+      { name: 'Send to USCIS', time: 'Posterior a Ready to Print', desc: '📤 Envío a inmigración. Punto de transición entre procesos internos y externos.', isTransition: true }
+    ],
+    external: [
+      { name: 'Recibo Inicial (I-129F)', time: '120 días hábiles aprox.', desc: 'Primeros recibos de USCIS. Pasando 180 días se puede solicitar Missing Receipts (Tier 2).' },
+      { name: 'Aprobación I-129F', time: '9–26.5 meses después de recibos', desc: 'Si pasa los 27 meses se puede solicitar a BO.' },
+      { name: 'Notificación NVC', time: 'Post aprobación', desc: 'La NVC enviará número de caso para seguimiento en línea.' },
+      { name: 'DS-160', time: '~1 mes', desc: 'Llamada para completar el DS-160. Después de 2 meses se puede turnar.' },
+      { name: 'Cita en Consulado', time: 'Post DS-160', desc: 'Notificación de cita en el consulado.' },
+      { name: 'Ingreso a EE. UU.', time: 'Post visa', desc: 'Ingreso a EE. UU. para casarse dentro de 90 días.' },
+      { name: 'Inicia Reg AOS', time: 'Post matrimonio', desc: 'Se inicia el ajuste de estatus: I-130, I-765, I-131 e I-485.' }
+    ]
+  },
+  'DACA': {
+    label: 'DACA',
+    desc: 'Protección temporal de deportación para inmigrantes "Dreamers" que llegaron siendo menores de edad.',
+    internal: [
+      { name: 'Inicio del Caso — DACA', time: 'Al pago del Retainer', desc: 'Protege temporalmente de la deportación a inmigrantes indocumentados que llegaron al país siendo menores de edad ("Dreamers").' },
+      { name: 'Collecting Documents', time: 'Tiempo indefinido', desc: 'Follow Up reúne los documentos hasta estar Fully.' },
+      { name: 'RFA — Ready for Assembly', time: 'Al llegar a Fully', desc: 'Caso listo para iniciar el ensamblado del paquete.' },
+      { name: 'Packet Assembled', time: '1–3 meses', desc: 'Se junta el First Draft para el Case Review.' },
+      { name: 'Case Review', time: '6–12 semanas aprox.', desc: 'Revisión con el cliente.' },
+      { name: 'Attorney Review', time: '6–12 semanas aprox.', desc: 'Los abogados asistentes revisan el caso.' },
+      { name: 'Final Review', time: '6–12 semanas aprox.', desc: 'Revisión final por la abogada.' },
+      { name: 'Ready to Print', time: '1 mes aprox.', desc: 'Se imprime el paquete.' },
+      { name: 'Send to USCIS', time: 'Posterior a Ready to Print', desc: '📤 Envío a inmigración. Punto de transición entre procesos internos y externos.', isTransition: true }
+    ],
+    external: [
+      { name: 'Recibo Inicial', time: '120 días hábiles aprox.', desc: 'I-821D / I-765WS. Primeros recibos de USCIS. Pasando 180 días se puede solicitar Missing Receipts (Tier 2).' },
+      { name: 'Biométricos', time: '3–4 meses después de recibos', desc: 'Solo si USCIS lo requiere (p. ej. si pasó un año desde el vencimiento). Queda a consideración de USCIS.' },
+      { name: 'Aprobación', time: '5 meses aprox. después de recibos', desc: 'Si pasa los 6 meses se puede solicitar a BO. Después se debe esperar a que esté por vencer para iniciar renovación.' }
+    ]
+  },
+  'FOIA': {
+    label: 'FOIA',
+    desc: 'Investigación del historial criminal y entradas/salidas en EE. UU.',
+    internal: [
+      { name: 'Inicio del Caso — FOIA', time: 'Al pago del Retainer', desc: 'Investigación para conocer el historial criminal y las entradas y salidas en los Estados Unidos.' },
+      { name: 'Collecting Documents', time: 'Tiempo indefinido', desc: 'Se reúnen los documentos hasta estar Fully.' },
+      { name: 'RFA — Ready for Assembly', time: 'Al llegar a Fully', desc: 'Caso listo para iniciar el ensamblado del paquete.' },
+      { name: 'Packet Assembled', time: '1–3 meses', desc: 'Se junta el First Draft para el Case Review.' },
+      { name: 'Case Review', time: '6–12 semanas aprox.', desc: 'Revisión con el cliente.' },
+      { name: 'Attorney Review', time: '6–12 semanas aprox.', desc: 'Los abogados asistentes revisan el caso.' },
+      { name: 'Final Review', time: '6–12 semanas aprox.', desc: 'Revisión final por la abogada.' },
+      { name: 'Ready to Print', time: '1 mes aprox.', desc: 'Se imprime el paquete.' },
+      { name: 'Send to USCIS', time: 'Posterior a Ready to Print', desc: '📤 Envío a inmigración. Punto de transición entre procesos internos y externos.', isTransition: true }
+    ],
+    external: [
+      { name: 'FOIA Result', time: '3–12 meses aprox.', desc: 'Se le indica al cliente que debe esperar respuesta. Si pasaron los 12 meses se escala con TL para resometer el FOIA.' },
+      { name: 'Consejo Legal', time: 'Post resultado', desc: 'Asesoramiento legal basado en los resultados obtenidos del FOIA.' }
+    ]
+  },
+  'I-751': {
+    label: 'I-751',
+    desc: 'Remoción de las condiciones de una Residencia Permanente Condicionada (LPR condicionada).',
+    internal: [
+      { name: 'Inicio del Caso — I-751', time: 'Al pago del Retainer', desc: 'Remoción de las condiciones de una Residencia Condicionada. Importante: deben presentarse 90 días antes del vencimiento.' },
+      { name: 'Collecting Documents', time: 'Tiempo indefinido', desc: 'Follow Up reúne los documentos hasta estar Fully.' },
+      { name: 'RFA — Ready for Assembly', time: 'Al llegar a Fully', desc: 'Caso listo para iniciar el ensamblado del paquete.' },
+      { name: 'Packet Assembled', time: '1–3 meses', desc: 'Se junta el First Draft para el Case Review.' },
+      { name: 'Case Review', time: '6–12 semanas aprox.', desc: 'Revisión con el cliente.' },
+      { name: 'Attorney Review', time: '6–12 semanas aprox.', desc: 'Los abogados asistentes revisan el caso.' },
+      { name: 'Final Review', time: '6–12 semanas aprox.', desc: 'Revisión final por la abogada.' },
+      { name: 'Ready to Print', time: '1 mes aprox.', desc: 'Se imprime el paquete.' },
+      { name: 'Send to USCIS', time: 'Posterior a Ready to Print', desc: '📤 Envío a inmigración. Punto de transición entre procesos internos y externos.', isTransition: true }
+    ],
+    external: [
+      { name: 'Recibo Inicial (I-751)', time: '120 días hábiles aprox.', desc: 'Primeros recibos de USCIS. Pasando 180 días se puede solicitar Missing Receipts (Tier 2).' },
+      { name: 'Información sobre I-751', time: '~30.5 meses', desc: 'No se puede renovar la LPR condicionada. Se tienen 90 días antes del vencimiento para meter la solicitud.' }
+    ]
+  },
+  'I-90': {
+    label: 'I-90',
+    desc: 'Renovación de una Residencia Permanente Legal (LPR) no condicionada.',
+    internal: [
+      { name: 'Inicio del Caso — I-90', time: 'Al pago del Retainer', desc: 'Proceso para poder renovar una LPR no condicionada (Green Card de 10 años).' },
+      { name: 'Collecting Documents', time: 'Tiempo indefinido', desc: 'Follow Up reúne los documentos hasta estar Fully.' },
+      { name: 'RFA — Ready for Assembly', time: 'Al llegar a Fully', desc: 'Caso listo para iniciar el ensamblado del paquete.' },
+      { name: 'Packet Assembled', time: '1–3 meses', desc: 'Se junta el First Draft para el Case Review.' },
+      { name: 'Case Review', time: '6–12 semanas aprox.', desc: 'Revisión con el cliente.' },
+      { name: 'Attorney Review', time: '6–12 semanas aprox.', desc: 'Los abogados asistentes revisan el caso.' },
+      { name: 'Final Review', time: '6–12 semanas aprox.', desc: 'Revisión final por la abogada.' },
+      { name: 'Ready to Print', time: '1 mes aprox.', desc: 'Se imprime el paquete.' },
+      { name: 'Send to USCIS', time: 'Posterior a Ready to Print', desc: '📤 Envío a inmigración. Punto de transición entre procesos internos y externos.', isTransition: true }
+    ],
+    external: [
+      { name: 'Recibo Inicial (I-90)', time: '120 días hábiles aprox.', desc: 'Primeros recibos de USCIS. Pasando 180 días se puede solicitar Missing Receipts (Tier 2).' },
+      { name: 'Biométricos', time: '3–4 meses después de recibos', desc: 'Solo si USCIS lo requiere. Queda a consideración de USCIS.' },
+      { name: 'Información sobre Renovación', time: '~26 meses', desc: 'Se recibe información sobre la renovación de la LPR. Pasando los 26 meses se puede turnar.' }
+    ]
+  },
+  'N-400': {
+    label: 'N-400',
+    desc: 'Solicitud de naturalización — Residentes permanentes que desean convertirse en ciudadanos americanos.',
+    internal: [
+      { name: 'Inicio del Caso — N-400', time: 'Al pago del Retainer', desc: 'Los residentes permanentes legales de EE. UU. pueden solicitar naturalización para convertirse en ciudadanos americanos.' },
+      { name: 'Collecting Documents', time: 'Tiempo indefinido', desc: 'Follow Up reúne los documentos hasta estar Fully.' },
+      { name: 'RFA — Ready for Assembly', time: 'Al llegar a Fully', desc: 'Caso listo para iniciar el ensamblado del paquete.' },
+      { name: 'Packet Assembled', time: '1–3 meses', desc: 'Se junta el First Draft para el Case Review.' },
+      { name: 'Case Review', time: '6–12 semanas aprox.', desc: 'Revisión con el cliente.' },
+      { name: 'Attorney Review', time: '6–12 semanas aprox.', desc: 'Los abogados asistentes revisan el caso.' },
+      { name: 'Final Review', time: '6–12 semanas aprox.', desc: 'Revisión final por la abogada.' },
+      { name: 'Ready to Print', time: '1 mes aprox.', desc: 'Se imprime el paquete.' },
+      { name: 'Send to USCIS', time: 'Posterior a Ready to Print', desc: '📤 Envío a inmigración. Punto de transición entre procesos internos y externos.', isTransition: true }
+    ],
+    external: [
+      { name: 'Recibo Inicial (N-400)', time: '120 días hábiles aprox.', desc: 'Primeros recibos de USCIS. Pasando 180 días se puede solicitar Missing Receipts (Tier 2).' },
+      { name: 'Biométricos', time: '3–4 meses después de recibos', desc: 'Solo si USCIS lo requiere.' },
+      { name: 'Naturalización', time: '5–10.5 meses aprox.', desc: 'Información sobre el proceso de naturalización. Para mayor precisión verificar tiempos en USCIS. Pasando los 10.5 meses se puede turnar.' }
+    ]
+  },
+  'N-600': {
+    label: 'N-600',
+    desc: 'Certificado de ciudadanía para personas que adquirieron ciudadanía al nacer o por derivación.',
+    internal: [
+      { name: 'Inicio del Caso — N-600', time: 'Al pago del Retainer', desc: 'Solicitud de Certificado de Ciudadanía para personas que adquirieron ciudadanía al nacer o por naturalización de un padre.' },
+      { name: 'Collecting Documents', time: 'Tiempo indefinido', desc: 'Follow Up reúne los documentos hasta estar Fully.' },
+      { name: 'RFA — Ready for Assembly', time: 'Al llegar a Fully', desc: 'Caso listo para iniciar el ensamblado del paquete.' },
+      { name: 'Packet Assembled', time: '1–3 meses', desc: 'Se junta el First Draft para el Case Review.' },
+      { name: 'Case Review', time: '6–12 semanas aprox.', desc: 'Revisión con el cliente.' },
+      { name: 'Attorney Review', time: '6–12 semanas aprox.', desc: 'Los abogados asistentes revisan el caso.' },
+      { name: 'Final Review', time: '6–12 semanas aprox.', desc: 'Revisión final por la abogada.' },
+      { name: 'Ready to Print', time: '1 mes aprox.', desc: 'Se imprime el paquete.' },
+      { name: 'Send to USCIS', time: 'Posterior a Ready to Print', desc: '📤 Envío a inmigración. Punto de transición entre procesos internos y externos.', isTransition: true }
+    ],
+    external: [
+      { name: 'Recibo Inicial (N-600)', time: '120 días hábiles aprox.', desc: 'Primeros recibos de USCIS. Pasando 180 días se puede solicitar Missing Receipts (Tier 2).' },
+      { name: 'Biométricos', time: '3–4 meses después de recibos', desc: 'Solo si USCIS lo requiere.' },
+      { name: 'Certificado / Resolución Final', time: '3–15.5 meses aprox.', desc: 'Información sobre el certificado de ciudadanía. Para mayor precisión verificar en USCIS. Pasando los 10.5 meses se puede turnar.' }
+    ]
+  }
+};
+
+// ══════════════════════════════════════════════════════════════
+//  APP STATE
+// ══════════════════════════════════════════════════════════════
+let currentCase = 'VAWA';
+let currentView = 'internal';   // 'internal' | 'external'
+let currentStageIndex = 0;
+let searchTerm = '';
+
+// ══════════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════════
+function init() {
+  currentCase = 'VAWA';
+  currentView = 'internal';
+  currentStageIndex = 0;
+  document.getElementById('caseTypeSelect').value = currentCase;
+  updateStageSelect();
+  render();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  EVENT HANDLERS
+// ══════════════════════════════════════════════════════════════
+function onCaseTypeChange() {
+  currentCase = document.getElementById('caseTypeSelect').value;
+  currentStageIndex = 0;
+  updateStageSelect();
+  render();
+}
+
+function switchView(view) {
+  currentView = view;
+  currentStageIndex = 0;
+  document.getElementById('tabInt').classList.toggle('active', view === 'internal');
+  document.getElementById('tabExt').classList.toggle('active', view === 'external');
+  updateStageSelect();
+  render();
+}
+
+function onStageChange() {
+  currentStageIndex = parseInt(document.getElementById('stageSelect').value);
+  render();
+}
+
+function onSearch() {
+  searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+  render();
+}
+
+function resetAll() {
+  document.getElementById('searchInput').value = '';
+  searchTerm = '';
+  currentCase = 'VAWA';
+  currentView = 'internal';
+  currentStageIndex = 0;
+  document.getElementById('caseTypeSelect').value = 'VAWA';
+  document.getElementById('tabInt').classList.add('active');
+  document.getElementById('tabExt').classList.remove('active');
+  updateStageSelect();
+  render();
+}
+
+function exportPDF() {
+  window.print();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  STAGE SELECT POPULATION
+// ══════════════════════════════════════════════════════════════
+function updateStageSelect() {
+  const stages = getStages();
+  const sel = document.getElementById('stageSelect');
+  sel.innerHTML = '';
+  stages.forEach((s, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = (i + 1) + '. ' + s.name;
+    sel.appendChild(opt);
+  });
+  sel.value = currentStageIndex;
+}
+
+function getStages() {
+  return CASE_DATA[currentCase][currentView === 'internal' ? 'internal' : 'external'];
+}
+
+// ══════════════════════════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════════════════════════
+function render() {
+  const caseData = CASE_DATA[currentCase];
+  const stages = getStages();
+  const total = stages.length;
+  const doneCount = currentStageIndex;
+  const pendingCount = total - currentStageIndex - 1;
+  const pct = total <= 1 ? 100 : Math.round((currentStageIndex / (total - 1)) * 100);
+
+  // Update header
+  document.getElementById('caseTypePill').textContent = caseData.label;
+  document.getElementById('caseDescText').textContent = caseData.desc;
+  const viewBadge = document.getElementById('viewBadge');
+  if (currentView === 'internal') {
+    viewBadge.className = 'view-label-badge internal';
+    viewBadge.textContent = '🏢 Procesos Internos';
+  } else {
+    viewBadge.className = 'view-label-badge external';
+    viewBadge.textContent = '🌐 Procesos Externos';
+  }
+
+  // Progress
+  document.getElementById('doneCount').textContent = doneCount;
+  document.getElementById('pendingCount').textContent = pendingCount;
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressBar').style.width = pct + '%';
+
+  // External banner
+  document.getElementById('transitionBanner').style.display =
+    currentView === 'external' ? 'flex' : 'none';
+
+  // Sync stage select
+  document.getElementById('stageSelect').value = currentStageIndex;
+
+  // Render timeline
+  const timeline = document.getElementById('timeline');
+  timeline.innerHTML = '';
+  let anyVisible = false;
+
+  stages.forEach((stage, i) => {
+    const name = stage.name;
+    const matchesSearch = searchTerm === '' ||
+      name.toLowerCase().includes(searchTerm) ||
+      (stage.desc && stage.desc.toLowerCase().includes(searchTerm));
+
+    const card = document.createElement('div');
+    const isTransition = stage.isTransition === true;
+    let statusClass;
+    if (i < currentStageIndex) statusClass = 'done';
+    else if (i === currentStageIndex) statusClass = 'current';
+    else statusClass = 'pending';
+
+    card.className = 'stage-card ' + statusClass +
+      (isTransition ? ' transition-stage' : '') +
+      (matchesSearch ? '' : ' hidden');
+
+    if (matchesSearch) anyVisible = true;
+
+    // Dot
+    const dot = document.createElement('div');
+    dot.className = 'stage-dot ' + statusClass + (isTransition ? ' transition-dot' : '');
+    if (statusClass === 'done') {
+      dot.innerHTML = '✓';
+    } else if (statusClass === 'current') {
+      dot.innerHTML = (i + 1);
+    } else {
+      dot.innerHTML = (i + 1);
+    }
+    card.appendChild(dot);
+
+    // Inner card
+    const inner = document.createElement('div');
+    inner.className = 'stage-inner';
+    inner.onclick = () => setCurrentStage(i);
+
+    // Top row
+    const top = document.createElement('div');
+    top.className = 'stage-top';
+
+    const namEl = document.createElement('div');
+    namEl.className = 'stage-name';
+    namEl.textContent = name;
+    top.appendChild(namEl);
+
+    const badge = document.createElement('span');
+    badge.className = 'stage-status-badge';
+    if (isTransition && statusClass !== 'pending') {
+      badge.className += ' badge-transition';
+      badge.innerHTML = '🚀 Transición';
+    } else if (statusClass === 'done') {
+      badge.className += ' badge-done';
+      badge.innerHTML = '✔ Completada';
+    } else if (statusClass === 'current') {
+      badge.className += ' badge-current';
+      badge.innerHTML = '● Etapa Actual';
+    } else {
+      badge.className += ' badge-pending';
+      badge.innerHTML = '○ Pendiente';
+    }
+    top.appendChild(badge);
+    inner.appendChild(top);
+
+    // Time
+    if (stage.time) {
+      const timeEl = document.createElement('div');
+      timeEl.className = 'stage-time';
+      timeEl.innerHTML = '<span class="stage-time-icon">⏱</span>' + stage.time;
+      inner.appendChild(timeEl);
+    }
+
+    // Desc
+    const descEl = document.createElement('div');
+    descEl.className = 'stage-desc';
+    descEl.textContent = stage.desc;
+    inner.appendChild(descEl);
+
+    card.appendChild(inner);
+    timeline.appendChild(card);
+  });
+
+  // No results
+  document.getElementById('noResults').style.display = anyVisible ? 'none' : 'block';
+}
+
+function setCurrentStage(index) {
+  currentStageIndex = index;
+  document.getElementById('stageSelect').value = index;
+  render();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  START
+// ══════════════════════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
