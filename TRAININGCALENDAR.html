@@ -1132,6 +1132,63 @@
     /* ── Panel de tab ── */
     .sb-panel { display: none; flex-direction: column; gap: 0; }
     .sb-panel.active { display: flex; }
+
+    /* Semanas pasadas — altura reducida */
+    .fc-daygrid-body tr.fc-week-past td.fc-daygrid-day {
+      height: 28px !important;
+      min-height: 28px !important;
+      max-height: 28px !important;
+      overflow: hidden;
+    }
+    .fc-daygrid-body tr.fc-week-past .fc-daygrid-day-frame {
+      min-height: 28px !important;
+      height: 28px !important;
+    }
+    .fc-daygrid-body tr.fc-week-past .fc-daygrid-day-events,
+    .fc-daygrid-body tr.fc-week-past .fc-daygrid-day-bg {
+      display: none !important;
+    }
+    .fc-daygrid-body tr.fc-week-past .fc-daygrid-day-top {
+      opacity: 0.38;
+      font-size: 10px !important;
+    }
+    .fc-daygrid-body tr.fc-week-past .fc-daygrid-day-number {
+      font-size: 10px !important;
+      padding: 2px 4px !important;
+    }
+    /* Semanas expandidas (data-was-past) — atenuadas pero con info completa */
+    .fc-daygrid-body tr[data-was-past] td.fc-daygrid-day {
+      opacity: 0.65;
+      background: repeating-linear-gradient(
+        -45deg, transparent, transparent 6px,
+        rgba(0,0,0,.015) 6px, rgba(0,0,0,.015) 12px
+      );
+    }
+    .fc-daygrid-body tr[data-was-past] .fc-daygrid-day-number {
+      color: var(--text-3) !important;
+    }
+    /* Línea separadora entre semana pasada y actual */
+    .fc-daygrid-body tr.fc-week-current td {
+      border-top: 2px solid var(--accent) !important;
+    }
+    /* Botón para expandir semanas pasadas */
+    #expandPastWeeks {
+      position: absolute;
+      bottom: 6px;
+      left: 6px;
+      font-size: 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px 8px;
+      cursor: pointer;
+      color: var(--text-3);
+      font-weight: 600;
+      z-index: 10;
+      transition: all .15s;
+    }
+    #expandPastWeeks:hover { background: var(--border); color: var(--text-1); }
+    .calendar-card { position: relative; }
 </style>
 </head>
 <body>
@@ -1239,7 +1296,7 @@
                   </select></div>
               </div>
               <button class="sidebar-btn-clear" id="clearFiltersBtn">✕ Limpiar filtros</button>
-              <button class="sidebar-btn-clear" id="resetDataBtn" style="margin-top:4px">🔄 Recargar datos</button>
+              <button class="sidebar-btn-clear" id="resetDataBtn" style="margin-top:4px">🔄 Recargar datos <span id="autoRefreshBadge" style="font-size:9px;background:#d1fae5;color:#065f46;padding:1px 5px;border-radius:10px;font-weight:700">AUTO</span></button>
             </div>
           </div>
         </div>
@@ -2238,16 +2295,16 @@ let eventos = [];
 let backendActivo = false;
 
 // ── Cargar eventos desde Apps Script ──────────────────────
-async function cargarEventos() {
+let _autoRefreshing = false;
+async function cargarEventos(silent = false) {
   if (!WEB_APP_URL) {
-    showToast('⚠️ No hay URL configurada para el backend', 'warn');
     eventos = [];
     refreshCalendar();
     updateSidebar();
     return;
   }
   backendActivo = true;
-  showToast('🔄 Cargando datos...', 'info');
+  if (!silent) showToast('🔄 Cargando datos...', 'info');
 
   const url = WEB_APP_URL + '?action=getAll&t=' + Date.now();
   let text = null;
@@ -2304,7 +2361,7 @@ async function cargarEventos() {
       eventos = data.eventos || [];
       refreshCalendar();
       updateSidebar();
-      showToast('✓ ' + eventos.length + ' actividades cargadas', 'success');
+      if (!silent) showToast('✓ ' + eventos.length + ' actividades cargadas', 'success');
     } else {
       throw new Error(data.error || 'Respuesta inválida');
     }
@@ -3898,6 +3955,106 @@ function toggleSidebar() {
   setTimeout(() => { try { calendar.updateSize(); } catch(e){} }, 280);
 }
 
+
+/* ── Colapsar semanas pasadas ─────────────────────────── */
+let pastWeeksExpanded = false;
+
+function colapsarSemanasPassadas() {
+  if (pastWeeksExpanded) return;
+
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  // Obtener todas las filas de semana del daygrid
+  const rows = document.querySelectorAll('.fc-daygrid-body tbody tr');
+  let hayPasadas = false;
+  let semanaActualMarcada = false;
+
+  rows.forEach(row => {
+    row.classList.remove('fc-week-past', 'fc-week-current');
+
+    // Leer la primera celda de la fila para obtener la fecha
+    const firstCell = row.querySelector('td.fc-daygrid-day');
+    if (!firstCell) return;
+
+    const dateStr = firstCell.getAttribute('data-date');
+    if (!dateStr) return;
+
+    // Calcular el lunes y domingo de esa semana
+    const cellDate = new Date(dateStr + 'T00:00:00');
+    // Buscar el domingo (fin de semana)
+    const sunday = new Date(cellDate);
+    sunday.setDate(cellDate.getDate() + (6 - cellDate.getDay() + 1) % 7 + 6);
+    // Más simple: tomar todas las celdas de la fila y ver si TODAS son pasadas
+    const cells = row.querySelectorAll('td.fc-daygrid-day[data-date]');
+    const dates  = Array.from(cells).map(c => new Date(c.getAttribute('data-date') + 'T00:00:00'));
+    const allPast = dates.length > 0 && dates.every(d => d < hoy);
+    const hasToday = dates.some(d => {
+      const t = new Date(hoy);
+      return d.getFullYear() === t.getFullYear() && d.getMonth() === t.getMonth() && d.getDate() === t.getDate();
+    });
+
+    if (allPast) {
+      row.classList.add('fc-week-past');
+      hayPasadas = true;
+    } else if (hasToday && !semanaActualMarcada) {
+      row.classList.add('fc-week-current');
+      semanaActualMarcada = true;
+    }
+  });
+
+  // Mostrar botón de expandir si hay semanas pasadas
+  let btn = document.getElementById('expandPastWeeks');
+  if (hayPasadas) {
+    if (!btn) {
+      btn = document.createElement('button');
+      btn.id = 'expandPastWeeks';
+      btn.onclick = expandirSemanasPassadas;
+      document.querySelector('.calendar-card').appendChild(btn);
+    }
+    const n = document.querySelectorAll('tr.fc-week-past').length;
+    btn.textContent = '▲ Ver ' + n + ' semana' + (n > 1 ? 's' : '') + ' anterior' + (n > 1 ? 'es' : '');
+    btn.style.display = '';
+  } else if (btn) {
+    btn.style.display = 'none';
+  }
+}
+
+function expandirSemanasPassadas() {
+  pastWeeksExpanded = !pastWeeksExpanded;
+
+  if (pastWeeksExpanded) {
+    // Expandir: quitar clase past, restaurar altura y mostrar eventos
+    document.querySelectorAll('tr.fc-week-past').forEach(r => {
+      r.classList.remove('fc-week-past');
+      r.dataset.wasPast = 'true';
+    });
+  } else {
+    // Colapsar: devolver clase past a las filas que la tenían
+    document.querySelectorAll('tr[data-was-past]').forEach(r => {
+      r.classList.add('fc-week-past');
+    });
+  }
+
+  const btn = document.getElementById('expandPastWeeks');
+  if (btn) {
+    if (pastWeeksExpanded) {
+      const n = document.querySelectorAll('tr[data-was-past]').length;
+      btn.textContent = '▼ Ocultar ' + n + ' semana' + (n > 1 ? 's' : '') + ' anterior' + (n > 1 ? 'es' : '');
+      btn.style.background = 'var(--accent-lt)';
+      btn.style.color = 'var(--accent)';
+      btn.style.borderColor = 'var(--accent)';
+    } else {
+      const n = document.querySelectorAll('tr.fc-week-past').length;
+      btn.textContent = '▲ Ver ' + n + ' semana' + (n > 1 ? 's' : '') + ' anterior' + (n > 1 ? 'es' : '');
+      btn.style.background = '';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }
+  }
+  try { calendar.updateSize(); } catch(e) {}
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const calendarEl = document.getElementById('calendar');
 
@@ -3913,6 +4070,12 @@ document.addEventListener('DOMContentLoaded', () => {
       right: 'dayGridMonth,timeGridWeek,timeGridDay'
     },
     buttonText: { today: 'Hoy', month: 'Mes', week: 'Semana', day: 'Día' },
+
+    datesSet: function() {
+      // Cada vez que cambia el mes/vista, re-aplicar colapso
+      pastWeeksExpanded = false;
+      setTimeout(colapsarSemanasPassadas, 50);
+    },
     eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
 
     /* ── eventContent: TRAINER = color de fondo · PRIORIDAD = dot indicador ── */
@@ -4112,6 +4275,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   cargarEventos();
   updateSidebar();
+
+  // Auto-refresh cada 3 minutos
+  setInterval(() => {
+    cargarEventos(true);
+  }, 3 * 60 * 1000);
 
   /* ──────────────────────────────────────────────────────
      BACKEND CONNECTION POINT
