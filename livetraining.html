@@ -1,0 +1,3376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMLF Live Training Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== VARIABLES ===== */
+:root {
+  --c-bg:       #0f1117;
+  --c-surface:  #171a21;
+  --c-card:     #1e2230;
+  --c-border:   rgba(255,255,255,0.07);
+  --c-border2:  rgba(255,255,255,0.12);
+  --c-muted:    #617073;
+  --c-slate:    #7a93ac;
+  --c-sky:      #92bcea;
+  --c-lilac:    #afb3f7;
+  --c-white:    #f8fafc;
+  --c-light:    #e8edf3;
+  --c-green:    #4caf50;
+  --c-yellow:   #f4b400;
+  --c-red:      #d9534f;
+  --c-orange:   #f07c3a;
+  --c-accent:   #afb3f7;
+  --radius-sm:  6px;
+  --radius:     10px;
+  --radius-lg:  16px;
+  --radius-xl:  22px;
+  --shadow:     0 4px 24px rgba(0,0,0,0.4);
+  --shadow-lg:  0 8px 48px rgba(0,0,0,0.6);
+  --shadow-glow:0 0 32px rgba(175,179,247,0.15);
+  --font-ui:    'DM Sans', sans-serif;
+  --font-display:'Barlow Condensed', sans-serif;
+  --font-mono:  'JetBrains Mono', monospace;
+  --sidebar-w: 64px;
+  --header-h:  60px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%; font-family: var(--font-ui);
+  background: var(--c-bg); color: var(--c-white);
+  overflow: hidden; font-size: 14px;
+}
+
+/* ===== SCROLLBARS ===== */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--c-border2); border-radius: 10px; }
+
+/* ===== LAYOUT ===== */
+#app { display: flex; flex-direction: column; height: 100vh; }
+
+/* ===== HEADER ===== */
+#header {
+  height: var(--header-h); min-height: var(--header-h);
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border2);
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 16px;
+  position: relative; z-index: 100;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.5);
+}
+.header-logo {
+  font-family: var(--font-display);
+  font-size: 18px; font-weight: 800; letter-spacing: 2px;
+  color: var(--c-accent); white-space: nowrap;
+  text-transform: uppercase;
+}
+.header-logo span { color: var(--c-sky); }
+.header-sep { width: 1px; height: 28px; background: var(--c-border2); flex-shrink: 0; }
+.session-name-wrap { flex: 1; min-width: 0; }
+#sessionName {
+  background: transparent; border: none; outline: none;
+  font-family: var(--font-display); font-size: 15px; font-weight: 600;
+  color: var(--c-white); width: 100%;
+  cursor: text; border-bottom: 1px solid transparent;
+  transition: border-color .2s; padding: 2px 4px;
+  letter-spacing: 0.5px;
+}
+#sessionName:focus { border-color: var(--c-accent); }
+#sessionName::placeholder { color: var(--c-muted); }
+.header-meta { display: flex; align-items: center; gap: 10px; }
+.trainer-field {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm); padding: 4px 10px;
+}
+.trainer-field input {
+  background: transparent; border: none; outline: none;
+  color: var(--c-white); font-size: 12px; width: 110px;
+  font-family: var(--font-ui);
+}
+.trainer-field .lbl { color: var(--c-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+#liveClock {
+  font-family: var(--font-mono); font-size: 13px; color: var(--c-sky);
+  background: rgba(146,190,234,0.08); border: 1px solid rgba(146,190,234,0.15);
+  border-radius: var(--radius-sm); padding: 4px 10px; white-space: nowrap;
+}
+.header-btns { display: flex; gap: 6px; }
+.hbtn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: var(--radius-sm);
+  font-size: 11px; font-weight: 600; cursor: pointer;
+  border: 1px solid var(--c-border2); background: rgba(255,255,255,0.04);
+  color: var(--c-light); transition: all .18s; white-space: nowrap;
+  font-family: var(--font-ui); letter-spacing: 0.3px;
+}
+.hbtn:hover { background: rgba(255,255,255,0.08); border-color: var(--c-accent); color: var(--c-accent); }
+.hbtn.primary { background: rgba(175,179,247,0.12); border-color: rgba(175,179,247,0.3); color: var(--c-accent); }
+.hbtn.danger { background: rgba(217,83,79,0.1); border-color: rgba(217,83,79,0.3); color: var(--c-red); }
+
+/* ===== BODY LAYOUT ===== */
+#body { display: flex; flex: 1; overflow: hidden; }
+
+/* ===== SIDEBAR NAV ===== */
+#sidenav {
+  width: var(--sidebar-w); min-width: var(--sidebar-w);
+  background: var(--c-surface);
+  border-right: 1px solid var(--c-border2);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 10px 0; gap: 4px; overflow-y: auto;
+}
+.nav-item {
+  width: 44px; height: 44px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  border-radius: var(--radius); cursor: pointer;
+  transition: all .18s; color: var(--c-muted); gap: 2px;
+  position: relative;
+}
+.nav-item:hover { background: rgba(255,255,255,0.05); color: var(--c-sky); }
+.nav-item.active { background: rgba(175,179,247,0.12); color: var(--c-accent); box-shadow: var(--shadow-glow); }
+.nav-item .nav-icon { font-size: 18px; line-height: 1; }
+.nav-item .nav-label { font-size: 7px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+.nav-divider { width: 28px; height: 1px; background: var(--c-border); margin: 4px 0; }
+.nav-item .badge {
+  position: absolute; top: 4px; right: 4px;
+  background: var(--c-red); color: white; border-radius: 20px;
+  font-size: 8px; font-weight: 700; min-width: 14px; height: 14px;
+  display: flex; align-items: center; justify-content: center; padding: 0 2px;
+}
+
+/* ===== MAIN CONTENT ===== */
+#main { flex: 1; overflow: hidden; position: relative; }
+
+.panel {
+  position: absolute; inset: 0;
+  overflow-y: auto; padding: 16px;
+  display: none; flex-direction: column; gap: 14px;
+}
+.panel.active { display: flex; }
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--c-card); border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg); padding: 16px;
+}
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.card-title {
+  font-family: var(--font-display); font-size: 14px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase; color: var(--c-accent);
+}
+.card-subtitle { font-size: 11px; color: var(--c-muted); margin-top: 2px; }
+
+/* ===== INPUTS ===== */
+.inp, .sel, textarea.inp {
+  background: rgba(255,255,255,0.04); border: 1px solid var(--c-border2);
+  border-radius: var(--radius-sm); padding: 8px 12px;
+  color: var(--c-white); font-size: 13px; font-family: var(--font-ui);
+  outline: none; transition: border-color .18s, box-shadow .18s; width: 100%;
+}
+.inp:focus, .sel:focus, textarea.inp:focus {
+  border-color: var(--c-accent); box-shadow: 0 0 0 2px rgba(175,179,247,0.1);
+}
+.inp::placeholder, textarea.inp::placeholder { color: var(--c-muted); }
+.sel { cursor: pointer; }
+.sel option { background: var(--c-card); }
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 8px 14px; border-radius: var(--radius-sm);
+  font-size: 12px; font-weight: 600; cursor: pointer; border: none;
+  font-family: var(--font-ui); transition: all .18s; letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+.btn-primary { background: var(--c-accent); color: #171a21; }
+.btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(175,179,247,0.3); }
+.btn-secondary { background: rgba(255,255,255,0.06); color: var(--c-light); border: 1px solid var(--c-border2); }
+.btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: var(--c-sky); }
+.btn-success { background: var(--c-green); color: white; }
+.btn-success:hover { filter: brightness(1.1); }
+.btn-danger { background: rgba(217,83,79,0.15); color: var(--c-red); border: 1px solid rgba(217,83,79,0.25); }
+.btn-danger:hover { background: rgba(217,83,79,0.25); }
+.btn-warn { background: rgba(244,180,0,0.15); color: var(--c-yellow); border: 1px solid rgba(244,180,0,0.25); }
+.btn-warn:hover { background: rgba(244,180,0,0.25); }
+.btn-sky { background: rgba(146,190,234,0.12); color: var(--c-sky); border: 1px solid rgba(146,190,234,0.2); }
+.btn-sky:hover { background: rgba(146,190,234,0.2); }
+.btn-sm { padding: 5px 10px; font-size: 11px; }
+.btn-xs { padding: 3px 8px; font-size: 10px; border-radius: 4px; }
+.btn-icon { padding: 6px; border-radius: var(--radius-sm); }
+
+/* ===== STATUS BADGES ===== */
+.status-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600;
+  letter-spacing: 0.5px; text-transform: uppercase;
+}
+.status-pending  { background: rgba(97,112,115,0.2); color: var(--c-slate); border: 1px solid rgba(97,112,115,0.3); }
+.status-participated { background: rgba(76,175,80,0.15); color: var(--c-green); border: 1px solid rgba(76,175,80,0.25); }
+.status-highlighted { background: rgba(244,180,0,0.15); color: var(--c-yellow); border: 1px solid rgba(244,180,0,0.25); }
+.status-absent  { background: rgba(217,83,79,0.12); color: var(--c-red); border: 1px solid rgba(217,83,79,0.2); }
+
+/* ===== GRID HELPERS ===== */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.flex-row { display: flex; align-items: center; gap: 8px; }
+.flex-col { display: flex; flex-direction: column; gap: 8px; }
+.flex-wrap { flex-wrap: wrap; }
+.flex-1 { flex: 1; }
+.mt8 { margin-top: 8px; }
+.mt12 { margin-top: 12px; }
+
+/* ===== TAG ===== */
+.tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 20px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.5px;
+}
+
+/* ===== PANEL: MEET ===== */
+.meet-card {
+  background: linear-gradient(135deg, rgba(146,190,234,0.08), rgba(175,179,247,0.04));
+  border: 1px solid rgba(146,190,234,0.2);
+  border-radius: var(--radius-lg); padding: 18px;
+}
+.meet-indicator {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 600;
+}
+.meet-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--c-muted); transition: all .3s;
+}
+.meet-dot.live {
+  background: var(--c-green);
+  box-shadow: 0 0 0 0 rgba(76,175,80,0.4);
+  animation: pulse-green 1.5s infinite;
+}
+@keyframes pulse-green {
+  0%   { box-shadow: 0 0 0 0 rgba(76,175,80,0.4); }
+  70%  { box-shadow: 0 0 0 8px rgba(76,175,80,0); }
+  100% { box-shadow: 0 0 0 0 rgba(76,175,80,0); }
+}
+
+/* ===== PANEL: COLLABORATORS ===== */
+.collab-list { display: flex; flex-direction: column; gap: 6px; max-height: 320px; overflow-y: auto; }
+.collab-row {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.03); border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm); padding: 7px 10px;
+  transition: all .15s;
+}
+.collab-row:hover { background: rgba(255,255,255,0.06); border-color: var(--c-border2); }
+.collab-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 12px; flex-shrink: 0;
+}
+.collab-name { flex: 1; font-size: 13px; font-weight: 500; }
+.collab-team { font-size: 10px; color: var(--c-muted); }
+.collab-pts {
+  font-family: var(--font-mono); font-size: 12px; color: var(--c-yellow);
+  font-weight: 700; min-width: 32px; text-align: right;
+}
+
+/* ===== PANEL: WHEEL ===== */
+#wheelCanvas {
+  display: block; margin: 0 auto;
+  border-radius: 50%;
+  box-shadow: 0 0 40px rgba(175,179,247,0.2), 0 0 80px rgba(175,179,247,0.08);
+}
+.wheel-result {
+  text-align: center; padding: 16px;
+  background: linear-gradient(135deg, rgba(175,179,247,0.12), rgba(146,190,234,0.06));
+  border: 1px solid rgba(175,179,247,0.2);
+  border-radius: var(--radius-lg);
+  animation: resultPop .4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes resultPop {
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.wheel-result-name {
+  font-family: var(--font-display); font-size: 28px; font-weight: 800;
+  color: var(--c-accent); letter-spacing: 1px;
+}
+.wheel-result-label { font-size: 11px; color: var(--c-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+/* ===== TIMERS ===== */
+.timer-display {
+  font-family: var(--font-mono); font-size: 52px; font-weight: 700;
+  text-align: center; letter-spacing: 4px;
+  padding: 20px; border-radius: var(--radius-lg);
+  transition: color .3s;
+}
+.timer-display.warning { color: var(--c-yellow) !important; }
+.timer-display.danger  { color: var(--c-red) !important; animation: flash .5s infinite; }
+@keyframes flash { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.timer-progress {
+  height: 6px; background: rgba(255,255,255,0.06);
+  border-radius: 10px; overflow: hidden; margin: 8px 0;
+}
+.timer-progress-bar {
+  height: 100%; border-radius: 10px;
+  background: linear-gradient(90deg, var(--c-sky), var(--c-accent));
+  transition: width .5s linear, background .3s;
+}
+
+/* ===== SCOREBOARD ===== */
+.rank-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.03); border: 1px solid var(--c-border);
+  transition: all .2s;
+}
+.rank-row:nth-child(1) { background: rgba(244,180,0,0.08); border-color: rgba(244,180,0,0.2); }
+.rank-row:nth-child(2) { background: rgba(146,190,234,0.06); border-color: rgba(146,190,234,0.15); }
+.rank-row:nth-child(3) { background: rgba(76,175,80,0.05); border-color: rgba(76,175,80,0.12); }
+.rank-num {
+  font-family: var(--font-display); font-size: 16px; font-weight: 800;
+  min-width: 24px; text-align: center; color: var(--c-muted);
+}
+.rank-row:nth-child(1) .rank-num { color: var(--c-yellow); }
+.rank-row:nth-child(2) .rank-num { color: var(--c-sky); }
+.rank-row:nth-child(3) .rank-num { color: var(--c-green); }
+.rank-bar-wrap { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 10px; overflow: hidden; }
+.rank-bar { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--c-sky), var(--c-accent)); }
+.rank-pts { font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--c-accent); min-width: 40px; text-align: right; }
+
+/* ===== QUIZ ===== */
+.quiz-q-card {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--c-border);
+  border-radius: var(--radius); padding: 12px; display: flex;
+  flex-direction: column; gap: 8px;
+}
+.quiz-q-text { font-size: 13px; font-weight: 500; color: var(--c-white); }
+.quiz-options { display: flex; flex-direction: column; gap: 4px; }
+.quiz-opt {
+  padding: 6px 10px; border-radius: var(--radius-sm); font-size: 12px;
+  background: rgba(255,255,255,0.03); border: 1px solid var(--c-border);
+  cursor: pointer; transition: all .15s;
+}
+.quiz-opt:hover { background: rgba(175,179,247,0.08); border-color: rgba(175,179,247,0.2); }
+.quiz-opt.correct { background: rgba(76,175,80,0.12); border-color: rgba(76,175,80,0.3); color: var(--c-green); }
+.quiz-opt.incorrect { background: rgba(217,83,79,0.1); border-color: rgba(217,83,79,0.2); color: var(--c-red); }
+
+/* ===== ACTIVITIES ===== */
+.activity-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+}
+.activity-card {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; padding: 14px 8px;
+  background: rgba(255,255,255,0.03); border: 1px solid var(--c-border);
+  border-radius: var(--radius); cursor: pointer; transition: all .2s;
+  text-align: center;
+}
+.activity-card:hover {
+  background: rgba(175,179,247,0.08); border-color: rgba(175,179,247,0.2);
+  transform: translateY(-2px); box-shadow: 0 4px 16px rgba(175,179,247,0.1);
+}
+.activity-icon { font-size: 26px; }
+.activity-name { font-size: 11px; font-weight: 600; color: var(--c-light); letter-spacing: 0.3px; }
+
+/* ===== ACTIVITY MODAL ===== */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px); z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  animation: fadeIn .15s;
+}
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+.modal {
+  background: var(--c-card); border: 1px solid var(--c-border2);
+  border-radius: var(--radius-xl); padding: 24px; min-width: 420px; max-width: 560px;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp .2s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+.modal-title {
+  font-family: var(--font-display); font-size: 18px; font-weight: 800;
+  letter-spacing: 1.5px; text-transform: uppercase; color: var(--c-accent);
+  margin-bottom: 14px;
+}
+.modal-close {
+  float: right; cursor: pointer; font-size: 18px; color: var(--c-muted);
+  line-height: 1; transition: color .15s;
+}
+.modal-close:hover { color: var(--c-red); }
+
+/* ===== NOTES ===== */
+#notesArea {
+  width: 100%; min-height: 200px; resize: vertical;
+  background: rgba(255,255,255,0.03); border: 1px solid var(--c-border2);
+  border-radius: var(--radius); padding: 12px; color: var(--c-white);
+  font-family: var(--font-mono); font-size: 12px; line-height: 1.6;
+  outline: none;
+}
+#notesArea:focus { border-color: var(--c-accent); }
+
+/* ===== TEAMS ===== */
+.team-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.3px; cursor: pointer;
+}
+
+/* ===== SUMMARY STAT ===== */
+.stat-box {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--c-border);
+  border-radius: var(--radius); padding: 14px; text-align: center;
+}
+.stat-num {
+  font-family: var(--font-display); font-size: 36px; font-weight: 800;
+  color: var(--c-accent); line-height: 1;
+}
+.stat-lbl { font-size: 10px; color: var(--c-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+/* ===== NOTIFICATION TOAST ===== */
+#toast {
+  position: fixed; bottom: 20px; right: 20px;
+  background: var(--c-card); border: 1px solid var(--c-accent);
+  border-radius: var(--radius); padding: 10px 16px;
+  font-size: 12px; color: var(--c-accent);
+  box-shadow: var(--shadow-lg); z-index: 300;
+  opacity: 0; transform: translateY(10px);
+  transition: all .25s; pointer-events: none;
+}
+#toast.show { opacity: 1; transform: translateY(0); }
+
+/* ===== MEET PANEL SPECIFIC ===== */
+.meet-url-row { display: flex; gap: 8px; align-items: center; }
+.meet-url-row .inp { flex: 1; font-family: var(--font-mono); font-size: 12px; }
+
+/* ===== TABS inside panel ===== */
+.ptabs { display: flex; gap: 4px; margin-bottom: 12px; }
+.ptab {
+  padding: 6px 12px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 600;
+  cursor: pointer; color: var(--c-muted); transition: all .15s; letter-spacing: 0.3px;
+  border: 1px solid transparent;
+}
+.ptab.active { background: rgba(175,179,247,0.12); color: var(--c-accent); border-color: rgba(175,179,247,0.2); }
+.ptab:hover:not(.active) { color: var(--c-sky); background: rgba(255,255,255,0.04); }
+.ptab-content { display: none; }
+.ptab-content.active { display: block; }
+
+/* ===== SEMAPHORE ===== */
+.semaphore { display: flex; justify-content: center; gap: 16px; margin: 12px 0; }
+.sem-btn {
+  width: 70px; height: 70px; border-radius: 50%; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: 700; transition: all .2s; border: 3px solid transparent;
+  box-shadow: 0 0 0 0 transparent;
+}
+.sem-btn.green  { background: rgba(76,175,80,0.15); border-color: rgba(76,175,80,0.3); }
+.sem-btn.yellow { background: rgba(244,180,0,0.15); border-color: rgba(244,180,0,0.3); }
+.sem-btn.red    { background: rgba(217,83,79,0.15); border-color: rgba(217,83,79,0.3); }
+.sem-btn.green.active  { background: rgba(76,175,80,0.35); border-color: var(--c-green); box-shadow: 0 0 20px rgba(76,175,80,0.4); }
+.sem-btn.yellow.active { background: rgba(244,180,0,0.35); border-color: var(--c-yellow); box-shadow: 0 0 20px rgba(244,180,0,0.4); }
+.sem-btn.red.active    { background: rgba(217,83,79,0.35); border-color: var(--c-red);    box-shadow: 0 0 20px rgba(217,83,79,0.4); }
+.sem-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-top: 4px; }
+
+/* ===== HOTKEY CHIP ===== */
+.hotkey {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; color: var(--c-muted);
+  background: rgba(255,255,255,0.05); border: 1px solid var(--c-border);
+  border-radius: 4px; padding: 1px 5px; font-family: var(--font-mono);
+}
+
+/* ===== QUIZ HISTORY ===== */
+.q-hist-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 10px; border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.02); border: 1px solid var(--c-border);
+  font-size: 12px;
+}
+.q-hist-num { font-family: var(--font-mono); color: var(--c-muted); min-width: 20px; }
+
+/* ===== PULSE ANIM ===== */
+@keyframes pulse-accent {
+  0%,100% { box-shadow: 0 0 0 0 rgba(175,179,247,0.3); }
+  50%      { box-shadow: 0 0 0 8px rgba(175,179,247,0); }
+}
+.pulse { animation: pulse-accent 2s infinite; }
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+  text-align: center; padding: 28px; color: var(--c-muted);
+  font-size: 12px;
+}
+.empty-state .empty-icon { font-size: 32px; margin-bottom: 8px; opacity: 0.4; }
+
+/* ===== DIVIDER ===== */
+hr.divider { border: none; border-top: 1px solid var(--c-border); margin: 10px 0; }
+
+/* ===== SCROLLBAR in modals ===== */
+.scroll-box { overflow-y: auto; max-height: 240px; }
+
+/* ===== RESPONSIVE FIX ===== */
+@media (max-width: 1200px) {
+  .grid-3 { grid-template-columns: 1fr 1fr; }
+}
+
+/* ===== COLLAB VIEW ===== */
+#collabView {
+  position: fixed; inset: 0; z-index: 500;
+  background: var(--c-bg);
+  display: none; flex-direction: column;
+  font-family: var(--font-ui);
+}
+#collabView.active { display: flex; }
+
+.cv-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 28px;
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border2);
+  flex-shrink: 0;
+}
+.cv-logo {
+  font-family: var(--font-display); font-size: 16px; font-weight: 800;
+  letter-spacing: 2px; color: var(--c-accent); text-transform: uppercase;
+}
+.cv-session {
+  font-family: var(--font-display); font-size: 15px; font-weight: 600;
+  color: var(--c-white); letter-spacing: 0.5px;
+}
+.cv-trainer { font-size: 12px; color: var(--c-muted); }
+.cv-clock {
+  font-family: var(--font-mono); font-size: 14px; color: var(--c-sky);
+  background: rgba(146,190,234,0.08); border: 1px solid rgba(146,190,234,0.15);
+  border-radius: var(--radius-sm); padding: 5px 12px;
+}
+.cv-body {
+  flex: 1; display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 0; overflow: hidden;
+}
+.cv-main {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 32px; gap: 20px;
+  border-right: 1px solid var(--c-border);
+  overflow: hidden;
+}
+.cv-idle {
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  color: var(--c-muted);
+}
+.cv-idle-icon { font-size: 64px; opacity: 0.25; }
+.cv-idle-text { font-family: var(--font-display); font-size: 22px; font-weight: 700; letter-spacing: 1px; opacity: 0.4; text-transform: uppercase; }
+
+/* Active activity card */
+.cv-activity {
+  width: 100%; max-width: 680px;
+  background: var(--c-card); border: 1px solid var(--c-border2);
+  border-radius: var(--radius-xl); padding: 32px 36px;
+  display: flex; flex-direction: column; gap: 18px;
+  animation: cvSlideIn .4s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes cvSlideIn {
+  from { transform: translateY(24px) scale(0.97); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+.cv-act-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+  background: rgba(175,179,247,0.1); color: var(--c-accent);
+  border: 1px solid rgba(175,179,247,0.2); width: fit-content;
+}
+.cv-act-question {
+  font-family: var(--font-display); font-size: 32px; font-weight: 800;
+  color: var(--c-white); line-height: 1.2; letter-spacing: 0.5px;
+}
+.cv-act-options {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.cv-opt {
+  padding: 14px 18px; border-radius: var(--radius);
+  background: rgba(255,255,255,0.04); border: 1px solid var(--c-border2);
+  font-size: 16px; font-weight: 500; color: var(--c-light);
+  display: flex; align-items: center; gap: 10px;
+  transition: all .2s;
+}
+.cv-opt-letter {
+  font-family: var(--font-display); font-size: 20px; font-weight: 800;
+  color: var(--c-accent); min-width: 24px;
+}
+.cv-opt.correct-reveal { background: rgba(76,175,80,0.15); border-color: rgba(76,175,80,0.4); }
+.cv-opt.correct-reveal .cv-opt-letter { color: var(--c-green); }
+.cv-act-tf { display: flex; gap: 16px; }
+.cv-tf-btn {
+  flex: 1; padding: 20px; border-radius: var(--radius-lg); font-size: 22px;
+  font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  border: 2px solid var(--c-border2);
+}
+.cv-tf-btn.true  { background: rgba(76,175,80,0.08); border-color: rgba(76,175,80,0.2); color: var(--c-green); }
+.cv-tf-btn.false { background: rgba(217,83,79,0.08); border-color: rgba(217,83,79,0.2); color: var(--c-red); }
+.cv-tf-label { font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+
+/* Timer in collab */
+.cv-timer {
+  font-family: var(--font-mono); font-size: 56px; font-weight: 700;
+  text-align: center; color: var(--c-sky); letter-spacing: 4px;
+  transition: color .3s;
+}
+.cv-timer.warning { color: var(--c-yellow); }
+.cv-timer.danger  { color: var(--c-red); animation: flash .5s infinite; }
+.cv-timer-bar { height: 8px; background: rgba(255,255,255,0.06); border-radius: 10px; overflow: hidden; width: 100%; max-width: 400px; }
+.cv-timer-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg,var(--c-sky),var(--c-accent)); transition: width .5s linear; }
+
+/* Semaphore in collab */
+.cv-semaphore {
+  display: flex; gap: 24px; justify-content: center; align-items: center;
+}
+.cv-sem {
+  width: 100px; height: 100px; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: 32px; gap: 4px; border: 3px solid transparent;
+}
+.cv-sem.active-green  { background: rgba(76,175,80,0.2); border-color: var(--c-green); box-shadow: 0 0 32px rgba(76,175,80,0.3); }
+.cv-sem.active-yellow { background: rgba(244,180,0,0.2); border-color: var(--c-yellow); box-shadow: 0 0 32px rgba(244,180,0,0.3); }
+.cv-sem.active-red    { background: rgba(217,83,79,0.2); border-color: var(--c-red); box-shadow: 0 0 32px rgba(217,83,79,0.3); }
+.cv-sem-lbl { font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+
+/* Sidebar panel collab */
+.cv-side {
+  display: flex; flex-direction: column; background: var(--c-surface);
+  padding: 20px 16px; gap: 16px; overflow-y: auto;
+}
+.cv-side-title {
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--c-muted);
+}
+.cv-rank-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.03); border: 1px solid var(--c-border);
+  animation: rankIn .3s ease;
+}
+@keyframes rankIn { from{transform:translateX(12px);opacity:0} to{transform:translateX(0);opacity:1} }
+.cv-rank-num { font-family: var(--font-display); font-size: 18px; font-weight: 800; min-width: 28px; color: var(--c-muted); }
+.cv-rank-name { flex:1; font-size: 13px; font-weight: 600; }
+.cv-rank-pts { font-family: var(--font-mono); font-size: 14px; font-weight: 700; color: var(--c-accent); }
+
+/* Points notification */
+.cv-points-notif {
+  position: fixed; top: 80px; right: 24px; z-index: 600;
+  background: var(--c-card); border: 1px solid rgba(244,180,0,0.4);
+  border-radius: var(--radius-lg); padding: 16px 22px;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  animation: notifPop .4s cubic-bezier(0.34,1.56,0.64,1);
+  min-width: 240px;
+}
+@keyframes notifPop {
+  from { transform: translateX(60px) scale(0.9); opacity: 0; }
+  to   { transform: translateX(0) scale(1); opacity: 1; }
+}
+.cv-notif-icon { font-size: 28px; }
+.cv-notif-name { font-size: 15px; font-weight: 700; color: var(--c-white); }
+.cv-notif-pts  { font-family: var(--font-display); font-size: 24px; font-weight: 800; color: var(--c-yellow); }
+
+/* Collab admin exit button */
+.cv-exit-btn {
+  position: fixed; bottom: 16px; right: 16px; z-index: 700;
+  padding: 8px 14px; background: rgba(217,83,79,0.15);
+  border: 1px solid rgba(217,83,79,0.3); border-radius: var(--radius-sm);
+  color: var(--c-red); font-size: 11px; font-weight: 600; cursor: pointer;
+  font-family: var(--font-ui); transition: all .15s;
+}
+.cv-exit-btn:hover { background: rgba(217,83,79,0.25); }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+<!-- ===== COLLAB VIEW (full-screen overlay) ===== -->
+<div id="collabView">
+  <div class="cv-header">
+    <div class="cv-logo">TMLF <span style="color:var(--c-sky)">Live</span></div>
+    <div style="text-align:center;">
+      <div class="cv-session" id="cv-sessionName">Sesión</div>
+      <div class="cv-trainer" id="cv-trainerName"></div>
+    </div>
+    <div class="cv-clock" id="cv-clock">00:00:00</div>
+  </div>
+  <div class="cv-body">
+    <!-- MAIN: actividad actual -->
+    <div class="cv-main" id="cv-main">
+      <div class="cv-idle" id="cv-idle">
+        <div class="cv-idle-icon">🎛</div>
+        <div class="cv-idle-text">Esperando actividad...</div>
+        <div style="font-size:13px;color:var(--c-muted);opacity:0.5;">El trainer iniciará una actividad en breve</div>
+      </div>
+    </div>
+    <!-- SIDE: scoreboard -->
+    <div class="cv-side">
+      <div class="cv-side-title">🏆 Scoreboard</div>
+      <div id="cv-scoreboard" style="display:flex;flex-direction:column;gap:6px;">
+        <div style="text-align:center;color:var(--c-muted);font-size:12px;padding:20px 0;opacity:0.5;">Sin puntos aún</div>
+      </div>
+      <div style="margin-top:auto;">
+        <div class="cv-side-title" style="margin-bottom:8px;">⏱ Timer</div>
+        <div class="cv-timer" id="cv-timerDisplay">--:--</div>
+        <div class="cv-timer-bar" style="margin-top:8px;"><div class="cv-timer-fill" id="cv-timerFill" style="width:100%;"></div></div>
+      </div>
+    </div>
+  </div>
+  <button class="cv-exit-btn" id="cv-exitBtn" style="display:none;" onclick="exitCollabView()">✕ Salir (Admin)</button>
+</div>
+<!-- points notification (shared between views) -->
+<div id="cv-pointsNotif" style="display:none;" class="cv-points-notif">
+  <div class="cv-notif-icon">⭐</div>
+  <div>
+    <div class="cv-notif-name" id="cv-notifName">—</div>
+    <div class="cv-notif-pts" id="cv-notifPts">+0 pts</div>
+  </div>
+</div>
+
+  <!-- ============ HEADER ============ -->
+  <header id="header">
+    <div class="header-logo">TMLF <span>Live</span></div>
+    <div class="header-sep"></div>
+    <div class="session-name-wrap">
+      <input id="sessionName" type="text" placeholder="Nombre de la sesión..." value="Capacitación VAWA — Módulo 1" oninput="syncToCollab()">
+    </div>
+    <div class="header-meta">
+      <div class="trainer-field">
+        <span class="lbl">Trainer</span>
+        <input id="trainerName" type="text" placeholder="Tu nombre" value="" oninput="syncToCollab()">
+      </div>
+      <div id="liveClock">00:00:00</div>
+      <div class="header-btns">
+        <button class="hbtn" onclick="openCollabView()" title="Vista Colaboradores" style="background:rgba(76,175,80,0.1);border-color:rgba(76,175,80,0.3);color:var(--c-green);">📺 Collab</button>
+        <button class="hbtn" onclick="exportCSV()" title="Exportar CSV">⬇ CSV</button>
+        <button class="hbtn primary" onclick="saveToSheets()" title="Guardar en Sheets">💾 Sheets</button>
+        <button class="hbtn" onclick="toggleFullscreen()" title="Pantalla completa">⛶</button>
+        <button class="hbtn danger" onclick="confirmReset()">↺ Reset</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ BODY ============ -->
+  <div id="body">
+
+    <!-- SIDEBAR -->
+    <nav id="sidenav">
+      <div class="nav-item active" onclick="showPanel('meet')" title="Sesión Meet">
+        <div class="nav-icon">📡</div>
+        <div class="nav-label">Meet</div>
+      </div>
+      <div class="nav-item" onclick="showPanel('collabs')" title="Colaboradores">
+        <div class="nav-icon">👥</div>
+        <div class="nav-label">Equipo</div>
+        <div class="badge" id="collabBadge">0</div>
+      </div>
+      <div class="nav-item" onclick="showPanel('teams')" title="Equipos">
+        <div class="nav-icon">🏆</div>
+        <div class="nav-label">Teams</div>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-item" onclick="showPanel('wheel')" title="Ruleta">
+        <div class="nav-icon">🎡</div>
+        <div class="nav-label">Ruleta</div>
+      </div>
+      <div class="nav-item" onclick="showPanel('activities')" title="Actividades">
+        <div class="nav-icon">⚡</div>
+        <div class="nav-label">Activ.</div>
+      </div>
+      <div class="nav-item" onclick="showPanel('quiz')" title="Quiz">
+        <div class="nav-icon">❓</div>
+        <div class="nav-label">Quiz</div>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-item" onclick="showPanel('timers')" title="Timers">
+        <div class="nav-icon">⏱</div>
+        <div class="nav-label">Timers</div>
+      </div>
+      <div class="nav-item" onclick="showPanel('score')" title="Scoreboard">
+        <div class="nav-icon">📊</div>
+        <div class="nav-label">Score</div>
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-item" onclick="showPanel('notes')" title="Notas">
+        <div class="nav-icon">📝</div>
+        <div class="nav-label">Notas</div>
+      </div>
+      <div class="nav-item" onclick="showPanel('summary')" title="Resumen">
+        <div class="nav-icon">📋</div>
+        <div class="nav-label">Resumen</div>
+      </div>
+    </nav>
+
+    <!-- ============ MAIN ============ -->
+    <main id="main">
+
+      <!-- ===== PANEL: MEET ===== -->
+      <div class="panel active" id="panel-meet">
+        <div class="card meet-card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🎙 Live Session — Google Meet</div>
+              <div class="card-subtitle">Sesión en vivo integrada con split-screen automático</div>
+            </div>
+            <div class="meet-indicator">
+              <div class="meet-dot" id="meetDot"></div>
+              <span id="meetStatus" style="color:var(--c-muted);font-size:11px;">Sin sesión activa</span>
+            </div>
+          </div>
+          <div class="meet-url-row">
+            <input class="inp" id="meetUrl" type="text" placeholder="https://meet.google.com/abc-defg-hij" oninput="updateMeetStatus()">
+            <button class="btn btn-sky btn-sm" onclick="copyMeetLink()">📋 Copiar</button>
+          </div>
+          <!-- SPLIT SCREEN LAUNCHER -->
+          <div id="splitLaunchArea" style="margin-top:14px;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <!-- Opción A: Split automático -->
+              <div onclick="launchSplitScreen()" style="cursor:pointer;padding:14px;border-radius:var(--radius);border:1px solid rgba(146,190,234,0.25);background:rgba(146,190,234,0.06);transition:all .2s;display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;" onmouseover="this.style.background='rgba(146,190,234,0.12)';this.style.borderColor='rgba(146,190,234,0.4)'" onmouseout="this.style.background='rgba(146,190,234,0.06)';this.style.borderColor='rgba(146,190,234,0.25)'">
+                <div style="font-size:26px;">⚡</div>
+                <div style="font-size:12px;font-weight:700;color:var(--c-sky);">Split-Screen Auto</div>
+                <div style="font-size:10px;color:var(--c-muted);line-height:1.4;">Abre Meet a la izquierda y reposiciona este panel a la derecha automáticamente</div>
+                <div id="splitBtn" style="margin-top:4px;padding:6px 14px;background:var(--c-sky);color:#171a21;border-radius:var(--radius-sm);font-size:11px;font-weight:700;">▶ Lanzar Split</div>
+              </div>
+              <!-- Opción B: Ventana separada -->
+              <div onclick="openMeet()" style="cursor:pointer;padding:14px;border-radius:var(--radius);border:1px solid rgba(175,179,247,0.2);background:rgba(175,179,247,0.05);transition:all .2s;display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;" onmouseover="this.style.background='rgba(175,179,247,0.1)';this.style.borderColor='rgba(175,179,247,0.35)'" onmouseout="this.style.background='rgba(175,179,247,0.05)';this.style.borderColor='rgba(175,179,247,0.2)'">
+                <div style="font-size:26px;">🪟</div>
+                <div style="font-size:12px;font-weight:700;color:var(--c-accent);">Ventana Separada</div>
+                <div style="font-size:10px;color:var(--c-muted);line-height:1.4;">Abre Meet en nueva ventana. Organiza manualmente en tu pantalla.</div>
+                <div style="margin-top:4px;padding:6px 14px;background:rgba(175,179,247,0.15);color:var(--c-accent);border:1px solid rgba(175,179,247,0.3);border-radius:var(--radius-sm);font-size:11px;font-weight:700;">↗ Abrir Meet</div>
+              </div>
+            </div>
+            <!-- Split preview diagram -->
+            <div id="splitPreview" style="margin-top:12px;padding:12px;border-radius:var(--radius);border:1px solid var(--c-border);background:rgba(255,255,255,0.02);">
+              <div style="font-size:10px;color:var(--c-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Vista previa del split-screen</div>
+              <div style="display:flex;gap:6px;height:64px;border-radius:6px;overflow:hidden;border:1px solid var(--c-border2);">
+                <div style="flex:1;background:rgba(76,175,80,0.08);border-right:1px solid var(--c-border2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;">
+                  <div style="font-size:14px;">📹</div>
+                  <div style="font-size:9px;color:var(--c-green);font-weight:700;letter-spacing:0.5px;">GOOGLE MEET</div>
+                </div>
+                <div style="flex:1;background:rgba(175,179,247,0.06);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;">
+                  <div style="font-size:14px;">🎛</div>
+                  <div style="font-size:9px;color:var(--c-accent);font-weight:700;letter-spacing:0.5px;">COMMAND CENTER</div>
+                </div>
+              </div>
+              <div id="splitStatus" style="margin-top:6px;font-size:10px;color:var(--c-muted);text-align:center;">Click en "Lanzar Split" para activar el modo paralelo</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header" style="margin-bottom:10px;">
+              <div class="card-title">📈 Estadísticas de sesión</div>
+            </div>
+            <div class="grid-2">
+              <div class="stat-box">
+                <div class="stat-num" id="statTotal">0</div>
+                <div class="stat-lbl">Participantes</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-num" id="statInterv">0</div>
+                <div class="stat-lbl">Intervenciones</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-num" id="statActivities">0</div>
+                <div class="stat-lbl">Actividades</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-num" id="statQuizzes">0</div>
+                <div class="stat-lbl">Quizzes</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header" style="margin-bottom:10px;">
+              <div class="card-title">🥇 Top del momento</div>
+            </div>
+            <div id="topMoment" style="display:flex;flex-direction:column;gap:6px;">
+              <div class="empty-state"><div class="empty-icon">🏅</div>Aún no hay participaciones</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PANEL: COLLABORATORS ===== -->
+      <div class="panel" id="panel-collabs">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">👥 Gestión de Colaboradores</div>
+              <div class="card-subtitle" id="collabCount">0 colaboradores registrados</div>
+            </div>
+            <div class="flex-row">
+              <button class="btn btn-secondary btn-sm" onclick="openBulkAdd()">📋 Carga Masiva</button>
+              <button class="btn btn-primary btn-sm" onclick="openAddCollab()">＋ Agregar</button>
+            </div>
+          </div>
+          <div class="flex-row" style="margin-bottom:10px;">
+            <input class="inp" id="collabSearch" type="text" placeholder="🔍 Buscar colaborador..." oninput="renderCollabs()">
+            <select class="sel" id="collabFilter" style="width:140px;" onchange="renderCollabs()">
+              <option value="">Todos</option>
+              <option value="pending">Pendiente</option>
+              <option value="participated">Participó</option>
+              <option value="highlighted">Destacado</option>
+              <option value="absent">Ausente</option>
+            </select>
+          </div>
+          <div id="collabList" class="collab-list">
+            <div class="empty-state"><div class="empty-icon">👥</div>Agrega colaboradores para comenzar</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PANEL: TEAMS ===== -->
+      <div class="panel" id="panel-teams">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🏆 Gestión de Equipos</div>
+            <div class="flex-row">
+              <button class="btn btn-sky btn-sm" onclick="autoAssignTeams()">🎲 Auto-asignar</button>
+              <button class="btn btn-primary btn-sm" onclick="openCreateTeam()">＋ Crear Equipo</button>
+            </div>
+          </div>
+          <div id="teamsList" style="display:flex;flex-direction:column;gap:10px;">
+            <div class="empty-state"><div class="empty-icon">🏆</div>Crea equipos y asigna colaboradores</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🎯 Ranking por Equipos</div>
+          </div>
+          <div id="teamsScoreboard" style="display:flex;flex-direction:column;gap:6px;">
+            <div class="empty-state"><div class="empty-icon">📊</div>Los puntos aparecerán aquí</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PANEL: WHEEL ===== -->
+      <div class="panel" id="panel-wheel">
+        <div class="grid-2" style="align-items:start;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">🎡 Ruleta Premium</div>
+              <div class="flex-row">
+                <select class="sel" id="wheelMode" style="width:130px;" onchange="setupWheel()">
+                  <option value="individual">Individual</option>
+                  <option value="team">Por Equipo</option>
+                </select>
+              </div>
+            </div>
+            <div style="text-align:center;">
+              <canvas id="wheelCanvas" width="300" height="300"></canvas>
+              <div style="margin-top:14px;display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;">
+                <button class="btn btn-primary" onclick="spinWheel()" id="spinBtn">🎰 Girar</button>
+                <label class="flex-row" style="font-size:11px;color:var(--c-muted);cursor:pointer;gap:4px;">
+                  <input type="checkbox" id="noRepeat" style="accent-color:var(--c-accent);"> Sin repetición
+                </label>
+                <label class="flex-row" style="font-size:11px;color:var(--c-muted);cursor:pointer;gap:4px;">
+                  <input type="checkbox" id="wheelSound" checked style="accent-color:var(--c-accent);"> Sonido
+                </label>
+              </div>
+            </div>
+            <div id="wheelResult" style="margin-top:12px;display:none;"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">📋 Participantes en Ruleta</div>
+              <button class="btn btn-danger btn-xs" onclick="clearWheelUsed()">↺ Reiniciar</button>
+            </div>
+            <div id="wheelParticipants" style="display:flex;flex-direction:column;gap:4px;max-height:300px;overflow-y:auto;">
+              <div class="empty-state"><div class="empty-icon">🎡</div>Agrega colaboradores primero</div>
+            </div>
+            <div style="margin-top:10px;">
+              <div style="font-size:11px;color:var(--c-muted);margin-bottom:4px;">Historial de seleccionados:</div>
+              <div id="wheelHistory" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PANEL: ACTIVITIES ===== -->
+      <div class="panel" id="panel-activities">
+
+        <!-- Tab bar -->
+        <div style="display:flex;gap:6px;align-items:center;margin-bottom:2px;">
+          <div class="ptabs" style="flex:1;margin-bottom:0;">
+            <div class="ptab active" id="atab-live" onclick="showActTab('live')">⚡ En Vivo</div>
+            <div class="ptab" id="atab-library" onclick="showActTab('library')">📚 Biblioteca</div>
+            <div class="ptab" id="atab-history" onclick="showActTab('history')">📋 Historial</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="openCollabView()">📺 Collab</button>
+          <button class="btn btn-danger btn-sm" onclick="clearCollabActivity()">✕ Limpiar</button>
+        </div>
+
+        <!-- TAB: EN VIVO -->
+        <div id="actTab-live">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">⚡ Lanzar Actividad</div>
+              <span style="font-size:10px;color:var(--c-muted);">Configura y asigna en tiempo real</span>
+            </div>
+            <div class="activity-grid">
+              <div class="activity-card" onclick="launchActivity('quickQuestion')"><div class="activity-icon">💬</div><div class="activity-name">Pregunta Rápida</div></div>
+              <div class="activity-card" onclick="launchActivity('truefalse')"><div class="activity-icon">✅</div><div class="activity-name">Verdadero / Falso</div></div>
+              <div class="activity-card" onclick="launchActivity('multipleChoice')"><div class="activity-icon">🔢</div><div class="activity-name">Opción Múltiple</div></div>
+              <div class="activity-card" onclick="launchActivity('surpriseCase')"><div class="activity-icon">🎁</div><div class="activity-name">Caso Sorpresa</div></div>
+              <div class="activity-card" onclick="launchActivity('flashChallenge')"><div class="activity-icon">⚡</div><div class="activity-name">Reto Relámpago</div></div>
+              <div class="activity-card" onclick="launchActivity('randomCard')"><div class="activity-icon">🃏</div><div class="activity-name">Tarjeta Aleatoria</div></div>
+              <div class="activity-card" onclick="launchActivity('hotSeat')"><div class="activity-icon">🔥</div><div class="activity-name">Hot Seat</div></div>
+              <div class="activity-card" onclick="launchActivity('quickDebate')"><div class="activity-icon">⚖️</div><div class="activity-name">Debate Rápido</div></div>
+              <div class="activity-card" onclick="launchActivity('semaphore')"><div class="activity-icon">🚦</div><div class="activity-name">Semáforo</div></div>
+              <div class="activity-card" onclick="launchActivity('brainstorm')" style="border-color:rgba(175,179,247,0.2);"><div class="activity-icon">🧠</div><div class="activity-name">Lluvia de Ideas</div></div>
+              <div class="activity-card" onclick="launchActivity('quickPoll')" style="border-color:rgba(175,179,247,0.2);"><div class="activity-icon">📊</div><div class="activity-name">Encuesta Rápida</div></div>
+              <div class="activity-card" onclick="launchActivity('mythFact')" style="border-color:rgba(175,179,247,0.2);"><div class="activity-icon">🔍</div><div class="activity-name">Mito o Realidad</div></div>
+              <div class="activity-card" onclick="launchActivity('lightningRound')" style="border-color:rgba(175,179,247,0.2);"><div class="activity-icon">🎯</div><div class="activity-name">Ronda Relámpago</div></div>
+              <div class="activity-card" onclick="launchActivity('whoKnowsMore')" style="border-color:rgba(175,179,247,0.2);"><div class="activity-icon">🏅</div><div class="activity-name">¿Quién Sabe Más?</div></div>
+              <div class="activity-card" onclick="launchActivity('caseEval')" style="border-color:rgba(175,179,247,0.2);"><div class="activity-icon">⚖️</div><div class="activity-name">Evalúa el Caso</div></div>
+              <div class="activity-card" onclick="launchActivity('correctOrder')" style="border-color:rgba(175,179,247,0.2);"><div class="activity-icon">🔢</div><div class="activity-name">Orden Correcto</div></div>
+              <div class="activity-card" onclick="launchActivity('conceptMatch')" style="border-color:rgba(175,179,247,0.2);"><div class="activity-icon">🔗</div><div class="activity-name">Conecta Conceptos</div></div>
+            </div>
+          </div>
+          <!-- LIVE RESPONSES PANEL -->
+          <div class="card" id="liveResponsesCard" style="display:none;border-color:rgba(175,179,247,0.2);background:linear-gradient(135deg,rgba(175,179,247,0.04),rgba(146,190,234,0.02));"></div>
+        </div>
+
+        <!-- TAB: BIBLIOTECA -->
+        <div id="actTab-library" style="display:none;">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">📚 Biblioteca de Actividades</div>
+                <div class="card-subtitle">Pre-carga actividades antes de la sesión — lanza con un clic</div>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <button class="btn btn-sky btn-sm" onclick="importQuizToLibrary()">⬆ Importar Quiz</button>
+                <button class="btn btn-primary btn-sm" onclick="openLibraryEditor()">＋ Nueva</button>
+              </div>
+            </div>
+
+            <!-- Filter bar -->
+            <div class="flex-row" style="margin-bottom:10px;gap:6px;">
+              <input class="inp" id="libSearch" type="text" placeholder="🔍 Buscar actividad..." oninput="renderLibrary()" style="flex:1;">
+              <select class="sel" id="libFilter" style="width:150px;" onchange="renderLibrary()">
+                <option value="">Todos los tipos</option>
+                <option value="quickQuestion">💬 Pregunta Rápida</option>
+                <option value="truefalse">✅ V/F</option>
+                <option value="multipleChoice">🔢 Opción Múltiple</option>
+                <option value="surpriseCase">🎁 Caso Sorpresa</option>
+                <option value="flashChallenge">⚡ Reto Relámpago</option>
+                <option value="hotSeat">🔥 Hot Seat</option>
+                <option value="quickDebate">⚖️ Debate</option>
+              </select>
+            </div>
+
+            <div id="libraryList" style="display:flex;flex-direction:column;gap:6px;max-height:420px;overflow-y:auto;">
+              <div class="empty-state"><div class="empty-icon">📚</div>Sin actividades en biblioteca. Crea una o importa del Quiz.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: HISTORIAL -->
+        <div id="actTab-history" style="display:none;">
+          <div class="card">
+            <div class="card-header"><div class="card-title">📋 Historial de Actividades</div></div>
+            <div id="activityHistory" style="display:flex;flex-direction:column;gap:6px;max-height:420px;overflow-y:auto;">
+              <div class="empty-state"><div class="empty-icon">⚡</div>Ninguna actividad lanzada aún</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ===== PANEL: QUIZ ===== -->
+      <div class="panel" id="panel-quiz">
+        <div class="grid-2" style="align-items:start;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">❓ Crear Pregunta</div>
+            </div>
+            <div class="flex-col">
+              <input class="inp" id="quizQuestion" type="text" placeholder="Escribe la pregunta...">
+              <select class="sel" id="quizType" onchange="toggleQuizType()">
+                <option value="multiplechoice">Opción múltiple</option>
+                <option value="truefalse">Verdadero / Falso</option>
+                <option value="open">Pregunta abierta</option>
+              </select>
+              <div id="quizOptionsArea">
+                <div id="mcOptions" class="flex-col">
+                  <div class="flex-row"><input class="inp" id="opt1" placeholder="Opción A"><button class="btn btn-xs" id="correct1" onclick="setCorrect(1)" style="background:rgba(76,175,80,0.1);color:var(--c-green);border:1px solid rgba(76,175,80,0.2);">✓</button></div>
+                  <div class="flex-row"><input class="inp" id="opt2" placeholder="Opción B"><button class="btn btn-xs" id="correct2" onclick="setCorrect(2)" style="background:rgba(76,175,80,0.1);color:var(--c-green);border:1px solid rgba(76,175,80,0.2);">✓</button></div>
+                  <div class="flex-row"><input class="inp" id="opt3" placeholder="Opción C (opcional)"><button class="btn btn-xs" id="correct3" onclick="setCorrect(3)" style="background:rgba(76,175,80,0.1);color:var(--c-green);border:1px solid rgba(76,175,80,0.2);">✓</button></div>
+                  <div class="flex-row"><input class="inp" id="opt4" placeholder="Opción D (opcional)"><button class="btn btn-xs" id="correct4" onclick="setCorrect(4)" style="background:rgba(76,175,80,0.1);color:var(--c-green);border:1px solid rgba(76,175,80,0.2);">✓</button></div>
+                </div>
+                <div id="tfOptions" style="display:none;" class="flex-row">
+                  <button class="btn btn-secondary flex-1" id="tfTrue" onclick="setTFAnswer('true')" style="justify-content:center;">✅ Verdadero</button>
+                  <button class="btn btn-secondary flex-1" id="tfFalse" onclick="setTFAnswer('false')" style="justify-content:center;">❌ Falso</button>
+                </div>
+              </div>
+              <div class="flex-row">
+                <div class="flex-row flex-1">
+                  <span style="font-size:11px;color:var(--c-muted);">Puntos:</span>
+                  <input class="inp" id="quizPoints" type="number" value="10" min="1" max="100" style="width:60px;">
+                </div>
+                <button class="btn btn-primary" onclick="addQuizQuestion()">➕ Agregar</button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">📚 Quiz Activo</div>
+              <div class="flex-row">
+                <button class="btn btn-warn btn-sm" onclick="clearQuiz()">↺ Limpiar</button>
+                <button class="btn btn-primary btn-sm" onclick="launchQuiz()">▶ Lanzar</button>
+              </div>
+            </div>
+            <div id="quizList" style="display:flex;flex-direction:column;gap:6px;max-height:320px;overflow-y:auto;">
+              <div class="empty-state"><div class="empty-icon">❓</div>Sin preguntas. Crea una.</div>
+            </div>
+          </div>
+        </div>
+        <!-- LIVE QUIZ -->
+        <div class="card" id="liveQuizPanel" style="display:none;">
+          <div class="card-header">
+            <div class="card-title">🎯 Quiz en Vivo</div>
+            <button class="btn btn-danger btn-sm" onclick="endQuiz()">■ Terminar</button>
+          </div>
+          <div id="liveQuizContent"></div>
+        </div>
+      </div>
+
+      <!-- ===== PANEL: TIMERS ===== -->
+      <div class="panel" id="panel-timers">
+        <div class="grid-2">
+          <!-- Cronómetro -->
+          <div class="card">
+            <div class="card-header"><div class="card-title">⏱ Cronómetro</div></div>
+            <div class="timer-display" id="stopwatchDisplay" style="color:var(--c-sky);">00:00:00</div>
+            <div class="flex-row" style="justify-content:center;gap:8px;margin-top:10px;">
+              <button class="btn btn-success" onclick="startStopwatch()">▶ Iniciar</button>
+              <button class="btn btn-secondary" onclick="pauseStopwatch()">⏸ Pausar</button>
+              <button class="btn btn-danger" onclick="resetStopwatch()">↺ Reset</button>
+            </div>
+          </div>
+          <!-- Cuenta Regresiva -->
+          <div class="card">
+            <div class="card-header"><div class="card-title">⏳ Cuenta Regresiva</div></div>
+            <div class="flex-row" style="margin-bottom:10px;">
+              <input class="inp" id="cdMinutes" type="number" value="5" min="0" max="99" style="width:60px;text-align:center;" placeholder="min">
+              <span style="color:var(--c-muted);">:</span>
+              <input class="inp" id="cdSeconds" type="number" value="0" min="0" max="59" style="width:60px;text-align:center;" placeholder="seg">
+              <button class="btn btn-sky btn-sm" onclick="setCountdown()">Cargar</button>
+            </div>
+            <div class="timer-display" id="countdownDisplay" style="color:var(--c-accent);">05:00</div>
+            <div class="timer-progress"><div class="timer-progress-bar" id="cdBar" style="width:100%;"></div></div>
+            <div class="flex-row" style="justify-content:center;gap:8px;margin-top:10px;">
+              <button class="btn btn-success" onclick="startCountdown()">▶ Iniciar</button>
+              <button class="btn btn-secondary" onclick="pauseCountdown()">⏸ Pausar</button>
+              <button class="btn btn-danger" onclick="resetCountdown()">↺ Reset</button>
+            </div>
+          </div>
+        </div>
+        <!-- Timer de Retos Rápidos -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">⚡ Timer de Retos Rápidos</div></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+            <button class="btn btn-secondary btn-sm" onclick="setChallTimer(30)">30 seg</button>
+            <button class="btn btn-secondary btn-sm" onclick="setChallTimer(60)">1 min</button>
+            <button class="btn btn-secondary btn-sm" onclick="setChallTimer(120)">2 min</button>
+            <button class="btn btn-secondary btn-sm" onclick="setChallTimer(180)">3 min</button>
+            <button class="btn btn-secondary btn-sm" onclick="setChallTimer(300)">5 min</button>
+            <button class="btn btn-secondary btn-sm" onclick="setChallTimer(600)">10 min</button>
+          </div>
+          <div class="timer-display" id="challDisplay" style="color:var(--c-yellow);">00:00</div>
+          <div class="timer-progress"><div class="timer-progress-bar" id="challBar" style="width:100%;background:linear-gradient(90deg,var(--c-yellow),var(--c-orange));"></div></div>
+          <div class="flex-row" style="justify-content:center;gap:8px;margin-top:10px;">
+            <button class="btn btn-success" onclick="startChallTimer()">▶ Iniciar</button>
+            <button class="btn btn-secondary" onclick="pauseChallTimer()">⏸ Pausar</button>
+            <button class="btn btn-danger" onclick="resetChallTimer()">↺ Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PANEL: SCOREBOARD ===== -->
+      <div class="panel" id="panel-score">
+        <div class="ptabs">
+          <div class="ptab active" onclick="showScoreTab('individual')">👤 Individual</div>
+          <div class="ptab" onclick="showScoreTab('team')">🏆 Por Equipo</div>
+        </div>
+        <div class="ptab-content active" id="scoreTab-individual">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">🥇 Ranking Individual</div>
+              <div style="display:flex;gap:6px;">
+                <button class="btn btn-secondary btn-sm" onclick="projectCurrentActivity({type:'scoreboard'})" title="Proyectar en Collab">📺</button>
+                <button class="btn btn-primary btn-sm" onclick="openAddPoints()">＋ Puntos</button>
+              </div>
+            </div>
+            <div id="individualRanking" style="display:flex;flex-direction:column;gap:6px;">
+              <div class="empty-state"><div class="empty-icon">🏅</div>Sin puntos aún</div>
+            </div>
+          </div>
+        </div>
+        <div class="ptab-content" id="scoreTab-team">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">🏆 Ranking por Equipos</div>
+              <button class="btn btn-primary btn-sm" onclick="openAddTeamPoints()">＋ Puntos</button>
+            </div>
+            <div id="teamRanking" style="display:flex;flex-direction:column;gap:6px;">
+              <div class="empty-state"><div class="empty-icon">🏆</div>Sin puntos de equipo</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PANEL: NOTES ===== -->
+      <div class="panel" id="panel-notes">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">📝 Notas del Trainer</div>
+              <div class="card-subtitle">Privado — guardado localmente en tu navegador</div>
+            </div>
+            <div class="flex-row">
+              <button class="btn btn-secondary btn-sm" onclick="clearNotes()">↺ Limpiar</button>
+              <button class="btn btn-primary btn-sm" onclick="saveNotes()">💾 Guardar</button>
+            </div>
+          </div>
+          <textarea id="notesArea" class="inp" rows="14" placeholder="Escribe tus notas privadas aquí...&#10;• Observaciones de la sesión&#10;• Pendientes&#10;• Puntos de mejora&#10;• Ideas para próxima sesión"></textarea>
+          <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;">
+            <span id="notesStatus" style="font-size:11px;color:var(--c-muted);">Sin cambios pendientes</span>
+            <span id="notesTimestamp" style="font-size:11px;color:var(--c-muted);font-family:var(--font-mono);"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PANEL: SUMMARY ===== -->
+      <div class="panel" id="panel-summary">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📋 Resumen de Sesión</div>
+            <div class="flex-row">
+              <button class="btn btn-sky btn-sm" onclick="exportCSV()">⬇ CSV</button>
+              <button class="btn btn-primary btn-sm" onclick="saveToSheets()">💾 Sheets</button>
+            </div>
+          </div>
+          <div class="grid-3" style="margin-bottom:14px;">
+            <div class="stat-box">
+              <div class="stat-num" id="sum-total">0</div>
+              <div class="stat-lbl">Participantes</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num" id="sum-interv">0</div>
+              <div class="stat-lbl">Intervenciones</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num" id="sum-activ">0</div>
+              <div class="stat-lbl">Actividades</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num" id="sum-quiz">0</div>
+              <div class="stat-lbl">Preguntas Quiz</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num" id="sum-teams">0</div>
+              <div class="stat-lbl">Equipos</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num" id="sum-spins">0</div>
+              <div class="stat-lbl">Giros Ruleta</div>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div style="padding:12px;background:rgba(244,180,0,0.06);border:1px solid rgba(244,180,0,0.15);border-radius:var(--radius);">
+              <div style="font-size:10px;color:var(--c-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">🥇 Top Participante</div>
+              <div id="sum-topPart" style="font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--c-yellow);">—</div>
+            </div>
+            <div style="padding:12px;background:rgba(146,190,234,0.06);border:1px solid rgba(146,190,234,0.15);border-radius:var(--radius);">
+              <div style="font-size:10px;color:var(--c-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">🏆 Top Equipo</div>
+              <div id="sum-topTeam" style="font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--c-sky);">—</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">📊 Log de Actividad</div></div>
+          <div id="activityLog" style="display:flex;flex-direction:column;gap:4px;max-height:260px;overflow-y:auto;">
+            <div class="empty-state"><div class="empty-icon">📋</div>El log aparecerá aquí</div>
+          </div>
+        </div>
+      </div>
+
+    </main><!-- /main -->
+  </div><!-- /body -->
+</div><!-- /app -->
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- ============ MODALS ============ -->
+
+<!-- ADD COLLAB -->
+<div id="modal-addCollab" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <div class="modal-title"><span class="modal-close" onclick="closeModal('addCollab')">×</span>➕ Agregar Colaborador</div>
+    <div class="flex-col">
+      <input class="inp" id="newCollabName" type="text" placeholder="Nombre completo" onkeydown="if(event.key==='Enter')saveCollab()">
+      <select class="sel" id="newCollabTeam"><option value="">Sin equipo</option></select>
+      <select class="sel" id="newCollabStatus">
+        <option value="pending">Pendiente</option>
+        <option value="participated">Participó</option>
+        <option value="highlighted">Destacado</option>
+        <option value="absent">Ausente</option>
+      </select>
+      <div class="flex-row" style="justify-content:flex-end;">
+        <button class="btn btn-secondary" onclick="closeModal('addCollab')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveCollab()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BULK ADD -->
+<div id="modal-bulkAdd" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <div class="modal-title"><span class="modal-close" onclick="closeModal('bulkAdd')">×</span>📋 Carga Masiva</div>
+    <div class="flex-col">
+      <div style="font-size:12px;color:var(--c-muted);">Pega los nombres, uno por línea:</div>
+      <textarea class="inp" id="bulkNames" rows="8" placeholder="Ana López&#10;Carlos Mendez&#10;María Ramos&#10;Juan García"></textarea>
+      <div class="flex-row" style="justify-content:flex-end;">
+        <button class="btn btn-secondary" onclick="closeModal('bulkAdd')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveBulk()">Importar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE TEAM -->
+<div id="modal-createTeam" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <div class="modal-title"><span class="modal-close" onclick="closeModal('createTeam')">×</span>🏆 Crear Equipo</div>
+    <div class="flex-col">
+      <input class="inp" id="newTeamName" type="text" placeholder="Nombre del equipo" onkeydown="if(event.key==='Enter')saveTeam()">
+      <div class="flex-row">
+        <span style="font-size:12px;color:var(--c-muted);">Color:</span>
+        <input type="color" id="newTeamColor" value="#92bcea" style="width:40px;height:32px;border:none;background:none;cursor:pointer;">
+      </div>
+      <div class="flex-row" style="justify-content:flex-end;">
+        <button class="btn btn-secondary" onclick="closeModal('createTeam')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveTeam()">Crear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD POINTS -->
+<div id="modal-addPoints" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <div class="modal-title"><span class="modal-close" onclick="closeModal('addPoints')">×</span>⭐ Asignar Puntos</div>
+    <div class="flex-col">
+      <select class="sel" id="pointsCollab"><option value="">Selecciona colaborador...</option></select>
+      <div class="flex-row">
+        <input class="inp" id="pointsAmount" type="number" value="10" min="1" max="9999" placeholder="Puntos">
+        <select class="sel" id="pointsReason" style="width:200px;">
+          <option value="participacion">Participación</option>
+          <option value="respuesta_correcta">Respuesta correcta</option>
+          <option value="destacado">Destacado</option>
+          <option value="quiz">Quiz</option>
+          <option value="bonus">Bonus</option>
+        </select>
+      </div>
+      <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(76,175,80,0.06);border:1px solid rgba(76,175,80,0.2);border-radius:var(--radius);cursor:pointer;">
+        <input type="checkbox" id="publishPoints" checked style="accent-color:var(--c-green);width:16px;height:16px;">
+        <span style="font-size:12px;color:var(--c-light);">📺 Mostrar notificación en Vista Collab</span>
+      </label>
+      <div class="flex-row" style="justify-content:flex-end;">
+        <button class="btn btn-secondary" onclick="closeModal('addPoints')">Cancelar</button>
+        <button class="btn btn-primary" onclick="savePoints()">Asignar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD TEAM POINTS -->
+<div id="modal-addTeamPoints" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <div class="modal-title"><span class="modal-close" onclick="closeModal('addTeamPoints')">×</span>🏆 Puntos de Equipo</div>
+    <div class="flex-col">
+      <select class="sel" id="teamPointsSelect"><option value="">Selecciona equipo...</option></select>
+      <input class="inp" id="teamPointsAmount" type="number" value="20" min="1" max="9999" placeholder="Puntos">
+      <div class="flex-row" style="justify-content:flex-end;">
+        <button class="btn btn-secondary" onclick="closeModal('addTeamPoints')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveTeamPoints()">Asignar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ACTIVITY MODAL -->
+<div id="modal-activity" class="modal-overlay" style="display:none;">
+  <div class="modal" style="min-width:480px;">
+    <div class="modal-title" id="activityModalTitle"><span class="modal-close" onclick="closeModal('activity')">×</span></div>
+    <div id="activityModalContent"></div>
+  </div>
+</div>
+
+<!-- QUIZ LAUNCH -->
+<div id="modal-quiz" class="modal-overlay" style="display:none;">
+  <div class="modal" style="min-width:500px;max-height:80vh;overflow-y:auto;">
+    <div class="modal-title"><span class="modal-close" onclick="closeModal('quiz')">×</span>🎯 Quiz en Progreso</div>
+    <div id="quizModalContent"></div>
+  </div>
+</div>
+
+<!-- SHEETS INFO -->
+<div id="modal-sheets" class="modal-overlay" style="display:none;">
+  <div class="modal" style="min-width:500px;">
+    <div class="modal-title"><span class="modal-close" onclick="closeModal('sheets')">×</span>💾 Conexión Google Sheets</div>
+    <div class="flex-col">
+      <div style="font-size:12px;color:var(--c-muted);">URL de tu Apps Script Web App:</div>
+      <input class="inp" id="sheetsUrl" type="text" placeholder="https://script.google.com/macros/s/.../exec" style="font-family:var(--font-mono);font-size:11px;">
+      <div style="font-size:11px;color:var(--c-muted);padding:10px;background:rgba(255,255,255,0.03);border-radius:var(--radius);border:1px solid var(--c-border);">
+        <strong style="color:var(--c-sky);">Instrucciones:</strong><br>
+        1. Abre Google Sheets → Extensiones → Apps Script<br>
+        2. Pega el código Apps Script provisto más abajo<br>
+        3. Implementar → Nueva implementación → App web<br>
+        4. Quién tiene acceso: Cualquier persona<br>
+        5. Copia la URL y pégala aquí
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="showAppsScript()">📋 Ver código Apps Script</button>
+      <div id="appsScriptCode" style="display:none;">
+        <pre style="font-family:var(--font-mono);font-size:10px;color:var(--c-sky);background:rgba(0,0,0,0.3);padding:12px;border-radius:var(--radius);overflow-x:auto;white-space:pre-wrap;border:1px solid var(--c-border);">function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet()
+              .getSheetByName('TMLF_Training') 
+              || SpreadsheetApp.getActiveSpreadsheet().insertSheet('TMLF_Training');
+  var data = JSON.parse(e.postData.contents);
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow([
+      'timestamp','sessionName','trainerName','meetLink',
+      'participantName','teamName','activityType','questionText',
+      'responseStatus','pointsAwarded','participationStatus','notes'
+    ]);
+  }
+  data.rows.forEach(function(row) {
+    sheet.appendRow([
+      row.timestamp, row.sessionName, row.trainerName, row.meetLink,
+      row.participantName, row.teamName, row.activityType, row.questionText,
+      row.responseStatus, row.pointsAwarded, row.participationStatus, row.notes
+    ]);
+  });
+  return ContentService.createTextOutput(JSON.stringify({status:'ok'}))
+         .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doGet(e) {
+  return ContentService.createTextOutput('TMLF Training Command Center — Online')
+         .setMimeType(ContentService.MimeType.TEXT);
+}</pre>
+      </div>
+      <div class="flex-row" style="justify-content:flex-end;">
+        <button class="btn btn-secondary" onclick="closeModal('sheets')">Cancelar</button>
+        <button class="btn btn-primary" onclick="confirmSaveSheets()">Conectar y Enviar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIBRARY EDITOR MODAL -->
+<div id="modal-libraryEditor" class="modal-overlay" style="display:none;">
+  <div class="modal" style="min-width:520px;max-height:88vh;overflow-y:auto;">
+    <div class="modal-title" id="libEditorTitle">
+      <span class="modal-close" onclick="closeModal('libraryEditor')">×</span>
+      📚 Nueva Actividad
+    </div>
+    <div class="flex-col" id="libEditorBody">
+      <div>
+        <div style="font-size:10px;color:var(--c-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Tipo de actividad</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;" id="libTypeGrid"></div>
+      </div>
+      <div id="libContentFields" style="display:flex;flex-direction:column;gap:8px;"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <div style="font-size:10px;color:var(--c-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Puntos base</div>
+          <input class="inp" id="libPoints" type="number" value="10" min="1" max="999" style="text-align:center;">
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--c-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Etiqueta / módulo</div>
+          <input class="inp" id="libTag" type="text" placeholder="ej. Módulo 1, VAWA...">
+        </div>
+      </div>
+      <div>
+        <div style="font-size:10px;color:var(--c-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Notas del trainer (privado)</div>
+        <textarea class="inp" id="libNotes" rows="2" placeholder="Contexto, respuesta esperada, hints..."></textarea>
+      </div>
+      <div class="flex-row" style="justify-content:flex-end;border-top:1px solid var(--c-border);padding-top:12px;">
+        <button class="btn btn-secondary" onclick="closeModal('libraryEditor')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveLibraryItem()">💾 Guardar en Biblioteca</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================================================
+//  TMLF LIVE TRAINING COMMAND CENTER — v1.0
+//  JavaScript Core
+// ===================================================
+
+// ===== STATE =====
+const STATE = {
+  collaborators: [],
+  teams: [],
+  quizQuestions: [],
+  activityLog: [],
+  activityLibrary: [],          // ← biblioteca pre-cargada
+  interventions: 0,
+  activitiesUsed: 0,
+  quizzesLaunched: 0,
+  wheelSpins: 0,
+  wheelUsed: [],
+  currentQuizIndex: 0,
+  currentCorrectAnswer: null,
+  currentTFAnswer: null,
+  sheetsUrl: '',
+  semaphoreState: null,
+  activeActivity: null,
+};
+
+const COLORS = ['#92bcea','#afb3f7','#4caf50','#f4b400','#d9534f','#f07c3a','#c084fc','#34d399','#fb923c','#60a5fa'];
+let editingCollabId = null;
+
+// ===== CLOCK =====
+function updateClock() {
+  const now = new Date();
+  document.getElementById('liveClock').textContent =
+    now.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(updateClock, 1000); updateClock();
+
+// ===== PANEL NAVIGATION =====
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  const idx = ['meet','collabs','teams','wheel','activities','quiz','timers','score','notes','summary'].indexOf(id);
+  document.querySelectorAll('.nav-item')[idx]?.classList.add('active');
+  if(id==='wheel') { setupWheel(); renderWheelParticipants(); }
+  if(id==='score') { renderScoreboard(); }
+  if(id==='summary') { updateSummary(); }
+  if(id==='collabs') { renderCollabs(); }
+  if(id==='teams') { renderTeams(); renderTeamsScore(); }
+}
+
+// ===== TOAST =====
+function toast(msg, duration=2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), duration);
+}
+
+// ===== MEET =====
+function updateMeetStatus() {
+  const url = document.getElementById('meetUrl').value.trim();
+  const dot = document.getElementById('meetDot');
+  const status = document.getElementById('meetStatus');
+  if(url && url.startsWith('https://meet.google.com/')) {
+    dot.classList.add('live'); status.textContent = 'Sesión activa';
+    status.style.color = 'var(--c-green)';
+  } else {
+    dot.classList.remove('live'); status.textContent = url ? 'URL inválida' : 'Sin sesión activa';
+    status.style.color = url ? 'var(--c-red)' : 'var(--c-muted)';
+  }
+}
+let meetWindow = null;
+
+function launchSplitScreen() {
+  const url = document.getElementById('meetUrl').value.trim();
+  if(!url) return toast('⚠ Ingresa el enlace de Meet primero');
+  if(!url.startsWith('https://meet.google.com/')) return toast('⚠ URL de Meet inválida');
+
+  const sw = window.screen.width;
+  const sh = window.screen.height;
+  const half = Math.floor(sw / 2);
+
+  // Reposicionar esta ventana a la derecha
+  try {
+    window.moveTo(half, 0);
+    window.resizeTo(half, sh);
+  } catch(e) {
+    // Algunos navegadores bloquean moveTo (ej. pestañas)
+  }
+
+  // Abrir Meet en la mitad izquierda
+  meetWindow = window.open(
+    url,
+    'TMLF_Meet',
+    `width=${half},height=${sh},left=0,top=0,toolbar=0,menubar=0,scrollbars=1`
+  );
+
+  if (!meetWindow) {
+    toast('⚠ El navegador bloqueó la ventana emergente. Permite popups para este sitio.', 4000);
+    return;
+  }
+
+  // Actualizar UI
+  updateMeetStatus();
+  document.getElementById('splitStatus').innerHTML =
+    '<span style="color:var(--c-green);font-weight:600;">✅ Split activo — Meet abierto a la izquierda</span>';
+  document.getElementById('meetDot').classList.add('live');
+  document.getElementById('meetStatus').textContent = 'Split-screen activo';
+  document.getElementById('meetStatus').style.color = 'var(--c-green)';
+
+  logActivity('meet_open', 'Split-screen lanzado: ' + url);
+  toast('✅ Split-screen activado', 3000);
+
+  // Watchdog: detectar si Meet se cierra
+  const check = setInterval(() => {
+    if (meetWindow && meetWindow.closed) {
+      clearInterval(check);
+      document.getElementById('splitStatus').textContent = 'Meet cerrado. Vuelve a lanzar cuando lo necesites.';
+      document.getElementById('meetDot').classList.remove('live');
+      document.getElementById('meetStatus').textContent = 'Sin sesión activa';
+      document.getElementById('meetStatus').style.color = 'var(--c-muted)';
+    }
+  }, 2000);
+}
+
+function openMeet() {
+  const url = document.getElementById('meetUrl').value.trim();
+  if(!url) return toast('⚠ Ingresa un enlace de Meet');
+  meetWindow = window.open(url, '_blank');
+  updateMeetStatus();
+  logActivity('meet_open', 'Sesión Meet abierta: ' + url);
+  toast('↗ Meet abierto en nueva ventana');
+}
+function copyMeetLink() {
+  const url = document.getElementById('meetUrl').value.trim();
+  if(!url) return toast('⚠ No hay enlace para copiar');
+  navigator.clipboard.writeText(url).then(()=>toast('✅ Enlace copiado al portapapeles'));
+}
+
+// ===== COLLABORATORS =====
+function genId() { return '_'+Math.random().toString(36).slice(2,9); }
+function genColor(name) {
+  let h = 0; for(let c of name) h = (h<<5)-h+c.charCodeAt(0);
+  return COLORS[Math.abs(h)%COLORS.length];
+}
+function initials(name) { return name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase(); }
+
+function openAddCollab(id=null) {
+  editingCollabId = id;
+  const m = document.getElementById('modal-addCollab');
+  const nameInput = document.getElementById('newCollabName');
+  const teamSel = document.getElementById('newCollabTeam');
+  teamSel.innerHTML = '<option value="">Sin equipo</option>';
+  STATE.teams.forEach(t => {
+    teamSel.innerHTML += `<option value="${t.id}">${t.name}</option>`;
+  });
+  if(id) {
+    const c = STATE.collaborators.find(x=>x.id===id);
+    nameInput.value = c.name;
+    teamSel.value = c.teamId||'';
+    document.getElementById('newCollabStatus').value = c.status;
+  } else {
+    nameInput.value = ''; teamSel.value = '';
+    document.getElementById('newCollabStatus').value = 'pending';
+  }
+  m.style.display='flex'; nameInput.focus();
+}
+function saveCollab() {
+  const name = document.getElementById('newCollabName').value.trim();
+  if(!name) return toast('⚠ Escribe un nombre');
+  const teamId = document.getElementById('newCollabTeam').value;
+  const status = document.getElementById('newCollabStatus').value;
+  const teamName = STATE.teams.find(t=>t.id===teamId)?.name||'';
+  if(editingCollabId) {
+    const c = STATE.collaborators.find(x=>x.id===editingCollabId);
+    c.name=name; c.teamId=teamId; c.teamName=teamName; c.status=status;
+  } else {
+    STATE.collaborators.push({id:genId(),name,teamId,teamName,status,points:0,color:genColor(name),participations:0});
+  }
+  closeModal('addCollab'); renderCollabs(); updateBadge(); updateStats();
+  toast(editingCollabId?'✅ Colaborador actualizado':'✅ Colaborador agregado');
+}
+function deleteCollab(id) {
+  if(!confirm('¿Eliminar este colaborador?')) return;
+  STATE.collaborators = STATE.collaborators.filter(c=>c.id!==id);
+  renderCollabs(); updateBadge(); updateStats();
+}
+function renderCollabs() {
+  const list = document.getElementById('collabList');
+  const search = document.getElementById('collabSearch').value.toLowerCase();
+  const filter = document.getElementById('collabFilter').value;
+  let items = STATE.collaborators.filter(c=>{
+    const matchS = !search || c.name.toLowerCase().includes(search);
+    const matchF = !filter || c.status===filter;
+    return matchS&&matchF;
+  });
+  document.getElementById('collabCount').textContent = STATE.collaborators.length+' colaboradores registrados';
+  if(!items.length){list.innerHTML='<div class="empty-state"><div class="empty-icon">👥</div>Sin resultados</div>';return;}
+  list.innerHTML = items.map(c=>`
+    <div class="collab-row" id="cr-${c.id}">
+      <div class="collab-avatar" style="background:${c.color}22;color:${c.color};">${initials(c.name)}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="collab-name">${c.name}</div>
+        <div class="collab-team">${c.teamName||'Sin equipo'}</div>
+      </div>
+      <span class="status-badge status-${c.status}">${{pending:'Pendiente',participated:'Participó',highlighted:'⭐ Destacado',absent:'Ausente'}[c.status]}</span>
+      <div class="collab-pts">${c.points}p</div>
+      <div style="display:flex;gap:4px;">
+        <button class="btn btn-xs btn-success" onclick="quickPoints('${c.id}',10)" title="+ 10pts">+10</button>
+        <button class="btn btn-xs btn-sky" onclick="openAddCollab('${c.id}')" title="Editar">✏</button>
+        <button class="btn btn-xs btn-danger" onclick="deleteCollab('${c.id}')" title="Eliminar">🗑</button>
+      </div>
+    </div>`).join('');
+}
+function updateBadge() {
+  document.getElementById('collabBadge').textContent = STATE.collaborators.length;
+}
+function openBulkAdd() { document.getElementById('modal-bulkAdd').style.display='flex'; document.getElementById('bulkNames').value=''; document.getElementById('bulkNames').focus(); }
+function saveBulk() {
+  const lines = document.getElementById('bulkNames').value.split('\n').map(l=>l.trim()).filter(Boolean);
+  if(!lines.length) return toast('⚠ Escribe al menos un nombre');
+  lines.forEach(name=>{
+    if(!STATE.collaborators.find(c=>c.name.toLowerCase()===name.toLowerCase()))
+      STATE.collaborators.push({id:genId(),name,teamId:'',teamName:'',status:'pending',points:0,color:genColor(name),participations:0});
+  });
+  closeModal('bulkAdd'); renderCollabs(); updateBadge(); updateStats();
+  toast(`✅ ${lines.length} colaboradores importados`);
+}
+function quickPoints(id, amt) {
+  const c = STATE.collaborators.find(x=>x.id===id);
+  if(!c) return;
+  c.points += amt; c.participations++;
+  if(c.status==='pending') c.status='participated';
+  STATE.interventions++; updateStats(); renderCollabs();
+  logActivity('quick_points', `+${amt}pts a ${c.name}`);
+  toast(`⭐ +${amt}pts → ${c.name}`);
+}
+
+// ===== TEAMS =====
+function openCreateTeam() {
+  document.getElementById('modal-createTeam').style.display='flex';
+  document.getElementById('newTeamName').value='';
+  document.getElementById('newTeamColor').value='#92bcea';
+  document.getElementById('newTeamName').focus();
+}
+function saveTeam() {
+  const name = document.getElementById('newTeamName').value.trim();
+  if(!name) return toast('⚠ Escribe un nombre de equipo');
+  const color = document.getElementById('newTeamColor').value;
+  STATE.teams.push({id:genId(),name,color,points:0});
+  closeModal('createTeam'); renderTeams(); renderTeamsScore();
+  toast(`✅ Equipo "${name}" creado`);
+}
+function deleteTeam(id) {
+  if(!confirm('¿Eliminar este equipo?')) return;
+  STATE.collaborators.forEach(c=>{ if(c.teamId===id){c.teamId='';c.teamName='';} });
+  STATE.teams = STATE.teams.filter(t=>t.id!==id);
+  renderTeams(); renderTeamsScore(); renderCollabs();
+}
+function autoAssignTeams() {
+  if(!STATE.teams.length) return toast('⚠ Crea equipos primero');
+  const unassigned = STATE.collaborators.filter(c=>!c.teamId);
+  if(!unassigned.length) return toast('ℹ Todos ya tienen equipo');
+  const shuffled = [...unassigned].sort(()=>Math.random()-.5);
+  shuffled.forEach((c,i)=>{
+    const t = STATE.teams[i%STATE.teams.length];
+    c.teamId=t.id; c.teamName=t.name;
+  });
+  renderCollabs(); renderTeams(); toast('✅ Equipos asignados automáticamente');
+}
+function renderTeams() {
+  const el = document.getElementById('teamsList');
+  if(!STATE.teams.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">🏆</div>Sin equipos creados</div>';return;}
+  el.innerHTML = STATE.teams.map(t=>{
+    const members = STATE.collaborators.filter(c=>c.teamId===t.id);
+    return `<div style="background:rgba(255,255,255,0.02);border:1px solid ${t.color}33;border-radius:var(--radius);padding:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:12px;height:12px;border-radius:50%;background:${t.color};"></div>
+          <span style="font-weight:600;font-size:14px;color:${t.color};">${t.name}</span>
+          <span style="font-size:11px;color:var(--c-muted);">${members.length} miembros · ${t.points}pts</span>
+        </div>
+        <button class="btn btn-xs btn-danger" onclick="deleteTeam('${t.id}')">🗑</button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;">
+        ${members.map(m=>`<div class="team-chip" style="background:${t.color}22;color:${t.color};border:1px solid ${t.color}44;">${initials(m.name)} ${m.name.split(' ')[0]}</div>`).join('')||'<span style="font-size:11px;color:var(--c-muted);">Sin miembros</span>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+function renderTeamsScore() {
+  const sorted = [...STATE.teams].sort((a,b)=>b.points-a.points);
+  const el = document.getElementById('teamsScoreboard');
+  if(!sorted.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">📊</div>Sin equipos</div>';return;}
+  const max = sorted[0].points||1;
+  el.innerHTML = sorted.map((t,i)=>`
+    <div class="rank-row">
+      <div class="rank-num">${i+1}</div>
+      <div class="collab-avatar" style="background:${t.color}22;color:${t.color};width:28px;height:28px;font-size:10px;">${t.name.slice(0,2).toUpperCase()}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;font-weight:600;">${t.name}</div>
+        <div class="rank-bar-wrap" style="margin-top:4px;"><div class="rank-bar" style="width:${(t.points/max*100)||0}%;background:${t.color};"></div></div>
+      </div>
+      <div class="rank-pts">${t.points}p</div>
+    </div>`).join('');
+}
+
+// ===== WHEEL =====
+let wheelSpinning = false;
+let wheelAngle = 0;
+let wheelItems = [];
+let wheelAnimId = null;
+
+function setupWheel() {
+  const mode = document.getElementById('wheelMode').value;
+  if(mode==='team') wheelItems = STATE.teams.map(t=>({label:t.name,color:t.color,id:t.id}));
+  else wheelItems = STATE.collaborators.map(c=>({label:c.name.split(' ')[0],color:c.color,id:c.id}));
+  drawWheel();
+  renderWheelParticipants();
+}
+function drawWheel() {
+  const canvas = document.getElementById('wheelCanvas');
+  const ctx = canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height, cx=W/2, cy=H/2, r=cx-8;
+  ctx.clearRect(0,0,W,H);
+  // Shadow glow
+  ctx.save(); ctx.shadowColor='rgba(175,179,247,0.3)'; ctx.shadowBlur=30;
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fillStyle='#171a21'; ctx.fill();
+  ctx.restore();
+  const items = wheelItems.filter(it=>!document.getElementById('noRepeat')?.checked||!STATE.wheelUsed.includes(it.id));
+  if(!items.length){
+    ctx.fillStyle='#617073'; ctx.font='bold 14px DM Sans'; ctx.textAlign='center';
+    ctx.fillText('Sin participantes', cx, cy); return;
+  }
+  const step = (Math.PI*2)/items.length;
+  items.forEach((item,i)=>{
+    const start = wheelAngle+i*step, end = start+step;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,start,end); ctx.closePath();
+    ctx.fillStyle = item.color+'44'; ctx.fill();
+    ctx.strokeStyle = item.color+'88'; ctx.lineWidth=2; ctx.stroke();
+    ctx.save();
+    ctx.translate(cx,cy); ctx.rotate(start+step/2);
+    ctx.textAlign='right'; ctx.font='bold 12px DM Sans';
+    ctx.fillStyle='#f8fafc';
+    const maxL=10, label=item.label.length>maxL?item.label.slice(0,maxL)+'…':item.label;
+    ctx.fillText(label, r-10, 4);
+    ctx.restore();
+  });
+  // Center circle
+  ctx.beginPath(); ctx.arc(cx,cy,22,0,Math.PI*2);
+  ctx.fillStyle='#171a21'; ctx.fill();
+  ctx.strokeStyle='rgba(175,179,247,0.4)'; ctx.lineWidth=2; ctx.stroke();
+  ctx.fillStyle='#afb3f7'; ctx.font='bold 16px DM Sans'; ctx.textAlign='center';
+  ctx.fillText('⭐', cx, cy+5);
+  // Pointer
+  ctx.beginPath(); ctx.moveTo(cx+r-4,cy); ctx.lineTo(cx+r+14,cy-8); ctx.lineTo(cx+r+14,cy+8); ctx.closePath();
+  ctx.fillStyle='#afb3f7'; ctx.fill();
+}
+
+function spinWheel() {
+  if(wheelSpinning) return;
+  const items = wheelItems.filter(it=>!document.getElementById('noRepeat')?.checked||!STATE.wheelUsed.includes(it.id));
+  if(!items.length) return toast('⚠ Sin participantes disponibles');
+  wheelSpinning = true;
+  document.getElementById('spinBtn').disabled = true;
+  document.getElementById('wheelResult').style.display='none';
+  const spinSpeed = 0.3+Math.random()*0.25;
+  const totalRotation = Math.PI*2*(6+Math.random()*4);
+  const duration = 4000+Math.random()*2000;
+  const startAngle = wheelAngle;
+  const startTime = performance.now();
+  let lastTickTime = 0;
+  if(document.getElementById('wheelSound').checked) playWheelSound();
+  function animate(now) {
+    const elapsed = now-startTime;
+    const progress = Math.min(elapsed/duration,1);
+    const ease = 1-Math.pow(1-progress,3);
+    wheelAngle = startAngle+totalRotation*ease;
+    drawWheel();
+    if(progress<1){ wheelAnimId=requestAnimationFrame(animate); }
+    else {
+      wheelSpinning=false;
+      document.getElementById('spinBtn').disabled=false;
+      // Determine winner
+      const step=(Math.PI*2)/items.length;
+      const normalizedAngle = ((-wheelAngle)%(Math.PI*2)+(Math.PI*2))%(Math.PI*2);
+      const winnerIdx = Math.floor(normalizedAngle/step)%items.length;
+      const winner = items[winnerIdx];
+      STATE.wheelSpins++;
+      STATE.wheelUsed.push(winner.id);
+      showWheelResult(winner);
+      renderWheelParticipants();
+      logActivity('wheel_spin',`Ruleta: ${winner.label}`);
+      STATE.interventions++;
+      updateStats();
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+function showWheelResult(winner) {
+  const el = document.getElementById('wheelResult');
+  el.style.display='block';
+  el.innerHTML=`<div class="wheel-result">
+    <div class="wheel-result-label">¡Seleccionado!</div>
+    <div class="wheel-result-name">${winner.label}</div>
+    <div style="margin-top:8px;display:flex;gap:6px;justify-content:center;">
+      <button class="btn btn-success btn-sm" onclick="quickPointsById('${winner.id}',10)">⭐ +10pts</button>
+      <button class="btn btn-secondary btn-sm" onclick="spinWheel()">↻ Volver a girar</button>
+    </div>
+  </div>`;
+  // Add to history
+  const hist = document.getElementById('wheelHistory');
+  const chip = document.createElement('div');
+  chip.className='tag'; chip.style.cssText=`background:${winner.color}22;color:${winner.color};border:1px solid ${winner.color}44;`;
+  chip.textContent=winner.label; hist.appendChild(chip);
+}
+
+function quickPointsById(id,amt) {
+  const c = STATE.collaborators.find(x=>x.id===id);
+  if(!c) return;
+  c.points+=amt; c.participations++;
+  if(c.status==='pending') c.status='participated';
+  STATE.interventions++; updateStats(); renderCollabs();
+  toast(`⭐ +${amt}pts → ${c.name}`);
+}
+
+function renderWheelParticipants() {
+  const el = document.getElementById('wheelParticipants');
+  const noRepeat = document.getElementById('noRepeat')?.checked;
+  const mode = document.getElementById('wheelMode').value;
+  const items = mode==='team'?STATE.teams:STATE.collaborators;
+  if(!items.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">🎡</div>Agrega participantes primero</div>';return;}
+  el.innerHTML=items.map(it=>{
+    const used = noRepeat&&STATE.wheelUsed.includes(it.id);
+    return `<div style="display:flex;align-items:center;gap:6px;padding:4px 8px;border-radius:4px;opacity:${used?0.35:1};">
+      <div style="width:8px;height:8px;border-radius:50%;background:${it.color};flex-shrink:0;"></div>
+      <span style="font-size:12px;">${it.name||it.label||''}</span>
+      ${used?'<span style="font-size:9px;color:var(--c-muted);margin-left:auto;">✓ usado</span>':''}
+    </div>`;
+  }).join('');
+}
+function clearWheelUsed() { STATE.wheelUsed=[]; renderWheelParticipants(); document.getElementById('wheelHistory').innerHTML=''; toast('↺ Ruleta reiniciada'); }
+
+// Wheel sound (simple)
+let audioCtx=null;
+function playWheelSound() {
+  try {
+    if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    let osc=audioCtx.createOscillator(); let gain=audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.type='triangle'; osc.frequency.setValueAtTime(400,audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1200,audioCtx.currentTime+3);
+    osc.frequency.exponentialRampToValueAtTime(300,audioCtx.currentTime+6);
+    gain.gain.setValueAtTime(0.15,audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01,audioCtx.currentTime+6);
+    osc.start(); osc.stop(audioCtx.currentTime+6);
+  } catch(e){}
+}
+
+// ===== ACTIVITIES =====
+const activityDefs = {
+  // — Originales —
+  quickQuestion:   { icon:'💬', name:'Pregunta Rápida' },
+  truefalse:       { icon:'✅', name:'Verdadero / Falso' },
+  multipleChoice:  { icon:'🔢', name:'Opción Múltiple' },
+  surpriseCase:    { icon:'🎁', name:'Caso Sorpresa' },
+  flashChallenge:  { icon:'⚡', name:'Reto Relámpago' },
+  randomCard:      { icon:'🃏', name:'Tarjeta Aleatoria' },
+  hotSeat:         { icon:'🔥', name:'Hot Seat' },
+  quickDebate:     { icon:'⚖️', name:'Debate Rápido' },
+  semaphore:       { icon:'🚦', name:'Semáforo' },
+  // — Nuevas —
+  brainstorm:      { icon:'🧠', name:'Lluvia de Ideas' },
+  quickPoll:       { icon:'📊', name:'Encuesta Rápida' },
+  mythFact:        { icon:'🔍', name:'Mito o Realidad' },
+  lightningRound:  { icon:'🎯', name:'Ronda Relámpago' },
+  whoKnowsMore:    { icon:'🏅', name:'¿Quién Sabe Más?' },
+  caseEval:        { icon:'⚖️', name:'Evalúa el Caso' },
+  correctOrder:    { icon:'🔢', name:'Orden Correcto' },
+  conceptMatch:    { icon:'🔗', name:'Conecta Conceptos' },
+};
+
+// ── Participant selector helper ──
+function buildParticipantSelector() {
+  if(!STATE.collaborators.length)
+    return '<div style="font-size:11px;color:var(--c-muted);">Agrega colaboradores para asignar</div>';
+  const teamOpts = STATE.teams.map(t=>`<option value="team:${t.id}">🏆 Equipo: ${t.name}</option>`).join('');
+  return `
+    <div style="border-top:1px solid var(--c-border);padding-top:12px;">
+      <div style="font-size:10px;color:var(--c-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">👥 ¿Quién responde?</div>
+      <select class="sel" id="actAssignScope" onchange="updateAssignList()" style="margin-bottom:6px;">
+        <option value="all">Todos los colaboradores</option>
+        ${teamOpts}
+        <option value="custom">Selección individual →</option>
+      </select>
+      <div id="actAssignList" style="display:flex;flex-wrap:wrap;gap:4px;max-height:80px;overflow-y:auto;"></div>
+    </div>
+    <div style="border-top:1px solid var(--c-border);padding-top:10px;">
+      <div style="font-size:10px;color:var(--c-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">⭐ Puntos base (ajustable por persona)</div>
+      <div class="flex-row">
+        <input class="inp" id="actBasePoints" type="number" value="10" min="1" max="999" style="width:70px;text-align:center;">
+        <span style="font-size:11px;color:var(--c-muted);">pts por respuesta correcta</span>
+      </div>
+    </div>`;
+}
+
+function updateAssignList() {
+  const scope = document.getElementById('actAssignScope')?.value;
+  const el = document.getElementById('actAssignList');
+  if(!el) return;
+  if(!scope || scope==='all') { el.innerHTML='<span style="font-size:11px;color:var(--c-muted);">Todos participan</span>'; return; }
+  if(scope.startsWith('team:')) {
+    const members = STATE.collaborators.filter(c=>c.teamId===scope.replace('team:',''));
+    el.innerHTML = members.map(c=>`<div style="padding:2px 8px;background:${c.color}18;border:1px solid ${c.color}33;border-radius:20px;font-size:11px;color:${c.color};font-weight:600;">${c.name.split(' ')[0]}</div>`).join('') || '<span style="font-size:11px;color:var(--c-red);">Equipo sin miembros</span>';
+    return;
+  }
+  if(scope==='custom') {
+    el.innerHTML = STATE.collaborators.map(c=>`
+      <label style="display:flex;align-items:center;gap:4px;padding:2px 8px;background:rgba(255,255,255,0.03);border:1px solid var(--c-border);border-radius:20px;font-size:11px;cursor:pointer;">
+        <input type="checkbox" class="act-custom-check" value="${c.id}" style="accent-color:var(--c-accent);">
+        ${c.name.split(' ')[0]}
+      </label>`).join('');
+  }
+}
+
+function getAssignedCollabs() {
+  const scope = document.getElementById('actAssignScope')?.value||'all';
+  if(scope==='all') return [...STATE.collaborators];
+  if(scope.startsWith('team:')) return STATE.collaborators.filter(c=>c.teamId===scope.replace('team:',''));
+  if(scope==='custom') {
+    const ids=[...document.querySelectorAll('.act-custom-check:checked')].map(x=>x.value);
+    return STATE.collaborators.filter(c=>ids.includes(c.id));
+  }
+  return [...STATE.collaborators];
+}
+
+function launchActivity(type) {
+  const def = activityDefs[type];
+  document.getElementById('activityModalTitle').innerHTML =
+    `<span class="modal-close" onclick="closeModal('activity')">×</span>${def.icon} ${def.name}`;
+
+  const needsParticipants = !['semaphore','randomCard'].includes(type);
+  const selector = needsParticipants ? buildParticipantSelector() : '';
+
+  let qHtml = '';
+  if(['quickQuestion','surpriseCase'].includes(type)) {
+    qHtml=`<textarea class="inp" id="actQ" rows="3" placeholder="${type==='surpriseCase'?'Describe el caso...':'Escribe la pregunta...'}"></textarea>`;
+  } else if(type==='hotSeat') {
+    const hs = STATE.collaborators.length ? STATE.collaborators[Math.floor(Math.random()*STATE.collaborators.length)] : null;
+    qHtml=`${hs?`<div style="font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--c-red);text-align:center;padding:8px;">🔥 ${hs.name.split(' ')[0]} en el Hot Seat 🔥</div>`:''}
+      <input class="inp" id="actQ" placeholder="${hs?`Pregunta para ${hs.name.split(' ')[0]}...`:'Pregunta...'}">`;
+  } else if(type==='truefalse') {
+    qHtml=`<textarea class="inp" id="actQ" rows="2" placeholder="Afirmación verdadera o falsa..."></textarea>
+      <div class="flex-row" style="gap:10px;">
+        <div style="flex:1;padding:10px;background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.25);border-radius:var(--radius);text-align:center;font-size:13px;">✅ Verdadero</div>
+        <div style="flex:1;padding:10px;background:rgba(217,83,79,0.08);border:1px solid rgba(217,83,79,0.2);border-radius:var(--radius);text-align:center;font-size:13px;">❌ Falso</div>
+      </div>`;
+  } else if(type==='multipleChoice') {
+    qHtml=`<textarea class="inp" id="actQ" rows="2" placeholder="Pregunta..."></textarea>
+      <div class="grid-2" style="gap:6px;">
+        <input class="inp" id="actOpt1" placeholder="A."><input class="inp" id="actOpt2" placeholder="B.">
+        <input class="inp" id="actOpt3" placeholder="C. (opcional)"><input class="inp" id="actOpt4" placeholder="D. (opcional)">
+      </div>
+      <div class="flex-row">
+        <span style="font-size:11px;color:var(--c-muted);">Respuesta correcta:</span>
+        <select class="sel" id="actCorrectOpt" style="width:90px;">
+          <option value="">Abierta</option><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option>
+        </select>
+      </div>`;
+  } else if(type==='flashChallenge') {
+    qHtml=`<textarea class="inp" id="actQ" rows="2" placeholder="El reto relámpago..."></textarea>
+      <div class="flex-row">
+        <span style="font-size:12px;color:var(--c-muted);">Tiempo:</span>
+        <select class="sel" id="flashTime" style="width:100px;">
+          <option value="30">30 seg</option><option value="60">1 min</option><option value="90">90 seg</option><option value="120">2 min</option>
+        </select>
+      </div>`;
+  } else if(type==='quickDebate') {
+    qHtml=`<input class="inp" id="actQ" placeholder="Tema del debate...">
+      <div class="grid-2"><input class="inp" id="debateA" placeholder="Posición A"><input class="inp" id="debateB" placeholder="Posición B"></div>`;
+  } else if(type==='semaphore') {
+    qHtml=`<div class="semaphore" style="margin:8px 0;">
+      <div class="sem-btn green" onclick="setSemaphore('green',this)">🟢<div class="sem-label">Claro</div></div>
+      <div class="sem-btn yellow" onclick="setSemaphore('yellow',this)">🟡<div class="sem-label">Dudas</div></div>
+      <div class="sem-btn red" onclick="setSemaphore('red',this)">🔴<div class="sem-label">Perdido</div></div>
+    </div>
+    <div id="semResult" style="text-align:center;font-size:12px;color:var(--c-muted);">Se proyecta en Vista Collab</div>`;
+  } else if(type==='brainstorm') {
+    qHtml=`<textarea class="inp" id="actQ" rows="2" placeholder="Tema de la lluvia de ideas..."></textarea>
+      <div style="font-size:11px;color:var(--c-muted);">El trainer anota las ideas en el cuadro de abajo durante la sesión.</div>
+      <textarea class="inp" id="actBrainstormIdeas" rows="4" placeholder="Idea 1&#10;Idea 2&#10;Idea 3..." style="font-family:var(--font-mono);font-size:12px;"></textarea>`;
+  } else if(type==='quickPoll') {
+    qHtml=`<textarea class="inp" id="actQ" rows="2" placeholder="Pregunta de la encuesta..."></textarea>
+      <div style="font-size:10px;color:var(--c-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Opciones de voto</div>
+      <input class="inp" id="actOpt1" placeholder="Opción 1">
+      <input class="inp" id="actOpt2" placeholder="Opción 2">
+      <input class="inp" id="actOpt3" placeholder="Opción 3 (opcional)">
+      <input class="inp" id="actOpt4" placeholder="Opción 4 (opcional)">`;
+  } else if(type==='mythFact') {
+    qHtml=`<textarea class="inp" id="actQ" rows="3" placeholder="Escribe el enunciado — ¿mito o realidad?"></textarea>
+      <div class="flex-row" style="gap:10px;">
+        <div style="flex:1;padding:10px;background:rgba(217,83,79,0.08);border:1px solid rgba(217,83,79,0.2);border-radius:var(--radius);text-align:center;">❌ Mito</div>
+        <div style="flex:1;padding:10px;background:rgba(76,175,80,0.08);border:1px solid rgba(76,175,80,0.2);border-radius:var(--radius);text-align:center;">✅ Realidad</div>
+      </div>
+      <div class="flex-row">
+        <span style="font-size:11px;color:var(--c-muted);">Respuesta correcta:</span>
+        <select class="sel" id="actMythAnswer" style="width:130px;">
+          <option value="myth">❌ Es Mito</option>
+          <option value="fact">✅ Es Realidad</option>
+        </select>
+      </div>
+      <textarea class="inp" id="actMythExplain" rows="2" placeholder="Explicación breve (aparece después de revelar)..."></textarea>`;
+  } else if(type==='lightningRound') {
+    const shuffled=[...STATE.collaborators].sort(()=>Math.random()-.5).slice(0,5);
+    qHtml=`<div style="font-size:11px;color:var(--c-muted);margin-bottom:6px;">El trainer hace preguntas rápidas a cada persona en turno. Define el tema:</div>
+      <input class="inp" id="actQ" placeholder="Tema de la ronda (ej. Definiciones VAWA...)">
+      <div style="font-size:10px;color:var(--c-muted);margin-top:8px;margin-bottom:4px;">Orden de turno (aleatorio):</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;" id="actRoundOrder">
+        ${shuffled.map((c,i)=>`<div style="padding:3px 8px;background:${c.color}18;border:1px solid ${c.color}33;border-radius:20px;font-size:11px;font-weight:600;color:${c.color};">${i+1}. ${c.name.split(' ')[0]}</div>`).join('')}
+      </div>`;
+  } else if(type==='whoKnowsMore') {
+    const pair=[...STATE.collaborators].sort(()=>Math.random()-.5).slice(0,2);
+    qHtml=`<input class="inp" id="actQ" placeholder="Tema o categoría del duelo...">
+      <div style="font-size:10px;color:var(--c-muted);margin-bottom:4px;">Participantes del duelo:</div>
+      <div class="flex-row" style="gap:8px;">
+        <select class="sel" id="actPlayer1">${STATE.collaborators.map(c=>`<option value="${c.id}" ${pair[0]?.id===c.id?'selected':''}>${c.name}</option>`).join('')}</select>
+        <span style="font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--c-accent);">VS</span>
+        <select class="sel" id="actPlayer2">${STATE.collaborators.map(c=>`<option value="${c.id}" ${pair[1]?.id===c.id?'selected':''}>${c.name}</option>`).join('')}</select>
+      </div>
+      <input class="inp" id="actDuelPoints" type="number" value="3" min="1" max="20" placeholder="Preguntas para ganar">`;
+  } else if(type==='caseEval') {
+    qHtml=`<textarea class="inp" id="actQ" rows="4" placeholder="Describe el caso a evaluar..."></textarea>
+      <div style="font-size:10px;color:var(--c-muted);margin-bottom:4px;">Escala de evaluación:</div>
+      <div class="flex-row" style="gap:6px;flex-wrap:wrap;">
+        ${[['1','Muy débil','var(--c-red)'],['2','Débil','#f07c3a'],['3','Regular','var(--c-yellow)'],['4','Bueno','var(--c-sky)'],['5','Excelente','var(--c-green)']].map(([v,l,c])=>
+          `<div style="flex:1;min-width:50px;padding:8px 4px;text-align:center;border:1px solid ${c}44;border-radius:var(--radius-sm);font-size:11px;font-weight:700;color:${c};background:${c}11;">${v}<br><span style="font-size:9px;font-weight:400;">${l}</span></div>`).join('')}
+      </div>
+      <textarea class="inp" id="actCaseContext" rows="2" placeholder="Criterios de evaluación (opcional)..."></textarea>`;
+  } else if(type==='correctOrder') {
+    qHtml=`<input class="inp" id="actQ" placeholder="Título del proceso a ordenar (ej. Pasos para presentar I-485)...">
+      <div style="font-size:10px;color:var(--c-muted);margin-bottom:4px;">Pasos (en el orden correcto):</div>
+      ${[1,2,3,4,5].map(n=>`<div class="flex-row"><span style="font-family:var(--font-mono);font-size:12px;color:var(--c-accent);min-width:20px;">${n}.</span><input class="inp" id="actStep${n}" placeholder="Paso ${n}${n>3?' (opcional)':''}"></div>`).join('')}`;
+  } else if(type==='conceptMatch') {
+    qHtml=`<input class="inp" id="actQ" placeholder="Título del ejercicio (ej. Relaciona términos VAWA)...">
+      <div style="font-size:10px;color:var(--c-muted);margin-bottom:4px;">Pares concepto → definición:</div>
+      ${[1,2,3,4].map(n=>`<div class="grid-2" style="gap:6px;"><input class="inp" id="actConcept${n}" placeholder="Concepto ${n}"><input class="inp" id="actDef${n}" placeholder="Definición ${n}"></div>`).join('')}`;
+  } else if(type==='randomCard') {
+    const topics=['Vocabulario clave','Caso práctico','Revisión rápida','Pregunta de reflexión','Anécdota real','Error común','Tip del día','Pregunta sorpresa'];
+    const picked=topics[Math.floor(Math.random()*topics.length)];
+    qHtml=`<div style="text-align:center;padding:14px;font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--c-accent);background:rgba(175,179,247,0.08);border:1px solid rgba(175,179,247,0.2);border-radius:var(--radius-lg);">🃏 ${picked}</div>
+      <textarea class="inp" id="actQ" rows="2" placeholder="Contexto o pregunta adicional (opcional)..."></textarea>`;
+  }
+
+  document.getElementById('activityModalContent').innerHTML = `<div class="flex-col">
+    ${qHtml}
+    ${selector}
+    <div class="flex-row" style="justify-content:flex-end;margin-top:6px;">
+      <button class="btn btn-secondary" onclick="closeModal('activity')">Cancelar</button>
+      <button class="btn btn-primary" onclick="fireActivity('${type}')">
+        ${type==='flashChallenge'?'⚡ Iniciar':'🚀 Lanzar actividad'}
+      </button>
+    </div>
+  </div>`;
+
+  setTimeout(updateAssignList, 40);
+  document.getElementById('modal-activity').style.display='flex';
+}
+
+function setSemaphore(color, el) {
+  document.querySelectorAll('.sem-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const msgs={green:'✅ El grupo comprende bien',yellow:'⚠️ Hay dudas — considera reforzar',red:'🔴 El grupo está perdido — detente y aclara'};
+  document.getElementById('semResult').textContent=msgs[color]||'';
+  STATE.semaphoreState=color;
+  logActivity('semaphore','Semáforo: '+color);
+  if(collabViewOpen) projectActivity({type:'semaphore',color});
+}
+
+function fireActivity(type) {
+  const q = document.getElementById('actQ')?.value.trim()||'';
+  const basePoints = parseInt(document.getElementById('actBasePoints')?.value)||10;
+  const assigned = getAssignedCollabs();
+
+  if(!['semaphore','randomCard'].includes(type) && assigned.length===0) {
+    return toast('⚠ No hay colaboradores asignados');
+  }
+
+  // Build active activity state
+  STATE.activeActivity = {
+    id: genId(), type, icon: activityDefs[type]?.icon||'💬',
+    label: activityDefs[type]?.name||type,
+    question: q, basePoints,
+    options: type==='multipleChoice' ? [1,2,3,4].map(n=>document.getElementById('actOpt'+n)?.value||'').filter(Boolean) : [],
+    correctOpt: type==='multipleChoice' ? document.getElementById('actCorrectOpt')?.value : null,
+    debateA: document.getElementById('debateA')?.value||'',
+    debateB: document.getElementById('debateB')?.value||'',
+    assigned: assigned.map(c=>({
+      id:c.id, name:c.name, color:c.color, teamId:c.teamId, teamName:c.teamName,
+      response: 'pending',   // pending | correct | partial | incorrect | noresponse
+      pointsToGive: basePoints,
+      awarded: false
+    })),
+    startedAt: new Date().toISOString(),
+    closed: false
+  };
+
+  STATE.activitiesUsed++;
+  logActivity(type, q||activityDefs[type]?.name);
+  updateStats();
+
+  // Collab projection
+  let projData = { type:'question', icon:activityDefs[type]?.icon, label:activityDefs[type]?.name, question:q };
+  if(type==='truefalse')      projData={type:'truefalse',question:q};
+  else if(type==='multipleChoice') projData={type:'multiplechoice',question:q,options:STATE.activeActivity.options};
+  else if(type==='quickDebate')    projData={type:'debate',question:q,sideA:STATE.activeActivity.debateA,sideB:STATE.activeActivity.debateB};
+  else if(type==='brainstorm')     projData={type:'brainstorm',question:q};
+  else if(type==='quickPoll')      projData={type:'quickpoll',question:q,options:STATE.activeActivity.options};
+  else if(type==='mythFact')       projData={type:'mythfact',question:q,answer:document.getElementById('actMythAnswer')?.value,explain:document.getElementById('actMythExplain')?.value||''};
+  else if(type==='lightningRound') projData={type:'question',icon:'🎯',label:'Ronda Relámpago',question:q};
+  else if(type==='whoKnowsMore')   { const p1=STATE.collaborators.find(c=>c.id===document.getElementById('actPlayer1')?.value); const p2=STATE.collaborators.find(c=>c.id===document.getElementById('actPlayer2')?.value); projData={type:'duel',question:q,player1:p1?.name||'?',player2:p2?.name||'?'}; }
+  else if(type==='caseEval')       projData={type:'caseeval',question:q};
+  else if(type==='correctOrder')   projData={type:'correctorder',question:q,steps:[1,2,3,4,5].map(n=>document.getElementById('actStep'+n)?.value||'').filter(Boolean)};
+  else if(type==='conceptMatch')   projData={type:'conceptmatch',question:q,pairs:[1,2,3,4].map(n=>({c:document.getElementById('actConcept'+n)?.value||'',d:document.getElementById('actDef'+n)?.value||''})).filter(p=>p.c)};
+
+  if(type==='flashChallenge') {
+    const t=parseInt(document.getElementById('flashTime')?.value||'60');
+    projData.timer={remaining:t,total:t};
+    closeModal('activity'); showPanel('timers'); setChallTimer(t); startChallTimer();
+    toast(`⚡ Reto lanzado — ${t}s`);
+  } else {
+    closeModal('activity'); toast('🚀 Actividad lanzada');
+  }
+
+  if(collabViewOpen) projectActivity(projData);
+  renderLiveResponses();
+  showPanel('activities');
+}
+
+// ── Live Response Panel ──
+function renderLiveResponses() {
+  const el = document.getElementById('liveResponsesCard');
+  if(!el) return;
+  const act = STATE.activeActivity;
+  if(!act || act.closed) { el.style.display='none'; return; }
+  el.style.display='block';
+
+  const allAwarded = act.assigned.every(r=>r.awarded);
+  const pendingCount = act.assigned.filter(r=>r.response==='pending').length;
+
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div>
+        <div style="font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--c-accent);">
+          ${act.icon} ${act.label} — Respuestas en vivo
+        </div>
+        <div style="font-size:11px;color:var(--c-muted);margin-top:2px;">${act.question||''}</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        ${pendingCount>0?`<span style="font-size:11px;color:var(--c-yellow);">⏳ ${pendingCount} sin responder</span>`:''}
+        <button class="btn btn-success btn-sm" onclick="awardAllCorrect()" title="Otorgar puntos base a todos con ✓">✓ Otorgar Todos</button>
+        <button class="btn btn-danger btn-sm" onclick="closeActiveActivity()">■ Cerrar</button>
+      </div>
+    </div>
+    <!-- Response rows -->
+    <div style="display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto;">
+      ${act.assigned.map(r=>`
+        <div class="resp-row" id="rrow-${r.id}" style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-sm);background:${r.awarded?'rgba(76,175,80,0.05)':r.response==='incorrect'?'rgba(217,83,79,0.05)':'rgba(255,255,255,0.03)'};border:1px solid ${r.awarded?'rgba(76,175,80,0.2)':r.response==='incorrect'?'rgba(217,83,79,0.15)':'var(--c-border)'};transition:all .2s;">
+          <!-- Avatar -->
+          <div class="collab-avatar" style="background:${r.color}22;color:${r.color};width:28px;height:28px;flex-shrink:0;">${initials(r.name)}</div>
+          <!-- Name -->
+          <div style="flex:1;min-width:80px;">
+            <div style="font-size:12px;font-weight:600;">${r.name}</div>
+            ${r.teamName?`<div style="font-size:10px;color:var(--c-muted);">${r.teamName}</div>`:''}
+          </div>
+          <!-- Response toggles -->
+          <div style="display:flex;gap:4px;">
+            ${[['correct','✓','var(--c-green)','rgba(76,175,80,0.15)'],
+               ['partial','~','var(--c-yellow)','rgba(244,180,0,0.12)'],
+               ['incorrect','✗','var(--c-red)','rgba(217,83,79,0.12)'],
+               ['noresponse','—','var(--c-muted)','rgba(97,112,115,0.1)']].map(([v,lbl,col,bg])=>`
+              <button onclick="setResponse('${r.id}','${v}')" style="width:28px;height:28px;border-radius:var(--radius-sm);border:1px solid ${r.response===v?col:'var(--c-border)'};background:${r.response===v?bg:'transparent'};color:${r.response===v?col:'var(--c-muted)'};font-size:13px;font-weight:800;cursor:pointer;transition:all .15s;" title="${{correct:'Correcta',partial:'Parcial',incorrect:'Incorrecta',noresponse:'Sin respuesta'}[v]}">${lbl}</button>`).join('')}
+          </div>
+          <!-- Points input -->
+          <div style="display:flex;align-items:center;gap:4px;">
+            <input type="number" value="${r.pointsToGive}" min="0" max="999"
+              onchange="setResponsePoints('${r.id}',this.value)"
+              style="width:52px;text-align:center;background:rgba(255,255,255,0.05);border:1px solid var(--c-border2);border-radius:var(--radius-sm);color:var(--c-accent);font-family:var(--font-mono);font-size:12px;font-weight:700;padding:4px 6px;outline:none;">
+            <span style="font-size:10px;color:var(--c-muted);">pts</span>
+          </div>
+          <!-- Award button -->
+          ${r.awarded
+            ? `<div style="font-size:11px;color:var(--c-green);font-weight:700;min-width:64px;text-align:center;">✅ +${r.pointsToGive}p</div>`
+            : `<button class="btn btn-primary btn-xs" onclick="awardResponse('${r.id}')"
+                style="min-width:64px;${r.response==='pending'?'opacity:0.45;':''}"
+                ${r.response==='pending'?'title="Marca una respuesta primero"':''}>
+                Otorgar
+              </button>`}
+        </div>`).join('')}
+    </div>
+    <!-- Summary bar -->
+    <div style="margin-top:10px;padding:8px 12px;background:rgba(255,255,255,0.02);border-radius:var(--radius-sm);border:1px solid var(--c-border);display:flex;gap:16px;font-size:11px;">
+      ${['correct','partial','incorrect','noresponse','pending'].map(s=>{
+        const n=act.assigned.filter(r=>r.response===s).length;
+        const cfg={correct:['✓',`color:var(--c-green)`],partial:['~',`color:var(--c-yellow)`],incorrect:['✗',`color:var(--c-red)`],noresponse:['—',`color:var(--c-muted)`],pending:['⏳',`color:var(--c-sky)`]};
+        return n>0?`<span style="${cfg[s][1]};font-weight:600;">${cfg[s][0]} ${n}</span>`:'';
+      }).join('')}
+      <span style="margin-left:auto;color:var(--c-muted);">
+        Otorgados: ${act.assigned.filter(r=>r.awarded).length}/${act.assigned.length}
+      </span>
+    </div>`;
+}
+
+function setResponse(collabId, value) {
+  if(!STATE.activeActivity) return;
+  const r = STATE.activeActivity.assigned.find(x=>x.id===collabId);
+  if(!r || r.awarded) return;
+  r.response = value;
+  // Auto-set points: incorrect/noresponse → 0, partial → half, correct → full
+  if(value==='incorrect'||value==='noresponse') r.pointsToGive=0;
+  else if(value==='partial') r.pointsToGive=Math.round(STATE.activeActivity.basePoints/2);
+  else if(value==='correct') r.pointsToGive=STATE.activeActivity.basePoints;
+  renderLiveResponses();
+}
+
+function setResponsePoints(collabId, val) {
+  if(!STATE.activeActivity) return;
+  const r=STATE.activeActivity.assigned.find(x=>x.id===collabId);
+  if(r && !r.awarded) r.pointsToGive=parseInt(val)||0;
+}
+
+function awardResponse(collabId) {
+  if(!STATE.activeActivity) return;
+  const r=STATE.activeActivity.assigned.find(x=>x.id===collabId);
+  if(!r||r.awarded) return;
+  if(r.response==='pending') return toast('⚠ Marca primero la respuesta');
+  const collab=STATE.collaborators.find(c=>c.id===collabId);
+  if(collab && r.pointsToGive>0) {
+    collab.points+=r.pointsToGive; collab.participations++;
+    if(collab.status==='pending') collab.status='participated';
+    if(r.response==='correct'||r.response==='partial') collab.status='participated';
+    STATE.interventions++;
+    updateStats(); renderCollabs();
+    if(collabViewOpen) showCollabNotif(collab.name, r.pointsToGive);
+    logActivity('award',`+${r.pointsToGive}pts (${r.response}) → ${collab.name}`);
+  }
+  r.awarded=true;
+  renderLiveResponses(); renderScoreboard();
+  toast(`⭐ ${r.pointsToGive>0?`+${r.pointsToGive}pts`:'0pts'} → ${r.name}`);
+}
+
+function awardAllCorrect() {
+  if(!STATE.activeActivity) return;
+  const pending=STATE.activeActivity.assigned.filter(r=>!r.awarded&&r.response!=='pending');
+  if(!pending.length) return toast('⚠ Marca respuestas antes de otorgar');
+  pending.forEach(r=>awardResponse(r.id));
+  toast(`✅ Puntos otorgados a ${pending.length} colaboradores`);
+}
+
+function closeActiveActivity() {
+  if(STATE.activeActivity) STATE.activeActivity.closed=true;
+  renderLiveResponses();
+  clearCollabActivity();
+  toast('✓ Actividad cerrada');
+}
+
+// ===== ACTIVITY LOG =====
+function logActivity(type, detail, extra={}) {
+  const now=new Date();
+  STATE.activityLog.push({
+    timestamp:now.toISOString(), type, detail,
+    sessionName:document.getElementById('sessionName').value,
+    trainerName:document.getElementById('trainerName').value,
+    meetLink:document.getElementById('meetUrl').value,
+    ...extra
+  });
+  renderActivityLog();
+}
+function renderActivityLog() {
+  const el=document.getElementById('activityLog');
+  if(!STATE.activityLog.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">📋</div>Sin actividad registrada</div>';return;}
+  const icons={wheel_spin:'🎡',quick_points:'⭐',meet_open:'📡',semaphore:'🚦',quickQuestion:'💬',truefalse:'✅',multipleChoice:'🔢',surpriseCase:'🎁',flashChallenge:'⚡',hotSeat:'🔥',quickDebate:'⚖️',randomCard:'🃏',quiz:'❓'};
+  el.innerHTML=[...STATE.activityLog].reverse().map(a=>`
+    <div class="q-hist-item">
+      <span>${icons[a.type]||'📌'}</span>
+      <span style="flex:1;">${a.detail||a.type}</span>
+      <span class="q-hist-num">${new Date(a.timestamp).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'})}</span>
+    </div>`).join('');
+}
+function renderActivityHistory() {
+  const el=document.getElementById('activityHistory');
+  if(!STATE.activityLog.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">⚡</div>Ninguna actividad lanzada</div>';return;}
+  el.innerHTML=[...STATE.activityLog].reverse().slice(0,20).map(a=>`
+    <div class="q-hist-item">
+      <span style="font-size:14px;">${activityDefs[a.type]?.icon||'📌'}</span>
+      <span style="flex:1;font-size:12px;">${a.detail||a.type}</span>
+      <span style="font-size:10px;color:var(--c-muted);font-family:var(--font-mono);">${new Date(a.timestamp).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'})}</span>
+    </div>`).join('');
+}
+
+// ===== QUIZ =====
+let correctAnswer = null;
+let tfAnswer = null;
+
+function toggleQuizType() {
+  const t = document.getElementById('quizType').value;
+  document.getElementById('mcOptions').style.display = t==='multiplechoice'?'flex':'none';
+  document.getElementById('tfOptions').style.display = t==='truefalse'?'flex':'none';
+  correctAnswer=null; tfAnswer=null;
+  document.querySelectorAll('[id^="correct"]').forEach(b=>{b.style.background='rgba(76,175,80,0.1)';b.style.fontWeight='';});
+  document.getElementById('tfTrue').style.background='rgba(255,255,255,0.06)';
+  document.getElementById('tfFalse').style.background='rgba(255,255,255,0.06)';
+}
+function setCorrect(n) {
+  correctAnswer=n;
+  document.querySelectorAll('[id^="correct"]').forEach(b=>{b.style.background='rgba(76,175,80,0.1)';b.style.fontWeight='';});
+  document.getElementById('correct'+n).style.background='rgba(76,175,80,0.3)';
+  document.getElementById('correct'+n).style.fontWeight='800';
+}
+function setTFAnswer(v) {
+  tfAnswer=v;
+  document.getElementById('tfTrue').style.background=v==='true'?'rgba(76,175,80,0.3)':'rgba(255,255,255,0.06)';
+  document.getElementById('tfFalse').style.background=v==='false'?'rgba(217,83,79,0.25)':'rgba(255,255,255,0.06)';
+}
+function addQuizQuestion() {
+  const q=document.getElementById('quizQuestion').value.trim();
+  const t=document.getElementById('quizType').value;
+  const pts=parseInt(document.getElementById('quizPoints').value)||10;
+  if(!q) return toast('⚠ Escribe la pregunta');
+  let opts=[],ans=null;
+  if(t==='multiplechoice'){
+    opts=[1,2,3,4].map(n=>document.getElementById('opt'+n).value.trim()).filter(Boolean);
+    if(opts.length<2) return toast('⚠ Escribe al menos 2 opciones');
+    ans=correctAnswer;
+  } else if(t==='truefalse'){
+    opts=['Verdadero','Falso']; ans=tfAnswer==='true'?0:1;
+  }
+  STATE.quizQuestions.push({id:genId(),text:q,type:t,options:opts,answer:ans,points:pts});
+  document.getElementById('quizQuestion').value='';
+  [1,2,3,4].forEach(n=>{const el=document.getElementById('opt'+n);if(el)el.value='';});
+  correctAnswer=null; tfAnswer=null;
+  renderQuizList(); toast('✅ Pregunta agregada');
+}
+function renderQuizList() {
+  const el=document.getElementById('quizList');
+  if(!STATE.quizQuestions.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">❓</div>Sin preguntas</div>';return;}
+  el.innerHTML=STATE.quizQuestions.map((q,i)=>`
+    <div class="quiz-q-card">
+      <div style="display:flex;justify-content:space-between;align-items:start;gap:8px;">
+        <div class="quiz-q-text">${i+1}. ${q.text}</div>
+        <div style="display:flex;gap:4px;flex-shrink:0;">
+          <span class="tag" style="background:rgba(175,179,247,0.1);color:var(--c-accent);">${q.points}p</span>
+          <button class="btn btn-xs btn-danger" onclick="removeQuizQ('${q.id}')">🗑</button>
+        </div>
+      </div>
+      ${q.options?.length?`<div class="quiz-options">${q.options.map((o,oi)=>`<div class="quiz-opt ${q.answer===oi?'correct':''}">${String.fromCharCode(65+oi)}. ${o}</div>`).join('')}</div>`:
+      '<div style="font-size:11px;color:var(--c-muted);">Pregunta abierta</div>'}
+    </div>`).join('');
+}
+function removeQuizQ(id) { STATE.quizQuestions=STATE.quizQuestions.filter(q=>q.id!==id); renderQuizList(); }
+function clearQuiz() { if(confirm('¿Limpiar todas las preguntas?')){STATE.quizQuestions=[];renderQuizList();} }
+
+let quizCurrentIdx = 0;
+function launchQuiz() {
+  if(!STATE.quizQuestions.length) return toast('⚠ Sin preguntas en el quiz');
+  quizCurrentIdx=0; STATE.quizzesLaunched++; updateStats();
+  showQuizQuestion();
+  document.getElementById('modal-quiz').style.display='flex';
+}
+function showQuizQuestion() {
+  const el=document.getElementById('quizModalContent');
+  const q=STATE.quizQuestions[quizCurrentIdx];
+  if(!q){el.innerHTML=`<div style="text-align:center;padding:20px;"><div style="font-size:32px;">🎉</div><div style="font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--c-accent);margin-top:8px;">¡Quiz Completado!</div><button class="btn btn-secondary" style="margin-top:16px;" onclick="closeModal('quiz')">Cerrar</button></div>`;return;}
+  el.innerHTML=`
+    <div style="font-size:11px;color:var(--c-muted);margin-bottom:10px;">${quizCurrentIdx+1} / ${STATE.quizQuestions.length} · ${q.points}pts</div>
+    <div style="font-size:15px;font-weight:600;margin-bottom:14px;">${q.text}</div>
+    ${q.type==='open'?`<textarea class="inp" rows="3" placeholder="Respuesta del grupo..."></textarea>`
+    :`<div class="quiz-options">${(q.options||[]).map((o,i)=>`<div class="quiz-opt" onclick="quizAnswer(${i},'${q.id}')">${String.fromCharCode(65+i)}. ${o}</div>`).join('')}</div>`}
+    <div style="display:flex;justify-content:space-between;margin-top:14px;">
+      <button class="btn btn-secondary btn-sm" onclick="closeModal('quiz')">■ Terminar</button>
+      ${q.type==='open'?`<button class="btn btn-primary btn-sm" onclick="quizNext()">Siguiente →</button>`:''}
+    </div>`;
+}
+function quizAnswer(idx, qid) {
+  const q=STATE.quizQuestions.find(x=>x.id===qid);
+  const opts=document.querySelectorAll('#quizModalContent .quiz-opt');
+  opts.forEach((o,i)=>{
+    o.classList.remove('correct','incorrect');
+    if(i===q.answer) o.classList.add('correct');
+    else if(i===idx&&idx!==q.answer) o.classList.add('incorrect');
+    o.style.pointerEvents='none';
+  });
+  const correct=idx===q.answer;
+  logActivity('quiz',`Quiz Q${quizCurrentIdx+1}: ${q.text} → ${correct?'✓ Correcta':'✗ Incorrecta'}`);
+  setTimeout(()=>quizNext(),1800);
+}
+function quizNext() { quizCurrentIdx++; showQuizQuestion(); }
+function endQuiz() { document.getElementById('liveQuizPanel').style.display='none'; }
+
+// ===== TIMERS =====
+let swInterval=null, swSeconds=0, swRunning=false;
+let cdInterval=null, cdTotal=300, cdRemaining=300, cdRunning=false;
+let challInterval=null, challTotal=60, challRemaining=60, challRunning=false;
+
+// Stopwatch
+function startStopwatch(){if(swRunning)return;swRunning=true;swInterval=setInterval(()=>{swSeconds++;updateSWDisplay();},1000);}
+function pauseStopwatch(){clearInterval(swInterval);swRunning=false;}
+function resetStopwatch(){pauseStopwatch();swSeconds=0;updateSWDisplay();}
+function updateSWDisplay(){const h=Math.floor(swSeconds/3600),m=Math.floor((swSeconds%3600)/60),s=swSeconds%60;document.getElementById('stopwatchDisplay').textContent=[h,m,s].map(v=>String(v).padStart(2,'0')).join(':');}
+
+// Countdown
+function setCountdown(){const m=parseInt(document.getElementById('cdMinutes').value)||0,s=parseInt(document.getElementById('cdSeconds').value)||0;cdTotal=m*60+s;cdRemaining=cdTotal;updateCDDisplay();document.getElementById('cdBar').style.width='100%';}
+function startCountdown(){if(cdRunning)return;if(cdRemaining<=0)setCountdown();cdRunning=true;cdInterval=setInterval(()=>{if(cdRemaining<=0){clearInterval(cdInterval);cdRunning=false;cdAlert();return;}cdRemaining--;updateCDDisplay();},1000);}
+function pauseCountdown(){clearInterval(cdInterval);cdRunning=false;}
+function resetCountdown(){pauseCountdown();cdRemaining=cdTotal;updateCDDisplay();const el=document.getElementById('cdDisplay');el.classList.remove('warning','danger');document.getElementById('cdBar').style.width='100%';}
+function updateCDDisplay(){const m=Math.floor(cdRemaining/60),s=cdRemaining%60;const el=document.getElementById('cdDisplay');el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');const pct=cdTotal>0?(cdRemaining/cdTotal*100):0;document.getElementById('cdBar').style.width=pct+'%';el.classList.toggle('warning',cdRemaining<=30&&cdRemaining>10);el.classList.toggle('danger',cdRemaining<=10);}
+function cdAlert(){toast('⏰ ¡Tiempo terminado!',3000);}
+
+// Challenge timer
+function setChallTimer(secs){challTotal=secs;challRemaining=secs;updateChallDisplay();document.getElementById('challBar').style.width='100%';}
+function startChallTimer(){if(challRunning)return;challRunning=true;challInterval=setInterval(()=>{if(challRemaining<=0){clearInterval(challInterval);challRunning=false;toast('⚡ ¡Tiempo de reto terminado!',3000);return;}challRemaining--;updateChallDisplay();},1000);}
+function pauseChallTimer(){clearInterval(challInterval);challRunning=false;}
+function resetChallTimer(){pauseChallTimer();challRemaining=challTotal;updateChallDisplay();const el=document.getElementById('challDisplay');el.classList.remove('warning','danger');document.getElementById('challBar').style.width='100%';}
+function updateChallDisplay(){const m=Math.floor(challRemaining/60),s=challRemaining%60;const el=document.getElementById('challDisplay');el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');const pct=challTotal>0?(challRemaining/challTotal*100):0;document.getElementById('challBar').style.width=pct+'%';el.classList.toggle('warning',challRemaining<=10&&challRemaining>5);el.classList.toggle('danger',challRemaining<=5);}
+
+// ===== SCOREBOARD =====
+function renderScoreboard(){
+  const sorted=[...STATE.collaborators].sort((a,b)=>b.points-a.points).filter(c=>c.points>0);
+  const el=document.getElementById('individualRanking');
+  if(!sorted.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">🏅</div>Sin puntos aún</div>';return;}
+  const max=sorted[0].points||1;
+  el.innerHTML=sorted.map((c,i)=>`
+    <div class="rank-row">
+      <div class="rank-num">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+      <div class="collab-avatar" style="background:${c.color}22;color:${c.color};width:28px;height:28px;">${initials(c.name)}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;font-weight:600;">${c.name}</div>
+        <div class="rank-bar-wrap" style="margin-top:4px;"><div class="rank-bar" style="width:${(c.points/max*100)}%;"></div></div>
+      </div>
+      <div class="rank-pts">${c.points}p</div>
+    </div>`).join('');
+  // Team ranking
+  const teamsSorted=[...STATE.teams].sort((a,b)=>b.points-a.points);
+  const tel=document.getElementById('teamRanking');
+  if(!teamsSorted.length){tel.innerHTML='<div class="empty-state"><div class="empty-icon">🏆</div>Sin equipos</div>';return;}
+  const tmax=teamsSorted[0].points||1;
+  tel.innerHTML=teamsSorted.map((t,i)=>`
+    <div class="rank-row">
+      <div class="rank-num">${i+1}</div>
+      <div style="width:12px;height:12px;border-radius:50%;background:${t.color};"></div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;font-weight:600;">${t.name}</div>
+        <div class="rank-bar-wrap" style="margin-top:4px;"><div class="rank-bar" style="width:${(t.points/tmax*100)||0}%;background:${t.color};"></div></div>
+      </div>
+      <div class="rank-pts">${t.points}p</div>
+    </div>`).join('');
+}
+function showScoreTab(tab){
+  document.querySelectorAll('#panel-score .ptab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('#panel-score .ptab-content').forEach(t=>t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('scoreTab-'+tab).classList.add('active');
+  renderScoreboard();
+}
+function openAddPoints(){
+  const sel=document.getElementById('pointsCollab');
+  sel.innerHTML='<option value="">Selecciona colaborador...</option>';
+  STATE.collaborators.forEach(c=>sel.innerHTML+=`<option value="${c.id}">${c.name} (${c.points}p)</option>`);
+  document.getElementById('modal-addPoints').style.display='flex';
+}
+function savePoints(){
+  const id=document.getElementById('pointsCollab').value;
+  const amt=parseInt(document.getElementById('pointsAmount').value)||0;
+  const reason=document.getElementById('pointsReason').value;
+  const publish=document.getElementById('publishPoints')?.checked !== false;
+  if(!id) return toast('⚠ Selecciona un colaborador');
+  const c=STATE.collaborators.find(x=>x.id===id);
+  c.points+=amt; c.participations++;
+  if(c.status==='pending') c.status='participated';
+  STATE.interventions++; updateStats(); renderScoreboard(); renderCollabs();
+  logActivity('quick_points',`+${amt}pts (${reason}) → ${c.name}`);
+  closeModal('addPoints'); toast(`⭐ +${amt}pts → ${c.name}`);
+  if(publish && collabViewOpen) showCollabNotif(c.name, amt);
+  else if(publish && !collabViewOpen) {
+    if(confirm('📺 ¿Abrir Vista Collab para mostrar la notificación de puntos?')) {
+      openCollabView(); showCollabNotif(c.name, amt);
+    }
+  }
+}
+function openAddTeamPoints(){
+  const sel=document.getElementById('teamPointsSelect');
+  sel.innerHTML='<option value="">Selecciona equipo...</option>';
+  STATE.teams.forEach(t=>sel.innerHTML+=`<option value="${t.id}">${t.name} (${t.points}p)</option>`);
+  document.getElementById('modal-addTeamPoints').style.display='flex';
+}
+function saveTeamPoints(){
+  const id=document.getElementById('teamPointsSelect').value;
+  const amt=parseInt(document.getElementById('teamPointsAmount').value)||0;
+  if(!id) return toast('⚠ Selecciona un equipo');
+  const t=STATE.teams.find(x=>x.id===id);
+  t.points+=amt;
+  renderTeamsScore(); renderTeams(); renderScoreboard();
+  logActivity('team_points',`+${amt}pts → Equipo ${t.name}`);
+  closeModal('addTeamPoints'); toast(`🏆 +${amt}pts → ${t.name}`);
+}
+
+// ===== NOTES =====
+function saveNotes(){
+  const val=document.getElementById('notesArea').value;
+  localStorage.setItem('tmlf_notes',val);
+  document.getElementById('notesStatus').textContent='✅ Guardado';
+  document.getElementById('notesTimestamp').textContent=new Date().toLocaleString('es-MX');
+  setTimeout(()=>document.getElementById('notesStatus').textContent='Sin cambios pendientes',2000);
+}
+function clearNotes(){if(confirm('¿Limpiar notas?')){document.getElementById('notesArea').value='';saveNotes();}}
+function loadNotes(){const v=localStorage.getItem('tmlf_notes');if(v)document.getElementById('notesArea').value=v;}
+document.getElementById('notesArea').addEventListener('input',()=>document.getElementById('notesStatus').textContent='● Cambios pendientes');
+
+// ===== SUMMARY =====
+function updateSummary(){
+  const sorted=[...STATE.collaborators].sort((a,b)=>b.points-a.points);
+  const topPart=sorted[0];
+  const teamsSorted=[...STATE.teams].sort((a,b)=>b.points-a.points);
+  const topTeam=teamsSorted[0];
+  document.getElementById('sum-total').textContent=STATE.collaborators.length;
+  document.getElementById('sum-interv').textContent=STATE.interventions;
+  document.getElementById('sum-activ').textContent=STATE.activitiesUsed;
+  document.getElementById('sum-quiz').textContent=STATE.quizQuestions.length;
+  document.getElementById('sum-teams').textContent=STATE.teams.length;
+  document.getElementById('sum-spins').textContent=STATE.wheelSpins;
+  document.getElementById('sum-topPart').textContent=topPart?`${topPart.name} (${topPart.points}p)`:'—';
+  document.getElementById('sum-topTeam').textContent=topTeam?`${topTeam.name} (${topTeam.points}p)`:'—';
+  renderActivityLog();
+}
+function updateStats(){
+  document.getElementById('statTotal').textContent=STATE.collaborators.length;
+  document.getElementById('statInterv').textContent=STATE.interventions;
+  document.getElementById('statActivities').textContent=STATE.activitiesUsed;
+  document.getElementById('statQuizzes').textContent=STATE.quizzesLaunched;
+  // Top moment
+  const sorted=[...STATE.collaborators].sort((a,b)=>b.points-a.points).slice(0,3).filter(c=>c.points>0);
+  const el=document.getElementById('topMoment');
+  if(!sorted.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">🏅</div>Aún no hay participaciones</div>';return;}
+  el.innerHTML=sorted.map((c,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:var(--radius-sm);background:rgba(255,255,255,0.03);border:1px solid var(--c-border);">
+      <span>${['🥇','🥈','🥉'][i]}</span>
+      <div class="collab-avatar" style="background:${c.color}22;color:${c.color};width:26px;height:26px;font-size:10px;">${initials(c.name)}</div>
+      <span style="font-size:12px;flex:1;">${c.name}</span>
+      <span style="font-family:var(--font-mono);color:var(--c-yellow);font-size:12px;font-weight:700;">${c.points}p</span>
+    </div>`).join('');
+}
+
+// ===== EXPORT CSV =====
+function exportCSV(){
+  const rows=[['timestamp','sessionName','trainerName','meetLink','participantName','teamName','activityType','questionText','responseStatus','pointsAwarded','participationStatus','notes']];
+  const session=document.getElementById('sessionName').value;
+  const trainer=document.getElementById('trainerName').value;
+  const meet=document.getElementById('meetUrl').value;
+  STATE.collaborators.forEach(c=>{
+    rows.push([new Date().toISOString(),session,trainer,meet,c.name,c.teamName,'participant','',c.status,c.points,c.status,'']);
+  });
+  STATE.activityLog.forEach(a=>{
+    rows.push([a.timestamp,a.sessionName||session,a.trainerName||trainer,a.meetLink||meet,'','',a.type,a.detail,'','','','']);
+  });
+  const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url;
+  a.download=`TMLF_Session_${session.replace(/\s+/g,'_')}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  toast('⬇ CSV exportado');
+}
+
+// ===== GOOGLE SHEETS =====
+function saveToSheets(){document.getElementById('sheetsUrl').value=STATE.sheetsUrl;document.getElementById('modal-sheets').style.display='flex';}
+function showAppsScript(){const el=document.getElementById('appsScriptCode');el.style.display=el.style.display==='none'?'block':'none';}
+async function confirmSaveSheets(){
+  const url=document.getElementById('sheetsUrl').value.trim();
+  if(!url) return toast('⚠ Ingresa la URL de Apps Script');
+  STATE.sheetsUrl=url;
+  const session=document.getElementById('sessionName').value;
+  const trainer=document.getElementById('trainerName').value;
+  const meet=document.getElementById('meetUrl').value;
+  const rows=[];
+  STATE.collaborators.forEach(c=>{
+    rows.push({timestamp:new Date().toISOString(),sessionName:session,trainerName:trainer,meetLink:meet,participantName:c.name,teamName:c.teamName||'',activityType:'participant',questionText:'',responseStatus:c.status,pointsAwarded:c.points,participationStatus:c.status,notes:''});
+  });
+  STATE.activityLog.forEach(a=>{
+    rows.push({timestamp:a.timestamp,sessionName:a.sessionName||session,trainerName:a.trainerName||trainer,meetLink:a.meetLink||meet,participantName:'',teamName:'',activityType:a.type,questionText:a.detail||'',responseStatus:'',pointsAwarded:0,participationStatus:'',notes:''});
+  });
+  try {
+    toast('📤 Enviando a Sheets...',4000);
+    const res=await fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({rows})});
+    closeModal('sheets'); toast('✅ Datos enviados a Google Sheets',3000);
+    logActivity('sheets_save','Datos guardados en Google Sheets');
+  } catch(e) {
+    toast('❌ Error al enviar: '+e.message,4000);
+  }
+}
+
+// ===== MODALS =====
+function closeModal(id){ document.getElementById('modal-'+id).style.display='none'; }
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{ if(e.target===o) o.style.display='none'; });
+});
+
+// ===== FULLSCREEN =====
+function toggleFullscreen(){
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+  else document.exitFullscreen?.();
+}
+
+// ===== RESET =====
+function confirmReset(){
+  if(confirm('⚠️ ¿Resetear toda la sesión? Se perderán todos los datos.')){
+    STATE.collaborators=[]; STATE.teams=[]; STATE.quizQuestions=[]; STATE.activityLog=[];
+    STATE.interventions=0; STATE.activitiesUsed=0; STATE.quizzesLaunched=0; STATE.wheelSpins=0;
+    STATE.wheelUsed=[];
+    renderCollabs(); updateBadge(); updateStats();
+    setupWheel(); renderWheelParticipants();
+    renderTeams(); renderTeamsScore();
+    renderQuizList(); renderScoreboard();
+    renderActivityLog();
+    document.getElementById('wheelHistory').innerHTML='';
+    document.getElementById('wheelResult').style.display='none';
+    toast('↺ Sesión reseteada');
+  }
+}
+
+// ===== COLLAB VIEW =====
+let collabViewOpen = false;
+let cvTimerInterval = null;
+let cvTimerTotal = 0;
+let cvTimerRemaining = 0;
+
+function openCollabView() {
+  collabViewOpen = true;
+  document.getElementById('collabView').classList.add('active');
+  document.getElementById('cv-exitBtn').style.display = 'block';
+  syncToCollab();
+  renderCollabScoreboard();
+  toast('📺 Vista Collab activa — comparte esta ventana', 3000);
+}
+
+function exitCollabView() {
+  collabViewOpen = false;
+  document.getElementById('collabView').classList.remove('active');
+}
+
+function syncToCollab() {
+  const session = document.getElementById('sessionName').value;
+  const trainer = document.getElementById('trainerName').value;
+  const el1 = document.getElementById('cv-sessionName');
+  const el2 = document.getElementById('cv-trainerName');
+  if(el1) el1.textContent = session || 'Sesión';
+  if(el2) el2.textContent = trainer ? `Trainer: ${trainer}` : '';
+}
+
+// Proyectar una actividad en la vista Collab
+function projectActivity(data) {
+  const main = document.getElementById('cv-main');
+  if(!main) return;
+  let html = '';
+
+  if(data.type === 'idle') {
+    html = `<div class="cv-idle" id="cv-idle">
+      <div class="cv-idle-icon">🎛</div>
+      <div class="cv-idle-text">Esperando actividad...</div>
+      <div style="font-size:13px;color:var(--c-muted);opacity:0.5;">El trainer iniciará una actividad en breve</div>
+    </div>`;
+  } else if(data.type === 'question' || data.type === 'surpriseCase' || data.type === 'hotSeat' || data.type === 'flashChallenge') {
+    html = `<div class="cv-activity">
+      <div class="cv-act-badge">${data.icon || '💬'} ${data.label || 'Actividad'}</div>
+      <div class="cv-act-question">${data.question}</div>
+    </div>`;
+  } else if(data.type === 'truefalse') {
+    html = `<div class="cv-activity">
+      <div class="cv-act-badge">✅ Verdadero / Falso</div>
+      <div class="cv-act-question">${data.question}</div>
+      <div class="cv-act-tf">
+        <div class="cv-tf-btn true">✅<div class="cv-tf-label">Verdadero</div></div>
+        <div class="cv-tf-btn false">❌<div class="cv-tf-label">Falso</div></div>
+      </div>
+    </div>`;
+  } else if(data.type === 'multiplechoice') {
+    const letters = ['A','B','C','D'];
+    html = `<div class="cv-activity">
+      <div class="cv-act-badge">🔢 Opción Múltiple</div>
+      <div class="cv-act-question">${data.question}</div>
+      <div class="cv-act-options">
+        ${(data.options||[]).filter(Boolean).map((o,i)=>`
+          <div class="cv-opt"><span class="cv-opt-letter">${letters[i]}</span>${o}</div>`).join('')}
+      </div>
+    </div>`;
+  } else if(data.type === 'semaphore') {
+    const colors = { green:'active-green', yellow:'active-yellow', red:'active-red' };
+    html = `<div class="cv-activity" style="align-items:center;text-align:center;">
+      <div class="cv-act-badge">🚦 Semáforo de Comprensión</div>
+      <div class="cv-act-question" style="font-size:22px;">¿Cómo va tu comprensión del tema?</div>
+      <div class="cv-semaphore">
+        <div class="cv-sem ${data.color==='green'?colors.green:''}">🟢<div class="cv-sem-lbl" style="color:var(--c-green);">Claro</div></div>
+        <div class="cv-sem ${data.color==='yellow'?colors.yellow:''}">🟡<div class="cv-sem-lbl" style="color:var(--c-yellow);">Dudas</div></div>
+        <div class="cv-sem ${data.color==='red'?colors.red:''}">🔴<div class="cv-sem-lbl" style="color:var(--c-red);">Perdido</div></div>
+      </div>
+    </div>`;
+  } else if(data.type === 'debate') {
+    html = `<div class="cv-activity">
+      <div class="cv-act-badge">⚖️ Debate Rápido</div>
+      <div class="cv-act-question">${data.question}</div>
+      <div class="cv-act-tf">
+        <div class="cv-tf-btn true" style="font-size:14px;color:var(--c-sky);">🔵<div class="cv-tf-label" style="color:var(--c-sky);">${data.sideA||'Posición A'}</div></div>
+        <div class="cv-tf-btn false" style="font-size:14px;color:var(--c-accent);">🟣<div class="cv-tf-label" style="color:var(--c-accent);">${data.sideB||'Posición B'}</div></div>
+      </div>
+    </div>`;
+  } else if(data.type === 'quiz') {
+    const letters = ['A','B','C','D'];
+    const q = data.question;
+    html = `<div class="cv-activity">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div class="cv-act-badge">❓ Quiz — Pregunta ${(data.idx||0)+1}</div>
+        <div style="font-family:var(--font-mono);font-size:13px;color:var(--c-yellow);">${data.points||0} pts</div>
+      </div>
+      <div class="cv-act-question">${q.text}</div>
+      ${q.type==='open'?'<div style="color:var(--c-muted);font-size:16px;">Respuesta abierta — comenta en chat</div>'
+       :q.type==='truefalse'?`<div class="cv-act-tf">
+          <div class="cv-tf-btn true">✅<div class="cv-tf-label">Verdadero</div></div>
+          <div class="cv-tf-btn false">❌<div class="cv-tf-label">Falso</div></div>
+        </div>`
+       :`<div class="cv-act-options">${(q.options||[]).map((o,i)=>`<div class="cv-opt ${data.reveal&&q.answer===i?'correct-reveal':''}"><span class="cv-opt-letter">${letters[i]}</span>${o}</div>`).join('')}</div>`}
+    </div>`;
+  } else if(data.type === 'brainstorm') {
+    html=`<div class="cv-activity" style="width:100%;max-width:700px;">
+      <div class="cv-act-badge">🧠 Lluvia de Ideas</div>
+      <div class="cv-act-question">${data.question}</div>
+      <div style="font-size:14px;color:var(--c-muted);text-align:center;margin-top:8px;">💡 Comparte tus ideas en el chat o levanta la mano</div>
+    </div>`;
+  } else if(data.type === 'quickpoll') {
+    html=`<div class="cv-activity" style="width:100%;max-width:680px;">
+      <div class="cv-act-badge">📊 Encuesta Rápida</div>
+      <div class="cv-act-question">${data.question}</div>
+      <div class="cv-act-options">${(data.options||[]).filter(Boolean).map((o,i)=>`<div class="cv-opt"><span class="cv-opt-letter">${i+1}</span>${o}</div>`).join('')}</div>
+    </div>`;
+  } else if(data.type === 'mythfact') {
+    html=`<div class="cv-activity" style="width:100%;max-width:680px;align-items:center;text-align:center;">
+      <div class="cv-act-badge">🔍 Mito o Realidad</div>
+      <div class="cv-act-question">${data.question}</div>
+      <div class="cv-act-tf">
+        <div class="cv-tf-btn false" style="font-size:14px;">❌<div class="cv-tf-label">MITO</div></div>
+        <div class="cv-tf-btn true" style="font-size:14px;">✅<div class="cv-tf-label">REALIDAD</div></div>
+      </div>
+      ${data.reveal?`<div style="padding:12px 20px;background:rgba(175,179,247,0.08);border:1px solid rgba(175,179,247,0.2);border-radius:var(--radius);font-size:15px;color:var(--c-accent);margin-top:8px;">${data.answer==='myth'?'❌ Es un MITO':'✅ Es REALIDAD'}: ${data.explain||''}</div>`:''}
+    </div>`;
+  } else if(data.type === 'duel') {
+    html=`<div class="cv-activity" style="align-items:center;text-align:center;width:100%;max-width:600px;">
+      <div class="cv-act-badge">🏅 ¿Quién Sabe Más?</div>
+      <div class="cv-act-question" style="font-size:22px;">${data.question||'Duelo de conocimiento'}</div>
+      <div class="cv-act-tf" style="margin-top:16px;">
+        <div class="cv-tf-btn true" style="font-size:22px;color:var(--c-sky);">🔵<div class="cv-tf-label" style="font-size:14px;color:var(--c-sky);">${data.player1||'Jugador 1'}</div></div>
+        <div style="font-family:var(--font-display);font-size:32px;font-weight:900;color:var(--c-accent);align-self:center;">VS</div>
+        <div class="cv-tf-btn false" style="font-size:22px;color:var(--c-lilac);">🟣<div class="cv-tf-label" style="font-size:14px;color:var(--c-lilac);">${data.player2||'Jugador 2'}</div></div>
+      </div>
+    </div>`;
+  } else if(data.type === 'caseeval') {
+    html=`<div class="cv-activity" style="width:100%;max-width:700px;">
+      <div class="cv-act-badge">⚖️ Evalúa el Caso</div>
+      <div class="cv-act-question" style="font-size:20px;">${data.question}</div>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;">
+        ${[['1','Muy débil','var(--c-red)'],['2','Débil','#f07c3a'],['3','Regular','var(--c-yellow)'],['4','Bueno','var(--c-sky)'],['5','Excelente','var(--c-green)']].map(([v,l,c])=>
+          `<div style="flex:1;padding:16px 8px;text-align:center;border:2px solid ${c}55;border-radius:var(--radius);background:${c}11;font-family:var(--font-display);font-size:28px;font-weight:800;color:${c};">${v}<div style="font-size:11px;font-weight:600;margin-top:4px;">${l}</div></div>`).join('')}
+      </div>
+    </div>`;
+  } else if(data.type === 'correctorder') {
+    html=`<div class="cv-activity" style="width:100%;max-width:680px;">
+      <div class="cv-act-badge">🔢 Orden Correcto</div>
+      <div class="cv-act-question" style="font-size:20px;">${data.question}</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
+        ${(data.steps||[]).sort(()=>Math.random()-.5).map((s,i)=>`
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.04);border:1px solid var(--c-border2);border-radius:var(--radius-sm);">
+            <span style="font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--c-accent);min-width:28px;">${['A','B','C','D','E'][i]}</span>
+            <span style="font-size:14px;">${s}</span>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  } else if(data.type === 'conceptmatch') {
+    html=`<div class="cv-activity" style="width:100%;max-width:720px;">
+      <div class="cv-act-badge">🔗 Conecta Conceptos</div>
+      <div class="cv-act-question" style="font-size:20px;">${data.question}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          ${(data.pairs||[]).map((p,i)=>`<div style="padding:10px 14px;background:rgba(146,190,234,0.08);border:1px solid rgba(146,190,234,0.2);border-radius:var(--radius-sm);font-size:13px;font-weight:600;color:var(--c-sky);">${i+1}. ${p.c}</div>`).join('')}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          ${(data.pairs||[]).sort(()=>Math.random()-.5).map((p,i)=>`<div style="padding:10px 14px;background:rgba(175,179,247,0.06);border:1px solid rgba(175,179,247,0.15);border-radius:var(--radius-sm);font-size:13px;color:var(--c-accent);">${['A','B','C','D'][i]}. ${p.d}</div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+    html = `<div class="cv-activity" style="width:100%;max-width:800px;">
+      <div class="cv-act-badge">🏆 Scoreboard</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+        ${[...STATE.collaborators].sort((a,b)=>b.points-a.points).filter(c=>c.points>0).slice(0,8).map((c,i)=>{
+          const max=STATE.collaborators[0]?.points||1;
+          return `<div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-family:var(--font-display);font-size:20px;font-weight:800;min-width:32px;color:${['#f4b400','#92bcea','#4caf50'][i]||'#617073'};">${['🥇','🥈','🥉'][i]||i+1}</span>
+            <div style="flex:1;">
+              <div style="font-size:15px;font-weight:600;">${c.name}</div>
+              <div style="height:6px;background:rgba(255,255,255,0.06);border-radius:10px;margin-top:4px;overflow:hidden;">
+                <div style="height:100%;background:${c.color};border-radius:10px;width:${c.points/(STATE.collaborators[0]?.points||1)*100}%;"></div>
+              </div>
+            </div>
+            <span style="font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--c-accent);">${c.points}p</span>
+          </div>`;}).join('')}
+      </div>
+    </div>`;
+  }
+
+  if(data.timer && data.timer.total > 0) {
+    startCollabTimer(data.timer.remaining, data.timer.total);
+  }
+
+  main.innerHTML = html;
+}
+
+function startCollabTimer(remaining, total) {
+  clearInterval(cvTimerInterval);
+  cvTimerTotal = total; cvTimerRemaining = remaining;
+  const disp = document.getElementById('cv-timerDisplay');
+  const fill = document.getElementById('cv-timerFill');
+  function tick() {
+    if(!disp) return;
+    const m=Math.floor(cvTimerRemaining/60), s=cvTimerRemaining%60;
+    disp.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    disp.className='cv-timer'+(cvTimerRemaining<=10?' danger':cvTimerRemaining<=30?' warning':'');
+    if(fill) fill.style.width=(cvTimerTotal>0?cvTimerRemaining/cvTimerTotal*100:0)+'%';
+    if(cvTimerRemaining>0) cvTimerRemaining--;
+    else clearInterval(cvTimerInterval);
+  }
+  tick();
+  cvTimerInterval = setInterval(tick, 1000);
+}
+
+function renderCollabScoreboard() {
+  const el = document.getElementById('cv-scoreboard');
+  if(!el) return;
+  const sorted = [...STATE.collaborators].sort((a,b)=>b.points-a.points).filter(c=>c.points>0).slice(0,8);
+  if(!sorted.length){el.innerHTML='<div style="text-align:center;color:var(--c-muted);font-size:12px;padding:20px 0;opacity:0.5;">Sin puntos aún</div>';return;}
+  el.innerHTML=sorted.map((c,i)=>`
+    <div class="cv-rank-row">
+      <div class="cv-rank-num">${['🥇','🥈','🥉'][i]||i+1}</div>
+      <div style="width:22px;height:22px;border-radius:50%;background:${c.color}22;color:${c.color};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;">${initials(c.name)}</div>
+      <div class="cv-rank-name">${c.name.split(' ')[0]}</div>
+      <div class="cv-rank-pts">${c.points}p</div>
+    </div>`).join('');
+}
+
+// Points notification in collab view
+function showCollabNotif(name, pts) {
+  const el = document.getElementById('cv-pointsNotif');
+  if(!el) return;
+  document.getElementById('cv-notifName').textContent = name;
+  document.getElementById('cv-notifPts').textContent = `+${pts} pts`;
+  el.style.display = 'flex';
+  clearTimeout(el._t);
+  el._t = setTimeout(()=>{ el.style.display='none'; }, 3500);
+  renderCollabScoreboard();
+}
+
+// Project buttons inside activity modal
+function projectCurrentActivity(data) {
+  if(!collabViewOpen) {
+    openCollabView();
+  }
+  projectActivity(data);
+  toast('📺 Proyectado en Vista Collab');
+}
+
+function clearCollabActivity() {
+  projectActivity({type:'idle'});
+  clearInterval(cvTimerInterval);
+  const disp=document.getElementById('cv-timerDisplay');
+  const fill=document.getElementById('cv-timerFill');
+  if(disp) disp.textContent='--:--';
+  if(fill) fill.style.width='100%';
+  toast('🔄 Collab en espera');
+}
+
+// Collab clock
+setInterval(()=>{
+  const el=document.getElementById('cv-clock');
+  if(el) el.textContent=new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+},1000);
+
+// ===== FIX updateStats (safe DOM access) =====
+function updateStats(){
+  const safe=(id,val)=>{ const e=document.getElementById(id); if(e) e.textContent=val; };
+  safe('statTotal',STATE.collaborators.length);
+  safe('statInterv',STATE.interventions);
+  safe('statActivities',STATE.activitiesUsed);
+  safe('statQuizzes',STATE.quizzesLaunched);
+  // Top moment
+  const sorted=[...STATE.collaborators].sort((a,b)=>b.points-a.points).slice(0,3).filter(c=>c.points>0);
+  const el=document.getElementById('topMoment');
+  if(el){
+    if(!sorted.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">🏅</div>Aún no hay participaciones</div>';return;}
+    el.innerHTML=sorted.map((c,i)=>`
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:var(--radius-sm);background:rgba(255,255,255,0.03);border:1px solid var(--c-border);">
+        <span>${['🥇','🥈','🥉'][i]}</span>
+        <div class="collab-avatar" style="background:${c.color}22;color:${c.color};width:26px;height:26px;font-size:10px;">${initials(c.name)}</div>
+        <span style="font-size:12px;flex:1;">${c.name}</span>
+        <span style="font-family:var(--font-mono);color:var(--c-yellow);font-size:12px;font-weight:700;">${c.points}p</span>
+      </div>`).join('');
+  }
+}
+
+// ===== ACTIVITY TABS =====
+function showActTab(tab) {
+  ['live','library','history'].forEach(t=>{
+    document.getElementById('actTab-'+t).style.display = t===tab?'':'none';
+    document.getElementById('atab-'+t).classList.toggle('active', t===tab);
+  });
+  if(tab==='library') renderLibrary();
+  if(tab==='history') renderActivityHistory();
+}
+
+// ===== ACTIVITY LIBRARY =====
+let libEditingId = null;
+let libSelectedType = 'quickQuestion';
+
+const LIB_TYPE_CONFIG = {
+  quickQuestion:  { icon:'💬', name:'Pregunta Rápida',   fields:['question'] },
+  truefalse:      { icon:'✅', name:'V / F',              fields:['question','tfAnswer'] },
+  multipleChoice: { icon:'🔢', name:'Opción Múltiple',    fields:['question','options','correctOpt'] },
+  surpriseCase:   { icon:'🎁', name:'Caso Sorpresa',      fields:['question'] },
+  flashChallenge: { icon:'⚡', name:'Reto Relámpago',     fields:['question','flashTime'] },
+  hotSeat:        { icon:'🔥', name:'Hot Seat',           fields:['question'] },
+  quickDebate:    { icon:'⚖️', name:'Debate',            fields:['question','debateA','debateB'] },
+  brainstorm:     { icon:'🧠', name:'Lluvia de Ideas',    fields:['question'] },
+  quickPoll:      { icon:'📊', name:'Encuesta Rápida',    fields:['question','options'] },
+  mythFact:       { icon:'🔍', name:'Mito o Realidad',    fields:['question','tfAnswer'] },
+  lightningRound: { icon:'🎯', name:'Ronda Relámpago',    fields:['question'] },
+  whoKnowsMore:   { icon:'🏅', name:'¿Quién Sabe Más?',  fields:['question'] },
+  caseEval:       { icon:'⚖️', name:'Evalúa el Caso',    fields:['question'] },
+  correctOrder:   { icon:'🔢', name:'Orden Correcto',     fields:['question'] },
+  conceptMatch:   { icon:'🔗', name:'Conecta Conceptos', fields:['question'] },
+};
+
+function openLibraryEditor(id=null) {
+  libEditingId = id;
+  libSelectedType = 'quickQuestion';
+  const item = id ? STATE.activityLibrary.find(x=>x.id===id) : null;
+  if(item) libSelectedType = item.type;
+
+  document.getElementById('libEditorTitle').innerHTML =
+    `<span class="modal-close" onclick="closeModal('libraryEditor')">×</span>
+     📚 ${id?'Editar':'Nueva'} Actividad`;
+
+  // Type grid
+  document.getElementById('libTypeGrid').innerHTML = Object.entries(LIB_TYPE_CONFIG).map(([k,v])=>`
+    <div id="libType-${k}" onclick="selectLibType('${k}')"
+      style="padding:8px 4px;border-radius:var(--radius-sm);border:1px solid ${k===libSelectedType?'var(--c-accent)':'var(--c-border)'};
+      background:${k===libSelectedType?'rgba(175,179,247,0.1)':'rgba(255,255,255,0.02)'};
+      cursor:pointer;text-align:center;transition:all .15s;">
+      <div style="font-size:18px;">${v.icon}</div>
+      <div style="font-size:9px;font-weight:700;color:${k===libSelectedType?'var(--c-accent)':'var(--c-muted)'};letter-spacing:0.5px;margin-top:2px;">${v.name}</div>
+    </div>`).join('');
+
+  // Pre-fill if editing
+  if(item) {
+    document.getElementById('libPoints').value = item.basePoints||10;
+    document.getElementById('libTag').value = item.tag||'';
+    document.getElementById('libNotes').value = item.notes||'';
+  } else {
+    document.getElementById('libPoints').value = 10;
+    document.getElementById('libTag').value = '';
+    document.getElementById('libNotes').value = '';
+  }
+
+  renderLibContentFields(item);
+  document.getElementById('modal-libraryEditor').style.display='flex';
+}
+
+function selectLibType(type) {
+  libSelectedType = type;
+  document.querySelectorAll('[id^="libType-"]').forEach(el=>{
+    const k=el.id.replace('libType-','');
+    el.style.borderColor = k===type?'var(--c-accent)':'var(--c-border)';
+    el.style.background  = k===type?'rgba(175,179,247,0.1)':'rgba(255,255,255,0.02)';
+    el.querySelector('div:last-child').style.color = k===type?'var(--c-accent)':'var(--c-muted)';
+  });
+  renderLibContentFields(null);
+}
+
+function renderLibContentFields(item=null) {
+  const cfg = LIB_TYPE_CONFIG[libSelectedType];
+  let html = '';
+  if(cfg.fields.includes('question')) {
+    html+=`<div>
+      <div style="font-size:10px;color:var(--c-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Pregunta / Enunciado</div>
+      <textarea class="inp" id="libQ" rows="3" placeholder="Escribe la pregunta o enunciado...">${item?.question||''}</textarea>
+    </div>`;
+  }
+  if(cfg.fields.includes('tfAnswer')) {
+    const ans = item?.tfAnswer||'';
+    html+=`<div>
+      <div style="font-size:10px;color:var(--c-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Respuesta correcta</div>
+      <div class="flex-row" style="gap:8px;">
+        <label style="flex:1;display:flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid ${ans==='true'?'rgba(76,175,80,0.4)':'var(--c-border)'};border-radius:var(--radius-sm);cursor:pointer;background:${ans==='true'?'rgba(76,175,80,0.08)':'transparent'};">
+          <input type="radio" name="libTF" value="true" ${ans==='true'?'checked':''} style="accent-color:var(--c-green);">
+          ✅ Verdadero
+        </label>
+        <label style="flex:1;display:flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid ${ans==='false'?'rgba(217,83,79,0.4)':'var(--c-border)'};border-radius:var(--radius-sm);cursor:pointer;background:${ans==='false'?'rgba(217,83,79,0.08)':'transparent'};">
+          <input type="radio" name="libTF" value="false" ${ans==='false'?'checked':''} style="accent-color:var(--c-red);">
+          ❌ Falso
+        </label>
+      </div>
+    </div>`;
+  }
+  if(cfg.fields.includes('options')) {
+    const opts = item?.options||['','','',''];
+    html+=`<div>
+      <div style="font-size:10px;color:var(--c-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Opciones</div>
+      <div class="grid-2" style="gap:6px;">
+        ${['A','B','C','D'].map((l,i)=>`
+          <input class="inp" id="libOpt${i}" placeholder="${l}. Opción${i>1?' (opcional)':''}" value="${opts[i]||''}">`).join('')}
+      </div>
+    </div>`;
+  }
+  if(cfg.fields.includes('correctOpt')) {
+    const cor = item?.correctOpt??'';
+    html+=`<div class="flex-row">
+      <span style="font-size:11px;color:var(--c-muted);">Respuesta correcta:</span>
+      <select class="sel" id="libCorrectOpt" style="width:100px;">
+        <option value="" ${cor===''?'selected':''}>Abierta</option>
+        ${['A','B','C','D'].map((l,i)=>`<option value="${i}" ${cor==i?'selected':''}>${l}</option>`).join('')}
+      </select>
+    </div>`;
+  }
+  if(cfg.fields.includes('debateA')) {
+    html+=`<div class="grid-2">
+      <div>
+        <div style="font-size:10px;color:var(--c-muted);margin-bottom:4px;">Posición A</div>
+        <input class="inp" id="libDebateA" placeholder="A favor de..." value="${item?.debateA||''}">
+      </div>
+      <div>
+        <div style="font-size:10px;color:var(--c-muted);margin-bottom:4px;">Posición B</div>
+        <input class="inp" id="libDebateB" placeholder="En contra de..." value="${item?.debateB||''}">
+      </div>
+    </div>`;
+  }
+  if(cfg.fields.includes('flashTime')) {
+    html+=`<div class="flex-row">
+      <span style="font-size:11px;color:var(--c-muted);">Tiempo del reto:</span>
+      <select class="sel" id="libFlashTime" style="width:100px;">
+        ${[['30','30 seg'],['60','1 min'],['90','90 seg'],['120','2 min'],['180','3 min']].map(([v,l])=>
+          `<option value="${v}" ${item?.flashTime==v?'selected':''}>${l}</option>`).join('')}
+      </select>
+    </div>`;
+  }
+  document.getElementById('libContentFields').innerHTML = html;
+}
+
+function saveLibraryItem() {
+  const q = document.getElementById('libQ')?.value.trim()||'';
+  const type = libSelectedType;
+  if(!q && !['randomCard','semaphore'].includes(type)) return toast('⚠ Escribe la pregunta o enunciado');
+
+  const item = {
+    id: libEditingId || genId(),
+    type,
+    icon: LIB_TYPE_CONFIG[type]?.icon||'💬',
+    label: LIB_TYPE_CONFIG[type]?.name||type,
+    question: q,
+    basePoints: parseInt(document.getElementById('libPoints')?.value)||10,
+    tag: document.getElementById('libTag')?.value.trim()||'',
+    notes: document.getElementById('libNotes')?.value.trim()||'',
+    options: ['libOpt0','libOpt1','libOpt2','libOpt3'].map(id=>document.getElementById(id)?.value.trim()||'').filter(Boolean),
+    correctOpt: document.getElementById('libCorrectOpt')?.value??'',
+    tfAnswer: document.querySelector('input[name="libTF"]:checked')?.value||'',
+    debateA: document.getElementById('libDebateA')?.value.trim()||'',
+    debateB: document.getElementById('libDebateB')?.value.trim()||'',
+    flashTime: parseInt(document.getElementById('libFlashTime')?.value)||60,
+    createdAt: new Date().toISOString(),
+    usedCount: libEditingId ? (STATE.activityLibrary.find(x=>x.id===libEditingId)?.usedCount||0) : 0,
+  };
+
+  if(libEditingId) {
+    const idx = STATE.activityLibrary.findIndex(x=>x.id===libEditingId);
+    if(idx>-1) STATE.activityLibrary[idx] = item;
+  } else {
+    STATE.activityLibrary.push(item);
+  }
+
+  saveLibraryToStorage();
+  closeModal('libraryEditor');
+  renderLibrary();
+  toast(`✅ "${q.slice(0,40)||item.label}" ${libEditingId?'actualizada':'guardada en Biblioteca'}`);
+}
+
+function deleteLibraryItem(id) {
+  if(!confirm('¿Eliminar esta actividad de la biblioteca?')) return;
+  STATE.activityLibrary = STATE.activityLibrary.filter(x=>x.id!==id);
+  saveLibraryToStorage();
+  renderLibrary();
+  toast('🗑 Eliminada de la biblioteca');
+}
+
+function renderLibrary() {
+  const el = document.getElementById('libraryList');
+  if(!el) return;
+  const search = document.getElementById('libSearch')?.value.toLowerCase()||'';
+  const filter = document.getElementById('libFilter')?.value||'';
+  let items = STATE.activityLibrary.filter(it=>{
+    const matchS = !search || it.question.toLowerCase().includes(search) || (it.tag||'').toLowerCase().includes(search);
+    const matchF = !filter || it.type===filter;
+    return matchS && matchF;
+  });
+
+  if(!items.length) {
+    el.innerHTML='<div class="empty-state"><div class="empty-icon">📚</div>Sin actividades' + (search||filter?' que coincidan':' en biblioteca. Crea una o importa del Quiz.') + '</div>';
+    return;
+  }
+
+  el.innerHTML = items.map((it,idx)=>`
+    <div style="display:flex;align-items:start;gap:10px;padding:10px 12px;border-radius:var(--radius);
+      background:rgba(255,255,255,0.02);border:1px solid var(--c-border);transition:border-color .15s;"
+      onmouseover="this.style.borderColor='rgba(175,179,247,0.2)'" onmouseout="this.style.borderColor='var(--c-border)'">
+
+      <!-- Icon + used count -->
+      <div style="flex-shrink:0;text-align:center;width:36px;">
+        <div style="font-size:22px;">${it.icon}</div>
+        ${it.usedCount>0?`<div style="font-size:9px;color:var(--c-muted);margin-top:2px;">×${it.usedCount}</div>`:''}
+      </div>
+
+      <!-- Main content -->
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px;">
+          <span style="font-size:11px;font-weight:700;color:var(--c-accent);">${it.label}</span>
+          ${it.tag?`<span style="font-size:10px;padding:1px 7px;background:rgba(146,190,234,0.1);border:1px solid rgba(146,190,234,0.2);border-radius:20px;color:var(--c-sky);">${it.tag}</span>`:''}
+          <span style="font-size:10px;padding:1px 7px;background:rgba(244,180,0,0.1);border:1px solid rgba(244,180,0,0.2);border-radius:20px;color:var(--c-yellow);">⭐ ${it.basePoints}p</span>
+        </div>
+        <div style="font-size:13px;font-weight:500;color:var(--c-white);line-height:1.3;margin-bottom:4px;">${it.question||'—'}</div>
+        ${it.type==='multipleChoice'&&it.options.length?`
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            ${it.options.map((o,i)=>`<span style="font-size:10px;color:${it.correctOpt==i?'var(--c-green)':'var(--c-muted)'};${it.correctOpt==i?'font-weight:700;':''}">${['A','B','C','D'][i]}. ${o}</span>`).join('')}
+          </div>`:''}
+        ${it.type==='truefalse'?`<div style="font-size:10px;color:var(--c-muted);">Respuesta: <span style="color:${it.tfAnswer==='true'?'var(--c-green)':'var(--c-red)'};">${it.tfAnswer==='true'?'✅ Verdadero':'❌ Falso'}</span></div>`:''}
+        ${it.type==='quickDebate'&&it.debateA?`<div style="font-size:10px;color:var(--c-muted);">🔵 ${it.debateA} · 🟣 ${it.debateB}</div>`:''}
+        ${it.type==='flashChallenge'?`<div style="font-size:10px;color:var(--c-muted);">⏱ ${it.flashTime}s</div>`:''}
+        ${it.notes?`<div style="font-size:10px;color:var(--c-slate);margin-top:3px;font-style:italic;">📝 ${it.notes}</div>`:''}
+      </div>
+
+      <!-- Actions -->
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
+        <button class="btn btn-primary btn-sm" onclick="launchFromLibrary('${it.id}')" style="white-space:nowrap;">▶ Lanzar</button>
+        <button class="btn btn-sky btn-xs" onclick="openLibraryEditor('${it.id}')">✏ Editar</button>
+        <button class="btn btn-danger btn-xs" onclick="deleteLibraryItem('${it.id}')">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function launchFromLibrary(id) {
+  const it = STATE.activityLibrary.find(x=>x.id===id);
+  if(!it) return;
+  it.usedCount = (it.usedCount||0)+1;
+  saveLibraryToStorage();
+
+  const assigned = getAssignedCollabsForLib();
+
+  STATE.activeActivity = {
+    id: genId(), type:it.type, icon:it.icon, label:it.label,
+    question:it.question, basePoints:it.basePoints,
+    options:it.options, correctOpt:it.correctOpt,
+    debateA:it.debateA, debateB:it.debateB,
+    assigned: assigned.map(c=>({
+      id:c.id, name:c.name, color:c.color, teamId:c.teamId, teamName:c.teamName,
+      response:'pending', pointsToGive:it.basePoints, awarded:false
+    })),
+    startedAt:new Date().toISOString(), closed:false
+  };
+
+  STATE.activitiesUsed++;
+  logActivity(it.type, it.question||it.label);
+  updateStats();
+
+  // Collab projection
+  let projData = {type:'question',icon:it.icon,label:it.label,question:it.question};
+  if(it.type==='truefalse') projData={type:'truefalse',question:it.question};
+  else if(it.type==='multipleChoice') projData={type:'multiplechoice',question:it.question,options:it.options};
+  else if(it.type==='quickDebate') projData={type:'debate',question:it.question,sideA:it.debateA,sideB:it.debateB};
+  if(it.type==='flashChallenge') projData.timer={remaining:it.flashTime,total:it.flashTime};
+
+  if(collabViewOpen) projectActivity(projData);
+  if(it.type==='flashChallenge') { setChallTimer(it.flashTime); startChallTimer(); }
+
+  showActTab('live');
+  renderLiveResponses();
+  renderLibrary();
+  toast(`▶ "${it.question.slice(0,40)||it.label}" lanzada`);
+}
+
+// Quick participant picker for library launches (defaults to all)
+function getAssignedCollabsForLib() { return [...STATE.collaborators]; }
+
+function importQuizToLibrary() {
+  if(!STATE.quizQuestions.length) return toast('⚠ No hay preguntas en el Quiz');
+  let imported=0;
+  STATE.quizQuestions.forEach(q=>{
+    if(!STATE.activityLibrary.find(x=>x.question===q.text)) {
+      STATE.activityLibrary.push({
+        id:genId(),
+        type: q.type==='multiplechoice'?'multipleChoice':q.type==='truefalse'?'truefalse':'quickQuestion',
+        icon: q.type==='truefalse'?'✅':q.type==='multiplechoice'?'🔢':'💬',
+        label: q.type==='truefalse'?'V / F':q.type==='multiplechoice'?'Opción Múltiple':'Pregunta Rápida',
+        question:q.text, basePoints:q.points||10,
+        options:q.options||[], correctOpt: q.answer!==null&&q.answer!==undefined?String(q.answer):'',
+        tfAnswer: q.type==='truefalse'?(q.answer===0?'true':'false'):'',
+        tag:'Importado de Quiz', notes:'', debateA:'', debateB:'',
+        flashTime:60, usedCount:0, createdAt:new Date().toISOString()
+      });
+      imported++;
+    }
+  });
+  saveLibraryToStorage();
+  renderLibrary();
+  toast(`✅ ${imported} pregunta(s) importada(s) del Quiz`);
+}
+
+function saveLibraryToStorage() {
+  try { localStorage.setItem('tmlf_library', JSON.stringify(STATE.activityLibrary)); } catch(e){}
+}
+function loadLibraryFromStorage() {
+  try {
+    const saved = localStorage.getItem('tmlf_library');
+    if(saved) STATE.activityLibrary = JSON.parse(saved);
+  } catch(e){}
+}
+
+// ===== INIT =====
+function init(){
+  loadNotes(); loadLibraryFromStorage();
+  updateBadge(); updateStats();
+  setupWheel(); drawWheel();
+  setCountdown(); setChallTimer(60);
+  const saved=localStorage.getItem('tmlf_trainer')||'';
+  document.getElementById('trainerName').value=saved;
+  document.getElementById('trainerName').addEventListener('input',()=>{
+    localStorage.setItem('tmlf_trainer',document.getElementById('trainerName').value);
+    syncToCollab();
+  });
+  syncToCollab();
+}
+init();
+</script>
+</body>
+</html>
