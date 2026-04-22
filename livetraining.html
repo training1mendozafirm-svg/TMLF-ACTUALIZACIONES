@@ -449,6 +449,9 @@ html, body {
 /* ===== MEET PANEL SPECIFIC ===== */
 .meet-url-row { display: flex; gap: 8px; align-items: center; }
 .meet-url-row .inp { flex: 1; font-family: var(--font-mono); font-size: 12px; }
+#panel-meet { flex-direction: column; }
+#panel-meet > div:last-child { flex: 1; min-height: 0; }
+#meetVideo { min-height: 0; }
 
 /* ===== TABS inside panel ===== */
 .ptabs { display: flex; gap: 4px; margin-bottom: 12px; }
@@ -817,89 +820,76 @@ hr.divider { border: none; border-top: 1px solid var(--c-border); margin: 10px 0
 
       <!-- ===== PANEL: MEET ===== -->
       <div class="panel active" id="panel-meet">
-        <div class="card meet-card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">🎙 Live Session — Google Meet</div>
-              <div class="card-subtitle">Sesión en vivo integrada con split-screen automático</div>
-            </div>
-            <div class="meet-indicator">
-              <div class="meet-dot" id="meetDot"></div>
-              <span id="meetStatus" style="color:var(--c-muted);font-size:11px;">Sin sesión activa</span>
-            </div>
-          </div>
-          <div class="meet-url-row">
-            <input class="inp" id="meetUrl" type="text" placeholder="https://meet.google.com/abc-defg-hij" oninput="updateMeetStatus()">
-            <button class="btn btn-sky btn-sm" onclick="copyMeetLink()">📋 Copiar</button>
-          </div>
-          <!-- SPLIT SCREEN LAUNCHER -->
-          <div id="splitLaunchArea" style="margin-top:14px;">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-              <!-- Opción A: Split automático -->
-              <div onclick="launchSplitScreen()" style="cursor:pointer;padding:14px;border-radius:var(--radius);border:1px solid rgba(146,190,234,0.25);background:rgba(146,190,234,0.06);transition:all .2s;display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;" onmouseover="this.style.background='rgba(146,190,234,0.12)';this.style.borderColor='rgba(146,190,234,0.4)'" onmouseout="this.style.background='rgba(146,190,234,0.06)';this.style.borderColor='rgba(146,190,234,0.25)'">
-                <div style="font-size:26px;">⚡</div>
-                <div style="font-size:12px;font-weight:700;color:var(--c-sky);">Split-Screen Auto</div>
-                <div style="font-size:10px;color:var(--c-muted);line-height:1.4;">Abre Meet a la izquierda y reposiciona este panel a la derecha automáticamente</div>
-                <div id="splitBtn" style="margin-top:4px;padding:6px 14px;background:var(--c-sky);color:#171a21;border-radius:var(--radius-sm);font-size:11px;font-weight:700;">▶ Lanzar Split</div>
-              </div>
-              <!-- Opción B: Ventana separada -->
-              <div onclick="openMeet()" style="cursor:pointer;padding:14px;border-radius:var(--radius);border:1px solid rgba(175,179,247,0.2);background:rgba(175,179,247,0.05);transition:all .2s;display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;" onmouseover="this.style.background='rgba(175,179,247,0.1)';this.style.borderColor='rgba(175,179,247,0.35)'" onmouseout="this.style.background='rgba(175,179,247,0.05)';this.style.borderColor='rgba(175,179,247,0.2)'">
-                <div style="font-size:26px;">🪟</div>
-                <div style="font-size:12px;font-weight:700;color:var(--c-accent);">Ventana Separada</div>
-                <div style="font-size:10px;color:var(--c-muted);line-height:1.4;">Abre Meet en nueva ventana. Organiza manualmente en tu pantalla.</div>
-                <div style="margin-top:4px;padding:6px 14px;background:rgba(175,179,247,0.15);color:var(--c-accent);border:1px solid rgba(175,179,247,0.3);border-radius:var(--radius-sm);font-size:11px;font-weight:700;">↗ Abrir Meet</div>
-              </div>
-            </div>
-            <!-- Split preview diagram -->
-            <div id="splitPreview" style="margin-top:12px;padding:12px;border-radius:var(--radius);border:1px solid var(--c-border);background:rgba(255,255,255,0.02);">
-              <div style="font-size:10px;color:var(--c-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Vista previa del split-screen</div>
-              <div style="display:flex;gap:6px;height:64px;border-radius:6px;overflow:hidden;border:1px solid var(--c-border2);">
-                <div style="flex:1;background:rgba(76,175,80,0.08);border-right:1px solid var(--c-border2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;">
-                  <div style="font-size:14px;">📹</div>
-                  <div style="font-size:9px;color:var(--c-green);font-weight:700;letter-spacing:0.5px;">GOOGLE MEET</div>
-                </div>
-                <div style="flex:1;background:rgba(175,179,247,0.06);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;">
-                  <div style="font-size:14px;">🎛</div>
-                  <div style="font-size:9px;color:var(--c-accent);font-weight:700;letter-spacing:0.5px;">COMMAND CENTER</div>
-                </div>
-              </div>
-              <div id="splitStatus" style="margin-top:6px;font-size:10px;color:var(--c-muted);text-align:center;">Click en "Lanzar Split" para activar el modo paralelo</div>
-            </div>
+
+        <!-- TOP ROW: URL + controls -->
+        <div class="card meet-card" style="padding:14px 16px;">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <div class="meet-dot" id="meetDot"></div>
+            <span id="meetStatus" style="color:var(--c-muted);font-size:11px;white-space:nowrap;">Sin sesión</span>
+            <input class="inp" id="meetUrl" type="text" placeholder="https://meet.google.com/abc-defg-hij"
+              oninput="updateMeetStatus()" style="flex:1;font-family:var(--font-mono);font-size:12px;min-width:200px;">
+            <button class="btn btn-sky btn-sm" onclick="copyMeetLink()">📋</button>
+            <button class="btn btn-secondary btn-sm" onclick="openMeet()">↗ Abrir</button>
+            <button class="btn btn-success btn-sm" onclick="launchSplitScreen()">⚡ Split</button>
+            <button class="btn btn-primary btn-sm" onclick="captureMeetWindow()" id="captureBtn">
+              📹 Insertar Meet
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="stopCapture()" id="stopCaptureBtn" style="display:none;">■ Detener</button>
           </div>
         </div>
 
-        <div class="grid-2">
-          <div class="card">
-            <div class="card-header" style="margin-bottom:10px;">
-              <div class="card-title">📈 Estadísticas de sesión</div>
+        <!-- MAIN: video capture area + stats side by side -->
+        <div style="display:grid;grid-template-columns:1fr 280px;gap:12px;flex:1;min-height:0;">
+
+          <!-- VIDEO EMBED -->
+          <div class="card" style="padding:0;overflow:hidden;position:relative;display:flex;flex-direction:column;">
+            <!-- idle state -->
+            <div id="meetIdle" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:32px;background:linear-gradient(135deg,rgba(146,190,234,0.04),rgba(175,179,247,0.02));">
+              <div style="font-size:52px;opacity:0.25;">📹</div>
+              <div style="font-family:var(--font-display);font-size:18px;font-weight:700;letter-spacing:1px;color:var(--c-muted);text-align:center;">Meet aparecerá aquí</div>
+              <div style="font-size:12px;color:var(--c-muted);text-align:center;line-height:1.6;max-width:360px;">
+                1. Abre Google Meet en otra ventana o pestaña<br>
+                2. Haz clic en <strong style="color:var(--c-sky);">📹 Insertar Meet</strong><br>
+                3. El navegador te pedirá seleccionar la ventana de Meet<br>
+                4. Meet aparece aquí en vivo, sincronizado
+              </div>
+              <button class="btn btn-primary" onclick="captureMeetWindow()" style="font-size:13px;padding:10px 20px;">
+                📹 Insertar Meet ahora
+              </button>
+              <div style="font-size:10px;color:var(--c-muted);opacity:0.6;">Usa la API de captura de pantalla del navegador — sin extensiones</div>
             </div>
-            <div class="grid-2">
-              <div class="stat-box">
-                <div class="stat-num" id="statTotal">0</div>
-                <div class="stat-lbl">Participantes</div>
+            <!-- video element (hidden until capture) -->
+            <video id="meetVideo" autoplay muted playsinline
+              style="display:none;width:100%;height:100%;object-fit:contain;background:#000;flex:1;"></video>
+            <!-- overlay controls over video -->
+            <div id="meetVideoOverlay" style="display:none;position:absolute;bottom:0;left:0;right:0;padding:8px 12px;background:linear-gradient(transparent,rgba(15,17,23,0.9));display:flex;align-items:center;gap:8px;">
+              <div class="meet-dot live" style="flex-shrink:0;"></div>
+              <span style="font-size:11px;color:var(--c-green);font-weight:600;">Meet en vivo</span>
+              <div style="flex:1;"></div>
+              <button class="btn btn-xs btn-secondary" onclick="toggleMeetSize()" id="meetSizeBtn" title="Agrandar/reducir">⤢</button>
+              <button class="btn btn-xs btn-danger" onclick="stopCapture()">■ Detener</button>
+            </div>
+          </div>
+
+          <!-- SIDE STATS -->
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div class="card" style="padding:12px;">
+              <div class="card-title" style="margin-bottom:10px;">📈 Sesión</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <div class="stat-box"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl">Participantes</div></div>
+                <div class="stat-box"><div class="stat-num" id="statInterv">0</div><div class="stat-lbl">Intervenciones</div></div>
+                <div class="stat-box"><div class="stat-num" id="statActivities">0</div><div class="stat-lbl">Actividades</div></div>
+                <div class="stat-box"><div class="stat-num" id="statQuizzes">0</div><div class="stat-lbl">Quizzes</div></div>
               </div>
-              <div class="stat-box">
-                <div class="stat-num" id="statInterv">0</div>
-                <div class="stat-lbl">Intervenciones</div>
-              </div>
-              <div class="stat-box">
-                <div class="stat-num" id="statActivities">0</div>
-                <div class="stat-lbl">Actividades</div>
-              </div>
-              <div class="stat-box">
-                <div class="stat-num" id="statQuizzes">0</div>
-                <div class="stat-lbl">Quizzes</div>
+            </div>
+            <div class="card" style="padding:12px;flex:1;">
+              <div class="card-title" style="margin-bottom:8px;">🥇 Top ahora</div>
+              <div id="topMoment" style="display:flex;flex-direction:column;gap:5px;">
+                <div class="empty-state" style="padding:16px;"><div class="empty-icon">🏅</div>Sin participaciones</div>
               </div>
             </div>
           </div>
-          <div class="card">
-            <div class="card-header" style="margin-bottom:10px;">
-              <div class="card-title">🥇 Top del momento</div>
-            </div>
-            <div id="topMoment" style="display:flex;flex-direction:column;gap:6px;">
-              <div class="empty-state"><div class="empty-icon">🏅</div>Aún no hay participaciones</div>
-            </div>
-          </div>
+
         </div>
       </div>
 
@@ -1579,85 +1569,120 @@ function toast(msg, duration=2500) {
 }
 
 // ===== MEET =====
-function updateMeetStatus() {
-  const url = document.getElementById('meetUrl').value.trim();
-  const dot = document.getElementById('meetDot');
-  const status = document.getElementById('meetStatus');
-  if(url && url.startsWith('https://meet.google.com/')) {
-    dot.classList.add('live'); status.textContent = 'Sesión activa';
-    status.style.color = 'var(--c-green)';
-  } else {
-    dot.classList.remove('live'); status.textContent = url ? 'URL inválida' : 'Sin sesión activa';
-    status.style.color = url ? 'var(--c-red)' : 'var(--c-muted)';
+let meetWindow = null;
+let captureStream = null;
+let meetExpanded = false;
+
+async function captureMeetWindow() {
+  try {
+    captureStream = await navigator.mediaDevices.getDisplayMedia({
+      video: { frameRate: 30, cursor: 'always' },
+      audio: true
+    });
+    const video   = document.getElementById('meetVideo');
+    const idle    = document.getElementById('meetIdle');
+    const overlay = document.getElementById('meetVideoOverlay');
+    video.srcObject = captureStream;
+    video.style.display   = 'block';
+    idle.style.display    = 'none';
+    overlay.style.display = 'flex';
+    document.getElementById('captureBtn').style.display     = 'none';
+    document.getElementById('stopCaptureBtn').style.display = 'flex';
+    document.getElementById('meetDot').classList.add('live');
+    document.getElementById('meetStatus').textContent = 'Meet en vivo';
+    document.getElementById('meetStatus').style.color = 'var(--c-green)';
+    logActivity('meet_open', 'Meet capturado');
+    toast('✅ Meet insertado en vivo', 3000);
+    captureStream.getVideoTracks()[0].addEventListener('ended', stopCapture);
+  } catch(err) {
+    if(err.name === 'NotAllowedError') toast('⚠ Selecciona la ventana de Meet cuando el navegador lo pida', 4000);
+    else toast('❌ ' + err.message, 4000);
   }
 }
-let meetWindow = null;
+
+function stopCapture() {
+  if(captureStream) { captureStream.getTracks().forEach(t=>t.stop()); captureStream=null; }
+  const video   = document.getElementById('meetVideo');
+  const idle    = document.getElementById('meetIdle');
+  const overlay = document.getElementById('meetVideoOverlay');
+  video.srcObject = null;
+  video.style.display   = 'none';
+  idle.style.display    = 'flex';
+  overlay.style.display = 'none';
+  document.getElementById('captureBtn').style.display     = 'flex';
+  document.getElementById('stopCaptureBtn').style.display = 'none';
+  document.getElementById('meetDot').classList.remove('live');
+  document.getElementById('meetStatus').textContent = 'Sin sesión activa';
+  document.getElementById('meetStatus').style.color = 'var(--c-muted)';
+  toast('■ Captura detenida');
+}
+
+function toggleMeetSize() {
+  meetExpanded = !meetExpanded;
+  const grid = document.querySelector('#panel-meet > div:last-child');
+  if(grid) {
+    grid.style.gridTemplateColumns = meetExpanded ? '1fr' : '1fr 280px';
+    const side = grid.children[1];
+    if(side) side.style.display = meetExpanded ? 'none' : '';
+  }
+  document.getElementById('meetSizeBtn').textContent = meetExpanded ? '⤡' : '⤢';
+}
+
+function updateMeetStatus() {
+  if(captureStream) return;
+  const url    = document.getElementById('meetUrl').value.trim();
+  const status = document.getElementById('meetStatus');
+  if(url && url.startsWith('https://meet.google.com/')) {
+    status.textContent = 'URL lista — captura Meet abajo';
+    status.style.color = 'var(--c-sky)';
+  } else if(url) {
+    status.textContent = 'URL inválida';
+    status.style.color = 'var(--c-red)';
+  } else {
+    status.textContent = 'Sin sesión activa';
+    status.style.color = 'var(--c-muted)';
+  }
+}
+
+function openMeet() {
+  const url = document.getElementById('meetUrl').value.trim();
+  if(!url) return toast('⚠ Ingresa el enlace de Meet');
+  meetWindow = window.open(url, '_blank');
+  logActivity('meet_open', 'Meet abierto: ' + url);
+  toast('↗ Abierto — ahora haz clic en 📹 Insertar Meet');
+}
+
+function copyMeetLink() {
+  const url = document.getElementById('meetUrl').value.trim();
+  if(!url) return toast('⚠ No hay enlace');
+  navigator.clipboard.writeText(url).then(()=>toast('✅ Enlace copiado'));
+}
 
 function launchSplitScreen() {
   const url = document.getElementById('meetUrl').value.trim();
   if(!url) return toast('⚠ Ingresa el enlace de Meet primero');
   if(!url.startsWith('https://meet.google.com/')) return toast('⚠ URL de Meet inválida');
-
-  const sw = window.screen.width;
-  const sh = window.screen.height;
-  const half = Math.floor(sw / 2);
-
-  // Reposicionar esta ventana a la derecha
-  try {
-    window.moveTo(half, 0);
-    window.resizeTo(half, sh);
-  } catch(e) {
-    // Algunos navegadores bloquean moveTo (ej. pestañas)
-  }
-
-  // Abrir Meet en la mitad izquierda
-  meetWindow = window.open(
-    url,
-    'TMLF_Meet',
-    `width=${half},height=${sh},left=0,top=0,toolbar=0,menubar=0,scrollbars=1`
-  );
-
-  if (!meetWindow) {
-    toast('⚠ El navegador bloqueó la ventana emergente. Permite popups para este sitio.', 4000);
-    return;
-  }
-
-  // Actualizar UI
-  updateMeetStatus();
-  document.getElementById('splitStatus').innerHTML =
-    '<span style="color:var(--c-green);font-weight:600;">✅ Split activo — Meet abierto a la izquierda</span>';
+  const sw=window.screen.width, sh=window.screen.height, half=Math.floor(sw/2);
+  try { window.moveTo(half,0); window.resizeTo(half,sh); } catch(e){}
+  meetWindow = window.open(url,'TMLF_Meet',`width=${half},height=${sh},left=0,top=0,toolbar=0,menubar=0`);
+  if(!meetWindow) return toast('⚠ Permite popups para este sitio', 4000);
   document.getElementById('meetDot').classList.add('live');
-  document.getElementById('meetStatus').textContent = 'Split-screen activo';
+  document.getElementById('meetStatus').textContent = 'Split activo';
   document.getElementById('meetStatus').style.color = 'var(--c-green)';
-
-  logActivity('meet_open', 'Split-screen lanzado: ' + url);
+  logActivity('meet_open', 'Split-screen: ' + url);
   toast('✅ Split-screen activado', 3000);
-
-  // Watchdog: detectar si Meet se cierra
-  const check = setInterval(() => {
-    if (meetWindow && meetWindow.closed) {
+  const check = setInterval(()=>{
+    if(meetWindow && meetWindow.closed) {
       clearInterval(check);
-      document.getElementById('splitStatus').textContent = 'Meet cerrado. Vuelve a lanzar cuando lo necesites.';
-      document.getElementById('meetDot').classList.remove('live');
-      document.getElementById('meetStatus').textContent = 'Sin sesión activa';
-      document.getElementById('meetStatus').style.color = 'var(--c-muted)';
+      if(!captureStream) {
+        document.getElementById('meetDot').classList.remove('live');
+        document.getElementById('meetStatus').textContent = 'Sin sesión activa';
+        document.getElementById('meetStatus').style.color = 'var(--c-muted)';
+      }
     }
   }, 2000);
 }
 
-function openMeet() {
-  const url = document.getElementById('meetUrl').value.trim();
-  if(!url) return toast('⚠ Ingresa un enlace de Meet');
-  meetWindow = window.open(url, '_blank');
-  updateMeetStatus();
-  logActivity('meet_open', 'Sesión Meet abierta: ' + url);
-  toast('↗ Meet abierto en nueva ventana');
-}
-function copyMeetLink() {
-  const url = document.getElementById('meetUrl').value.trim();
-  if(!url) return toast('⚠ No hay enlace para copiar');
-  navigator.clipboard.writeText(url).then(()=>toast('✅ Enlace copiado al portapapeles'));
-}
 
 // ===== COLLABORATORS =====
 function genId() { return '_'+Math.random().toString(36).slice(2,9); }
