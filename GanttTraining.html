@@ -284,7 +284,6 @@ input,select,textarea{font-family:inherit;outline:none}
       <button class="btn btn-g" id="bvm" onclick="setZoom('month')">Vista Mes</button>
       <button class="btn btn-g" id="bvw" onclick="setZoom('week')">Vista Semana</button>
       <button class="btn btn-g" onclick="resetFilts()">↺ Reset</button>
-      <button class="btn" style="background:#1a3d60;border:1px solid #4db6ff44;color:#4db6ff" onclick="syncAll()" title="Guardar todos los proyectos en Google Sheets">☁ Sincronizar</button>
       <span id="syncStat" style="align-self:center;white-space:nowrap"></span>
     </div>
   </div>
@@ -502,6 +501,44 @@ let activeTab = 'gantt';
 // ── CLOUD CONFIG ───────────────────────────────────────────
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwvRVIqIy9sE5rSG-8EWE1RyGVma4QxxSZVjzYlOMfcikw1OSeUJ27r2RbLWX6tUYFHzQ/exec';
 
+const CACHE_KEY = 'tmlf_pmc_v1';
+
+function saveToCache() {
+  try {
+    const data = projects.map(p => ({
+      id:p.id, trainer:p.trainer, name:p.name, type:p.type,
+      start:p.start, end:p.end, status:p.status, priority:p.priority,
+      progress:p.progress, notes:p.notes||'',
+      phaseData: JSON.stringify(p.phases.map(ph=>({s:ph.status||'Pendiente',p:ph.progress||0})))
+    }));
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+  } catch(e) { /* storage lleno o modo privado */ }
+}
+
+function loadFromCache() {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    if (!data || !data.length) return false;
+    projects = data.map(p => ({
+      ...p, expanded: false,
+      phases: (() => {
+        const base = buildPhases(p);
+        if (p.phaseData) {
+          try {
+            const saved = typeof p.phaseData==='string' ? JSON.parse(p.phaseData) : p.phaseData;
+            saved.forEach((d,i) => { if(base[i]){ base[i].status=d.s||'Pendiente'; base[i].progress=d.p||0; } });
+          } catch(e){}
+        }
+        return base;
+      })()
+    }));
+    rebuildGroups();
+    return true;
+  } catch(e) { return false; }
+}
+
 // ── JSONP HELPER (funciona desde file:// y cualquier origen) ──
 function gasCall(params, cb) {
   if (!GAS_URL || GAS_URL === 'PEGAR_URL_AQUI') { cb({ok:false, error:'URL no configurada'}); return; }
@@ -548,23 +585,20 @@ function loadRAW() {
 }
 
 function initData() {
-  loadRAW(); // carga los datos base inmediatamente
-  if (!GAS_URL || GAS_URL === 'PEGAR_URL_AQUI') { setSyncStatus('off'); return; }
-  setSyncStatus('loading');
+  const fromCache = loadFromCache();
+  if (!fromCache) loadRAW(); // primera vez: carga datos base
+  if (!GAS_URL || GAS_URL === 'PEGAR_URL_AQUI') { setSyncStatus(fromCache?'ok':'off'); return; }
+  // Sync silencioso en background — no bloquea ni muestra spinner si ya hay caché
   gasCall({action:'getAll'}, res => {
     if (res.ok && res.data && res.data.length > 0) {
       projects = res.data.map(p => ({
-        ...p,
-        expanded: false,
+        ...p, expanded: false,
         phases: (() => {
           try {
-            const base = buildPhases(p); // fechas siempre desde RAW
-            // Restaura status/progress guardados en phaseData
+            const base = buildPhases(p);
             if (p.phaseData) {
               const saved = typeof p.phaseData==='string' ? JSON.parse(p.phaseData) : p.phaseData;
-              saved.forEach((d,i) => {
-                if (base[i]) { base[i].status = d.s||'Pendiente'; base[i].progress = d.p||0; }
-              });
+              saved.forEach((d,i) => { if(base[i]){ base[i].status=d.s||'Pendiente'; base[i].progress=d.p||0; } });
             }
             return base;
           } catch(e) { return buildPhases(p); }
@@ -572,14 +606,19 @@ function initData() {
       }));
       rebuildGroups(); renderFilters(); render(); updKPI();
       if(activeTab==='charts') renderCharts();
+      saveToCache(); // actualiza caché con datos frescos de cloud
       setSyncStatus('ok');
-      toast('☁️ Datos cargados desde la nube ('+res.count+' proyectos)','ok');
-    } else if (res.ok && res.count === 0) {
-      setSyncStatus('warn');
-      toast('⚠️ Nube vacía — mostrando datos base. Usa Sincronizar para guardar.','ok');
+    } else if (!fromCache) {
+      if (res.ok && res.count === 0) {
+        // Hoja vacía y no hay caché — auto-poblar Sheets con datos base
+        setSyncStatus('saving');
+        toast('☁️ Guardando proyectos en la nube por primera vez…','ok');
+        syncAll();
+      } else {
+        setSyncStatus(res.ok ? 'warn' : 'err');
+      }
     } else {
-      setSyncStatus('err');
-      toast('❌ Error al cargar nube: '+(res.error||'desconocido'),'er');
+      setSyncStatus('ok'); // tenemos caché — ignoramos error de cloud silenciosamente
     }
   });
 }
@@ -936,7 +975,7 @@ function bindDrag() {
         if(dm!==0){
           const id=+bar.dataset.id;
           const p=projects.find(x=>x.id===id);
-          if(p){ p.start=addD(p.start,dm); p.end=addD(p.end,dm); p.phases=p.phases.map(ph=>({...ph,start:addD(ph.start,dm),end:addD(ph.end,dm)})); rebuildGroups(); render(); toast('✅ Fechas actualizadas','ok'); syncOneToCloud(id); }
+          if(p){ p.start=addD(p.start,dm); p.end=addD(p.end,dm); p.phases=p.phases.map(ph=>({...ph,start:addD(ph.start,dm),end:addD(ph.end,dm)})); rebuildGroups(); render(); toast('✅ Fechas actualizadas','ok'); saveToCache(); syncOneToCloud(id); }
         }
       };
       document.addEventListener('mousemove',onM);
@@ -1050,6 +1089,7 @@ function saveModal(){
   rebuildGroups(); renderFilters(); render(); updKPI();
   if(activeTab==='charts') renderCharts();
   closeModal();
+  saveToCache();
   syncOneToCloud(syncId);
 }
 // ── PHASE MODAL ────────────────────────────────────────────
@@ -1093,6 +1133,7 @@ function savePhaseModal() {
   p.progress  = Math.round((done / p.phases.length)*100);
   rebuildGroups(); render(); updKPI();
   if(activeTab==='charts') renderCharts();
+  saveToCache();
   syncOneToCloud(p.id);
   closePModal();
   toast(`✅ ${ph.name} → ${st}`,'ok');
@@ -1115,6 +1156,7 @@ function delProj(){
   rebuildGroups(); renderFilters(); render(); updKPI();
   if(activeTab==='charts') renderCharts();
   closeModal(); toast('🗑 Proyecto eliminado','ok');
+  saveToCache();
   deleteFromCloud(delId);
 }
 
