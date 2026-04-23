@@ -244,7 +244,7 @@ input,select,textarea{font-family:inherit;outline:none}
   <div class="ld-logo">TMLF</div>
   <div class="ld-sub">Project Management Center</div>
   <div class="ld-bar"><div class="ld-fill"></div></div>
-  <div style="font-size:11px;color:var(--text-3);letter-spacing:2px;">Inicializando dashboard...</div>
+  <div id="ld-msg" style="font-size:11px;color:var(--text-3);letter-spacing:2px;">Cargando datos…</div>
 </div>
 
 <!-- TOOLTIP -->
@@ -584,43 +584,83 @@ function loadRAW() {
   rebuildGroups();
 }
 
+function setLdMsg(t){ const el=document.getElementById('ld-msg'); if(el) el.textContent=t; }
+
+function showApp() {
+  document.getElementById('loader').classList.add('out');
+  document.getElementById('app').classList.add('show');
+  document.getElementById('tdlbl').textContent=new Date().toLocaleDateString('es-MX',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+  renderFilters(); render(); updKPI(); renderLegend();
+  const bg=groups.find(g=>g.trainer==='Brenda');
+  if(bg){ bg.expanded=true; render(); }
+  setTimeout(goToday,200);
+}
+
+function applyCloudData(data) {
+  projects = data.map(p => ({
+    ...p, expanded: false,
+    phases: (() => {
+      const base = buildPhases(p);
+      if (p.phaseData) {
+        try {
+          const saved = typeof p.phaseData==='string' ? JSON.parse(p.phaseData) : p.phaseData;
+          saved.forEach((d,i) => { if(base[i]){ base[i].status=d.s||'Pendiente'; base[i].progress=d.p||0; } });
+        } catch(e){}
+      }
+      return base;
+    })()
+  }));
+  rebuildGroups();
+  saveToCache();
+}
+
 function initData() {
+  // 1. Caché local como vista previa instantánea si existe
   const fromCache = loadFromCache();
-  if (!fromCache) loadRAW(); // primera vez: carga datos base
-  if (!GAS_URL || GAS_URL === 'PEGAR_URL_AQUI') { setSyncStatus(fromCache?'ok':'off'); return; }
-  // Sync silencioso en background — no bloquea ni muestra spinner si ya hay caché
-  gasCall({action:'getAll'}, res => {
-    if (res.ok && res.data && res.data.length > 0) {
-      projects = res.data.map(p => ({
-        ...p, expanded: false,
-        phases: (() => {
-          try {
-            const base = buildPhases(p);
-            if (p.phaseData) {
-              const saved = typeof p.phaseData==='string' ? JSON.parse(p.phaseData) : p.phaseData;
-              saved.forEach((d,i) => { if(base[i]){ base[i].status=d.s||'Pendiente'; base[i].progress=d.p||0; } });
-            }
-            return base;
-          } catch(e) { return buildPhases(p); }
-        })()
-      }));
-      rebuildGroups(); renderFilters(); render(); updKPI();
-      if(activeTab==='charts') renderCharts();
-      saveToCache(); // actualiza caché con datos frescos de cloud
-      setSyncStatus('ok');
-    } else if (!fromCache) {
-      if (res.ok && res.count === 0) {
-        // Hoja vacía y no hay caché — auto-poblar Sheets con datos base
+
+  if (!GAS_URL || GAS_URL === 'PEGAR_URL_AQUI') {
+    if (!fromCache) loadRAW();
+    setSyncStatus('off');
+    showApp();
+    return;
+  }
+
+  if (fromCache) {
+    // Muestra datos cacheados inmediatamente y verifica cloud en background
+    showApp();
+    setSyncStatus('ok');
+    gasCall({action:'getAll'}, res => {
+      if (res.ok && res.data && res.data.length > 0) {
+        applyCloudData(res.data);
+        renderFilters(); render(); updKPI();
+        if(activeTab==='charts') renderCharts();
+        setSyncStatus('ok');
+      }
+    });
+  } else {
+    // Sin caché: el loader espera la respuesta de la nube
+    setLdMsg('Conectando con Google Sheets…');
+    gasCall({action:'getAll'}, res => {
+      if (res.ok && res.data && res.data.length > 0) {
+        applyCloudData(res.data);
+        setSyncStatus('ok');
+        showApp();
+      } else if (res.ok && res.count === 0) {
+        // Hoja vacía → carga RAW y auto-puebla
+        loadRAW();
+        setLdMsg('Guardando proyectos en la nube…');
         setSyncStatus('saving');
-        toast('☁️ Guardando proyectos en la nube por primera vez…','ok');
+        showApp();
         syncAll();
       } else {
-        setSyncStatus(res.ok ? 'warn' : 'err');
+        // Error de red → muestra RAW con aviso
+        loadRAW();
+        setSyncStatus('err');
+        showApp();
+        toast('⚠️ Sin conexión a la nube — mostrando datos base','er');
       }
-    } else {
-      setSyncStatus('ok'); // tenemos caché — ignoramos error de cloud silenciosamente
-    }
-  });
+    });
+  }
 }
 
 // ── CLOUD SYNC FUNCTIONS ───────────────────────────────────
@@ -1265,23 +1305,9 @@ function toast(msg,type='ok'){
 // ── BOOT ─────────────────────────────────────────────────
 window.addEventListener('load',()=>{
   setTimeout(()=>{
-    document.getElementById('loader').classList.add('out');
-    document.getElementById('app').classList.add('show');
-    document.getElementById('tdlbl').textContent=new Date().toLocaleDateString('es-MX',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
-    try {
-      initData();
-      renderFilters();
-      render();
-      updKPI();
-      renderLegend();
-      const bg=groups.find(g=>g.trainer==='Brenda');
-      if(bg){ bg.expanded=true; render(); }
-      setTimeout(goToday,200);
-    } catch(err) {
-      console.error('Boot error:', err);
-      toast('⚠️ Error al iniciar: '+err.message,'er');
-    }
-  },1700);
+    try { initData(); }
+    catch(err){ console.error('Boot error:',err); loadRAW(); showApp(); toast('⚠️ Error: '+err.message,'er'); }
+  },800);
 });
 </script>
 </body>
