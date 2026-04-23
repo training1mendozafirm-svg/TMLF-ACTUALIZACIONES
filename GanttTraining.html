@@ -554,7 +554,7 @@ function gasCall(params, cb) {
     .join('&');
   const s = document.createElement('script');
   const cleanup = () => { try{ document.head.removeChild(s); }catch(_){} delete window[cbName]; };
-  const timer = setTimeout(() => { cleanup(); cb({ok:false, error:'Timeout — verifica la URL o el acceso del deployment'}); }, 15000);
+  const timer = setTimeout(() => { cleanup(); cb({ok:false, error:'Timeout'}); }, 8000);
   window[cbName] = r => { clearTimeout(timer); cleanup(); cb(r); };
   s.onerror    = ()  => { clearTimeout(timer); cleanup(); cb({ok:false, error:'No se pudo cargar el script — verifica que el deployment sea "Anyone"'}); };
   s.src = GAS_URL + '?' + qs;
@@ -621,52 +621,30 @@ function applyCloudData(data) {
 }
 
 function initData() {
-  // 1. Caché local como vista previa instantánea si existe
   const fromCache = loadFromCache();
+  if (!fromCache) loadRAW();
 
-  if (!GAS_URL || GAS_URL === 'PEGAR_URL_AQUI') {
-    if (!fromCache) loadRAW();
-    setSyncStatus('off');
-    showApp();
-    return;
-  }
+  // App visible AL INSTANTE — nunca espera la nube
+  showApp();
 
-  if (fromCache) {
-    // Muestra datos cacheados inmediatamente y verifica cloud en background
-    showApp();
-    setSyncStatus('ok');
-    gasCall({action:'getAll'}, res => {
-      if (res.ok && res.data && res.data.length > 0) {
-        applyCloudData(res.data);
-        renderFilters(); render(); updKPI();
-        if(activeTab==='charts') renderCharts();
-        setSyncStatus('ok');
-      }
-    });
-  } else {
-    // Sin caché: el loader espera la respuesta de la nube
-    setLdMsg('Conectando con Google Sheets…');
-    gasCall({action:'getAll'}, res => {
-      if (res.ok && res.data && res.data.length > 0) {
-        applyCloudData(res.data);
-        setSyncStatus('ok');
-        showApp();
-      } else if (res.ok && res.count === 0) {
-        // Hoja vacía → carga RAW y auto-puebla
-        loadRAW();
-        setLdMsg('Guardando proyectos en la nube…');
-        setSyncStatus('saving');
-        showApp();
-        syncAll();
-      } else {
-        // Error de red → muestra RAW con aviso
-        loadRAW();
-        setSyncStatus('err');
-        showApp();
-        toast('⚠️ Sin conexión a la nube — mostrando datos base','er');
-      }
-    });
-  }
+  if (!GAS_URL || GAS_URL === 'PEGAR_URL_AQUI') { setSyncStatus('off'); return; }
+  setSyncStatus('loading');
+
+  // Cloud siempre en background
+  gasCall({action:'getAll'}, res => {
+    if (res.ok && res.data && res.data.length > 0) {
+      applyCloudData(res.data);
+      renderFilters(); render(); updKPI();
+      if(activeTab==='charts') renderCharts();
+      setSyncStatus('ok');
+    } else if (res.ok && res.count === 0 && !fromCache) {
+      setSyncStatus('saving');
+      syncAll();
+    } else if (!res.ok) {
+      setSyncStatus(fromCache ? 'ok' : 'err');
+      if (!fromCache) toast('⚠️ Sin conexión a la nube — mostrando datos base','er');
+    }
+  });
 }
 
 // ── CLOUD SYNC FUNCTIONS ───────────────────────────────────
