@@ -369,8 +369,14 @@ input,select,textarea{font-family:inherit;outline:none}
       <select class="fsel" id="mpr"><option>Alta</option><option>Media</option><option>Baja</option></select>
     </div>
     <div class="fgr full">
-      <label class="flbl">Avance: <span id="mpctlbl">0%</span></label>
-      <input class="fsldr" id="mpct" type="range" min="0" max="100" step="5" oninput="document.getElementById('mpctlbl').textContent=this.value+'%'">
+      <label class="flbl">Avance (calculado desde fases)</label>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
+        <div style="flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden">
+          <div id="mpct-bar" style="height:100%;background:var(--accent);border-radius:4px;transition:width .3s"></div>
+        </div>
+        <span id="mpctlbl" style="font-size:13px;font-weight:600;color:var(--accent);min-width:36px;text-align:right">0%</span>
+      </div>
+      <div id="mpct-phases" style="margin-top:8px;font-size:11px;color:var(--text-3)">Expande el proyecto y marca las fases para actualizar el avance.</div>
     </div>
     <div class="fgr full"><label class="flbl">Notas</label><textarea class="fta" id="mno" placeholder="Observaciones, pendientes..."></textarea></div>
   </div>
@@ -552,8 +558,15 @@ function initData() {
         expanded: false,
         phases: (() => {
           try {
-            const ph = typeof p.phases === 'string' ? JSON.parse(p.phases) : (p.phases || []);
-            return ph.length > 0 ? ph : buildPhases(p); // siempre reconstruye si viene vacío
+            const base = buildPhases(p); // fechas siempre desde RAW
+            // Restaura status/progress guardados en phaseData
+            if (p.phaseData) {
+              const saved = typeof p.phaseData==='string' ? JSON.parse(p.phaseData) : p.phaseData;
+              saved.forEach((d,i) => {
+                if (base[i]) { base[i].status = d.s||'Pendiente'; base[i].progress = d.p||0; }
+              });
+            }
+            return base;
           } catch(e) { return buildPhases(p); }
         })()
       }));
@@ -578,7 +591,8 @@ function syncAll() {
   const queue = projects.map(p => ({
     id: p.id, trainer: p.trainer, name: p.name, type: p.type,
     start: p.start, end: p.end, status: p.status, priority: p.priority,
-    progress: p.progress, notes: p.notes || ''
+    progress: p.progress, notes: p.notes || '',
+    phaseData: JSON.stringify(p.phases.map(ph=>({s:ph.status||'Pendiente',p:ph.progress||0})))
   }));
   let i = 0;
   const total = queue.length;
@@ -605,10 +619,12 @@ function syncOneToCloud(id) {
   if (!GAS_URL || GAS_URL === 'PEGAR_URL_AQUI') return;
   const p = projects.find(x=>x.id===id); if(!p) return;
   setSyncStatus('saving');
+  // phaseData: solo status y progress de cada fase (compacto, sin fechas)
+  const phaseData = JSON.stringify(p.phases.map(ph=>({s:ph.status||'Pendiente',p:ph.progress||0})));
   const data = JSON.stringify({
     id: p.id, trainer: p.trainer, name: p.name, type: p.type,
     start: p.start, end: p.end, status: p.status, priority: p.priority,
-    progress: p.progress, notes: p.notes || ''
+    progress: p.progress, notes: p.notes||'', phaseData
   });
   gasCall({action:'save', data}, res => {
     setSyncStatus(res.ok?'ok':'err');
@@ -975,9 +991,17 @@ function openModal(id) {
   document.getElementById('me').value=p.end;
   document.getElementById('mst').value=p.status;
   document.getElementById('mpr').value=p.priority;
-  document.getElementById('mpct').value=p.progress;
-  document.getElementById('mpctlbl').textContent=p.progress+'%';
   document.getElementById('mno').value=p.notes||'';
+  // Avance desde fases
+  const done = p.phases ? p.phases.filter(ph=>ph.status==='Terminado').length : 0;
+  const total = p.phases ? p.phases.length : 13;
+  const pct = Math.round((done/total)*100);
+  document.getElementById('mpctlbl').textContent = pct+'%';
+  document.getElementById('mpct-bar').style.width = pct+'%';
+  const names = p.phases ? p.phases.filter(ph=>ph.status==='Terminado').map(ph=>`✅ ${ph.name}`) : [];
+  const pending = p.phases ? p.phases.filter(ph=>ph.status!=='Terminado').length : total;
+  document.getElementById('mpct-phases').innerHTML =
+    `<b style="color:var(--text-1)">${done} de ${total} fases completadas</b>${names.length?'<br>'+names.join(' · '):''}${pending?' <span style="color:#fbbf24">· '+pending+' pendientes</span>':''}`;
   document.getElementById('mo').classList.add('vis');
 }
 function newProj(){
@@ -991,8 +1015,9 @@ function newProj(){
   document.getElementById('me').value=addD(td,PDUR);
   document.getElementById('mst').value='Pendiente';
   document.getElementById('mpr').value='Media';
-  document.getElementById('mpct').value=0;
   document.getElementById('mpctlbl').textContent='0%';
+  document.getElementById('mpct-bar').style.width='0%';
+  document.getElementById('mpct-phases').innerHTML='Las fases se marcan una vez creado el proyecto.';
   document.getElementById('mno').value='';
   document.getElementById('mo').classList.add('vis');
 }
@@ -1007,7 +1032,6 @@ function saveModal(){
     end:document.getElementById('me').value,
     status:document.getElementById('mst').value,
     priority:document.getElementById('mpr').value,
-    progress:+document.getElementById('mpct').value,
     notes:document.getElementById('mno').value
   };
   let syncId;
@@ -1201,19 +1225,20 @@ window.addEventListener('load',()=>{
   setTimeout(()=>{
     document.getElementById('loader').classList.add('out');
     document.getElementById('app').classList.add('show');
-    // Today label
     document.getElementById('tdlbl').textContent=new Date().toLocaleDateString('es-MX',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
-    // Init
-    initData();
-    renderFilters();
-    render();
-    updKPI();
-    renderLegend();
-    // Auto-expand Brenda (smallest group, most advanced)
-    const bg=groups.find(g=>g.trainer==='Brenda');
-    if(bg){ bg.expanded=true; render(); }
-    // Scroll to today
-    setTimeout(goToday,200);
+    try {
+      initData();
+      renderFilters();
+      render();
+      updKPI();
+      renderLegend();
+      const bg=groups.find(g=>g.trainer==='Brenda');
+      if(bg){ bg.expanded=true; render(); }
+      setTimeout(goToday,200);
+    } catch(err) {
+      console.error('Boot error:', err);
+      toast('⚠️ Error al iniciar: '+err.message,'er');
+    }
   },1700);
 });
 </script>
