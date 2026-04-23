@@ -341,6 +341,11 @@ input,select,textarea{font-family:inherit;outline:none}
           <div class="cc"><div class="cc-t">Distribución por Tipo</div><div class="cc-cv"><canvas id="ch2"></canvas></div></div>
           <div class="cc"><div class="cc-t">Avance por Trainer</div><div class="cc-cv"><canvas id="ch3"></canvas></div></div>
           <div class="cc"><div class="cc-t">Estado del Portafolio</div><div class="cc-cv"><canvas id="ch4"></canvas></div></div>
+          <div class="cc" style="grid-column:1/-1"><div class="cc-t">📊 Proyectos por Fase Activa</div><div class="cc-cv" style="height:220px"><canvas id="ch5"></canvas></div></div>
+          <div class="cc" style="grid-column:1/-1">
+            <div class="cc-t">🔁 Pipeline de Producción — Vista Junta</div>
+            <div id="fase-pipeline" style="margin-top:4px"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1253,6 +1258,63 @@ function renderCharts(){
     data:{labels:sts,datasets:[{data:sts.map(s=>fp.filter(p=>p.status===s).length),backgroundColor:sts.map(s=>SC[s]+'bb'),borderColor:'transparent'}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',...legOpts}}}
   });
+
+  // ── CH5: Proyectos por Fase Activa ──────────────────────
+  const faseNames = PHASES.map(ph=>ph.name);
+  const faseCounts = faseNames.map(n=>fp.filter(p=>getActiveFase(p)===n).length);
+  const faseColors = PHASES.map(ph=>ph.c.replace('rgba(','').replace(')','').split(',').slice(0,3));
+  chObjs.c5=new Chart(document.getElementById('ch5'),{
+    type:'bar',
+    data:{
+      labels: faseNames,
+      datasets:[{
+        label:'Proyectos',
+        data: faseCounts,
+        backgroundColor: PHASES.map(ph=>ph.c),
+        borderRadius:6, borderSkipped:false
+      }]
+    },
+    options:{
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>' '+ctx.raw+' proyecto'+(ctx.raw!==1?'s':'')}}},
+      scales:{
+        x:{...axOpts, beginAtZero:true, ticks:{...axOpts.ticks, stepSize:1}},
+        y:{...axOpts, ticks:{...axOpts.ticks, font:{family:'DM Sans',size:11}}}
+      }
+    }
+  });
+
+  // ── PIPELINE VIEW ──────────────────────────────────────
+  const pipeline = document.getElementById('fase-pipeline');
+  const activeFases = faseNames.filter((_,i)=>faseCounts[i]>0);
+  if(!activeFases.length){
+    pipeline.innerHTML='<div style="color:var(--text-3);font-size:12px;padding:12px 0">Marca fases en los proyectos para ver el pipeline.</div>';
+  } else {
+    pipeline.innerHTML = `
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px">
+        ${faseNames.map((fname,i)=>{
+          const projs = fp.filter(p=>getActiveFase(p)===fname);
+          if(!projs.length) return '';
+          const col = PHASES[i].c;
+          return `
+            <div style="flex:1;min-width:180px;max-width:260px;background:rgba(255,255,255,.04);border:1px solid ${col};border-top:3px solid ${col};border-radius:8px;padding:12px">
+              <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--text-2);text-transform:uppercase;margin-bottom:8px">${fname}</div>
+              <div style="display:flex;flex-direction:column;gap:5px">
+                ${projs.map(p=>`
+                  <div style="background:rgba(255,255,255,.06);border-radius:5px;padding:6px 8px">
+                    <div style="font-size:11px;font-weight:600;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${p.name}">${p.name}</div>
+                    <div style="display:flex;justify-content:space-between;margin-top:3px;align-items:center">
+                      <span style="font-size:10px;color:var(--text-3)">${p.trainer}</span>
+                      <span style="font-size:10px;font-weight:600;color:var(--accent)">${p.progress}%</span>
+                    </div>
+                    <div style="height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:4px"><div style="height:3px;width:${p.progress}%;background:var(--accent);border-radius:2px"></div></div>
+                  </div>`).join('')}
+              </div>
+              <div style="margin-top:8px;text-align:right;font-size:10px;color:var(--text-3)">${projs.length} proyecto${projs.length!==1?'s':''}</div>
+            </div>`;
+        }).filter(Boolean).join('')}
+      </div>`;
+  }
 }
 
 // ── TABS ──────────────────────────────────────────────────
