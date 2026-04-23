@@ -694,7 +694,8 @@ function tlHeader() {
     const w=Math.round(7*DW);
     const today=new Date();
     const isCur=cur<=today&&today<nxt;
-    weeks.push({label:`W${wn}`,x,width:w,date:new Date(cur),isCur});
+    const lbl = cur.toLocaleDateString('es-MX',{day:'2-digit',month:'short'}).replace('.','');
+    weeks.push({label:lbl,x,width:w,date:new Date(cur),isCur});
     cur=nxt; wn++;
   }
   const mmap={};
@@ -878,7 +879,7 @@ function bindDrag() {
         if(dm!==0){
           const id=+bar.dataset.id;
           const p=projects.find(x=>x.id===id);
-          if(p){ p.start=addD(p.start,dm); p.end=addD(p.end,dm); p.phases=p.phases.map(ph=>({...ph,start:addD(ph.start,dm),end:addD(ph.end,dm)})); rebuildGroups(); render(); toast('✅ Fechas actualizadas','ok'); }
+          if(p){ p.start=addD(p.start,dm); p.end=addD(p.end,dm); p.phases=p.phases.map(ph=>({...ph,start:addD(ph.start,dm),end:addD(ph.end,dm)})); rebuildGroups(); render(); toast('✅ Fechas actualizadas','ok'); syncOneToCloud(id); }
         }
       };
       document.addEventListener('mousemove',onM);
