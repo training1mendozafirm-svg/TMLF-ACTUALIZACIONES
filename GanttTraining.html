@@ -307,6 +307,7 @@ input,select,textarea{font-family:inherit;outline:none}
       <div class="fsec"><h3>Tipo</h3><div id="fTipo"></div></div>
       <div class="fsec"><h3>Trainer</h3><div id="fTrn"></div></div>
       <div class="fsec"><h3>Status</h3><div id="fSts"></div></div>
+      <div class="fsec"><h3>Fase activa</h3><div id="fFase"></div></div>
     </div>
 
     <!-- CONTENT -->
@@ -495,7 +496,7 @@ let projects = [];
 let groups = [];
 let editId = null;
 let chObjs = {};
-let filt = {tipo:new Set(), trainer:new Set(), status:new Set(), q:''};
+let filt = {tipo:new Set(), trainer:new Set(), status:new Set(), fase:new Set(), q:''};
 let activeTab = 'gantt';
 
 // ── CLOUD CONFIG ───────────────────────────────────────────
@@ -769,10 +770,20 @@ function sc(stat)  { return SC[stat] || '#64748b'; }
 function tbg(type) { const c=tc(type); return `background:${c}22;color:${c};border:1px solid ${c}44`; }
 function sbg(stat) { const c=sc(stat); return `background:${c}22;color:${c};border:1px solid ${c}44`; }
 function tlw()     { return Math.round((TL_END - TL_START) / 86400000 * DW); }
+// Fase activa = la que está "En proceso", o la primera pendiente si ninguna está en proceso
+function getActiveFase(p) {
+  if (!p.phases || !p.phases.length) return null;
+  const enP = p.phases.find(ph => ph.status === 'En proceso');
+  if (enP) return enP.name;
+  const pend = p.phases.find(ph => ph.status !== 'Terminado');
+  return pend ? pend.name : 'Terminado';
+}
+
 function filtProj(){ return projects.filter(p=>{
-  if(filt.tipo.size   && !filt.tipo.has(p.type))     return false;
+  if(filt.tipo.size    && !filt.tipo.has(p.type))       return false;
   if(filt.trainer.size && !filt.trainer.has(p.trainer)) return false;
-  if(filt.status.size  && !filt.status.has(p.status))  return false;
+  if(filt.status.size  && !filt.status.has(p.status))   return false;
+  if(filt.fase.size    && !filt.fase.has(getActiveFase(p))) return false;
   if(filt.q){const q=filt.q.toLowerCase(); if(!p.name.toLowerCase().includes(q)&&!p.trainer.toLowerCase().includes(q))return false;}
   return true;
 })}
@@ -797,13 +808,25 @@ function renderFilters() {
       <div class="fdot" style="background:${SC[s]}"></div>${s}
       <span class="fcnt">${projects.filter(p=>p.status===s).length}</span>
     </div>`).join('');
+  // Fases activas — solo muestra fases que al menos un proyecto tiene activa
+  const faseCount = {};
+  projects.forEach(p=>{ const f=getActiveFase(p); if(f) faseCount[f]=(faseCount[f]||0)+1; });
+  const faseNames = PHASES.map(ph=>ph.name).filter(n=>faseCount[n]);
+  document.getElementById('fFase').innerHTML = faseNames.length
+    ? faseNames.map(f=>`
+        <div class="fopt${filt.fase.has(f)?' on':''}" onclick="togF('fase','${f}',this)">
+          <div class="fdot" style="background:var(--gold)"></div>
+          <span style="flex:1;font-size:11px">${f}</span>
+          <span class="fcnt">${faseCount[f]||0}</span>
+        </div>`).join('')
+    : '<div style="font-size:11px;color:var(--text-3);padding:4px 0">Marca fases en los proyectos para filtrar</div>';
 }
 function togF(type,val,el){
   filt[type].has(val)?filt[type].delete(val):filt[type].add(val);
   el.classList.toggle('on'); render(); updKPI();
 }
 function applyF(){ filt.q=document.getElementById('srch').value; render(); updKPI(); }
-function resetFilts(){ filt={tipo:new Set(),trainer:new Set(),status:new Set(),q:''}; document.getElementById('srch').value=''; renderFilters(); render(); updKPI(); }
+function resetFilts(){ filt={tipo:new Set(),trainer:new Set(),status:new Set(),fase:new Set(),q:''}; document.getElementById('srch').value=''; renderFilters(); render(); updKPI(); }
 
 // ── KPI ────────────────────────────────────────────────────
 function updKPI(){
