@@ -601,33 +601,59 @@ function setLdMsg(t){ const el=document.getElementById('ld-msg'); if(el) el.text
 function showApp() {
   document.getElementById('loader').classList.add('out');
   document.getElementById('app').classList.add('show');
-  document.getElementById('tdlbl').textContent=new Date().toLocaleDateString('es-MX',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
-  renderFilters(); render(); updKPI(); renderLegend();
-  const bg=groups.find(g=>g.trainer==='Brenda');
-  if(bg){ bg.expanded=true; render(); }
-  setTimeout(goToday,200);
+  document.getElementById('tdlbl').textContent = new Date().toLocaleDateString('es-MX',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+  fullRender();
 }
 
 function applyCloudData(data) {
+  if (!data || !data.length) return false;
   try {
-    projects = data.map(p => ({
-      ...p, expanded: false,
-      phases: (() => {
-        const base = buildPhases(p);
-        if (p.phaseData) {
-          try {
-            const saved = typeof p.phaseData==='string' ? JSON.parse(p.phaseData) : p.phaseData;
+    projects = data.map(p => {
+      // Normaliza fechas — Sheets puede devolver objetos Date o strings con formato raro
+      const start = typeof p.start === 'string' ? p.start.substring(0,10)
+                  : p.start instanceof Date    ? p.start.toISOString().substring(0,10)
+                  : p.fechaInicio              ? String(p.fechaInicio).substring(0,10)
+                  : '2026-03-01';
+      const proj = {
+        id:       Number(p.id),
+        trainer:  p.trainer  || '',
+        name:     p.name     || p.nombre || '',
+        type:     p.type     || p.tipo   || 'PROYECTOS',
+        start,
+        end:      p.end      || addD(start, 51),
+        status:   p.status   || 'Pendiente',
+        priority: p.priority || 'Media',
+        progress: Number(p.progress) || 0,
+        notes:    p.notes    || '',
+        expanded: false,
+        phases: []
+      };
+      const base = buildPhases(proj);
+      if (p.phaseData) {
+        try {
+          const saved = typeof p.phaseData==='string' ? JSON.parse(p.phaseData) : p.phaseData;
+          if (Array.isArray(saved)) {
             saved.forEach((d,i) => { if(base[i]){ base[i].status=d.s||'Pendiente'; base[i].progress=d.p||0; } });
-          } catch(e){}
-        }
-        return base;
-      })()
-    }));
+          }
+        } catch(e){}
+      }
+      proj.phases = base;
+      return proj;
+    });
     rebuildGroups();
     saveToCache();
+    return true;
   } catch(err) {
     console.error('applyCloudData error:', err);
+    return false;
   }
+}
+
+function fullRender() {
+  renderFilters(); render(); updKPI(); renderLegend();
+  const bg = groups.find(g=>g.trainer==='Brenda');
+  if (bg) { bg.expanded=true; render(); }
+  setTimeout(goToday, 200);
 }
 
 function initData() {
@@ -641,28 +667,25 @@ function initData() {
   }
 
   if (fromCache) {
-    // ── CON CACHÉ: muestra inmediato, cloud silencioso ──
+    // CON CACHÉ: muestra inmediato, actualiza en background
     setSyncStatus('ok');
     showApp();
     gasCall({action:'getAll'}, res => {
       try {
         if (res.ok && res.data && res.data.length > 0) {
-          applyCloudData(res.data);
-          renderFilters(); render(); updKPI();
-          if(activeTab==='charts') renderCharts();
+          const ok = applyCloudData(res.data);
+          if (ok) fullRender();
         }
         setSyncStatus('ok');
       } catch(e) { setSyncStatus('ok'); }
     });
 
   } else {
-    // ── SIN CACHÉ: loader espera Sheets antes de mostrar ──
+    // SIN CACHÉ: loader espera a Sheets — garantiza que la coordinadora vea los datos
     setLdMsg('Conectando con Google Sheets…');
 
-    // Fallback: si en 9s no llega respuesta, muestra datos base
     const fallback = setTimeout(() => {
-      loadRAW();
-      setSyncStatus('err');
+      loadRAW(); setSyncStatus('err');
       showApp();
       toast('⚠️ Sin conexión — mostrando datos base','er');
     }, 9000);
@@ -674,13 +697,10 @@ function initData() {
           applyCloudData(res.data);
           setSyncStatus('ok');
         } else if (res.ok && res.count === 0) {
-          loadRAW();
-          setSyncStatus('saving');
+          loadRAW(); setSyncStatus('saving');
           setTimeout(() => syncAll(), 500);
         } else {
-          loadRAW();
-          setSyncStatus('err');
-          toast('⚠️ Sin conexión — mostrando datos base','er');
+          loadRAW(); setSyncStatus('err');
         }
       } catch(e) { loadRAW(); setSyncStatus('err'); }
       showApp();
