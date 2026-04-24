@@ -632,39 +632,60 @@ function applyCloudData(data) {
 
 function initData() {
   const fromCache = loadFromCache();
-  if (!fromCache) loadRAW();
 
-  // App visible AL INSTANTE — nunca espera la nube
-  showApp();
+  if (!GAS_URL || GAS_URL === 'PEGAR_URL_AQUI') {
+    if (!fromCache) loadRAW();
+    setSyncStatus('off');
+    showApp();
+    return;
+  }
 
-  if (!GAS_URL || GAS_URL === 'PEGAR_URL_AQUI') { setSyncStatus('off'); return; }
-
-  // Solo muestra "Cargando" si no hay caché — si hay caché el sync es silencioso
-  if (!fromCache) setSyncStatus('loading');
-  else setSyncStatus('ok');
-
-  // Cloud siempre en background
-  gasCall({action:'getAll'}, res => {
-    try {
-      if (res.ok && res.data && res.data.length > 0) {
-        applyCloudData(res.data);
-        renderFilters(); render(); updKPI();
-        if(activeTab==='charts') renderCharts();
+  if (fromCache) {
+    // ── CON CACHÉ: muestra inmediato, cloud silencioso ──
+    setSyncStatus('ok');
+    showApp();
+    gasCall({action:'getAll'}, res => {
+      try {
+        if (res.ok && res.data && res.data.length > 0) {
+          applyCloudData(res.data);
+          renderFilters(); render(); updKPI();
+          if(activeTab==='charts') renderCharts();
+        }
         setSyncStatus('ok');
-      } else if (res.ok && res.count === 0 && !fromCache) {
-        setSyncStatus('saving');
-        syncAll();
-      } else if (res.ok) {
-        setSyncStatus('ok'); // cloud vacío pero tenemos caché
-      } else {
-        setSyncStatus(fromCache ? 'ok' : 'err');
-        if (!fromCache) toast('⚠️ Sin conexión a la nube — mostrando datos base','er');
-      }
-    } catch(err) {
-      console.error('Cloud callback error:', err);
-      setSyncStatus(fromCache ? 'ok' : 'err');
-    }
-  });
+      } catch(e) { setSyncStatus('ok'); }
+    });
+
+  } else {
+    // ── SIN CACHÉ: loader espera Sheets antes de mostrar ──
+    setLdMsg('Conectando con Google Sheets…');
+
+    // Fallback: si en 9s no llega respuesta, muestra datos base
+    const fallback = setTimeout(() => {
+      loadRAW();
+      setSyncStatus('err');
+      showApp();
+      toast('⚠️ Sin conexión — mostrando datos base','er');
+    }, 9000);
+
+    gasCall({action:'getAll'}, res => {
+      clearTimeout(fallback);
+      try {
+        if (res.ok && res.data && res.data.length > 0) {
+          applyCloudData(res.data);
+          setSyncStatus('ok');
+        } else if (res.ok && res.count === 0) {
+          loadRAW();
+          setSyncStatus('saving');
+          setTimeout(() => syncAll(), 500);
+        } else {
+          loadRAW();
+          setSyncStatus('err');
+          toast('⚠️ Sin conexión — mostrando datos base','er');
+        }
+      } catch(e) { loadRAW(); setSyncStatus('err'); }
+      showApp();
+    });
+  }
 }
 
 // ── CLOUD SYNC FUNCTIONS ───────────────────────────────────
