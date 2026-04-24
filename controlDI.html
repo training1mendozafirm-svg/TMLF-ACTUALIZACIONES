@@ -1,0 +1,1991 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centro de Planeación Operativa · TMLF</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f0ebe0;
+  --bg2: #e8e0d0;
+  --surface: #ffffff;
+  --surface2: #faf7f2;
+  --sidebar: #253d2e;
+  --sidebar2: #1d3024;
+  --sidebar-text: #c8d8c0;
+  --sidebar-active: #3a6647;
+  --primary: #3a6647;
+  --primary-h: #2d5238;
+  --primary-light: #6a9e7c;
+  --accent: #c9914a;
+  --accent-h: #b07d38;
+  --sand: #dfd5c0;
+  --cream: #f5f0e5;
+  --border: #ddd5c5;
+  --border2: #ccc3b0;
+  --text: #1e1a14;
+  --text2: #4a4438;
+  --muted: #8a8070;
+  --red: #b84040;
+  --orange: #d4891a;
+  --green: #3a6647;
+  --blue: #2e6085;
+  --purple: #5e4b8b;
+  --teal: #3a7a6a;
+  --r: 10px;
+  --r2: 6px;
+  --shadow: 0 2px 8px rgba(0,0,0,.07);
+  --shadow2: 0 4px 20px rgba(0,0,0,.12);
+  --tr: .2s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;line-height:1.5}
+
+/* ── SIDEBAR ── */
+#sidebar{width:220px;min-width:220px;background:var(--sidebar);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto}
+.sb-logo{padding:22px 18px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-logo h1{font-family:'Lora',serif;font-size:1rem;font-weight:600;color:#fff;line-height:1.3}
+.sb-logo span{font-size:.72rem;color:var(--sidebar-text);display:block;margin-top:2px;opacity:.7}
+.sb-nav{flex:1;padding:10px 0}
+.sb-section{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:rgba(200,216,192,.4);padding:14px 18px 4px;font-weight:600}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;color:var(--sidebar-text);font-size:.82rem;font-weight:500;transition:all var(--tr);border-left:3px solid transparent;text-decoration:none;white-space:nowrap}
+.sb-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.sb-item.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:var(--accent)}
+.sb-item .ico{font-size:1rem;width:18px;text-align:center;flex-shrink:0}
+.sb-badge{margin-left:auto;background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;border-radius:10px;padding:1px 7px;min-width:20px;text-align:center}
+.sb-footer{padding:14px 18px;border-top:1px solid rgba(255,255,255,.08);font-size:.7rem;color:rgba(200,216,192,.4)}
+
+/* ── MAIN ── */
+#main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-title{font-family:'Lora',serif;font-size:1.1rem;font-weight:600;color:var(--text)}
+.topbar-sub{font-size:.75rem;color:var(--muted);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.page{padding:24px 28px;display:none;animation:fadeIn .2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:none;border-radius:var(--r2);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all var(--tr);text-decoration:none}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-h)}
+.btn-accent{background:var(--accent);color:#fff}.btn-accent:hover{background:var(--accent-h)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}.btn-ghost:hover{background:var(--bg);border-color:var(--border2)}
+.btn-sm{padding:5px 12px;font-size:.75rem}
+.btn-danger{background:#b84040;color:#fff}.btn-danger:hover{background:#9e3535}
+.btn-green{background:#3a7a6a;color:#fff}.btn-green:hover{background:#2d6558}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--shadow);padding:20px}
+.card-sm{padding:14px 16px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.section-title{font-family:'Lora',serif;font-size:1.2rem;font-weight:600;color:var(--text)}
+.section-title small{font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:400;color:var(--muted);margin-left:8px}
+
+/* ── STATS GRID ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);padding:16px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow)}
+.stat-icon{font-size:1.4rem}
+.stat-val{font-size:1.7rem;font-weight:700;color:var(--text);line-height:1}
+.stat-label{font-size:.72rem;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.stat-card.accent .stat-val{color:var(--accent)}
+.stat-card.green .stat-val{color:var(--green)}
+.stat-card.red .stat-val{color:var(--red)}
+.stat-card.blue .stat-val{color:var(--blue)}
+
+/* ── TAGS ── */
+.tag{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:.7rem;font-weight:600;white-space:nowrap}
+.tag-alta{background:#fce8e8;color:#b84040}
+.tag-media{background:#fdf0e0;color:#c77a14}
+.tag-baja{background:#e8f4ec;color:#2d6b3e}
+.tag-training{background:#e0f0ee;color:#2a6b5e}
+.tag-manual{background:#ece8f8;color:#5e4b8b}
+.tag-infografia{background:#fdf0e0;color:#c77a14}
+.tag-simulador{background:#e0eef8;color:#2e6085}
+.tag-reunion{background:#fde8e8;color:#b84040}
+.tag-daily{background:#e8f4ec;color:#2d6b3e}
+.tag-idea{background:#f8ece0;color:#b87040}
+.tag-pendiente{background:#f0e8f8;color:#7040b8}
+.tag-revision{background:#e8e8f8;color:#4040b8}
+.tag-liberacion{background:#e0f0e8;color:#206040}
+
+/* ── STATUS BADGES ── */
+.status{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:600}
+.status-backlog{background:#f0ebe0;color:var(--muted)}
+.status-porinicio{background:#e8f0f8;color:#2e6085}
+.status-enproceso{background:#e8f4ec;color:#2d6b3e}
+.status-enrevision{background:#fdf0e0;color:#c77a14}
+.status-enajustes{background:#fce8f8;color:#8b4b7a}
+.status-listo{background:#e0f8f0;color:#1a6b4a}
+.status-liberado{background:#c8e8d0;color:#155230}
+.status-abierto{background:#fde8e8;color:#b84040}
+.status-seguimiento{background:#fdf0e0;color:#c77a14}
+.status-cerrado{background:#e8f4ec;color:#2d6b3e}
+.status-planeada{background:#e8e8f8;color:#4040a0}
+.status-preparacion{background:#fdf0e0;color:#c77a14}
+.status-realizada{background:#e8f4ec;color:#2d6b3e}
+.status-reprogramada{background:#fce8f8;color:#8b4b7a}
+.status-cancelada{background:#fce8e8;color:#b84040}
+.status-vencido{background:#fce8e8;color:#b84040;animation:pulse .8s ease infinite alternate}
+@keyframes pulse{from{opacity:1}to{opacity:.6}}
+
+/* ── FORMS ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.form-full{grid-column:1/-1}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-label{font-size:.75rem;font-weight:600;color:var(--text2)}
+.form-input,.form-select,.form-textarea{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:var(--r2);font-family:'DM Sans',sans-serif;font-size:.82rem;background:var(--surface);color:var(--text);transition:border-color var(--tr);outline:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(58,102,71,.1)}
+.form-textarea{resize:vertical;min-height:70px}
+.range-wrap{display:flex;align-items:center;gap:10px}
+.range-wrap input[type=range]{flex:1;accent-color:var(--primary)}
+.range-val{font-size:.82rem;font-weight:700;color:var(--primary);min-width:35px;text-align:right}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--r);max-width:640px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow2)}
+.modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--surface);z-index:1}
+.modal-title{font-family:'Lora',serif;font-size:1rem;font-weight:600}
+.modal-close{background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--muted);padding:4px;border-radius:4px;transition:color var(--tr)}.modal-close:hover{color:var(--text)}
+.modal-body{padding:20px 24px}
+.modal-footer{padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--surface)}
+
+/* ── KANBAN ── */
+.kanban-wrap{overflow-x:auto;padding-bottom:8px}
+.kanban{display:flex;gap:14px;min-width:max-content}
+.kanban-col{width:230px;min-width:230px;background:var(--bg2);border-radius:var(--r);border:1px solid var(--border);display:flex;flex-direction:column}
+.kanban-col-header{padding:12px 14px;background:var(--surface);border-radius:var(--r) var(--r) 0 0;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.kanban-col-title{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2)}
+.kanban-count{background:var(--sand);color:var(--muted);font-size:.68rem;font-weight:700;border-radius:10px;padding:1px 8px}
+.kanban-col-body{flex:1;padding:10px;min-height:100px;display:flex;flex-direction:column;gap:8px}
+.kanban-col-body.drag-over{background:rgba(58,102,71,.05);border-radius:var(--r2)}
+.kanban-card{background:var(--surface);border-radius:var(--r2);border:1px solid var(--border);padding:10px 12px;cursor:grab;box-shadow:var(--shadow);transition:box-shadow var(--tr),transform var(--tr)}
+.kanban-card:hover{box-shadow:var(--shadow2);transform:translateY(-1px)}
+.kanban-card.dragging{opacity:.5;transform:rotate(2deg)}
+.kanban-card .kc-title{font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.3}
+.kanban-card .kc-meta{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.kanban-card .kc-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+.kanban-card .kc-date{font-size:.68rem;color:var(--muted)}
+.kanban-card .kc-date.vencido{color:var(--red);font-weight:700}
+.kanban-card .kc-date.proximo{color:var(--orange);font-weight:600}
+.progress-bar{height:4px;background:var(--sand);border-radius:2px;overflow:hidden;margin-top:6px}
+.progress-bar-fill{height:100%;background:var(--primary-light);border-radius:2px;transition:width .3s ease}
+.kanban-card-actions{display:flex;gap:4px;margin-top:6px}
+.kca-btn{background:none;border:none;cursor:pointer;font-size:.75rem;color:var(--muted);padding:2px 5px;border-radius:3px;transition:background var(--tr)}.kca-btn:hover{background:var(--bg);color:var(--text)}
+
+/* ── PIZARRON ── */
+.board-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.board-card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--shadow);padding:16px;display:flex;flex-direction:column;gap:8px;transition:box-shadow var(--tr),transform var(--tr)}
+.board-card:hover{box-shadow:var(--shadow2);transform:translateY(-2px)}
+.bc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.bc-title{font-weight:600;font-size:.88rem;color:var(--text);flex:1;line-height:1.3}
+.bc-desc{font-size:.78rem;color:var(--text2);line-height:1.5;flex:1}
+.bc-meta{display:flex;flex-wrap:wrap;gap:4px}
+.bc-footer{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border)}
+.bc-date{font-size:.7rem;color:var(--muted)}
+.bc-actions{display:flex;gap:4px}
+.icon-btn{background:none;border:none;cursor:pointer;padding:4px;border-radius:4px;color:var(--muted);font-size:.9rem;transition:all var(--tr)}.icon-btn:hover{background:var(--bg);color:var(--text)}
+
+/* ── SESSION CARDS ── */
+.session-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.session-card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--shadow);padding:18px;display:flex;flex-direction:column;gap:10px}
+.sc-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.sc-title{font-family:'Lora',serif;font-size:.95rem;font-weight:600;color:var(--text)}
+.sc-info{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.sc-field{font-size:.75rem;color:var(--text2)}.sc-field strong{color:var(--text);font-weight:600}
+.sc-actions{display:flex;gap:6px;margin-top:4px}
+
+/* ── REUNION CARDS ── */
+.reunion-list{display:flex;flex-direction:column;gap:14px}
+.reunion-card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--shadow);padding:18px}
+.rc-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px}
+.rc-title{font-family:'Lora',serif;font-size:.95rem;font-weight:600;color:var(--text)}
+.rc-date{font-size:.75rem;color:var(--muted)}
+.rc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.rc-field{font-size:.75rem;color:var(--text2)}.rc-field strong{display:block;color:var(--text);font-weight:600;font-size:.78rem}
+.rc-actions{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ── DAILY REPORT ── */
+.daily-output{background:var(--cream);border:1px solid var(--sand);border-radius:var(--r);padding:20px;font-size:.82rem;line-height:1.8;white-space:pre-wrap;min-height:200px;font-family:'DM Sans',monospace;color:var(--text2)}
+.daily-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.daily-notes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:20px}
+.daily-note-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:12px}
+.dn-label{font-size:.68rem;text-transform:uppercase;font-weight:700;color:var(--muted);letter-spacing:.06em;margin-bottom:6px}
+.dn-val{font-size:.82rem;color:var(--text);font-weight:500}
+
+/* ── MATRIZ ── */
+.matrix-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:16px;height:calc(100vh - 240px);min-height:400px}
+.matrix-quad{background:var(--surface);border-radius:var(--r);border:2px solid var(--border);padding:16px;display:flex;flex-direction:column;overflow:hidden}
+.matrix-quad.q1{border-color:#c84040;background:#fffafa}
+.matrix-quad.q2{border-color:#3a6647;background:#f6faf7}
+.matrix-quad.q3{border-color:#d4891a;background:#fffcf5}
+.matrix-quad.q4{border-color:#8a8070;background:#f8f8f5}
+.mq-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.mq-icon{font-size:1.2rem}
+.mq-title{font-size:.85rem;font-weight:700;color:var(--text)}
+.mq-sub{font-size:.7rem;color:var(--muted);margin-left:auto}
+.mq-items{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.mq-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:8px 10px;font-size:.78rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;transition:box-shadow var(--tr)}.mq-item:hover{box-shadow:var(--shadow)}
+.mq-empty{font-size:.75rem;color:var(--muted);text-align:center;padding:20px;font-style:italic}
+
+/* ── FILTERS BAR ── */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+.filter-input{padding:7px 12px;border:1px solid var(--border);border-radius:var(--r2);font-size:.78rem;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);outline:none;transition:border-color var(--tr)}.filter-input:focus{border-color:var(--primary)}
+.filter-label{font-size:.75rem;color:var(--muted);align-self:center}
+
+/* ── ALERTS ── */
+.alert{border-radius:var(--r2);padding:10px 14px;font-size:.8rem;display:flex;gap:8px;align-items:flex-start;margin-bottom:10px}
+.alert-warn{background:#fdf0e0;border:1px solid #f0cc80;color:#8a5a10}
+.alert-danger{background:#fde8e8;border:1px solid #f0a0a0;color:#8a2020}
+.alert-info{background:#e8f0f8;border:1px solid #a0c0e8;color:#204060}
+.alerts-panel{margin-bottom:20px}
+
+/* ── MODO COMPARTIDO ── */
+.shared-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}
+.shared-info{background:var(--cream);border:1px solid var(--sand);border-radius:var(--r);padding:20px;margin-bottom:20px;font-size:.82rem;line-height:1.7;color:var(--text2)}
+.shared-info h3{font-family:'Lora',serif;font-size:.95rem;font-weight:600;color:var(--text);margin-bottom:8px}
+
+/* ── MISC ── */
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty-state .es-icon{font-size:2.5rem;margin-bottom:12px;opacity:.5}
+.empty-state p{font-size:.85rem;margin-bottom:16px}
+.divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+.tooltip{position:relative}.tooltip:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#333;color:#fff;font-size:.68rem;white-space:nowrap;padding:4px 8px;border-radius:4px;pointer-events:none;z-index:999}
+
+@media(max-width:900px){
+  #sidebar{width:56px;min-width:56px}
+  .sb-item span,.sb-logo h1,.sb-logo span,.sb-section,.sb-badge,.sb-footer{display:none}
+  .sb-item{justify-content:center;padding:10px}
+  #main{margin-left:56px}
+  .page{padding:16px}
+  .form-grid,.form-grid-3{grid-template-columns:1fr}
+  .matrix-grid{grid-template-columns:1fr;height:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sb-logo">
+    <h1>Centro de Planeación</h1>
+    <span>TMLF Learning Center</span>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-section">Principal</div>
+    <div class="sb-item active" data-page="dashboard">
+      <span class="ico">📊</span><span>Dashboard</span>
+    </div>
+    <div class="sb-item" data-page="actividades">
+      <span class="ico">⚡</span><span>Actividades</span>
+      <span class="sb-badge" id="badge-actividades" style="background:var(--teal)">0</span>
+    </div>
+    <div class="sb-section">Trabajo</div>
+    <div class="sb-item" data-page="pizarron">
+      <span class="ico">🗒️</span><span>Pizarrón</span>
+    </div>
+    <div class="sb-item" data-page="kanban">
+      <span class="ico">📋</span><span>Pendientes</span>
+      <span class="sb-badge" id="badge-kanban">0</span>
+    </div>
+    <div class="sb-item" data-page="sesiones">
+      <span class="ico">📅</span><span>Sesiones</span>
+    </div>
+    <div class="sb-item" data-page="reuniones">
+      <span class="ico">🤝</span><span>Reuniones</span>
+    </div>
+    <div class="sb-item" data-page="agenda">
+      <span class="ico">🗓️</span><span>Agenda GCal</span>
+      <span class="sb-badge" id="badge-agenda" style="background:#2e6085">3</span>
+    </div>
+    <div class="sb-section">Reporting</div>
+    <div class="sb-item" data-page="daily">
+      <span class="ico">📝</span><span>Daily Report</span>
+    </div>
+    <div class="sb-item" data-page="matriz">
+      <span class="ico">🎯</span><span>Priorización</span>
+    </div>
+    <div class="sb-section">Sistema</div>
+    <div class="sb-item" data-page="compartido">
+      <span class="ico">🔗</span><span>Modo Compartido</span>
+    </div>
+  </div>
+  <div class="sb-footer">v1.0 · Datos locales</div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main id="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-sub" id="topbar-sub">Resumen general del estado operativo</div>
+    </div>
+    <div class="topbar-right">
+      <span id="sync-label" style="font-size:.7rem;color:var(--muted)"></span>
+      <button id="btn-sync" class="btn btn-ghost btn-sm" onclick="syncToSheets()" style="border-color:var(--primary);color:var(--primary)">☁️ Sync Sheets</button>
+      <span id="topbar-date" style="font-size:.75rem;color:var(--muted)"></span>
+    </div>
+  </div>
+
+  <!-- ══ DASHBOARD ══ -->
+  <section class="page active" id="page-dashboard">
+    <div id="alerts-container" class="alerts-panel"></div>
+    <div class="stats-grid" id="stats-grid"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px">
+      <div class="card">
+        <div class="section-header" style="margin-bottom:12px">
+          <span style="font-weight:700;font-size:.85rem;color:var(--text)">📋 Pendientes recientes</span>
+          <button class="btn btn-primary btn-sm" onclick="openPage('kanban')">Ver todos</button>
+        </div>
+        <div id="dash-pendientes-recent"></div>
+      </div>
+      <div class="card">
+        <div class="section-header" style="margin-bottom:12px">
+          <span style="font-weight:700;font-size:.85rem;color:var(--text)">📅 Próximas sesiones</span>
+          <button class="btn btn-primary btn-sm" onclick="openPage('sesiones')">Ver todas</button>
+        </div>
+        <div id="dash-sesiones-recent"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-header" style="margin-bottom:12px">
+        <span style="font-weight:700;font-size:.85rem;color:var(--text)">🤝 Reuniones con seguimiento pendiente</span>
+      </div>
+      <div id="dash-reuniones-open"></div>
+    </div>
+  </section>
+
+  <!-- ══ PIZARRON ══ -->
+  <section class="page" id="page-pizarron">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Pizarrón de Mapeo</div>
+      </div>
+      <button class="btn btn-primary" onclick="openModal('tarjeta')">+ Agregar tarjeta</button>
+    </div>
+    <div class="filters">
+      <span class="filter-label">Filtrar:</span>
+      <input class="filter-input" type="text" id="flt-tarjeta-q" placeholder="🔍 Buscar..." oninput="renderTarjetas()">
+      <select class="filter-input" id="flt-tarjeta-cat" onchange="renderTarjetas()">
+        <option value="">Todas las categorías</option>
+        <option>Training</option><option>Manual</option><option>Infografía</option>
+        <option>Simulador</option><option>Reunión</option><option>Daily</option>
+        <option>Idea</option><option>Pendiente operativo</option><option>Revisión DI</option><option>Liberación</option>
+      </select>
+      <select class="filter-input" id="flt-tarjeta-pri" onchange="renderTarjetas()">
+        <option value="">Todas las prioridades</option>
+        <option>Alta</option><option>Media</option><option>Baja</option>
+      </select>
+      <select class="filter-input" id="flt-tarjeta-est" onchange="renderTarjetas()">
+        <option value="">Todos los estados</option>
+        <option>Activo</option><option>En proceso</option><option>Pausado</option><option>Completado</option>
+      </select>
+    </div>
+    <div class="board-grid" id="board-grid"></div>
+  </section>
+
+  <!-- ══ KANBAN ══ -->
+  <section class="page" id="page-kanban">
+    <div class="section-header">
+      <div class="section-title">Tablero de Pendientes</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input class="filter-input" type="text" id="flt-kanban-q" placeholder="🔍 Buscar..." oninput="renderKanban()">
+        <select class="filter-input" id="flt-kanban-resp" onchange="renderKanban()">
+          <option value="">Todos los responsables</option>
+        </select>
+        <select class="filter-input" id="flt-kanban-pri" onchange="renderKanban()">
+          <option value="">Todas las prioridades</option>
+          <option>Alta</option><option>Media</option><option>Baja</option>
+        </select>
+        <button class="btn btn-primary" onclick="openModal('pendiente')">+ Agregar pendiente</button>
+      </div>
+    </div>
+    <div class="kanban-wrap">
+      <div class="kanban" id="kanban-board"></div>
+    </div>
+  </section>
+
+  <!-- ══ SESIONES ══ -->
+  <section class="page" id="page-sesiones">
+    <div class="section-header">
+      <div class="section-title">Planeador de Sesiones</div>
+      <button class="btn btn-primary" onclick="openModal('sesion')">+ Planear sesión</button>
+    </div>
+    <div class="filters">
+      <input class="filter-input" type="text" id="flt-sesion-q" placeholder="🔍 Buscar..." oninput="renderSesiones()">
+      <select class="filter-input" id="flt-sesion-est" onchange="renderSesiones()">
+        <option value="">Todos los estatus</option>
+        <option>Planeada</option><option>En preparación</option><option>Realizada</option><option>Reprogramada</option><option>Cancelada</option>
+      </select>
+    </div>
+    <div class="session-list" id="session-list"></div>
+  </section>
+
+  <!-- ══ REUNIONES ══ -->
+  <section class="page" id="page-reuniones">
+    <div class="section-header">
+      <div class="section-title">Registro de Reuniones</div>
+      <button class="btn btn-primary" onclick="openModal('reunion')">+ Registrar reunión</button>
+    </div>
+    <div class="filters">
+      <input class="filter-input" type="text" id="flt-reunion-q" placeholder="🔍 Buscar..." oninput="renderReuniones()">
+      <select class="filter-input" id="flt-reunion-est" onchange="renderReuniones()">
+        <option value="">Todos los estatus</option>
+        <option>Abierto</option><option>En seguimiento</option><option>Cerrado</option>
+      </select>
+    </div>
+    <div class="reunion-list" id="reunion-list"></div>
+  </section>
+
+  <!-- ══ ACTIVIDADES RÁPIDAS ══ -->
+  <section class="page" id="page-actividades">
+
+    <!-- REGISTRO RÁPIDO -->
+    <div class="card" style="margin-bottom:20px;border-left:4px solid var(--teal)">
+      <div style="font-family:'Lora',serif;font-size:1rem;font-weight:600;color:var(--text);margin-bottom:16px">⚡ Registro rápido de actividad</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">¿Qué hiciste? *</label>
+          <input class="form-input" id="act-titulo" placeholder="Ej: Revisé el módulo de VAWA, llamada con cliente...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo</label>
+          <select class="form-select" id="act-tipo" onchange="toggleActividadExtra()">
+            <option value="General">General</option>
+            <option value="Reunión">Reunión (no registrada)</option>
+            <option value="Sesión">Sesión</option>
+            <option value="Revisión">Revisión DI</option>
+            <option value="Llamada">Llamada</option>
+            <option value="Entrega">Entrega / Liberación</option>
+            <option value="Ajuste">Ajuste / Corrección</option>
+            <option value="Coordinación">Coordinación</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fecha</label>
+          <input class="form-input" type="date" id="act-fecha">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Hora (aprox.)</label>
+          <input class="form-input" type="time" id="act-hora">
+        </div>
+        <div class="form-group form-full">
+          <label class="form-label">Notas / Contexto</label>
+          <textarea class="form-textarea" id="act-notas" placeholder="Detalles adicionales, resultados, acuerdos..." style="min-height:60px"></textarea>
+        </div>
+
+        <!-- EXTRA: campos de reunión no registrada -->
+        <div id="act-reunion-extra" style="display:none;grid-column:1/-1">
+          <div style="background:var(--cream);border:1px solid var(--sand);border-radius:var(--r2);padding:14px;margin-bottom:4px">
+            <div style="font-size:.75rem;font-weight:700;color:var(--teal);margin-bottom:10px">📋 Datos de la reunión no registrada</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Nombre de la reunión</label>
+                <input class="form-input" id="act-reunion-nombre" placeholder="Ej: Sync con Karen, Follow-up Visa T...">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Participantes</label>
+                <input class="form-input" id="act-reunion-participantes" placeholder="Nombres o correos">
+              </div>
+              <div class="form-group form-full">
+                <label class="form-label">Acuerdos / Puntos tratados</label>
+                <textarea class="form-textarea" id="act-reunion-acuerdos" placeholder="¿De qué se habló? ¿Qué quedó pendiente?" style="min-height:60px"></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Responsable seguimiento</label>
+                <input class="form-input" id="act-reunion-responsable" placeholder="Nombre">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Fecha compromiso</label>
+                <input class="form-input" type="date" id="act-reunion-fecha-compromiso">
+              </div>
+            </div>
+            <div style="margin-top:10px;display:flex;align-items:center;gap:8px">
+              <input type="checkbox" id="act-crear-reunion" checked style="accent-color:var(--teal)">
+              <label for="act-crear-reunion" style="font-size:.78rem;font-weight:600;color:var(--text2);cursor:pointer">Guardar también en Registro de Reuniones</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- EXTRA: pendiente derivado -->
+        <div class="form-group form-full" style="display:flex;align-items:center;gap:8px">
+          <input type="checkbox" id="act-crear-pendiente" style="accent-color:var(--primary)">
+          <label for="act-crear-pendiente" style="font-size:.78rem;font-weight:600;color:var(--text2);cursor:pointer">Generar pendiente derivado de esta actividad</label>
+        </div>
+
+        <div id="act-pendiente-extra" style="display:none;grid-column:1/-1">
+          <div style="background:#e8f4ec;border:1px solid #a8d8b8;border-radius:var(--r2);padding:14px">
+            <div style="font-size:.75rem;font-weight:700;color:var(--primary);margin-bottom:10px">📌 Pendiente derivado</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Nombre del pendiente</label>
+                <input class="form-input" id="act-pend-nombre" placeholder="¿Qué queda por hacer?">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Fecha límite</label>
+                <input class="form-input" type="date" id="act-pend-fecha">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Prioridad</label>
+                <select class="form-select" id="act-pend-prioridad">
+                  <option>Alta</option><option selected>Media</option><option>Baja</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Responsable</label>
+                <input class="form-input" id="act-pend-responsable" placeholder="Nombre">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="registrarActividad()">⚡ Registrar actividad</button>
+        <button class="btn btn-ghost btn-sm" onclick="limpiarFormActividad()">✕ Limpiar</button>
+      </div>
+    </div>
+
+    <!-- FILTROS + LISTA -->
+    <div class="section-header">
+      <div class="section-title">Historial de actividades <small id="act-count"></small></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input class="filter-input" type="date" id="flt-act-fecha" onchange="renderActividades()">
+        <select class="filter-input" id="flt-act-tipo" onchange="renderActividades()">
+          <option value="">Todos los tipos</option>
+          <option>General</option><option>Reunión</option><option>Sesión</option>
+          <option>Revisión</option><option>Llamada</option><option>Entrega</option>
+          <option>Ajuste</option><option>Coordinación</option><option>Otro</option>
+        </select>
+        <input class="filter-input" type="text" id="flt-act-q" placeholder="🔍 Buscar..." oninput="renderActividades()">
+      </div>
+    </div>
+    <div id="actividades-list"></div>
+  </section>
+
+  <!-- ══ AGENDA GCAL ══ -->
+  <section class="page" id="page-agenda">
+    <div class="empty-state"><div class="es-icon">🗓️</div><p>Cargando agenda...</p></div>
+  </section>
+
+  <!-- ══ DAILY REPORT ══ -->
+  <section class="page" id="page-daily">
+    <div class="section-header">
+      <div class="section-title">Daily Report</div>
+      <div style="display:flex;gap:8px">
+        <input type="date" class="filter-input" id="daily-date">
+        <button class="btn btn-primary" onclick="generateDaily()">↺ Regenerar</button>
+      </div>
+    </div>
+    <div class="daily-notes-grid" id="daily-summary"></div>
+    <div style="margin-bottom:10px;font-size:.78rem;font-weight:600;color:var(--text2)">Notas adicionales del día:</div>
+    <textarea class="form-textarea" id="daily-extra" placeholder="Agrega bloqueos, observaciones, contexto adicional..." style="min-height:80px;margin-bottom:14px;width:100%" oninput="generateDaily()"></textarea>
+    <div class="daily-output" id="daily-output"></div>
+    <div class="daily-actions">
+      <button class="btn btn-accent" onclick="copyDaily()">📋 Copiar Daily</button>
+      <button class="btn btn-ghost" onclick="downloadDaily()">⬇ Descargar .txt</button>
+      <button class="btn btn-green" onclick="logDailyToSheets()">☁️ Guardar en Sheets</button>
+    </div>
+  </section>
+
+  <!-- ══ MATRIZ ══ -->
+  <section class="page" id="page-matriz">
+    <div class="section-header">
+      <div class="section-title">Vista de Priorización</div>
+      <span style="font-size:.75rem;color:var(--muted)">Arrastra los pendientes a cada cuadrante</span>
+    </div>
+    <div class="matrix-grid" id="matrix-grid"></div>
+  </section>
+
+  <!-- ══ COMPARTIDO ══ -->
+  <section class="page" id="page-compartido">
+    <div class="section-header">
+      <div class="section-title">Modo Compartido</div>
+    </div>
+    <div class="shared-info">
+      <h3>📌 Acerca de esta herramienta</h3>
+      Este artefacto puede ser utilizado por <strong>trainers, coordinadores o managers</strong> del área de Learning Center. Permite organizar pendientes, sesiones, reuniones y avances diarios en un solo lugar.<br><br>
+      La información se <strong>guarda automáticamente</strong> en el navegador (localStorage). Para compartir con otro usuario, usa la función de exportar/importar JSON. Para respaldar tu información, descarga el archivo JSON periódicamente.
+    </div>
+    <div class="shared-actions">
+      <button class="btn btn-primary" onclick="exportJSON()">⬇ Exportar respaldo (JSON)</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('import-file').click()">⬆ Importar respaldo (JSON)</button>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importJSON(event)">
+      <button class="btn btn-ghost" onclick="downloadSummary()">📄 Descargar resumen (.txt)</button>
+      <button class="btn btn-danger btn-sm" onclick="clearAllData()" style="margin-left:auto">🗑 Limpiar todo</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px">
+      <div class="card card-sm">
+        <div style="font-size:.7rem;text-transform:uppercase;font-weight:700;color:var(--muted);margin-bottom:6px">Tarjetas (pizarrón)</div>
+        <div style="font-size:1.5rem;font-weight:700;color:var(--primary)" id="sh-tarjetas">0</div>
+      </div>
+      <div class="card card-sm">
+        <div style="font-size:.7rem;text-transform:uppercase;font-weight:700;color:var(--muted);margin-bottom:6px">Pendientes activos</div>
+        <div style="font-size:1.5rem;font-weight:700;color:var(--accent)" id="sh-pendientes">0</div>
+      </div>
+      <div class="card card-sm">
+        <div style="font-size:.7rem;text-transform:uppercase;font-weight:700;color:var(--muted);margin-bottom:6px">Sesiones registradas</div>
+        <div style="font-size:1.5rem;font-weight:700;color:var(--blue)" id="sh-sesiones">0</div>
+      </div>
+      <div class="card card-sm">
+        <div style="font-size:.7rem;text-transform:uppercase;font-weight:700;color:var(--muted);margin-bottom:6px">Reuniones registradas</div>
+        <div style="font-size:1.5rem;font-weight:700;color:var(--teal)" id="sh-reuniones">0</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ══ MODAL OVERLAY ══ -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Nuevo registro</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" id="modal-save" onclick="saveModal()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let state = {pendientes:[],sesiones:[],reuniones:[],tarjetas:[]};
+let currentModal = null;
+let editingId = null;
+
+const KANBAN_COLS = ['Backlog','Por iniciar','En proceso','En revisión','En ajustes','Listo para liberar','Liberado'];
+const CATEGORIAS = ['Training','Manual','Infografía','Simulador','Reunión','Daily','Idea','Pendiente operativo','Revisión DI','Liberación'];
+const TIPOS = ['Proyecto','Manual','Infografía','Simulador','Teoría','Actualización','Sesión','Reunión','Otro'];
+const CUADRANTES = ['urgente-importante','importante-no-urgente','urgente-no-importante','puede-esperar'];
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function today(){return new Date().toISOString().split('T')[0]}
+function fmtDate(d){if(!d)return '';const[y,m,day]=d.split('-');return `${day}/${m}/${y}`}
+function isVencido(d){return d&&d<today()}
+function isProximo(d){if(!d)return false;const diff=(new Date(d)-new Date(today()))/(1000*60*60*24);return diff>=0&&diff<=3}
+
+function saveState(){localStorage.setItem('cpo_data_v1',JSON.stringify(state))}
+function loadState(){
+  const raw=localStorage.getItem('cpo_data_v1');
+  if(raw)try{state=JSON.parse(raw)}catch(e){}
+  else state={pendientes:[],sesiones:[],reuniones:[],tarjetas:[]};
+  if(!state.pendientes)state.pendientes=[];
+  if(!state.sesiones)state.sesiones=[];
+  if(!state.reuniones)state.reuniones=[];
+  if(!state.tarjetas)state.tarjetas=[];
+  if(!state.actividades)state.actividades=[];
+}
+
+// ─────────────────────────────────────────────
+// NAVIGATION
+// ─────────────────────────────────────────────
+const pageInfo = {
+  actividades:{title:'Registro de Actividades',sub:'Registra rápidamente lo que hiciste hoy — reuniones, sesiones, revisiones y más'},
+  pizarron:{title:'Pizarrón de Mapeo',sub:'Organiza ideas, pendientes y proyectos en tarjetas'},
+  kanban:{title:'Tablero de Pendientes',sub:'Gestiona el avance de todos los pendientes activos'},
+  sesiones:{title:'Planeador de Sesiones',sub:'Planea y registra sesiones de capacitación y trabajo'},
+  reuniones:{title:'Registro de Reuniones',sub:'Documenta reuniones, acuerdos y pendientes derivados'},
+  daily:{title:'Daily Report',sub:'Genera tu reporte diario de actividades'},
+  matriz:{title:'Vista de Priorización',sub:'Matriz Eisenhower – clasifica por urgencia e importancia'},
+  compartido:{title:'Modo Compartido',sub:'Exporta, importa y comparte tu información'}
+};
+
+function openPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelector(`.sb-item[data-page="${name}"]`).classList.add('active');
+  document.getElementById('topbar-title').textContent=pageInfo[name].title;
+  document.getElementById('topbar-sub').textContent=pageInfo[name].sub;
+  renderPage(name);
+}
+
+document.querySelectorAll('.sb-item').forEach(item=>{
+  item.addEventListener('click',()=>openPage(item.dataset.page));
+});
+
+function renderPage(name){
+  if(name==='actividades'){initActividadForm();renderActividades();}
+  if(name==='agenda')renderAgenda();
+  if(name==='dashboard')renderDashboard();
+  if(name==='pizarron')renderTarjetas();
+  if(name==='kanban'){buildKanbanResponsables();renderKanban();}
+  if(name==='sesiones')renderSesiones();
+  if(name==='reuniones')renderReuniones();
+  if(name==='daily')renderDaily();
+  if(name==='matriz')renderMatriz();
+  if(name==='compartido')renderCompartido();
+}
+
+// ─────────────────────────────────────────────
+// DASHBOARD
+// ─────────────────────────────────────────────
+function renderDashboard(){
+  // GCal hoy widget
+  const gcalHoy=gcalEvents.filter(e=>gcalDate(e.start)===today());
+  const gcalWidget=document.createElement('div');
+  gcalWidget.className='card';
+  gcalWidget.style.marginBottom='20px';
+  gcalWidget.innerHTML=`
+    <div class="section-header" style="margin-bottom:12px">
+      <span style="font-weight:700;font-size:.85rem;color:var(--text)">🗓️ Google Calendar — Hoy</span>
+      <button class="btn btn-ghost btn-sm" onclick="openPage('agenda')">Ver agenda completa</button>
+    </div>
+    ${gcalHoy.length?gcalHoy.map(ev=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)">
+        <span style="font-size:.75rem;font-weight:700;color:var(--primary);min-width:48px">${gcalTime(ev.start)}</span>
+        <div style="flex:1">
+          <div style="font-size:.82rem;font-weight:600;color:var(--text)">${ev.summary}</div>
+          <div style="font-size:.7rem;color:var(--muted)">${gcalAttendees(ev.attendees)}</div>
+        </div>
+        <span style="font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:12px;background:${ev.type==='sesion'?'#e8f4ec':'#fdf0e0'};color:${ev.type==='sesion'?'var(--green)':'var(--orange)'}">${ev.type==='sesion'?'Sesión':'Reunión'}</span>
+        ${ev.meet?`<a href="${ev.meet}" target="_blank" style="font-size:.7rem;color:var(--blue);text-decoration:none;white-space:nowrap">🎥 Meet</a>`:''}
+      </div>`).join('')
+    :`<div style="font-size:.8rem;color:var(--muted);padding:10px 0">Sin eventos en Google Calendar para hoy.</div>`}
+  `;
+  document.getElementById('page-dashboard').insertBefore(gcalWidget, document.getElementById('alerts-container').nextSibling);
+
+  const p=state.pendientes;
+  const s=state.sesiones;
+  const r=state.reuniones;
+  const t=state.tarjetas;
+  const activos=p.filter(x=>x.estado!=='Liberado').length;
+  const enproceso=p.filter(x=>x.estado==='En proceso').length;
+  const liberados=p.filter(x=>x.estado==='Liberado').length;
+  const vencidos=p.filter(x=>isVencido(x.fechaLimite)&&x.estado!=='Liberado').length;
+  const proximos=p.filter(x=>isProximo(x.fechaLimite)&&x.estado!=='Liberado').length;
+  const todaySes=s.filter(x=>x.fecha===today()).length;
+
+  document.getElementById('stats-grid').innerHTML=`
+    <div class="stat-card"><div class="stat-icon">📋</div><div class="stat-val">${activos}</div><div class="stat-label">Pendientes activos</div></div>
+    <div class="stat-card green"><div class="stat-icon">⚡</div><div class="stat-val">${enproceso}</div><div class="stat-label">En proceso</div></div>
+    <div class="stat-card accent"><div class="stat-icon">✅</div><div class="stat-val">${liberados}</div><div class="stat-label">Liberados</div></div>
+    <div class="stat-card blue"><div class="stat-icon">🤝</div><div class="stat-val">${r.length}</div><div class="stat-label">Reuniones</div></div>
+    <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-val">${s.length}</div><div class="stat-label">Sesiones</div></div>
+    <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-val">${todaySes}</div><div class="stat-label">Sesiones hoy</div></div>
+    ${vencidos>0?`<div class="stat-card red"><div class="stat-icon">🚨</div><div class="stat-val">${vencidos}</div><div class="stat-label">Vencidos</div></div>`:''}
+    ${proximos>0?`<div class="stat-card accent"><div class="stat-icon">⚠️</div><div class="stat-val">${proximos}</div><div class="stat-label">Próximos a vencer</div></div>`:''}
+    <div class="stat-card"><div class="stat-icon">🗒️</div><div class="stat-val">${t.length}</div><div class="stat-label">Tarjetas pizarrón</div></div>
+  `;
+
+  const alerts=[];
+  if(vencidos>0)alerts.push(`<div class="alert alert-danger">🚨 Tienes <strong>${vencidos} pendiente(s) vencidos</strong>. Revisa el tablero Kanban.</div>`);
+  if(proximos>0)alerts.push(`<div class="alert alert-warn">⚠️ <strong>${proximos} pendiente(s)</strong> vencen en los próximos 3 días.</div>`);
+  const reunAbiertas=r.filter(x=>x.estatus==='Abierto'||x.estatus==='En seguimiento');
+  if(reunAbiertas.length>0)alerts.push(`<div class="alert alert-info">📌 <strong>${reunAbiertas.length} reunión(es)</strong> tienen acuerdos pendientes de seguimiento.</div>`);
+  document.getElementById('alerts-container').innerHTML=alerts.join('');
+
+  // Pendientes recientes
+  const recP=p.filter(x=>x.estado!=='Liberado').slice(-5).reverse();
+  document.getElementById('dash-pendientes-recent').innerHTML=recP.length?recP.map(x=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);gap:8px">
+      <div>
+        <div style="font-size:.8rem;font-weight:600;color:var(--text)">${x.nombre}</div>
+        <div style="font-size:.7rem;color:var(--muted)">${x.responsable||'Sin responsable'}</div>
+      </div>
+      <div style="display:flex;gap:5px;align-items:center;flex-shrink:0">
+        ${prioTag(x.prioridad)}
+        <span class="status status-${slugStatus(x.estado)}" style="font-size:.65rem">${x.estado}</span>
+      </div>
+    </div>`).join(''):`<div class="empty-state"><div class="es-icon">📭</div><p>Sin pendientes activos</p></div>`;
+
+  // Próximas sesiones
+  const recS=s.filter(x=>x.fecha>=today()&&x.estatus!=='Cancelada').sort((a,b)=>a.fecha.localeCompare(b.fecha)).slice(0,4);
+  document.getElementById('dash-sesiones-recent').innerHTML=recS.length?recS.map(x=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);gap:8px">
+      <div>
+        <div style="font-size:.8rem;font-weight:600;color:var(--text)">${x.nombre}</div>
+        <div style="font-size:.7rem;color:var(--muted)">${fmtDate(x.fecha)} ${x.hora||''}</div>
+      </div>
+      <span class="status status-${slugStatus(x.estatus)}" style="font-size:.65rem">${x.estatus}</span>
+    </div>`).join(''):`<div class="empty-state"><div class="es-icon">📅</div><p>Sin sesiones próximas</p></div>`;
+
+  // Reuniones abiertas
+  document.getElementById('dash-reuniones-open').innerHTML=reunAbiertas.length?reunAbiertas.map(x=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);gap:8px">
+      <div>
+        <div style="font-size:.8rem;font-weight:600;color:var(--text)">${x.nombre}</div>
+        <div style="font-size:.7rem;color:var(--muted)">${fmtDate(x.fecha)} · ${x.responsable||'Sin responsable'}</div>
+      </div>
+      <div style="display:flex;gap:5px;align-items:center;flex-shrink:0">
+        <span class="status status-${slugStatus(x.estatus)}" style="font-size:.65rem">${x.estatus}</span>
+        ${x.fechaCompromiso&&isVencido(x.fechaCompromiso)?'<span style="font-size:.65rem;color:var(--red);font-weight:700">VENCIDO</span>':''}
+      </div>
+    </div>`).join(''):`<div class="empty-state"><div class="es-icon">✅</div><p>Sin reuniones abiertas</p></div>`;
+
+  // Badge kanban
+  document.getElementById('badge-kanban').textContent=activos;
+}
+
+// ─────────────────────────────────────────────
+// PIZARRÓN
+// ─────────────────────────────────────────────
+function renderTarjetas(){
+  const q=(document.getElementById('flt-tarjeta-q')||{}).value?.toLowerCase()||'';
+  const cat=(document.getElementById('flt-tarjeta-cat')||{}).value||'';
+  const pri=(document.getElementById('flt-tarjeta-pri')||{}).value||'';
+  const est=(document.getElementById('flt-tarjeta-est')||{}).value||'';
+  let items=state.tarjetas.filter(t=>{
+    if(q&&!t.titulo.toLowerCase().includes(q)&&!(t.descripcion||'').toLowerCase().includes(q))return false;
+    if(cat&&t.categoria!==cat)return false;
+    if(pri&&t.prioridad!==pri)return false;
+    if(est&&t.estado!==est)return false;
+    return true;
+  });
+  const grid=document.getElementById('board-grid');
+  if(!items.length){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="es-icon">🗒️</div><p>Sin tarjetas. Agrega una para comenzar.</p><button class="btn btn-primary" onclick="openModal('tarjeta')">+ Agregar tarjeta</button></div>`;return;}
+  grid.innerHTML=items.map(t=>`
+    <div class="board-card">
+      <div class="bc-top">
+        <div class="bc-title">${esc(t.titulo)}</div>
+        <div style="display:flex;gap:4px">
+          <button class="icon-btn" onclick="openModal('tarjeta','${t.id}')" title="Editar">✏️</button>
+          <button class="icon-btn" onclick="deleteTarjeta('${t.id}')" title="Eliminar">🗑</button>
+        </div>
+      </div>
+      ${t.descripcion?`<div class="bc-desc">${esc(t.descripcion)}</div>`:''}
+      <div class="bc-meta">
+        ${catTag(t.categoria)}
+        ${prioTag(t.prioridad)}
+        ${t.estado?`<span class="tag" style="background:#f0ebe0;color:var(--muted)">${t.estado}</span>`:''}
+      </div>
+      ${t.comentarios?`<div style="font-size:.72rem;color:var(--muted);font-style:italic;border-top:1px solid var(--border);padding-top:6px">${esc(t.comentarios)}</div>`:''}
+      <div class="bc-footer">
+        <div class="bc-date ${isVencido(t.fechaLimite)?'kc-date vencido':''}">${t.fechaLimite?'📅 '+fmtDate(t.fechaLimite):''}</div>
+      </div>
+    </div>`).join('');
+}
+
+function deleteTarjeta(id){if(confirm('¿Eliminar esta tarjeta?')){state.tarjetas=state.tarjetas.filter(t=>t.id!==id);saveState();renderTarjetas();}}
+
+// ─────────────────────────────────────────────
+// KANBAN
+// ─────────────────────────────────────────────
+function buildKanbanResponsables(){
+  const sel=document.getElementById('flt-kanban-resp');
+  if(!sel)return;
+  const resps=[...new Set(state.pendientes.map(p=>p.responsable).filter(Boolean))];
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Todos los responsables</option>'+resps.map(r=>`<option${r===cur?' selected':''}>${r}</option>`).join('');
+}
+
+function renderKanban(){
+  const q=(document.getElementById('flt-kanban-q')||{}).value?.toLowerCase()||'';
+  const resp=(document.getElementById('flt-kanban-resp')||{}).value||'';
+  const pri=(document.getElementById('flt-kanban-pri')||{}).value||'';
+  const board=document.getElementById('kanban-board');
+  board.innerHTML=KANBAN_COLS.map(col=>{
+    let items=state.pendientes.filter(p=>p.estado===col);
+    if(q)items=items.filter(p=>p.nombre.toLowerCase().includes(q)||(p.notas||'').toLowerCase().includes(q));
+    if(resp)items=items.filter(p=>p.responsable===resp);
+    if(pri)items=items.filter(p=>p.prioridad===pri);
+    return `
+    <div class="kanban-col" data-col="${col}">
+      <div class="kanban-col-header">
+        <span class="kanban-col-title">${col}</span>
+        <span class="kanban-count">${items.length}</span>
+      </div>
+      <div class="kanban-col-body" id="col-${slugCol(col)}"
+        ondragover="event.preventDefault();this.classList.add('drag-over')"
+        ondragleave="this.classList.remove('drag-over')"
+        ondrop="dropCard(event,'${col}')">
+        ${items.map(p=>kanbanCard(p)).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function kanbanCard(p){
+  const venc=isVencido(p.fechaLimite)&&p.estado!=='Liberado';
+  const prox=isProximo(p.fechaLimite)&&p.estado!=='Liberado'&&!venc;
+  return `
+  <div class="kanban-card${venc?' border-left:3px solid var(--red)':''}" draggable="true"
+    ondragstart="dragCard(event,'${p.id}')" id="kcard-${p.id}"
+    style="${venc?'border-left:3px solid var(--red)':prox?'border-left:3px solid var(--orange)':''}">
+    <div class="kc-title">${esc(p.nombre)}</div>
+    <div class="kc-meta">
+      ${prioTag(p.prioridad)}
+      ${p.tipo?`<span class="tag" style="background:var(--bg2);color:var(--muted)">${p.tipo}</span>`:''}
+    </div>
+    ${p.responsable?`<div style="font-size:.7rem;color:var(--muted)">👤 ${esc(p.responsable)}</div>`:''}
+    <div class="progress-bar"><div class="progress-bar-fill" style="width:${p.porcentaje||0}%"></div></div>
+    <div class="kc-bottom">
+      <div class="kc-date ${venc?'vencido':prox?'proximo':''}">${p.fechaLimite?(venc?'🚨 ':prox?'⚠️ ':'')+fmtDate(p.fechaLimite):''}</div>
+      <span style="font-size:.68rem;color:var(--muted)">${p.porcentaje||0}%</span>
+    </div>
+    ${p.notas?`<div style="font-size:.68rem;color:var(--muted);margin-top:4px;font-style:italic;line-height:1.4">${esc(p.notas.slice(0,80))}${p.notas.length>80?'…':''}</div>`:''}
+    <div class="kanban-card-actions">
+      <button class="kca-btn" onclick="openModal('pendiente','${p.id}')">✏️ Editar</button>
+      <button class="kca-btn" onclick="moveCard('${p.id}',-1)">◀</button>
+      <button class="kca-btn" onclick="moveCard('${p.id}',1)">▶</button>
+      <button class="kca-btn" onclick="deletePendiente('${p.id}')" style="color:var(--red)">🗑</button>
+    </div>
+  </div>`;
+}
+
+let dragId=null;
+function dragCard(e,id){dragId=id;e.dataTransfer.effectAllowed='move';document.getElementById('kcard-'+id).classList.add('dragging');}
+function dropCard(e,col){
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if(!dragId)return;
+  const p=state.pendientes.find(x=>x.id===dragId);
+  if(p){p.estado=col;if(col==='Liberado')p.porcentaje=100;saveState();renderKanban();renderDashboard();}
+  dragId=null;
+}
+function moveCard(id,dir){
+  const p=state.pendientes.find(x=>x.id===id);
+  if(!p)return;
+  const idx=KANBAN_COLS.indexOf(p.estado);
+  const newIdx=idx+dir;
+  if(newIdx<0||newIdx>=KANBAN_COLS.length)return;
+  p.estado=KANBAN_COLS[newIdx];
+  if(p.estado==='Liberado')p.porcentaje=100;
+  saveState();renderKanban();renderDashboard();
+}
+function deletePendiente(id){if(confirm('¿Eliminar este pendiente?')){state.pendientes=state.pendientes.filter(p=>p.id!==id);saveState();renderKanban();renderDashboard();}}
+
+// ─────────────────────────────────────────────
+// SESIONES
+// ─────────────────────────────────────────────
+function renderSesiones(){
+  const q=(document.getElementById('flt-sesion-q')||{}).value?.toLowerCase()||'';
+  const est=(document.getElementById('flt-sesion-est')||{}).value||'';
+  let items=state.sesiones.filter(s=>{
+    if(q&&!s.nombre.toLowerCase().includes(q)&&!(s.objetivo||'').toLowerCase().includes(q))return false;
+    if(est&&s.estatus!==est)return false;
+    return true;
+  }).sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  const list=document.getElementById('session-list');
+  if(!items.length){list.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="es-icon">📅</div><p>Sin sesiones registradas.</p><button class="btn btn-primary" onclick="openModal('sesion')">+ Planear sesión</button></div>`;return;}
+  list.innerHTML=items.map(s=>`
+    <div class="session-card">
+      <div class="sc-header">
+        <div class="sc-title">${esc(s.nombre)}</div>
+        <span class="status status-${slugStatus(s.estatus)}">${s.estatus}</span>
+      </div>
+      <div class="sc-info">
+        <div class="sc-field"><strong>Fecha</strong>${fmtDate(s.fecha)} ${s.hora||''}</div>
+        <div class="sc-field"><strong>Modalidad</strong>${s.modalidad||'—'}</div>
+        <div class="sc-field"><strong>Participantes</strong>${s.participantes||'—'}</div>
+        <div class="sc-field"><strong>Objetivo</strong>${s.objetivo||'—'}</div>
+      </div>
+      ${s.temas?`<div style="font-size:.75rem;color:var(--text2)"><strong style="color:var(--text)">Temas:</strong> ${esc(s.temas)}</div>`:''}
+      ${s.materiales?`<div style="font-size:.75rem;color:var(--text2)"><strong style="color:var(--text)">Materiales:</strong> ${esc(s.materiales)}</div>`:''}
+      ${s.pendientesDerivados?`<div style="font-size:.75rem;color:var(--text2)"><strong style="color:var(--text)">Pendientes derivados:</strong> ${esc(s.pendientesDerivados)}</div>`:''}
+      <div class="sc-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openModal('sesion','${s.id}')">✏️ Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteSesion('${s.id}')">🗑</button>
+      </div>
+    </div>`).join('');
+}
+function deleteSesion(id){if(confirm('¿Eliminar esta sesión?')){state.sesiones=state.sesiones.filter(s=>s.id!==id);saveState();renderSesiones();}}
+
+// ─────────────────────────────────────────────
+// REUNIONES
+// ─────────────────────────────────────────────
+function renderReuniones(){
+  const q=(document.getElementById('flt-reunion-q')||{}).value?.toLowerCase()||'';
+  const est=(document.getElementById('flt-reunion-est')||{}).value||'';
+  let items=state.reuniones.filter(r=>{
+    if(q&&!r.nombre.toLowerCase().includes(q)&&!(r.tema||'').toLowerCase().includes(q))return false;
+    if(est&&r.estatus!==est)return false;
+    return true;
+  }).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  const list=document.getElementById('reunion-list');
+  if(!items.length){list.innerHTML=`<div class="empty-state"><div class="es-icon">🤝</div><p>Sin reuniones registradas.</p><button class="btn btn-primary" onclick="openModal('reunion')">+ Registrar reunión</button></div>`;return;}
+  list.innerHTML=items.map(r=>`
+    <div class="reunion-card">
+      <div class="rc-header">
+        <div>
+          <div class="rc-title">${esc(r.nombre)}</div>
+          <div class="rc-date">📅 ${fmtDate(r.fecha)} · ${esc(r.participantes||'')}</div>
+        </div>
+        <span class="status status-${slugStatus(r.estatus)}">${r.estatus}</span>
+      </div>
+      <div class="rc-grid">
+        <div class="rc-field"><strong>Tema</strong>${esc(r.tema||'—')}</div>
+        <div class="rc-field"><strong>Responsable</strong>${esc(r.responsable||'—')}</div>
+        ${r.puntos?`<div class="rc-field" style="grid-column:1/-1"><strong>Puntos tratados</strong>${esc(r.puntos)}</div>`:''}
+        ${r.acuerdos?`<div class="rc-field" style="grid-column:1/-1"><strong>Acuerdos</strong>${esc(r.acuerdos)}</div>`:''}
+        ${r.pendientesGenerados?`<div class="rc-field" style="grid-column:1/-1"><strong>Pendientes generados</strong>${esc(r.pendientesGenerados)}</div>`:''}
+        ${r.fechaCompromiso?`<div class="rc-field"><strong>Fecha compromiso</strong>${fmtDate(r.fechaCompromiso)}</div>`:''}
+      </div>
+      <div class="rc-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openModal('reunion','${r.id}')">✏️ Editar</button>
+        ${r.acuerdos?`<button class="btn btn-green btn-sm" onclick="acuerdoToPendiente('${r.id}')">📋 Crear pendiente</button>`:''}
+        <button class="btn btn-danger btn-sm" onclick="deleteReunion('${r.id}')">🗑</button>
+      </div>
+    </div>`).join('');
+}
+function deleteReunion(id){if(confirm('¿Eliminar esta reunión?')){state.reuniones=state.reuniones.filter(r=>r.id!==id);saveState();renderReuniones();}}
+function acuerdoToPendiente(id){
+  const r=state.reuniones.find(x=>x.id===id);
+  if(!r)return;
+  const p={id:uid(),nombre:'Seguimiento: '+r.nombre,tipo:'Reunión',responsable:r.responsable||'',prioridad:'Media',fechaInicio:today(),fechaLimite:r.fechaCompromiso||'',porcentaje:0,estado:'Por iniciar',notas:r.acuerdos||'',proximoPaso:'',evidencia:'',cuadrante:''};
+  state.pendientes.push(p);saveState();
+  alert('✅ Pendiente creado en "Por iniciar" con los acuerdos de la reunión.');
+}
+
+// ─────────────────────────────────────────────
+// DAILY REPORT
+// ─────────────────────────────────────────────
+function renderDaily(){
+  const d=document.getElementById('daily-date');
+  if(!d.value)d.value=today();
+  generateDaily();
+}
+function generateDaily(){
+  const dateStr=document.getElementById('daily-date').value||today();
+  const extra=document.getElementById('daily-extra').value||'';
+  const actividadesHoy=(state.actividades||[]).filter(a=>a.fecha===dateStr);
+  const sesionesHoy=state.sesiones.filter(s=>s.fecha===dateStr&&s.estatus==='Realizada');
+  const reunionesHoy=state.reuniones.filter(r=>r.fecha===dateStr);
+  const reunionesDeActividades=actividadesHoy.filter(a=>a.tipo==='Reunión');
+  const todasReuniones=[...reunionesHoy,...reunionesDeActividades.filter(a=>!state.reuniones.find(r=>r.actividadId===a.id))];
+  const pendAvanzados=state.pendientes.filter(p=>p.fechaUltimoAvance===dateStr);
+  const pendLiberados=state.pendientes.filter(p=>p.estado==='Liberado'&&p.fechaLimite===dateStr);
+  const pendEnProceso=state.pendientes.filter(p=>p.estado==='En proceso'||p.estado==='En revisión');
+  const vencidos=state.pendientes.filter(p=>isVencido(p.fechaLimite)&&p.estado!=='Liberado');
+  const proxPasos=state.pendientes.filter(p=>p.proximoPaso&&p.estado!=='Liberado').slice(0,5);
+
+  document.getElementById('daily-summary').innerHTML=`
+    <div class="daily-note-card"><div class="dn-label">📅 Fecha</div><div class="dn-val">${fmtDate(dateStr)}</div></div>
+    <div class="daily-note-card"><div class="dn-label">⚡ Actividades</div><div class="dn-val">${actividadesHoy.length}</div></div>
+    <div class="daily-note-card"><div class="dn-label">🤝 Reuniones</div><div class="dn-val">${todasReuniones.length}</div></div>
+    <div class="daily-note-card"><div class="dn-label">🎓 Sesiones</div><div class="dn-val">${sesionesHoy.length}</div></div>
+    <div class="daily-note-card"><div class="dn-label">⚡ En proceso</div><div class="dn-val">${pendEnProceso.length}</div></div>
+    <div class="daily-note-card"><div class="dn-label">✅ Liberados</div><div class="dn-val">${pendLiberados.length}</div></div>
+    ${vencidos.length?`<div class="daily-note-card" style="border-color:var(--red)"><div class="dn-label" style="color:var(--red)">🚨 Vencidos</div><div class="dn-val" style="color:var(--red)">${vencidos.length}</div></div>`:''}
+  `;
+
+  let text=`Daily Report – ${fmtDate(dateStr)}\n`;
+  text+=`${'─'.repeat(40)}\n\n`;
+  text+=`Actividades realizadas:\n`;
+  if(actividadesHoy.length) actividadesHoy.forEach(a=>{text+=`  ${ACT_ICONS[a.tipo]||'•'} [${a.tipo}] ${a.titulo}${a.hora?' ('+a.hora+')':''}\n`;if(a.notas)text+=`      ↳ ${a.notas}\n`;});
+  if(sesionesHoy.length) sesionesHoy.forEach(s=>{text+=`  📅 [Sesión] ${s.nombre}\n`});
+  if(pendAvanzados.length) pendAvanzados.forEach(p=>{text+=`  📌 Avance en: ${p.nombre} (${p.porcentaje}%)\n`});
+  if(!actividadesHoy.length&&!sesionesHoy.length&&!pendAvanzados.length) text+=`  • (sin actividades registradas para esta fecha)\n`;
+
+  text+=`\nReuniones / sesiones:\n`;
+  if(todasReuniones.length) todasReuniones.forEach(r=>{
+    const nombre=r.nombre||r.titulo||'Reunión';
+    const acuerdos=r.acuerdos||r.reunionAcuerdos||'';
+    text+=`  • ${nombre}${acuerdos?' – '+acuerdos.slice(0,80):''}\n`;
+  });
+  else text+=`  • Ninguna\n`;
+
+  text+=`\nPendientes en proceso:\n`;
+  if(pendEnProceso.length) pendEnProceso.forEach(p=>{text+=`  • ${p.nombre} (${p.porcentaje||0}%) – ${p.estado}\n`});
+  else text+=`  • Ninguno\n`;
+
+  text+=`\nPendientes liberados:\n`;
+  if(pendLiberados.length) pendLiberados.forEach(p=>{text+=`  • ${p.nombre}\n`});
+  else text+=`  • Ninguno\n`;
+
+  text+=`\nBloqueos o riesgos:\n`;
+  if(vencidos.length) vencidos.forEach(p=>{text+=`  ⚠ Vencido: ${p.nombre} (límite ${fmtDate(p.fechaLimite)})\n`});
+  if(extra) text+=`  ${extra}\n`;
+  if(!vencidos.length&&!extra) text+=`  • Sin bloqueos identificados\n`;
+
+  text+=`\nPróximos pasos:\n`;
+  if(proxPasos.length) proxPasos.forEach(p=>{text+=`  → ${p.nombre}: ${p.proximoPaso}\n`});
+  else text+=`  • Pendiente de definir\n`;
+
+  document.getElementById('daily-output').textContent=text;
+}
+function copyDaily(){
+  navigator.clipboard.writeText(document.getElementById('daily-output').textContent)
+    .then(()=>{showToast('✅ Daily copiado al portapapeles')})
+    .catch(()=>{alert('No se pudo copiar. Copia el texto manualmente.')});
+}
+function downloadDaily(){
+  const text=document.getElementById('daily-output').textContent;
+  const d=document.getElementById('daily-date').value||today();
+  downloadText(text,`Daily_${d}.txt`);
+}
+
+// ─────────────────────────────────────────────
+// MATRIZ EISENHOWER
+// ─────────────────────────────────────────────
+function renderMatriz(){
+  const quads=[
+    {id:'urgente-importante',cls:'q1',icon:'🔥',title:'Urgente e Importante',sub:'Hacer ya'},
+    {id:'importante-no-urgente',cls:'q2',icon:'📈',title:'Importante, no urgente',sub:'Planear'},
+    {id:'urgente-no-importante',cls:'q3',icon:'📤',title:'Urgente, no importante',sub:'Delegar'},
+    {id:'puede-esperar',cls:'q4',icon:'📭',title:'Puede esperar',sub:'Eliminar o aplazar'},
+  ];
+  const unassigned=state.pendientes.filter(p=>p.estado!=='Liberado'&&!p.cuadrante);
+  document.getElementById('matrix-grid').innerHTML=quads.map(q=>{
+    const items=state.pendientes.filter(p=>p.cuadrante===q.id&&p.estado!=='Liberado');
+    return `
+    <div class="matrix-quad ${q.cls}" ondragover="event.preventDefault()" ondrop="dropMatriz(event,'${q.id}')">
+      <div class="mq-header">
+        <span class="mq-icon">${q.icon}</span>
+        <span class="mq-title">${q.title}</span>
+        <span class="mq-sub">${q.sub}</span>
+      </div>
+      <div class="mq-items">
+        ${items.length?items.map(p=>`
+          <div class="mq-item" draggable="true" ondragstart="dragCard(event,'${p.id}');event.stopPropagation();dragMatrizId='${p.id}'">
+            <span>${esc(p.nombre)}</span>
+            ${prioTag(p.prioridad)}
+          </div>`).join(''):`<div class="mq-empty">Sin pendientes</div>`}
+      </div>
+    </div>`;
+  }).join('');
+
+  if(unassigned.length){
+    document.getElementById('matrix-grid').insertAdjacentHTML('beforeend',`
+      <div class="card" style="grid-column:1/-1;max-height:120px;overflow-y:auto">
+        <div style="font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:8px">SIN CLASIFICAR — Arrastra a un cuadrante</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          ${unassigned.map(p=>`<div class="mq-item" draggable="true" ondragstart="dragMatrizId='${p.id}'" style="cursor:grab">
+            <span style="font-size:.75rem">${esc(p.nombre)}</span>${prioTag(p.prioridad)}
+          </div>`).join('')}
+        </div>
+      </div>`);
+  }
+}
+
+let dragMatrizId=null;
+function dropMatriz(e,cuadrante){
+  e.preventDefault();
+  const id=dragMatrizId||dragId;
+  if(!id)return;
+  const p=state.pendientes.find(x=>x.id===id);
+  if(p){p.cuadrante=cuadrante;saveState();renderMatriz();}
+  dragMatrizId=null;dragId=null;
+}
+
+// ─────────────────────────────────────────────
+// MODO COMPARTIDO
+// ─────────────────────────────────────────────
+function renderCompartido(){
+  document.getElementById('sh-tarjetas').textContent=state.tarjetas.length;
+  document.getElementById('sh-pendientes').textContent=state.pendientes.filter(p=>p.estado!=='Liberado').length;
+  document.getElementById('sh-sesiones').textContent=state.sesiones.length;
+  document.getElementById('sh-reuniones').textContent=state.reuniones.length;
+}
+function exportJSON(){
+  const data=JSON.stringify(state,null,2);
+  const d=today();
+  downloadText(data,`cpo_respaldo_${d}.json`);
+}
+function importJSON(e){
+  const file=e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(confirm('¿Importar estos datos? Reemplazará el contenido actual.')){
+        state=data;saveState();renderPage(getCurrentPage());renderCompartido();
+        showToast('✅ Datos importados correctamente');
+      }
+    }catch(err){alert('Error al leer el archivo JSON.');}
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+function downloadSummary(){
+  let txt=`RESUMEN OPERATIVO – ${fmtDate(today())}\n${'='.repeat(40)}\n\n`;
+  txt+=`PENDIENTES (${state.pendientes.length})\n${'-'.repeat(30)}\n`;
+  state.pendientes.forEach(p=>{txt+=`[${p.estado}] ${p.nombre} | ${p.prioridad} | ${p.responsable||'—'} | ${p.porcentaje||0}%\n`});
+  txt+=`\nSESIONES (${state.sesiones.length})\n${'-'.repeat(30)}\n`;
+  state.sesiones.forEach(s=>{txt+=`[${s.estatus}] ${s.nombre} | ${fmtDate(s.fecha)} ${s.hora||''}\n`});
+  txt+=`\nREUNIONES (${state.reuniones.length})\n${'-'.repeat(30)}\n`;
+  state.reuniones.forEach(r=>{txt+=`[${r.estatus}] ${r.nombre} | ${fmtDate(r.fecha)} | ${r.responsable||'—'}\n`});
+  downloadText(txt,`resumen_operativo_${today()}.txt`);
+}
+function clearAllData(){
+  if(confirm('⚠️ ¿Eliminar TODOS los datos? Esta acción no se puede deshacer.')){
+    if(confirm('Confirma que deseas eliminar todo el contenido.')){
+      state={pendientes:[],sesiones:[],reuniones:[],tarjetas:[]};
+      saveState();renderDashboard();renderCompartido();
+      showToast('🗑 Datos eliminados');
+    }
+  }
+}
+
+// ─────────────────────────────────────────────
+// MODAL FORMS
+// ─────────────────────────────────────────────
+const modals={
+  tarjeta:{
+    title:id=>(id?'Editar tarjeta':'Nueva tarjeta'),
+    form:data=>`
+      <div class="form-grid">
+        <div class="form-group form-full"><label class="form-label">Título *</label><input class="form-input" id="f-titulo" value="${esc(data.titulo||'')}" placeholder="Título de la tarjeta"></div>
+        <div class="form-group form-full"><label class="form-label">Descripción</label><textarea class="form-textarea" id="f-descripcion">${esc(data.descripcion||'')}</textarea></div>
+        <div class="form-group"><label class="form-label">Categoría</label><select class="form-select" id="f-categoria">${CATEGORIAS.map(c=>`<option${data.categoria===c?' selected':''}>${c}</option>`).join('')}</select></div>
+        <div class="form-group"><label class="form-label">Prioridad</label><select class="form-select" id="f-prioridad"><option${data.prioridad==='Alta'?' selected':''}>Alta</option><option${!data.prioridad||data.prioridad==='Media'?' selected':''}>Media</option><option${data.prioridad==='Baja'?' selected':''}>Baja</option></select></div>
+        <div class="form-group"><label class="form-label">Estado</label><select class="form-select" id="f-estado"><option>Activo</option><option>En proceso</option><option>Pausado</option><option>Completado</option></select></div>
+        <div class="form-group"><label class="form-label">Fecha límite</label><input class="form-input" type="date" id="f-fechaLimite" value="${data.fechaLimite||''}"></div>
+        <div class="form-group form-full"><label class="form-label">Comentarios</label><textarea class="form-textarea" id="f-comentarios">${esc(data.comentarios||'')}</textarea></div>
+      </div>`,
+    save:(data,id)=>{
+      const obj={
+        id:id||uid(),titulo:v('f-titulo'),descripcion:v('f-descripcion'),
+        categoria:v('f-categoria'),prioridad:v('f-prioridad'),estado:v('f-estado'),
+        fechaLimite:v('f-fechaLimite'),comentarios:v('f-comentarios')
+      };
+      if(!obj.titulo){alert('El título es obligatorio');return false;}
+      if(id)state.tarjetas=state.tarjetas.map(t=>t.id===id?obj:t);
+      else state.tarjetas.push(obj);
+      saveState();renderTarjetas();return true;
+    }
+  },
+  pendiente:{
+    title:id=>(id?'Editar pendiente':'Nuevo pendiente'),
+    form:data=>`
+      <div class="form-grid">
+        <div class="form-group form-full"><label class="form-label">Nombre del pendiente *</label><input class="form-input" id="f-nombre" value="${esc(data.nombre||'')}" placeholder="Nombre del pendiente"></div>
+        <div class="form-group"><label class="form-label">Tipo</label><select class="form-select" id="f-tipo">${TIPOS.map(t=>`<option${data.tipo===t?' selected':''}>${t}</option>`).join('')}</select></div>
+        <div class="form-group"><label class="form-label">Responsable</label><input class="form-input" id="f-responsable" value="${esc(data.responsable||'')}" placeholder="Nombre del responsable"></div>
+        <div class="form-group"><label class="form-label">Prioridad</label><select class="form-select" id="f-prioridad"><option${data.prioridad==='Alta'?' selected':''}>Alta</option><option${!data.prioridad||data.prioridad==='Media'?' selected':''}>Media</option><option${data.prioridad==='Baja'?' selected':''}>Baja</option></select></div>
+        <div class="form-group"><label class="form-label">Estado</label><select class="form-select" id="f-estado">${KANBAN_COLS.map(c=>`<option${data.estado===c?' selected':''}>${c}</option>`).join('')}</select></div>
+        <div class="form-group"><label class="form-label">Fecha inicio</label><input class="form-input" type="date" id="f-fechaInicio" value="${data.fechaInicio||today()}"></div>
+        <div class="form-group"><label class="form-label">Fecha límite</label><input class="form-input" type="date" id="f-fechaLimite" value="${data.fechaLimite||''}"></div>
+        <div class="form-group form-full"><label class="form-label">Avance: <span id="pct-display">${data.porcentaje||0}</span>%</label>
+          <div class="range-wrap"><input type="range" min="0" max="100" id="f-porcentaje" value="${data.porcentaje||0}" oninput="document.getElementById('pct-display').textContent=this.value"></div>
+        </div>
+        <div class="form-group form-full"><label class="form-label">Notas</label><textarea class="form-textarea" id="f-notas">${esc(data.notas||'')}</textarea></div>
+        <div class="form-group form-full"><label class="form-label">Próximo paso</label><input class="form-input" id="f-proximoPaso" value="${esc(data.proximoPaso||'')}" placeholder="Siguiente acción concreta"></div>
+        <div class="form-group form-full"><label class="form-label">Evidencia o link</label><input class="form-input" id="f-evidencia" value="${esc(data.evidencia||'')}" placeholder="URL o referencia"></div>
+      </div>`,
+    save:(data,id)=>{
+      const obj={
+        id:id||uid(),nombre:v('f-nombre'),tipo:v('f-tipo'),responsable:v('f-responsable'),
+        prioridad:v('f-prioridad'),estado:v('f-estado'),fechaInicio:v('f-fechaInicio'),
+        fechaLimite:v('f-fechaLimite'),porcentaje:parseInt(v('f-porcentaje'))||0,
+        notas:v('f-notas'),proximoPaso:v('f-proximoPaso'),evidencia:v('f-evidencia'),
+        cuadrante:(id&&state.pendientes.find(x=>x.id===id)?.cuadrante)||'',
+        fechaUltimoAvance:today()
+      };
+      if(!obj.nombre){alert('El nombre es obligatorio');return false;}
+      if(id)state.pendientes=state.pendientes.map(p=>p.id===id?obj:p);
+      else state.pendientes.push(obj);
+      saveState();buildKanbanResponsables();renderKanban();renderDashboard();return true;
+    }
+  },
+  sesion:{
+    title:id=>(id?'Editar sesión':'Planear sesión'),
+    form:data=>`
+      <div class="form-grid">
+        <div class="form-group form-full"><label class="form-label">Nombre de la sesión *</label><input class="form-input" id="f-nombre" value="${esc(data.nombre||'')}" placeholder="Nombre de la sesión"></div>
+        <div class="form-group"><label class="form-label">Fecha</label><input class="form-input" type="date" id="f-fecha" value="${data.fecha||today()}"></div>
+        <div class="form-group"><label class="form-label">Hora</label><input class="form-input" type="time" id="f-hora" value="${data.hora||''}"></div>
+        <div class="form-group"><label class="form-label">Modalidad</label><select class="form-select" id="f-modalidad"><option${data.modalidad==='Virtual'?' selected':''}>Virtual</option><option${data.modalidad==='Presencial'?' selected':''}>Presencial</option><option${data.modalidad==='Híbrida'?' selected':''}>Híbrida</option></select></div>
+        <div class="form-group"><label class="form-label">Estatus</label><select class="form-select" id="f-estatus"><option>Planeada</option><option>En preparación</option><option>Realizada</option><option>Reprogramada</option><option>Cancelada</option></select></div>
+        <div class="form-group form-full"><label class="form-label">Participantes</label><input class="form-input" id="f-participantes" value="${esc(data.participantes||'')}" placeholder="Nombres o grupos"></div>
+        <div class="form-group form-full"><label class="form-label">Objetivo de la sesión</label><textarea class="form-textarea" id="f-objetivo">${esc(data.objetivo||'')}</textarea></div>
+        <div class="form-group form-full"><label class="form-label">Temas a cubrir</label><textarea class="form-textarea" id="f-temas">${esc(data.temas||'')}</textarea></div>
+        <div class="form-group form-full"><label class="form-label">Materiales necesarios</label><textarea class="form-textarea" id="f-materiales">${esc(data.materiales||'')}</textarea></div>
+        <div class="form-group form-full"><label class="form-label">Actividades o dinámicas</label><textarea class="form-textarea" id="f-actividades">${esc(data.actividades||'')}</textarea></div>
+        <div class="form-group form-full"><label class="form-label">Pendientes derivados</label><textarea class="form-textarea" id="f-pendientesDerivados">${esc(data.pendientesDerivados||'')}</textarea></div>
+      </div>`,
+    save:(data,id)=>{
+      const obj={
+        id:id||uid(),nombre:v('f-nombre'),fecha:v('f-fecha'),hora:v('f-hora'),
+        modalidad:v('f-modalidad'),estatus:v('f-estatus'),participantes:v('f-participantes'),
+        objetivo:v('f-objetivo'),temas:v('f-temas'),materiales:v('f-materiales'),
+        actividades:v('f-actividades'),pendientesDerivados:v('f-pendientesDerivados')
+      };
+      if(!obj.nombre){alert('El nombre es obligatorio');return false;}
+      if(id)state.sesiones=state.sesiones.map(s=>s.id===id?obj:s);
+      else state.sesiones.push(obj);
+      // Set estatus if editing
+      if(id){const sel=document.getElementById('f-estatus');if(sel)obj.estatus=sel.value;}
+      saveState();renderSesiones();renderDashboard();return true;
+    }
+  },
+  reunion:{
+    title:id=>(id?'Editar reunión':'Registrar reunión'),
+    form:data=>`
+      <div class="form-grid">
+        <div class="form-group form-full"><label class="form-label">Nombre de la reunión *</label><input class="form-input" id="f-nombre" value="${esc(data.nombre||'')}" placeholder="Nombre de la reunión"></div>
+        <div class="form-group"><label class="form-label">Fecha</label><input class="form-input" type="date" id="f-fecha" value="${data.fecha||today()}"></div>
+        <div class="form-group"><label class="form-label">Estatus</label><select class="form-select" id="f-estatus"><option${data.estatus==='Abierto'||!data.estatus?' selected':''}>Abierto</option><option${data.estatus==='En seguimiento'?' selected':''}>En seguimiento</option><option${data.estatus==='Cerrado'?' selected':''}>Cerrado</option></select></div>
+        <div class="form-group form-full"><label class="form-label">Participantes</label><input class="form-input" id="f-participantes" value="${esc(data.participantes||'')}" placeholder="Nombres o áreas"></div>
+        <div class="form-group form-full"><label class="form-label">Tema principal</label><input class="form-input" id="f-tema" value="${esc(data.tema||'')}" placeholder="Tema central de la reunión"></div>
+        <div class="form-group form-full"><label class="form-label">Puntos tratados</label><textarea class="form-textarea" id="f-puntos">${esc(data.puntos||'')}</textarea></div>
+        <div class="form-group form-full"><label class="form-label">Acuerdos</label><textarea class="form-textarea" id="f-acuerdos">${esc(data.acuerdos||'')}</textarea></div>
+        <div class="form-group form-full"><label class="form-label">Pendientes generados</label><textarea class="form-textarea" id="f-pendientesGenerados">${esc(data.pendientesGenerados||'')}</textarea></div>
+        <div class="form-group"><label class="form-label">Responsable</label><input class="form-input" id="f-responsable" value="${esc(data.responsable||'')}" placeholder="Responsable del seguimiento"></div>
+        <div class="form-group"><label class="form-label">Fecha compromiso</label><input class="form-input" type="date" id="f-fechaCompromiso" value="${data.fechaCompromiso||''}"></div>
+        <div class="form-group form-full"><label class="form-label">Seguimiento requerido</label><textarea class="form-textarea" id="f-seguimiento">${esc(data.seguimiento||'')}</textarea></div>
+      </div>`,
+    save:(data,id)=>{
+      const obj={
+        id:id||uid(),nombre:v('f-nombre'),fecha:v('f-fecha'),estatus:v('f-estatus'),
+        participantes:v('f-participantes'),tema:v('f-tema'),puntos:v('f-puntos'),
+        acuerdos:v('f-acuerdos'),pendientesGenerados:v('f-pendientesGenerados'),
+        responsable:v('f-responsable'),fechaCompromiso:v('f-fechaCompromiso'),seguimiento:v('f-seguimiento')
+      };
+      if(!obj.nombre){alert('El nombre es obligatorio');return false;}
+      if(id)state.reuniones=state.reuniones.map(r=>r.id===id?obj:r);
+      else state.reuniones.push(obj);
+      saveState();renderReuniones();renderDashboard();return true;
+    }
+  }
+};
+
+function openModal(type,id){
+  currentModal=type;editingId=id||null;
+  const cfg=modals[type];
+  const data=id?(state[type==='tarjeta'?'tarjetas':type==='pendiente'?'pendientes':type==='sesion'?'sesiones':'reuniones'].find(x=>x.id===id)||{}):{};
+  document.getElementById('modal-title').textContent=cfg.title(id);
+  document.getElementById('modal-body').innerHTML=cfg.form(data);
+  // Set estatus select value if editing
+  if(id&&data.estatus){const sel=document.getElementById('f-estatus');if(sel)sel.value=data.estatus;}
+  if(id&&data.estado&&type==='tarjeta'){const sel=document.getElementById('f-estado');if(sel)sel.value=data.estado;}
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(e){
+  if(e&&e.target!==document.getElementById('modal-overlay'))return;
+  document.getElementById('modal-overlay').classList.remove('open');
+  currentModal=null;editingId=null;
+}
+function saveModal(){
+  if(!currentModal)return;
+  const cfg=modals[currentModal];
+  const data=editingId?(state[currentModal==='tarjeta'?'tarjetas':currentModal==='pendiente'?'pendientes':currentModal==='sesion'?'sesiones':'reuniones'].find(x=>x.id===editingId)||{}):{};
+  const ok=cfg.save(data,editingId);
+  if(ok)document.getElementById('modal-overlay').classList.remove('open');
+}
+
+// ─────────────────────────────────────────────
+// UTILITIES
+// ─────────────────────────────────────────────
+function v(id){const el=document.getElementById(id);return el?el.value.trim():'';}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function slugStatus(s){return (s||'').toLowerCase().replace(/[^a-z]/g,'').replace('porinicio','porinicio').replace('backlog','backlog')}
+function slugCol(s){return s.toLowerCase().replace(/\s/g,'').replace(/[^a-z]/g,'')}
+function getCurrentPage(){return document.querySelector('.sb-item.active')?.dataset?.page||'dashboard'}
+function downloadText(text,filename){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([text],{type:'text/plain'}));
+  a.download=filename;a.click();URL.revokeObjectURL(a.href);
+}
+function showToast(msg){
+  const t=document.createElement('div');
+  t.textContent=msg;
+  Object.assign(t.style,{position:'fixed',bottom:'24px',right:'24px',background:'#253d2e',color:'#fff',padding:'10px 18px',borderRadius:'8px',fontSize:'.82rem',fontFamily:'DM Sans,sans-serif',zIndex:9999,boxShadow:'0 4px 16px rgba(0,0,0,.2)',animation:'fadeIn .2s ease'});
+  document.body.appendChild(t);setTimeout(()=>t.remove(),2500);
+}
+function prioTag(p){
+  if(!p)return '';
+  const cls=p==='Alta'?'tag-alta':p==='Media'?'tag-media':'tag-baja';
+  return `<span class="tag ${cls}">${p}</span>`;
+}
+function catTag(c){
+  if(!c)return '';
+  const map={'Training':'training','Manual':'manual','Infografía':'infografia','Simulador':'simulador','Reunión':'reunion','Daily':'daily','Idea':'idea','Pendiente operativo':'pendiente','Revisión DI':'revision','Liberación':'liberacion'};
+  const cls=map[c]||'';
+  return `<span class="tag tag-${cls}">${c}</span>`;
+}
+
+// ─────────────────────────────────────────────
+// GOOGLE SHEETS SYNC
+// ─────────────────────────────────────────────
+// 👇 PEGA AQUÍ la URL de tu implementación de Apps Script
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwHYnW6I-J5Zd2SjMZ3ZDT9UGKvZ9Gc31N2RSXlAKDdeXrXjvuXC-Tu3wHTz3xqST29Pw/exec";
+
+// Envío via no-cors (evita bloqueo CORS desde archivos locales)
+// Apps Script recibe e.postData.contents y lo parsea como JSON
+async function postToScript(payload){
+  await fetch(APPS_SCRIPT_URL,{
+    method:'POST',
+    mode:'no-cors',              // opaque response – sin CORS preflight
+    body:JSON.stringify(payload),
+    headers:{'Content-Type':'text/plain'} // simple request = permitido
+  });
+}
+
+async function syncToSheets(){
+  if(!APPS_SCRIPT_URL){
+    alert('⚠️ No hay URL de Apps Script configurada.');return;
+  }
+  const btn=document.getElementById('btn-sync');
+  if(btn){btn.textContent='⏳ Sincronizando...';btn.disabled=true;}
+  try{
+    await postToScript({action:'sync_all',data:state});
+    const ts=new Date().toLocaleString('es-MX');
+    localStorage.setItem('cpo_last_sync',ts);
+    updateSyncLabel();
+    const total=state.pendientes.length+state.sesiones.length+state.reuniones.length+state.tarjetas.length;
+    showToast(`✅ ${total} registros enviados a Google Sheets`);
+  }catch(err){
+    showToast('❌ Error al enviar datos. Revisa la consola.');
+    console.error(err);
+  }finally{
+    if(btn){btn.textContent='☁️ Sync Sheets';btn.disabled=false;}
+  }
+}
+
+async function logDailyToSheets(){
+  if(!APPS_SCRIPT_URL)return;
+  const texto=document.getElementById('daily-output')?.textContent;
+  const fecha=document.getElementById('daily-date')?.value;
+  if(!texto)return;
+  try{
+    await postToScript({action:'log_daily',entry:{fecha,texto}});
+    showToast('📋 Daily guardado en Sheets');
+  }catch(e){console.error(e);}
+}
+
+function updateSyncLabel(){
+  const last=localStorage.getItem('cpo_last_sync');
+  const el=document.getElementById('sync-label');
+  if(el&&last)el.textContent='Último sync: '+last;
+}
+
+// ─────────────────────────────────────────────
+// ACTIVIDADES RÁPIDAS
+// ─────────────────────────────────────────────
+const ACT_ICONS={General:'📌',Reunión:'🤝',Sesión:'📅',Revisión:'🔍',Llamada:'📞',Entrega:'✅',Ajuste:'🔧',Coordinación:'🔗',Otro:'📎'};
+
+function initActividadForm(){
+  const fd=document.getElementById('act-fecha');
+  const fh=document.getElementById('act-hora');
+  if(fd&&!fd.value) fd.value=today();
+  if(fh&&!fh.value){const now=new Date();fh.value=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');}
+  // checkbox wiring
+  const chkPend=document.getElementById('act-crear-pendiente');
+  if(chkPend) chkPend.onchange=()=>{document.getElementById('act-pendiente-extra').style.display=chkPend.checked?'block':'none';};
+}
+
+function toggleActividadExtra(){
+  const tipo=document.getElementById('act-tipo')?.value;
+  const extra=document.getElementById('act-reunion-extra');
+  if(extra) extra.style.display=(tipo==='Reunión')?'block':'none';
+}
+
+function registrarActividad(){
+  const titulo=(document.getElementById('act-titulo')?.value||'').trim();
+  if(!titulo){alert('Escribe al menos una descripción de la actividad.');return;}
+  const tipo=document.getElementById('act-tipo')?.value||'General';
+  const fecha=document.getElementById('act-fecha')?.value||today();
+  const hora=document.getElementById('act-hora')?.value||'';
+  const notas=document.getElementById('act-notas')?.value||'';
+  const act={
+    id:uid(),titulo,tipo,fecha,hora,notas,
+    ts:new Date().toLocaleString('es-MX',{timeZone:'America/Mexico_City'})
+  };
+  state.actividades.unshift(act);
+
+  // Si es reunión → crear en Registro de Reuniones
+  if(tipo==='Reunión'){
+    const nombre=(document.getElementById('act-reunion-nombre')?.value||'').trim()||titulo;
+    const participantes=document.getElementById('act-reunion-participantes')?.value||'';
+    const acuerdos=document.getElementById('act-reunion-acuerdos')?.value||'';
+    const responsable=document.getElementById('act-reunion-responsable')?.value||'';
+    const fechaCompromiso=document.getElementById('act-reunion-fecha-compromiso')?.value||'';
+    const crearReunion=document.getElementById('act-crear-reunion')?.checked!==false;
+    act.reunionNombre=nombre;
+    act.reunionParticipantes=participantes;
+    act.reunionAcuerdos=acuerdos;
+    if(crearReunion){
+      const r={
+        id:uid(),actividadId:act.id,nombre,fecha,estatus:'Abierto',
+        participantes,tema:titulo,puntos:notas,acuerdos,
+        pendientesGenerados:'',responsable,fechaCompromiso,seguimiento:''
+      };
+      state.reuniones.push(r);
+      showToast('🤝 Reunión guardada en Registro de Reuniones');
+    }
+  }
+
+  // Si se marcó generar pendiente
+  const crearPend=document.getElementById('act-crear-pendiente')?.checked;
+  if(crearPend){
+    const pnombre=(document.getElementById('act-pend-nombre')?.value||'').trim()||('Seguimiento: '+titulo);
+    const pfecha=document.getElementById('act-pend-fecha')?.value||'';
+    const pprioridad=document.getElementById('act-pend-prioridad')?.value||'Media';
+    const presp=document.getElementById('act-pend-responsable')?.value||'';
+    const p={
+      id:uid(),nombre:pnombre,tipo:'Otro',responsable:presp,
+      prioridad:pprioridad,estado:'Por iniciar',fechaInicio:fecha,
+      fechaLimite:pfecha,porcentaje:0,notas:'Derivado de: '+titulo,
+      proximoPaso:'',evidencia:'',cuadrante:'',fechaUltimoAvance:today()
+    };
+    state.pendientes.push(p);
+    showToast('📌 Pendiente creado en Tablero Kanban');
+  }
+
+  saveState();
+  updateActBadge();
+  limpiarFormActividad();
+  renderActividades();
+  renderDashboard();
+
+  if(APPS_SCRIPT_URL) postToScript({action:'log_actividad',actividad:act});
+  showToast(`⚡ Actividad registrada: ${titulo}`);
+}
+
+function limpiarFormActividad(){
+  ['act-titulo','act-notas','act-reunion-nombre','act-reunion-participantes',
+   'act-reunion-acuerdos','act-reunion-responsable','act-reunion-fecha-compromiso',
+   'act-pend-nombre','act-pend-responsable','act-pend-fecha'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
+  const tipo=document.getElementById('act-tipo');if(tipo)tipo.value='General';
+  const chk=document.getElementById('act-crear-pendiente');if(chk)chk.checked=false;
+  const chkR=document.getElementById('act-crear-reunion');if(chkR)chkR.checked=true;
+  document.getElementById('act-reunion-extra').style.display='none';
+  document.getElementById('act-pendiente-extra').style.display='none';
+  initActividadForm();
+}
+
+function deleteActividad(id){
+  if(!confirm('¿Eliminar esta actividad?'))return;
+  state.actividades=state.actividades.filter(a=>a.id!==id);
+  saveState();updateActBadge();renderActividades();
+}
+
+function updateActBadge(){
+  const todayCount=state.actividades.filter(a=>a.fecha===today()).length;
+  const badge=document.getElementById('badge-actividades');
+  if(badge)badge.textContent=todayCount;
+}
+
+function renderActividades(){
+  const q=(document.getElementById('flt-act-q')||{}).value?.toLowerCase()||'';
+  const tipo=(document.getElementById('flt-act-tipo')||{}).value||'';
+  const fecha=(document.getElementById('flt-act-fecha')||{}).value||'';
+  let items=state.actividades.filter(a=>{
+    if(q&&!a.titulo.toLowerCase().includes(q)&&!(a.notas||'').toLowerCase().includes(q))return false;
+    if(tipo&&a.tipo!==tipo)return false;
+    if(fecha&&a.fecha!==fecha)return false;
+    return true;
+  });
+
+  const countEl=document.getElementById('act-count');
+  if(countEl)countEl.textContent=`${items.length} registro${items.length!==1?'s':''}`;
+
+  const list=document.getElementById('actividades-list');
+  if(!list)return;
+  if(!items.length){
+    list.innerHTML=`<div class="empty-state"><div class="es-icon">⚡</div><p>Sin actividades registradas${fecha?' para esta fecha':''}.</p></div>`;
+    return;
+  }
+
+  // Agrupar por fecha
+  const byDate={};
+  items.forEach(a=>{
+    if(!byDate[a.fecha])byDate[a.fecha]=[];
+    byDate[a.fecha].push(a);
+  });
+  const sortedDates=Object.keys(byDate).sort((a,b)=>b.localeCompare(a));
+
+  list.innerHTML=sortedDates.map(d=>`
+    <div style="margin-bottom:20px">
+      <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:${d===today()?'var(--primary)':'var(--muted)'};margin-bottom:10px;display:flex;align-items:center;gap:6px">
+        ${d===today()?'<span style="width:7px;height:7px;background:var(--primary);border-radius:50%;display:inline-block;animation:pulse .8s ease infinite alternate"></span>':''} 
+        ${d===today()?'Hoy — ':''} ${fmtDate(d)}
+        <span style="font-size:.68rem;font-weight:400;color:var(--muted)">(${byDate[d].length} actividad${byDate[d].length!==1?'es':''})</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${byDate[d].map(a=>actCard(a)).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function actCard(a){
+  const icon=ACT_ICONS[a.tipo]||'📎';
+  const isReunion=a.tipo==='Reunión';
+  const reunionEnRegistro=isReunion&&state.reuniones.find(r=>r.actividadId===a.id);
+  return `
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow);display:flex;gap:14px;align-items:flex-start;transition:box-shadow .2s ease" onmouseover="this.style.boxShadow='var(--shadow2)'" onmouseout="this.style.boxShadow='var(--shadow)'">
+    <div style="font-size:1.3rem;margin-top:2px;flex-shrink:0">${icon}</div>
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <div>
+          <div style="font-weight:700;font-size:.88rem;color:var(--text);margin-bottom:2px">${esc(a.titulo)}</div>
+          <div style="font-size:.72rem;color:var(--muted)">
+            ${a.hora?'🕐 '+a.hora+' · ':''}
+            <span style="font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:12px;background:var(--bg2);color:var(--text2)">${a.tipo}</span>
+            ${isReunion&&reunionEnRegistro?'<span style="font-size:.68rem;font-weight:700;color:var(--teal);margin-left:6px">✔ En Registro de Reuniones</span>':''}
+          </div>
+        </div>
+        <button class="icon-btn" onclick="deleteActividad('${a.id}')" style="flex-shrink:0;color:var(--muted)" title="Eliminar">🗑</button>
+      </div>
+      ${a.notas?`<div style="font-size:.78rem;color:var(--text2);margin-top:6px;line-height:1.5">${esc(a.notas)}</div>`:''}
+      ${isReunion&&a.reunionAcuerdos?`<div style="margin-top:6px;background:var(--cream);border-radius:var(--r2);padding:7px 10px;font-size:.75rem;color:var(--text2)"><strong>Acuerdos:</strong> ${esc(a.reunionAcuerdos)}</div>`:''}
+      ${isReunion&&a.reunionParticipantes?`<div style="font-size:.72rem;color:var(--muted);margin-top:4px">👥 ${esc(a.reunionParticipantes)}</div>`:''}
+    </div>
+  </div>`;
+}
+
+// Incluir actividades en el daily
+const _origGenerateDaily=typeof generateDaily==='function'?generateDaily:null;
+
+// ─────────────────────────────────────────────
+// GOOGLE CALENDAR DATA (último sync: 24/04/2026)
+// ─────────────────────────────────────────────
+const gcalEvents = [
+  {
+    id:"2i5jft2tc4m6e31fo1rvlpss8b",
+    summary:"Reunión Training team",
+    start:"2026-04-24T09:20:00",end:"2026-04-24T10:20:00",
+    organizer:"azendejas@supportmendoza.com",
+    attendees:["lreynac@supportmendoza.com","bdominguez@supportmendoza.com","azendejas@supportmendoza.com"],
+    meet:"https://meet.google.com/cam-jrho-itj",type:"reunion"
+  },
+  {
+    id:"7emnda6q94r2dq3kko1bhr1rl6",
+    summary:"Estructura de Entrevista Visa T",
+    start:"2026-04-24T14:30:00",end:"2026-04-24T15:00:00",
+    organizer:"lreynac@supportmendoza.com",
+    attendees:["lreynac@supportmendoza.com","bdominguez@supportmendoza.com","rescalante@supportmendoza.com"],
+    meet:"https://meet.google.com/fvh-fcfi-tej",type:"sesion"
+  },
+  {
+    id:"4b6u1e4ssr8rjq08996g645gjo",
+    summary:"Sesión de Cierre",
+    start:"2026-04-24T15:00:00",end:"2026-04-24T15:30:00",
+    organizer:"lreynac@supportmendoza.com",
+    attendees:["lreynac@supportmendoza.com","mdiazf@supportmendoza.com","nnava@supportmendoza.com","djuarez@supportmendoza.com","bdominguez@supportmendoza.com","svazquezc@supportmendoza.com","jburgos@supportmendoza.com","azendejas@supportmendoza.com"],
+    meet:"https://meet.google.com/oyg-wkzq-hmc",type:"sesion"
+  },
+  {
+    id:"6udpnmmrhe8ub0vnj7h0potd44_20260427",
+    summary:"Sesión de Inicio",
+    start:"2026-04-27T12:30:00",end:"2026-04-27T13:30:00",
+    organizer:"lreynac@supportmendoza.com",
+    attendees:["lreynac@supportmendoza.com","bdominguez@supportmendoza.com","azendejas@supportmendoza.com","djuarez@supportmendoza.com","jburgos@supportmendoza.com","mdiazf@supportmendoza.com","nnava@supportmendoza.com","svazquezc@supportmendoza.com"],
+    meet:"https://meet.google.com/npr-hyno-chc",type:"sesion",recurrente:true
+  },
+  {
+    id:"6udpnmmrhe8ub0vnj7h0potd44_20260504",
+    summary:"Sesión de Inicio",
+    start:"2026-05-04T12:30:00",end:"2026-05-04T13:30:00",
+    organizer:"lreynac@supportmendoza.com",
+    attendees:["lreynac@supportmendoza.com","bdominguez@supportmendoza.com","azendejas@supportmendoza.com","djuarez@supportmendoza.com","jburgos@supportmendoza.com","mdiazf@supportmendoza.com","nnava@supportmendoza.com","svazquezc@supportmendoza.com"],
+    meet:"https://meet.google.com/npr-hyno-chc",type:"sesion",recurrente:true
+  },
+  {
+    id:"standalone_hmhzbjs",
+    summary:"Meet sin título — hmh-zbjs-mgo",
+    start:"2026-04-24T00:00:00",end:"2026-04-24T01:00:00",
+    organizer:"bdominguez@supportmendoza.com",
+    attendees:["bdominguez@supportmendoza.com"],
+    meet:"https://meet.google.com/hmh-zbjs-mgo",type:"reunion",
+    sinFecha:true
+  },
+  {
+    id:"6udpnmmrhe8ub0vnj7h0potd44_20260511",
+    summary:"Sesión de Inicio",
+    start:"2026-05-11T12:30:00",end:"2026-05-11T13:30:00",
+    organizer:"lreynac@supportmendoza.com",
+    attendees:["lreynac@supportmendoza.com","bdominguez@supportmendoza.com","azendejas@supportmendoza.com","djuarez@supportmendoza.com","jburgos@supportmendoza.com","mdiazf@supportmendoza.com","nnava@supportmendoza.com","svazquezc@supportmendoza.com"],
+    meet:"https://meet.google.com/npr-hyno-chc",type:"sesion",recurrente:true
+  },
+  {
+    id:"6udpnmmrhe8ub0vnj7h0potd44_20260518",
+    summary:"Sesión de Inicio",
+    start:"2026-05-18T12:30:00",end:"2026-05-18T13:30:00",
+    organizer:"lreynac@supportmendoza.com",
+    attendees:["lreynac@supportmendoza.com","bdominguez@supportmendoza.com","azendejas@supportmendoza.com","djuarez@supportmendoza.com","jburgos@supportmendoza.com","mdiazf@supportmendoza.com","nnava@supportmendoza.com","svazquezc@supportmendoza.com"],
+    meet:"https://meet.google.com/npr-hyno-chc",type:"sesion",recurrente:true
+  },
+  {
+    id:"6udpnmmrhe8ub0vnj7h0potd44_20260525",
+    summary:"Sesión de Inicio",
+    start:"2026-05-25T12:30:00",end:"2026-05-25T13:30:00",
+    organizer:"lreynac@supportmendoza.com",
+    attendees:["lreynac@supportmendoza.com","bdominguez@supportmendoza.com","azendejas@supportmendoza.com","djuarez@supportmendoza.com","jburgos@supportmendoza.com","mdiazf@supportmendoza.com","nnava@supportmendoza.com","svazquezc@supportmendoza.com"],
+    meet:"https://meet.google.com/npr-hyno-chc",type:"sesion",recurrente:true
+  }
+];
+const gcalSyncDate = "24/04/2026 · 10:22 AM";
+
+function gcalDate(dt){return dt.split('T')[0];}
+function gcalTime(dt){return dt.split('T')[1].slice(0,5);}
+function gcalEndTime(dt){return dt.split('T')[1].slice(0,5);}
+function gcalAttendees(arr){return arr.map(e=>e.split('@')[0]).join(', ');}
+
+function importGcalAsSesion(id){
+  const ev=gcalEvents.find(e=>e.id===id);if(!ev)return;
+  const exists=state.sesiones.find(s=>s.gcalId===id);
+  if(exists){alert('Este evento ya fue importado como sesión.');return;}
+  const s={
+    id:uid(),gcalId:id,nombre:ev.summary,fecha:gcalDate(ev.start),
+    hora:gcalTime(ev.start),modalidad:'Virtual',estatus:'Planeada',
+    participantes:gcalAttendees(ev.attendees),objetivo:'',temas:'',materiales:'',
+    actividades:'',pendientesDerivados:''
+  };
+  state.sesiones.push(s);saveState();
+  showToast('✅ Importado como sesión en Planeador');
+}
+function importGcalAsReunion(id){
+  const ev=gcalEvents.find(e=>e.id===id);if(!ev)return;
+  const exists=state.reuniones.find(r=>r.gcalId===id);
+  if(exists){alert('Este evento ya fue importado como reunión.');return;}
+  const r={
+    id:uid(),gcalId:id,nombre:ev.summary,fecha:gcalDate(ev.start),
+    estatus:'Abierto',participantes:gcalAttendees(ev.attendees),tema:'',
+    puntos:'',acuerdos:'',pendientesGenerados:'',responsable:'',
+    fechaCompromiso:'',seguimiento:''
+  };
+  state.reuniones.push(r);saveState();
+  showToast('✅ Importado como reunión en Registro');
+}
+
+function getEvStatus(id){ return state.gcalStatuses[id] || {status:'Pendiente',historial:[]}; }
+
+function statusChip(st){
+  const map={
+    'Pendiente':  {bg:'#f0ebe0',color:'var(--muted)',  icon:'🕐'},
+    'Realizada':  {bg:'#d4edda',color:'#155724',       icon:'✅'},
+    'Pospuesta':  {bg:'#fff3cd',color:'#856404',       icon:'⏭️'},
+    'Cancelada':  {bg:'#f8d7da',color:'#721c24',       icon:'❌'},
+    'En curso':   {bg:'#d1ecf1',color:'#0c5460',       icon:'▶️'},
+  };
+  const s=map[st]||map['Pendiente'];
+  return `<span style="font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:20px;background:${s.bg};color:${s.color};white-space:nowrap">${s.icon} ${st}</span>`;
+}
+
+function updateEventStatus(id, newStatus, extra={}){
+  if(!state.gcalStatuses) state.gcalStatuses={};
+  const prev = state.gcalStatuses[id]||{};
+  const ts = new Date().toLocaleString('es-MX',{timeZone:'America/Mexico_City'});
+  const histEntry = {status:newStatus, timestamp:ts, nota:extra.nota||'', nuevaFecha:extra.nuevaFecha||'', nuevaHora:extra.nuevaHora||''};
+  state.gcalStatuses[id] = {
+    status: newStatus,
+    ultimaActualizacion: ts,
+    nota: extra.nota || prev.nota || '',
+    nuevaFecha: extra.nuevaFecha || '',
+    nuevaHora: extra.nuevaHora || '',
+    historial: [...(prev.historial||[]), histEntry]
+  };
+  saveState();
+  if(APPS_SCRIPT_URL){
+    const ev=gcalEvents.find(e=>e.id===id);
+    postToScript({action:'update_event_status', eventId:id, summary:ev?ev.summary:'', status:newStatus, nota:extra.nota||'', nuevaFecha:extra.nuevaFecha||'', nuevaHora:extra.nuevaHora||'', timestamp:ts});
+  }
+  renderAgenda();
+  const msgs={Realizada:'✅ Evento confirmado como Realizado','En curso':'▶️ Evento marcado En curso',Pospuesta:'⏭️ Evento pospuesto',Cancelada:'❌ Evento cancelado'};
+  showToast(msgs[newStatus]||'Estado actualizado');
+}
+
+function openPosponerModal(id){
+  const ev=gcalEvents.find(e=>e.id===id); if(!ev)return;
+  currentModal='_posponer'; editingId=id;
+  document.getElementById('modal-title').textContent='⏭️ Posponer evento';
+  document.getElementById('modal-body').innerHTML=`
+    <div style="background:var(--cream);border:1px solid var(--sand);border-radius:var(--r2);padding:14px;margin-bottom:16px">
+      <div style="font-weight:700;font-size:.9rem;color:var(--text);margin-bottom:4px">${esc(ev.summary)}</div>
+      <div style="font-size:.75rem;color:var(--muted)">📅 Fecha original: ${fmtDate(gcalDate(ev.start))} · 🕐 ${gcalTime(ev.start)} – ${gcalTime(ev.end)}</div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">Nueva fecha *</label><input class="form-input" type="date" id="f-nuevaFecha"></div>
+      <div class="form-group"><label class="form-label">Nueva hora</label><input class="form-input" type="time" id="f-nuevaHora" value="${gcalTime(ev.start)}"></div>
+      <div class="form-group form-full"><label class="form-label">Motivo de la posposición</label><textarea class="form-textarea" id="f-notaPosponer" placeholder="¿Por qué se pospone? ¿Quién lo solicitó?"></textarea></div>
+    </div>`;
+  document.getElementById('modal-save').textContent='⏭️ Confirmar posposición';
+  document.getElementById('modal-save').onclick=confirmPosponer;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function openCancelarModal(id){
+  const ev=gcalEvents.find(e=>e.id===id); if(!ev)return;
+  currentModal='_cancelar'; editingId=id;
+  document.getElementById('modal-title').textContent='❌ Cancelar evento';
+  document.getElementById('modal-body').innerHTML=`
+    <div style="background:#fde8e8;border:1px solid #f0a0a0;border-radius:var(--r2);padding:14px;margin-bottom:16px">
+      <div style="font-weight:700;font-size:.9rem;color:var(--text);margin-bottom:4px">${esc(ev.summary)}</div>
+      <div style="font-size:.75rem;color:#b84040">📅 ${fmtDate(gcalDate(ev.start))} · 🕐 ${gcalTime(ev.start)}</div>
+    </div>
+    <div class="form-group"><label class="form-label">Motivo de cancelación</label>
+      <textarea class="form-textarea" id="f-notaCancelar" placeholder="¿Por qué se cancela?"></textarea>
+    </div>`;
+  document.getElementById('modal-save').textContent='❌ Confirmar cancelación';
+  document.getElementById('modal-save').onclick=()=>{
+    updateEventStatus(editingId,'Cancelada',{nota:v('f-notaCancelar')});
+    document.getElementById('modal-overlay').classList.remove('open');
+    resetModalSave();
+  };
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function openRealizadaModal(id){
+  const ev=gcalEvents.find(e=>e.id===id); if(!ev)return;
+  currentModal='_realizada'; editingId=id;
+  document.getElementById('modal-title').textContent='✅ Confirmar evento realizado';
+  document.getElementById('modal-body').innerHTML=`
+    <div style="background:#d4edda;border:1px solid #a3d5a8;border-radius:var(--r2);padding:14px;margin-bottom:16px">
+      <div style="font-weight:700;font-size:.9rem;color:#155724;margin-bottom:4px">${esc(ev.summary)}</div>
+      <div style="font-size:.75rem;color:#2d6b3e">📅 ${fmtDate(gcalDate(ev.start))} · 🕐 ${gcalTime(ev.start)} – ${gcalTime(ev.end)}</div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group form-full"><label class="form-label">Notas / Resultados del evento</label>
+        <textarea class="form-textarea" id="f-notaRealizada" placeholder="¿Qué se trató? ¿Qué acuerdos se tomaron? ¿Qué queda pendiente?"></textarea>
+      </div>
+      <div class="form-group form-full">
+        <label class="form-label">¿Importar también como reunión/sesión registrada?</label>
+        <select class="form-select" id="f-importarComo"><option value="">No importar</option><option value="sesion">Importar como Sesión</option><option value="reunion">Importar como Reunión</option></select>
+      </div>
+    </div>`;
+  document.getElementById('modal-save').textContent='✅ Confirmar realizado';
+  document.getElementById('modal-save').onclick=confirmRealizada;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function confirmRealizada(){
+  const nota=v('f-notaRealizada');
+  const importarComo=v('f-importarComo');
+  updateEventStatus(editingId,'Realizada',{nota});
+  if(importarComo==='sesion') importGcalAsSesion(editingId);
+  else if(importarComo==='reunion') importGcalAsReunion(editingId);
+  document.getElementById('modal-overlay').classList.remove('open');
+  resetModalSave();
+}
+
+function confirmPosponer(){
+  const nuevaFecha=v('f-nuevaFecha');
+  const nuevaHora=v('f-nuevaHora');
+  const nota=v('f-notaPosponer');
+  if(!nuevaFecha){alert('Selecciona la nueva fecha');return;}
+  updateEventStatus(editingId,'Pospuesta',{nota,nuevaFecha,nuevaHora});
+  document.getElementById('modal-overlay').classList.remove('open');
+  resetModalSave();
+}
+
+function resetModalSave(){
+  document.getElementById('modal-save').textContent='Guardar';
+  document.getElementById('modal-save').onclick=saveModal;
+  currentModal=null; editingId=null;
+}
+
+function renderAgenda(){
+  const todayStr=today();
+  const todayEvs=gcalEvents.filter(e=>gcalDate(e.start)===todayStr);
+  const futureEvs=gcalEvents.filter(e=>gcalDate(e.start)>todayStr).sort((a,b)=>a.start.localeCompare(b.start));
+  const importedIds=new Set([...state.sesiones.filter(s=>s.gcalId).map(s=>s.gcalId),...state.reuniones.filter(r=>r.gcalId).map(r=>r.gcalId)]);
+
+  const renderEvCard=(ev)=>{
+    const st=getEvStatus(ev.id);
+    const isSesion=ev.type==='sesion';
+    const isRealizada=st.status==='Realizada';
+    const isPospuesta=st.status==='Pospuesta';
+    const isCancelada=st.status==='Cancelada';
+    const imported=importedIds.has(ev.id);
+    const borderColor=isRealizada?'#3a7a6a':isPospuesta?'#d4891a':isCancelada?'#b84040':isSesion?'var(--primary)':'var(--accent)';
+    const historial=st.historial||[];
+
+    return `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;border-left:4px solid ${borderColor};opacity:${isCancelada?.6:1}">
+      
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:.92rem;color:var(--text);margin-bottom:3px;${isRealizada?'text-decoration:line-through;color:var(--muted)':''}">${esc(ev.summary)}${ev.recurrente?' <span style="font-size:.62rem;background:var(--bg2);color:var(--muted);padding:1px 6px;border-radius:10px">↻ Recurrente</span>':''}</div>
+          <div style="font-size:.73rem;color:var(--muted)">🕐 ${ev.sinFecha?'Sin fecha/hora definida':gcalTime(ev.start)+' – '+gcalTime(ev.end)+' &nbsp;·&nbsp; 📅 '+fmtDate(gcalDate(ev.start))}</div>
+          ${isPospuesta&&st.nuevaFecha?`<div style="font-size:.73rem;color:var(--orange);font-weight:600;margin-top:2px">📌 Nueva fecha: ${fmtDate(st.nuevaFecha)} ${st.nuevaHora||''}</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+          ${statusChip(st.status)}
+          <span style="font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:12px;background:${isSesion?'#e8f4ec':'#fdf0e0'};color:${isSesion?'var(--green)':'var(--orange)'}">${isSesion?'Sesión':'Reunión'}</span>
+        </div>
+      </div>
+
+      <div style="font-size:.73rem;color:var(--text2)">👥 ${gcalAttendees(ev.attendees)}</div>
+
+      ${st.nota?`<div style="background:var(--cream);border-radius:var(--r2);padding:8px 10px;font-size:.75rem;color:var(--text2);font-style:italic;border-left:2px solid var(--sand)">📝 ${esc(st.nota)}</div>`:''}
+
+      ${historial.length>1?`
+      <details style="font-size:.72rem">
+        <summary style="cursor:pointer;color:var(--muted);font-weight:600;user-select:none">📋 Historial de cambios (${historial.length})</summary>
+        <div style="margin-top:6px;display:flex;flex-direction:column;gap:4px">
+          ${historial.map(h=>`<div style="display:flex;gap:8px;padding:5px 8px;background:var(--bg2);border-radius:4px">
+            <span style="font-weight:700;color:var(--text2);white-space:nowrap">${h.status}</span>
+            <span style="color:var(--muted)">${h.timestamp}</span>
+            ${h.nota?`<span style="color:var(--text2)">· ${esc(h.nota)}</span>`:''}
+            ${h.nuevaFecha?`<span style="color:var(--orange)">→ ${fmtDate(h.nuevaFecha)} ${h.nuevaHora||''}</span>`:''}
+          </div>`).reverse().join('')}
+        </div>
+      </details>`:''}
+
+      <div style="display:flex;gap:6px;flex-wrap:wrap;padding-top:4px;border-top:1px solid var(--border)">
+        ${!isRealizada&&!isCancelada?`<button class="btn btn-green btn-sm" onclick="openRealizadaModal('${ev.id}')" style="font-size:.72rem">✅ Realizada</button>`:''}
+        ${st.status==='Pendiente'||st.status==='En curso'?`<button class="btn btn-ghost btn-sm" onclick="updateEventStatus('${ev.id}','En curso')" style="font-size:.72rem;border-color:var(--blue);color:var(--blue)">▶️ En curso</button>`:''}
+        ${!isCancelada&&!isRealizada?`<button class="btn btn-ghost btn-sm" onclick="openPosponerModal('${ev.id}')" style="font-size:.72rem;border-color:var(--orange);color:var(--orange)">⏭️ Posponer</button>`:''}
+        ${!isCancelada?`<button class="btn btn-ghost btn-sm" onclick="openCancelarModal('${ev.id}')" style="font-size:.72rem;border-color:var(--red);color:var(--red)">❌ Cancelar</button>`:''}
+        ${isCancelada||isPospuesta?`<button class="btn btn-ghost btn-sm" onclick="updateEventStatus('${ev.id}','Pendiente')" style="font-size:.72rem">↩️ Reactivar</button>`:''}
+        ${ev.meet?`<a href="${ev.meet}" target="_blank" class="btn btn-ghost btn-sm" style="font-size:.72rem;margin-left:auto">🎥 Meet</a>`:''}
+        ${!imported&&!isRealizada?`<button class="btn btn-primary btn-sm" style="font-size:.72rem" onclick="importGcalAs${isSesion?'Sesion':'Reunion'}('${ev.id}')">⬇ Importar</button>`:''}
+        ${imported?`<span style="font-size:.68rem;font-weight:600;color:var(--primary);align-self:center;margin-left:auto">✔ Importado</span>`:''}
+      </div>
+    </div>`;
+  };
+
+  // Contadores para el badge
+  const pendHoy=gcalEvents.filter(e=>gcalDate(e.start)===todayStr&&getEvStatus(e.id).status==='Pendiente').length;
+  const badge=document.getElementById('badge-agenda');
+  if(badge) badge.textContent=pendHoy;
+
+  const stats={
+    total:gcalEvents.length,
+    realizadas:gcalEvents.filter(e=>getEvStatus(e.id).status==='Realizada').length,
+    pospuestas:gcalEvents.filter(e=>getEvStatus(e.id).status==='Pospuesta').length,
+    canceladas:gcalEvents.filter(e=>getEvStatus(e.id).status==='Cancelada').length,
+  };
+
+  document.getElementById('page-agenda').innerHTML=`
+    <div class="section-header">
+      <div>
+        <div class="section-title">Agenda Google Calendar</div>
+        <div style="font-size:.72rem;color:var(--muted);margin-top:2px">📡 Último sync: ${gcalSyncDate} · bdominguez@supportmendoza.com</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px">
+      <div class="stat-card" style="flex:1;min-width:100px"><div class="stat-icon">🗓️</div><div class="stat-val">${stats.total}</div><div class="stat-label">Total eventos</div></div>
+      <div class="stat-card green" style="flex:1;min-width:100px"><div class="stat-icon">✅</div><div class="stat-val">${stats.realizadas}</div><div class="stat-label">Realizados</div></div>
+      <div class="stat-card accent" style="flex:1;min-width:100px"><div class="stat-icon">⏭️</div><div class="stat-val">${stats.pospuestas}</div><div class="stat-label">Pospuestos</div></div>
+      <div class="stat-card red" style="flex:1;min-width:100px"><div class="stat-icon">❌</div><div class="stat-val">${stats.canceladas}</div><div class="stat-label">Cancelados</div></div>
+    </div>
+
+    ${todayEvs.length?`
+    <div style="margin-bottom:24px">
+      <div style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--primary);margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <span style="width:8px;height:8px;background:var(--primary);border-radius:50%;display:inline-block;animation:pulse .8s ease infinite alternate"></span> Hoy — ${fmtDate(todayStr)}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px">
+        ${todayEvs.map(renderEvCard).join('')}
+      </div>
+    </div>`:''}
+
+    ${futureEvs.length?`
+    <div>
+      <div style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <span style="width:8px;height:8px;background:var(--muted);border-radius:50%;display:inline-block"></span> Próximos eventos
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px">
+        ${futureEvs.map(renderEvCard).join('')}
+      </div>
+    </div>`:''}
+  `;
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+loadState();
+const now=new Date();
+document.getElementById('topbar-date').textContent=now.toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+renderDashboard();
+updateSyncLabel();
+updateActBadge();
+</script>
+</body>
+</html>
