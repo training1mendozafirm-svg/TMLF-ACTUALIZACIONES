@@ -221,7 +221,14 @@ input,select,textarea{font-family:inherit;outline:none}
 .ph-st-btn.active-ph[data-s="En proceso"]{background:rgba(201,168,76,.15);border-color:#c9a84c;color:#a07830}
 .ph-st-btn.active-ph[data-s="Terminado"]{background:rgba(42,158,110,.12);border-color:#2a9e6e;color:#2a9e6e}
 
-/* TOAST */
+/* ── SEMÁFORO DE AVANCE ─────────────────────────────────── */
+.alert-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;cursor:help}
+.alert-dot.verde {background:#2a9e6e;box-shadow:0 0 5px rgba(42,158,110,.5)}
+.alert-dot.amarillo{background:#d97706;box-shadow:0 0 5px rgba(217,119,6,.5)}
+.alert-dot.rojo  {background:#c0392b;box-shadow:0 0 6px rgba(192,57,43,.7);animation:pulseR 1.5s infinite}
+@keyframes pulseR{0%,100%{opacity:1}50%{opacity:.5}}
+.alert-banner{background:#fff3cd;border:1px solid #d97706;border-left:4px solid #d97706;border-radius:6px;padding:8px 12px;font-size:11px;color:#7a4f00;display:flex;align-items:center;gap:6px}
+.alert-banner.critico{background:#fde8e8;border-color:#c0392b;border-left-color:#c0392b;color:#7a1a1a}
 #tc{position:fixed;bottom:22px;right:22px;z-index:9000;display:flex;flex-direction:column;gap:7px}
 .toast{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:11px 18px;font-size:12px;box-shadow:var(--sh);animation:sIn .3s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;gap:8px;color:var(--text)}
 .toast.ok{border-left:3px solid #2a9e6e}
@@ -305,6 +312,7 @@ input,select,textarea{font-family:inherit;outline:none}
   </div>
 
   <!-- MAIN -->
+  <div id="alert-panel" style="display:none;flex-shrink:0;border-bottom:1px solid #e8d5a0;background:#fffbf0"></div>
   <div id="main">
 
     <!-- SIDEBAR -->
@@ -603,6 +611,7 @@ function showApp() {
   document.getElementById('app').classList.add('show');
   document.getElementById('tdlbl').textContent = new Date().toLocaleDateString('es-MX',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
   fullRender();
+  startAutoRefresh();
 }
 
 function applyCloudData(data) {
@@ -708,7 +717,27 @@ function initData() {
   }
 }
 
-// ── CLOUD SYNC FUNCTIONS ───────────────────────────────────
+// ── AUTO-REFRESH ──────────────────────────────────────────
+let autoRefreshInterval = null;
+
+function startAutoRefresh() {
+  if (!GAS_URL || GAS_URL === 'PEGAR_URL_AQUI') return;
+  if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+  autoRefreshInterval = setInterval(() => {
+    // No refrescar si hay un modal abierto o se está arrastrando
+    if (document.getElementById('mo').classList.contains('vis')) return;
+    if (document.getElementById('pmo').style.display === 'flex') return;
+    gasCall({action:'getAll'}, res => {
+      try {
+        if (res.ok && res.data && res.data.length > 0) {
+          const ok = applyCloudData(res.data);
+          if (ok) fullRender();
+          setSyncStatus('ok');
+        }
+      } catch(e){}
+    });
+  }, 30000); // cada 30 segundos
+}
 function syncAll() {
   if (!GAS_URL || GAS_URL === 'PEGAR_URL_AQUI') { toast('⚠️ Configura la URL primero','er'); return; }
   setSyncStatus('saving');
@@ -873,17 +902,74 @@ function applyF(){ filt.q=document.getElementById('srch').value; render(); updKP
 function resetFilts(){ filt={tipo:new Set(),trainer:new Set(),status:new Set(),fase:new Set(),q:''}; document.getElementById('srch').value=''; renderFilters(); render(); updKPI(); }
 
 // ── KPI ────────────────────────────────────────────────────
+// ── SEMÁFORO: calcula salud del proyecto según avance esperado vs real ──
+function getAlert(p) {
+  if (p.status === 'Terminado') return { level: 'verde', label: 'Completado', icon: '✅', delta: 0 };
+  if (p.status === 'Pausado')   return { level: 'amarillo', label: 'Pausado', icon: '⏸', delta: 0 };
+
+  const today = new Date();
+  const start = new Date((p.start||'').substring(0,10) + 'T00:00:00');
+  const end   = new Date((p.end  ||'').substring(0,10) + 'T00:00:00');
+
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) return { level: 'verde', label: 'Sin fecha', icon: '🔵', delta: 0 };
+
+  const total   = end - start;
+  const elapsed = today - start;
+
+  if (total <= 0 || elapsed < 0) return { level: 'verde', label: 'Pendiente de inicio', icon: '🔵', delta: 0 };
+  if (today > end && p.progress < 100) {
+    const dias = Math.round((today - end) / 86400000);
+    return { level: 'rojo', label: `Vencido hace ${dias}d`, icon: '🔴', delta: -(100 - p.progress) };
+  }
+
+  const expectedPct = Math.min(100, Math.round((elapsed / total) * 100));
+  const delta       = (p.progress || 0) - expectedPct;
+  const diasRest    = Math.round((end - today) / 86400000);
+
+  if (delta >= -10) return { level: 'verde',    label: `En tiempo · ${diasRest}d`,              icon: '🟢', delta };
+  if (delta >= -25) return { level: 'amarillo', label: `Atrasado ${Math.abs(delta)}% esperado`, icon: '🟡', delta };
+  return               { level: 'rojo',         label: `Crítico: ${Math.abs(delta)}% retraso`,  icon: '🔴', delta };
+}
+
+
+function renderAlertPanel(fp) {
+  const panel = document.getElementById('alert-panel');
+  const rojos    = fp.filter(p=>getAlert(p).level==='rojo');
+  const amarillos = fp.filter(p=>getAlert(p).level==='amarillo');
+  if (!rojos.length && !amarillos.length) { panel.style.display='none'; return; }
+
+  panel.style.display = 'block';
+  const total = rojos.length + amarillos.length;
+  const isOpen = panel.dataset.open === '1';
+
+  panel.innerHTML = `
+    <div onclick="this.parentElement.dataset.open=this.parentElement.dataset.open==='1'?'0':'1';updKPI()"
+         style="display:flex;align-items:center;gap:10px;padding:7px 20px;cursor:pointer;user-select:none">
+      ${rojos.length    ? `<span style="background:#fde8e8;color:#c0392b;border:1px solid #c0392b;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700">🔴 ${rojos.length} crítico${rojos.length>1?'s':''}</span>` : ''}
+      ${amarillos.length? `<span style="background:#fff3cd;color:#7a4f00;border:1px solid #d97706;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700">🟡 ${amarillos.length} en riesgo</span>` : ''}
+      <span style="font-size:11px;color:var(--text-3);flex:1">${total} proyecto${total>1?'s':''} requieren atención</span>
+      <span style="font-size:11px;color:var(--text-3)">${isOpen?'▲ ocultar':'▼ ver detalle'}</span>
+    </div>
+    ${isOpen ? `<div style="padding:0 20px 10px;display:flex;flex-wrap:wrap;gap:6px">
+      ${[...rojos,...amarillos].map(p=>{const a=getAlert(p);return`
+        <div style="background:${a.level==='rojo'?'#fde8e8':'#fff3cd'};border:1px solid ${a.level==='rojo'?'#c0392b':'#d97706'};border-radius:6px;padding:5px 10px;font-size:11px;display:flex;align-items:center;gap:6px">
+          <span>${a.icon}</span><b>${p.name}</b><span style="color:var(--text-3)">${a.label} · ${p.trainer}</span>
+        </div>`}).join('')}
+    </div>` : ''}`;
+}
+
+
 function updKPI(){
   const fp=filtProj();
-  const today=new Date();
-  const late=fp.filter(p=>p.status!=='Terminado'&&new Date(p.end+'T00:00:00')<today);
+  const atRisk=fp.filter(p=>{ const a=getAlert(p); return a.level==='amarillo'||a.level==='rojo'; });
   document.getElementById('kv-tot').textContent=fp.length;
   document.getElementById('kv-enp').textContent=fp.filter(p=>p.status==='En proceso').length;
   document.getElementById('kv-ter').textContent=fp.filter(p=>p.status==='Terminado').length;
-  document.getElementById('kv-atr').textContent=late.length;
+  document.getElementById('kv-atr').textContent=atRisk.length;
   document.getElementById('kv-trn').textContent=new Set(fp.map(p=>p.trainer)).size;
   const avg=fp.length?Math.round(fp.reduce((a,b)=>a+b.progress,0)/fp.length):0;
   document.getElementById('kv-avg').textContent=avg+'%';
+  renderAlertPanel(fp);
 }
 
 // ── TIMELINE HEADER ────────────────────────────────────────
@@ -945,6 +1031,7 @@ function rowHTML(item, lv) {
       </div>`;
   } else if (lv===1) {
     const pColor = tc(item.type);
+    const alert  = getAlert(item);
     infoHTML = `
       <div style="width:20px;flex-shrink:0"></div>
       <div class="toggle-btn${isExp?' op':''}" onclick="togExp(${toggleId},event)">${isExp?'▾':'▸'}</div>
@@ -956,7 +1043,10 @@ function rowHTML(item, lv) {
         </div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0">
-        <span class="sts-badge" style="${sbg(item.status)}">${item.status}</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div class="alert-dot ${alert.level}" title="${alert.label}"></div>
+          <span class="sts-badge" style="${sbg(item.status)}">${item.status}</span>
+        </div>
         <div style="display:flex;align-items:center;gap:4px">
           <div class="prog-mini"><div class="prog-fill" style="width:${pct}%;background:${pColor}"></div></div>
           <span class="pct-lbl" style="color:${pColor}">${pct}%</span>
