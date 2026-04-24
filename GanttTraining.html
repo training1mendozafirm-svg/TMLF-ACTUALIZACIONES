@@ -638,7 +638,10 @@ function initData() {
   showApp();
 
   if (!GAS_URL || GAS_URL === 'PEGAR_URL_AQUI') { setSyncStatus('off'); return; }
-  setSyncStatus('loading');
+
+  // Solo muestra "Cargando" si no hay caché — si hay caché el sync es silencioso
+  if (!fromCache) setSyncStatus('loading');
+  else setSyncStatus('ok');
 
   // Cloud siempre en background
   gasCall({action:'getAll'}, res => {
