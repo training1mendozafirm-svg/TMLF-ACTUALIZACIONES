@@ -86,7 +86,7 @@ var ScormAPI = (function () {
 // CONFIGURACIÓN — Google Apps Script URL
 // Pega aquí la URL de tu Web App desplegada en Apps Script
 // ════════════════════════════════════════════════════════════════
-var GAS_URL = 'https://script.google.com/a/macros/supportmendoza.com/s/AKfycbx0g09CT1S3E-LSFlYYvwCRAx1qkPylWpnSaoxXqJEws-CoaPnhGzBiYPqvMBOwzx0/exec';
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbx5eDli_HbkJveVWSCyMMmjho9rmiqyZqiAPk8MlSGfxidizgCaXWVbIVPGqvxyWBVuvg/exec';
 
 // ── Funciones de persistencia via Apps Script ──
 var DataStore = {
@@ -131,6 +131,84 @@ var DataStore = {
     } catch(e) { return { deleted: true }; }
   }
 };
+</script>
+<script>
+// ════════════════════════════════════════════════════════════════
+// TMLF_TRACKER — Captura de respuestas hacia Google Sheets
+// Usa la misma GAS_URL definida arriba. Si esa URL apunta a un
+// Apps Script que NO implementa los endpoints log_answer/log_final,
+// los registros simplemente no se guardarán (no rompe el training).
+// ════════════════════════════════════════════════════════════════
+var TMLF_TRACKER = (function () {
+  var startTime = null;
+  var pendingFlush = [];
+
+  function _post(action, data) {
+    if (!GAS_URL || GAS_URL.indexOf('http') !== 0) return;
+    try {
+      var fd = new FormData();
+      fd.append('action', action);
+      fd.append('data', JSON.stringify(data));
+      // Use no-cors fetch (fire-and-forget). We don't read the response.
+      fetch(GAS_URL, { method: 'POST', body: fd, mode: 'no-cors', keepalive: true })
+        .catch(function () { /* silenciar */ });
+    } catch (e) { /* silenciar */ }
+  }
+
+  // Mapea el ID de pregunta a un módulo legible y a un texto de pregunta
+  function _resolveContext(simId) {
+    var map = {
+      // Verificación Módulo 2 (cq2_*) - Estructura de la Llamada
+      cq2_: 'Verificación Módulo 2 — Estructura',
+      // Verificación Módulo 3 (cq3_*) - Manejo de Cliente
+      cq3_: 'Verificación Módulo 3 — Manejo',
+      // Quejas (qsX_a/qsX_b)
+      qs:   'Simulación · Manejo de Quejas',
+      // Simulación principal (sim1...sim12)
+      sim:  'Simulación · Analiza el Caso',
+      // Simulación avanzada (m6a...m6h)
+      m6:   'Simulación Avanzada — Casos Complejos',
+      // Ruleta de criterios
+      rul:  'Ruleta · Criterios de Elegibilidad'
+    };
+    var keys = Object.keys(map);
+    for (var i = 0; i < keys.length; i++) {
+      if (simId.indexOf(keys[i]) === 0) return map[keys[i]];
+    }
+    return 'Otro';
+  }
+
+  return {
+    setStart: function () { startTime = new Date(); },
+    getElapsedMin: function () {
+      if (!startTime) return 0;
+      return Math.round((new Date() - startTime) / 60000);
+    },
+    logAnswer: function (info) {
+      // info: { simId, correct, optionText, questionText?, user }
+      var module = _resolveContext(info.simId || '');
+      _post('log_answer', {
+        user: info.user || (typeof participantName !== 'undefined' ? participantName : 'Anónimo'),
+        module: module,
+        questionId: info.simId || '',
+        questionText: info.questionText || '',
+        userAnswer: info.optionText ? info.optionText.substring(0, 80) : '',
+        optionText: info.optionText || '',
+        correct: info.correct === true || info.correct === 'yes'
+      });
+    },
+    logFinal: function (info) {
+      _post('log_final', {
+        user: info.user || (typeof participantName !== 'undefined' ? participantName : 'Anónimo'),
+        score: info.score || 0,
+        total: info.total || 0,
+        percent: info.percent || 0,
+        minutes: this.getElapsedMin(),
+        verdict: info.verdict || ''
+      });
+    }
+  };
+})();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
@@ -925,28 +1003,32 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
     </div>
     <div class="sb-group">
       <div class="sb-group-label">Módulos del Training</div>
-      <div class="sb-item active" id="nav-mod1" onclick="goSection(0)">
+      <div class="sb-item active" id="nav-mod0" onclick="goSection(0)">
         <div class="sb-num">1</div>
+        <div class="sb-text"><div class="sb-name">Analogía Médica</div><div class="sb-sub">5 min · Roles del equipo</div></div>
+      </div>
+      <div class="sb-item" id="nav-mod1" onclick="goSection(1)">
+        <div class="sb-num">2</div>
         <div class="sb-text"><div class="sb-name">Contexto</div><div class="sb-sub">10 min · Teoría base</div></div>
       </div>
-      <div class="sb-item" id="nav-mod2" onclick="goSection(1)">
-        <div class="sb-num">2</div>
+      <div class="sb-item" id="nav-mod2" onclick="goSection(2)">
+        <div class="sb-num">3</div>
         <div class="sb-text"><div class="sb-name">Criterios de Elegibilidad</div><div class="sb-sub">15 min · Teoría profunda</div></div>
       </div>
-      <div class="sb-item" id="nav-mod3" onclick="goSection(2)">
-        <div class="sb-num">3</div>
+      <div class="sb-item" id="nav-mod3" onclick="goSection(3)">
+        <div class="sb-num">4</div>
         <div class="sb-text"><div class="sb-name">Estructura de la Llamada</div><div class="sb-sub">15 min · Discovery &amp; Screening</div></div>
       </div>
-      <div class="sb-item" id="nav-mod4" onclick="goSection(3)">
-        <div class="sb-num">4</div>
+      <div class="sb-item" id="nav-mod4" onclick="goSection(4)">
+        <div class="sb-num">5</div>
         <div class="sb-text"><div class="sb-name">Manejo de Cliente</div><div class="sb-sub">15 min · 8 pasos · Quejas</div></div>
       </div>
-      <div class="sb-item practice" id="nav-mod5" onclick="goSection(4)">
-        <div class="sb-num">5</div>
+      <div class="sb-item practice" id="nav-mod5" onclick="goSection(5)">
+        <div class="sb-num">6</div>
         <div class="sb-text"><div class="sb-name">Simulación</div><div class="sb-sub">40 min · DC + Screening ★</div></div>
       </div>
-      <div class="sb-item practice" id="nav-mod6" onclick="goSection(5)">
-        <div class="sb-num">6</div>
+      <div class="sb-item practice" id="nav-mod6" onclick="goSection(6)">
+        <div class="sb-num">7</div>
         <div class="sb-text"><div class="sb-name">Simulación Avanzada</div><div class="sb-sub">30 min · Casos complejos ★</div></div>
       </div>
     </div>
@@ -967,7 +1049,7 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
       <h1>Discovery Calls &amp; Screenings: Reclasificación Migratoria</h1>
       <p class="subtitle">Entrevista estructurada para explorar la reclasificación de casos migratorios activos. Discovery Calls: exploración abierta de todos los visados. Screenings: indagación dirigida a un visado específico asignado.</p>
       <div class="header-meta">
-        <div class="header-meta-item"><span>📚</span><strong>5 Módulos</strong></div>
+        <div class="header-meta-item"><span>📚</span><strong>7 Módulos</strong></div>
         <div class="header-meta-item"><span>📊</span><strong>70% Práctica · 30% Teoría</strong></div>
         <div class="header-meta-item"><span>⏱️</span><strong>2 horas máx.</strong></div>
         <div class="header-meta-item"><span>🎯</span><strong>Agente de la Firma</strong></div>
@@ -976,7 +1058,138 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
 
     <div class="panel active" id="sec0">
       <div class="page-title">
-        <div class="pt-label">Módulo 1 · 10 minutos</div>
+        <div class="pt-label">Módulo 1 · 5 minutos</div>
+        <h2>Analogía Médica: El Equipo Detrás del Caso</h2>
+        <p class="pt-sub">Marco conceptual · Roles del agente, screening y abogado · Flujo del caso migratorio</p>
+      </div>
+
+    <!-- ═══ ANALOGÍA MÉDICA ═══ -->
+    <div class="block" style="margin-bottom:14px">
+      <div class="btitle">
+        <div class="bicon" style="background:linear-gradient(135deg,#0e7490,#0891b2)">🏥</div>
+        <h3>Analogía: El equipo médico-quirúrgico</h3>
+        <div class="mod-badge badge-core">Marco conceptual</div>
+      </div>
+      <div class="bbody">
+        <p style="font-size:13.5px;color:var(--slate);line-height:1.75;margin-bottom:18px">Para entender el rol de cada persona en este proceso, imagina que el caso migratorio de un cliente es como un <strong style="color:var(--ink)">paciente con una condición que aún no ha sido diagnosticada con precisión</strong>. El tratamiento actual funciona, pero puede no ser el más efectivo para su situación específica.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px">
+          <div style="background:rgba(71,85,97,.04);border:1.5px solid rgba(71,85,97,.15);border-radius:12px;padding:16px;text-align:center">
+            <div style="font-size:28px;margin-bottom:8px">🔬</div>
+            <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--accent);margin-bottom:6px">Agente de Callback</div>
+            <div style="font-size:12.5px;color:var(--slate);line-height:1.6">Como el <strong style="color:var(--ink)">técnico de laboratorio o enfermero de triaje</strong>: recopila la información clínica del paciente, documenta síntomas y aplica protocolos establecidos. <em>No diagnostica ni receta</em> — entrega los hallazgos al médico.</div>
+          </div>
+          <div style="background:rgba(71,85,97,.04);border:1.5px solid rgba(154,139,122,.2);border-radius:12px;padding:16px;text-align:center">
+            <div style="font-size:28px;margin-bottom:8px">🩺</div>
+            <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--amber);margin-bottom:6px">Agente de Screening</div>
+            <div style="font-size:12.5px;color:var(--slate);line-height:1.6">Como el <strong style="color:var(--ink)">especialista que hace estudios dirigidos</strong>: el médico ya identificó el sistema a analizar y el especialista profundiza en esa área. Tampoco diagnostica — confirma o descarta la hipótesis del médico.</div>
+          </div>
+          <div style="background:rgba(185,28,28,.03);border:1.5px solid rgba(185,28,28,.18);border-radius:12px;padding:16px;text-align:center">
+            <div style="font-size:28px;margin-bottom:8px">👨‍⚕️</div>
+            <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#991b1b;margin-bottom:6px">Abogado(a)</div>
+            <div style="font-size:12.5px;color:var(--slate);line-height:1.6">Como el <strong style="color:var(--ink)">cirujano o médico tratante</strong>: con los hallazgos del agente, <strong>identifica la enfermedad</strong> — determina qué visado aplica — y <strong>receta la estrategia legal</strong> como tratamiento. Es quien toma la decisión clínica final.</div>
+          </div>
+        </div>
+        <!-- ══ FLUJO COMPLETO — Pipeline rediseñado ══ -->
+        <style>
+          .fp-wrap{margin-bottom:14px;background:linear-gradient(135deg,rgba(14,116,144,.04),rgba(71,85,97,.04));border:1.5px solid rgba(14,116,144,.18);border-radius:16px;padding:20px 20px 18px}
+          .fp-label-row{display:flex;align-items:center;gap:8px;margin-bottom:18px}
+          .fp-label-icon{width:24px;height:24px;background:linear-gradient(135deg,#0e7490,#0891b2);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+          .fp-label-text{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#0e7490}
+          .fp-pipeline{display:grid;grid-template-columns:1fr 28px 1fr 28px 1fr 28px 1fr;align-items:stretch;gap:0}
+          .fp-node{border-radius:13px;padding:16px 14px 14px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:0;position:relative}
+          .fp-node-num{width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;color:#fff;margin-bottom:10px;align-self:flex-start}
+          .fp-node-icon{font-size:26px;margin-bottom:8px;line-height:1}
+          .fp-node-name{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;line-height:1.2}
+          .fp-node-desc{font-size:11px;line-height:1.55;color:var(--slate)}
+          .fp-arrow{display:flex;align-items:center;justify-content:center;flex-shrink:0}
+          @media(max-width:680px){
+            .fp-pipeline{grid-template-columns:1fr;grid-template-rows:auto}
+            .fp-arrow{transform:rotate(90deg);height:28px}
+          }
+        </style>
+        <div class="fp-wrap">
+          <div class="fp-label-row">
+            <div class="fp-label-icon">🔁</div>
+            <div class="fp-label-text">El flujo completo — de caso activo a nueva estrategia</div>
+          </div>
+          <div class="fp-pipeline">
+
+            <!-- ① CASO ACTIVO -->
+            <div class="fp-node" style="background:rgba(14,116,144,.08);border:1.5px solid rgba(14,116,144,.28)">
+              <div class="fp-node-num" style="background:#0e7490">1</div>
+              <div class="fp-node-icon">📂</div>
+              <div class="fp-node-name" style="color:#0e7490">Caso Activo</div>
+              <div class="fp-node-desc">Caso migratorio vigente con potencial de mejora o reclasificación</div>
+            </div>
+
+            <!-- → -->
+            <div class="fp-arrow">
+              <svg width="28" height="18" viewBox="0 0 28 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="0" y1="9" x2="20" y2="9" stroke="#94a3b8" stroke-width="1.5"/>
+                <polyline points="16,4 24,9 16,14" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+              </svg>
+            </div>
+
+            <!-- ② CALLBACK / SCREENING -->
+            <div class="fp-node" style="background:rgba(71,85,97,.07);border:1.5px solid rgba(71,85,97,.22)">
+              <div class="fp-node-num" style="background:var(--accent)">2</div>
+              <div class="fp-node-icon">🩺</div>
+              <div class="fp-node-name" style="color:var(--accent)">Callback / Screening</div>
+              <div class="fp-node-desc">Triaje estructurado — indicadores documentados por el agente</div>
+            </div>
+
+            <!-- → -->
+            <div class="fp-arrow">
+              <svg width="28" height="18" viewBox="0 0 28 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="0" y1="9" x2="20" y2="9" stroke="#9a8b7a" stroke-width="1.5"/>
+                <polyline points="16,4 24,9 16,14" stroke="#9a8b7a" stroke-width="1.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+              </svg>
+            </div>
+
+            <!-- ③ ABOGADO(A) -->
+            <div class="fp-node" style="background:rgba(154,139,122,.09);border:1.5px solid rgba(154,139,122,.3)">
+              <div class="fp-node-num" style="background:var(--gold);color:var(--ink)">3</div>
+              <div class="fp-node-icon">👨‍⚕️</div>
+              <div class="fp-node-name" style="color:var(--amber)">Abogado(a)</div>
+              <div class="fp-node-desc">Diagnóstico jurídico y prescripción de estrategia legal</div>
+            </div>
+
+            <!-- → -->
+            <div class="fp-arrow">
+              <svg width="28" height="18" viewBox="0 0 28 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="0" y1="9" x2="20" y2="9" stroke="#1e6641" stroke-width="1.5"/>
+                <polyline points="16,4 24,9 16,14" stroke="#1e6641" stroke-width="1.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+              </svg>
+            </div>
+
+            <!-- ④ NUEVA ESTRATEGIA -->
+            <div class="fp-node" style="background:rgba(30,102,65,.08);border:1.5px solid rgba(30,102,65,.28)">
+              <div class="fp-node-num" style="background:var(--green)">4</div>
+              <div class="fp-node-icon">✅</div>
+              <div class="fp-node-name" style="color:var(--green)">Nueva Estrategia</div>
+              <div class="fp-node-desc">Reclasificación — tratamiento óptimo para el cliente</div>
+            </div>
+
+          </div>
+        </div>
+        <div class="critical-rule" style="margin-bottom:0">
+          <div class="critical-rule-label">Principio fundamental</div>
+          <div class="critical-rule-text">El agente nunca diagnostica ni receta.</div>
+          <div class="critical-rule-sub">Así como un técnico de laboratorio no puede decirle al paciente "usted tiene cáncer" — aunque vea los indicadores — el agente no puede decirle al cliente qué visado le aplica, si califica o si su caso "va bien". Esa decisión pertenece exclusivamente al abogado(a).</div>
+        </div>
+      </div>
+    </div>
+
+      <div class="mod-nav-bar">
+        <button class="mod-nav-btn mod-nav-prev" disabled>← Anterior</button>
+        <span class="mod-nav-counter">1 / 7</span>
+        <button class="mod-nav-btn mod-nav-next" onclick="goSection(1)">Siguiente →</button>
+      </div>
+    </div>
+
+    <div class="panel" id="sec1">
+      <div class="page-title">
+        <div class="pt-label">Módulo 2 · 10 minutos</div>
         <h2>¿Para qué sirve una Discovery Call?</h2>
         <p class="pt-sub">Teoría base · Marco conceptual · Objetivo de los agentes de la firma</p>
       </div>
@@ -1100,133 +1313,16 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
       </div>
     </div>
 
-    <!-- ═══ ANALOGÍA MÉDICA ═══ -->
-    <div class="block" style="margin-bottom:14px">
-      <div class="btitle">
-        <div class="bicon" style="background:linear-gradient(135deg,#0e7490,#0891b2)">🏥</div>
-        <h3>Analogía: El equipo médico-quirúrgico</h3>
-        <div class="mod-badge badge-core">Marco conceptual</div>
-      </div>
-      <div class="bbody">
-        <p style="font-size:13.5px;color:var(--slate);line-height:1.75;margin-bottom:18px">Para entender el rol de cada persona en este proceso, imagina que el caso migratorio de un cliente es como un <strong style="color:var(--ink)">paciente con una condición que aún no ha sido diagnosticada con precisión</strong>. El tratamiento actual funciona, pero puede no ser el más efectivo para su situación específica.</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px">
-          <div style="background:rgba(71,85,97,.04);border:1.5px solid rgba(71,85,97,.15);border-radius:12px;padding:16px;text-align:center">
-            <div style="font-size:28px;margin-bottom:8px">🔬</div>
-            <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--accent);margin-bottom:6px">Agente de Callback</div>
-            <div style="font-size:12.5px;color:var(--slate);line-height:1.6">Como el <strong style="color:var(--ink)">técnico de laboratorio o enfermero de triaje</strong>: recopila la información clínica del paciente, documenta síntomas y aplica protocolos establecidos. <em>No diagnostica ni receta</em> — entrega los hallazgos al médico.</div>
-          </div>
-          <div style="background:rgba(71,85,97,.04);border:1.5px solid rgba(154,139,122,.2);border-radius:12px;padding:16px;text-align:center">
-            <div style="font-size:28px;margin-bottom:8px">🩺</div>
-            <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--amber);margin-bottom:6px">Agente de Screening</div>
-            <div style="font-size:12.5px;color:var(--slate);line-height:1.6">Como el <strong style="color:var(--ink)">especialista que hace estudios dirigidos</strong>: el médico ya identificó el sistema a analizar y el especialista profundiza en esa área. Tampoco diagnostica — confirma o descarta la hipótesis del médico.</div>
-          </div>
-          <div style="background:rgba(185,28,28,.03);border:1.5px solid rgba(185,28,28,.18);border-radius:12px;padding:16px;text-align:center">
-            <div style="font-size:28px;margin-bottom:8px">👨‍⚕️</div>
-            <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#991b1b;margin-bottom:6px">Abogado(a)</div>
-            <div style="font-size:12.5px;color:var(--slate);line-height:1.6">Como el <strong style="color:var(--ink)">cirujano o médico tratante</strong>: con los hallazgos del agente, <strong>identifica la enfermedad</strong> — determina qué visado aplica — y <strong>receta la estrategia legal</strong> como tratamiento. Es quien toma la decisión clínica final.</div>
-          </div>
-        </div>
-        <!-- ══ FLUJO COMPLETO — Pipeline rediseñado ══ -->
-        <style>
-          .fp-wrap{margin-bottom:14px;background:linear-gradient(135deg,rgba(14,116,144,.04),rgba(71,85,97,.04));border:1.5px solid rgba(14,116,144,.18);border-radius:16px;padding:20px 20px 18px}
-          .fp-label-row{display:flex;align-items:center;gap:8px;margin-bottom:18px}
-          .fp-label-icon{width:24px;height:24px;background:linear-gradient(135deg,#0e7490,#0891b2);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
-          .fp-label-text{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#0e7490}
-          .fp-pipeline{display:grid;grid-template-columns:1fr 28px 1fr 28px 1fr 28px 1fr;align-items:stretch;gap:0}
-          .fp-node{border-radius:13px;padding:16px 14px 14px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:0;position:relative}
-          .fp-node-num{width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;color:#fff;margin-bottom:10px;align-self:flex-start}
-          .fp-node-icon{font-size:26px;margin-bottom:8px;line-height:1}
-          .fp-node-name{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;line-height:1.2}
-          .fp-node-desc{font-size:11px;line-height:1.55;color:var(--slate)}
-          .fp-arrow{display:flex;align-items:center;justify-content:center;flex-shrink:0}
-          @media(max-width:680px){
-            .fp-pipeline{grid-template-columns:1fr;grid-template-rows:auto}
-            .fp-arrow{transform:rotate(90deg);height:28px}
-          }
-        </style>
-        <div class="fp-wrap">
-          <div class="fp-label-row">
-            <div class="fp-label-icon">🔁</div>
-            <div class="fp-label-text">El flujo completo — de caso activo a nueva estrategia</div>
-          </div>
-          <div class="fp-pipeline">
-
-            <!-- ① CASO ACTIVO -->
-            <div class="fp-node" style="background:rgba(14,116,144,.08);border:1.5px solid rgba(14,116,144,.28)">
-              <div class="fp-node-num" style="background:#0e7490">1</div>
-              <div class="fp-node-icon">📂</div>
-              <div class="fp-node-name" style="color:#0e7490">Caso Activo</div>
-              <div class="fp-node-desc">Caso migratorio vigente con potencial de mejora o reclasificación</div>
-            </div>
-
-            <!-- → -->
-            <div class="fp-arrow">
-              <svg width="28" height="18" viewBox="0 0 28 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <line x1="0" y1="9" x2="20" y2="9" stroke="#94a3b8" stroke-width="1.5"/>
-                <polyline points="16,4 24,9 16,14" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
-              </svg>
-            </div>
-
-            <!-- ② CALLBACK / SCREENING -->
-            <div class="fp-node" style="background:rgba(71,85,97,.07);border:1.5px solid rgba(71,85,97,.22)">
-              <div class="fp-node-num" style="background:var(--accent)">2</div>
-              <div class="fp-node-icon">🩺</div>
-              <div class="fp-node-name" style="color:var(--accent)">Callback / Screening</div>
-              <div class="fp-node-desc">Triaje estructurado — indicadores documentados por el agente</div>
-            </div>
-
-            <!-- → -->
-            <div class="fp-arrow">
-              <svg width="28" height="18" viewBox="0 0 28 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <line x1="0" y1="9" x2="20" y2="9" stroke="#9a8b7a" stroke-width="1.5"/>
-                <polyline points="16,4 24,9 16,14" stroke="#9a8b7a" stroke-width="1.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
-              </svg>
-            </div>
-
-            <!-- ③ ABOGADO(A) -->
-            <div class="fp-node" style="background:rgba(154,139,122,.09);border:1.5px solid rgba(154,139,122,.3)">
-              <div class="fp-node-num" style="background:var(--gold);color:var(--ink)">3</div>
-              <div class="fp-node-icon">👨‍⚕️</div>
-              <div class="fp-node-name" style="color:var(--amber)">Abogado(a)</div>
-              <div class="fp-node-desc">Diagnóstico jurídico y prescripción de estrategia legal</div>
-            </div>
-
-            <!-- → -->
-            <div class="fp-arrow">
-              <svg width="28" height="18" viewBox="0 0 28 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <line x1="0" y1="9" x2="20" y2="9" stroke="#1e6641" stroke-width="1.5"/>
-                <polyline points="16,4 24,9 16,14" stroke="#1e6641" stroke-width="1.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
-              </svg>
-            </div>
-
-            <!-- ④ NUEVA ESTRATEGIA -->
-            <div class="fp-node" style="background:rgba(30,102,65,.08);border:1.5px solid rgba(30,102,65,.28)">
-              <div class="fp-node-num" style="background:var(--green)">4</div>
-              <div class="fp-node-icon">✅</div>
-              <div class="fp-node-name" style="color:var(--green)">Nueva Estrategia</div>
-              <div class="fp-node-desc">Reclasificación — tratamiento óptimo para el cliente</div>
-            </div>
-
-          </div>
-        </div>
-        <div class="critical-rule" style="margin-bottom:0">
-          <div class="critical-rule-label">Principio fundamental</div>
-          <div class="critical-rule-text">El agente nunca diagnostica ni receta.</div>
-          <div class="critical-rule-sub">Así como un técnico de laboratorio no puede decirle al paciente "usted tiene cáncer" — aunque vea los indicadores — el agente no puede decirle al cliente qué visado le aplica, si califica o si su caso "va bien". Esa decisión pertenece exclusivamente al abogado(a).</div>
-        </div>
-      </div>
-    </div>
-
-      <div class="mod-nav-bar">
+    <div class="mod-nav-bar">
         <button class="mod-nav-btn mod-nav-prev" disabled>← Anterior</button>
-        <span class="mod-nav-counter">1 / 6</span>
-        <button class="mod-nav-btn mod-nav-next" onclick="goSection(1)">Siguiente →</button>
+        <span class="mod-nav-counter">2 / 7</span>
+        <button class="mod-nav-btn mod-nav-next" onclick="goSection(2)">Siguiente →</button>
       </div>
     </div>
 
-    <div class="panel" id="sec1">
+    <div class="panel" id="sec2">
       <div class="page-title">
-        <div class="pt-label">Módulo 2 · 15 minutos</div>
+        <div class="pt-label">Módulo 3 · 15 minutos</div>
         <h2>Criterios de Elegibilidad Detallados</h2>
         <p class="pt-sub">Teoría profunda · Requisitos legales · Red flags positivos y negativos</p>
       </div>
@@ -2003,15 +2099,15 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
     </div><!-- /crTheoryWrap -->
 
       <div class="mod-nav-bar">
-        <button class="mod-nav-btn mod-nav-prev" onclick="goSection(0)">← Anterior</button>
-        <span class="mod-nav-counter">2 / 6</span>
-        <button class="mod-nav-btn mod-nav-next" onclick="goSection(2)">Siguiente →</button>
+        <button class="mod-nav-btn mod-nav-prev" onclick="goSection(1)">← Anterior</button>
+        <span class="mod-nav-counter">3 / 7</span>
+        <button class="mod-nav-btn mod-nav-next" onclick="goSection(3)">Siguiente →</button>
       </div>
     </div>
 
-    <div class="panel" id="sec2">
+    <div class="panel" id="sec3">
       <div class="page-title">
-        <div class="pt-label">Módulo 3 · 15 minutos</div>
+        <div class="pt-label">Módulo 4 · 15 minutos</div>
         <h2>Estructura de la Llamada</h2>
         <p class="pt-sub">Speech · Preguntas clave · Discovery Call y Screening</p>
       </div>
@@ -2865,18 +2961,18 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
     </div>
 
       <div class="mod-nav-bar">
-        <button class="mod-nav-btn mod-nav-prev" onclick="goSection(1)">← Anterior</button>
-        <span class="mod-nav-counter">3 / 6</span>
-        <button class="mod-nav-btn mod-nav-next" onclick="goSection(3)">Siguiente →</button>
+        <button class="mod-nav-btn mod-nav-prev" onclick="goSection(2)">← Anterior</button>
+        <span class="mod-nav-counter">4 / 7</span>
+        <button class="mod-nav-btn mod-nav-next" onclick="goSection(4)">Siguiente →</button>
       </div>
     </div>
 
     <!-- ══════════════════════════════════════════
          MÓDULO 4 — MANEJO DE CLIENTE
     ══════════════════════════════════════════ -->
-    <div class="panel" id="sec3">
+    <div class="panel" id="sec4">
       <div class="page-title">
-        <div class="pt-label">Módulo 4 · 15 minutos</div>
+        <div class="pt-label">Módulo 5 · 15 minutos</div>
         <h2>Manejo de Cliente</h2>
         <p class="pt-sub">Procedimiento de 8 pasos · Quejas frecuentes · Estrategias de contención</p>
       </div>
@@ -3514,15 +3610,15 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
       </div><!-- /qs-sim-content -->
 
       <div class="mod-nav-bar">
-        <button class="mod-nav-btn mod-nav-prev" onclick="goSection(2)">← Anterior</button>
-        <span class="mod-nav-counter">4 / 6</span>
-        <button class="mod-nav-btn mod-nav-next" onclick="goSection(4)">Siguiente →</button>
+        <button class="mod-nav-btn mod-nav-prev" onclick="goSection(3)">← Anterior</button>
+        <span class="mod-nav-counter">5 / 7</span>
+        <button class="mod-nav-btn mod-nav-next" onclick="goSection(5)">Siguiente →</button>
       </div>
     </div>
 
-    <div class="panel" id="sec4">
+    <div class="panel" id="sec5">
       <div class="page-title">
-        <div class="pt-label">Módulo 4 · 40 minutos · Práctica guiada</div>
+        <div class="pt-label">Módulo 6 · 40 minutos · Práctica guiada</div>
         <h2>Simulación: Analiza el Caso</h2>
         <p class="pt-sub">Casos de Discovery Call y Screening · Toma de decisiones · 12 escenarios</p>
       </div>
@@ -3926,15 +4022,15 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
   
 
       <div class="mod-nav-bar">
-        <button class="mod-nav-btn mod-nav-prev" onclick="goSection(3)">← Anterior</button>
-        <span class="mod-nav-counter">5 / 6</span>
-        <button class="mod-nav-btn mod-nav-next" onclick="goSection(5)">Siguiente →</button>
+        <button class="mod-nav-btn mod-nav-prev" onclick="goSection(4)">← Anterior</button>
+        <span class="mod-nav-counter">6 / 7</span>
+        <button class="mod-nav-btn mod-nav-next" onclick="goSection(6)">Siguiente →</button>
       </div>
     </div>
 
-    <div class="panel" id="sec5">
+    <div class="panel" id="sec6">
       <div class="page-title">
-        <div class="pt-label">Módulo 6 · 30 minutos · Práctica guiada</div>
+        <div class="pt-label">Módulo 7 · 30 minutos · Práctica guiada</div>
         <h2>Simulación Avanzada: Casos Complejos</h2>
         <p class="pt-sub">Casos con múltiples indicadores · Stoppers · Viabilidad por visado · 8 escenarios</p>
       </div>
@@ -4166,8 +4262,8 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
     </div>
 
       <div class="mod-nav-bar">
-        <button class="mod-nav-btn mod-nav-prev" onclick="goSection(4)">← Anterior</button>
-        <span class="mod-nav-counter">6 / 6</span>
+        <button class="mod-nav-btn mod-nav-prev" onclick="goSection(5)">← Anterior</button>
+        <span class="mod-nav-counter">7 / 7</span>
         <button class="mod-nav-btn mod-nav-next" onclick="showFinalScore()" style="background:linear-gradient(135deg,var(--gold),#6e5f50)">Finalizar Training →</button>
       </div>
     </div>
@@ -4299,7 +4395,7 @@ function toggleSidebar(){document.getElementById("sidebar").classList.toggle("op
 
 <script>
   let currentSection = 0;
-  const totalSections = 6;
+  const totalSections = 7;
   let score = 0;
   let simAnswered = {};
   let participantName = '';
@@ -4325,6 +4421,8 @@ function toggleSidebar(){document.getElementById("sidebar").classList.toggle("op
     document.getElementById('registerError').style.display = 'none';
     document.getElementById('registerScreen').style.display = 'none';
     document.getElementById('trainingApp').style.display = 'flex';
+    // Iniciar cronómetro de tracking
+    try { TMLF_TRACKER.setStart(); } catch (e) {}
     // SCORM: Inicializar conexión con LMS
     ScormAPI.init();
     ScormAPI.setValue('cmi.core.student_name', participantName);
@@ -4384,6 +4482,16 @@ function toggleSidebar(){document.getElementById("sidebar").classList.toggle("op
     const allBtns = container.querySelectorAll('.sim-option');
     allBtns.forEach(b => { b.disabled = true; });
     const feedbackEl = document.getElementById(simId);
+    // ── Captura para Google Sheets ──
+    try {
+      var qEl = container.querySelector('p');
+      TMLF_TRACKER.logAnswer({
+        simId: simId,
+        correct: correct === 'yes',
+        optionText: (btn.textContent || '').trim().substring(0, 200),
+        questionText: qEl ? (qEl.textContent || '').trim().substring(0, 200) : ''
+      });
+    } catch (e) { /* silenciar */ }
     if (correct === 'yes') {
       btn.classList.add('correct');
       score += 25;
@@ -4549,6 +4657,16 @@ function toggleSidebar(){document.getElementById("sidebar").classList.toggle("op
     // Guardar en storage
     saveResult(participantName, finalScore);
 
+    // ── Captura final hacia Google Sheets ──
+    try {
+      TMLF_TRACKER.logFinal({
+        score: finalScore,
+        total: 20,
+        percent: finalScore,
+        verdict: gradeText
+      });
+    } catch (e) { /* silenciar */ }
+
     // SCORM: Reportar puntuación al LMS
     ScormAPI.setScore(finalScore);
     if (finalScore >= 75) {
@@ -4632,6 +4750,9 @@ function toggleSidebar(){document.getElementById("sidebar").classList.toggle("op
   // ============================================================
   const ADM_CREDENTIALS = { user: 'admin.tmlf', pass: 'Mendoza2025!' };
   const ADM_STORAGE_KEY = 'dc_results';
+  // Clave para consultar el Apps Script de la Sheet (debe coincidir con ADMIN_KEY del Apps Script)
+  const SHEET_ADMIN_KEY = 'TMLF_ADMIN_2026';
+  window.__admSheetKey = SHEET_ADMIN_KEY;
   let admRecords = [];
   let admParticipants = {};
 
@@ -4684,6 +4805,23 @@ function toggleSidebar(){document.getElementById("sidebar").classList.toggle("op
       if (result && result.value) admRecords = JSON.parse(result.value);
     } catch(e) { admRecords = []; }
 
+    // ── Trae también respuestas almacenadas en la Sheet (Apps Script) ──
+    try {
+      const sheetData = await admFetchSheetSummary();
+      if (sheetData && sheetData.users) {
+        sheetData.users.forEach(function (u) {
+          if (!u.final) return; // solo los que completaron
+          admRecords.push({
+            name: u.user,
+            score: u.final.percent || 0,
+            date: admFormatSheetDate(u.final.ts, true),
+            time: admFormatSheetDate(u.final.ts, false),
+            source: 'sheet'
+          });
+        });
+      }
+    } catch (e) { /* silenciar — usa solo datos locales */ }
+
     admRecords.forEach(function(r) {
       const key = r.name.trim().toLowerCase();
       if (!admParticipants[key]) admParticipants[key] = { displayName: r.name.trim(), attempts: [] };
@@ -4699,6 +4837,48 @@ function toggleSidebar(){document.getElementById("sidebar").classList.toggle("op
     admUpdateKPIs();
     admRender();
     document.getElementById('admLastRefresh').textContent = 'Actualizado: ' + new Date().toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'});
+  }
+
+  // ── JSONP a la Sheet para esquivar CORS ──
+  function admFetchSheetSummary() {
+    return new Promise(function (resolve, reject) {
+      if (!GAS_URL || GAS_URL.indexOf('http') !== 0) { resolve(null); return; }
+      var cbName = '__admCb_' + Date.now();
+      var timer = setTimeout(function () {
+        delete window[cbName];
+        var s = document.getElementById(cbName);
+        if (s) s.remove();
+        resolve(null);
+      }, 8000);
+      window[cbName] = function (data) {
+        clearTimeout(timer);
+        delete window[cbName];
+        var s = document.getElementById(cbName);
+        if (s) s.remove();
+        resolve(data && data.ok ? data : null);
+      };
+      var script = document.createElement('script');
+      script.id = cbName;
+      script.src = GAS_URL + '?action=summary&key=' +
+        encodeURIComponent(window.__admSheetKey || 'TMLF_ADMIN_2026') +
+        '&callback=' + cbName;
+      script.onerror = function () {
+        clearTimeout(timer);
+        delete window[cbName];
+        s = document.getElementById(cbName);
+        if (s) s.remove();
+        resolve(null);
+      };
+      document.body.appendChild(script);
+    });
+  }
+
+  function admFormatSheetDate(iso, isDate) {
+    try {
+      var d = new Date(iso);
+      if (isDate) return d.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      return d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+    } catch (e) { return ''; }
   }
 
   function admParseDate(dateStr, timeStr) {
