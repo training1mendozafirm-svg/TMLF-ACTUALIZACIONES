@@ -178,6 +178,15 @@ var TMLF_TRACKER = (function () {
     return 'Otro';
   }
 
+  function _resolveUser() {
+    try {
+      var pn = window.participantName;
+      if (pn && typeof pn === 'object' && 'value' in pn) pn = pn.value;
+      if (typeof pn === 'string' && pn.trim()) return pn.trim();
+    } catch (e) {}
+    return 'Anónimo';
+  }
+
   return {
     setStart: function () { startTime = new Date(); },
     getElapsedMin: function () {
@@ -188,7 +197,7 @@ var TMLF_TRACKER = (function () {
       // info: { simId, correct, optionText, questionText?, user }
       var module = _resolveContext(info.simId || '');
       _post('log_answer', {
-        user: info.user || (typeof participantName !== 'undefined' ? participantName : 'Anónimo'),
+        user: info.user || _resolveUser(),
         module: module,
         questionId: info.simId || '',
         questionText: info.questionText || '',
@@ -199,7 +208,7 @@ var TMLF_TRACKER = (function () {
     },
     logFinal: function (info) {
       _post('log_final', {
-        user: info.user || (typeof participantName !== 'undefined' ? participantName : 'Anónimo'),
+        user: info.user || _resolveUser(),
         score: info.score || 0,
         total: info.total || 0,
         percent: info.percent || 0,
@@ -710,6 +719,7 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
 
 /* ══ BOOK NAV (Sim & Roleplay pagination) ══ */
 .bk-nav{display:flex;align-items:center;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.bk-nav-bottom{margin-top:24px;margin-bottom:16px;padding-top:18px;border-top:1px solid rgba(107,143,168,.18)}
 .bk-btn{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(107,143,168,.2);background:var(--white);color:var(--slate);transition:all .2s;flex-shrink:0}
 .bk-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
 .bk-btn:disabled{opacity:.3;cursor:default}
@@ -1032,6 +1042,10 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
         <div class="sb-num">7</div>
         <div class="sb-text"><div class="sb-name">Simulación Avanzada</div><div class="sb-sub">30 min · Casos complejos ★</div></div>
       </div>
+      <div class="sb-item practice" id="nav-mod7" onclick="goSection(7)">
+        <div class="sb-num">8</div>
+        <div class="sb-text"><div class="sb-name">Aplicación en Vivo</div><div class="sb-sub">Foro · Participación en tiempo real</div></div>
+      </div>
     </div>
     <div class="sb-divider"></div>
     <div class="sb-spec-banner"><span style="font-size:14px">⚙️</span><div class="sbb-text">Administración</div></div>
@@ -1050,7 +1064,7 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
       <h1>Discovery Calls &amp; Screenings: Reclasificación Migratoria</h1>
       <p class="subtitle">Entrevista estructurada para explorar la reclasificación de casos migratorios activos. Discovery Calls: exploración abierta de todos los visados. Screenings: indagación dirigida a un visado específico asignado.</p>
       <div class="header-meta">
-        <div class="header-meta-item"><span>📚</span><strong>7 Módulos</strong></div>
+        <div class="header-meta-item"><span>📚</span><strong>8 Módulos</strong></div>
         <div class="header-meta-item"><span>📊</span><strong>70% Práctica · 30% Teoría</strong></div>
         <div class="header-meta-item"><span>⏱️</span><strong>2 horas máx.</strong></div>
         <div class="header-meta-item"><span>🎯</span><strong>Agente de la Firma</strong></div>
@@ -1183,7 +1197,7 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
 
       <div class="mod-nav-bar">
         <button class="mod-nav-btn mod-nav-prev" disabled>← Anterior</button>
-        <span class="mod-nav-counter">1 / 7</span>
+        <span class="mod-nav-counter">1 / 8</span>
         <button class="mod-nav-btn mod-nav-next" onclick="goSection(1)">Siguiente →</button>
       </div>
     </div>
@@ -1316,7 +1330,7 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
 
     <div class="mod-nav-bar">
         <button class="mod-nav-btn mod-nav-prev" disabled>← Anterior</button>
-        <span class="mod-nav-counter">2 / 7</span>
+        <span class="mod-nav-counter">2 / 8</span>
         <button class="mod-nav-btn mod-nav-next" onclick="goSection(2)">Siguiente →</button>
       </div>
     </div>
@@ -2101,7 +2115,7 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
 
       <div class="mod-nav-bar">
         <button class="mod-nav-btn mod-nav-prev" onclick="goSection(1)">← Anterior</button>
-        <span class="mod-nav-counter">3 / 7</span>
+        <span class="mod-nav-counter">3 / 8</span>
         <button class="mod-nav-btn mod-nav-next" onclick="goSection(3)">Siguiente →</button>
       </div>
     </div>
@@ -2963,7 +2977,7 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
 
       <div class="mod-nav-bar">
         <button class="mod-nav-btn mod-nav-prev" onclick="goSection(2)">← Anterior</button>
-        <span class="mod-nav-counter">4 / 7</span>
+        <span class="mod-nav-counter">4 / 8</span>
         <button class="mod-nav-btn mod-nav-next" onclick="goSection(4)">Siguiente →</button>
       </div>
     </div>
@@ -3608,11 +3622,23 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
           </div>
         </div>
       </div>
+      <div class="bk-nav bk-nav-bottom" id="qsBookNav2">
+        <button class="bk-prev-btn" id="qsPrevBtn2" onclick="bkNav('qs',-1)" disabled>← Anterior</button>
+        <div class="bk-tabs" id="qsTabs2">
+          <button class="bk-tab bk-active" onclick="bkGo('qs',0,this)">Caso 1</button>
+          <button class="bk-tab" onclick="bkGo('qs',1,this)">Caso 2</button>
+          <button class="bk-tab" onclick="bkGo('qs',2,this)">Caso 3</button>
+          <button class="bk-tab" onclick="bkGo('qs',3,this)">Caso 4</button>
+          <button class="bk-tab" onclick="bkGo('qs',4,this)">Caso 5</button>
+        </div>
+        <span class="bk-counter" id="qsCounter2">1 / 5</span>
+        <button class="bk-next-btn" id="qsNextBtn2" onclick="bkNav('qs',1)">Siguiente →</button>
+      </div>
       </div><!-- /qs-sim-content -->
 
       <div class="mod-nav-bar">
         <button class="mod-nav-btn mod-nav-prev" onclick="goSection(3)">← Anterior</button>
-        <span class="mod-nav-counter">5 / 7</span>
+        <span class="mod-nav-counter">5 / 8</span>
         <button class="mod-nav-btn mod-nav-next" onclick="goSection(5)">Siguiente →</button>
       </div>
     </div>
@@ -4020,11 +4046,30 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
     </div>
 
     
-  
+
+    <div class="bk-nav bk-nav-bottom" id="simBookNav2">
+      <button class="bk-prev-btn" id="simPrevBtn2" onclick="bkNav('sim',-1)" disabled>← Anterior</button>
+      <div class="bk-tabs" id="simTabs2">
+        <button class="bk-tab bk-active" onclick="bkGo('sim',0,this)">Caso A</button>
+        <button class="bk-tab" onclick="bkGo('sim',1,this)">Caso B</button>
+        <button class="bk-tab" onclick="bkGo('sim',2,this)">Caso C</button>
+        <button class="bk-tab" onclick="bkGo('sim',3,this)">Caso D</button>
+        <button class="bk-tab" onclick="bkGo('sim',4,this)">Caso E</button>
+        <button class="bk-tab" onclick="bkGo('sim',5,this)">Caso F</button>
+        <button class="bk-tab" onclick="bkGo('sim',6,this)">Caso G</button>
+        <button class="bk-tab" onclick="bkGo('sim',7,this)">Caso H</button>
+        <button class="bk-tab" onclick="bkGo('sim',8,this)" style="border-color:rgba(154,139,122,.3);color:var(--amber)">Caso I 🎯</button>
+        <button class="bk-tab" onclick="bkGo('sim',9,this)" style="border-color:rgba(154,139,122,.3);color:var(--amber)">Caso J 🎯</button>
+        <button class="bk-tab" onclick="bkGo('sim',10,this)" style="border-color:rgba(154,139,122,.3);color:var(--amber)">Caso K 🎯</button>
+        <button class="bk-tab" onclick="bkGo('sim',11,this)" style="border-color:rgba(154,139,122,.3);color:var(--amber)">Caso L 🎯</button>
+      </div>
+      <span class="bk-counter" id="simCounter2">1 / 12</span>
+      <button class="bk-next-btn" id="simNextBtn2" onclick="bkNav('sim',1)">Siguiente →</button>
+    </div>
 
       <div class="mod-nav-bar">
         <button class="mod-nav-btn mod-nav-prev" onclick="goSection(4)">← Anterior</button>
-        <span class="mod-nav-counter">6 / 7</span>
+        <span class="mod-nav-counter">6 / 8</span>
         <button class="mod-nav-btn mod-nav-next" onclick="goSection(6)">Siguiente →</button>
       </div>
     </div>
@@ -4262,9 +4307,433 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
       </div>
     </div>
 
+    <div class="bk-nav bk-nav-bottom" id="mod6BookNav2">
+      <button class="bk-prev-btn" id="mod6PrevBtn2" onclick="bkNav('mod6',-1)" disabled>← Anterior</button>
+      <div class="bk-tabs" id="mod6Tabs2">
+        <button class="bk-tab bk-active" onclick="bkGo('mod6',0,this)">Caso A</button>
+        <button class="bk-tab" onclick="bkGo('mod6',1,this)">Caso B</button>
+        <button class="bk-tab" onclick="bkGo('mod6',2,this)">Caso C</button>
+        <button class="bk-tab" onclick="bkGo('mod6',3,this)">Caso D</button>
+        <button class="bk-tab" onclick="bkGo('mod6',4,this)">Caso E</button>
+        <button class="bk-tab" onclick="bkGo('mod6',5,this)">Caso F</button>
+        <button class="bk-tab" onclick="bkGo('mod6',6,this)">Caso G</button>
+        <button class="bk-tab" onclick="bkGo('mod6',7,this)">Caso H</button>
+      </div>
+      <span class="bk-counter" id="mod6Counter2">1 / 8</span>
+      <button class="bk-next-btn" id="mod6NextBtn2" onclick="bkNav('mod6',1)">Siguiente →</button>
+    </div>
+
       <div class="mod-nav-bar">
         <button class="mod-nav-btn mod-nav-prev" onclick="goSection(5)">← Anterior</button>
-        <span class="mod-nav-counter">7 / 7</span>
+        <span class="mod-nav-counter">7 / 8</span>
+        <button class="mod-nav-btn mod-nav-next" onclick="goSection(7)">Siguiente →</button>
+      </div>
+    </div>
+
+    <div class="panel" id="sec7">
+      <div class="page-title">
+        <div class="pt-label">Módulo 8 · Participación en vivo</div>
+        <h2>Actividad de Aplicación</h2>
+        <p class="pt-sub">Participación en tiempo real · Foro colaborativo</p>
+      </div>
+
+      <style>
+        /* ═══════════════════════════════════════════════
+           MÓDULO 8 — APLICACIÓN EN VIVO
+           ═══════════════════════════════════════════════ */
+        .liv-instr{background:rgba(154,139,122,.07);border:1px solid rgba(154,139,122,.22);border-radius:12px;padding:14px 18px;margin-bottom:18px;display:flex;gap:12px;align-items:flex-start;font-size:13.5px;color:var(--slate);line-height:1.65}
+        .liv-instr-icon{flex-shrink:0;font-size:20px;line-height:1;margin-top:1px}
+        .liv-instr strong{color:var(--ink)}
+
+        .liv-video-wrap{position:relative;border-radius:14px;overflow:hidden;background:#000;border:1.5px solid rgba(26,31,38,.18);box-shadow:0 8px 28px rgba(26,31,38,.13);margin-bottom:22px;aspect-ratio:16/9;width:100%}
+        .liv-video-wrap iframe,.liv-video-wrap video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+        .liv-canva-fallback{position:absolute;bottom:8px;right:8px;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(26,31,38,.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);border-radius:999px;font-size:11px;color:rgba(255,255,255,.75);z-index:2;pointer-events:auto}
+        .liv-canva-fallback a{color:rgba(154,139,122,.95);font-weight:700;text-decoration:none;border-bottom:1px solid rgba(154,139,122,.4);padding-bottom:1px}
+        .liv-canva-fallback a:hover{color:#fff;border-bottom-color:#fff}
+        .liv-video-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:rgba(255,255,255,.55);font-family:'DM Sans',sans-serif;text-align:center;padding:24px}
+        .liv-video-empty-icon{font-size:48px;margin-bottom:10px;opacity:.7}
+        .liv-video-empty-title{font-size:14px;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:4px}
+        .liv-video-empty-sub{font-size:12px;opacity:.7;max-width:38ch;line-height:1.55}
+
+        .liv-board{background:var(--white);border-radius:14px;border:1px solid rgba(107,143,168,.18);overflow:hidden;box-shadow:0 6px 22px rgba(26,31,38,.06)}
+        .liv-board-head{padding:16px 20px;border-bottom:1px solid rgba(107,143,168,.13);display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:linear-gradient(135deg,rgba(154,139,122,.04),rgba(71,85,97,.04))}
+        .liv-board-title-block{display:flex;align-items:center;gap:11px}
+        .liv-board-icon{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+        .liv-board-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;color:var(--ink);line-height:1.2}
+        .liv-board-sub{font-size:11.5px;color:var(--slate);margin-top:1px}
+        .liv-board-status{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;background:rgba(35,166,99,.09);border:1px solid rgba(35,166,99,.25);border-radius:999px;font-size:10.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#1f7a4a}
+        .liv-pulse{width:7px;height:7px;background:#23a663;border-radius:50%;animation:livPulse 1.6s ease-in-out infinite}
+        @keyframes livPulse{0%,100%{box-shadow:0 0 0 0 rgba(35,166,99,.6)}50%{box-shadow:0 0 0 6px rgba(35,166,99,0)}}
+
+        .liv-form{padding:18px 20px;border-bottom:1px solid rgba(107,143,168,.13);background:rgba(154,139,122,.025)}
+        .liv-form-row{display:grid;grid-template-columns:240px 1fr auto;gap:10px;align-items:start}
+        @media (max-width:780px){.liv-form-row{grid-template-columns:1fr}}
+        .liv-input,.liv-textarea{width:100%;padding:11px 14px;background:var(--white);border:1.5px solid rgba(107,143,168,.22);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);transition:border-color .18s,box-shadow .18s;resize:none;line-height:1.5}
+        .liv-textarea{min-height:46px;max-height:120px}
+        .liv-input:focus,.liv-textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(154,139,122,.13)}
+        .liv-input.error,.liv-textarea.error{border-color:#dc2626;box-shadow:0 0 0 3px rgba(220,38,38,.12)}
+        .liv-send{padding:11px 22px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;transition:transform .18s,box-shadow .18s;display:inline-flex;align-items:center;gap:8px;justify-content:center;min-width:120px;white-space:nowrap}
+        .liv-send:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 22px rgba(71,85,97,.32)}
+        .liv-send:disabled{opacity:.55;cursor:not-allowed;transform:none}
+        .liv-send-spin{width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:livSpin .7s linear infinite;display:none}
+        .liv-send.is-loading .liv-send-spin{display:inline-block}
+        .liv-send.is-loading .liv-send-text{opacity:.6}
+        @keyframes livSpin{to{transform:rotate(360deg)}}
+
+        .liv-toast{margin-top:10px;padding:9px 14px;border-radius:8px;font-size:12px;font-weight:600;display:none;animation:livFade .3s ease}
+        .liv-toast.show{display:block}
+        .liv-toast.success{background:rgba(35,166,99,.1);border:1px solid rgba(35,166,99,.28);color:#1f7a4a}
+        .liv-toast.error{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.28);color:#991b1b}
+        @keyframes livFade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+        .liv-feed{padding:18px 20px;max-height:520px;overflow-y:auto;scroll-behavior:smooth}
+        .liv-feed::-webkit-scrollbar{width:6px}
+        .liv-feed::-webkit-scrollbar-thumb{background:rgba(107,143,168,.3);border-radius:3px}
+        .liv-feed-empty{text-align:center;padding:36px 20px;color:var(--slate)}
+        .liv-feed-empty-icon{font-size:38px;opacity:.45;margin-bottom:10px}
+        .liv-feed-empty-text{font-size:13px;line-height:1.6;max-width:36ch;margin:0 auto}
+
+        .liv-msg{padding:13px 16px;background:var(--white);border:1px solid rgba(107,143,168,.16);border-radius:11px;margin-bottom:10px;animation:livIn .35s cubic-bezier(.16,.7,.3,1);transition:border-color .2s}
+        .liv-msg:hover{border-color:rgba(154,139,122,.32)}
+        .liv-msg-head{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+        .liv-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--gold));color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;text-transform:uppercase}
+        .liv-msg-name{font-size:12.5px;font-weight:800;color:var(--ink);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .liv-msg-time{font-size:10.5px;color:var(--slate);font-variant-numeric:tabular-nums;flex-shrink:0}
+        .liv-msg-text{font-size:13px;color:var(--ink);line-height:1.6;word-wrap:break-word;white-space:pre-wrap;padding-left:37px}
+        .liv-msg.is-new{border-color:rgba(35,166,99,.4);background:linear-gradient(135deg,rgba(35,166,99,.04),var(--white))}
+        @keyframes livIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+        .liv-counter{font-size:11px;color:var(--slate);padding:0 20px 14px;text-align:right;font-variant-numeric:tabular-nums}
+      </style>
+
+      <div class="liv-instr">
+        <span class="liv-instr-icon">🎥</span>
+        <div>Mira el video y participa colocando tus <strong>preguntas o comentarios</strong> en el foro en vivo. Tus aportes serán visibles para el resto del equipo en tiempo real.</div>
+      </div>
+
+      <!-- VIDEO -->
+      <div class="liv-video-wrap" id="livVideoWrap">
+        <div class="liv-video-empty">
+          <div class="liv-video-empty-icon">▶</div>
+          <div class="liv-video-empty-title">Video aún no configurado</div>
+          <div class="liv-video-empty-sub">Pega el enlace del video en la constante <code style="background:rgba(255,255,255,.1);padding:1px 6px;border-radius:4px;color:rgba(255,255,255,.85)">LIVE_VIDEO_URL</code> al inicio del script.</div>
+        </div>
+      </div>
+
+      <!-- FORO -->
+      <div class="liv-board">
+        <div class="liv-board-head">
+          <div class="liv-board-title-block">
+            <div class="liv-board-icon">💬</div>
+            <div>
+              <div class="liv-board-title">Foro en vivo</div>
+              <div class="liv-board-sub">Preguntas y comentarios del equipo</div>
+            </div>
+          </div>
+          <div class="liv-board-status"><span class="liv-pulse"></span>Auto-refresh activo</div>
+        </div>
+
+        <div class="liv-form">
+          <div class="liv-form-row">
+            <input type="text" class="liv-input" id="livName" maxlength="40" placeholder="Escribe tu nombre" autocomplete="off">
+            <textarea class="liv-textarea" id="livMsg" maxlength="500" placeholder="Escribe tu pregunta o comentario..." rows="1"></textarea>
+            <button class="liv-send" id="livSendBtn" onclick="livSend()"><span class="liv-send-spin"></span><span class="liv-send-text">Enviar</span></button>
+          </div>
+          <div class="liv-toast" id="livToast"></div>
+        </div>
+
+        <div class="liv-feed" id="livFeed">
+          <div class="liv-feed-empty" id="livFeedEmpty">
+            <div class="liv-feed-empty-icon">💭</div>
+            <div class="liv-feed-empty-text">Aún no hay mensajes en el foro. Sé el primero en compartir una pregunta o comentario.</div>
+          </div>
+        </div>
+        <div class="liv-counter" id="livCounter"></div>
+      </div>
+
+      <script>
+      (function () {
+        // ═══════════════════════════════════════════════
+        // Configuración (editable)
+        // ═══════════════════════════════════════════════
+        const LIVE_VIDEO_URL = "https://www.canva.com/design/DAHA8ddwbJY/CPRcX-T6CtYDm2zAdIEuTg/watch";
+        const LIVE_ENDPOINT  = "PEGAR_ENDPOINT_AQUI"; // Apps Script /exec o Firebase REST
+        const REFRESH_MS = 5000;
+
+        // ═══════════════════════════════════════════════
+        // Video adaptable (YouTube · Vimeo · Drive · Canva · MP4)
+        // ═══════════════════════════════════════════════
+        function buildVideo(url) {
+          if (!url || url === "[PEGAR_LINK_VIDEO]") return null;
+          var u = url.trim();
+          // YouTube
+          var ytMatch = u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+          if (ytMatch) return '<iframe src="https://www.youtube.com/embed/' + ytMatch[1] + '?rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
+          // Vimeo
+          var vmMatch = u.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+          if (vmMatch) return '<iframe src="https://player.vimeo.com/video/' + vmMatch[1] + '" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>';
+          // Drive
+          var dvMatch = u.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+          if (dvMatch) return '<iframe src="https://drive.google.com/file/d/' + dvMatch[1] + '/preview" allow="autoplay" allowfullscreen></iframe>';
+          // Canva (formato /design/{id}/{token}/watch o /view)
+          // Importante: el embed sólo funciona si el diseño está publicado como "Cualquiera con el enlace"
+          var cvMatch = u.match(/canva\.com\/design\/([a-zA-Z0-9_-]+)\/([a-zA-Z0-9_-]+)\/(watch|view|edit)/);
+          if (cvMatch) {
+            var embedUrl = 'https://www.canva.com/design/' + cvMatch[1] + '/' + cvMatch[2] + '/view?embed';
+            return '<iframe src="' + embedUrl + '" allow="fullscreen" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>' +
+              '<div class="liv-canva-fallback">' +
+                '<span>¿No carga el video?</span>' +
+                '<a href="' + u + '" target="_blank" rel="noopener noreferrer">Abrir en Canva ↗</a>' +
+              '</div>';
+          }
+          // Embed directo
+          if (/\/embed\//.test(u) || /player\./.test(u)) return '<iframe src="' + u + '" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';
+          // MP4 directo
+          if (/\.(mp4|webm|ogg)(\?|$)/i.test(u)) return '<video controls preload="metadata" playsinline><source src="' + u + '">Su navegador no soporta video HTML5.</video>';
+          // Fallback: iframe genérico
+          return '<iframe src="' + u + '" allow="autoplay; fullscreen" allowfullscreen></iframe>';
+        }
+        var videoHTML = buildVideo(LIVE_VIDEO_URL);
+        if (videoHTML) document.getElementById('livVideoWrap').innerHTML = videoHTML;
+
+        // ═══════════════════════════════════════════════
+        // Estado del foro
+        // ═══════════════════════════════════════════════
+        var feedEl    = document.getElementById('livFeed');
+        var emptyEl   = document.getElementById('livFeedEmpty');
+        var counterEl = document.getElementById('livCounter');
+        var nameEl    = document.getElementById('livName');
+        var msgEl     = document.getElementById('livMsg');
+        var sendBtn   = document.getElementById('livSendBtn');
+        var toastEl   = document.getElementById('livToast');
+        var seenIds   = {};
+        var localMsgs = []; // fallback si no hay endpoint
+
+        // Auto-resize textarea
+        msgEl.addEventListener('input', function () {
+          this.style.height = 'auto';
+          this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // Prefill nombre desde el training (lee la variable string, no el elemento DOM)
+        try {
+          var pn = window.participantName;
+          // Si window.participantName resuelve al <input id="participantName"> (no string),
+          // leemos su .value en su lugar
+          if (pn && typeof pn === 'object' && 'value' in pn) {
+            pn = pn.value;
+          }
+          if (typeof pn === 'string' && pn.trim()) {
+            nameEl.value = pn.trim();
+          }
+        } catch (e) { /* silenciar */ }
+
+        // ═══════════════════════════════════════════════
+        // UI helpers
+        // ═══════════════════════════════════════════════
+        function toast(msg, type) {
+          toastEl.textContent = msg;
+          toastEl.className = 'liv-toast show ' + (type || 'success');
+          setTimeout(function () { toastEl.classList.remove('show'); }, 2800);
+        }
+        function initials(name) {
+          var parts = (name || '?').trim().split(/\s+/);
+          return ((parts[0] || '?')[0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+        }
+        function escapeHTML(s) {
+          return String(s).replace(/[&<>"']/g, function (c) {
+            return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c];
+          });
+        }
+        function fmtTime(ts) {
+          try {
+            var d = new Date(ts);
+            return d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+          } catch (e) { return ''; }
+        }
+        function msgKey(m) {
+          return (m.id || '') + '|' + (m.ts || '') + '|' + (m.name || '') + '|' + (m.text || '').slice(0, 30);
+        }
+
+        // ═══════════════════════════════════════════════
+        // Render
+        // ═══════════════════════════════════════════════
+        function render(msgs, highlightKey) {
+          msgs = msgs || [];
+          // Ordenar de más reciente a más antiguo
+          msgs.sort(function (a, b) {
+            return new Date(b.ts || 0) - new Date(a.ts || 0);
+          });
+          if (!msgs.length) {
+            emptyEl.style.display = 'block';
+            counterEl.textContent = '';
+            // limpiar mensajes previos pero conservar el empty
+            Array.prototype.slice.call(feedEl.querySelectorAll('.liv-msg')).forEach(function (n) { n.remove(); });
+            return;
+          }
+          emptyEl.style.display = 'none';
+          var html = msgs.map(function (m) {
+            var k = msgKey(m);
+            var isNew = (k === highlightKey);
+            return '<div class="liv-msg' + (isNew ? ' is-new' : '') + '">' +
+              '<div class="liv-msg-head">' +
+                '<div class="liv-avatar">' + escapeHTML(initials(m.name)) + '</div>' +
+                '<div class="liv-msg-name">' + escapeHTML(m.name || 'Anónimo') + '</div>' +
+                '<div class="liv-msg-time">' + escapeHTML(fmtTime(m.ts)) + '</div>' +
+              '</div>' +
+              '<div class="liv-msg-text">' + escapeHTML(m.text || '') + '</div>' +
+            '</div>';
+          }).join('');
+          // limpiar mensajes previos
+          Array.prototype.slice.call(feedEl.querySelectorAll('.liv-msg')).forEach(function (n) { n.remove(); });
+          feedEl.insertAdjacentHTML('beforeend', html);
+          counterEl.textContent = msgs.length + ' mensaje' + (msgs.length === 1 ? '' : 's');
+          if (highlightKey) {
+            feedEl.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        }
+
+        // ═══════════════════════════════════════════════
+        // Endpoint helpers (Apps Script o Firebase REST)
+        // ═══════════════════════════════════════════════
+        function isFirebase() {
+          return /firebaseio\.com|firebasedatabase\.app/.test(LIVE_ENDPOINT);
+        }
+        function endpointReady() {
+          return LIVE_ENDPOINT && LIVE_ENDPOINT !== 'PEGAR_ENDPOINT_AQUI';
+        }
+        function postMessage(payload) {
+          if (!endpointReady()) {
+            // modo local: guardar en memoria
+            localMsgs.unshift(payload);
+            return Promise.resolve({ ok: true });
+          }
+          if (isFirebase()) {
+            var base = LIVE_ENDPOINT.replace(/\/$/, '');
+            var url = base.indexOf('.json') >= 0 ? base : base + '/messages.json';
+            return fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            }).then(function (r) { return r.json(); });
+          }
+          // Apps Script
+          var fd = new FormData();
+          fd.append('action', 'liv_post');
+          fd.append('data', JSON.stringify(payload));
+          return fetch(LIVE_ENDPOINT, { method: 'POST', body: fd, mode: 'no-cors', keepalive: true })
+            .then(function () { return { ok: true }; });
+        }
+        function fetchMessages() {
+          if (!endpointReady()) {
+            return Promise.resolve(localMsgs.slice());
+          }
+          if (isFirebase()) {
+            var base = LIVE_ENDPOINT.replace(/\/$/, '');
+            var url = base.indexOf('.json') >= 0 ? base : base + '/messages.json';
+            return fetch(url).then(function (r) { return r.json(); }).then(function (data) {
+              if (!data) return [];
+              return Object.keys(data).map(function (k) {
+                var m = data[k]; m.id = k; return m;
+              });
+            }).catch(function () { return null; });
+          }
+          // Apps Script vía JSONP para esquivar CORS
+          return new Promise(function (resolve) {
+            var cbName = '__livCb_' + Date.now() + Math.floor(Math.random() * 1000);
+            var timer = setTimeout(function () {
+              delete window[cbName];
+              var s = document.getElementById(cbName);
+              if (s) s.remove();
+              resolve(null);
+            }, 6000);
+            window[cbName] = function (data) {
+              clearTimeout(timer);
+              delete window[cbName];
+              var s = document.getElementById(cbName);
+              if (s) s.remove();
+              resolve(data && data.ok ? (data.messages || []) : null);
+            };
+            var script = document.createElement('script');
+            script.id = cbName;
+            script.src = LIVE_ENDPOINT + (LIVE_ENDPOINT.indexOf('?') >= 0 ? '&' : '?') +
+              'action=liv_list&callback=' + cbName;
+            script.onerror = function () {
+              clearTimeout(timer);
+              delete window[cbName];
+              var s = document.getElementById(cbName);
+              if (s) s.remove();
+              resolve(null);
+            };
+            document.body.appendChild(script);
+          });
+        }
+
+        // ═══════════════════════════════════════════════
+        // Refresh loop
+        // ═══════════════════════════════════════════════
+        var lastHash = '';
+        var lastNewKey = null;
+        function refresh() {
+          fetchMessages().then(function (msgs) {
+            if (msgs === null) return; // error transitorio, no tocar render
+            var hash = msgs.map(msgKey).join('||');
+            if (hash !== lastHash) {
+              lastHash = hash;
+              render(msgs, lastNewKey);
+              lastNewKey = null;
+            }
+          });
+        }
+        refresh();
+        setInterval(refresh, REFRESH_MS);
+
+        // ═══════════════════════════════════════════════
+        // Send
+        // ═══════════════════════════════════════════════
+        window.livSend = function () {
+          var name = nameEl.value.trim();
+          var msg  = msgEl.value.trim();
+          var ok = true;
+          if (!name) { nameEl.classList.add('error'); ok = false; }
+          else nameEl.classList.remove('error');
+          if (!msg)  { msgEl.classList.add('error'); ok = false; }
+          else msgEl.classList.remove('error');
+          if (!ok) { toast('Completa nombre y mensaje', 'error'); return; }
+
+          var payload = { name: name, text: msg, ts: new Date().toISOString() };
+          sendBtn.classList.add('is-loading');
+          sendBtn.disabled = true;
+
+          postMessage(payload).then(function () {
+            sendBtn.classList.remove('is-loading');
+            sendBtn.disabled = false;
+            msgEl.value = '';
+            msgEl.style.height = 'auto';
+            toast('✓ Mensaje publicado', 'success');
+            lastNewKey = msgKey(payload);
+            // refrescar inmediatamente
+            setTimeout(refresh, 400);
+          }).catch(function () {
+            sendBtn.classList.remove('is-loading');
+            sendBtn.disabled = false;
+            toast('No se pudo enviar. Intenta de nuevo.', 'error');
+          });
+        };
+
+        // Enter para enviar (Shift+Enter = salto de línea)
+        msgEl.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            livSend();
+          }
+        });
+      })();
+      </script>
+
+      <div class="mod-nav-bar">
+        <button class="mod-nav-btn mod-nav-prev" onclick="goSection(6)">← Anterior</button>
+        <span class="mod-nav-counter">8 / 8</span>
         <button class="mod-nav-btn mod-nav-next" onclick="showFinalScore()" style="background:linear-gradient(135deg,var(--gold),#6e5f50)">Finalizar Training →</button>
       </div>
     </div>
@@ -4396,7 +4865,7 @@ function toggleSidebar(){document.getElementById("sidebar").classList.toggle("op
 
 <script>
   let currentSection = 0;
-  const totalSections = 7;
+  const totalSections = 8;
   let score = 0;
   let simAnswered = {};
   let participantName = '';
@@ -4540,33 +5009,55 @@ function toggleSidebar(){document.getElementById("sidebar").classList.toggle("op
   const simTotal = 12;
 
   function bkGo(prefix, n, btn) {
+    // Helper: sincroniza el estado de UNA pestaña entre las barras top y bottom
+    function _syncTab(tabsId, tabsId2, n) {
+      var top = document.querySelector('#' + tabsId + ' .bk-tab:nth-child(' + (n + 1) + ')');
+      var bot = document.querySelector('#' + tabsId2 + ' .bk-tab:nth-child(' + (n + 1) + ')');
+      if (top) top.classList.add('bk-active');
+      if (bot) bot.classList.add('bk-active');
+    }
+    function _setText(id, text) {
+      var el = document.getElementById(id); if (el) el.textContent = text;
+    }
+    function _setDisabled(id, val) {
+      var el = document.getElementById(id); if (el) el.disabled = val;
+    }
     if (prefix === 'sim') {
       document.querySelectorAll('[id^="sim-panel-"]').forEach(p => p.classList.remove('bk-active'));
-      document.querySelectorAll('#simTabs .bk-tab').forEach(t => t.classList.remove('bk-active'));
+      document.querySelectorAll('#simTabs .bk-tab, #simTabs2 .bk-tab').forEach(t => t.classList.remove('bk-active'));
       document.getElementById('sim-panel-' + n).classList.add('bk-active');
-      if (btn) btn.classList.add('bk-active');
+      _syncTab('simTabs', 'simTabs2', n);
       simCurrent = n;
-      document.getElementById('simCounter').textContent = (n + 1) + ' / ' + simTotal;
-      document.getElementById('simPrevBtn').disabled = n === 0;
-      document.getElementById('simNextBtn').disabled = n === simTotal - 1;
+      _setText('simCounter', (n + 1) + ' / ' + simTotal);
+      _setText('simCounter2', (n + 1) + ' / ' + simTotal);
+      _setDisabled('simPrevBtn', n === 0);
+      _setDisabled('simPrevBtn2', n === 0);
+      _setDisabled('simNextBtn', n === simTotal - 1);
+      _setDisabled('simNextBtn2', n === simTotal - 1);
     } else if (prefix === 'mod6') {
       document.querySelectorAll('[id^="mod6-panel-"]').forEach(p => p.classList.remove('bk-active'));
-      document.querySelectorAll('#mod6Tabs .bk-tab').forEach(t => t.classList.remove('bk-active'));
+      document.querySelectorAll('#mod6Tabs .bk-tab, #mod6Tabs2 .bk-tab').forEach(t => t.classList.remove('bk-active'));
       document.getElementById('mod6-panel-' + n).classList.add('bk-active');
-      if (btn) btn.classList.add('bk-active');
+      _syncTab('mod6Tabs', 'mod6Tabs2', n);
       mod6Current = n;
-      document.getElementById('mod6Counter').textContent = (n + 1) + ' / ' + mod6Total;
-      document.getElementById('mod6PrevBtn').disabled = n === 0;
-      document.getElementById('mod6NextBtn').disabled = n === mod6Total - 1;
+      _setText('mod6Counter', (n + 1) + ' / ' + mod6Total);
+      _setText('mod6Counter2', (n + 1) + ' / ' + mod6Total);
+      _setDisabled('mod6PrevBtn', n === 0);
+      _setDisabled('mod6PrevBtn2', n === 0);
+      _setDisabled('mod6NextBtn', n === mod6Total - 1);
+      _setDisabled('mod6NextBtn2', n === mod6Total - 1);
     } else if (prefix === 'qs') {
       document.querySelectorAll('[id^="qs-panel-"]').forEach(p => p.classList.remove('bk-active'));
-      document.querySelectorAll('#qsTabs .bk-tab').forEach(t => t.classList.remove('bk-active'));
+      document.querySelectorAll('#qsTabs .bk-tab, #qsTabs2 .bk-tab').forEach(t => t.classList.remove('bk-active'));
       document.getElementById('qs-panel-' + n).classList.add('bk-active');
-      if (btn) btn.classList.add('bk-active');
+      _syncTab('qsTabs', 'qsTabs2', n);
       qsCurrent = n;
-      document.getElementById('qsCounter').textContent = (n + 1) + ' / ' + qsTotal;
-      document.getElementById('qsPrevBtn').disabled = n === 0;
-      document.getElementById('qsNextBtn').disabled = n === qsTotal - 1;
+      _setText('qsCounter', (n + 1) + ' / ' + qsTotal);
+      _setText('qsCounter2', (n + 1) + ' / ' + qsTotal);
+      _setDisabled('qsPrevBtn', n === 0);
+      _setDisabled('qsPrevBtn2', n === 0);
+      _setDisabled('qsNextBtn', n === qsTotal - 1);
+      _setDisabled('qsNextBtn2', n === qsTotal - 1);
     }
   }
 
