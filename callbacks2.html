@@ -4448,6 +4448,13 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
             <div class="liv-feed-empty-text">Aún no hay mensajes en el foro. Sé el primero en compartir una pregunta o comentario.</div>
           </div>
         </div>
+
+        <!-- Diagnóstico (visible al añadir ?debug a la URL) -->
+        <div id="livDiag" style="display:none;margin-top:18px;padding:14px 16px;background:rgba(26,31,38,.04);border:1px dashed rgba(107,143,168,.3);border-radius:10px;font-family:ui-monospace,monospace;font-size:11px;color:var(--slate);line-height:1.6">
+          <div style="font-weight:800;color:var(--ink);margin-bottom:8px;font-family:'DM Sans',sans-serif">🔧 Diagnóstico del foro</div>
+          <div id="livDiagOut">Iniciando…</div>
+          <button onclick="livDebugTest()" style="margin-top:10px;padding:6px 12px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer">Probar fetch ahora</button>
+        </div>
         <div class="liv-counter" id="livCounter"></div>
       </div>
 
@@ -4457,7 +4464,7 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
         // Configuración (editable)
         // ═══════════════════════════════════════════════
         const LIVE_VIDEO_URL = "https://www.canva.com/design/DAHA8ddwbJY/CPRcX-T6CtYDm2zAdIEuTg/watch";
-        const LIVE_ENDPOINT  = "PEGAR_ENDPOINT_AQUI"; // Apps Script /exec o Firebase REST
+        const LIVE_ENDPOINT  = "https://script.google.com/macros/s/AKfycbx5eDli_HbkJveVWSCyMMmjho9rmiqyZqiAPk8MlSGfxidizgCaXWVbIVPGqvxyWBVuvg/exec";
         const REFRESH_MS = 5000;
 
         // ═══════════════════════════════════════════════
@@ -4476,11 +4483,12 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
           var dvMatch = u.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
           if (dvMatch) return '<iframe src="https://drive.google.com/file/d/' + dvMatch[1] + '/preview" allow="autoplay" allowfullscreen></iframe>';
           // Canva (formato /design/{id}/{token}/watch o /view)
-          // Importante: el embed sólo funciona si el diseño está publicado como "Cualquiera con el enlace"
+          // El embed correcto usa /watch?embed (no /view?embed)
+          // Importante: el diseño debe estar publicado como "Cualquiera con el enlace"
           var cvMatch = u.match(/canva\.com\/design\/([a-zA-Z0-9_-]+)\/([a-zA-Z0-9_-]+)\/(watch|view|edit)/);
           if (cvMatch) {
-            var embedUrl = 'https://www.canva.com/design/' + cvMatch[1] + '/' + cvMatch[2] + '/view?embed';
-            return '<iframe src="' + embedUrl + '" allow="fullscreen" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>' +
+            var embedUrl = 'https://www.canva.com/design/' + cvMatch[1] + '/' + cvMatch[2] + '/watch?embed';
+            return '<iframe src="' + embedUrl + '" allow="fullscreen" allowfullscreen loading="lazy"></iframe>' +
               '<div class="liv-canva-fallback">' +
                 '<span>¿No carga el video?</span>' +
                 '<a href="' + u + '" target="_blank" rel="noopener noreferrer">Abrir en Canva ↗</a>' +
@@ -4638,36 +4646,137 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
               });
             }).catch(function () { return null; });
           }
-          // Apps Script vía JSONP para esquivar CORS
+          // Apps Script: usamos iframe + postMessage (esquiva CORS y CSP estrictas)
+          // El doGet del Apps Script DEBE incluir un postMessage al window padre cuando recibe ?embed=1
+          // Si esto falla, hacemos último intento con fetch directo
           return new Promise(function (resolve) {
-            var cbName = '__livCb_' + Date.now() + Math.floor(Math.random() * 1000);
-            var timer = setTimeout(function () {
-              delete window[cbName];
-              var s = document.getElementById(cbName);
-              if (s) s.remove();
-              resolve(null);
-            }, 6000);
-            window[cbName] = function (data) {
-              clearTimeout(timer);
-              delete window[cbName];
-              var s = document.getElementById(cbName);
-              if (s) s.remove();
-              resolve(data && data.ok ? (data.messages || []) : null);
-            };
-            var script = document.createElement('script');
-            script.id = cbName;
-            script.src = LIVE_ENDPOINT + (LIVE_ENDPOINT.indexOf('?') >= 0 ? '&' : '?') +
-              'action=liv_list&callback=' + cbName;
-            script.onerror = function () {
-              clearTimeout(timer);
-              delete window[cbName];
-              var s = document.getElementById(cbName);
-              if (s) s.remove();
-              resolve(null);
-            };
-            document.body.appendChild(script);
+            var resolved = false;
+            var iframe = null;
+
+            function cleanup() {
+              if (iframe && iframe.parentNode) iframe.parentNode.removeChild(iframe);
+              window.removeEventListener('message', onMsg);
+            }
+            function done(value) {
+              if (resolved) return;
+              resolved = true;
+              cleanup();
+              resolve(value);
+            }
+            function onMsg(ev) {
+              // El iframe del Apps Script (en script.googleusercontent.com) envía postMessage
+              if (!ev.data || typeof ev.data !== 'object' || ev.data.__source !== 'tmlf-foro') return;
+              done(ev.data.messages || []);
+            }
+            window.addEventListener('message', onMsg);
+
+            // Plan A: fetch normal
+            fetch(LIVE_ENDPOINT + (LIVE_ENDPOINT.indexOf('?') >= 0 ? '&' : '?') + 'action=liv_list', {
+              method: 'GET',
+              redirect: 'follow',
+              cache: 'no-store'
+            })
+            .then(function (r) {
+              if (!r.ok) throw new Error('HTTP ' + r.status);
+              return r.text();
+            })
+            .then(function (txt) {
+              try {
+                var data = JSON.parse(txt);
+                if (data && data.ok) done(data.messages || []);
+                else done(null);
+              } catch (e) { done(null); }
+            })
+            .catch(function (err) {
+              if (typeof diagLog === 'function') diagLog('⚠ fetch falló (' + (err.message || err) + '), intentando JSONP fallback');
+              // Plan B (fallback): JSONP via script element con Trusted Types policy
+              tryJsonpFallback(done);
+            });
+
+            // Timeout final
+            setTimeout(function () { done(null); }, 8000);
           });
         }
+
+        // Fallback JSONP: usado solo si fetch falla.
+        // En entornos con CSP estricta, este también puede fallar — en cuyo caso
+        // la promesa se resolverá con null y el feed mantendrá su último estado.
+        function tryJsonpFallback(done) {
+          try {
+            var cbName = '__livFb_' + Date.now() + Math.floor(Math.random() * 1000);
+            var timer = setTimeout(function () {
+              try { delete window[cbName]; } catch (e) {}
+              var s = document.getElementById(cbName);
+              if (s) s.remove();
+              done(null);
+            }, 5000);
+            window[cbName] = function (data) {
+              clearTimeout(timer);
+              try { delete window[cbName]; } catch (e) {}
+              var s = document.getElementById(cbName);
+              if (s) s.remove();
+              done(data && data.ok ? (data.messages || []) : null);
+            };
+            var url = LIVE_ENDPOINT + (LIVE_ENDPOINT.indexOf('?') >= 0 ? '&' : '?') +
+              'action=liv_list&callback=' + cbName;
+            var script = document.createElement('script');
+            script.id = cbName;
+            try {
+              if (window.trustedTypes && window.trustedTypes.createPolicy) {
+                if (!window.__livTTPolicy) {
+                  window.__livTTPolicy = window.trustedTypes.createPolicy('liv-jsonp', {
+                    createScriptURL: function (s) { return s; }
+                  });
+                }
+                script.src = window.__livTTPolicy.createScriptURL(url);
+              } else {
+                script.src = url;
+              }
+            } catch (e) { script.src = url; }
+            script.onerror = function () {
+              clearTimeout(timer);
+              try { delete window[cbName]; } catch (e) {}
+              var s = document.getElementById(cbName);
+              if (s) s.remove();
+              if (typeof diagLog === 'function') diagLog('✗ Fallback JSONP también falló — el entorno bloquea conexiones a Apps Script');
+              done(null);
+            };
+            document.body.appendChild(script);
+          } catch (e) {
+            done(null);
+          }
+        }
+
+        // ═══════════════════════════════════════════════
+        // Diagnóstico (?debug en URL)
+        // ═══════════════════════════════════════════════
+        if (location.search.indexOf('debug') >= 0) {
+          var diag = document.getElementById('livDiag');
+          if (diag) diag.style.display = 'block';
+        }
+        function diagLog(msg) {
+          var out = document.getElementById('livDiagOut');
+          if (!out) return;
+          var t = new Date().toLocaleTimeString();
+          out.innerHTML = '<div>[' + t + '] ' + msg + '</div>' + out.innerHTML;
+        }
+        window.livDebugTest = function () {
+          diagLog('▶ Llamando ' + LIVE_ENDPOINT + '?action=liv_list');
+          if (!endpointReady()) {
+            diagLog('✗ LIVE_ENDPOINT no configurado');
+            return;
+          }
+          fetchMessages().then(function (msgs) {
+            if (msgs === null) {
+              diagLog('✗ La petición falló (null) — el script no respondió, o devolvió un error.');
+            } else if (!Array.isArray(msgs)) {
+              diagLog('✗ Respuesta inesperada: ' + JSON.stringify(msgs).substring(0, 200));
+            } else {
+              diagLog('✓ Mensajes recibidos: ' + msgs.length);
+              if (msgs.length > 0) diagLog('  Primero: ' + JSON.stringify(msgs[0]).substring(0, 200));
+            }
+          });
+        };
 
         // ═══════════════════════════════════════════════
         // Refresh loop
@@ -5331,38 +5440,22 @@ function toggleSidebar(){document.getElementById("sidebar").classList.toggle("op
     document.getElementById('admLastRefresh').textContent = 'Actualizado: ' + new Date().toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'});
   }
 
-  // ── JSONP a la Sheet para esquivar CORS ──
+  // ── Fetch CORS a la Sheet (reemplaza JSONP por compatibilidad con CSP estricta) ──
   function admFetchSheetSummary() {
-    return new Promise(function (resolve, reject) {
-      if (!GAS_URL || GAS_URL.indexOf('http') !== 0) { resolve(null); return; }
-      var cbName = '__admCb_' + Date.now();
-      var timer = setTimeout(function () {
-        delete window[cbName];
-        var s = document.getElementById(cbName);
-        if (s) s.remove();
-        resolve(null);
-      }, 8000);
-      window[cbName] = function (data) {
-        clearTimeout(timer);
-        delete window[cbName];
-        var s = document.getElementById(cbName);
-        if (s) s.remove();
-        resolve(data && data.ok ? data : null);
-      };
-      var script = document.createElement('script');
-      script.id = cbName;
-      script.src = GAS_URL + '?action=summary&key=' +
-        encodeURIComponent(window.__admSheetKey || 'TMLF_ADMIN_2026') +
-        '&callback=' + cbName;
-      script.onerror = function () {
-        clearTimeout(timer);
-        delete window[cbName];
-        s = document.getElementById(cbName);
-        if (s) s.remove();
-        resolve(null);
-      };
-      document.body.appendChild(script);
-    });
+    if (!GAS_URL || GAS_URL.indexOf('http') !== 0) return Promise.resolve(null);
+    var url = GAS_URL + '?action=summary&key=' + encodeURIComponent(window.__admSheetKey || 'TMLF_ADMIN_2026');
+    return fetch(url, { method: 'GET', redirect: 'follow' })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.text();
+      })
+      .then(function (txt) {
+        try {
+          var data = JSON.parse(txt);
+          return data && data.ok ? data : null;
+        } catch (e) { return null; }
+      })
+      .catch(function () { return null; });
   }
 
   function admFormatSheetDate(iso, isDate) {
