@@ -1,0 +1,1846 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Common Core Visa T | TMLF Learning Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#111827;--slate:#6B7280;--ice:#a78bfa;
+  --gold:#c9a84c;--gold-bg:rgba(201,168,76,.09);
+  --white:#fff;--bg:#f3f0ff;--shadow:0 8px 28px rgba(91,33,182,.1);--radius:16px;
+  --nav-h:56px;--sidebar-w:272px;
+  --green:#1e6641;--green-bg:rgba(30,102,65,.08);
+  --red:#8b2c2c;--red-bg:rgba(180,50,50,.08);
+  --amber:#7a5200;--amber-bg:rgba(180,130,0,.09);
+  --accent:#5B21B6;--accent2:#7C3AED;
+  --sidebar-bg:#0e0720;
+  --purple:#7c3aed;--purple-light:#ede9fe;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65}
+
+/* ══ TOP NAV ══ */
+.topnav{position:fixed;top:0;left:0;right:0;z-index:300;height:var(--nav-h);background:rgba(14,7,32,.97);backdrop-filter:blur(16px);border-bottom:1px solid rgba(124,58,237,.18);display:flex;align-items:center;padding:0 18px;gap:10px}
+.topnav .brand{font-family:'Cormorant Garamond',serif;font-size:19px;color:#fff;white-space:nowrap;letter-spacing:.3px;display:flex;align-items:center;gap:10px}
+.topnav .brand .seal{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,rgba(124,58,237,.35),rgba(124,58,237,.1));border:1px solid rgba(124,58,237,.35);display:flex;align-items:center;justify-content:center;font-size:14px}
+.topnav .brand span{color:var(--ice)}
+.topnav-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.topnav-pill{padding:5px 14px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:rgba(124,58,237,.18);border:1px solid rgba(124,58,237,.35);color:rgba(167,139,250,.95)}
+.sidebar-toggle{display:none;background:none;border:none;color:#fff;font-size:20px;cursor:pointer;padding:4px 8px}
+@media(max-width:900px){.sidebar-toggle{display:block}}
+
+/* ══ SHELL ══ */
+.app-shell{display:flex;min-height:100vh;padding-top:var(--nav-h)}
+
+/* ══ SIDEBAR ══ */
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--sidebar-bg);position:fixed;top:var(--nav-h);bottom:0;left:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.08) transparent;border-right:1px solid rgba(124,58,237,.1);z-index:200;transition:transform .3s ease}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(167,139,250,.15);border-radius:3px}
+.sidebar-header{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.05)}
+.sidebar-header .sh-label{font-size:9px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:3px}
+.sidebar-header .sh-title{font-family:'Cormorant Garamond',serif;font-size:15px;color:rgba(255,255,255,.88);font-weight:600;line-height:1.3}
+.sb-group{padding:8px 0}
+.sb-group-label{padding:6px 16px 3px;font-size:8.5px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:rgba(255,255,255,.25)}
+.sb-divider{margin:4px 14px 6px;height:1px;background:linear-gradient(90deg,rgba(124,58,237,.2),transparent)}
+.sb-item{display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;transition:all .18s;position:relative;user-select:none}
+.sb-item:hover{background:rgba(255,255,255,.04)}
+.sb-item.active{background:rgba(124,58,237,.12)}
+.sb-item.active::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:3px;background:var(--accent2);border-radius:0 3px 3px 0}
+.sb-item.locked{opacity:.42;cursor:not-allowed}
+.sb-item.locked:hover{background:none}
+.sb-item.completed .sb-num{background:var(--green)!important;color:#fff!important}
+.sb-num{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;background:rgba(255,255,255,.06);color:rgba(255,255,255,.45);transition:all .18s}
+.sb-item.active .sb-num{background:var(--accent2);color:#fff}
+.sb-item:hover:not(.locked) .sb-num{background:rgba(255,255,255,.1);color:rgba(255,255,255,.75)}
+.sb-text{flex:1;min-width:0}
+.sb-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.55);line-height:1.3;transition:color .18s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-item.active .sb-name{color:rgba(255,255,255,.92)}
+.sb-item:hover:not(.locked) .sb-name{color:rgba(255,255,255,.82)}
+.sb-sub{font-size:10px;color:rgba(255,255,255,.28);margin-top:1px}
+.sb-item.overview .sb-num{background:rgba(124,58,237,.15);color:var(--ice)}
+.sb-item.overview.active .sb-num{background:var(--accent2);color:#fff}
+.sb-spec-banner{margin:6px 12px 2px;padding:7px 11px;border-radius:9px;background:linear-gradient(135deg,rgba(124,58,237,.14),rgba(124,58,237,.04));border:1px solid rgba(124,58,237,.2);display:flex;align-items:center;gap:7px}
+.sb-spec-banner .sbb-text{font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:rgba(167,139,250,.8)}
+.sb-item.exam .sb-num{background:rgba(201,168,76,.14);color:var(--gold)}
+.sb-item.exam.active .sb-num{background:var(--gold);color:var(--ink)}
+.sb-item.exam .sb-name{color:rgba(255,210,80,.55)}
+.sb-item.exam.active .sb-name{color:rgba(255,210,80,.92)}
+.sb-item.practice .sb-num{background:rgba(30,102,65,.14);color:#4ade80}
+.sb-item.practice.active .sb-num{background:var(--green);color:#fff}
+.sb-item.practice .sb-name{color:rgba(74,222,128,.55)}
+.sb-item.practice.active .sb-name{color:rgba(74,222,128,.92)}
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0);box-shadow:8px 0 32px rgba(0,0,0,.45)}
+  .sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199}
+  .sb-overlay.show{display:block}
+}
+
+/* ══ PROGRESS BAR ══ */
+.progress-bar-wrap{position:fixed;top:var(--nav-h);left:0;right:0;z-index:299;height:3px;background:rgba(255,255,255,.06)}
+.progress-bar-fill{height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--ice));transition:width .5s ease;width:0%}
+
+/* ══ MAIN ══ */
+.main{margin-left:var(--sidebar-w);flex:1;padding:26px 26px 60px;min-width:0;max-width:calc(100vw - var(--sidebar-w))}
+@media(max-width:900px){.main{margin-left:0;padding:18px 14px 50px;max-width:100vw}}
+
+/* ══ HEADER ══ */
+.header{background:linear-gradient(135deg,#1e0540 0%,#2d0a6e 45%,#5B21B6 100%);color:#fff;border-radius:20px;padding:42px 38px 36px;box-shadow:0 16px 40px rgba(91,33,182,.28);position:relative;overflow:hidden;margin-bottom:22px}
+.header::before{content:'';position:absolute;top:-60px;right:-40px;width:270px;height:270px;border:1.5px solid rgba(167,139,250,.12);border-radius:50%;animation:pulse 5s ease-in-out infinite}
+.header::after{content:'';position:absolute;bottom:-70px;right:90px;width:180px;height:180px;border:1.5px solid rgba(124,58,237,.1);border-radius:50%;animation:pulse 6s ease-in-out infinite .8s}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.04);opacity:.85}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.header-seal{position:absolute;top:26px;right:34px;width:62px;height:62px;border:1.5px solid rgba(167,139,250,.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;opacity:.55;animation:pulse 4s ease-in-out infinite}
+.header-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.35);border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;margin-bottom:12px}
+.header-badge .dot{width:5px;height:5px;background:var(--ice);border-radius:50%}
+h1{font-family:'Cormorant Garamond',serif;font-size:36px;letter-spacing:.4px;position:relative;z-index:1;font-weight:700;line-height:1.15}
+.subtitle{font-size:14px;opacity:.76;max-width:52ch;position:relative;z-index:1;margin-top:6px}
+.header-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;position:relative;z-index:1}
+.header-meta-item{display:flex;align-items:center;gap:6px;padding:5px 13px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;font-size:11.5px}
+.header-meta-item span:first-child{opacity:.58}
+.header-meta-item strong{font-weight:700}
+
+/* ══ PANELS ══ */
+.panel{display:none;animation:fadeUp .28s ease both}
+.panel.active{display:block}
+
+/* ══ DISTRIBUCIÓN ══ */
+.dist-bar{display:flex;border-radius:10px;overflow:hidden;height:36px;margin:14px 0}
+.dist-seg{display:flex;align-items:center;justify-content:center;gap:5px;font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase}
+.dist-seg.theory{background:linear-gradient(135deg,#3b0764,#5B21B6);color:#fff;flex:20}
+.dist-seg.practice{background:linear-gradient(135deg,#1e6641,#2d9d62);color:#fff;flex:70}
+.dist-seg.eval{background:linear-gradient(135deg,var(--gold),#a07828);color:#fff;flex:10}
+.dist-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.dist-lg-item{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--slate)}
+.dist-lg-dot{width:10px;height:10px;border-radius:3px}
+
+/* ══ STAT CARDS ══ */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:9px;margin-bottom:18px}
+.stat-card{background:var(--white);border-radius:13px;padding:15px;border:1px solid rgba(124,58,237,.15);text-align:center}
+.stat-card .stat-val{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--accent);line-height:1}
+.stat-card .stat-label{font-size:11px;color:var(--slate);margin-top:4px;font-weight:600}
+
+/* ══ BLOCKS ══ */
+.block{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(124,58,237,.1);overflow:hidden;margin-bottom:14px}
+.block:last-child{margin-bottom:0}
+.block .btitle{display:flex;align-items:center;gap:10px;padding:15px 18px;background:linear-gradient(180deg,rgba(124,58,237,.07),rgba(124,58,237,.01));border-bottom:1px solid rgba(124,58,237,.09)}
+.block .btitle .bicon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px}
+.block .btitle h3{font-size:15.5px;color:var(--ink);font-family:'Cormorant Garamond',serif;font-weight:700;letter-spacing:.2px;flex:1}
+.block .btitle .mod-badge{margin-left:auto;padding:3px 10px;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;flex-shrink:0}
+.badge-core{background:rgba(91,33,182,.08);color:#5B21B6;border:1px solid rgba(91,33,182,.17)}
+.badge-warn{background:rgba(139,44,44,.08);color:#8b2c2c;border:1px solid rgba(139,44,44,.17)}
+.badge-green{background:rgba(30,102,65,.08);color:#1e6641;border:1px solid rgba(30,102,65,.17)}
+.badge-gold{background:rgba(201,168,76,.09);color:#7a5200;border:1px solid rgba(201,168,76,.2)}
+.badge-exam{background:linear-gradient(135deg,rgba(201,168,76,.16),rgba(201,168,76,.05));color:#7a5200;border:1px solid rgba(201,168,76,.28)}
+.badge-practice{background:rgba(30,102,65,.08);color:#1e6641;border:1px solid rgba(30,102,65,.17)}
+.badge-purple{background:rgba(124,58,237,.08);color:#7c3aed;border:1px solid rgba(124,58,237,.2)}
+.badge-critical{background:rgba(139,44,44,.12);color:#8b2c2c;border:1px solid rgba(139,44,44,.25)}
+.block .bbody{padding:18px}
+.block .bbody p{margin:0 0 10px;font-size:13.5px}
+.block .bbody p:last-child{margin-bottom:0}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ══ DIVIDERS ══ */
+.sdiv{display:flex;align-items:center;gap:11px;margin:20px 0 13px}
+.sdiv .l{flex:1;height:1px;background:linear-gradient(90deg,rgba(124,58,237,.22),transparent)}
+.sdiv .l:last-child{background:linear-gradient(270deg,rgba(124,58,237,.22),transparent)}
+.sdiv .t{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--slate);white-space:nowrap}
+
+/* ══ LO CALLOUT ══ */
+.lo-callout{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:11px;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.13);margin-bottom:13px}
+.lo-callout .lo-icon{font-size:17px;flex-shrink:0;margin-top:1px}
+.lo-callout .lo-text{font-size:12.5px;color:var(--slate);line-height:1.55}
+.lo-callout .lo-text strong{color:var(--ink);display:block;margin-bottom:2px;font-size:13px}
+
+/* ══ ACCORDIONS ══ */
+details.block-accordion{border:none;background:none;padding:0;margin:8px 0 0}
+details.block-accordion+details.block-accordion{margin-top:7px}
+.block-accordion-header{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-radius:11px;background:linear-gradient(135deg,rgba(91,33,182,.04),rgba(124,58,237,.06));border:1px solid rgba(124,58,237,.12);transition:all .2s;user-select:none}
+.block-accordion-header::-webkit-details-marker{display:none}
+details.block-accordion[open] .block-accordion-header{border-radius:11px 11px 0 0;border-bottom-color:transparent;background:linear-gradient(135deg,rgba(91,33,182,.07),rgba(124,58,237,.1))}
+.block-accordion-header:hover{background:linear-gradient(135deg,rgba(91,33,182,.06),rgba(124,58,237,.1))}
+.bac-left{display:flex;align-items:center;gap:11px}
+.bac-num{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bac-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--slate);margin-bottom:2px}
+.bac-title{font-size:13.5px;font-weight:700;color:var(--ink)}
+.bac-arrow{font-size:11px;color:var(--slate);transition:transform .2s;flex-shrink:0}
+details.block-accordion[open] .bac-arrow{transform:rotate(90deg)}
+.bac-body{padding:14px 16px 16px;border:1px solid rgba(124,58,237,.1);border-top:none;border-radius:0 0 11px 11px;background:rgba(245,243,255,.5)}
+
+/* ══ CHIPS ══ */
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.chip{padding:4px 10px;border-radius:7px;font-size:11px;font-weight:600;background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.15);color:var(--accent)}
+.chip.green{background:var(--green-bg);border-color:rgba(30,102,65,.17);color:var(--green)}
+.chip.amber{background:var(--amber-bg);border-color:rgba(180,130,0,.19);color:var(--amber)}
+.chip.dark{background:rgba(15,25,35,.07);border-color:rgba(15,25,35,.12);color:var(--ink)}
+.chip.gold{background:var(--gold-bg);border-color:rgba(201,168,76,.2);color:#7a5200}
+.chip.red{background:rgba(180,50,50,.08);border-color:rgba(180,50,50,.18);color:#8b2c2c}
+.chip.purple{background:rgba(124,58,237,.08);border-color:rgba(124,58,237,.2);color:#7c3aed}
+.chip.gray{background:rgba(107,114,128,.08);border-color:rgba(107,114,128,.2);color:#374151}
+
+/* ══ ALERTS ══ */
+.alert{margin-top:10px;padding:10px 13px;border-radius:10px;font-size:12.5px;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.alert.warn{background:var(--amber-bg);border:1px solid rgba(180,130,0,.19);color:var(--amber)}
+.alert.danger{background:var(--red-bg);border:1px solid rgba(180,50,50,.17);color:var(--red)}
+.alert.success{background:var(--green-bg);border:1px solid rgba(30,102,65,.17);color:var(--green)}
+.alert.info{background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.14);color:#5B21B6}
+.alert.purple{background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.18);color:#7c3aed}
+.alert.critical{background:rgba(139,44,44,.1);border:2px solid rgba(139,44,44,.3);color:#7f1d1d}
+.alert-icon{flex-shrink:0;margin-top:1px}
+.alert strong{font-weight:700}
+
+/* ══ PRINCIPLE ══ */
+.principle{margin-top:13px;padding:14px 17px;border-radius:11px;background:linear-gradient(135deg,rgba(91,33,182,.04),rgba(124,58,237,.06));border:1px solid rgba(124,58,237,.16);border-left:3px solid var(--accent2)}
+.principle p{margin:0;font-size:14px;font-weight:600;font-style:italic;font-family:'Cormorant Garamond',serif;line-height:1.55;color:var(--ink)}
+.principle .principle-sub{font-weight:500;color:var(--slate);margin-top:4px;font-style:normal;font-family:'DM Sans',sans-serif;font-size:12px}
+
+/* ══ OB LIST ══ */
+.ob-list{display:grid;grid-template-columns:1fr;gap:6px;margin-top:9px}
+@media(min-width:600px){.ob-list{grid-template-columns:1fr 1fr}}
+.ob-item{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;border-radius:10px;background:rgba(124,58,237,.05);border:1px solid rgba(124,58,237,.12);transition:all .2s}
+.ob-item:hover{transform:translateX(3px);background:rgba(124,58,237,.1)}
+.ob-num{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10.5px;flex-shrink:0;margin-top:1px}
+.ob-item span{font-size:12.5px;font-weight:600;line-height:1.4}
+
+/* ══ TWO COL / THREE COL ══ */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:10px}
+@media(max-width:700px){.three-col{grid-template-columns:1fr}}
+@media(max-width:600px){.two-col{grid-template-columns:1fr}}
+.mini-card{padding:13px;border-radius:11px;border:1px solid rgba(124,58,237,.12);background:rgba(124,58,237,.03)}
+.mini-card h4{font-size:12.5px;margin-bottom:6px;display:flex;align-items:center;gap:6px;color:var(--ink);font-weight:700}
+.mini-card p,.mini-card li{font-size:12px;color:var(--slate);line-height:1.6}
+.mini-card ul{padding-left:15px}
+
+/* ══ PAGE TITLE ══ */
+.page-title{margin-bottom:18px}
+.page-title .pt-label{font-size:9.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--accent2);margin-bottom:4px}
+.page-title h2{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:var(--ink)}
+.page-title .pt-sub{font-size:13.5px;color:var(--slate);margin-top:4px}
+
+/* ══ MOD META ══ */
+.mod-meta{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
+.mod-meta-item{padding:6px 13px;border-radius:8px;background:var(--white);border:1px solid rgba(124,58,237,.12);font-size:11.5px}
+.mod-meta-item .label{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--slate)}
+.mod-meta-item .value{font-weight:700;color:var(--ink);font-size:12px}
+
+/* ══ INFO TABLE ══ */
+.info-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+.info-table th{padding:9px 12px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--slate);background:rgba(124,58,237,.05);border-bottom:2px solid rgba(124,58,237,.12)}
+.info-table td{padding:9px 12px;border-bottom:1px solid rgba(124,58,237,.07);vertical-align:top;line-height:1.5}
+.info-table tr:last-child td{border-bottom:none}
+.info-table tr:hover td{background:rgba(124,58,237,.03)}
+
+/* ══ CRITICAL BLOCK ══ */
+.critical-block{background:linear-gradient(135deg,rgba(139,44,44,.06),rgba(139,44,44,.02));border:2px solid rgba(139,44,44,.3);border-radius:13px;padding:16px 18px;margin:14px 0}
+.critical-block .cb-head{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.critical-block .cb-icon{font-size:20px}
+.critical-block .cb-label{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#8b2c2c}
+.critical-block .cb-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;color:#7f1d1d;margin-bottom:8px}
+.critical-block p{font-size:13px;color:#7f1d1d;line-height:1.6;margin:0 0 8px}
+.critical-block .cb-example{background:rgba(255,255,255,.7);border:1px solid rgba(139,44,44,.2);border-radius:9px;padding:11px 13px;font-size:12.5px;color:var(--ink);margin-top:10px}
+.critical-block .cb-example strong{color:#8b2c2c}
+
+/* ══ CONCEPT CARDS ══ */
+.concept-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:12px}
+.concept-card{background:var(--white);border:1px solid rgba(124,58,237,.13);border-radius:11px;padding:12px;transition:all .2s}
+.concept-card:hover{border-color:var(--accent2);box-shadow:0 4px 12px rgba(124,58,237,.1);transform:translateY(-1px)}
+.concept-card .cc-icon{font-size:22px;margin-bottom:6px}
+.concept-card .cc-term{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.concept-card .cc-def{font-size:11.5px;color:var(--slate);line-height:1.45}
+
+/* ══ TYPE CARDS ══ */
+.type-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:12px}
+.type-card{border-radius:12px;padding:15px;border:1px solid rgba(124,58,237,.12);background:var(--white);transition:all .2s}
+.type-card:hover{border-color:var(--accent2);box-shadow:0 4px 14px rgba(124,58,237,.12)}
+.type-card .tc-num{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.type-card .tc-type{font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.type-card .tc-desc{font-size:12px;color:var(--slate);line-height:1.5}
+.type-card.highlight{border-color:rgba(201,168,76,.3);background:linear-gradient(135deg,rgba(201,168,76,.06),rgba(201,168,76,.02))}
+
+/* ══ ELIGIBILITY CARDS ══ */
+.elig-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+@media(max-width:700px){.elig-grid{grid-template-columns:1fr}}
+.elig-card{background:var(--white);border:1.5px solid rgba(124,58,237,.16);border-radius:16px;padding:0;overflow:hidden;box-shadow:0 4px 18px rgba(91,33,182,.08);transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column}
+.elig-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(91,33,182,.14)}
+.elig-card .ec-header{padding:16px 18px 14px;background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);position:relative;overflow:hidden}
+.elig-card .ec-header::after{content:'';position:absolute;right:-18px;top:-18px;width:72px;height:72px;border:2px solid rgba(255,255,255,.12);border-radius:50%}
+.elig-card .ec-num{font-family:'Barlow Condensed',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.elig-card .ec-num::before{content:'';width:18px;height:2px;background:rgba(255,255,255,.35);border-radius:2px}
+.elig-card .ec-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:#fff;line-height:1.2;letter-spacing:.1px}
+.elig-card .ec-icon{font-size:26px;margin-bottom:6px;display:block}
+.elig-card .ec-body-wrap{padding:15px 18px;flex:1;display:flex;flex-direction:column;gap:10px}
+.elig-card .ec-body{font-size:13px;color:var(--slate);line-height:1.6}
+.elig-card .ec-body strong{color:var(--ink)}
+.elig-card .ec-example{background:rgba(124,58,237,.05);border:1px solid rgba(124,58,237,.12);border-radius:9px;padding:10px 12px;font-size:12.5px;color:var(--ink);line-height:1.55}
+.elig-card .ec-example strong{color:var(--accent);font-weight:700}
+.ec-nocumple{background:rgba(139,44,44,.05);border:1px solid rgba(139,44,44,.18);border-radius:9px;padding:10px 12px;margin-top:2px}
+.ec-nocumple .ec-nc-label{font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#8b2c2c;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.ec-nocumple ul{padding-left:14px;margin:0}
+.ec-nocumple li{font-size:12px;color:#7f1d1d;line-height:1.6;margin-bottom:2px}
+/* Variantes de color por criterio */
+.elig-card.c1 .ec-header{background:linear-gradient(135deg,#3b0764,#5B21B6)}
+.elig-card.c2 .ec-header{background:linear-gradient(135deg,#1e3a8a,#2563eb)}
+.elig-card.c3 .ec-header{background:linear-gradient(135deg,#065f46,#059669)}
+.elig-card.c4 .ec-header{background:linear-gradient(135deg,#7c2d12,#c2410c)}
+
+/* ══ PROCESOS MEDIOS FINES ══ */
+.pmf-wrap{margin-top:14px}
+.pmf-equation{display:flex;align-items:stretch;gap:0;border-radius:14px;overflow:hidden;border:1.5px solid rgba(124,58,237,.2);box-shadow:0 6px 20px rgba(91,33,182,.1)}
+@media(max-width:680px){.pmf-equation{flex-direction:column}}
+.pmf-col{flex:1;display:flex;flex-direction:column}
+.pmf-col-head{padding:14px 16px 12px;text-align:center;position:relative;overflow:hidden}
+.pmf-col-head::after{content:'';position:absolute;right:-20px;bottom:-20px;width:60px;height:60px;border:2px solid rgba(255,255,255,.1);border-radius:50%}
+.pmf-col.proceso .pmf-col-head{background:linear-gradient(160deg,#1e3a8a,#2563eb)}
+.pmf-col.medios .pmf-col-head{background:linear-gradient(160deg,#3b0764,#7C3AED)}
+.pmf-col.fines .pmf-col-head{background:linear-gradient(160deg,#7c2d12,#dc2626)}
+.pmf-col-letter{font-family:'Barlow Condensed',sans-serif;font-size:42px;font-weight:800;color:rgba(255,255,255,.15);line-height:1;position:absolute;right:10px;top:4px;letter-spacing:-2px}
+.pmf-col-tag{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:4px}
+.pmf-col-name{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:700;color:#fff;line-height:1.15}
+.pmf-col-sub{font-size:11px;color:rgba(255,255,255,.65);margin-top:3px;font-style:italic}
+.pmf-col-body{padding:14px 16px;flex:1;background:var(--white)}
+.pmf-col.proceso .pmf-col-body{border-top:3px solid #2563eb}
+.pmf-col.medios .pmf-col-body{border-top:3px solid #7C3AED}
+.pmf-col.fines .pmf-col-body{border-top:3px solid #dc2626}
+.pmf-item{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid rgba(124,58,237,.06)}
+.pmf-item:last-child{border-bottom:none}
+.pmf-dot{width:22px;height:22px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;margin-top:1px}
+.pmf-col.proceso .pmf-dot{background:rgba(37,99,235,.12);color:#1d4ed8}
+.pmf-col.medios .pmf-dot{background:rgba(124,58,237,.12);color:#7C3AED}
+.pmf-col.fines .pmf-dot{background:rgba(220,38,38,.1);color:#dc2626}
+.pmf-item-text{font-size:12.5px;color:var(--ink);font-weight:600;line-height:1.4}
+.pmf-item-sub{font-size:11px;color:var(--slate);line-height:1.4;margin-top:1px}
+.pmf-connector{display:flex;align-items:center;justify-content:center;width:36px;flex-shrink:0;background:rgba(124,58,237,.06);font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--accent2);letter-spacing:-1px}
+@media(max-width:680px){.pmf-connector{width:100%;height:28px}}
+.pmf-formula{margin-top:14px;background:linear-gradient(135deg,rgba(91,33,182,.07),rgba(124,58,237,.04));border:1.5px solid rgba(124,58,237,.2);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pmf-formula-text{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;color:var(--ink);line-height:1.4}
+.pmf-formula-text span.blue{color:#2563eb}.pmf-formula-text span.purple{color:#7C3AED}.pmf-formula-text span.red{color:#dc2626}.pmf-formula-text span.green{color:var(--green)}
+.pmf-formula-icon{font-size:24px;flex-shrink:0}
+.pmf-why{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px}
+@media(max-width:680px){.pmf-why{grid-template-columns:1fr}}
+.pmf-why-card{border-radius:11px;padding:13px;border:1px solid rgba(124,58,237,.12);background:var(--white)}
+.pmf-why-card .pwc-q{font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--slate);margin-bottom:5px}
+.pmf-why-card .pwc-a{font-size:13px;color:var(--ink);line-height:1.45;font-weight:700;font-family:'Cormorant Garamond',serif}
+.pmf-why-card .pwc-detail{font-size:12px;color:var(--slate);margin-top:5px;line-height:1.5}
+.pmf-why-card.pwc-proceso{border-top:3px solid #2563eb}
+.pmf-why-card.pwc-medios{border-top:3px solid #7C3AED}
+.pmf-why-card.pwc-fines{border-top:3px solid #dc2626}
+.pmf-missing{margin-top:14px;background:rgba(139,44,44,.04);border:1.5px solid rgba(139,44,44,.2);border-radius:12px;padding:14px 16px}
+.pmf-missing .pm-title{font-size:13px;font-weight:700;color:#7f1d1d;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.pmf-missing-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+@media(max-width:680px){.pmf-missing-grid{grid-template-columns:1fr}}
+.pmf-miss-item{background:rgba(255,255,255,.75);border:1px solid rgba(139,44,44,.14);border-radius:9px;padding:10px 12px}
+.pmf-miss-item .pmi-label{font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#8b2c2c;margin-bottom:4px}
+.pmf-miss-item .pmi-text{font-size:12.5px;color:#7f1d1d;font-weight:600;line-height:1.4}
+.pmf-miss-item .pmi-result{font-size:11.5px;color:var(--slate);margin-top:5px;line-height:1.4}
+.pmf-case-strip{display:flex;flex-wrap:wrap;gap:0;border-radius:11px;overflow:hidden;margin-top:14px;border:1.5px solid rgba(124,58,237,.15)}
+.pmf-case-strip .pcs-part{flex:1;min-width:220px;padding:11px 14px;font-size:12px;line-height:1.5}
+.pmf-case-strip .pcs-label{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}
+.pcs-proceso{background:rgba(37,99,235,.06);border-right:1px solid rgba(37,99,235,.12)}
+.pcs-proceso .pcs-label{color:#1d4ed8}
+.pcs-medios{background:rgba(124,58,237,.06);border-right:1px solid rgba(124,58,237,.12)}
+.pcs-medios .pcs-label{color:#7C3AED}
+.pcs-fines{background:rgba(220,38,38,.05)}
+.pcs-fines .pcs-label{color:#dc2626}
+
+/* ══ VAWA VS VISA T ══ */
+.vawa-compare{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:14px;overflow:hidden;border:1.5px solid rgba(124,58,237,.18);margin-top:12px}
+@media(max-width:650px){.vawa-compare{grid-template-columns:1fr}}
+.vawa-col{padding:0}
+.vawa-col-head{padding:14px 18px;display:flex;align-items:center;gap:10px}
+.vawa-col.vawa{border-right:1px solid rgba(124,58,237,.12)}
+.vawa-col.vawa .vawa-col-head{background:linear-gradient(135deg,#831843,#be185d)}
+.vawa-col.visat .vawa-col-head{background:linear-gradient(135deg,#3b0764,#5B21B6)}
+.vawa-col-badge{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;letter-spacing:1px;color:#fff;padding:4px 10px;border-radius:7px;background:rgba(255,255,255,.15);flex-shrink:0}
+.vawa-col-title{font-size:13px;font-weight:700;color:rgba(255,255,255,.9);line-height:1.3}
+.vawa-col-sub{font-size:11px;color:rgba(255,255,255,.6)}
+.vawa-rows{padding:0}
+.vawa-row{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid rgba(124,58,237,.07)}
+.vawa-row:last-child{border-bottom:none}
+.vawa-row-label{padding:9px 12px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--slate);background:rgba(124,58,237,.04);border-right:1px solid rgba(124,58,237,.07);display:flex;align-items:center}
+.vawa-row-vawa{padding:9px 12px;font-size:12.5px;color:var(--ink);border-right:1px solid rgba(190,24,93,.08);background:rgba(190,24,93,.02);line-height:1.5}
+.vawa-row-visat{padding:9px 12px;font-size:12.5px;color:var(--ink);line-height:1.5}
+.vawa-compare-full{grid-template-columns:1fr}
+.vawa-row-3col{display:grid;grid-template-columns:120px 1fr 1fr}
+@media(max-width:650px){.vawa-row-3col{grid-template-columns:1fr}}
+
+/* ══ DV→VISAT ELEMENTS ══ */
+.dv-element{background:var(--white);border:1px solid rgba(124,58,237,.12);border-radius:12px;padding:13px 15px;margin-bottom:9px;display:flex;gap:12px;align-items:flex-start}
+.dv-element .dv-num{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dv-element .dv-body .dv-title{font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.dv-element .dv-body .dv-desc{font-size:12.5px;color:var(--slate);line-height:1.55}
+
+/* ══ INVESTIGACIÓN PROFUNDA C2+C4 ══ */
+.inv-timeline{position:relative;padding:6px 0;margin-top:12px}
+.inv-timeline::before{content:'';position:absolute;left:18px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,#2563eb,#7C3AED,#dc2626,rgba(124,58,237,.1))}
+.inv-titem{display:flex;gap:14px;margin-bottom:18px;position:relative}
+.inv-titem:last-child{margin-bottom:0}
+.inv-tdot{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;border:2px solid var(--white);box-shadow:0 0 0 2px rgba(124,58,237,.2);z-index:1}
+.inv-tdot.blue{background:linear-gradient(135deg,#1e3a8a,#2563eb)}
+.inv-tdot.purple{background:linear-gradient(135deg,var(--accent),var(--accent2))}
+.inv-tdot.red{background:linear-gradient(135deg,#7c2d12,#dc2626)}
+.inv-tdot.green{background:linear-gradient(135deg,#065f46,#059669)}
+.inv-tdot.gold{background:linear-gradient(135deg,#7a5200,#c9a84c)}
+.inv-tbody{flex:1;background:var(--white);border-radius:12px;padding:12px 15px;border:1px solid rgba(124,58,237,.1);box-shadow:0 2px 8px rgba(91,33,182,.05)}
+.inv-tbody .it-phase{font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--accent2);margin-bottom:3px}
+.inv-tbody .it-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:5px;font-family:'Cormorant Garamond',serif}
+.inv-tbody .it-body{font-size:12.5px;color:var(--slate);line-height:1.55}
+.inv-tbody .it-qs{margin-top:8px;padding-top:8px;border-top:1px solid rgba(124,58,237,.08)}
+.inv-tbody .it-qs-label{font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.inv-tbody .it-q{font-size:12px;color:var(--ink);padding:4px 0;display:flex;align-items:baseline;gap:7px;line-height:1.45}
+.inv-tbody .it-q::before{content:'→';color:var(--accent2);font-weight:700;flex-shrink:0;font-size:11px}
+.nexus-box{background:linear-gradient(135deg,rgba(37,99,235,.06),rgba(124,58,237,.04));border:1.5px solid rgba(37,99,235,.2);border-radius:13px;padding:16px 18px;margin-top:14px}
+.nexus-box .nb-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:#1e3a8a;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.nexus-box .nb-body{font-size:13px;color:var(--slate);line-height:1.6}
+.nexus-box .nb-body strong{color:var(--ink)}
+
+/* ══ CASO COMPLEJO TRATA CORTA ══ */
+.complex-case{border-radius:16px;overflow:hidden;border:1.5px solid rgba(201,168,76,.25);box-shadow:0 4px 18px rgba(91,33,182,.08);margin-bottom:14px}
+.complex-case .cc-header{background:linear-gradient(135deg,#1c1245,#2d1a6e 60%,#3b1f8c);padding:16px 20px;display:flex;align-items:flex-start;gap:12px}
+.complex-case .cc-badge{padding:4px 10px;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;letter-spacing:.5px;background:rgba(201,168,76,.2);border:1px solid rgba(201,168,76,.35);color:rgba(201,168,76,.95);flex-shrink:0;margin-top:2px}
+.complex-case .cc-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;color:#fff;line-height:1.25}
+.complex-case .cc-sub{font-size:12px;color:rgba(255,255,255,.6);margin-top:3px}
+.complex-case .cc-body{background:var(--white);padding:16px 20px}
+.cc-timeline-strip{display:flex;gap:0;border-radius:10px;overflow:hidden;border:1px solid rgba(124,58,237,.15);margin:12px 0}
+.cc-timeline-strip .cts-seg{flex:1;padding:10px 12px;text-align:center;font-size:12px}
+.cts-trata{background:rgba(220,38,38,.07);border-right:1px solid rgba(220,38,38,.15)}
+.cts-trata .cts-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#dc2626;margin-bottom:3px}
+.cts-gap{background:rgba(107,114,128,.05);border-right:1px solid rgba(107,114,128,.12)}
+.cts-gap .cts-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--slate);margin-bottom:3px}
+.cts-now{background:rgba(5,150,105,.07)}
+.cts-now .cts-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#059669;margin-bottom:3px}
+.cts-val{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;line-height:1}
+.cts-trata .cts-val{color:#dc2626}
+.cts-gap .cts-val{color:var(--slate)}
+.cts-now .cts-val{color:#059669}
+.strategy-card{background:var(--white);border:1px solid rgba(124,58,237,.13);border-radius:12px;padding:14px 16px;margin-bottom:9px;border-left:4px solid var(--accent2)}
+.strategy-card .sc-num{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--accent2);margin-bottom:4px}
+.strategy-card .sc-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px;font-family:'Cormorant Garamond',serif}
+.strategy-card .sc-body{font-size:12.5px;color:var(--slate);line-height:1.6}
+.strategy-card .sc-body strong{color:var(--ink)}
+.strategy-card .sc-tip{margin-top:8px;padding:7px 10px;background:rgba(124,58,237,.05);border-radius:7px;font-size:12px;color:var(--accent);font-weight:600;border:1px solid rgba(124,58,237,.1)}
+.strategy-card.sc-gold{border-left-color:var(--gold)}
+.strategy-card.sc-green{border-left-color:var(--green)}
+.strategy-card.sc-red{border-left-color:var(--red)}
+/* ── HARDSHIP VISUAL CARDS ── */
+.h-cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:14px}
+.h-card{border-radius:14px;border:1.5px solid;overflow:hidden;background:var(--white);transition:transform .15s,box-shadow .15s}
+.h-card:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(0,0,0,.08)}
+.h-card-header{padding:16px 16px 12px;display:flex;align-items:flex-start;gap:12px}
+.h-card-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.h-card-meta{flex:1}
+.h-card-num{font-size:9.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;margin-bottom:3px;opacity:.7}
+.h-card-title{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:700;color:var(--ink);line-height:1.25}
+.h-card-divider{height:1px;margin:0 16px;opacity:.35}
+.h-card-body{padding:12px 16px;font-size:12.5px;color:var(--slate);line-height:1.65}
+.h-card-body strong{color:var(--ink)}
+.h-card-tags{padding:0 16px 10px;display:flex;flex-wrap:wrap;gap:5px}
+.h-card-tag{padding:3px 9px;border-radius:6px;font-size:10.5px;font-weight:700;border:1px solid}
+.h-card-tip{margin:0 12px 14px;padding:9px 12px;border-radius:9px;font-size:11.5px;font-weight:600;line-height:1.5;border:1px solid;display:flex;gap:8px;align-items:flex-start}
+.h-card-tip-icon{font-size:13px;flex-shrink:0;margin-top:1px}
+/* purple card */
+.h-card.hc-purple{border-color:rgba(124,58,237,.22)}
+.h-card.hc-purple .h-card-icon{background:rgba(124,58,237,.1)}
+.h-card.hc-purple .h-card-num{color:#7c3aed}
+.h-card.hc-purple .h-card-divider{background:#7c3aed}
+.h-card.hc-purple .h-card-tag{background:rgba(124,58,237,.07);border-color:rgba(124,58,237,.2);color:#5B21B6}
+.h-card.hc-purple .h-card-tip{background:rgba(124,58,237,.05);border-color:rgba(124,58,237,.15);color:#5B21B6}
+/* gold card */
+.h-card.hc-gold{border-color:rgba(201,168,76,.35)}
+.h-card.hc-gold .h-card-icon{background:rgba(201,168,76,.12)}
+.h-card.hc-gold .h-card-num{color:#7a5200}
+.h-card.hc-gold .h-card-divider{background:#c8a84b}
+.h-card.hc-gold .h-card-tag{background:rgba(201,168,76,.09);border-color:rgba(201,168,76,.25);color:#7a5200}
+.h-card.hc-gold .h-card-tip{background:rgba(201,168,76,.06);border-color:rgba(201,168,76,.2);color:#7a5200}
+/* green card */
+.h-card.hc-green{border-color:rgba(30,102,65,.25)}
+.h-card.hc-green .h-card-icon{background:rgba(30,102,65,.09)}
+.h-card.hc-green .h-card-num{color:#1e6641}
+.h-card.hc-green .h-card-divider{background:#1e6641}
+.h-card.hc-green .h-card-tag{background:rgba(30,102,65,.07);border-color:rgba(30,102,65,.2);color:#1e6641}
+.h-card.hc-green .h-card-tip{background:rgba(30,102,65,.05);border-color:rgba(30,102,65,.18);color:#1e6641}
+.wants-return{background:linear-gradient(135deg,rgba(124,58,237,.06),rgba(91,33,182,.03));border:1.5px solid rgba(124,58,237,.2);border-radius:13px;padding:16px 18px;margin-top:14px}
+.wants-return .wr-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.wants-return .wr-badge{background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.25);border-radius:7px;padding:4px 10px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--accent2);flex-shrink:0}
+.wants-return .wr-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--ink)}
+.wants-return .wr-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:650px){.wants-return .wr-grid{grid-template-columns:1fr}}
+.wr-item{background:var(--white);border-radius:10px;padding:12px 14px;border:1px solid rgba(124,58,237,.1)}
+.wr-item .wri-label{font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--slate);margin-bottom:5px}
+.wr-item .wri-text{font-size:12.5px;color:var(--ink);line-height:1.5;font-weight:600}
+.wr-item .wri-sub{font-size:11.5px;color:var(--slate);margin-top:3px;line-height:1.4}
+.evidence-checklist{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+@media(max-width:650px){.evidence-checklist{grid-template-columns:1fr}}
+/* ── EVIDENCE CARDS ── */
+.ev-section{margin-bottom:20px}
+.ev-section-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:9px 14px;border-radius:10px;border:1.5px solid}
+.ev-section-header .evsh-icon{font-size:18px;flex-shrink:0}
+.ev-section-header .evsh-label{font-size:10px;font-weight:800;letter-spacing:.6px;text-transform:uppercase}
+.ev-section-header .evsh-title{font-size:13.5px;font-weight:700;color:var(--ink);margin-top:1px}
+.ev-section-header.esh-blue{background:rgba(37,99,235,.04);border-color:rgba(37,99,235,.2)}
+.ev-section-header.esh-blue .evsh-label{color:#1e3a8a}
+.ev-section-header.esh-red{background:rgba(220,38,38,.04);border-color:rgba(220,38,38,.2)}
+.ev-section-header.esh-red .evsh-label{color:#7f1d1d}
+.ev-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.ev-card{border-radius:11px;border:1.5px solid;background:var(--white);padding:12px 14px;display:flex;flex-direction:column;gap:7px;transition:transform .15s,box-shadow .15s;cursor:default}
+.ev-card:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.07)}
+.ev-card-top{display:flex;align-items:center;gap:9px}
+.ev-card-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ev-card-label{font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase}
+.ev-card-title{font-size:12.5px;font-weight:700;color:var(--ink);line-height:1.35}
+.ev-card-note{font-size:11px;color:var(--slate);line-height:1.5;padding-top:2px;border-top:1px solid rgba(0,0,0,.06)}
+.ev-card-impact{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;margin-top:2px}
+/* blue variant (C2) */
+.ev-card.evc-blue{border-color:rgba(37,99,235,.18)}
+.ev-card.evc-blue .ev-card-icon{background:rgba(37,99,235,.08)}
+.ev-card.evc-blue .ev-card-label{color:#1e3a8a}
+.ev-card.evc-blue .ev-card-impact{background:rgba(37,99,235,.07);color:#1e3a8a;border:1px solid rgba(37,99,235,.15)}
+/* red variant (C4) */
+.ev-card.evc-red{border-color:rgba(220,38,38,.2)}
+.ev-card.evc-red .ev-card-icon{background:rgba(220,38,38,.07)}
+.ev-card.evc-red .ev-card-label{color:#7f1d1d}
+.ev-card.evc-red .ev-card-impact{background:rgba(220,38,38,.07);color:#7f1d1d;border:1px solid rgba(220,38,38,.15)}
+/* ══ FOOTNOTES ══ */
+.fn-block{margin-top:14px;padding:8px 12px;border-radius:9px;background:rgba(107,114,128,.05);border:1px solid rgba(107,114,128,.12);border-left:3px solid rgba(107,114,128,.3)}
+.fn-block .fn-title{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--slate);margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.fn-pills{display:flex;flex-wrap:wrap;gap:5px;align-items:flex-start}
+.fn-pill-wrap{display:inline-flex;flex-direction:column;max-width:100%}
+.fn-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;border:1px solid rgba(107,114,128,.2);background:rgba(107,114,128,.06);cursor:pointer;font-size:11px;font-weight:600;color:var(--slate);font-family:inherit;text-align:left;transition:border-color .15s,background .15s;white-space:nowrap}
+.fn-pill:hover{border-color:var(--accent2);background:rgba(124,58,237,.07);color:var(--accent)}
+.fn-pill.fn-open{border-color:var(--accent2);background:rgba(124,58,237,.08);color:var(--accent)}
+.fn-pill .fn-pill-arrow{font-size:8px;opacity:.45;transition:transform .2s;display:inline-block}
+.fn-pill.fn-open .fn-pill-arrow{transform:rotate(180deg);opacity:.9}
+.fn-def-box{display:none;margin-top:5px;padding:8px 11px;border-radius:8px;background:rgba(124,58,237,.04);border:1px solid rgba(124,58,237,.13);font-size:11.5px;color:var(--slate);line-height:1.6;width:260px;max-width:calc(100vw - 60px);box-sizing:border-box}
+.fn-def-box.fn-def-open{display:block;animation:fadeUp .2s ease both}
+.ecl-item{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;border-radius:9px;background:var(--white);border:1px solid rgba(124,58,237,.1)}
+.ecl-check{width:20px;height:20px;border-radius:5px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:1px}
+.ecl-item span{font-size:12px;color:var(--ink);font-weight:600;line-height:1.4}
+
+/* ══ RED FLAGS CONFUSION ══ */
+.redflag-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+@media(max-width:650px){.redflag-grid{grid-template-columns:1fr}}
+.redflag-card{border-radius:12px;padding:14px;border:1.5px solid rgba(180,50,50,.2);background:rgba(180,50,50,.04)}
+.redflag-card .rf-flag{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#8b2c2c;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.redflag-card .rf-title{font-size:13.5px;font-weight:700;color:#7f1d1d;margin-bottom:5px}
+
+/* ══ KEYWORDS ══ */
+.kw{background:rgba(124,58,237,.12);color:#5B21B6;font-weight:700;padding:1px 5px;border-radius:4px;white-space:nowrap;font-size:.95em}
+.kw-red{background:rgba(180,50,50,.1);color:#8b2c2c;font-weight:700;padding:1px 5px;border-radius:4px;white-space:nowrap;font-size:.95em}
+.kw-green{background:rgba(30,102,65,.1);color:#1e6641;font-weight:700;padding:1px 5px;border-radius:4px;white-space:nowrap;font-size:.95em}
+.kw-gold{background:rgba(201,168,76,.14);color:#7a5200;font-weight:700;padding:1px 5px;border-radius:4px;white-space:nowrap;font-size:.95em}
+.kw-blue{background:rgba(37,99,235,.1);color:#1e3a8a;font-weight:700;padding:1px 5px;border-radius:4px;white-space:nowrap;font-size:.95em}
+
+/* ══ KEY TERM VISUAL BOX ══ */
+.keyterm-row{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.keyterm-pill{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:10px;border:1.5px solid;font-size:12.5px;font-weight:700;transition:transform .15s}
+.keyterm-pill:hover{transform:translateY(-1px)}
+.ktp-purple{background:rgba(124,58,237,.08);border-color:rgba(124,58,237,.25);color:#5B21B6}
+.ktp-red{background:rgba(180,50,50,.07);border-color:rgba(180,50,50,.22);color:#8b2c2c}
+.ktp-green{background:rgba(30,102,65,.08);border-color:rgba(30,102,65,.22);color:#1e6641}
+.ktp-gold{background:rgba(201,168,76,.1);border-color:rgba(201,168,76,.3);color:#7a5200}
+.ktp-blue{background:rgba(37,99,235,.07);border-color:rgba(37,99,235,.2);color:#1e3a8a}
+.ktp-gray{background:rgba(107,114,128,.07);border-color:rgba(107,114,128,.2);color:#374151}
+
+/* ══ VISUAL CALLOUT ══ */
+.visual-split{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+@media(max-width:600px){.visual-split{grid-template-columns:1fr}}
+.vs-card{border-radius:11px;padding:13px 15px;border:1px solid rgba(124,58,237,.12);background:var(--white)}
+.vs-card .vs-icon{font-size:22px;margin-bottom:6px}
+.vs-card .vs-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.vs-card .vs-body{font-size:12px;color:var(--slate);line-height:1.55}
+.vs-card.vs-red{border-color:rgba(180,50,50,.2);background:rgba(180,50,50,.03)}
+.vs-card.vs-green{border-color:rgba(30,102,65,.2);background:rgba(30,102,65,.03)}
+.vs-card.vs-purple{border-color:rgba(124,58,237,.2);background:rgba(124,58,237,.03)}
+.vs-card.vs-gold{border-color:rgba(201,168,76,.25);background:rgba(201,168,76,.04)}
+.redflag-card .rf-vawa{font-size:12px;color:#8b2c2c;line-height:1.5;margin-bottom:6px}
+.redflag-card .rf-visat{font-size:12px;color:var(--accent);font-weight:600;line-height:1.5;padding:7px 10px;background:rgba(124,58,237,.06);border-radius:7px;border:1px solid rgba(124,58,237,.12)}
+
+/* ══ DOL/FLSA/OSHA BLOCKS ══ */
+.agency-card{background:var(--white);border-radius:13px;padding:16px;border:1px solid rgba(124,58,237,.12);margin-bottom:10px}
+.agency-card .ag-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.agency-card .ag-badge{padding:5px 12px;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;letter-spacing:1px}
+.ag-badge-dol{background:rgba(91,33,182,.1);color:#5B21B6;border:1px solid rgba(91,33,182,.2)}
+.ag-badge-flsa{background:rgba(30,102,65,.1);color:#1e6641;border:1px solid rgba(30,102,65,.2)}
+.ag-badge-osha{background:rgba(180,130,0,.1);color:#7a5200;border:1px solid rgba(180,130,0,.2)}
+.agency-card .ag-title{font-size:14px;font-weight:700;color:var(--ink)}
+.agency-card .ag-sub{font-size:11px;color:var(--slate)}
+.ag-items{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+.ag-item{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink);padding:6px 9px;border-radius:7px;background:rgba(124,58,237,.03);border:1px solid rgba(124,58,237,.07)}
+.ag-item::before{content:'→';color:var(--accent2);font-weight:700;flex-shrink:0}
+
+/* ══ ROADMAP ══ */
+.roadmap{padding:8px 0}
+.rm-item{display:flex;gap:14px;margin-bottom:16px;position:relative}
+.rm-item:not(:last-child)::after{content:'';position:absolute;left:15px;top:34px;bottom:-16px;width:1.5px;background:rgba(124,58,237,.15)}
+.rm-dot{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 3px 10px rgba(91,33,182,.2)}
+.rm-dot.done{background:var(--green)}
+.rm-dot.locked{background:rgba(107,114,128,.15);color:rgba(107,114,128,.4);box-shadow:none}
+.rm-content h4{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.rm-content p{font-size:12.5px;color:var(--slate)}
+.rm-level{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--accent2);margin-bottom:3px}
+
+/* ══ OVERVIEW GRID ══ */
+.overview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:9px;margin-top:10px}
+.ov-card{background:var(--white);border:1px solid rgba(124,58,237,.12);border-radius:11px;padding:14px;text-align:center;cursor:pointer;transition:all .2s}
+.ov-card:hover{border-color:var(--accent2);box-shadow:0 4px 12px rgba(124,58,237,.12);transform:translateY(-1px)}
+.ov-card .ov-icon{font-size:22px;margin-bottom:7px}
+.ov-card strong{display:block;font-size:12px;color:var(--ink);margin-bottom:3px}
+.ov-card small{font-size:10.5px;color:var(--slate)}
+.ov-card.completed-card{border-color:rgba(30,102,65,.3);background:rgba(30,102,65,.04)}
+.ov-card.exam-card{border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.04)}
+.ov-card.practice-card{border-color:rgba(30,102,65,.25);background:rgba(30,102,65,.04)}
+.ov-card.locked-card{opacity:.5;cursor:default;pointer-events:none}
+.lock-badge{font-size:10px;margin-top:4px}
+.ov-card.purple-card{border-color:rgba(91,33,182,.3);background:rgba(91,33,182,.04)}
+
+/* ══ PROGRESS ══ */
+.progress-section{background:var(--white);border-radius:13px;padding:16px;border:1px solid rgba(124,58,237,.12);margin-bottom:14px}
+.progress-section h4{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:12px}
+.prog-track{display:flex;flex-direction:column;gap:9px}
+.prog-row{display:grid;grid-template-columns:140px 1fr 40px;align-items:center;gap:10px}
+@media(max-width:600px){.prog-row{grid-template-columns:1fr;gap:4px}}
+.prog-label{font-size:11.5px;font-weight:600;color:var(--slate)}
+.prog-bar-outer{height:8px;background:#e5e7eb;border-radius:6px;overflow:hidden}
+.prog-bar-inner{height:8px;border-radius:6px;transition:width .5s ease;width:0%}
+.prog-bar-inner.theory{background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.prog-bar-inner.practice{background:linear-gradient(90deg,var(--green),#2d9d62)}
+.prog-bar-inner.eval{background:linear-gradient(90deg,var(--gold),#a07828)}
+.prog-pct{font-size:11.5px;font-weight:700;color:var(--slate)}
+
+/* ══ MOD NAV BAR ══ */
+.mod-nav-bar{display:flex;justify-content:space-between;align-items:center;margin-top:22px;padding-top:16px;border-top:1px solid rgba(124,58,237,.1)}
+.mod-nav-btn{padding:10px 22px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s;font-family:'DM Sans',sans-serif}
+.mod-nav-prev{background:rgba(124,58,237,.08);color:var(--accent);border:1px solid rgba(124,58,237,.18)}
+.mod-nav-prev:hover{background:rgba(124,58,237,.14)}
+.mod-nav-next{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 14px rgba(91,33,182,.25)}
+.mod-nav-next:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(91,33,182,.35)}
+
+/* ══ INTERACTIVE EXERCISES ══ */
+.ck-section-title{font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--accent);margin:16px 0 10px;display:flex;align-items:center;gap:7px}
+.ck-section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(124,58,237,.2),transparent)}
+
+.ck2-question{background:rgba(124,58,237,.03);border:1px solid rgba(124,58,237,.12);border-radius:11px;padding:14px;margin-bottom:12px}
+.ck2-qtext{font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:11px;line-height:1.5}
+.ck2-opts{display:flex;flex-direction:column;gap:6px}
+.ck2-opt{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-radius:8px;border:1.5px solid rgba(124,58,237,.12);background:var(--white);cursor:pointer;transition:all .18s;font-size:13px}
+.ck2-opt:hover{border-color:var(--accent2);background:rgba(124,58,237,.04)}
+.ck2-opt.selected{border-color:var(--accent2);background:rgba(124,58,237,.08)}
+.ck2-opt.correct{border-color:var(--green)!important;background:var(--green-bg)!important;pointer-events:none}
+.ck2-opt.incorrect{border-color:var(--red)!important;background:var(--red-bg)!important;pointer-events:none}
+.ck2-opt.disabled{pointer-events:none;opacity:.75}
+.ck2-radio{width:16px;height:16px;border-radius:50%;border:2px solid rgba(124,58,237,.3);flex-shrink:0;margin-top:2px;transition:all .15s}
+.ck2-opt.selected .ck2-radio{border-color:var(--accent2);background:var(--accent2)}
+
+.ck4-question{background:rgba(124,58,237,.03);border:1px solid rgba(124,58,237,.12);border-radius:11px;padding:14px;margin-bottom:12px}
+.ck4-stmt{font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:12px;line-height:1.5}
+.ck4-btns{display:flex;gap:8px}
+.ck4-btn{flex:1;padding:10px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid rgba(124,58,237,.15);background:var(--white);transition:all .2s;font-family:'DM Sans',sans-serif}
+.ck4-btn:hover{border-color:var(--accent2);background:rgba(124,58,237,.06)}
+.ck4-btn.selected{border-color:var(--accent2);background:rgba(124,58,237,.1);color:var(--accent)}
+.ck4-btn.correct{border-color:var(--green)!important;background:var(--green-bg)!important;color:var(--green)!important;pointer-events:none}
+.ck4-btn.incorrect{border-color:var(--red)!important;background:var(--red-bg)!important;color:var(--red)!important;pointer-events:none}
+.ck4-btn.disabled{pointer-events:none}
+
+.ck-feedback{margin-top:10px;padding:9px 12px;border-radius:8px;font-size:12.5px;display:none;line-height:1.5}
+.ck-feedback.show.ok{display:block;background:var(--green-bg);border:1px solid rgba(30,102,65,.2);color:var(--green)}
+.ck-feedback.show.fail{display:block;background:var(--red-bg);border:1px solid rgba(180,50,50,.2);color:var(--red)}
+
+.ck-result-summary{margin-top:10px;padding:10px 14px;border-radius:9px;font-size:13px;font-weight:600;display:none}
+.ck-result-summary.ok{display:block;background:var(--green-bg);border:1px solid rgba(30,102,65,.18);color:var(--green)}
+.ck-result-summary.warn{display:block;background:var(--amber-bg);border:1px solid rgba(180,130,0,.2);color:var(--amber)}
+.ck-result-summary.fail{display:block;background:var(--red-bg);border:1px solid rgba(180,50,50,.18);color:var(--red)}
+
+.ck-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.ck-btn{padding:9px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .2s}
+.ck-verify{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 12px rgba(91,33,182,.22)}
+.ck-verify:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(91,33,182,.3)}
+.ck-retry{background:rgba(107,114,128,.12);color:var(--slate);border:1px solid rgba(107,114,128,.2)}
+.ck-next{background:linear-gradient(135deg,var(--green),#2d9d62);color:#fff;box-shadow:0 4px 12px rgba(30,102,65,.2)}
+
+/* ══ SCENARIO EXERCISE ══ */
+.scenario-box{background:linear-gradient(135deg,rgba(91,33,182,.06),rgba(124,58,237,.03));border:1px solid rgba(124,58,237,.18);border-radius:12px;padding:15px;margin-bottom:12px}
+.scenario-box .sc-label{font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--accent2);margin-bottom:6px}
+.scenario-box .sc-text{font-size:13.5px;color:var(--ink);line-height:1.6;font-style:italic}
+
+/* ══ EXAM ══ */
+.q-block{background:var(--white);border:1px solid rgba(124,58,237,.1);border-radius:12px;padding:16px;margin-bottom:12px}
+.q-num{font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--accent2);margin-bottom:5px}
+.q-text{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:12px;line-height:1.5}
+.q-opts{display:flex;flex-direction:column;gap:6px}
+.q-opt{display:flex;align-items:flex-start;gap:9px;padding:9px 12px;border-radius:8px;border:1.5px solid #e5e7eb;background:#fafafa;cursor:pointer;transition:all .18s;font-size:13px;color:var(--ink)}
+.q-opt:hover{border-color:var(--accent2);background:rgba(124,58,237,.05)}
+.q-opt.selected{border-color:var(--accent2);background:rgba(124,58,237,.08)}
+.q-opt.correct{border-color:var(--green)!important;background:var(--green-bg)!important;pointer-events:none}
+.q-opt.incorrect{border-color:var(--red)!important;background:var(--red-bg)!important;pointer-events:none}
+.q-opt.disabled{pointer-events:none}
+.q-radio{width:16px;height:16px;border-radius:50%;border:2px solid #d1d5db;flex-shrink:0;margin-top:2px;transition:all .15s}
+.q-opt.selected .q-radio{border-color:var(--accent2);background:var(--accent2)}
+.q-opt.correct .q-radio{border-color:var(--green);background:var(--green)}
+.q-opt.incorrect .q-radio{border-color:var(--red);background:var(--red)}
+.q-feedback{margin-top:9px;padding:8px 11px;border-radius:8px;font-size:12px;display:none}
+.q-feedback.show.ok{display:block;background:var(--green-bg);border:1px solid rgba(30,102,65,.18);color:var(--green)}
+.q-feedback.show.fail{display:block;background:var(--red-bg);border:1px solid rgba(180,50,50,.18);color:var(--red)}
+.exam-result{background:var(--white);border-radius:16px;padding:28px;text-align:center;margin-top:20px;box-shadow:var(--shadow);border:1px solid rgba(124,58,237,.15);display:none}
+.exam-result.show{display:block;animation:fadeUp .3s ease}
+.result-score{font-family:'Barlow Condensed',sans-serif;font-size:72px;font-weight:800;line-height:1;margin:10px 0}
+.result-score.pass{color:var(--green)}
+.result-score.warn{color:#7a5200}
+.result-score.fail{color:var(--red)}
+#exam-result-label{font-size:22px;font-weight:700;margin-bottom:10px}
+#exam-result-msg{font-size:14px;color:var(--slate);max-width:50ch;margin:0 auto 16px;line-height:1.6}
+.result-stats{display:flex;justify-content:center;gap:24px;margin-top:16px}
+.rs-item{text-align:center}
+.rs-val{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700}
+.rs-val.ok{color:var(--green)}
+.rs-val.fail{color:var(--red)}
+.rs-label{font-size:11px;color:var(--slate);font-weight:600}
+.exam-submit-area{text-align:center;margin-top:20px}
+.exam-btn{padding:12px 32px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .2s}
+.exam-btn-submit{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 6px 18px rgba(91,33,182,.3)}
+.exam-btn-submit:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(91,33,182,.4)}
+.exam-btn-retry{background:rgba(107,114,128,.12);color:var(--slate);border:1px solid rgba(107,114,128,.2)}
+
+/* ══ SECTION HEAD ══ */
+.section-head{margin-bottom:18px}
+.section-head h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--ink);line-height:1.2}
+.section-head p{font-size:14px;color:var(--slate);margin-top:5px;max-width:60ch}
+.section-head .sh-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 12px;background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.22);border-radius:999px;font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--accent2);margin-bottom:8px}
+
+/* ══ BAD MORAL CHARACTER ══ */
+.bmc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:12px}
+.bmc-item{background:rgba(139,44,44,.04);border:1px solid rgba(139,44,44,.15);border-radius:10px;padding:11px 13px;display:flex;align-items:flex-start;gap:8px}
+.bmc-dot{width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:5px}
+.bmc-item span{font-size:12px;color:#7f1d1d;font-weight:600;line-height:1.4}
+</style>
+
+<!-- Extra styles for EVT activities -->
+<style>
+.act-sub{font-size:12.5px;color:var(--slate);margin-bottom:14px;line-height:1.55}
+.ck-list{display:flex;flex-direction:column;gap:6px}
+.ck-item{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-radius:9px;background:var(--white);border:1.5px solid rgba(124,58,237,.1);cursor:pointer;transition:all .18s;user-select:none}
+.ck-item:hover{border-color:var(--accent2);background:rgba(124,58,237,.04)}
+.ck-item.ck-checked{border-color:var(--green);background:var(--green-bg)}
+.ck-item .ck-box{width:20px;height:20px;border-radius:5px;border:2px solid rgba(124,58,237,.3);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .18s;background:var(--white)}
+.ck-item.ck-checked .ck-box{background:var(--green);border-color:var(--green);color:#fff}
+.ck-item span{font-size:13px;color:var(--ink);line-height:1.4;font-weight:500}
+.ck-item.ck-checked span{color:var(--green)}
+.ck-counter{font-size:11.5px;font-weight:700;color:var(--slate);margin-top:8px;text-align:right}
+.compare-strip{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.compare-zone{border-radius:11px;padding:14px;min-height:70px;border:2px dashed}
+.compare-zone.before-z{background:rgba(139,44,44,.04);border-color:rgba(139,44,44,.2)}
+.compare-zone.after-z{background:rgba(30,102,65,.04);border-color:rgba(30,102,65,.2)}
+.compare-zone h4{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
+.compare-zone.before-z h4{color:#8b2c2c}
+.compare-zone.after-z h4{color:#1e6641}
+.compare-chips-src{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.comp-chip{padding:5px 12px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid rgba(124,58,237,.22);background:rgba(124,58,237,.07);color:var(--accent);transition:all .15s;user-select:none}
+.comp-chip:hover{border-color:var(--accent2);background:rgba(124,58,237,.14)}
+.comp-chip.ch-selected{outline:2px solid var(--gold);outline-offset:2px}
+.comp-chip.ch-placed{opacity:.45;pointer-events:none}
+.placed-chip{padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:600;background:rgba(255,255,255,.85);border:1px solid rgba(0,0,0,.1);cursor:pointer;color:var(--ink);display:inline-block;margin:2px}
+.emp-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px}
+.emp-col{border-radius:11px;padding:12px;min-height:70px}
+.emp-col.c-proceso{background:rgba(37,99,235,.05);border:2px dashed rgba(37,99,235,.3)}
+.emp-col.c-medios{background:rgba(124,58,237,.05);border:2px dashed rgba(124,58,237,.3)}
+.emp-col.c-fines{background:rgba(220,38,38,.05);border:2px dashed rgba(220,38,38,.3)}
+.emp-col h4{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
+.emp-col.c-proceso h4{color:#1d4ed8}
+.emp-col.c-medios h4{color:#7C3AED}
+.emp-col.c-fines h4{color:#dc2626}
+.emp-items-src{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+.emp-chip{padding:5px 12px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid rgba(124,58,237,.22);background:rgba(124,58,237,.07);color:var(--accent);transition:all .15s;user-select:none}
+.emp-chip.ec-selected{outline:2px solid var(--gold);outline-offset:2px}
+.emp-chip.ec-placed{opacity:.4;pointer-events:none}
+.emp-placed-chip{padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:600;background:rgba(255,255,255,.85);border:1px solid rgba(0,0,0,.1);cursor:pointer;color:var(--ink);margin-bottom:4px;display:block}
+.sem-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px}
+.sem-card{border-radius:12px;padding:14px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.sem-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.1)}
+.sem-card.sc-verde{background:var(--green-bg);border-color:rgba(30,102,65,.25)}
+.sem-card.sc-amarillo{background:var(--amber-bg);border-color:rgba(180,130,0,.25)}
+.sem-card.sc-rojo{background:var(--red-bg);border-color:rgba(180,50,50,.25)}
+.sem-card.sc-selected{transform:translateY(-2px) scale(1.02)}
+.sem-card.sc-verde.sc-selected{border-color:var(--green);box-shadow:0 0 0 3px rgba(30,102,65,.15)}
+.sem-card.sc-amarillo.sc-selected{border-color:#7a5200;box-shadow:0 0 0 3px rgba(180,130,0,.15)}
+.sem-card.sc-rojo.sc-selected{border-color:var(--red);box-shadow:0 0 0 3px rgba(180,50,50,.15)}
+.sem-dot{width:28px;height:28px;border-radius:50%;margin:0 auto 8px}
+.sc-verde .sem-dot{background:var(--green)}
+.sc-amarillo .sem-dot{background:#7a5200}
+.sc-rojo .sem-dot{background:var(--red)}
+.sem-label{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.sem-sub{font-size:11px;color:var(--slate);line-height:1.35}
+.sort-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.sort-item{background:var(--white);border:1.5px solid rgba(124,58,237,.13);border-radius:9px;padding:10px 13px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink)}
+.sort-num{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sort-move{display:flex;gap:3px;margin-left:auto}
+.sort-btn{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.18);border-radius:5px;color:var(--accent);font-size:11px;cursor:pointer;width:22px;height:20px;display:flex;align-items:center;justify-content:center;font-family:inherit;font-weight:700;transition:background .15s}
+.sort-btn:hover{background:rgba(124,58,237,.18)}
+.sim-tab-row{display:flex;gap:0;border-bottom:2px solid rgba(124,58,237,.1);margin-bottom:0}
+.sim-tab-btn{padding:9px 16px;background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;color:var(--slate);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .18s}
+.sim-tab-btn:hover{color:var(--accent)}
+.sim-tab-btn.st-active{color:var(--accent2);border-bottom-color:var(--accent2)}
+.sim-panel{display:none;padding:18px 0}
+.sim-panel.sp-active{display:block}
+.reform-area{width:100%;border:1.5px solid rgba(124,58,237,.18);border-radius:9px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);resize:vertical;min-height:68px;transition:border-color .18s;background:var(--white)}
+.reform-area:focus{border-color:var(--accent2);outline:none}
+.q-ms-opts{display:flex;flex-direction:column;gap:6px}
+.q-ms-opt{display:flex;align-items:flex-start;gap:9px;padding:9px 12px;border-radius:8px;border:1.5px solid #e5e7eb;background:#fafafa;cursor:pointer;transition:all .18s;font-size:13px;color:var(--ink)}
+.q-ms-opt:hover{border-color:var(--accent2);background:rgba(124,58,237,.05)}
+.q-ms-opt.selected{border-color:var(--accent2);background:rgba(124,58,237,.08)}
+.q-ms-opt.correct{border-color:var(--green)!important;background:var(--green-bg)!important;pointer-events:none}
+.q-ms-opt.incorrect{border-color:var(--red)!important;background:var(--red-bg)!important;pointer-events:none}
+.q-ms-opt.disabled{pointer-events:none}
+.q-checkbox{width:16px;height:16px;border-radius:4px;border:2px solid #d1d5db;flex-shrink:0;margin-top:2px;transition:all .15s}
+.q-ms-opt.selected .q-checkbox{border-color:var(--accent2);background:var(--accent2)}
+.q-ms-opt.correct .q-checkbox{border-color:var(--green);background:var(--green)}
+@media(max-width:700px){.emp-cols,.sem-grid,.compare-strip,.three-col{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+  <div class="brand"><div class="seal">⚖️</div>TMLF <span>Learning Center</span></div>
+  <div class="topnav-right"><div class="topnav-pill">Entrevista Visa T</div></div>
+</nav>
+<div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
+<div class="sb-overlay" id="sbOverlay" onclick="toggleSidebar()"></div>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sh-label">TMLF Learning Center</div>
+      <div class="sh-title">Estructura de Entrevista Visa T</div>
+    </div>
+    <div class="sb-group">
+      <div class="sb-group-label">Inicio</div>
+      <div class="sb-item overview active" id="nav-bienvenida" onclick="showPanel('bienvenida')">
+        <div class="sb-num">📋</div>
+        <div class="sb-text"><div class="sb-name">Bienvenida</div><div class="sb-sub">Objetivo y estructura</div></div>
+      </div>
+    </div>
+    <div class="sb-divider"></div>
+    <div class="sb-group">
+      <div class="sb-group-label">Módulos del Training</div>
+      <div class="sb-item" id="nav-mod1" onclick="showPanel('mod1')">
+        <div class="sb-num">1</div>
+        <div class="sb-text"><div class="sb-name">Nuevo enfoque de la entrevista</div><div class="sb-sub">Teoría · Antes vs Ahora</div></div>
+      </div>
+      <div class="sb-item" id="nav-mod2" onclick="showPanel('mod2')">
+        <div class="sb-num">2</div>
+        <div class="sb-text"><div class="sb-name">Lectura estratégica del predraft</div><div class="sb-sub">Teoría · Checklist</div></div>
+      </div>
+      <div class="sb-item" id="nav-mod3" onclick="showPanel('mod3')">
+        <div class="sb-num">3</div>
+        <div class="sb-text"><div class="sb-name">Uso del bot / guía de entrevista</div><div class="sb-sub">Práctica · Reformulación</div></div>
+      </div>
+      <div class="sb-item" id="nav-mod4" onclick="showPanel('mod4')">
+        <div class="sb-num">4</div>
+        <div class="sb-text"><div class="sb-name">Identificación de vacíos</div><div class="sb-sub">Práctica · Análisis de caso</div></div>
+      </div>
+      <div class="sb-item" id="nav-mod5" onclick="showPanel('mod5')">
+        <div class="sb-num">5</div>
+        <div class="sb-text"><div class="sb-name">Construcción EMP en entrevista</div><div class="sb-sub">Práctica · Clasificación</div></div>
+      </div>
+      <div class="sb-item" id="nav-mod6" onclick="showPanel('mod6')">
+        <div class="sb-num">6</div>
+        <div class="sb-text"><div class="sb-name">Manejo del cliente</div><div class="sb-sub">Práctica · Decisión</div></div>
+      </div>
+      <div class="sb-item" id="nav-mod7" onclick="showPanel('mod7')">
+        <div class="sb-num">7</div>
+        <div class="sb-text"><div class="sb-name">Flujo operativo</div><div class="sb-sub">Práctica · Ordenamiento</div></div>
+      </div>
+      <div class="sb-item" id="nav-mod8" onclick="showPanel('mod8')">
+        <div class="sb-num">8</div>
+        <div class="sb-text"><div class="sb-name">Cierre y entregable</div><div class="sb-sub">Teoría · Checklist</div></div>
+      </div>
+      <div class="sb-item" id="nav-mod9" onclick="showPanel('mod9')">
+        <div class="sb-num">9</div>
+        <div class="sb-text"><div class="sb-name">Casos débiles y suficiencia</div><div class="sb-sub">Práctica · Semáforo</div></div>
+      </div>
+    </div>
+    <div class="sb-divider"></div>
+    <div class="sb-spec-banner"><span style="font-size:14px">⭐</span><div class="sbb-text">Cierre del Training</div></div>
+    <div class="sb-group">
+      <div class="sb-item practice" id="nav-simulador" onclick="showPanel('simulador')">
+        <div class="sb-num">S</div>
+        <div class="sb-text"><div class="sb-name">Simulador Final</div><div class="sb-sub">Caso completo Visa T</div></div>
+      </div>
+      <div class="sb-item exam" id="nav-evaluacion" onclick="showPanel('evaluacion')">
+        <div class="sb-num">✦</div>
+        <div class="sb-text"><div class="sb-name">Evaluación Final</div><div class="sb-sub">20 preguntas · 80% aprobatorio</div></div>
+      </div>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="header">
+      <div class="header-seal">⚖️</div>
+      <div class="header-badge"><div class="dot"></div>TMLF Learning Center · Visa T · Entrevista</div>
+      <h1>Estructura de Entrevista Visa T</h1>
+      <p class="subtitle">Aprende a validar, profundizar y estructurar estratégicamente una entrevista Visa T usando el predraft y la guía/bot como herramientas operativas.</p>
+      <div class="header-meta">
+        <div class="header-meta-item"><span>📚</span><strong>9 Módulos</strong></div>
+        <div class="header-meta-item"><span>🎯</span><strong>70% Práctica</strong></div>
+        <div class="header-meta-item"><span>🖥️</span><strong>Predraft · Bot · Transcripción</strong></div>
+      </div>
+    </div>
+
+    <!-- ═══ BIENVENIDA ═══ -->
+    <div class="panel active" id="panel-bienvenida">
+      <div class="page-title"><div class="pt-label">Antes de comenzar</div><h2>Bienvenida al Training</h2><p class="pt-sub">Este training no enseña una entrevista desde cero: enseña cómo <strong>validar, profundizar y estructurar estratégicamente</strong> una entrevista Visa T a partir del predraft y la guía/bot.</p></div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">🎯</div><h3>Objetivo general</h3><div class="mod-badge badge-core">Esencial</div></div>
+        <div class="bbody">
+          <div class="lo-callout"><div class="lo-icon">💡</div><div class="lo-text"><strong>Punto de partida clave</strong>A partir del nuevo esquema de trabajo, la entrevista Visa T ya no se conduce desde cero. El colaborador recibe un <strong>predraft</strong> (declaración inicial del INTEC) y una <strong>guía/bot personalizada</strong> por caso. Tu rol: profundizar, completar y fortalecer lo que ya existe.</div></div>
+          <div class="dist-bar" style="margin-top:14px"><div class="dist-seg theory">📚 20% Teoría</div><div class="dist-seg practice">🔬 70% Práctica</div><div class="dist-seg eval">✦ 10%</div></div>
+          <div class="dist-legend">
+            <div class="dist-lg-item"><div class="dist-lg-dot" style="background:#5B21B6"></div>20% Teórico — Nuevo enfoque, predraft, bot, EMP, cierre, suficiencia mínima</div>
+            <div class="dist-lg-item"><div class="dist-lg-dot" style="background:#1e6641"></div>70% Práctico — Checklists, reformulación, clasificación EMP, semáforo, simulador</div>
+            <div class="dist-lg-item"><div class="dist-lg-dot" style="background:var(--gold)"></div>10% Evaluación — Examen final 20 preguntas, mínimo 80% aprobatorio</div>
+          </div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">🗺️</div><h3>Mapa del training</h3><div class="mod-badge badge-green">Estructura</div></div>
+        <div class="bbody">
+          <div class="overview-grid">
+            <div class="ov-card" onclick="showPanel('mod1')"><div class="ov-icon">🔄</div><strong>Módulo 1</strong><small>Nuevo enfoque</small></div>
+            <div class="ov-card" onclick="showPanel('mod2')"><div class="ov-icon">📄</div><strong>Módulo 2</strong><small>Predraft</small></div>
+            <div class="ov-card" onclick="showPanel('mod3')"><div class="ov-icon">🤖</div><strong>Módulo 3</strong><small>Bot / Guía</small></div>
+            <div class="ov-card" onclick="showPanel('mod4')"><div class="ov-icon">🔍</div><strong>Módulo 4</strong><small>Vacíos</small></div>
+            <div class="ov-card" onclick="showPanel('mod5')"><div class="ov-icon">⚙️</div><strong>Módulo 5</strong><small>EMP</small></div>
+            <div class="ov-card" onclick="showPanel('mod6')"><div class="ov-icon">🤝</div><strong>Módulo 6</strong><small>Manejo cliente</small></div>
+            <div class="ov-card" onclick="showPanel('mod7')"><div class="ov-icon">📋</div><strong>Módulo 7</strong><small>Flujo operativo</small></div>
+            <div class="ov-card" onclick="showPanel('mod8')"><div class="ov-icon">✅</div><strong>Módulo 8</strong><small>Cierre</small></div>
+            <div class="ov-card" onclick="showPanel('mod9')"><div class="ov-icon">🚦</div><strong>Módulo 9</strong><small>Suficiencia</small></div>
+            <div class="ov-card practice-card" onclick="showPanel('simulador')"><div class="ov-icon">🎮</div><strong>Simulador</strong><small>Caso completo</small></div>
+            <div class="ov-card exam-card" onclick="showPanel('evaluacion')"><div class="ov-icon">✦</div><strong>Evaluación</strong><small>20 preguntas</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="mod-nav-bar"><div></div><button class="mod-nav-btn mod-nav-next" onclick="showPanel('mod1')">Iniciar Módulo 1 →</button></div>
+    </div>
+
+    <!-- ═══ MÓDULO 1 ═══ -->
+    <div class="panel" id="panel-mod1">
+      <div class="section-head"><div class="sh-badge">Módulo 1 · 20% Teoría</div><h2>Nuevo enfoque de la entrevista Visa T</h2><p>La forma en que se conduce la entrevista cambió. El colaborador ya no llega sin información: llega con un predraft y una guía/bot personalizados para el caso.</p></div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">🔄</div><h3>Del modelo exploratorio al modelo dirigido</h3><div class="mod-badge badge-core">Teoría</div></div>
+        <div class="bbody">
+          <div class="two-col">
+            <div class="mini-card" style="border-left:3px solid var(--red);background:rgba(139,44,44,.03)"><h4 style="color:var(--red)">✗ Modelo anterior</h4><ul><li>Entrevista exploratoria desde cero</li><li>Sin información previa del caso</li><li>El colaborador construía el caso durante la llamada</li><li>Sin guía personalizada por caso</li></ul></div>
+            <div class="mini-card" style="border-left:3px solid var(--green);background:rgba(30,102,65,.03)"><h4 style="color:var(--green)">✓ Modelo actual</h4><ul><li>Entrevista dirigida con predraft + guía/bot</li><li>El colaborador llega informado del caso</li><li>Objetivo: validar, completar y profundizar</li><li>Guía personalizada específica para el caso</li></ul></div>
+          </div>
+          <div class="principle" style="margin-top:14px"><p>El objetivo de la entrevista ahora es <strong>validar lo que ya existe, completar lo que falta e indagar en profundidad los elementos débiles o ausentes del caso.</strong></p><div class="principle-sub">Duración objetivo sugerida: aproximadamente 2 horas. El bot incluye propuesta de distribución de tiempo por sección.</div></div>
+          <div class="alert info" style="margin-top:12px"><span class="alert-icon">📌</span><div><strong>Regla de oro:</strong> Ambos documentos (predraft + bot) deben leerse completamente <em>antes</em> de cualquier contacto con el cliente, incluso antes de la agenda.</div></div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">✏️</div><h3>Actividad — Clasifica: Antes vs Ahora</h3><div class="mod-badge badge-practice">Práctica</div></div>
+        <div class="bbody">
+          <p style="font-size:13px;color:var(--slate);margin-bottom:10px">Haz clic en una característica y luego en la columna donde pertenece.</p>
+          <div class="compare-chips-src" id="compare-src"></div>
+          <div class="compare-strip">
+            <div class="compare-zone before-z" id="before-zone"><h4>✗ Modelo anterior</h4><div id="before-items" style="display:flex;flex-direction:column;gap:5px;min-height:30px"></div></div>
+            <div class="compare-zone after-z" id="after-zone"><h4>✓ Modelo actual</h4><div id="after-items" style="display:flex;flex-direction:column;gap:5px;min-height:30px"></div></div>
+          </div>
+          <div class="ck-actions"><button class="ck-btn ck-verify" onclick="checkCompare()">Verificar</button><button class="ck-btn ck-retry" onclick="initCompare()">Reiniciar</button></div>
+          <div class="ck-feedback" id="fb-compare"></div>
+        </div>
+      </div>
+      <div class="mod-nav-bar"><button class="mod-nav-btn mod-nav-prev" onclick="showPanel('bienvenida')">← Bienvenida</button><button class="mod-nav-btn mod-nav-next" onclick="showPanel('mod2')">Módulo 2 →</button></div>
+    </div>
+
+    <!-- ═══ MÓDULO 2 ═══ -->
+    <div class="panel" id="panel-mod2">
+      <div class="section-head"><div class="sh-badge">Módulo 2 · Predraft</div><h2>Lectura estratégica del predraft</h2><p>El predraft es el primer documento que debes revisar. Contiene toda la información capturada durante el INTEC.</p></div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">📄</div><h3>¿Qué es el predraft?</h3><div class="mod-badge badge-core">Definición</div></div>
+        <div class="bbody">
+          <p>Declaración inicial generada a partir del INTEC (llamada de intake). Se entrega junto con el bot. <strong>Ambos documentos deben leerse antes de cualquier contacto con el cliente.</strong></p>
+          <div class="three-col" style="margin-top:14px">
+            <div class="mini-card" style="border-top:3px solid #2563eb"><h4>📋 Datos generales</h4><ul><li>Tipo de trata</li><li>Background del cliente</li><li>Entradas y salidas al país</li><li>Datos de identificación</li></ul></div>
+            <div class="mini-card" style="border-top:3px solid #7C3AED"><h4>⚙️ Esquema EMP</h4><ul><li><span class="kw-blue">Proceso:</span> qué hizo el tratante</li><li><span class="kw">Medios:</span> cómo controló/forzó</li><li><span class="kw-red">Fines:</span> qué explotación buscaba</li></ul></div>
+            <div class="mini-card" style="border-top:3px solid #1e6641"><h4>🏛️ Cierre del caso</h4><ul><li>Cooperación con autoridades</li><li>Presencia en EE. UU.</li><li>Dificultad extrema</li></ul></div>
+          </div>
+          <div class="sdiv"><div class="l"></div><div class="t">Vacíos narrativos a detectar</div><div class="l"></div></div>
+          <div class="concept-grid">
+            <div class="concept-card"><div class="cc-icon">🥇</div><div class="cc-term">Siete oros</div><div class="cc-def">7 elementos narrativos específicos que deben estar documentados.</div></div>
+            <div class="concept-card"><div class="cc-icon">💬</div><div class="cc-term">Frases exactas</div><div class="cc-def">Órdenes, insultos, groserías que el tratante usó para controlar.</div></div>
+            <div class="concept-card"><div class="cc-icon">⚡</div><div class="cc-term">Amenazas específicas</div><div class="cc-def">Qué amenazó, contra quién, con qué consecuencias exactas.</div></div>
+            <div class="concept-card"><div class="cc-icon">🔗</div><div class="cc-term">Coerción</div><div class="cc-def">Control, aislamiento, uso de hijos, deudas, documentos retenidos.</div></div>
+            <div class="concept-card"><div class="cc-icon">🔄</div><div class="cc-term">Relación medio–fin</div><div class="cc-def">Cómo ese medio permitió al tratante lograr el fin de explotación.</div></div>
+            <div class="concept-card"><div class="cc-icon">🚫</div><div class="cc-term">Trata sexual</div><div class="cc-def">Si no se indagó en INTEC, debe abordarse en la entrevista.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">✅</div><h3>Actividad — Checklist de revisión del predraft</h3><div class="mod-badge badge-practice">Práctica</div></div>
+        <div class="bbody">
+          <div class="ck-section-title">Marca cada elemento revisado antes de iniciar la entrevista</div>
+          <div class="ck-list" id="predraft-ck">
+            <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box">✓</div><span>Identifiqué el tipo de trata por el que aplica el cliente</span></div>
+            <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box">✓</div><span>Leí el background completo del cliente (historia personal y familiar)</span></div>
+            <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box">✓</div><span>Revisé las entradas y salidas al país documentadas</span></div>
+            <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box">✓</div><span>Identifiqué el proceso (acciones concretas del tratante)</span></div>
+            <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box">✓</div><span>Identifiqué los medios (control, fuerza, manipulación, coerción)</span></div>
+            <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box">✓</div><span>Identifiqué los fines (tipo de explotación)</span></div>
+            <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box">✓</div><span>Verifiqué si hay cooperación con autoridades documentada</span></div>
+            <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box">✓</div><span>Verifiqué si se indagó la presencia en EE. UU.</span></div>
+            <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box">✓</div><span>Verifiqué si hay dificultad extrema documentada</span></div>
+            <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box">✓</div><span>Marqué los vacíos narrativos que debo profundizar en la entrevista</span></div>
+          </div>
+          <div class="ck-counter" id="predraft-counter">0 / 10 revisados</div>
+        </div>
+      </div>
+      <div class="mod-nav-bar"><button class="mod-nav-btn mod-nav-prev" onclick="showPanel('mod1')">← Módulo 1</button><button class="mod-nav-btn mod-nav-next" onclick="showPanel('mod3')">Módulo 3 →</button></div>
+    </div>
+
+    <!-- ═══ MÓDULO 3 ═══ -->
+    <div class="panel" id="panel-mod3">
+      <div class="section-head"><div class="sh-badge">Módulo 3 · Bot / Guía</div><h2>Uso correcto de la guía / bot de entrevista</h2><p>La guía/bot no es un formulario que se sigue literalmente. Es una herramienta estratégica que debes adaptar a la dinámica real del caso.</p></div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">🤖</div><h3>¿Qué contiene la guía/bot?</h3><div class="mod-badge badge-core">Teoría</div></div>
+        <div class="bbody">
+          <div class="ob-list">
+            <div class="ob-item"><div class="ob-num">1</div><span>Mini resumen del caso con los datos ya existentes</span></div>
+            <div class="ob-item"><div class="ob-num">2</div><span>Dificultades detectadas del cliente (ej. minimiza)</span></div>
+            <div class="ob-item"><div class="ob-num">3</div><span>Listado de lo que ya está cubierto en el predraft</span></div>
+            <div class="ob-item"><div class="ob-num">4</div><span>Listado de vacíos — lo que falta obtener en la entrevista</span></div>
+            <div class="ob-item"><div class="ob-num">5</div><span>Sugerencias de preguntas por sección (antecedentes, proceso, medios, fines, cooperación)</span></div>
+            <div class="ob-item"><div class="ob-num">6</div><span>Propuesta de distribución de tiempo (~2 horas total)</span></div>
+            <div class="ob-item"><div class="ob-num">7</div><span>Notas para el psicólogo al final del documento</span></div>
+          </div>
+          <div class="critical-block" style="margin-top:14px">
+            <div class="cb-head"><span class="cb-icon">🎯</span><span class="cb-label">Regla clave</span></div>
+            <div class="cb-title">Las preguntas son sugerencias — no un guión literal</div>
+            <p>Si el cliente ya te dio una respuesta útil, no repitas la pregunta: <strong>profundiza</strong>. Si algo ya se cubrió en la prewelcome, no lo vuelvas a preguntar. Adapta, no transcribas. Conecta siempre medios con fines.</p>
+          </div>
+          <div class="two-col" style="margin-top:14px">
+            <div class="strategy-card"><div class="sc-num">Regla 1</div><div class="sc-title">Lee el bot completo antes de la entrevista</div><div class="sc-body">Debes conocer de antemano las preguntas para no leerlas por primera vez durante la llamada.</div></div>
+            <div class="strategy-card sc-green"><div class="sc-num">Regla 2</div><div class="sc-title">Prioriza según los vacíos</div><div class="sc-body">El bot lista lo que falta. Esa lista es tu hoja de ruta. Dedica más tiempo a lo ausente que a lo ya documentado.</div></div>
+            <div class="strategy-card sc-gold"><div class="sc-num">Regla 3</div><div class="sc-title">Conecta medios con fines siempre</div><div class="sc-body">Aunque el bot separa preguntas por sección, asegúrate de que el cliente conecte cada medio con el fin que habilitó.</div></div>
+            <div class="strategy-card sc-red"><div class="sc-num">Regla 4</div><div class="sc-title">No induzcas respuestas</div><div class="sc-body">Nunca sugieras palabras específicas al cliente. Reformula en lenguaje natural, sin sesgar la declaración.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">✏️</div><h3>Actividad — Reformula estas preguntas del bot</h3><div class="mod-badge badge-practice">Práctica</div></div>
+        <div class="bbody">
+          <p class="act-sub">Reformula cada pregunta del bot en lenguaje natural. No hay una única respuesta; lo importante es que suene conversacional y no induzca.</p>
+          <div class="scenario-box" style="margin-bottom:10px"><div class="sc-label">Pregunta del bot 1</div><div class="sc-text">"¿Cuáles fueron los medios de control que el tratante utilizó para mantenerla en la situación de explotación?"</div></div>
+          <textarea class="reform-area" id="reform1" placeholder="Escribe tu versión natural..."></textarea>
+          <button class="ck-btn ck-verify" style="margin-top:8px;font-size:12px;padding:7px 16px" onclick="showRfb('rfb1')">Ver ejemplo</button>
+          <div class="ck-feedback ok" id="rfb1" style="display:none;margin-top:8px"><strong>Ejemplo:</strong> "¿Cómo lograba él hacer que te quedaras o siguieras haciendo lo que te pedía? ¿Qué pasaba si intentabas no obedecer?"</div>
+          <div class="scenario-box" style="margin:14px 0 10px"><div class="sc-label">Pregunta del bot 2</div><div class="sc-text">"Indique si existió coacción sexual y describa las circunstancias específicas en que ocurrió."</div></div>
+          <textarea class="reform-area" id="reform2" placeholder="Escribe tu versión natural..."></textarea>
+          <button class="ck-btn ck-verify" style="margin-top:8px;font-size:12px;padding:7px 16px" onclick="showRfb('rfb2')">Ver ejemplo</button>
+          <div class="ck-feedback ok" id="rfb2" style="display:none;margin-top:8px"><strong>Ejemplo:</strong> "Me gustaría entender mejor esta parte. ¿Hubo algún momento en que él te forzara o presionara a tener actividad sexual? Puedes contarme lo que recuerdes."</div>
+          <div class="scenario-box" style="margin:14px 0 10px"><div class="sc-label">Pregunta del bot 3</div><div class="sc-text">"¿La víctima cooperó formalmente con alguna autoridad de ley? En caso afirmativo, proporcione nombre de la agencia y fecha."</div></div>
+          <textarea class="reform-area" id="reform3" placeholder="Escribe tu versión natural..."></textarea>
+          <button class="ck-btn ck-verify" style="margin-top:8px;font-size:12px;padding:7px 16px" onclick="showRfb('rfb3')">Ver ejemplo</button>
+          <div class="ck-feedback ok" id="rfb3" style="display:none;margin-top:8px"><strong>Ejemplo:</strong> "¿Alguna vez reportaste lo que te pasó a la policía u otra autoridad? ¿Recuerdas con qué agencia fue y más o menos cuándo?"</div>
+        </div>
+      </div>
+      <div class="mod-nav-bar"><button class="mod-nav-btn mod-nav-prev" onclick="showPanel('mod2')">← Módulo 2</button><button class="mod-nav-btn mod-nav-next" onclick="showPanel('mod4')">Módulo 4 →</button></div>
+    </div>
+
+    <!-- ═══ MÓDULO 4 ═══ -->
+    <div class="panel" id="panel-mod4">
+      <div class="section-head"><div class="sh-badge">Módulo 4 · Vacíos</div><h2>Identificación de vacíos narrativos</h2><p>El colaborador debe detectar activamente lo que falta en el caso para fortalecer los elementos legales requeridos.</p></div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">🔍</div><h3>Tipos de vacíos críticos</h3><div class="mod-badge badge-warn">Crítico</div></div>
+        <div class="bbody">
+          <div class="chips"><span class="chip red">Siete oros sin indagar</span><span class="chip red">Frases/insultos exactos</span><span class="chip red">Amenazas sin especificar</span><span class="chip red">Órdenes concretas sin detalle</span><span class="chip red">Coerción sin documentar</span><span class="chip red">Relación medio–fin no conectada</span><span class="chip red">Trata sexual no indagada</span></div>
+          <div class="alert warn" style="margin-top:12px"><span class="alert-icon">⚠️</span><div>El bot lista los vacíos del caso específico. Tu responsabilidad es saber <strong>qué</strong> buscar y <strong>cómo</strong> profundizar para obtenerlo.</div></div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">📝</div><h3>Actividad — Detecta los vacíos en este predraft</h3><div class="mod-badge badge-practice">Práctica</div></div>
+        <div class="bbody">
+          <div style="background:linear-gradient(135deg,#1e0540,#2d0a6e);color:rgba(255,255,255,.88);border-radius:11px;padding:16px 18px;margin-bottom:14px;font-size:13px;line-height:1.75">
+            <div style="font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Fragmento del predraft — Caso ficticio</div>
+            La clienta refiere que convivió con su pareja durante 3 años. Durante este tiempo él ejerció control sobre ella. Señala que la amenazaba frecuentemente y que no podía salir sola. En varias ocasiones tuvo relaciones sexuales con él sin querer hacerlo. Ella refiere sentirse muy mal durante ese tiempo. Indica que sus hijos estaban presentes. No hay mayor detalle sobre las circunstancias específicas. La clienta señala que en algún momento ella se fue y ya no volvió.
+          </div>
+          <div class="q-ms-opts" id="vacios-opts">
+            <div class="q-ms-opt" data-val="1" onclick="toggleMs(this)"><div class="q-checkbox"></div>No se especifica con qué amenazaba ni cuáles eran las consecuencias</div>
+            <div class="q-ms-opt" data-val="2" onclick="toggleMs(this)"><div class="q-checkbox"></div>No se documentaron frases exactas, insultos o palabras que usaba</div>
+            <div class="q-ms-opt" data-val="3" onclick="toggleMs(this)"><div class="q-checkbox"></div>La trata sexual se menciona pero no se indagaron las circunstancias específicas</div>
+            <div class="q-ms-opt" data-val="4" onclick="toggleMs(this)"><div class="q-checkbox"></div>No hay información sobre el proceso: cómo inició la relación, captación</div>
+            <div class="q-ms-opt" data-val="5" onclick="toggleMs(this)"><div class="q-checkbox"></div>No se explica de qué forma los hijos fueron usados como elemento de coerción</div>
+            <div class="q-ms-opt" data-val="6" onclick="toggleMs(this)"><div class="q-checkbox"></div>No se conecta cómo el control/amenazas permitieron al tratante lograr la explotación sexual</div>
+            <div class="q-ms-opt" data-val="7" onclick="toggleMs(this)"><div class="q-checkbox"></div>El nombre del cliente no aparece en el predraft</div>
+          </div>
+          <div class="ck-actions"><button class="ck-btn ck-verify" onclick="checkVacios()">Verificar selección</button><button class="ck-btn ck-retry" onclick="resetMs('vacios-opts')">Reiniciar</button></div>
+          <div class="ck-feedback" id="fb-vacios"></div>
+        </div>
+      </div>
+      <div class="mod-nav-bar"><button class="mod-nav-btn mod-nav-prev" onclick="showPanel('mod3')">← Módulo 3</button><button class="mod-nav-btn mod-nav-next" onclick="showPanel('mod5')">Módulo 5 →</button></div>
+    </div>
+
+    <!-- ═══ MÓDULO 5 ═══ -->
+    <div class="panel" id="panel-mod5">
+      <div class="section-head"><div class="sh-badge">Módulo 5 · EMP</div><h2>Construcción EMP en la entrevista</h2><p>El modelo Proceso–Medios–Fines es la columna vertebral del caso. La entrevista debe construirlo y conectarlo.</p></div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">⚙️</div><h3>El modelo EMP</h3><div class="mod-badge badge-core">Teoría</div></div>
+        <div class="bbody">
+          <div class="pmf-wrap">
+            <div class="pmf-equation">
+              <div class="pmf-col proceso">
+                <div class="pmf-col-head"><div class="pmf-col-letter">P</div><div class="pmf-col-tag">Elemento 1</div><div class="pmf-col-name">Proceso</div><div class="pmf-col-sub">¿Qué hizo el tratante?</div></div>
+                <div class="pmf-col-body">
+                  <div class="pmf-item"><div class="pmf-dot">→</div><div><div class="pmf-item-text">Captación</div><div class="pmf-item-sub">Cómo inició el reclutamiento</div></div></div>
+                  <div class="pmf-item"><div class="pmf-dot">→</div><div><div class="pmf-item-text">Traslado / Retención</div><div class="pmf-item-sub">Acciones para mantener a la víctima</div></div></div>
+                  <div class="pmf-item"><div class="pmf-dot">→</div><div><div class="pmf-item-text">Aislamiento progresivo</div><div class="pmf-item-sub">Separación de familia y redes</div></div></div>
+                </div>
+              </div>
+              <div class="pmf-connector">+</div>
+              <div class="pmf-col medios">
+                <div class="pmf-col-head"><div class="pmf-col-letter">M</div><div class="pmf-col-tag">Elemento 2</div><div class="pmf-col-name">Medios</div><div class="pmf-col-sub">¿Cómo lo logró?</div></div>
+                <div class="pmf-col-body">
+                  <div class="pmf-item"><div class="pmf-dot">→</div><div><div class="pmf-item-text">Fraude / Engaño</div></div></div>
+                  <div class="pmf-item"><div class="pmf-dot">→</div><div><div class="pmf-item-text">Amenazas / Coerción</div></div></div>
+                  <div class="pmf-item"><div class="pmf-dot">→</div><div><div class="pmf-item-text">Control / Aislamiento</div></div></div>
+                  <div class="pmf-item"><div class="pmf-dot">→</div><div><div class="pmf-item-text">Uso de hijos / deudas</div></div></div>
+                </div>
+              </div>
+              <div class="pmf-connector">=</div>
+              <div class="pmf-col fines">
+                <div class="pmf-col-head"><div class="pmf-col-letter">F</div><div class="pmf-col-tag">Elemento 3</div><div class="pmf-col-name">Fines</div><div class="pmf-col-sub">¿Para qué?</div></div>
+                <div class="pmf-col-body">
+                  <div class="pmf-item"><div class="pmf-dot">→</div><div><div class="pmf-item-text">Explotación sexual</div></div></div>
+                  <div class="pmf-item"><div class="pmf-dot">→</div><div><div class="pmf-item-text">Explotación laboral</div></div></div>
+                  <div class="pmf-item"><div class="pmf-dot">→</div><div><div class="pmf-item-text">Beneficio económico</div></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="pmf-formula"><span class="pmf-formula-icon">⚠️</span><div class="pmf-formula-text"><span class="red">Regla crítica:</span> Aunque el bot separa las preguntas por sección, <strong>siempre debes conectar proceso, medios y fines.</strong> No basta identificar una amenaza; hay que explicar cómo esa amenaza permitió al tratante lograr el fin de explotación.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">✏️</div><h3>Actividad — Clasifica los datos del caso</h3><div class="mod-badge badge-practice">Práctica</div></div>
+        <div class="bbody">
+          <p class="act-sub">Haz clic en un dato y luego en la columna donde debe ir (Proceso, Medios o Fines).</p>
+          <div class="emp-items-src" id="emp-src"></div>
+          <div class="emp-cols">
+            <div class="emp-col c-proceso" onclick="placeEmp('proceso')"><h4>Proceso</h4><div id="emp-proceso" style="min-height:30px"></div></div>
+            <div class="emp-col c-medios" onclick="placeEmp('medios')"><h4>Medios</h4><div id="emp-medios" style="min-height:30px"></div></div>
+            <div class="emp-col c-fines" onclick="placeEmp('fines')"><h4>Fines</h4><div id="emp-fines" style="min-height:30px"></div></div>
+          </div>
+          <div class="ck-actions"><button class="ck-btn ck-verify" onclick="checkEMP()">Verificar</button><button class="ck-btn ck-retry" onclick="initEMP()">Reiniciar</button></div>
+          <div class="ck-feedback" id="fb-emp"></div>
+          <div style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(124,58,237,.08)">
+            <div class="ck-section-title">Conecta medio con fin</div>
+            <div class="scenario-box" style="margin-bottom:10px"><div class="sc-label">Dato del caso</div><div class="sc-text">"Él la amenazaba con quitarle a sus hijos si ella intentaba irse o denunciarlo."</div></div>
+            <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:8px">Completa: "Esta amenaza funcionó como medio porque..."</div>
+            <textarea class="reform-area" id="emp-connect" placeholder="Explica cómo esa amenaza le permitió al tratante mantener la situación de explotación..."></textarea>
+            <button class="ck-btn ck-verify" style="margin-top:8px;font-size:12px;padding:7px 16px" onclick="showRfb('rfb-emp')">Ver retroalimentación</button>
+            <div class="ck-feedback ok" id="rfb-emp" style="display:none;margin-top:8px"><strong>Ejemplo:</strong> "...le generaba miedo suficiente como para que la clienta no intentara escapar ni denunciar, lo que le permitía al tratante continuar ejerciendo control y mantener la explotación sexual de forma sostenida."</div>
+          </div>
+        </div>
+      </div>
+      <div class="mod-nav-bar"><button class="mod-nav-btn mod-nav-prev" onclick="showPanel('mod4')">← Módulo 4</button><button class="mod-nav-btn mod-nav-next" onclick="showPanel('mod6')">Módulo 6 →</button></div>
+    </div>
+
+    <!-- ═══ MÓDULO 6 ═══ -->
+    <div class="panel" id="panel-mod6">
+      <div class="section-head"><div class="sh-badge">Módulo 6 · Manejo del cliente</div><h2>Manejo del cliente durante la entrevista</h2><p>Algunos clientes presentan patrones de respuesta que dificultan obtener la información. Debes reconocerlos y manejarlos.</p></div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">🤝</div><h3>Patrones frecuentes del cliente</h3><div class="mod-badge badge-core">Teoría</div></div>
+        <div class="bbody">
+          <div class="two-col">
+            <div class="mini-card" style="border-left:3px solid var(--red)"><h4>⚡ Minimiza lo ocurrido</h4><p>"No era tan malo", "creo que exagero". Requiere sensibilización y preguntas directivas.</p></div>
+            <div class="mini-card" style="border-left:3px solid var(--amber)"><h4>🔒 Omite detalles sensibles</h4><p>Por vergüenza o trauma no menciona ciertos elementos. Crea ambiente de seguridad.</p></div>
+            <div class="mini-card" style="border-left:3px solid #2563eb"><h4>📢 Responde de forma general</h4><p>"Me maltrataba mucho". Válido pero insuficiente. Profundiza: ¿cómo?, ¿cuándo?, ¿qué hacía exactamente?</p></div>
+            <div class="mini-card" style="border-left:3px solid #7C3AED"><h4>🧩 Normaliza la violencia</h4><p>Asume que ciertas conductas eran "normales". Señala con respeto que forman parte del esquema de trata, sin imponer.</p></div>
+          </div>
+          <div class="principle" style="margin-top:14px"><p>El colaborador debe: <strong>sensibilizar, ser directivo sin presionar, profundizar con respeto y nunca inducir respuestas.</strong></p></div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">✏️</div><h3>Actividad — Elige la mejor respuesta del entrevistador</h3><div class="mod-badge badge-practice">Práctica</div></div>
+        <div class="bbody">
+          <div class="ck2-question">
+            <div class="ck2-qtext">El cliente dice: <em>"La verdad no era tan malo, creo que exagero. Él me quería a su manera."</em><br><br>¿Cuál es la mejor respuesta del colaborador?</div>
+            <div class="ck2-opts" id="cliente-opts">
+              <div class="ck2-opt" data-val="1" onclick="selCliente(this,false)"><div class="ck2-radio"></div>a) "Entiendo, quizás no fue tan grave entonces. Pasemos a otra pregunta."</div>
+              <div class="ck2-opt" data-val="2" onclick="selCliente(this,false)"><div class="ck2-radio"></div>b) "No, usted sí fue víctima. Lo que vivió fue abuso, aunque no lo sienta así."</div>
+              <div class="ck2-opt" data-val="3" onclick="selCliente(this,true)"><div class="ck2-radio"></div>c) "Entiendo que puede sentirse así, y eso es muy común. Lo que me interesa es entender en detalle qué pasaba. ¿Puede contarme algún momento específico en que sintió que no podía hacer algo que quería hacer?"</div>
+              <div class="ck2-opt" data-val="4" onclick="selCliente(this,false)"><div class="ck2-radio"></div>d) "¿Él la golpeaba? ¿La amenazaba con sus hijos? ¿Le quitaba el dinero?"</div>
+            </div>
+            <div class="ck-feedback" id="fb-cliente"></div>
+          </div>
+        </div>
+      </div>
+      <div class="mod-nav-bar"><button class="mod-nav-btn mod-nav-prev" onclick="showPanel('mod5')">← Módulo 5</button><button class="mod-nav-btn mod-nav-next" onclick="showPanel('mod7')">Módulo 7 →</button></div>
+    </div>
+
+    <!-- ═══ MÓDULO 7 ═══ -->
+    <div class="panel" id="panel-mod7">
+      <div class="section-head"><div class="sh-badge">Módulo 7 · Flujo operativo</div><h2>Flujo operativo de la entrevista</h2><p>Conocer el orden correcto te permite ejecutar el proceso con eficiencia y sin omisiones.</p></div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">📋</div><h3>El proceso paso a paso</h3><div class="mod-badge badge-core">Referencia</div></div>
+        <div class="bbody">
+          <div class="inv-timeline">
+            <div class="inv-titem"><div class="inv-tdot blue">1</div><div class="inv-tbody"><div class="it-phase">Preparación</div><div class="it-title">Revisar daily / asignación del caso</div><div class="it-body">Identifica el caso asignado y confirma los datos básicos.</div></div></div>
+            <div class="inv-titem"><div class="inv-tdot blue">2</div><div class="inv-tbody"><div class="it-phase">Preparación</div><div class="it-title">Abrir y leer el predraft completo</div><div class="it-body">Lee el predraft completo antes de abrir el bot. Identifica vacíos e información existente.</div></div></div>
+            <div class="inv-titem"><div class="inv-tdot purple">3</div><div class="inv-tbody"><div class="it-phase">Preparación</div><div class="it-title">Abrir la guía/bot y preparar estrategia</div><div class="it-body">Revisa preguntas, marca lo que existe y lo que falta. Define tu estrategia de profundización.</div></div></div>
+            <div class="inv-titem"><div class="inv-tdot gold">4</div><div class="inv-tbody"><div class="it-phase">Ejecución</div><div class="it-title">Iniciar videollamada · Aplicar speech</div><div class="it-body">Aplica el código/speech correspondiente al inicio de la entrevista.</div></div></div>
+            <div class="inv-titem"><div class="inv-tdot gold">5</div><div class="inv-tbody"><div class="it-phase">Ejecución</div><div class="it-title">Realizar entrevista · Profundizar puntos débiles</div><div class="it-body">Adapta las preguntas del bot, profundiza los vacíos y conecta medios con fines.</div></div></div>
+            <div class="inv-titem"><div class="inv-tdot green">6</div><div class="inv-tbody"><div class="it-phase">Cierre</div><div class="it-title">Cierre: evidencias + recomendaciones + mensajes</div><div class="it-body">Speech de evidencias, recomendaciones legales, mensaje de encuesta y mensaje de devidencia.</div></div></div>
+            <div class="inv-titem"><div class="inv-tdot green">7</div><div class="inv-tbody"><div class="it-phase">Entregable</div><div class="it-title">Entregar la transcripción</div><div class="it-body">La transcripción es el entregable final. No se requiere carátula compleja.</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">✏️</div><h3>Actividad — Ordena los pasos</h3><div class="mod-badge badge-practice">Práctica</div></div>
+        <div class="bbody">
+          <p class="act-sub">Los siguientes pasos están desordenados. Usa los botones ▲▼ para colocarlos en el orden correcto.</p>
+          <div class="sort-list" id="sort-steps"></div>
+          <div class="ck-actions"><button class="ck-btn ck-verify" onclick="checkOrder()">Verificar orden</button><button class="ck-btn ck-retry" onclick="initOrder()">Reiniciar</button></div>
+          <div class="ck-feedback" id="fb-order"></div>
+        </div>
+      </div>
+      <div class="mod-nav-bar"><button class="mod-nav-btn mod-nav-prev" onclick="showPanel('mod6')">← Módulo 6</button><button class="mod-nav-btn mod-nav-next" onclick="showPanel('mod8')">Módulo 8 →</button></div>
+    </div>
+
+    <!-- ═══ MÓDULO 8 ═══ -->
+    <div class="panel" id="panel-mod8">
+      <div class="section-head"><div class="sh-badge">Módulo 8 · Cierre</div><h2>Cierre y entregable de la entrevista</h2><p>La entrevista siempre es por videollamada y tiene un cierre definido. El entregable principal es la transcripción.</p></div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">🏁</div><h3>Elementos del cierre</h3><div class="mod-badge badge-core">Operativo</div></div>
+        <div class="bbody">
+          <div class="two-col">
+            <div class="mini-card" style="border-left:3px solid var(--green)"><h4 style="color:var(--green)">📋 Evidencias</h4><p>Se explica al cliente qué documentos se le solicitarán y se aplica el speech correspondiente.</p></div>
+            <div class="mini-card" style="border-left:3px solid #2563eb"><h4 style="color:#1d4ed8">⚖️ Recomendaciones legales</h4><p>Se entrega la información legal al cierre usando el speech definido para esa parte.</p></div>
+          </div>
+          <div class="sdiv"><div class="l"></div><div class="t">Mensajes post-entrevista</div><div class="l"></div></div>
+          <div class="two-col">
+            <div class="mini-card"><h4>📨 Encuesta de satisfacción</h4><p>Se envía el speech de encuesta de satisfacción al cliente.</p></div>
+            <div class="mini-card"><h4>📎 Mensaje de evidencias</h4><p>Se envía el mensaje de devidencia con instrucciones sobre los documentos.</p></div>
+          </div>
+          <div class="principle" style="margin-top:14px"><p><strong>Entregable principal:</strong> La transcripción de la entrevista. No se requiere carátula compleja. La IA procesará el intake para generar la declaración final → va a escritores.</p><div class="principle-sub">Nota de MyCase: "SA Visat" (o equivalente vigente) con agenda, término de entrevista y cualquier incidencia durante la llamada.</div></div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">✅</div><h3>Actividad — Checklist de cierre</h3><div class="mod-badge badge-practice">Práctica</div></div>
+        <div class="bbody">
+          <div class="ck-section-title">Marca cada elemento completado antes de dar la entrevista por cerrada</div>
+          <div class="ck-list" id="cierre-ck">
+            <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box">✓</div><span>Realicé el cierre de evidencias con el speech correspondiente</span></div>
+            <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box">✓</div><span>Entregué las recomendaciones legales al cliente</span></div>
+            <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box">✓</div><span>Finalicé la videollamada correctamente</span></div>
+            <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box">✓</div><span>Envié el mensaje de encuesta de satisfacción</span></div>
+            <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box">✓</div><span>Envié el mensaje de evidencias (devidencia)</span></div>
+            <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box">✓</div><span>Registré la nota en MyCase con agenda, término e incidencias</span></div>
+            <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box">✓</div><span>Entregué la transcripción como entregable final</span></div>
+          </div>
+          <div class="ck-counter" id="cierre-counter">0 / 7 completados</div>
+        </div>
+      </div>
+      <div class="mod-nav-bar"><button class="mod-nav-btn mod-nav-prev" onclick="showPanel('mod7')">← Módulo 7</button><button class="mod-nav-btn mod-nav-next" onclick="showPanel('mod9')">Módulo 9 →</button></div>
+    </div>
+
+    <!-- ═══ MÓDULO 9 ═══ -->
+    <div class="panel" id="panel-mod9">
+      <div class="section-head"><div class="sh-badge">Módulo 9 · Suficiencia mínima</div><h2>Casos débiles y suficiencia mínima</h2><p>No todos los casos son perfectos. El colaborador debe distinguir entre un caso viable y uno que requiere escalamiento directo.</p></div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">🚦</div><h3>El criterio de suficiencia mínima</h3><div class="mod-badge badge-critical">Operativo</div></div>
+        <div class="bbody">
+          <div class="critical-block">
+            <div class="cb-head"><span class="cb-icon">⚖️</span><span class="cb-label">Regla operativa</span></div>
+            <div class="cb-title">Si cumple lo mínimo necesario, se pasa</div>
+            <p>Un caso puede ser débil pero viable si tiene los elementos básicos del EMP. Solo se escala directamente con abogados cuando el caso <strong>no cumple el mínimo, está en riesgo de cancelación o no califica para Visa T.</strong></p>
+            <div class="cb-example"><strong>Importante:</strong> Ya no se hacen correcciones con revisión interna previa. Si el caso cumple mínimo → se manda. Si no cumple → va directamente con los abogados.</div>
+          </div>
+          <div class="three-col" style="margin-top:14px">
+            <div class="mini-card" style="border-top:3px solid var(--green);text-align:center"><div style="font-size:22px;margin-bottom:8px">🟢</div><h4 style="color:var(--green)">Verde — Avanza</h4><p>EMP presente aunque débil. Cumple elementos mínimos. Se entrega la transcripción.</p></div>
+            <div class="mini-card" style="border-top:3px solid #7a5200;text-align:center"><div style="font-size:22px;margin-bottom:8px">🟡</div><h4 style="color:#7a5200">Amarillo — Profundizar</h4><p>Tiene estructura parcial. Con más profundización puede conectar los medios con los fines.</p></div>
+            <div class="mini-card" style="border-top:3px solid var(--red);text-align:center"><div style="font-size:22px;margin-bottom:8px">🔴</div><h4 style="color:var(--red)">Rojo — Escalar</h4><p>Sin fines claros, medios muy vagos, sin mínimo necesario. Va directamente con abogados.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">✏️</div><h3>Actividad — Semáforo de suficiencia</h3><div class="mod-badge badge-practice">Práctica</div></div>
+        <div class="bbody">
+          <div class="ck-section-title">Para cada caso, elige el semáforo correcto</div>
+          <div style="margin-bottom:18px">
+            <div class="scenario-box"><div class="sc-label">Caso A</div><div class="sc-text">El predraft documenta proceso, medios y fines. Los medios son amenazas verbales y control. No hay violencia física documentada, pero la estructura EMP está completa y hay cooperación con autoridades.</div></div>
+            <div class="sem-grid">
+              <div class="sem-card sc-verde" onclick="checkSem(this,'A','verde')"><div class="sem-dot"></div><div class="sem-label">Verde</div><div class="sem-sub">Cumple mínimo. Avanza.</div></div>
+              <div class="sem-card sc-amarillo" onclick="checkSem(this,'A','amarillo')"><div class="sem-dot"></div><div class="sem-label">Amarillo</div><div class="sem-sub">Requiere profundización.</div></div>
+              <div class="sem-card sc-rojo" onclick="checkSem(this,'A','rojo')"><div class="sem-dot"></div><div class="sem-label">Rojo</div><div class="sem-sub">Escala con abogados.</div></div>
+            </div>
+            <div class="ck-feedback" id="fb-semA"></div>
+          </div>
+          <div style="margin-bottom:18px">
+            <div class="scenario-box"><div class="sc-label">Caso B</div><div class="sc-text">El predraft refiere que hubo una relación de pareja difícil. No hay fines documentados, no se indagó si hubo explotación, los medios son muy vagos y no hay cooperación con autoridades.</div></div>
+            <div class="sem-grid">
+              <div class="sem-card sc-verde" onclick="checkSem(this,'B','verde')"><div class="sem-dot"></div><div class="sem-label">Verde</div><div class="sem-sub">Cumple mínimo. Avanza.</div></div>
+              <div class="sem-card sc-amarillo" onclick="checkSem(this,'B','amarillo')"><div class="sem-dot"></div><div class="sem-label">Amarillo</div><div class="sem-sub">Requiere profundización.</div></div>
+              <div class="sem-card sc-rojo" onclick="checkSem(this,'B','rojo')"><div class="sem-dot"></div><div class="sem-label">Rojo</div><div class="sem-sub">Escala con abogados.</div></div>
+            </div>
+            <div class="ck-feedback" id="fb-semB"></div>
+          </div>
+          <div>
+            <div class="scenario-box"><div class="sc-label">Caso C</div><div class="sc-text">El caso tiene proceso y medios, pero los fines no quedan claros en el predraft. Durante la entrevista la cliente dio información general. Con profundización adicional se podría fortalecer la conexión medios–fines.</div></div>
+            <div class="sem-grid">
+              <div class="sem-card sc-verde" onclick="checkSem(this,'C','verde')"><div class="sem-dot"></div><div class="sem-label">Verde</div><div class="sem-sub">Cumple mínimo. Avanza.</div></div>
+              <div class="sem-card sc-amarillo" onclick="checkSem(this,'C','amarillo')"><div class="sem-dot"></div><div class="sem-label">Amarillo</div><div class="sem-sub">Requiere profundización.</div></div>
+              <div class="sem-card sc-rojo" onclick="checkSem(this,'C','rojo')"><div class="sem-dot"></div><div class="sem-label">Rojo</div><div class="sem-sub">Escala con abogados.</div></div>
+            </div>
+            <div class="ck-feedback" id="fb-semC"></div>
+          </div>
+        </div>
+      </div>
+      <div class="mod-nav-bar"><button class="mod-nav-btn mod-nav-prev" onclick="showPanel('mod8')">← Módulo 8</button><button class="mod-nav-btn mod-nav-next" onclick="showPanel('simulador')">Simulador Final →</button></div>
+    </div>
+
+    <!-- ═══ SIMULADOR ═══ -->
+    <div class="panel" id="panel-simulador">
+      <div class="section-head"><div class="sh-badge" style="background:rgba(30,102,65,.1);border-color:rgba(30,102,65,.3);color:#1e6641">Simulador Final</div><h2>Caso completo Visa T — Liliana M.</h2><p>Aplica todo lo aprendido en un caso real de Visa T por pareja. Sigue las 5 fases en orden.</p></div>
+      <div class="sim-tab-row">
+        <button class="sim-tab-btn st-active" onclick="switchSim(this,'sp1')">① Predraft</button>
+        <button class="sim-tab-btn" onclick="switchSim(this,'sp2')">② Vacíos</button>
+        <button class="sim-tab-btn" onclick="switchSim(this,'sp3')">③ Preguntas</button>
+        <button class="sim-tab-btn" onclick="switchSim(this,'sp4')">④ EMP</button>
+        <button class="sim-tab-btn" onclick="switchSim(this,'sp5')">⑤ Cierre</button>
+      </div>
+      <div class="sim-panel sp-active" id="sp1">
+        <div class="block">
+          <div class="btitle"><div class="bicon">📄</div><h3>Predraft resumido — Caso Liliana M.</h3><div class="mod-badge badge-gold">Leer primero</div></div>
+          <div class="bbody" style="background:linear-gradient(135deg,#1e0540,#2d0a6e);border-radius:10px;color:rgba(255,255,255,.88);font-size:13px;line-height:1.8;padding:18px 20px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div><span style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold)">Tipo de caso</span><br>Visa T por pareja</div>
+              <div><span style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold)">Cliente</span><br>Mujer de 34 años, originaria de Guatemala</div>
+              <div><span style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold)">Proceso</span><br>Conoció a su pareja en 2019. Inició convivencia. La aisló de su familia progresivamente.</div>
+              <div><span style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold)">Medios</span><br>Control sobre salida, sin acceso a su teléfono, no podía trabajar. Insultos frecuentes.</div>
+              <div><span style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold)">Fines</span><br><span style="color:rgba(255,120,120,.9)">No documentados con claridad en el predraft.</span></div>
+              <div><span style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold)">Cooperación</span><br>Sí reportó a la policía local en 2022.</div>
+            </div>
+            <div style="margin-top:12px;padding:10px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);border-radius:8px;font-size:12px"><strong style="color:var(--gold)">Nota del bot:</strong> La cliente tiende a minimizar. No hay frases exactas ni amenazas específicas documentadas. Trata sexual no indagada durante el INTEC. Dificultad extrema no explorada.</div>
+          </div>
+        </div>
+        <div style="margin-top:14px"><button class="mod-nav-btn mod-nav-next" onclick="switchSimById('sp2')">Continuar → Identificar vacíos</button></div>
+      </div>
+      <div class="sim-panel" id="sp2">
+        <div class="block">
+          <div class="btitle"><div class="bicon">🔍</div><h3>¿Cuáles son los vacíos críticos de este predraft?</h3><div class="mod-badge badge-practice">Práctica</div></div>
+          <div class="bbody">
+            <div class="q-ms-opts" id="sim-vacios-opts">
+              <div class="q-ms-opt" data-val="1" onclick="toggleMs(this)"><div class="q-checkbox"></div>Los fines no están documentados con claridad</div>
+              <div class="q-ms-opt" data-val="2" onclick="toggleMs(this)"><div class="q-checkbox"></div>No hay frases exactas ni amenazas específicas</div>
+              <div class="q-ms-opt" data-val="3" onclick="toggleMs(this)"><div class="q-checkbox"></div>La trata sexual no fue indagada durante el INTEC</div>
+              <div class="q-ms-opt" data-val="4" onclick="toggleMs(this)"><div class="q-checkbox"></div>La dificultad extrema no fue explorada</div>
+              <div class="q-ms-opt" data-val="5" onclick="toggleMs(this)"><div class="q-checkbox"></div>No hay información sobre la cooperación con autoridades</div>
+              <div class="q-ms-opt" data-val="6" onclick="toggleMs(this)"><div class="q-checkbox"></div>El background del cliente es completo y no necesita profundización</div>
+            </div>
+            <div class="ck-actions"><button class="ck-btn ck-verify" onclick="checkSimVacios()">Verificar</button><button class="ck-btn ck-retry" onclick="resetMs('sim-vacios-opts')">Reiniciar</button></div>
+            <div class="ck-feedback" id="fb-sim-vacios"></div>
+          </div>
+        </div>
+        <div style="margin-top:14px"><button class="mod-nav-btn mod-nav-next" onclick="switchSimById('sp3')">Continuar → Preguntas prioritarias</button></div>
+      </div>
+      <div class="sim-panel" id="sp3">
+        <div class="block">
+          <div class="btitle"><div class="bicon">❓</div><h3>Selecciona las 4 preguntas más prioritarias para esta entrevista</h3><div class="mod-badge badge-practice">Práctica</div></div>
+          <div class="bbody">
+            <div class="q-ms-opts" id="sim-pregs-opts">
+              <div class="q-ms-opt" data-val="1" onclick="toggleMs(this)"><div class="q-checkbox"></div>¿Para qué quería él que hicieras eso? ¿Qué obtenía él de esa situación?</div>
+              <div class="q-ms-opt" data-val="2" onclick="toggleMs(this)"><div class="q-checkbox"></div>¿Hubo algún momento en que él te forzara o presionara a tener actividad sexual?</div>
+              <div class="q-ms-opt" data-val="3" onclick="toggleMs(this)"><div class="q-checkbox"></div>¿Cuáles son tus hobbies y actividades favoritas?</div>
+              <div class="q-ms-opt" data-val="4" onclick="toggleMs(this)"><div class="q-checkbox"></div>¿Qué palabras exactas usaba cuando te insultaba o amenazaba?</div>
+              <div class="q-ms-opt" data-val="5" onclick="toggleMs(this)"><div class="q-checkbox"></div>¿Si tuvieras que quedarte en EE. UU., qué tan difícil sería para ti y tus hijos regresar a Guatemala?</div>
+              <div class="q-ms-opt" data-val="6" onclick="toggleMs(this)"><div class="q-checkbox"></div>¿Cuánto pagaste por el trámite de tu visa inicial?</div>
+            </div>
+            <div class="ck-actions"><button class="ck-btn ck-verify" onclick="checkSimPregs()">Verificar</button><button class="ck-btn ck-retry" onclick="resetMs('sim-pregs-opts')">Reiniciar</button></div>
+            <div class="ck-feedback" id="fb-sim-pregs"></div>
+          </div>
+        </div>
+        <div style="margin-top:14px"><button class="mod-nav-btn mod-nav-next" onclick="switchSimById('sp4')">Continuar → Construir EMP</button></div>
+      </div>
+      <div class="sim-panel" id="sp4">
+        <div class="block">
+          <div class="btitle"><div class="bicon">⚙️</div><h3>Durante la entrevista, Liliana reveló lo siguiente</h3><div class="mod-badge badge-practice">Construye el EMP</div></div>
+          <div class="bbody">
+            <div style="background:linear-gradient(135deg,#1e0540,#2d0a6e);color:rgba(255,255,255,.88);border-radius:10px;padding:14px 18px;font-size:13px;line-height:1.75;margin-bottom:16px">"Él me decía que si me iba me quitaba a mis hijos y nadie me creería porque soy ilegal. Me forzó a tener relaciones sexuales muchas veces. Yo no podía salir ni trabajar. Con el dinero que él 'ganaba' usando mi cuerpo pagaba sus deudas."</div>
+            <div class="three-col">
+              <div><div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#1d4ed8;margin-bottom:6px">Proceso</div><textarea class="reform-area" id="sim-proceso" placeholder="¿Qué hizo el tratante?..."></textarea></div>
+              <div><div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#7C3AED;margin-bottom:6px">Medios</div><textarea class="reform-area" id="sim-medios" placeholder="¿Cómo lo logró?..."></textarea></div>
+              <div><div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#dc2626;margin-bottom:6px">Fines</div><textarea class="reform-area" id="sim-fines" placeholder="¿Para qué?..."></textarea></div>
+            </div>
+            <button class="ck-btn ck-verify" style="margin-top:12px" onclick="showRfb('rfb-sim-emp')">Ver retroalimentación EMP</button>
+            <div class="ck-feedback ok" id="rfb-sim-emp" style="display:none;margin-top:8px"><strong>Referencia:</strong> <strong>Proceso:</strong> Inicio de convivencia, aislamiento progresivo de familia y redes, retención con control de teléfono y movilidad. <strong>Medios:</strong> Amenaza de quitarle a sus hijos, amenaza de denunciarla como indocumentada, control financiero, coerción sexual reiterada. <strong>Fines:</strong> Explotación sexual para beneficio económico (pagaba sus deudas con el dinero obtenido).</div>
+          </div>
+        </div>
+        <div style="margin-top:14px"><button class="mod-nav-btn mod-nav-next" onclick="switchSimById('sp5')">Continuar → Decisión de cierre</button></div>
+      </div>
+      <div class="sim-panel" id="sp5">
+        <div class="block">
+          <div class="btitle"><div class="bicon">🚦</div><h3>Decisión final — ¿este caso cumple el mínimo necesario?</h3><div class="mod-badge badge-practice">Práctica</div></div>
+          <div class="bbody">
+            <div class="scenario-box" style="margin-bottom:14px"><div class="sc-label">Resumen del caso</div><div class="sc-text">Liliana fue aislada, controlada, amenazada con sus hijos y su estatus migratorio. Fue víctima de explotación sexual. El tratante obtuvo beneficio económico. Hay cooperación con autoridades (policía 2022).</div></div>
+            <div class="sem-grid">
+              <div class="sem-card sc-verde" onclick="checkSimFinal(this,'verde')"><div class="sem-dot"></div><div class="sem-label">Verde</div><div class="sem-sub">Cumple mínimo. Entrego transcripción.</div></div>
+              <div class="sem-card sc-amarillo" onclick="checkSimFinal(this,'amarillo')"><div class="sem-dot"></div><div class="sem-label">Amarillo</div><div class="sem-sub">Necesita más profundización.</div></div>
+              <div class="sem-card sc-rojo" onclick="checkSimFinal(this,'rojo')"><div class="sem-dot"></div><div class="sem-label">Rojo</div><div class="sem-sub">Escala con abogados.</div></div>
+            </div>
+            <div class="ck-feedback" id="fb-sim-final"></div>
+            <div style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(124,58,237,.08)">
+              <div class="ck-section-title">¿Qué elementos van en el cierre correcto?</div>
+              <div class="q-ms-opts" id="sim-cierre-opts">
+                <div class="q-ms-opt" data-val="1" onclick="toggleMs(this)"><div class="q-checkbox"></div>Speech de evidencias</div>
+                <div class="q-ms-opt" data-val="2" onclick="toggleMs(this)"><div class="q-checkbox"></div>Recomendaciones legales</div>
+                <div class="q-ms-opt" data-val="3" onclick="toggleMs(this)"><div class="q-checkbox"></div>Mensaje de encuesta de satisfacción</div>
+                <div class="q-ms-opt" data-val="4" onclick="toggleMs(this)"><div class="q-checkbox"></div>Mensaje de evidencias (devidencia)</div>
+                <div class="q-ms-opt" data-val="5" onclick="toggleMs(this)"><div class="q-checkbox"></div>Lectura completa de la declaración final al cliente</div>
+                <div class="q-ms-opt" data-val="6" onclick="toggleMs(this)"><div class="q-checkbox"></div>Entrega de la transcripción</div>
+              </div>
+              <div class="ck-actions"><button class="ck-btn ck-verify" onclick="checkSimCierre()">Verificar</button><button class="ck-btn ck-retry" onclick="resetMs('sim-cierre-opts')">Reiniciar</button></div>
+              <div class="ck-feedback" id="fb-sim-cierre"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mod-nav-bar"><button class="mod-nav-btn mod-nav-prev" onclick="showPanel('mod9')">← Módulo 9</button><button class="mod-nav-btn mod-nav-next" onclick="showPanel('evaluacion')">Evaluación Final →</button></div>
+    </div>
+
+    <!-- ═══ EVALUACIÓN FINAL ═══ -->
+    <div class="panel" id="panel-evaluacion">
+      <div class="section-head"><div class="sh-badge" style="background:rgba(201,168,76,.1);border-color:rgba(201,168,76,.3);color:#7a5200">Evaluación Final</div><h2>Evaluación — Estructura de Entrevista Visa T</h2><p>20 preguntas para medir tu dominio del proceso. Mínimo aprobatorio: 80% (16/20).</p></div>
+      <div id="exam-form">
+        <div class="q-block" id="exam-q1"><div class="q-num">Pregunta 1 de 20 · Opción múltiple</div><div class="q-text">¿Cuál es el PRIMER documento que el colaborador debe revisar antes de la entrevista Visa T?</div><div class="q-opts"><div class="q-opt" data-val="1" onclick="qSel('q1',this,false)"><div class="q-radio"></div>La guía general de entrevistas Visa T del área</div><div class="q-opt" data-val="2" onclick="qSel('q1',this,true)"><div class="q-radio"></div>El predraft del caso asignado</div><div class="q-opt" data-val="3" onclick="qSel('q1',this,false)"><div class="q-radio"></div>El perfil de MyCase del cliente</div><div class="q-opt" data-val="4" onclick="qSel('q1',this,false)"><div class="q-radio"></div>El formulario de cooperación con autoridades</div></div><div class="q-feedback" id="qfb-q1"></div></div>
+        <div class="q-block" id="exam-q2"><div class="q-num">Pregunta 2 de 20 · Verdadero / Falso</div><div class="q-text">Las preguntas del bot/guía de entrevista deben aplicarse exactamente como están escritas, sin modificaciones.</div><div class="q-opts"><div class="q-opt" data-val="1" onclick="qSel('q2',this,false)"><div class="q-radio"></div>Verdadero</div><div class="q-opt" data-val="2" onclick="qSel('q2',this,true)"><div class="q-radio"></div>Falso — Son sugerencias que deben adaptarse al caso y la dinámica</div></div><div class="q-feedback" id="qfb-q2"></div></div>
+        <div class="q-block" id="exam-q3"><div class="q-num">Pregunta 3 de 20 · Opción múltiple</div><div class="q-text">¿Qué significa que los "fines" en el modelo EMP no estén documentados en el predraft?</div><div class="q-opts"><div class="q-opt" data-val="1" onclick="qSel('q3',this,false)"><div class="q-radio"></div>El caso no califica para Visa T y debe cancelarse</div><div class="q-opt" data-val="2" onclick="qSel('q3',this,true)"><div class="q-radio"></div>Es un vacío crítico que debe indagarse durante la entrevista</div><div class="q-opt" data-val="3" onclick="qSel('q3',this,false)"><div class="q-radio"></div>Los fines no son necesarios para la Visa T</div><div class="q-opt" data-val="4" onclick="qSel('q3',this,false)"><div class="q-radio"></div>Se puede pasar el caso aunque los fines no estén claros</div></div><div class="q-feedback" id="qfb-q3"></div></div>
+        <div class="q-block" id="exam-q4"><div class="q-num">Pregunta 4 de 20 · Escenario</div><div class="q-text">El cliente dice: "La verdad no me acuerdo exactamente de las palabras que usaba, pero era muy malo conmigo." ¿Qué debe hacer el colaborador?</div><div class="q-opts"><div class="q-opt" data-val="1" onclick="qSel('q4',this,false)"><div class="q-radio"></div>Aceptar la respuesta y pasar a la siguiente pregunta</div><div class="q-opt" data-val="2" onclick="qSel('q4',this,false)"><div class="q-radio"></div>Sugerirle algunas palabras para que escoja la que aplica</div><div class="q-opt" data-val="3" onclick="qSel('q4',this,true)"><div class="q-radio"></div>Profundizar: preguntar por momentos específicos que recuerde y cómo se sentía</div><div class="q-opt" data-val="4" onclick="qSel('q4',this,false)"><div class="q-radio"></div>Indicar al cliente que ese dato no es importante</div></div><div class="q-feedback" id="qfb-q4"></div></div>
+        <div class="q-block" id="exam-q5"><div class="q-num">Pregunta 5 de 20 · Verdadero / Falso</div><div class="q-text">La entrevista Visa T puede realizarse por llamada de voz (sin video) si el cliente así lo solicita.</div><div class="q-opts"><div class="q-opt" data-val="1" onclick="qSel('q5',this,false)"><div class="q-radio"></div>Verdadero</div><div class="q-opt" data-val="2" onclick="qSel('q5',this,true)"><div class="q-radio"></div>Falso — La entrevista siempre es por videollamada, sin excepción</div></div><div class="q-feedback" id="qfb-q5"></div></div>
+        <div class="q-block" id="exam-q6"><div class="q-num">Pregunta 6 de 20 · Opción múltiple</div><div class="q-text">¿Cuál es el entregable principal del colaborador al finalizar la entrevista Visa T?</div><div class="q-opts"><div class="q-opt" data-val="1" onclick="qSel('q6',this,false)"><div class="q-radio"></div>La declaración final revisada por el colaborador</div><div class="q-opt" data-val="2" onclick="qSel('q6',this,true)"><div class="q-radio"></div>La transcripción de la entrevista</div><div class="q-opt" data-val="3" onclick="qSel('q6',this,false)"><div class="q-radio"></div>Un resumen ejecutivo con carátula del caso</div><div class="q-opt" data-val="4" onclick="qSel('q6',this,false)"><div class="q-radio"></div>El formulario de cooperación con autoridades firmado</div></div><div class="q-feedback" id="qfb-q6"></div></div>
+        <div class="q-block" id="exam-q7"><div class="q-num">Pregunta 7 de 20 · Opción múltiple</div><div class="q-text">¿Cuál es la duración objetivo sugerida para una entrevista Visa T?</div><div class="q-opts"><div class="q-opt" data-val="1" onclick="qSel('q7',this,false)"><div class="q-radio"></div>30 minutos</div><div class="q-opt" data-val="2" onclick="qSel('q7',this,false)"><div class="q-radio"></div>1 hora</div><div class="q-opt" data-val="3" onclick="qSel('q7',this,true)"><div class="q-radio"></div>Aproximadamente 2 horas</div><div class="q-opt" data-val="4" onclick="qSel('q7',this,false)"><div class="q-radio"></div>El tiempo que el cliente necesite, sin límite</div></div><div class="q-feedback" id="qfb-q7"></div></div>
+        <div class="q-block" id="exam-q8"><div class="q-num">Pregunta 8 de 20 · Escenario</div><div class="q-text">El bot señala 14 preguntas sobre fraude como medio. El cliente ya dio respuestas sólidas sobre las primeras 4. ¿Qué haces con las restantes?</div><div class="q-opts"><div class="q-opt" data-val="1" onclick="qSel('q8',this,false)"><div class="q-radio"></div>Hacerlas todas; el bot es obligatorio</div><div class="q-opt" data-val="2" onclick="qSel('q8',this,false)"><div class="q-radio"></div>Saltar todo el resto y pasar a la siguiente sección</div><div class="q-opt" data-val="3" onclick="qSel('q8',this,true)"><div class="q-radio"></div>Evaluar cuáles aportan nueva información y priorizar las que profundicen lo que aún no quedó claro</div><div class="q-opt" data-val="4" onclick="qSel('q8',this,false)"><div class="q-radio"></div>Pedir al cliente que lea las preguntas y responda por escrito</div></div><div class="q-feedback" id="qfb-q8"></div></div>
+        <div class="q-block" id="exam-q9"><div class="q-num">Pregunta 9 de 20 · Verdadero / Falso</div><div class="q-text">Si el caso es débil pero cumple con los elementos mínimos del EMP, el colaborador debe pasarlo aunque los medios no sean contundentes.</div><div class="q-opts"><div class="q-opt" data-val="1" onclick="qSel('q9',this,true)"><div class="q-radio"></div>Verdadero</div><div class="q-opt" data-val="2" onclick="qSel('q9',this,false)"><div class="q-radio"></div>Falso</div></div><div class="q-feedback" id="qfb-q9"></div></div>
+        <div class="q-block" id="exam-q10"><div class="q-num">Pregunta 10 de 20 · Opción múltiple</div><div class="q-text">¿Qué contiene el predraft de un caso Visa T?</div><div class="q-opts"><div class="q-opt" data-val="1" onclick="qSel('q10',this,false)"><div class="q-radio"></div>Solo los datos personales del cliente</div><div class="q-opt" data-val="2" onclick="qSel('q10',this,true)"><div class="q-radio"></div>La declaración inicial con background, proceso, medios, fines, cooperación, presencia y dificultades tomada del INTEC</div><div class="q-opt" data-val="3" onclick="qSel('q10',this,false)"><div class="q-radio"></div>La evaluación psicológica del cliente</div><div class="q-opt" data-val="4" onclick="qSel('q10',this,false)"><div class="q-radio"></div>Los documentos de evidencia del caso</div></div><div class="q-feedback" id="qfb-q10"></div></div>
+        <div class="q-block" id="exam-q11"><div class="q-num">Pregunta 11 de 20 · Escenario</div><div class="q-text">Al revisar el predraft, notas que los "medios" son vagos: solo dice "ejercía control". ¿Cuál es tu estrategia para la entrevista?</div><div class="q-opts"><div class="q-opt" data-val="1" onclick="qSel('q11',this,false)"><div class="q-radio"></div>Pasar por esta sección rápidamente ya que está "cubierta"</div><div class="q-opt" data-val="2" onclick="qSel('q11',this,true)"><div class="q-radio"></div>Marcarla como vacío crítico y dedicar tiempo a obtener tipos específicos de control, frases exactas y amenazas concretas</div><div class="q-opt" data-val="3" onclick="qSel('q11',this,false)"><div class="q-radio"></div>Completar el predraft con ejemplos de control inventados</div><div class="q-opt" data-val="4" onclick="qSel('q11',this,false)"><div class="q-radio"></div>Escalar de inmediato con los abogados sin intentar profundizar</div></div><div class="q-feedback" id="qfb-q11"></div></div>
+        <div class="q-block" id="exam-q12"><div class="q-num">Pregunta 12 de 20 · Verdadero / Falso</div><div class="q-text">El colaborador puede sugerir palabras o respuestas al cliente cuando este no recuerda algo, para agilizar la entrevista.</div><div class="q-opts"><div class="q-opt" data-val="1" onclick="qSel('q12',this,false)"><div class="q-radio"></div>Verdadero</div><div class="q-opt" data-val="2" onclick="qSel('q12',this,true)"><div class="q-radio"></div>Falso — No debe inducir respuestas bajo ninguna circunstancia</div></div><div class="q-feedback" id="qfb-q12"></div></div>
+        <div class="q-block" id="exam-q13"><div class="q-num">Pregunta 13 de 20 · Opción múltiple</div><div class="q-text">¿Qué sucede con los casos muy débiles que no cumplen el mínimo necesario?</div><div class="q-opts"><div class="q-opt" data-val="1" onclick="qSel('q13',this,false)"><div class="q-radio"></div>Se pasan de igual forma con una nota de advertencia</div><div class="q-opt" data-val="2" onclick="qSel('q13',this,true)"><div class="q-radio"></div>Se escalan directamente con los abogados, ya no con revisión interna previa</div><div class="q-opt" data-val="3" onclick="qSel('q13',this,false)"><div class="q-radio"></div>Se agenda una segunda entrevista automáticamente</div><div class="q-opt" data-val="4" onclick="qSel('q13',this,false)"><div class="q-radio"></div>El colaborador los cierra y archiva sin más acción</div></div><div class="q-feedback" id="qfb-q13"></div></div>
+        <div class="q-block" id="exam-q14">
+          <div class="q-num">Pregunta 14 de 20 · Selección múltiple</div>
+          <div class="q-text">¿Cuáles de los siguientes son vacíos narrativos críticos que deben identificarse en el predraft? (Selecciona todos los que aplican)</div>
+          <div class="q-ms-opts" id="q14-opts">
+            <div class="q-ms-opt" data-val="a" onclick="toggleMs(this)"><div class="q-checkbox"></div>Siete oros no documentados</div>
+            <div class="q-ms-opt" data-val="b" onclick="toggleMs(this)"><div class="q-checkbox"></div>Frases exactas e insultos no registrados</div>
+            <div class="q-ms-opt" data-val="c" onclick="toggleMs(this)"><div class="q-checkbox"></div>El nombre del abogado asignado al caso</div>
+            <div class="q-ms-opt" data-val="d" onclick="toggleMs(this)"><div class="q-checkbox"></div>Amenazas específicas sin detallar</div>
+            <div class="q-ms-opt" data-val="e" onclick="toggleMs(this)"><div class="q-checkbox"></div>Relación medios–fines no conectada</div>
+          </div>
+          <div class="q-feedback" id="qfb-q14"></div>
+        </div>
+        <div class="q-block" id="exam-q15"><div class="q-num">Pregunta 15 de 20 · Escenario</div><div class="q-text">Un cliente dice que fue controlado por su pareja. El predraft dice que hubo control pero no detalla si fue para explotación laboral o sexual. ¿Qué debes hacer?</div><div class="q-opts"><div class="q-opt" data-val="1" onclick="qSel('q15',this,false)"><div class="q-radio"></div>Asumir que es explotación laboral porque es más común</div><div class="q-opt" data-val="2" onclick="qSel('q15',this,true)"><div class="q-radio"></div>Preguntar directamente sobre la explotación y qué obtenía el tratante con ese control</div><div class="q-opt" data-val="3" onclick="qSel('q15',this,false)"><div class="q-radio"></div>Marcar "fines no identificados" y no profundizar para no incomodar al cliente</div><div class="q-opt" data-val="4" onclick="qSel('q15',this,false)"><div class="q-radio"></div>Pasar el caso porque los fines son responsabilidad del abogado</div></div><div class="q-feedback" id="qfb-q15"></div></div>
+        <div class="q-block" id="exam-q16"><div class="q-num">Pregunta 16 de 20 · Opción múltiple</div><div class="q-text">¿Cuáles son los dos mensajes que el colaborador envía después de finalizar la videollamada?</div><div class="q-opts"><div class="q-opt" data-val="1" onclick="qSel('q16',this,false)"><div class="q-radio"></div>Mensaje de bienvenida y mensaje de derechos del cliente</div><div class="q-opt" data-val="2" onclick="qSel('q16',this,true)"><div class="q-radio"></div>Mensaje de encuesta de satisfacción y mensaje de evidencias (devidencia)</div><div class="q-opt" data-val="3" onclick="qSel('q16',this,false)"><div class="q-radio"></div>Resumen de la entrevista y solicitud de firma de documentos</div><div class="q-opt" data-val="4" onclick="qSel('q16',this,false)"><div class="q-radio"></div>Mensaje de agradecimiento y mensaje al área de escritores</div></div><div class="q-feedback" id="qfb-q16"></div></div>
+        <div class="q-block" id="exam-q17"><div class="q-num">Pregunta 17 de 20 · Verdadero / Falso</div><div class="q-text">La transcripción de la entrevista será procesada por IA para generar la declaración final del caso.</div><div class="q-opts"><div class="q-opt" data-val="1" onclick="qSel('q17',this,true)"><div class="q-radio"></div>Verdadero</div><div class="q-opt" data-val="2" onclick="qSel('q17',this,false)"><div class="q-radio"></div>Falso</div></div><div class="q-feedback" id="qfb-q17"></div></div>
+        <div class="q-block" id="exam-q18"><div class="q-num">Pregunta 18 de 20 · Escenario</div><div class="q-text">La guía/bot señala que este cliente "tiende a minimizar". ¿Cuál es la estrategia correcta?</div><div class="q-opts"><div class="q-opt" data-val="1" onclick="qSel('q18',this,false)"><div class="q-radio"></div>Evitar preguntar sobre temas delicados para no causar incomodidad</div><div class="q-opt" data-val="2" onclick="qSel('q18',this,true)"><div class="q-radio"></div>Ser más directivo, explicar al cliente por qué es importante el detalle y sensibilizarlo</div><div class="q-opt" data-val="3" onclick="qSel('q18',this,false)"><div class="q-radio"></div>Aceptar sus respuestas generales y completar la información con el predraft</div><div class="q-opt" data-val="4" onclick="qSel('q18',this,false)"><div class="q-radio"></div>Parar la entrevista y escalar inmediatamente con los abogados</div></div><div class="q-feedback" id="qfb-q18"></div></div>
+        <div class="q-block" id="exam-q19"><div class="q-num">Pregunta 19 de 20 · Opción múltiple</div><div class="q-text">¿En qué parte del bot/guía de entrevista están las notas para el psicólogo?</div><div class="q-opts"><div class="q-opt" data-val="1" onclick="qSel('q19',this,false)"><div class="q-radio"></div>Al inicio, antes de las preguntas de antecedentes</div><div class="q-opt" data-val="2" onclick="qSel('q19',this,true)"><div class="q-radio"></div>Al final del bot, después de las secciones de cooperación y dificultades</div><div class="q-opt" data-val="3" onclick="qSel('q19',this,false)"><div class="q-radio"></div>En el predraft, al lado de los datos del cliente</div><div class="q-opt" data-val="4" onclick="qSel('q19',this,false)"><div class="q-radio"></div>En un documento separado llamado "evaluación psicológica"</div></div><div class="q-feedback" id="qfb-q19"></div></div>
+        <div class="q-block" id="exam-q20">
+          <div class="q-num">Pregunta 20 de 20 · Selección múltiple</div>
+          <div class="q-text">¿Cuáles de los siguientes pasos forman parte del flujo correcto ANTES de iniciar la videollamada con el cliente? (Selecciona todos los que aplican)</div>
+          <div class="q-ms-opts" id="q20-opts">
+            <div class="q-ms-opt" data-val="a" onclick="toggleMs(this)"><div class="q-checkbox"></div>Leer el predraft completo</div>
+            <div class="q-ms-opt" data-val="b" onclick="toggleMs(this)"><div class="q-checkbox"></div>Abrir y revisar la guía/bot de entrevista</div>
+            <div class="q-ms-opt" data-val="c" onclick="toggleMs(this)"><div class="q-checkbox"></div>Identificar los vacíos del caso</div>
+            <div class="q-ms-opt" data-val="d" onclick="toggleMs(this)"><div class="q-checkbox"></div>Enviar la transcripción al área de escritores</div>
+            <div class="q-ms-opt" data-val="e" onclick="toggleMs(this)"><div class="q-checkbox"></div>Preparar la estrategia de la entrevista</div>
+          </div>
+          <div class="q-feedback" id="qfb-q20"></div>
+        </div>
+        <div class="exam-submit-area"><button class="exam-btn exam-btn-submit" id="exam-submit" onclick="examSubmit()">Enviar evaluación</button><button class="exam-btn exam-btn-retry" id="exam-retry" style="display:none;margin-left:10px" onclick="examRetry()">Reintentar</button></div>
+      </div>
+      <div class="exam-result" id="exam-result">
+        <div style="font-size:13px;font-weight:600;color:var(--slate);margin-bottom:8px">Resultado final</div>
+        <div id="exam-result-label" style="font-size:22px;font-weight:700;margin-bottom:10px"></div>
+        <div class="result-score" id="exam-score-display"></div>
+        <div id="exam-result-msg" style="font-size:14px;color:var(--slate);max-width:50ch;margin:0 auto 16px;line-height:1.6"></div>
+        <div class="result-stats">
+          <div class="rs-item"><div class="rs-val ok" id="exam-correct"></div><div class="rs-label">Correctas</div></div>
+          <div class="rs-item"><div class="rs-val fail" id="exam-wrong"></div><div class="rs-label">Incorrectas</div></div>
+          <div class="rs-item"><div class="rs-val" id="exam-score-val" style="color:var(--accent)"></div><div class="rs-label">Porcentaje</div></div>
+        </div>
+      </div>
+      <div class="mod-nav-bar"><button class="mod-nav-btn mod-nav-prev" onclick="showPanel('simulador')">← Simulador</button><button class="mod-nav-btn mod-nav-next" onclick="showPanel('bienvenida')">Volver al inicio ↺</button></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+var PANELS=['bienvenida','mod1','mod2','mod3','mod4','mod5','mod6','mod7','mod8','mod9','simulador','evaluacion'];
+var visited=new Set(['bienvenida']);
+function showPanel(id){
+  PANELS.forEach(function(p){
+    var el=document.getElementById('panel-'+p);
+    var nav=document.getElementById('nav-'+p);
+    if(el) el.classList.toggle('active',p===id);
+    if(nav) nav.classList.toggle('active',p===id);
+  });
+  visited.add(id);
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sbOverlay').classList.remove('show');
+}
+function updateProgress(){
+  var pct=Math.round((visited.size/PANELS.length)*100);
+  var bar=document.getElementById('globalProgress');
+  if(bar) bar.style.width=pct+'%';
+}
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sbOverlay').classList.toggle('show');
+}
+function toggleCk(el){
+  el.classList.toggle('ck-checked');
+  var list=el.closest('.ck-list');
+  if(!list) return;
+  var checked=list.querySelectorAll('.ck-checked').length;
+  var total=list.querySelectorAll('.ck-item').length;
+  var cid=list.id==='predraft-ck'?'predraft-counter':'cierre-counter';
+  var counter=document.getElementById(cid);
+  if(counter) counter.textContent=checked+' / '+total+' '+(list.id==='predraft-ck'?'revisados':'completados');
+}
+function showRfb(id){
+  var el=document.getElementById(id);
+  if(el){el.style.display='block';el.classList.add('show','ok');}
+}
+function toggleMs(el){el.classList.toggle('selected');}
+function resetMs(cid){
+  document.querySelectorAll('#'+cid+' .q-ms-opt').forEach(function(o){
+    o.classList.remove('selected','correct','incorrect','disabled');
+  });
+}
+
+/* ── M1 COMPARE ── */
+var compareData=[
+  {t:'Entrevista exploratoria desde cero',c:'before'},
+  {t:'Parte del predraft y la guía/bot',c:'after'},
+  {t:'Sin información previa del caso',c:'before'},
+  {t:'Valida, completa y profundiza lo existente',c:'after'},
+  {t:'Construye el caso durante la llamada',c:'before'},
+  {t:'Usa guía personalizada por caso',c:'after'}
+];
+var selCompChip=null;
+function initCompare(){
+  selCompChip=null;
+  var src=document.getElementById('compare-src');
+  var bi=document.getElementById('before-items');
+  var ai=document.getElementById('after-items');
+  if(!src) return;
+  src.innerHTML='';bi.innerHTML='';ai.innerHTML='';
+  compareData.forEach(function(d,i){
+    var chip=document.createElement('span');
+    chip.className='comp-chip';chip.textContent=d.t;chip.dataset.idx=i;
+    chip.onclick=function(){
+      document.querySelectorAll('.comp-chip').forEach(function(c){c.classList.remove('ch-selected');});
+      chip.classList.add('ch-selected');selCompChip=chip;
+    };
+    src.appendChild(chip);
+  });
+  document.getElementById('before-zone').onclick=function(e){if(!e.target.classList.contains('placed-chip'))placeComp('before');};
+  document.getElementById('after-zone').onclick=function(e){if(!e.target.classList.contains('placed-chip'))placeComp('after');};
+  var fb=document.getElementById('fb-compare');
+  if(fb){fb.className='ck-feedback';fb.style.display='none';}
+}
+function placeComp(zone){
+  if(!selCompChip) return;
+  var container=document.getElementById(zone+'-items');
+  var placed=document.createElement('span');
+  placed.className='placed-chip';placed.textContent=selCompChip.textContent;
+  placed.dataset.idx=selCompChip.dataset.idx;placed.dataset.zone=zone;
+  placed.onclick=function(){placed.remove();};
+  container.appendChild(placed);
+  selCompChip.classList.add('ch-placed');selCompChip.classList.remove('ch-selected');selCompChip=null;
+}
+function checkCompare(){
+  var placed=document.querySelectorAll('.placed-chip');
+  var correct=0;
+  placed.forEach(function(p){if(compareData[parseInt(p.dataset.idx)].c===p.dataset.zone) correct++;});
+  var fb=document.getElementById('fb-compare');
+  if(correct===compareData.length&&placed.length===compareData.length){
+    fb.className='ck-feedback show ok';fb.style.display='block';
+    fb.innerHTML='<strong>✓ ¡Correcto!</strong> El modelo actual parte del predraft y la guía/bot para validar, completar y profundizar.';
+  } else {
+    fb.className='ck-feedback show fail';fb.style.display='block';
+    fb.innerHTML='<strong>Revisa.</strong> '+correct+' de '+compareData.length+' correctos. El modelo actual: predraft+bot para dirigir la entrevista.';
+  }
+}
+
+/* ── M4 VACÍOS ── */
+function checkVacios(){
+  var opts=document.querySelectorAll('#vacios-opts .q-ms-opt');
+  var sel=[];
+  opts.forEach(function(o){if(o.classList.contains('selected')) sel.push(parseInt(o.dataset.val));});
+  var correct=[1,2,3,4,5,6];
+  var ok=correct.every(function(v){return sel.includes(v);})&&!sel.includes(7);
+  opts.forEach(function(o){o.classList.add('disabled');});
+  var fb=document.getElementById('fb-vacios');
+  if(ok){fb.className='ck-feedback show ok';fb.style.display='block';fb.innerHTML='<strong>✓ ¡Correcto!</strong> Los 6 vacíos identificados. El nombre del cliente no es un vacío narrativo crítico.';}
+  else{fb.className='ck-feedback show fail';fb.style.display='block';fb.innerHTML='<strong>Revisa.</strong> Los vacíos: amenazas sin especificar, frases exactas faltantes, trata sexual no indagada, captación sin documentar, uso de hijos sin explicar y conexión medios–fines ausente.';}
+}
+
+/* ── M5 EMP ── */
+var empData=[
+  {t:'La aisló de su familia',c:'proceso'},
+  {t:'La amenazó con quitarle a sus hijos',c:'medios'},
+  {t:'Controló su teléfono y movilidad',c:'medios'},
+  {t:'Explotación sexual para pagar sus deudas',c:'fines'},
+  {t:'Inició la convivencia con ella',c:'proceso'},
+  {t:'Obtuvo beneficio económico de la explotación',c:'fines'}
+];
+var selEmpChip=null;
+function initEMP(){
+  selEmpChip=null;
+  var src=document.getElementById('emp-src');
+  if(!src) return;
+  src.innerHTML='';
+  ['proceso','medios','fines'].forEach(function(z){var el=document.getElementById('emp-'+z);if(el)el.innerHTML='';});
+  empData.forEach(function(d,i){
+    var chip=document.createElement('span');
+    chip.className='emp-chip';chip.textContent=d.t;chip.dataset.idx=i;
+    chip.onclick=function(){
+      document.querySelectorAll('.emp-chip').forEach(function(c){c.classList.remove('ec-selected');});
+      chip.classList.add('ec-selected');selEmpChip=chip;
+    };
+    src.appendChild(chip);
+  });
+  var fb=document.getElementById('fb-emp');
+  if(fb){fb.className='ck-feedback';fb.style.display='none';}
+}
+function placeEmp(zone){
+  if(!selEmpChip) return;
+  var container=document.getElementById('emp-'+zone);
+  var placed=document.createElement('span');
+  placed.className='emp-placed-chip';placed.textContent=selEmpChip.textContent;
+  placed.dataset.idx=selEmpChip.dataset.idx;placed.dataset.zone=zone;
+  placed.onclick=function(){placed.remove();};
+  container.appendChild(placed);
+  selEmpChip.classList.add('ec-placed');selEmpChip.classList.remove('ec-selected');selEmpChip=null;
+}
+function checkEMP(){
+  var placed=document.querySelectorAll('.emp-placed-chip');
+  var correct=0;
+  placed.forEach(function(p){if(empData[parseInt(p.dataset.idx)].c===p.dataset.zone) correct++;});
+  var fb=document.getElementById('fb-emp');
+  if(correct===empData.length&&placed.length===empData.length){
+    fb.className='ck-feedback show ok';fb.style.display='block';
+    fb.innerHTML='<strong>✓ ¡Correcto!</strong> EMP clasificado perfectamente. Recuerda siempre conectar los tres elementos durante la entrevista.';
+  } else {
+    fb.className='ck-feedback show fail';fb.style.display='block';
+    fb.innerHTML='<strong>Revisa la clasificación.</strong> '+correct+' de '+empData.length+' correctos. Proceso=qué hizo, Medios=cómo, Fines=para qué.';
+  }
+}
+
+/* ── M6 CLIENTE ── */
+function selCliente(el,isCorrect){
+  document.querySelectorAll('#cliente-opts .ck2-opt').forEach(function(o){o.classList.add('disabled');});
+  var fb=document.getElementById('fb-cliente');
+  if(isCorrect){
+    el.classList.add('correct');
+    fb.className='ck-feedback show ok';fb.style.display='block';
+    fb.innerHTML='<strong>✓ Correcto.</strong> Esta respuesta valida el sentimiento sin negar la experiencia, orienta al cliente a reflexionar sobre momentos específicos y hace una pregunta abierta sin inducir.';
+  } else {
+    el.classList.add('incorrect');
+    fb.className='ck-feedback show fail';fb.style.display='block';
+    var msgs={'1':'Aceptar la minimización sin profundizar deja el vacío sin resolver.','2':'Afirmar que "sí fue víctima" puede sentirse impositivo y no ayuda al cliente a narrar con sus propias palabras.','4':'Hacer preguntas cerradas y dirigidas puede considerarse inducción, comprometiendo la validez de la declaración.'};
+    fb.innerHTML='<strong>Incorrecto.</strong> '+(msgs[el.dataset.val]||'Revisa las reglas de manejo del cliente.');
+  }
+}
+
+/* ── M7 ORDEN ── */
+var stepsData=[
+  'Revisar el daily o asignación del caso','Abrir el predraft del caso asignado','Leer el predraft completo e identificar vacíos',
+  'Abrir la guía/bot de entrevista del caso','Marcar lo que ya existe y lo que falta','Preparar la estrategia de la entrevista',
+  'Iniciar la videollamada con el cliente','Aplicar el speech/código correspondiente','Realizar la entrevista adaptando las preguntas',
+  'Profundizar los puntos débiles detectados','Cerrar: evidencias y recomendaciones legales','Enviar mensajes de encuesta y devidencia',
+  'Entregar la transcripción'
+];
+var stepsOrder=[];
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}}
+function initOrder(){
+  stepsOrder=stepsData.map(function(_,i){return i;});shuffle(stepsOrder);
+  renderOrder();
+  var fb=document.getElementById('fb-order');
+  if(fb){fb.className='ck-feedback';fb.style.display='none';}
+}
+function renderOrder(){
+  var list=document.getElementById('sort-steps');
+  if(!list) return;
+  list.innerHTML='';
+  stepsOrder.forEach(function(si,pos){
+    var item=document.createElement('div');item.className='sort-item';
+    item.innerHTML='<span class="sort-num">'+(pos+1)+'</span><span style="flex:1;font-size:13px">'+stepsData[si]+'</span><div class="sort-move"><button class="sort-btn" onclick="moveStep('+pos+',-1)">▲</button><button class="sort-btn" onclick="moveStep('+pos+',1)">▼</button></div>';
+    list.appendChild(item);
+  });
+}
+function moveStep(pos,dir){
+  var np=pos+dir;if(np<0||np>=stepsOrder.length)return;
+  var t=stepsOrder[pos];stepsOrder[pos]=stepsOrder[np];stepsOrder[np]=t;renderOrder();
+}
+function checkOrder(){
+  var ok=stepsOrder.every(function(v,i){return v===i;});
+  var fb=document.getElementById('fb-order');
+  if(ok){fb.className='ck-feedback show ok';fb.style.display='block';fb.innerHTML='<strong>✓ ¡Orden correcto!</strong> Dominas el flujo operativo completo de la entrevista Visa T.';}
+  else{
+    var wrong=stepsOrder.map(function(v,i){return v!==i?i+1:null;}).filter(Boolean);
+    fb.className='ck-feedback show fail';fb.style.display='block';
+    fb.innerHTML='<strong>Revisa el orden.</strong> Pasos incorrectos: '+wrong.join(', ')+'. Recuerda: predraft→bot→estrategia siempre antes de la llamada.';
+  }
+}
+
+/* ── M9 SEMÁFORO ── */
+var semCorrect={A:'verde',B:'rojo',C:'amarillo'};
+function checkSem(btn,caseId,color){
+  btn.parentElement.querySelectorAll('.sem-card').forEach(function(b){b.classList.remove('sc-selected');b.style.pointerEvents='none';});
+  btn.classList.add('sc-selected');
+  var fb=document.getElementById('fb-sem'+caseId);
+  var ok=color===semCorrect[caseId];
+  var msgs={
+    A:{ok:'<strong>✓ Verde.</strong> EMP completo con cooperación. Débil pero mínimo necesario = avanza.',fail:'Este caso sí cumple. EMP completo + cooperación = avanza aunque sea débil.'},
+    B:{ok:'<strong>✓ Rojo.</strong> Sin fines claros, medios vagos, sin cooperación. No cumple el mínimo. Va con abogados.',fail:'Este caso no cumple el mínimo. Sin fines documentados, medios vagos, sin cooperación.'},
+    C:{ok:'<strong>✓ Amarillo.</strong> Tiene estructura parcial. Con profundización adicional puede fortalecerse.',fail:'Tiene estructura parcial. Necesita trabajo para conectar los fines. No está listo para pasar pero tampoco para escalar aún.'}
+  };
+  fb.className='ck-feedback show '+(ok?'ok':'fail');fb.style.display='block';
+  fb.innerHTML=ok?msgs[caseId].ok:'<strong>Incorrecto.</strong> '+msgs[caseId].fail;
+}
+
+/* ── SIMULADOR ── */
+function switchSim(btn,panelId){
+  document.querySelectorAll('.sim-tab-btn').forEach(function(b){b.classList.remove('st-active');});
+  document.querySelectorAll('.sim-panel').forEach(function(p){p.classList.remove('sp-active');});
+  btn.classList.add('st-active');
+  var el=document.getElementById(panelId);if(el)el.classList.add('sp-active');
+}
+function switchSimById(panelId){
+  var panels2=document.querySelectorAll('.sim-panel');
+  var tabs=document.querySelectorAll('.sim-tab-btn');
+  panels2.forEach(function(p,i){var active=p.id===panelId;p.classList.toggle('sp-active',active);if(tabs[i])tabs[i].classList.toggle('st-active',active);});
+}
+function checkSimVacios(){
+  var opts=document.querySelectorAll('#sim-vacios-opts .q-ms-opt');
+  var sel=[];opts.forEach(function(o){if(o.classList.contains('selected'))sel.push(parseInt(o.dataset.val));});
+  var correct=[1,2,3,4];
+  var ok=correct.every(function(v){return sel.includes(v);})&&!sel.includes(5)&&!sel.includes(6);
+  opts.forEach(function(o){o.classList.add('disabled');});
+  var fb=document.getElementById('fb-sim-vacios');
+  if(ok){fb.className='ck-feedback show ok';fb.style.display='block';fb.innerHTML='<strong>✓ ¡Correcto!</strong> Los 4 vacíos: fines sin documentar, frases/amenazas faltantes, trata sexual no indagada, dificultad extrema no explorada. La cooperación sí está documentada (policía 2022).';}
+  else{fb.className='ck-feedback show fail';fb.style.display='block';fb.innerHTML='<strong>Revisa.</strong> La cooperación (policía 2022) sí está documentada. Los vacíos son: fines, frases exactas, trata sexual, dificultad extrema.';}
+}
+function checkSimPregs(){
+  var opts=document.querySelectorAll('#sim-pregs-opts .q-ms-opt');
+  var sel=[];opts.forEach(function(o){if(o.classList.contains('selected'))sel.push(parseInt(o.dataset.val));});
+  var correct=[1,2,4,5];
+  var ok=correct.every(function(v){return sel.includes(v);})&&!sel.includes(3)&&!sel.includes(6);
+  opts.forEach(function(o){o.classList.add('disabled');});
+  var fb=document.getElementById('fb-sim-pregs');
+  if(ok){fb.className='ck-feedback show ok';fb.style.display='block';fb.innerHTML='<strong>✓ ¡Correcto!</strong> Las prioritarias atacan los vacíos: fines, trata sexual, frases exactas, dificultad extrema.';}
+  else{fb.className='ck-feedback show fail';fb.style.display='block';fb.innerHTML='<strong>Ajusta tu selección.</strong> Prioriza las que van a los vacíos: fines (¿para qué?), trata sexual, frases/amenazas exactas, dificultad extrema. Hobbies y pago de visa no son relevantes.';}
+}
+function checkSimFinal(btn,color){
+  btn.parentElement.querySelectorAll('.sem-card').forEach(function(b){b.classList.remove('sc-selected');b.style.pointerEvents='none';});
+  btn.classList.add('sc-selected');
+  var fb=document.getElementById('fb-sim-final');
+  if(color==='verde'){fb.className='ck-feedback show ok';fb.style.display='block';fb.innerHTML='<strong>✓ ¡Correcto!</strong> El caso cumple: EMP completo con explotación sexual documentada, medios de coerción específicos y cooperación con autoridades. Se entrega la transcripción.';}
+  else if(color==='amarillo'){fb.className='ck-feedback show fail';fb.style.display='block';fb.innerHTML='<strong>Incorrecto.</strong> El caso ya tiene todos los elementos mínimos necesarios. No requiere más profundización.';}
+  else{fb.className='ck-feedback show fail';fb.style.display='block';fb.innerHTML='<strong>Incorrecto.</strong> Este caso sí cumple el mínimo. Solo se escala cuando el caso NO califica o está en riesgo de cancelación.';}
+}
+function checkSimCierre(){
+  var opts=document.querySelectorAll('#sim-cierre-opts .q-ms-opt');
+  var sel=[];opts.forEach(function(o){if(o.classList.contains('selected'))sel.push(parseInt(o.dataset.val));});
+  var correct=[1,2,3,4,6];
+  var ok=correct.every(function(v){return sel.includes(v);})&&!sel.includes(5)&&sel.length===correct.length;
+  opts.forEach(function(o){o.classList.add('disabled');});
+  var fb=document.getElementById('fb-sim-cierre');
+  if(ok){fb.className='ck-feedback show ok';fb.style.display='block';fb.innerHTML='<strong>✓ ¡Perfecto!</strong> Cierre correcto: evidencias, recomendaciones legales, mensajes (encuesta+devidencia), transcripción. La declaración final NO se lee al cliente en este momento.';}
+  else{fb.className='ck-feedback show fail';fb.style.display='block';fb.innerHTML='<strong>Revisa.</strong> La lectura de la declaración final NO es parte del cierre. Cierre: speech de evidencias, recomendaciones, mensajes y transcripción.';}
+}
+
+/* ── EVALUACIÓN ── */
+var examAnswers={},examLocked={};
+var examExpl={
+  q1:'El predraft es siempre el primer documento a revisar antes de la entrevista.',
+  q2:'Las preguntas del bot son sugerencias — se adaptan, no se transcriben literalmente.',
+  q3:'Los fines ausentes son un vacío crítico que debe indagarse en la entrevista.',
+  q4:'Profundizar con preguntas abiertas sobre momentos específicos es la técnica correcta.',
+  q5:'La entrevista siempre es por videollamada. Sin excepción.',
+  q6:'La transcripción es el entregable principal. No se requiere carátula compleja.',
+  q7:'La duración objetivo sugerida es aproximadamente 2 horas.',
+  q8:'Se evalúa qué preguntas aportan nueva información y se priorizan las que profundizan los vacíos.',
+  q9:'Débil pero con mínimo necesario = se pasa. No hay que esperar perfección.',
+  q10:'El predraft contiene la declaración inicial con todos los elementos del caso tomados del INTEC.',
+  q11:'Un medio vago es un vacío crítico — hay que profundizar para obtener frases exactas y amenazas concretas.',
+  q12:'Inducir respuestas compromete la validez de la declaración. Nunca se hace.',
+  q13:'Sin mínimo necesario = directamente con abogados. Ya no hay revisión interna.',
+  q14:'Vacíos: siete oros, frases exactas, amenazas específicas, relación medios-fines. El nombre del abogado no es un vacío narrativo.',
+  q15:'Si los fines no están claros, hay que preguntar directamente sobre la explotación y qué obtenía el tratante.',
+  q16:'Los dos mensajes: encuesta de satisfacción y mensaje de evidencias (devidencia).',
+  q17:'El área de procesamiento de IA toma el intake de la transcripción para generar la declaración final.',
+  q18:'Ante cliente que minimiza: ser directivo, sensibilizar, explicar la importancia del detalle.',
+  q19:'Las notas para el psicólogo están al final del bot, después de cooperación y dificultades.',
+  q20:'Antes de la llamada: leer predraft, revisar bot, identificar vacíos, preparar estrategia. La transcripción se entrega al finalizar.'
+};
+function qSel(qid,el,isCorrect){
+  if(examLocked[qid]) return;
+  examLocked[qid]=true;examAnswers[qid]=isCorrect;
+  el.closest('.q-opts').querySelectorAll('.q-opt').forEach(function(o){o.classList.add('disabled');});
+  var fb=document.getElementById('qfb-'+qid);
+  if(isCorrect){el.classList.add('correct');fb.className='q-feedback show ok';fb.style.display='block';fb.innerHTML='<strong>✓ Correcto.</strong> '+examExpl[qid];}
+  else{el.classList.add('incorrect');fb.className='q-feedback show fail';fb.style.display='block';fb.innerHTML='<strong>Incorrecto.</strong> '+examExpl[qid];}
+}
+function examSubmit(){
+  var q14sel=Array.from(document.querySelectorAll('#q14-opts .q-ms-opt.selected')).map(function(o){return o.dataset.val;});
+  var q14c=['a','b','d','e'];
+  var q14ok=q14c.every(function(v){return q14sel.includes(v);})&&q14sel.length===q14c.length;
+  examAnswers.q14=q14ok;
+  document.querySelectorAll('#q14-opts .q-ms-opt').forEach(function(o){o.classList.add(q14c.includes(o.dataset.val)?'correct':'incorrect','disabled');});
+  var fb14=document.getElementById('qfb-q14');
+  fb14.className='q-feedback show '+(q14ok?'ok':'fail');fb14.style.display='block';
+  fb14.innerHTML=(q14ok?'<strong>✓ Correcto.</strong> ':'<strong>Incorrecto.</strong> ')+examExpl.q14;
+
+  var q20sel=Array.from(document.querySelectorAll('#q20-opts .q-ms-opt.selected')).map(function(o){return o.dataset.val;});
+  var q20c=['a','b','c','e'];
+  var q20ok=q20c.every(function(v){return q20sel.includes(v);})&&q20sel.length===q20c.length;
+  examAnswers.q20=q20ok;
+  document.querySelectorAll('#q20-opts .q-ms-opt').forEach(function(o){o.classList.add(q20c.includes(o.dataset.val)?'correct':'incorrect','disabled');});
+  var fb20=document.getElementById('qfb-q20');
+  fb20.className='q-feedback show '+(q20ok?'ok':'fail');fb20.style.display='block';
+  fb20.innerHTML=(q20ok?'<strong>✓ Correcto.</strong> ':'<strong>Incorrecto.</strong> ')+examExpl.q20;
+
+  var total=0;Object.values(examAnswers).forEach(function(v){if(v===true)total++;});
+  var pct=Math.round((total/20)*100);
+  document.getElementById('exam-result').classList.add('show');
+  var scoreEl=document.getElementById('exam-score-display');
+  scoreEl.textContent=pct+'%';scoreEl.className='result-score '+(pct>=80?'pass':pct>=60?'warn':'fail');
+  document.getElementById('exam-result-label').textContent=pct>=80?'✓ Aprobado':'✗ No aprobado';
+  document.getElementById('exam-result-msg').textContent=pct>=80?'Excelente dominio del proceso de entrevista Visa T.':pct>=60?'Buen intento. Repasa los módulos de EMP, vacíos y flujo operativo.':'Necesitas repasar los módulos antes de intentar de nuevo.';
+  document.getElementById('exam-correct').textContent=total;
+  document.getElementById('exam-wrong').textContent=20-total;
+  document.getElementById('exam-score-val').textContent=pct+'%';
+  document.getElementById('exam-submit').style.display='none';
+  document.getElementById('exam-retry').style.display='inline-block';
+  document.getElementById('exam-result').scrollIntoView({behavior:'smooth'});
+}
+function examRetry(){
+  examAnswers={};examLocked={};
+  document.querySelectorAll('.q-opt').forEach(function(o){o.classList.remove('selected','correct','incorrect','disabled');});
+  document.querySelectorAll('.q-ms-opt').forEach(function(o){o.classList.remove('selected','correct','incorrect','disabled');});
+  document.querySelectorAll('.q-feedback').forEach(function(f){f.className='q-feedback';f.style.display='none';});
+  document.getElementById('exam-result').classList.remove('show');
+  document.getElementById('exam-submit').style.display='inline-block';
+  document.getElementById('exam-retry').style.display='none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  initCompare();initEMP();initOrder();updateProgress();
+});
+</script>
+</body>
+</html>
