@@ -979,6 +979,27 @@ mark.hi-green{background:rgba(30,102,65,.1);color:#1a5234;border-radius:3px;padd
 .adm-ans-qtext{color:var(--ink);font-weight:600;font-size:11.5px;line-height:1.5}
 .adm-ans-opt{font-size:11.5px;color:var(--slate);font-style:italic}
 
+/* ── Reporte de áreas de refuerzo ── */
+.adm-rein-block{margin-bottom:6px}
+.adm-rein-banner{display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid;border-radius:11px;margin-bottom:14px}
+.adm-rein-banner-icon{flex-shrink:0;width:38px;height:38px;border-radius:10px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;box-shadow:0 3px 10px rgba(0,0,0,.12)}
+.adm-rein-banner-title{font-size:14px;font-weight:800;color:var(--ink);line-height:1.3}
+.adm-rein-banner-title span{font-family:'Syne','DM Sans',sans-serif}
+.adm-rein-banner-sub{font-size:11.5px;color:var(--slate);margin-top:2px}
+.adm-rein-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+@media(max-width:900px){.adm-rein-grid{grid-template-columns:1fr}}
+.adm-rein-card{background:var(--white);border:1px solid rgba(107,143,168,.16);border-radius:11px;padding:14px 16px}
+.adm-rein-card-title{font-size:11.5px;font-weight:800;color:var(--ink);margin-bottom:11px;display:flex;align-items:center;gap:7px;letter-spacing:.3px}
+.adm-rein-card-body{display:flex;flex-direction:column;gap:11px}
+.adm-rein-area{padding:10px 12px;background:rgba(185,28,28,.04);border:1px solid rgba(185,28,28,.14);border-radius:8px}
+.adm-rein-area-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;flex-wrap:wrap}
+.adm-rein-area-name{font-size:12px;font-weight:800;color:#7f1d1d}
+.adm-rein-area-pct{font-family:'IBM Plex Mono','DM Sans',monospace;font-size:10px;font-weight:700;color:#b91c1c;background:rgba(185,28,28,.1);padding:2px 7px;border-radius:999px}
+.adm-rein-tags{margin:0;padding:0 0 0 16px;list-style:disc;display:flex;flex-direction:column;gap:3px}
+.adm-rein-tags li{font-size:11px;color:var(--slate);line-height:1.5}
+.adm-rein-list{margin:0;padding:0 0 0 18px;list-style:disc;display:flex;flex-direction:column;gap:6px}
+.adm-rein-list li{font-size:11.5px;color:var(--slate);line-height:1.55}
+
 /* ── Audio Player ── */
 .speech-audio-wrap{margin:0 0 18px;background:linear-gradient(135deg,rgba(71,85,97,.07),rgba(154,139,122,.05));border:1.5px solid rgba(154,139,122,.25);border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:14px}
 .speech-audio-icon{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 3px 10px rgba(71,85,97,.25)}
@@ -5713,6 +5734,255 @@ function toggleSidebar(){document.getElementById("sidebar").classList.toggle("op
     document.getElementById('admKpiAttempts').textContent = totalAttempts || '—';
   }
 
+  // ════════════════════════════════════════════════════════════════
+  // MAPA DE COMPETENCIAS: cada pregunta → área de competencia + tags
+  // Esto alimenta el "Reporte por Colaborador — Áreas de refuerzo"
+  // ════════════════════════════════════════════════════════════════
+  var ADM_COMPETENCY_MAP = {
+    // Verificación Módulo 2 — Estructura de la Llamada
+    'cq2_1': { area: 'Estructura de la llamada', tag: 'Identificación de fases del Discovery/Screening' },
+    'cq2_2': { area: 'Preparación previa',       tag: 'Revisión de mycase y contexto del cliente' },
+    'cq2_3': { area: 'Estructura de la llamada', tag: 'Orden correcto de los pasos' },
+    'cq2_4': { area: 'Control de scope',          tag: 'Identifica qué NO hace el agente' },
+    // Verificación Módulo 3 — Manejo de Cliente
+    'cq3_1': { area: 'Manejo de cliente',          tag: 'Aplicación de los 8 pasos' },
+    'cq3_2': { area: 'Manejo de cliente',          tag: 'Reconocimiento del sentimiento' },
+    'cq3_3': { area: 'Escalación',                  tag: 'Cuándo escalar a TL' },
+    'cq3_4': { area: 'Manejo de cliente',          tag: 'Frase modelo correcta' },
+    // Simulación de Quejas: A = identifica queja, B = elige respuesta
+    'qs1a': { area: 'Manejo de cliente',           tag: 'Identificación del tipo de queja' },
+    'qs1b': { area: 'Manejo de cliente',           tag: 'Elección de respuesta correcta (8 pasos)' },
+    'qs2a': { area: 'Manejo de cliente',           tag: 'Identificación del tipo de queja' },
+    'qs2b': { area: 'Manejo de cliente',           tag: 'Elección de respuesta correcta (8 pasos)' },
+    'qs3a': { area: 'Escalación',                   tag: 'Detección de queja crítica (TL)' },
+    'qs3b': { area: 'Escalación',                   tag: 'Decisión de escalación correcta' },
+    'qs4a': { area: 'Manejo de cliente',           tag: 'Identificación del tipo de queja' },
+    'qs4b': { area: 'Manejo de cliente',           tag: 'Elección de respuesta correcta (8 pasos)' },
+    'qs5a': { area: 'Escalación',                   tag: 'Cancelación / fraude — escala obligatoria' },
+    'qs5b': { area: 'Escalación',                   tag: 'Acción correcta ante riesgo de cancelación' },
+    // Simulación principal — análisis de casos (sim1..sim8 = base, sim9..sim12 = stoppers/complejos)
+    'sim1':  { area: 'Análisis de caso',           tag: 'Viabilidad VAWA — relación calificada' },
+    'sim2':  { area: 'Análisis de caso',           tag: 'Viabilidad Visa T — Proceso/Medio/Fin' },
+    'sim3':  { area: 'Análisis de caso',           tag: 'Viabilidad Visa U — crimen + I-918B' },
+    'sim4':  { area: 'Análisis de caso',           tag: 'Viabilidad I-130 — buena fe matrimonial' },
+    'sim5':  { area: 'Criterios de elegibilidad',  tag: 'Distinción entre visados similares' },
+    'sim6':  { area: 'Estructura de la llamada',   tag: 'Discovery vs Screening — alcance' },
+    'sim7':  { area: 'Control de scope',            tag: 'No revelar estrategia jurídica' },
+    'sim8':  { area: 'Priorización operativa (CADS)', tag: 'Callback vs CADS — manejo de tiempo' },
+    'sim9':  { area: 'Casos complejos',             tag: 'Stoppers — viabilidad limitada' },
+    'sim10': { area: 'Casos complejos',             tag: 'Indicadores múltiples — visado más viable' },
+    'sim11': { area: 'Casos complejos',             tag: 'Caso límite — denuncia y certificación' },
+    'sim12': { area: 'Casos complejos',             tag: 'Caso ambiguo — decisión y escalación' },
+    // Simulación Avanzada — todos casos complejos
+    'm6a': { area: 'Casos complejos', tag: 'Múltiples indicadores entre visados' },
+    'm6b': { area: 'Casos complejos', tag: 'Stopper temporal (timing del crimen)' },
+    'm6c': { area: 'Casos complejos', tag: 'Fraude matrimonial / buena fe' },
+    'm6d': { area: 'Casos complejos', tag: 'Trata sin matrimonio — descartar VAWA' },
+    'm6e': { area: 'Casos complejos', tag: 'Cooperación parcial / certificación I-918B' },
+    'm6f': { area: 'Casos complejos', tag: 'Abuso emocional sin lesión física' },
+    'm6g': { area: 'Casos complejos', tag: 'Captación engañosa vs crimen aislado' },
+    'm6h': { area: 'Casos complejos', tag: 'Decisión bajo evidencia limitada' },
+    // Ruleta de criterios
+    'rul0': { area: 'Criterios de elegibilidad', tag: 'Conocimiento general de visados' }
+  };
+
+  // Riesgos derivados por área cuando hay debilidad detectada
+  var ADM_RISK_BY_AREA = {
+    'Preparación previa': [
+      'Solicitar al cliente datos ya registrados',
+      'Apertura sin lectura del historial / contexto de mycase',
+      'Repetir información con clientes molestos por exceso de llamadas'
+    ],
+    'Estructura de la llamada': [
+      'Entrevistas largas y desordenadas',
+      'Pérdida de foco narrativo',
+      'Saltarse pasos clave del Discovery o Screening'
+    ],
+    'Priorización operativa (CADS)': [
+      'Manejo deficiente del tiempo en llamada',
+      'Confundir Callback con CADS y desperdiciar slots de abogado',
+      'Saturación de pendientes en el calendario operativo'
+    ],
+    'Control de scope': [
+      'Explorar visados fuera del enfoque asignado (ej. VAWA en Visa U)',
+      'Revelar estrategia jurídica al cliente',
+      'Diagnosticar o recetar como agente — fuera de rol'
+    ],
+    'Manejo de cliente': [
+      'Respuesta improvisada ante quejas frecuentes',
+      'Aplicación incorrecta de los 8 pasos',
+      'Fricción con clientes que ya tenían patrón de molestia'
+    ],
+    'Escalación': [
+      'No reportar al TL casos que requieren intervención',
+      'Manejar de forma aislada cancelaciones o fraude',
+      'Dejar pasar señales críticas sin notificar'
+    ],
+    'Análisis de caso': [
+      'Errores de viabilidad por visado',
+      'Confundir requisitos de un visado con otro',
+      'Decisiones de reclasificación poco fundamentadas'
+    ],
+    'Casos complejos': [
+      'Pasar por alto stoppers (timing, ubicación, certificación)',
+      'No detectar indicadores cruzados entre visados',
+      'Decisiones débiles ante evidencia ambigua o limitada'
+    ],
+    'Criterios de elegibilidad': [
+      'Confusión entre requisitos de visados similares',
+      'Aplicar criterios de otro visado al caso analizado',
+      'Vacíos en conocimiento base de los 4 visados'
+    ]
+  };
+
+  // Acciones de refuerzo concretas por área
+  var ADM_REINFORCE_BY_AREA = {
+    'Preparación previa':            ['Disciplina de pre-call: lectura de mycase antes de marcar','Verificación de datos ya registrados antes de solicitarlos','Detección temprana de patrones de molestia del cliente'],
+    'Estructura de la llamada':      ['Respeto al orden de los 8 pasos','Disciplina de estructura (CADS)','Ejercicios de práctica con guion estructurado'],
+    'Priorización operativa (CADS)': ['Distinción Callback vs CADS','Manejo de tiempo en llamada (cierre disciplinado)','Toma de decisión rápida sobre tipo de seguimiento'],
+    'Control de scope':              ['No diagnosticar ni recetar (rol del agente)','Mantener el enfoque del visado asignado','Frase modelo para no revelar estrategia jurídica'],
+    'Manejo de cliente':             ['Aplicación de los 8 pasos','Frases modelo por tipo de queja','Reencuadre y contención emocional'],
+    'Escalación':                    ['Identificación temprana de casos críticos','Protocolo de escalación a Team Leader','Notificación a otras áreas (mycase notes)'],
+    'Análisis de caso':              ['Repaso de criterios de elegibilidad por visado','Práctica con casos reales de viabilidad','Distinción de requisitos entre visados'],
+    'Casos complejos':               ['Detección de stoppers (timing, ubicación, certificación)','Análisis de indicadores cruzados','Manejo de evidencia ambigua y limitada'],
+    'Criterios de elegibilidad':     ['Repaso teórico de los 4 visados (VAWA, T, U, I-130)','Diferenciación entre Visa T y Visa U','Affidavit of Support y buena fe matrimonial']
+  };
+
+  // Construye el reporte de refuerzo de un participante
+  function admBuildReinforcementReport(p) {
+    if (!p.rawAnswers || p.rawAnswers.length === 0) return null;
+
+    // Acumular por área: { area: { total, wrong, examples: [{tag, qid}] } }
+    var byArea = {};
+    p.rawAnswers.forEach(function (r) {
+      var qid = r.questionId;
+      if (!qid) return;
+      // rul0..rul3 → todas a 'rul0'
+      var lookupId = qid;
+      if (/^rul/.test(qid)) lookupId = 'rul0';
+      var meta = ADM_COMPETENCY_MAP[lookupId];
+      if (!meta) return;
+      if (!byArea[meta.area]) byArea[meta.area] = { total: 0, wrong: 0, tags: {} };
+      byArea[meta.area].total++;
+      var isWrong = r.correct !== 'Sí';
+      if (isWrong) {
+        byArea[meta.area].wrong++;
+        // Guardar tag(s) que más se repiten
+        byArea[meta.area].tags[meta.tag] = (byArea[meta.area].tags[meta.tag] || 0) + 1;
+      }
+    });
+
+    // Filtrar áreas con error >= 40% y al menos 2 respuestas para evitar falsos positivos
+    var areasOfConcern = [];
+    Object.keys(byArea).forEach(function (areaName) {
+      var d = byArea[areaName];
+      var errorPct = d.total > 0 ? Math.round((d.wrong / d.total) * 100) : 0;
+      if (d.wrong >= 1 && errorPct >= 40) {
+        // tags ordenados por frecuencia
+        var topTags = Object.keys(d.tags).sort(function (a, b) { return d.tags[b] - d.tags[a]; });
+        areasOfConcern.push({
+          area: areaName,
+          errorPct: errorPct,
+          wrong: d.wrong,
+          total: d.total,
+          tags: topTags
+        });
+      }
+    });
+
+    if (areasOfConcern.length === 0) return null;
+
+    // Ordenar áreas por % error (más graves primero)
+    areasOfConcern.sort(function (a, b) { return b.errorPct - a.errorPct; });
+
+    // Generar nivel de riesgo global
+    var avgError = areasOfConcern.reduce(function (s, a) { return s + a.errorPct; }, 0) / areasOfConcern.length;
+    var riskLevel;
+    if (avgError >= 70 || areasOfConcern.length >= 4) riskLevel = 'Alto';
+    else if (avgError >= 50 || areasOfConcern.length >= 2) riskLevel = 'Medio';
+    else riskLevel = 'Bajo';
+
+    // Compilar riesgos operativos (sin duplicados)
+    var risks = [];
+    var seen = {};
+    areasOfConcern.forEach(function (a) {
+      var pool = ADM_RISK_BY_AREA[a.area] || [];
+      pool.slice(0, 2).forEach(function (r) {
+        if (!seen[r]) { risks.push(r); seen[r] = true; }
+      });
+    });
+
+    // Compilar acciones de refuerzo (top 4-5)
+    var reinforces = [];
+    var seenR = {};
+    areasOfConcern.forEach(function (a) {
+      var pool = ADM_REINFORCE_BY_AREA[a.area] || [];
+      pool.slice(0, 2).forEach(function (r) {
+        if (!seenR[r] && reinforces.length < 5) { reinforces.push(r); seenR[r] = true; }
+      });
+    });
+
+    return {
+      areas: areasOfConcern,
+      risks: risks.slice(0, 6),
+      reinforces: reinforces,
+      riskLevel: riskLevel,
+      avgError: Math.round(avgError)
+    };
+  }
+
+  // Construye el HTML del reporte
+  function admBuildReinforcementHTML(report) {
+    if (!report) return '';
+    var riskColor = report.riskLevel === 'Alto' ? '#b91c1c' : (report.riskLevel === 'Medio' ? '#c2410c' : '#7a5200');
+    var riskBg    = report.riskLevel === 'Alto' ? 'rgba(185,28,28,.08)' : (report.riskLevel === 'Medio' ? 'rgba(194,65,12,.08)' : 'rgba(122,82,0,.08)');
+
+    var areasHTML = report.areas.map(function (a) {
+      var tagsHTML = a.tags.slice(0, 3).map(function (t) {
+        return '<li>' + admEsc(t) + '</li>';
+      }).join('');
+      return '<div class="adm-rein-area">'
+        + '<div class="adm-rein-area-head">'
+        + '<span class="adm-rein-area-name">' + admEsc(a.area) + '</span>'
+        + '<span class="adm-rein-area-pct">' + a.errorPct + '% error · ' + a.wrong + '/' + a.total + '</span>'
+        + '</div>'
+        + (tagsHTML ? '<ul class="adm-rein-tags">' + tagsHTML + '</ul>' : '')
+        + '</div>';
+    }).join('');
+
+    var risksHTML = report.risks.map(function (r) {
+      return '<li>' + admEsc(r) + '</li>';
+    }).join('');
+
+    var reinforcesHTML = report.reinforces.map(function (r) {
+      return '<li>' + admEsc(r) + '</li>';
+    }).join('');
+
+    return '<div class="adm-section-sub">⚠ Reporte de áreas de refuerzo</div>'
+      + '<div class="adm-rein-block">'
+      + '<div class="adm-rein-banner" style="background:' + riskBg + '; border-color:' + riskColor + '40;">'
+      + '<div class="adm-rein-banner-icon" style="background:' + riskColor + ';">⚠</div>'
+      + '<div>'
+      + '<div class="adm-rein-banner-title">Riesgo operativo: <span style="color:' + riskColor + ';">' + report.riskLevel + '</span></div>'
+      + '<div class="adm-rein-banner-sub">Promedio de error en áreas detectadas: ' + report.avgError + '%</div>'
+      + '</div></div>'
+      + '<div class="adm-rein-grid">'
+      + '<div class="adm-rein-card">'
+      +   '<div class="adm-rein-card-title"><span style="color:#b91c1c">❌</span> Áreas de error detectadas</div>'
+      +   '<div class="adm-rein-card-body">' + areasHTML + '</div>'
+      + '</div>'
+      + '<div class="adm-rein-card">'
+      +   '<div class="adm-rein-card-title"><span style="color:#c2410c">📉</span> Riesgo operativo</div>'
+      +   '<ul class="adm-rein-list">' + risksHTML + '</ul>'
+      + '</div>'
+      + '<div class="adm-rein-card">'
+      +   '<div class="adm-rein-card-title"><span style="color:#1e6641">🎯</span> Requiere refuerzo en</div>'
+      +   '<ul class="adm-rein-list">' + reinforcesHTML + '</ul>'
+      + '</div>'
+      + '</div>'
+      + '</div>';
+  }
+
   function admRender() {
     const search = document.getElementById('admSearch').value.toLowerCase();
     const fStatus = document.getElementById('admFilterStatus').value;
@@ -5876,6 +6146,7 @@ function toggleSidebar(){document.getElementById("sidebar").classList.toggle("op
       + '<div class="adm-pright">' + headerRight + '<span class="adm-expand">▼</span></div></div>'
       + '<div class="adm-attempts-body">'
       + aggregateBar
+      + admBuildReinforcementHTML(admBuildReinforcementReport(p))
       + (moduleCards ? '<div class="adm-section-sub">📊 Desempeño por módulo</div><div class="adm-mod-grid">' + moduleCards + '</div>' : '')
       + (detailHTML ? '<div class="adm-section-sub">📝 Detalle de respuestas</div>' + detailHTML : '')
       + (cnt > 0
