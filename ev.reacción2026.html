@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Evaluación de Reacción — TMLF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --navy:#0e1621;
+  --slate:#6e8499;
+  --steel:#9ab0c6;
+  --gold:#c9a84c;
+  --gold-lt:#e0c068;
+  --gold-dim:#a07c2e;
+  --warm:#f2efe9;
+  --card:rgba(255,255,255,0.04);
+  --border:rgba(255,255,255,0.09);
+  --border-h:rgba(201,168,76,0.55);
+  --r:14px;
+}
+
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--warm);min-height:100vh;overflow-x:hidden;font-size:15px;}
+
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 70% 55% at 10% 5%,rgba(201,168,76,.07) 0%,transparent 55%),
+    radial-gradient(ellipse 60% 50% at 90% 90%,rgba(201,168,76,.05) 0%,transparent 55%),
+    radial-gradient(ellipse 80% 70% at 50% 50%,rgba(14,28,50,.6) 0%,transparent 80%);
+  pointer-events:none;z-index:0;
+}
+
+.prog-track{position:fixed;top:0;left:0;right:0;height:3px;background:rgba(255,255,255,.06);z-index:200}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold),var(--gold-lt));transition:width .55s cubic-bezier(.4,0,.2,1);box-shadow:0 0 10px rgba(201,168,76,.6)}
+
+.topnav{position:fixed;top:3px;left:0;right:0;height:54px;display:none;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(14,22,33,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(201,168,76,.15);z-index:199}
+.topnav .logo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;letter-spacing:.05em;color:var(--warm)}
+.topnav .logo span{color:var(--gold)}
+.prog-lbl{font-size:13px;font-weight:500;color:var(--slate);letter-spacing:.04em}
+
+.app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 16px 56px}
+
+.screen{display:none;width:100%;max-width:680px;padding-top:78px}
+.screen.active{display:block;animation:fadeUp .42s cubic-bezier(.4,0,.2,1) both}
+.screen.leaving{animation:fadeDown .26s ease forwards}
+.screen.center-v{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding-top:20px}
+.screen.center-v.active{display:flex}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-12px)}}
+
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.13);border-radius:22px;padding:36px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 4px 32px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05)}
+
+.badge{display:inline-flex;align-items:center;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);border-radius:100px;padding:4px 13px;margin-bottom:18px}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;line-height:1.2;margin-bottom:8px;color:var(--warm)}
+.sec-sub{font-size:15px;color:var(--slate);line-height:1.6;margin-bottom:28px;font-weight:400}
+
+.qb{margin-bottom:26px}
+.ql{font-size:15px;font-weight:600;color:var(--warm);margin-bottom:11px;letter-spacing:-.01em;display:flex;align-items:center;gap:9px}
+.qn{width:24px;height:24px;border-radius:50%;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);font-size:10px;font-weight:700;color:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.qdiv{height:1px;background:rgba(255,255,255,.07);margin:22px 0}
+.hint{font-size:12px;color:var(--slate);font-weight:400}
+
+.sel{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:13px 42px 13px 16px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--warm);appearance:none;-webkit-appearance:none;cursor:pointer;transition:border-color .2s,background .2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236e8499' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.sel:focus{outline:none;border-color:var(--border-h);background-color:rgba(201,168,76,.06)}
+.sel option,.sel optgroup{background:#111d2b;color:var(--warm)}
+
+.og{display:grid;gap:10px}
+.og.c2{grid-template-columns:1fr 1fr}
+.og.c3{grid-template-columns:1fr 1fr 1fr}
+.oc{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--r);padding:16px 12px;cursor:pointer;transition:all .2s cubic-bezier(.4,0,.2,1);text-align:center;user-select:none}
+.oc:hover{border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.05);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.oc.picked{border-color:var(--gold);background:rgba(201,168,76,.1);box-shadow:0 0 0 1px rgba(201,168,76,.25),0 4px 18px rgba(201,168,76,.12)}
+.oc .oi{font-size:22px;display:block;margin-bottom:7px}
+.oc .ol{font-size:13px;font-weight:600;color:var(--slate);line-height:1.3}
+.oc.picked .ol{color:var(--warm)}
+.oc:hover .ol{color:var(--warm)}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:100px;padding:8px 17px;font-size:14px;font-weight:500;color:var(--slate);cursor:pointer;transition:all .18s ease;user-select:none}
+.chip:hover{border-color:rgba(201,168,76,.35);color:var(--warm);background:rgba(201,168,76,.05)}
+.chip.on{background:rgba(201,168,76,.12);border-color:var(--gold);color:var(--warm);font-weight:600}
+
+.rscale{display:flex;gap:6px;flex-wrap:wrap}
+.rbtn{width:44px;height:44px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--slate);font-size:14px;font-weight:600;cursor:pointer;transition:all .18s ease;display:flex;align-items:center;justify-content:center;user-select:none;flex-shrink:0}
+.rbtn:hover{transform:translateY(-2px);border-color:rgba(201,168,76,.2)}
+.rbtn.on{color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.rfb{display:flex;align-items:center;gap:10px;margin-top:10px;min-height:28px}
+.remoji{font-size:22px;transition:all .2s ease}
+.rtxt{font-size:14px;color:var(--slate);font-weight:500}
+
+.ckg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.cki{display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:12px 15px;cursor:pointer;transition:all .18s ease;user-select:none}
+.cki:hover{border-color:rgba(201,168,76,.25);background:rgba(201,168,76,.04)}
+.cki.on{border-color:var(--gold);background:rgba(201,168,76,.08)}
+.ckb{width:19px;height:19px;border-radius:5px;border:1.5px solid rgba(255,255,255,.15);background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .18s ease}
+.cki.on .ckb{background:var(--gold);border-color:var(--gold)}
+.ckt{color:var(--navy);font-size:11px;font-weight:800;opacity:0;transition:opacity .15s}
+.cki.on .ckt{opacity:1}
+.ckl{font-size:14px;font-weight:500;color:var(--slate);line-height:1.3}
+.cki.on .ckl,.cki:hover .ckl{color:var(--warm)}
+
+.ta{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--warm);resize:none;transition:border-color .2s;min-height:94px;line-height:1.65}
+.ta::placeholder{color:var(--slate)}
+.ta:focus{outline:none;border-color:var(--border-h);background:rgba(201,168,76,.04)}
+
+.stars-row{display:flex;gap:12px;justify-content:center;margin:20px 0}
+.star{font-size:46px;cursor:pointer;color:rgba(255,255,255,.1);transition:color .15s ease,transform .18s ease;user-select:none;line-height:1}
+.star.lit,.star:hover{color:#f5c842}
+.star:hover{transform:scale(1.18)}
+.starlbl{text-align:center;font-size:14px;color:var(--slate);min-height:22px;font-weight:500}
+
+.btn-p{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,var(--gold-dim),var(--gold),var(--gold-lt));color:#0e1621;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;padding:14px 30px;border-radius:100px;border:none;cursor:pointer;transition:all .2s ease;letter-spacing:.02em}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(201,168,76,.32)}
+.btn-p:active{transform:translateY(0)}
+.btn-g{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:transparent;color:var(--slate);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;padding:13px 22px;border-radius:100px;border:1px solid var(--border);cursor:pointer;transition:all .2s ease}
+.btn-g:hover{border-color:rgba(201,168,76,.3);color:var(--warm);background:rgba(201,168,76,.04)}
+.navrow{display:flex;align-items:center;justify-content:space-between;margin-top:30px}
+
+.verr{font-size:13px;color:#f87171;margin-top:7px;display:none;align-items:center;gap:5px;font-weight:500}
+.verr.show{display:flex}
+
+.wi{width:68px;height:68px;border-radius:18px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 26px}
+.wt{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:400;text-align:center;line-height:1.15;margin-bottom:14px;color:var(--warm)}
+.wt em{font-style:italic;color:var(--gold)}
+.ws{font-size:15px;color:var(--slate);text-align:center;line-height:1.65;max-width:420px;margin:0 auto 32px}
+.pills{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:36px}
+.pill{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--steel);background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.18);border-radius:100px;padding:6px 15px}
+
+.tyi{width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(224,192,104,.2));border:1px solid rgba(201,168,76,.35);display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 28px;animation:pulse 2.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.2)}50%{box-shadow:0 0 0 20px rgba(201,168,76,0)}}
+.tyt{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:400;text-align:center;line-height:1.18;margin-bottom:12px}
+.tyt em{font-style:italic;color:var(--gold)}
+.tys{font-size:15px;color:var(--slate);text-align:center;line-height:1.7;max-width:380px;margin:0 auto}
+.tydiv{width:44px;height:1px;background:rgba(201,168,76,.2);margin:24px auto}
+.tyscl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);text-align:center;margin-bottom:6px;font-weight:600}
+.tyscv{font-family:'Cormorant Garamond',serif;font-size:60px;font-weight:300;color:var(--gold);text-align:center;line-height:1}
+
+.otro-reveal{margin-top:8px;overflow:hidden;max-height:0;transition:max-height .3s cubic-bezier(.4,0,.2,1),opacity .3s ease;opacity:0}
+.otro-reveal.open{max-height:70px;opacity:1}
+.otro-input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:12px 15px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--warm);transition:border-color .2s}
+.otro-input::placeholder{color:var(--slate)}
+.otro-input:focus{outline:none;border-color:var(--border-h);background:rgba(201,168,76,.04)}
+
+.sec-trainer-reveal{overflow:hidden;max-height:0;transition:max-height .35s cubic-bezier(.4,0,.2,1),opacity .3s ease;opacity:0;margin-top:0}
+.sec-trainer-reveal.open{max-height:160px;opacity:1;margin-top:10px}
+.toggle-row{display:flex;gap:8px;margin-top:6px}
+.tog{flex:1;text-align:center;padding:11px 12px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;font-size:14px;font-weight:600;color:var(--slate);cursor:pointer;transition:all .18s ease;user-select:none}
+.tog:hover{border-color:rgba(201,168,76,.3);color:var(--warm)}
+.tog.on{border-color:var(--gold);background:rgba(201,168,76,.1);color:var(--warm)}
+
+@media(max-width:540px){.card{padding:24px 18px}.og.c3{grid-template-columns:1fr 1fr}.ckg{grid-template-columns:1fr}.rbtn{width:38px;height:38px;font-size:13px}.wt{font-size:32px}.sec-title{font-size:26px}.tyt{font-size:28px}}
+@media(max-width:380px){.rbtn{width:32px;height:32px;font-size:12px;border-radius:8px}.rscale{gap:4px}.btn-p{font-size:14px;padding:12px 22px}}
+
+/* ══════════════════════════════════════
+   ADMIN PANEL
+══════════════════════════════════════ */
+
+/* Trigger button — bottom-right, subtle */
+.adm-trigger{
+  position:fixed;bottom:22px;right:22px;z-index:300;
+  width:38px;height:38px;border-radius:50%;
+  background:rgba(255,255,255,.06);border:1px solid rgba(201,168,76,.2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .2s ease;
+  color:var(--slate);font-size:15px;
+}
+.adm-trigger:hover{background:rgba(201,168,76,.12);border-color:var(--gold);color:var(--gold);box-shadow:0 4px 16px rgba(0,0,0,.3)}
+
+/* Password modal */
+.adm-modal{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(10,16,26,.88);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  display:flex;align-items:center;justify-content:center;
+  animation:fadeUp .3s ease;
+}
+.adm-modal-box{
+  background:#111d2b;border:1px solid rgba(201,168,76,.2);
+  border-radius:22px;padding:36px 32px;width:100%;max-width:360px;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+.adm-modal-icon{width:52px;height:52px;border-radius:14px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 20px}
+.adm-modal-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;text-align:center;margin-bottom:6px;color:var(--warm)}
+.adm-modal-sub{font-size:13px;color:var(--slate);text-align:center;margin-bottom:24px}
+.adm-pwd-wrap{position:relative;margin-bottom:14px}
+.adm-pwd-input{
+  width:100%;background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);border-radius:12px;
+  padding:13px 44px 13px 16px;
+  font-family:'DM Sans',sans-serif;font-size:15px;color:var(--warm);
+  letter-spacing:.08em;transition:border-color .2s;
+}
+.adm-pwd-input:focus{outline:none;border-color:rgba(201,168,76,.5)}
+.adm-pwd-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--slate);font-size:16px;user-select:none}
+.adm-pwd-toggle:hover{color:var(--warm)}
+.adm-pwd-err{font-size:12px;color:#f87171;text-align:center;min-height:18px;margin-bottom:8px;font-weight:500}
+.adm-btn-login{
+  width:100%;background:linear-gradient(135deg,var(--gold-dim),var(--gold));
+  color:#0e1621;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;
+  padding:13px;border-radius:100px;border:none;cursor:pointer;
+  transition:all .2s ease;letter-spacing:.02em;
+}
+.adm-btn-login:hover{box-shadow:0 6px 20px rgba(201,168,76,.3);transform:translateY(-1px)}
+.adm-btn-cancel{
+  width:100%;background:transparent;color:var(--slate);
+  font-family:'DM Sans',sans-serif;font-size:13px;
+  padding:10px;border-radius:100px;border:1px solid rgba(255,255,255,.07);
+  cursor:pointer;transition:all .2s ease;margin-top:8px;
+}
+.adm-btn-cancel:hover{color:var(--warm);border-color:rgba(255,255,255,.15)}
+
+/* Admin full-screen panel */
+.adm-panel{
+  position:fixed;inset:0;z-index:400;
+  background:var(--navy);overflow-y:auto;
+  display:none;
+}
+.adm-panel.open{display:block;animation:fadeUp .35s ease}
+
+/* Admin header */
+.adm-hdr{
+  position:sticky;top:0;z-index:10;
+  background:rgba(14,22,33,.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(201,168,76,.15);
+  height:56px;padding:0 24px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.adm-hdr-left{display:flex;align-items:center;gap:12px}
+.adm-logo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:var(--warm);letter-spacing:.04em}
+.adm-logo span{color:var(--gold)}
+.adm-sep{width:1px;height:22px;background:rgba(255,255,255,.1)}
+.adm-title{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--slate)}
+.adm-hdr-right{display:flex;align-items:center;gap:10px}
+.adm-data-badge{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;border-radius:100px;padding:3px 10px}
+.adm-data-badge.demo{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25);color:#fbbf24}
+.adm-data-badge.real{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);color:#4ade80}
+.adm-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;
+  padding:7px 14px;border-radius:100px;cursor:pointer;transition:all .18s ease;border:none;
+  letter-spacing:.01em;
+}
+.adm-btn-gold{background:linear-gradient(135deg,var(--gold-dim),var(--gold));color:#0e1621}
+.adm-btn-gold:hover{box-shadow:0 4px 14px rgba(201,168,76,.28);transform:translateY(-1px)}
+.adm-btn-ghost{background:transparent;color:var(--slate);border:1px solid rgba(255,255,255,.09)}
+.adm-btn-ghost:hover{border-color:rgba(201,168,76,.3);color:var(--warm)}
+.adm-btn-close{background:rgba(248,113,113,.1);color:#f87171;border:1px solid rgba(248,113,113,.2)}
+.adm-btn-close:hover{background:rgba(248,113,113,.18)}
+
+/* Admin page content */
+.adm-page{max-width:1260px;margin:0 auto;padding:24px 20px 56px;position:relative;z-index:1}
+
+/* Section label */
+.adm-stl{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.adm-stl-bar{width:3px;height:18px;background:linear-gradient(180deg,var(--gold),var(--gold-dim));border-radius:2px}
+.adm-stl-txt{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--warm)}
+.adm-stl-cnt{font-size:12px;color:var(--slate);margin-left:auto;font-weight:500}
+
+/* KPI cards */
+.adm-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.adm-kpi{
+  background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.12);
+  border-radius:16px;padding:18px 20px;
+  box-shadow:0 2px 16px rgba(0,0,0,.2);transition:transform .2s,box-shadow .2s;
+}
+.adm-kpi:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(0,0,0,.28)}
+.adm-kpi-icon{font-size:20px;display:block;margin-bottom:10px}
+.adm-kpi-val{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--gold);line-height:1;margin-bottom:4px}
+.adm-kpi-val.sm{font-size:26px}
+.adm-kpi-lbl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--slate)}
+.adm-kpi-sub{font-size:12px;color:#8a9bb0;margin-top:3px}
+
+/* Charts */
+.adm-charts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.adm-chart{background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.12);border-radius:16px;padding:20px 22px;box-shadow:0 2px 14px rgba(0,0,0,.18)}
+.adm-chart-ttl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.adm-chart-ttl::before{content:'';width:3px;height:12px;background:var(--gold);border-radius:2px;flex-shrink:0}
+.adm-bar-item{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.adm-bar-item:last-child{margin-bottom:0}
+.adm-bar-lbl{font-size:13px;font-weight:600;color:#8a9bb0;width:32px;text-align:right;flex-shrink:0}
+.adm-bar-track{flex:1;height:9px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden}
+.adm-bar-fill{height:100%;border-radius:5px;transition:width .8s cubic-bezier(.4,0,.2,1) .15s}
+.adm-bar-fill.gold{background:linear-gradient(90deg,var(--gold-dim),var(--gold))}
+.adm-bar-fill.green{background:linear-gradient(90deg,#16a34a,#4ade80)}
+.adm-bar-fill.amber{background:linear-gradient(90deg,#d97706,#fbbf24)}
+.adm-bar-fill.red{background:linear-gradient(90deg,#dc2626,#f87171)}
+.adm-bar-cnt{font-size:12px;font-weight:600;color:#8a9bb0;min-width:56px}
+.adm-dim-item{margin-bottom:14px}
+.adm-dim-item:last-child{margin-bottom:0}
+.adm-dim-hdr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.adm-dim-name{font-size:13px;font-weight:500;color:var(--warm)}
+.adm-dim-score{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold)}
+.adm-dim-track{height:7px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden}
+.adm-dim-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--gold-dim),var(--gold),var(--gold-lt));transition:width .9s cubic-bezier(.4,0,.2,1) .2s}
+
+/* Filters */
+.adm-filters{
+  background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.12);
+  border-radius:16px;padding:16px 20px;
+  display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;
+  margin-bottom:18px;
+}
+.adm-flt-g{display:flex;flex-direction:column;gap:4px;min-width:160px;flex:1}
+.adm-flt-lbl{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--slate)}
+.adm-flt-sel,.adm-flt-inp{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);
+  border-radius:10px;padding:9px 34px 9px 12px;
+  font-family:'DM Sans',sans-serif;font-size:14px;color:var(--warm);
+  appearance:none;-webkit-appearance:none;cursor:pointer;transition:border-color .2s;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%236e8499' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 11px center;
+}
+.adm-flt-inp{background-image:none;padding-right:12px}
+.adm-flt-sel:focus,.adm-flt-inp:focus{outline:none;border-color:rgba(201,168,76,.45)}
+.adm-flt-sel option{background:#111d2b;color:var(--warm)}
+.adm-flt-btns{display:flex;gap:8px;align-items:flex-end;padding-bottom:1px}
+
+/* Table */
+.adm-tbl{background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.12);border-radius:16px;overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,.18);margin-bottom:24px}
+.adm-tbl-cols{grid-template-columns:130px 1fr 130px 96px 76px 76px 40px}
+.adm-tbl-head{display:grid;background:rgba(201,168,76,.07);border-bottom:1px solid rgba(201,168,76,.12);padding:10px 16px;gap:12px}
+.adm-th{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--slate)}
+.adm-tbl-row{border-bottom:1px solid rgba(255,255,255,.04)}
+.adm-tbl-row:last-child{border-bottom:none}
+.adm-tbl-cells{display:grid;padding:12px 16px;gap:12px;align-items:center;cursor:pointer;transition:background .15s}
+.adm-tbl-cells:hover{background:rgba(201,168,76,.03)}
+.adm-td{font-size:13px;color:#8a9bb0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.adm-td.b{color:var(--warm);font-weight:500}
+.adm-td.dt{font-size:12px;display:flex;flex-direction:column;gap:1px}
+.adm-td.dt span:last-child{font-size:11px;opacity:.7}
+.adm-stars{color:var(--gold);font-size:12px;letter-spacing:-1px}
+.adm-stars .off{opacity:.18}
+.adm-avg{display:inline-flex;align-items:center;font-size:12px;font-weight:700;padding:2px 8px;border-radius:100px}
+.adm-avg.hi{background:rgba(74,222,128,.1);color:#4ade80}
+.adm-avg.md{background:rgba(251,191,36,.1);color:#fbbf24}
+.adm-avg.lo{background:rgba(248,113,113,.1);color:#f87171}
+.adm-exp-btn{
+  width:26px;height:26px;border-radius:7px;border:1px solid rgba(255,255,255,.09);
+  background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--slate);font-size:15px;font-weight:700;transition:all .18s;
+}
+.adm-exp-btn:hover{border-color:rgba(201,168,76,.35);color:var(--gold)}
+.adm-exp-btn.open{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold)}
+
+/* Detail */
+.adm-detail{display:none;background:rgba(0,0,0,.14);border-top:1px solid rgba(201,168,76,.1);padding:18px 20px}
+.adm-detail.open{display:block}
+.adm-det-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.adm-det-sec{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:13px 15px}
+.adm-det-ttl{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);margin-bottom:10px}
+.adm-det-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px}
+.adm-det-row:last-child{margin-bottom:0}
+.adm-det-lbl{font-size:12px;color:#8a9bb0;flex:1;min-width:0}
+.adm-det-val{font-size:13px;font-weight:600;color:var(--warm);flex-shrink:0}
+.adm-det-bar{height:3px;background:rgba(255,255,255,.07);border-radius:2px;margin-top:3px;overflow:hidden}
+.adm-det-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold-dim),var(--gold))}
+.adm-chip-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.adm-chip-g{font-size:11px;font-weight:500;padding:2px 8px;border-radius:100px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);color:var(--gold)}
+.adm-chip-r{font-size:11px;font-weight:500;padding:2px 8px;border-radius:100px;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.18);color:#fca5a5}
+.adm-comment-box{font-size:13px;color:var(--warm);line-height:1.6;font-style:italic;opacity:.85;background:rgba(255,255,255,.03);border-left:3px solid var(--gold);padding:10px 14px;border-radius:0 8px 8px 0;margin-top:6px}
+
+/* Comments */
+.adm-comments{background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.12);border-radius:16px;overflow:hidden;margin-bottom:24px}
+.adm-comment-item{border-bottom:1px solid rgba(255,255,255,.04);padding:14px 20px;display:grid;grid-template-columns:1fr auto;gap:14px;align-items:start}
+.adm-comment-item:last-child{border-bottom:none}
+.adm-cm-meta{display:flex;align-items:center;gap:7px;margin-bottom:5px;flex-wrap:wrap}
+.adm-cm-trainer{font-size:12px;font-weight:700;color:var(--gold)}
+.adm-cm-training{font-size:12px;color:var(--slate)}
+.adm-cm-dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.2);flex-shrink:0}
+.adm-cm-txt{font-size:14px;color:var(--warm);line-height:1.6;font-style:italic}
+.adm-cm-date{font-size:11px;color:var(--slate);white-space:nowrap;text-align:right;padding-top:2px}
+.adm-empty{padding:48px 20px;text-align:center;color:var(--slate)}
+.adm-empty-icon{font-size:36px;opacity:.35;display:block;margin-bottom:12px}
+.adm-empty-ttl{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--warm);margin-bottom:6px}
+.adm-empty-sub{font-size:13px}
+
+/* Print */
+@media print{
+  .adm-trigger,.adm-modal,.adm-btn-close,.adm-btn-ghost,.adm-flt-btns,.adm-filters,.adm-exp-btn{display:none!important}
+  .adm-panel{position:static!important;overflow:visible!important}
+  .adm-hdr{background:#0e1621;print-color-adjust:exact;-webkit-print-color-adjust:exact;position:static}
+  .adm-kpi,.adm-chart,.adm-tbl,.adm-comments{border:1px solid #333;break-inside:avoid;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .adm-detail{display:block!important}
+  @page{margin:14mm;size:A4 landscape}
+}
+@media(max-width:900px){
+  .adm-charts{grid-template-columns:1fr}
+  .adm-kpi-row{grid-template-columns:1fr 1fr}
+  .adm-tbl{overflow-x:auto}
+  .adm-tbl-head,.adm-tbl-cells{min-width:680px}
+  .adm-det-grid{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+  .adm-kpi-row{grid-template-columns:1fr 1fr}
+  .adm-hdr{padding:0 14px}
+  .adm-title,.adm-sep{display:none}
+  .adm-page{padding:16px 12px 48px}
+}
+</style>
+</head>
+<body>
+
+<div class="prog-track"><div class="prog-fill" id="pf" style="width:0%"></div></div>
+
+<div class="topnav" id="tnav">
+  <div class="logo">TMLF <span>Learning</span></div>
+  <div class="prog-lbl" id="plbl">Sección 1 de 5</div>
+</div>
+
+<div class="app">
+
+<!-- WELCOME -->
+<div class="screen center-v active" id="s0">
+  <div class="wi">📋</div>
+  <div class="wt">Evaluación de <em>Reacción</em></div>
+  <div class="ws">Comparte tu experiencia sobre el training reciente.<br/>Tu retroalimentación impulsa la mejora continua.</div>
+  <div class="pills">
+    <div class="pill">🔒 Anónima</div>
+    <div class="pill">⏱ 3–5 minutos</div>
+    <div class="pill">📊 5 secciones</div>
+  </div>
+  <button class="btn-p" style="font-size:15px;padding:15px 36px" onclick="appStart()">
+    Comenzar evaluación
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </button>
+</div>
+
+<!-- SECCIÓN 1 -->
+<div class="screen" id="s1">
+<div class="card">
+  <div class="badge">01 — Información del Training</div>
+  <div class="sec-title">¿Qué training tomaste?</div>
+  <div class="sec-sub">Cuéntanos los datos básicos de la sesión.</div>
+
+  <!-- Q1: Training -->
+  <div class="qb">
+    <div class="ql"><span class="qn">1</span>Training</div>
+    <select class="sel" id="q1" onchange="onTrainingChange(this.value)">
+      <option value="">Selecciona el training…</option>
+    </select>
+    <div class="otro-reveal" id="otro-q1">
+      <input class="otro-input" id="q1-otro-txt" type="text" placeholder="Escribe el nombre del training…" oninput="sv('q1_training', this.value)"/>
+    </div>
+    <div class="verr" id="e-q1">⚠ Selecciona o escribe el training</div>
+  </div>
+
+  <!-- Q2: Tipo -->
+  <div class="qb">
+    <div class="ql"><span class="qn">2</span>Tipo de training</div>
+    <div class="og c3" id="g-q2">
+      <div class="oc" onclick="so('q2_tipo','Orientation',this,'g-q2','e-q2')"><span class="oi">🌱</span><span class="ol">Orientation</span></div>
+      <div class="oc" onclick="so('q2_tipo','Ongoing',this,'g-q2','e-q2')"><span class="oi">🔄</span><span class="ol">Ongoing</span></div>
+      <div class="oc" onclick="so('q2_tipo','Actualización',this,'g-q2','e-q2')"><span class="oi">⚡</span><span class="ol">Actualización</span></div>
+      <div class="oc" onclick="so('q2_tipo','Taller',this,'g-q2','e-q2')"><span class="oi">🛠</span><span class="ol">Taller</span></div>
+      <div class="oc" onclick="so('q2_tipo','Simulador',this,'g-q2','e-q2')"><span class="oi">🎯</span><span class="ol">Simulador</span></div>
+      <div class="oc" onclick="so('q2_tipo','Common Core',this,'g-q2','e-q2')"><span class="oi">📚</span><span class="ol">Common Core</span></div>
+    </div>
+    <div class="verr" id="e-q2">⚠ Selecciona el tipo de training</div>
+  </div>
+
+  <!-- Q3: Trainer principal -->
+  <div class="qb">
+    <div class="ql"><span class="qn">3</span>Trainer principal</div>
+    <select class="sel" id="q3" onchange="onTrainer('q3','otro-q3',this.value)">
+      <option value="">Selecciona el trainer…</option>
+    </select>
+    <div class="otro-reveal" id="otro-q3">
+      <input class="otro-input" id="q3-otro-txt" type="text" placeholder="Nombre del trainer…" oninput="sv('q3_trainer_otro',this.value)"/>
+    </div>
+    <div class="verr" id="e-q3">⚠ Selecciona el trainer principal</div>
+  </div>
+
+  <!-- Q3b: Trainer secundario -->
+  <div class="qb">
+    <div class="ql"><span class="qn">3b</span>¿Hubo trainer secundario? <span class="hint">(opcional)</span></div>
+    <div class="toggle-row">
+      <div class="tog" id="tog-sec-no"  onclick="setSecTrainer(false)">No</div>
+      <div class="tog" id="tog-sec-yes" onclick="setSecTrainer(true)">Sí</div>
+    </div>
+    <div class="sec-trainer-reveal" id="sec-trainer-box">
+      <select class="sel" id="q3b" onchange="onTrainer('q3b_trainer','otro-q3b',this.value)" style="margin-top:2px">
+        <option value="">Selecciona el trainer secundario…</option>
+      </select>
+      <div class="otro-reveal" id="otro-q3b">
+        <input class="otro-input" id="q3b-otro-txt" type="text" placeholder="Nombre del trainer secundario…" oninput="sv('q3b_trainer_otro',this.value)"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q4: Modalidad -->
+  <div class="qb">
+    <div class="ql"><span class="qn">4</span>Modalidad de la sesión</div>
+    <div class="og c2" id="g-q4">
+      <div class="oc" onclick="so('q4_modalidad','Online',this,'g-q4','e-q4')"><span class="oi">💻</span><span class="ol">Online</span></div>
+      <div class="oc" onclick="so('q4_modalidad','Presencial',this,'g-q4','e-q4')"><span class="oi">🏢</span><span class="ol">Presencial</span></div>
+    </div>
+    <div class="verr" id="e-q4">⚠ Selecciona la modalidad</div>
+  </div>
+
+  <div class="navrow"><div></div>
+    <button class="btn-p" onclick="go(2)">Continuar
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+</div>
+
+<!-- SECCIÓN 2 -->
+<div class="screen" id="s2">
+<div class="card">
+  <div class="badge">02 — Evaluación del Trainer</div>
+  <div class="sec-title">¿Cómo estuvo el trainer?</div>
+  <div class="sec-sub">Califica del 1 al 10 cada aspecto.</div>
+  <div id="rs2"></div>
+  <div class="navrow">
+    <button class="btn-g" onclick="go(1)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Regresar</button>
+    <button class="btn-p" onclick="go(3)">Continuar
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+</div>
+
+<!-- SECCIÓN 3 -->
+<div class="screen" id="s3">
+<div class="card">
+  <div class="badge">03 — Contenido y Materiales</div>
+  <div class="sec-title">¿Cómo fue el contenido?</div>
+  <div class="sec-sub">Evalúa la calidad del material y los recursos.</div>
+  <div id="rs3a"></div>
+
+  <div class="qb">
+    <div class="ql"><span class="qn">12</span>La cantidad de información fue…</div>
+    <div class="og c3" id="g-q12">
+      <div class="oc" onclick="so('q12_cantidad','Muy poca',this,'g-q12','e-q12')"><span class="oi">📉</span><span class="ol">Muy poca</span></div>
+      <div class="oc" onclick="so('q12_cantidad','Adecuada',this,'g-q12','e-q12')"><span class="oi">✅</span><span class="ol">Adecuada</span></div>
+      <div class="oc" onclick="so('q12_cantidad','Demasiada',this,'g-q12','e-q12')"><span class="oi">📈</span><span class="ol">Demasiada</span></div>
+    </div>
+    <div class="verr" id="e-q12">⚠ Selecciona una opción</div>
+  </div>
+
+  <div id="rs3b"></div>
+
+  <div class="qb">
+    <div class="ql"><span class="qn">15</span>¿Qué parte fue más útil? <span class="hint">(puedes elegir varias)</span></div>
+    <div class="chips">
+      <div class="chip" onclick="tc('q15_mas_util','Teoría',this)">Teoría</div>
+      <div class="chip" onclick="tc('q15_mas_util','Casos prácticos',this)">Casos prácticos</div>
+      <div class="chip" onclick="tc('q15_mas_util','Simulador',this)">Simulador</div>
+      <div class="chip" onclick="tc('q15_mas_util','Roleplay',this)">Roleplay</div>
+      <div class="chip" onclick="tc('q15_mas_util','Ejemplos',this)">Ejemplos</div>
+      <div class="chip" onclick="tc('q15_mas_util','Material visual',this)">Material visual</div>
+      <div class="chip" onclick="tc('q15_mas_util','Retro del trainer',this)">Retro del trainer</div>
+    </div>
+  </div>
+
+  <div class="navrow">
+    <button class="btn-g" onclick="go(2)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Regresar</button>
+    <button class="btn-p" onclick="go(4)">Continuar
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+</div>
+
+<!-- SECCIÓN 4 -->
+<div class="screen" id="s4">
+<div class="card">
+  <div class="badge">04 — Evaluación Práctica</div>
+  <div class="sec-title">Práctica y operación real</div>
+  <div class="sec-sub">¿Cuánto se conectó el training con tu día a día?</div>
+  <div id="rs4"></div>
+
+  <div class="qb">
+    <div class="ql"><span class="qn">19</span>¿Qué hizo falta? <span class="hint">(puedes marcar varias)</span></div>
+    <div class="ckg">
+      <div class="cki" onclick="tck('q19_falta','Más práctica',this)"><div class="ckb"><span class="ckt">✓</span></div><span class="ckl">Más práctica</span></div>
+      <div class="cki" onclick="tck('q19_falta','Más ejemplos',this)"><div class="ckb"><span class="ckt">✓</span></div><span class="ckl">Más ejemplos</span></div>
+      <div class="cki" onclick="tck('q19_falta','Más simuladores',this)"><div class="ckb"><span class="ckt">✓</span></div><span class="ckl">Más simuladores</span></div>
+      <div class="cki" onclick="tck('q19_falta','Más tiempo',this)"><div class="ckb"><span class="ckt">✓</span></div><span class="ckl">Más tiempo</span></div>
+      <div class="cki" onclick="tck('q19_falta','Mejor explicación',this)"><div class="ckb"><span class="ckt">✓</span></div><span class="ckl">Mejor explicación</span></div>
+      <div class="cki" onclick="tck('q19_falta','Mejor material visual',this)"><div class="ckb"><span class="ckt">✓</span></div><span class="ckl">Mejor material visual</span></div>
+      <div class="cki" onclick="tck('q19_falta','Más ejercicios',this)"><div class="ckb"><span class="ckt">✓</span></div><span class="ckl">Más ejercicios</span></div>
+      <div class="cki" onclick="tck('q19_falta','Nada, estuvo completo',this)"><div class="ckb"><span class="ckt">✓</span></div><span class="ckl">Nada, estuvo completo</span></div>
+    </div>
+  </div>
+
+  <div class="qb">
+    <div class="ql"><span class="qn">20</span>¿Qué mejorarías? <span class="hint">(opcional)</span></div>
+    <textarea class="ta" placeholder="Escribe aquí tu sugerencia…" oninput="sv('q20_mejoras',this.value)"></textarea>
+  </div>
+
+  <div class="navrow">
+    <button class="btn-g" onclick="go(3)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Regresar</button>
+    <button class="btn-p" onclick="go(5)">Continuar
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+</div>
+
+<!-- SECCIÓN 5 — FINAL -->
+<div class="screen" id="s5">
+<div class="card" style="text-align:center">
+  <div class="badge" style="justify-content:center">05 — Calificación Final</div>
+  <div class="sec-title" style="text-align:center">¿Cómo calificarías<br/>el training en general?</div>
+  <div class="sec-sub" style="text-align:center">Una última pregunta antes de finalizar.</div>
+  <div class="stars-row">
+    <span class="star" onclick="rateS(1)" onmouseover="hS(1)" onmouseout="uS()">★</span>
+    <span class="star" onclick="rateS(2)" onmouseover="hS(2)" onmouseout="uS()">★</span>
+    <span class="star" onclick="rateS(3)" onmouseover="hS(3)" onmouseout="uS()">★</span>
+    <span class="star" onclick="rateS(4)" onmouseover="hS(4)" onmouseout="uS()">★</span>
+    <span class="star" onclick="rateS(5)" onmouseover="hS(5)" onmouseout="uS()">★</span>
+  </div>
+  <div class="starlbl" id="slbl">Toca una estrella para calificar</div>
+  <div class="verr" id="e-q21" style="justify-content:center">⚠ Por favor califica el training</div>
+  <div class="navrow" style="margin-top:32px">
+    <button class="btn-g" onclick="go(4)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Regresar</button>
+    <button class="btn-p" onclick="appSubmit()">Enviar evaluación
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+</div>
+
+<!-- GRACIAS -->
+<div class="screen center-v" id="s6">
+  <div class="card" style="text-align:center;max-width:460px;padding:48px 36px;width:100%">
+    <div class="tyi">✦</div>
+    <div class="tyt">Gracias por tu<br/><em>retroalimentación</em></div>
+    <div class="tydiv"></div>
+    <div class="tys">Tus respuestas ayudan a mejorar el aprendizaje en TMLF y a fortalecer nuestros programas de capacitación.</div>
+    <div style="margin-top:30px">
+      <div class="tyscl">Calificación general</div>
+      <div class="tyscv" id="fsc">—</div>
+      <div style="color:var(--slate);font-size:13px;margin-top:4px">/ 5 estrellas</div>
+    </div>
+    <div style="margin-top:32px;padding-top:22px;border-top:1px solid var(--border)">
+      <div style="font-size:12px;color:var(--slate);letter-spacing:.06em;font-weight:500">TMLF Learning Center</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<!-- ══ ADMIN TRIGGER ══ -->
+<button class="adm-trigger" onclick="A.showLogin()" title="Acceso Training">🔒</button>
+
+<!-- ══ PASSWORD MODAL ══ -->
+<div id="adm-modal" class="adm-modal" style="display:none" onclick="A.closeLogin(event)">
+  <div class="adm-modal-box" onclick="event.stopPropagation()">
+    <div class="adm-modal-icon">🔐</div>
+    <div class="adm-modal-title">Acceso restringido</div>
+    <div class="adm-modal-sub">Solo para el equipo de Training · TMLF</div>
+    <div class="adm-pwd-wrap">
+      <input class="adm-pwd-input" id="adm-pwd" type="password" placeholder="Contraseña"
+        onkeydown="if(event.key==='Enter')A.login()"/>
+      <span class="adm-pwd-toggle" onclick="A.togglePwd()">👁</span>
+    </div>
+    <div class="adm-pwd-err" id="adm-err"></div>
+    <button class="adm-btn-login" onclick="A.login()">Ingresar al panel</button>
+    <button class="adm-btn-cancel" onclick="A.closeLogin()">Cancelar</button>
+  </div>
+</div>
+
+<!-- ══ ADMIN PANEL ══ -->
+<div id="adm-panel" class="adm-panel">
+
+  <!-- Header -->
+  <div class="adm-hdr">
+    <div class="adm-hdr-left">
+      <div class="adm-logo">TMLF <span>Learning</span></div>
+      <div class="adm-sep"></div>
+      <div class="adm-title">Panel de Evaluaciones de Reacción</div>
+    </div>
+    <div class="adm-hdr-right">
+      <span class="adm-data-badge demo" id="adm-data-badge">DATOS DEMO</span>
+      <button class="adm-btn adm-btn-ghost" id="adm-toggle-btn" onclick="A.toggleSource()">Usar datos reales</button>
+      <button class="adm-btn adm-btn-gold" onclick="window.print()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>
+        Imprimir
+      </button>
+      <button class="adm-btn adm-btn-close" onclick="A.close()">✕ Cerrar</button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="adm-page">
+
+    <!-- KPIs -->
+    <div class="adm-kpi-row" id="adm-kpis">
+      <div class="adm-kpi"><span class="adm-kpi-icon">📋</span><div class="adm-kpi-val" id="ak-total">—</div><div class="adm-kpi-lbl">Evaluaciones</div><div class="adm-kpi-sub" id="ak-total-sub">—</div></div>
+      <div class="adm-kpi"><span class="adm-kpi-icon">⭐</span><div class="adm-kpi-val" id="ak-stars">—</div><div class="adm-kpi-lbl">Calificación General</div><div class="adm-kpi-sub">Promedio / 5 estrellas</div></div>
+      <div class="adm-kpi"><span class="adm-kpi-icon">🎤</span><div class="adm-kpi-val sm" id="ak-trainer">—</div><div class="adm-kpi-lbl">Promedio Trainer</div><div class="adm-kpi-sub">Escala 1–5</div></div>
+      <div class="adm-kpi"><span class="adm-kpi-icon">📚</span><div class="adm-kpi-val sm" id="ak-content">—</div><div class="adm-kpi-lbl">Promedio Contenido</div><div class="adm-kpi-sub">Escala 1–5</div></div>
+    </div>
+
+    <!-- Charts -->
+    <div class="adm-charts">
+      <div class="adm-chart"><div class="adm-chart-ttl">Distribución de Calificación General</div><div id="adm-stars-chart"></div></div>
+      <div class="adm-chart"><div class="adm-chart-ttl">Promedio por Dimensión</div><div id="adm-dim-chart"></div></div>
+    </div>
+
+    <!-- Filters -->
+    <div class="adm-filters">
+      <div class="adm-flt-g"><span class="adm-flt-lbl">Trainer</span><select class="adm-flt-sel" id="af-trainer" onchange="A.filter()"><option value="">Todos los trainers</option></select></div>
+      <div class="adm-flt-g"><span class="adm-flt-lbl">Training</span><select class="adm-flt-sel" id="af-training" onchange="A.filter()"><option value="">Todos los trainings</option></select></div>
+      <div class="adm-flt-g" style="max-width:140px"><span class="adm-flt-lbl">Tipo</span>
+        <select class="adm-flt-sel" id="af-tipo" onchange="A.filter()">
+          <option value="">Todos</option>
+          <option>Orientation</option><option>Ongoing</option><option>Actualización</option>
+          <option>Taller</option><option>Simulador</option><option>Common Core</option>
+        </select>
+      </div>
+      <div class="adm-flt-g" style="max-width:140px"><span class="adm-flt-lbl">Desde</span><input class="adm-flt-inp" type="date" id="af-desde" onchange="A.filter()"/></div>
+      <div class="adm-flt-g" style="max-width:140px"><span class="adm-flt-lbl">Hasta</span><input class="adm-flt-inp" type="date" id="af-hasta" onchange="A.filter()"/></div>
+      <div class="adm-flt-btns"><button class="adm-btn adm-btn-ghost" onclick="A.clearFilters()" style="font-size:12px;padding:8px 14px">✕ Limpiar</button></div>
+    </div>
+
+    <!-- Table -->
+    <div class="adm-stl"><div class="adm-stl-bar"></div><div class="adm-stl-txt">Evaluaciones</div><div class="adm-stl-cnt" id="adm-res-cnt"></div></div>
+    <div class="adm-tbl">
+      <div class="adm-tbl-head adm-tbl-cols adm-tbl-cells" style="cursor:default;background:rgba(201,168,76,.07)">
+        <div class="adm-th">Fecha / Hora</div><div class="adm-th">Training</div>
+        <div class="adm-th">Trainer</div><div class="adm-th">Tipo</div>
+        <div class="adm-th">Cal. ★</div><div class="adm-th">Prom./5</div>
+        <div class="adm-th"></div>
+      </div>
+      <div id="adm-tbl-body"></div>
+    </div>
+
+    <!-- Comments -->
+    <div class="adm-stl"><div class="adm-stl-bar"></div><div class="adm-stl-txt">Comentarios & Sugerencias</div><div class="adm-stl-cnt" id="adm-cm-cnt"></div></div>
+    <div class="adm-comments" id="adm-comments"></div>
+
+  </div><!-- /adm-page -->
+</div><!-- /adm-panel -->
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// TMLF — Evaluación de Reacción v1.0
+// Preparado para Google Apps Script (GAS)
+// ═══════════════════════════════════════════════════════════
+
+// ── GAS INTEGRATION ─────────────────────────────────────────────
+// Pega tu URL de deployment aquí (termina en /exec):
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwt41O6ZwgvP7EasydSfRQecL0LpAp1frDQlAf4WV01btnCMR8hNTfzcMt8-GLvGKKZpg/exec';
+
+function sendGAS(data) {
+  if (!GAS_URL || GAS_URL === 'PEGA_TU_URL_AQUÍ') return;
+  try {
+    // Image Beacon — funciona sin CORS, silencioso para el usuario
+    new Image().src = GAS_URL + '?data=' + encodeURIComponent(JSON.stringify(data));
+  } catch(e) { console.warn('GAS send error:', e); }
+}
+
+// ── STATE
+let cur = 0;
+const R = {
+  timestamp: null,
+  q1_training: null, q2_tipo: null,
+  q3_trainer: null, q3_trainer_otro: null,
+  q3b_has_secondary: false, q3b_trainer: null, q3b_trainer_otro: null,
+  q4_modalidad: null,
+  q5_dominio: null, q6_claridad: null, q7_dudas: null, q8_dinamismo: null, q9_teoria_practica: null,
+  q10_comprension: null, q11_diseno_material: null, q12_cantidad: null,
+  q13_ejemplos: null, q14_preparacion: null, q15_mas_util: [],
+  q16_situaciones_reales: null, q17_tiempo_practica: null, q18_seguridad: null,
+  q19_falta: [], q20_mejoras: null,
+  q21_calificacion_general: null,
+  _avg_rating: null
+};
+
+// ── RATING SETS
+const RS2  = [{k:'q5_dominio',n:5,l:'El trainer dominaba el tema'},{k:'q6_claridad',n:6,l:'Explicó de forma clara y entendible'},{k:'q7_dudas',n:7,l:'Resolvió dudas de manera efectiva'},{k:'q8_dinamismo',n:8,l:'La sesión fue dinámica y mantuvo mi atención'},{k:'q9_teoria_practica',n:9,l:'Relacionó la teoría con la operación real'}];
+const RS3A = [{k:'q10_comprension',n:10,l:'El contenido fue fácil de comprender'},{k:'q11_diseno_material',n:11,l:'El diseño visual y materiales ayudaron al aprendizaje'}];
+const RS3B = [{k:'q13_ejemplos',n:13,l:'Los ejemplos y ejercicios ayudaron a entender el tema'},{k:'q14_preparacion',n:14,l:'El training me deja más preparado(a) para operar'}];
+const RS4  = [{k:'q16_situaciones_reales',n:16,l:'Los ejercicios se parecían a situaciones reales'},{k:'q17_tiempo_practica',n:17,l:'El tiempo de práctica fue suficiente'},{k:'q18_seguridad',n:18,l:'Me siento más seguro(a) para aplicar el tema'}];
+
+const EM = {1:'😞',2:'😟',3:'😕',4:'🙁',5:'😐',6:'🙂',7:'😊',8:'😄',9:'🌟',10:'🏆'};
+const ET = {1:'Muy bajo',2:'Bajo',3:'Regular',4:'Bueno',5:'Excelente'};
+const ST = ['','Muy malo 😞','Malo 🙁','Regular 😐','Bueno 😊','Excelente 🌟'];
+
+function buildR(cid, items) {
+  const c = document.getElementById(cid);
+  if (!c) return;
+  c.innerHTML = items.map((q, i) => `
+    <div class="qb">
+      <div class="ql"><span class="qn">${q.n}</span>${q.l}</div>
+      <div class="rscale" id="sc-${q.k}">
+        ${[1,2,3,4,5].map(n => `<div class="rbtn" id="rb-${q.k}-${n}" onclick="selR('${q.k}',${n})">${n}</div>`).join('')}
+      </div>
+      <div class="rfb">
+        <span class="remoji" id="em-${q.k}">·</span>
+        <span class="rtxt" id="rt-${q.k}">Selecciona una calificación</span>
+      </div>
+      <div class="verr" id="e-${q.k}">⚠ Selecciona una calificación</div>
+      ${i < items.length - 1 ? '<div class="qdiv"></div>' : ''}
+    </div>`).join('');
+}
+
+// ── TRAINING DATA (agregar nuevos trainings aquí fácilmente)
+const TRAININGS = [
+  { g: 'Orientación & Onboarding', items: [
+    'CONCEPTOS BÁSICOS OPERATIVOS','FLUJO OPERATIVO Y PROCESOS TMLF 2026','INTAKERS SCRIPT',
+    'MANUAL DE PROTOCOLOS','MENDOZA WAY','ORIENTATION PACKETS','ORIENTATION PSYCHS 5.0',
+    'ORIENTATION VAWA FINAL','ORIENTATION VISA T 1.0',
+    'PAQUETE AJUSTE DE ESTATUS REGULAR / ORIENTATION','TMLF ATTY ORIENTATION',
+    'WP (PAQUETE DE BIENVENIDA)'
+  ]},
+  { g: 'VAWA', items: [
+    'ABUSO VAWA','COMMON CORE VAWA','CRITERIOS VAWA','FORMAS / MENDOZA HUB PWI VAWA',
+    'FORMAS VAWA','FORMATOS VAWA','I-485 VAWA, PROCESOS, PETICIONES','PLATAFORMAS VAWA',
+    'RECURSOS OPERATIVOS PWI VAWA','TALLER DE REDACCIÓN VAWA (NOTAS)',
+    'TALLER DE REDACCIÓN VAWA EVIDENCIAS','VAWA','VAWA DOCUMENTS',
+    'VAWA Y NO VAWA','VAWA Y SALUD MENTAL','VAWA+'
+  ]},
+  { g: 'No VAWA', items: [
+    'MANEJO DE CLIENTE (NON VAWA)','NO VAWA','NO VAWA / FORMAS NO VAWA PWI',
+    'RECURSOS DE OPERACION PWI NO VAWA'
+  ]},
+  { g: 'Visa T', items: [
+    'COMMON CORE','COMMON CORE Y DOL VISA T','CRITERIOS DE CALIDAD VISA T','CRITERIOS VISA T',
+    'DISCOVERY CALLS','ENTREVISTA VISA T','ESQUEMA DE TRATA: APLICACIÓN Y ANÁLISIS',
+    'ESTRUCTURA DE EVENTOS VISA T','FORMAS / MENDOZA HUB PWI VISA T','FORMAS VISA T',
+    'LOS AVATARES DE LA PRESENCIA EN ESTADOS UNIDOS COMO CONSECUENCIA DE LA TRATA',
+    'PATRONES DE RECHAZO VISA T Y EVIDENCIAS SUGERIDAS',
+    'PETICIÓN DE ESTATUS DE NO INMIGRANTE "T" Y COOPERACIÓN CON LEA',
+    'PLATAFORMAS VISA T','RECURSOS OPERATIVOS PWI VISA T','SCRIPT DE ENTREVISTA VISA T',
+    'TALLER DE REDACCIÓN VISA T','VISA T','VISA T - CSM','VISA T ANÁLISIS DE CASOS',
+    'VISA T: ARGUMENTACIÓN Y CVL','VISA T: CASE STUDIES','VISA T COMMON CORE',
+    'VISA T DOL','VISA T DVS','VISA T EDITORS','VISA T EXPRESS','VISA T FORMATOS',
+    'VISA T RFE','VISA T SCRIPT','VISA T: TALLER DE EDICIÓN DE CVL',
+    'VISA T: TALLER DE ESCRITURA DE CVL','VISA T WRITERS'
+  ]},
+  { g: 'Visa U', items: [
+    'FORMAS VISA U','TALLER DE ANÁLISIS VISA U','TALLER DE SCF VISA U',
+    'VISA U','VISA U - PETICIÓN DE ESTATUS DE NO INMIGRANTE "I-918"',
+    'VISA U FUNDAMENTOS TEÓRICOS','VISA U SCRIPT'
+  ]},
+  { g: 'Formas, I-Forms & Paquetes', items: [
+    'ACTUALIZACIONES FOIA 2026','ANALISIS DE CASO P+','ARMADO DE PAQUETE','CARATULA P+',
+    'CHECKLIST PWI','CONSULAR PROCESS (I-130)','CUESTIONARIO I-485',
+    'FOIA G-639','FOIA PACKET','FOIA, N-400, N-600, RENEWALS','FORMAS FOIA (PRÁCTICO)',
+    'FORM I-290 APPEAL OR MOTION TO RECONSIDER OR REOPEN',
+    'I-129 F PETICIÓN DE PROMETIDO(A) EXTRANJERO(A)','I-192 PERMISO NO INMIGRANTE',
+    'I-360 REGRESOS X CATEGORÍA','I-751 REMOCIÓN STATUS DE CONDICIONES',
+    'I-864 E I-864 A DECLARACIÓN JURADA DE PATROCINIO','I-912 GUIDELINES',
+    'INTRODUCCIÓN A PAQUETE PLUS','PETICIÓN FAMILIAR I-130','REG AOS (245 A / 245 I)',
+    'REG AOS PACKET','TALLER CHECKLIST / DOCUMENTOS POR PROCESO','TMLF I-FORMS',
+    'VISA K - PETICIÓN DE ESTATUS DE NO INMIGRANTE "I-129 F"','VISA K1','VISA K1 - K2',
+    'WC, QA I360 I485'
+  ]},
+  { g: 'RFE & Apelaciones', items: [
+    '¿CÓMO EVITAR UN RFE? (EDITORS)','¿CÓMO EVITAR UN RFE? (WRITERS)',
+    'CVL Y DCL PARA RFE','CUSTOMER SERVICE RFE','END TO END RFE','INTRODUCCIÓN RFE',
+    'IRAC PARA CVL DE RFE',"IRAC PARA REGRESOS (CO's)",
+    'PAQUETE PLUS "COMO EVITAR UN RFE" (PACKETS)','REQUEST FOR EVIDENCE AND NOIDS',
+    'ROLL PLAY RFE','SD PP: ADDITIONAL EVIDENCE REQUEST Y CUADRO COMPARATIVO','VISA T RFE'
+  ]},
+  { g: 'Evidencias & Documentos', items: [
+    'ANÁLISIS DE CALIDAD DE DOCUMENTOS','ANÁLISIS DE FORMATOS',
+    'ATENUANTES Y AGRAVANTES SUPPORT DOCUMENTS','CALIDAD DE CONTENIDO EN EVIDENCIAS',
+    'CHECKLIST EVIDENCIAS','EVIDENCIA: ANÁLISIS DE CASO','EVIDENCIAS CCC PARTE 4',
+    'EVIDENCIAS GMC','EVIDENCIAS SOFISTICADAS','EVIDENCIAS T2','EVIDENCIAS VISA T',
+    'EVIDENCIAS Y TESTIGOS','HACKS PARA CASOS CON POCA EVIDENCIA',
+    'JUNK, REQUISITOS PARA DOCUMENTOS','LEGAL REQUIREMENTS SUPPORT DOCUMENTS',
+    'REPASO SD','SCRIPT EVIDENCIAS MGM','TALLER: DESCRIPTION OF EVIDENCE',
+    'TIPOS DE EVIDENCIAS','WRITERS DOCUMENTS (PMO)'
+  ]},
+  { g: 'Redacción, CVL & Argumentación', items: [
+    'ADOBE ACROBAT','ANÁLISIS DE CASOS PARA REDACCIÓN DOE Y AFFIDAVIT',
+    'ARGUMENTACIÓN','ARGUMENTACIÓN ESCRITORES','ARGUMENTACIÓN POR CRITERIO',
+    'ARGUMENTACION AFFIDAVIT Y DOE','CONSTRUCCION DE DCL','CONTUNDENCIA',
+    'CVL P+ INDICE Y ESTRUCTURA','CVL TALLEREO','CVL Y DCL','CVL Y DCL PARA RFE',
+    'DESARROLLO WRR','DESARROLLO WRR / AIR','EDICIÓN PARA AFFIDAVIT + DOE',
+    'FRAUDE VS INFERENCIAS','INFERENCIAS 2.0','LECTURA RÁPIDA Y CRÍTICA',
+    'LEGAL ARGUMENTS: TOULMIN AND IRAC','LÓGICA ARGUMENTATIVA','PRINCIPIOS DE EDICIÓN',
+    'PUNCHLINES','REDACCIÓN','REDACCIÓN EN AFFIDAVITS','STORY SELLING','STORYTELLING',
+    'TALLER: ABUSE STATEMENT','TALLER: AFFIDAVIT / STATEMENT',
+    'TALLER: FORMATO FLEXIBLE DCL','TALLER: FORMATO FLEXIBLE RAR',
+    'TALLER: WITNESS STATEMENT','TECNICAS COMPLEX PARA EDITAR',
+    'TIPS Y CONSEJOS PRÁCTICOS PARA EDITAR','VACIADO DE INFORMACIÓN','VELOCIDAD'
+  ]},
+  { g: 'Abuso & Violencia Doméstica', items: [
+    'ABUSO, PODER Y MIGRACIÓN','ABUSO SEXUAL','ATENUANTES Y AGRAVANTES DE ABUSO',
+    'CÓMO SACAR ABUSO','CONTENCIÓN Y CIERRE EMOCIONAL',
+    'ID ABUSO E INTERPRETACIÓN DE NOTAS','LLAMADA A LAS AUTORIDADES',
+    'MERE UNKINDNESS VS EXTREME CRUELTY','TÉCNICAS PARA OBTENER EL ABUSO',
+    'TIPOS DE ABUSO Y ABUSOMETRO','TRARÓMETRO Y AGRAVANTES','VIOLENCIA DOMÉSTICA'
+  ]},
+  { g: 'Compliance & Calidad', items: [
+    'ATENCIÓN AL DETALLE','COMO MEJORAR MI NOTA SIN MORIR EN EL INTENTO',
+    'COMPLIANCE POLICY, QUALITY CRITERIA, PRINCIPIOS DE EDICIÓN',
+    'CRITERIOS DE CALIDAD EDITORES / AIR','CRITERIOS DE CALIDAD WRITERS',
+    'EB-3 COMPLIANCE PROCESS','FAIR','FOIA / G-28 / RFE / REJECTION COMPLIANCE',
+    'PEU Y EH','PEU Y EH: APRENDIZAJE DESDE LAS QC',
+    'POLÍTICAS DE COMPLIANCE Y QUALITY CRITERIA','REPORTES ESPECIALES','SMART FEEDBACK'
+  ]},
+  { g: 'Derecho Migratorio', items: [
+    'APA, MANDAMUS Y HABEAS CORPUS','BAR COMPLAINTS','COOPERACIÓN CON LEA',
+    'CORTES MIGRATORIAS (INDIVIDUAL Y MASTER HEARINGS)','EB 3',
+    'GMC','GMC - INADMISIBILIDAD Y DELITOS','GMC - INADMISIBILIDAD Y DELITOS - PARTE 1',
+    'GMC - INADMISIBILIDAD Y DELITOS PARTE II','GMC Y BONAFIDES',
+    'ICE, USCIS, CBP (FACULTADES Y JURISDICCIÓN)','IDENTIDAD USA',
+    'LEY INA (LEY DE INMIGRACIÓN Y NACIONALIDAD DE EEUU)','LITIGATION (ATTYS)',
+    'LOS ALTOS ESTÁNDARES DE LA EXTREME HARDSHIP','NATURALIZACIÓN',
+    'PCL RAPSHEET','POLICE CLEARANCE LETTER','PROCESO DE ASILO Y REFUGIO',
+    'PROCESO DE COOPERACIÓN','PROCESO DE DEPORTACIÓN Y RECURSOS','PROVISIONAL WAIVER',
+    'RECIBOS USCIS','REMOVAL','REMOVAL OF CONDITIONS (I-751)','VISA APP',
+    'VISA EB-3 ON LINE','VISAS DE INMIGRANTE PT.1 (LPR, FAMILIARES, TRABAJO)',
+    'VISAS DE INMIGRANTE PT.2 (INVERSIÓN, CATEGORÍAS ESPECIALES)',
+    'VISAS DE NO INMIGRANTE PT.1 (TURISMO, ESTUDIOS)',
+    'VISAS DE NO INMIGRANTE PT.2 (TRABAJO TEMPORAL, ESPECIALES)',
+    'VISAS HUMANITARIAS (DIFERENCIA ENTRE VISA T, VISA U Y VAWA)','WAIVER'
+  ]},
+  { g: 'Customer Service & Atención al Cliente', items: [
+    'ACTUALIZACIÓN MENSAJES CON CLIENTE 2026','ANÁLISIS DE CLIENTE',
+    'ANÁLISIS DE LA PERSONALIDAD DEL CL','ATENCIÓN AL CLIENTE INTERNO Y EXTERNO',
+    'CALLBACKS PROCESS','CONVENCIMIENTO Y COLABORACIÓN LEA','CR CALL MONITORING',
+    'CUSTOMER SERVICE FOLLOW UP','CUSTOMER SERVICE RFE',
+    'ESTANDARES DE CALIDAD EN EL SERVICIO AL CLIENTE',
+    'L.E.A.S.T, MANEJO DE CLIENTE, TIPO DE CLIENTES','LSU CALL / FORMS',
+    'LSU CALL MONITORING','MANEJO DE CL. TÉCNICAS DE PERSUASIÓN E IMPROVISACIÓN',
+    'MANEJO DE OBJECIONES','PCL FOLLOW UP +','POLITE INTERRUPTIONS',
+    'PRACTICA CORREOS / LLAMADAS','QUICK CALLS','QUICK Y DEEP CALLS',
+    'SERVICIO AL CLIENTE','TÉCNICAS DE PERSUASIÓN 1','TÉCNICAS DE PERSUASIÓN 2',
+    'VIDEOLLAMADA EFICAZ'
+  ]},
+  { g: 'Procesos Operativos', items: [
+    'CATEGORIZACIÓN DE CASOS C.C.C.','COMO DETECTAR UN OUTCOME (DCO)',
+    'DATA ENTRY (DCO)','END TO END','END TO END - PSYCH','END TO END PWI','END TO END RFE',
+    'LECTURA DE CASO - CSM','OVERVIEW CASE REVIEW PT.1','OVERVIEW CASE REVIEW PT.2',
+    'OPCIÓN 269','OPCIÓN 283','PCR OPERATIVO','PR CR OPERATIVO',
+    'PSYCH PROCESO OPERATIVO','PWC OPERATIVO'
+  ]},
+  { g: 'Plataformas & Sistemas', items: [
+    '8 X 8 VERSIÓN EXTENDIDA','CLICK UP','INGENIERÍA SOCIAL Y PHISHING',
+    'PLATAFORMAS (8X8, MYCASE, OUTLOOK, GMAIL, DROPBOX, CLICKUP)',
+    'PLATAFORMAS MLF Y SPREADSHEETS','PLATAFORMAS VISA T','PLATAFORMAS VAWA'
+  ]},
+  { g: 'Soft Skills & Desarrollo Profesional', items: [
+    '7 OROS','COMUNICACIÓN SOFTSKILLS','EXPRESIÓN Y DESENVOLVIMIENTO',
+    'FINANZAS SALUDABLES','INGLÉS BÁSICO','INGLÉS JURÍDICO','LIDERAZGO',
+    'NEGOCIACIÓN','PENSAMIENTO ESTRATÉGICO Y SISTÉMICO','PLANEACIÓN',
+    'SOFT SKILL (EXPRESS)','TOMA DE DECISIONES SOFTSKILLS','TRAIN THE TRAINERS'
+  ]},
+  { g: 'Traducción', items: [
+    'TRADUCCIÓN: MÓDULO 1','TRADUCCIÓN: MÓDULO 2','TRADUCCIÓN: MÓDULO 3',
+    'TRADUCCIÓN: MÓDULO 4','TRADUCCIÓN: MÓDULO 5','TRADUCCIÓN: MÓDULO 6',
+    'TRADUCCIÓN: MÓDULO 7','TRADUCCIÓN: MÓDULO 8'
+  ]},
+  { g: 'Otros', items: [
+    'AIR','CDL (LICENCIA DE CONDUCIR)','COMMON MISTAKES','FU','LTC','NOTAS','PIP (2)'
+  ]}
+];
+
+// ── TRAINER DATA (agregar/quitar trainers aquí)
+const TRAINERS = [
+  'Andrea Zendejas','Joham Burgos','Diego Romo','Sofia Vazquez',
+  'Mariana Diaz','Nidia Nava','Karen Reyna','Brenda Dominguez'
+];
+
+// ── BUILD SELECTS
+function buildTrainingSelect() {
+  const sel = document.getElementById('q1');
+  TRAININGS.forEach(grp => {
+    const og = document.createElement('optgroup');
+    og.label = grp.g;
+    grp.items.forEach(t => {
+      const o = document.createElement('option');
+      o.textContent = t;
+      og.appendChild(o);
+    });
+    sel.appendChild(og);
+  });
+  // Opción para ingresar manualmente
+  const sep = document.createElement('optgroup');
+  sep.label = '──────────────';
+  const otro = document.createElement('option');
+  otro.value = 'Otro';
+  otro.textContent = '✏️ Otro — ingresar manualmente';
+  sep.appendChild(otro);
+  sel.appendChild(sep);
+}
+
+function buildTrainerSelect(id) {
+  const sel = document.getElementById(id);
+  if (!sel) return;
+  TRAINERS.forEach(name => {
+    const o = document.createElement('option');
+    o.value = name; o.textContent = name;
+    sel.appendChild(o);
+  });
+  const o = document.createElement('option');
+  o.value = 'Otro'; o.textContent = 'Otro (especificar)';
+  sel.appendChild(o);
+}
+
+// ── TRAINER OTRO REVEAL
+function onTrainer(rKey, revealId, val) {
+  R[rKey] = val;
+  const reveal = document.getElementById(revealId);
+  if (reveal) {
+    reveal.classList.toggle('open', val === 'Otro');
+  }
+  if (rKey === 'q3_trainer') hideE('e-q3');
+}
+
+// ── SECONDARY TRAINER TOGGLE
+function setSecTrainer(show) {
+  R.q3b_has_secondary = show;
+  document.getElementById('tog-sec-yes').classList.toggle('on', show);
+  document.getElementById('tog-sec-no').classList.toggle('on', !show);
+  document.getElementById('sec-trainer-box').classList.toggle('open', show);
+  if (!show) {
+    R.q3b_trainer = null;
+    R.q3b_trainer_otro = null;
+    const sel = document.getElementById('q3b');
+    if (sel) sel.value = '';
+    const inp = document.getElementById('q3b-otro-txt');
+    if (inp) inp.value = '';
+    const rev = document.getElementById('otro-q3b');
+    if (rev) rev.classList.remove('open');
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  buildTrainingSelect();
+  buildTrainerSelect('q3');
+  buildTrainerSelect('q3b');
+  buildR('rs2', RS2);
+  buildR('rs3a', RS3A);
+  buildR('rs3b', RS3B);
+  buildR('rs4', RS4);
+  // Default: no secondary trainer selected
+  document.getElementById('tog-sec-no').classList.add('on');
+});
+
+// ── NAVIGATION
+function appStart() {
+  document.getElementById('tnav').style.display = 'flex';
+  go(1);
+}
+
+function go(n) {
+  if (n > cur && !validate(cur)) return;
+  const prev = document.getElementById('s' + cur);
+  const next = document.getElementById('s' + n);
+  if (!next) return;
+  if (prev) {
+    prev.classList.add('leaving');
+    setTimeout(() => { prev.classList.remove('active', 'leaving'); }, 240);
+  }
+  setTimeout(() => {
+    next.classList.add('active');
+    cur = n;
+    updProg(n);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 190);
+}
+
+function updProg(n) {
+  document.getElementById('pf').style.width = (n >= 6 ? 100 : Math.round(n / 5 * 100)) + '%';
+  const L = ['','Sección 1 de 5','Sección 2 de 5','Sección 3 de 5','Sección 4 de 5','Sección 5 de 5','Completado ✦'];
+  document.getElementById('plbl').textContent = L[n] || 'Completado ✦';
+}
+
+// ── VALIDATION
+function validate(n) {
+  if (n === 0) return true;
+  let ok = true;
+  if (n === 1) {
+    const q1val = document.getElementById('q1').value;
+    const q1otro = document.getElementById('q1-otro-txt').value.trim();
+    const q3val = document.getElementById('q3').value;
+    const q3otro = document.getElementById('q3-otro-txt').value.trim();
+    if (!q1val) { showE('e-q1'); ok = false; }
+    else if (q1val === 'Otro' && !q1otro) { showE('e-q1'); ok = false; }
+    else { hideE('e-q1'); if (q1val === 'Otro') R.q1_training = q1otro; }
+    if (!q3val) { showE('e-q3'); ok = false; }
+    else if (q3val === 'Otro' && !q3otro) { showE('e-q3'); ok = false; }
+    else hideE('e-q3');
+    if (!R.q2_tipo) { showE('e-q2'); ok = false; } else hideE('e-q2');
+    if (!R.q4_modalidad) { showE('e-q4'); ok = false; } else hideE('e-q4');
+    // Capture final trainer value
+    if (q3val === 'Otro') R.q3_trainer = q3otro || 'Otro';
+    else R.q3_trainer = q3val;
+    // Secondary trainer
+    if (R.q3b_has_secondary) {
+      const q3bval = document.getElementById('q3b').value;
+      const q3botro = document.getElementById('q3b-otro-txt').value.trim();
+      R.q3b_trainer = q3bval === 'Otro' ? (q3botro || 'Otro') : q3bval;
+    }
+  }
+  if (n === 2) RS2.forEach(q => { if (!R[q.k]) { showE('e-'+q.k); ok=false; } else hideE('e-'+q.k); });
+  if (n === 3) {
+    [...RS3A,...RS3B].forEach(q => { if (!R[q.k]) { showE('e-'+q.k); ok=false; } else hideE('e-'+q.k); });
+    if (!R.q12_cantidad) { showE('e-q12'); ok=false; } else hideE('e-q12');
+  }
+  if (n === 4) RS4.forEach(q => { if (!R[q.k]) { showE('e-'+q.k); ok=false; } else hideE('e-'+q.k); });
+  if (n === 5) { if (!R.q21_calificacion_general) { showE('e-q21'); ok=false; } else hideE('e-q21'); }
+  return ok;
+}
+function showE(id) { const e = document.getElementById(id); if (e) e.classList.add('show'); }
+function hideE(id) { const e = document.getElementById(id); if (e) e.classList.remove('show'); }
+
+// ── HELPERS
+function sv(k, v) { R[k] = v; }
+
+function onTrainingChange(val) {
+  R.q1_training = val === 'Otro' ? null : val;
+  const reveal = document.getElementById('otro-q1');
+  if (reveal) reveal.classList.toggle('open', val === 'Otro');
+  if (val && val !== 'Otro') hideE('e-q1');
+}
+
+function so(k, v, el, gid, eid) {
+  document.getElementById(gid).querySelectorAll('.oc').forEach(c => c.classList.remove('picked'));
+  el.classList.add('picked');
+  R[k] = v;
+  hideE(eid);
+}
+
+function selR(k, v) {
+  const col = rCol(v);
+  for (let i = 1; i <= 5; i++) {
+    const b = document.getElementById('rb-'+k+'-'+i);
+    b.classList.remove('on');
+    b.style.background = b.style.borderColor = b.style.color = '';
+  }
+  for (let i = 1; i <= v; i++) {
+    const b = document.getElementById('rb-'+k+'-'+i);
+    b.classList.add('on');
+    b.style.background  = i === v ? col : hA(col, .28);
+    b.style.borderColor = col;
+    b.style.color = '#fff';
+  }
+  document.getElementById('em-'+k).textContent = EM[v];
+  document.getElementById('rt-'+k).textContent = ET[v];
+  R[k] = v;
+  hideE('e-'+k);
+}
+
+function rCol(v) {
+  if (v <= 1) return '#f87171';
+  if (v <= 2) return '#fb923c';
+  if (v <= 3) return '#fbbf24';
+  if (v <= 4) return '#a3e635';
+  return '#34d399';
+}
+function hA(h, a) {
+  const r = parseInt(h.slice(1,3),16), g = parseInt(h.slice(3,5),16), b = parseInt(h.slice(5,7),16);
+  return 'rgba('+r+','+g+','+b+','+a+')';
+}
+
+function tc(k, v, el) {
+  el.classList.toggle('on');
+  if (!Array.isArray(R[k])) R[k] = [];
+  const i = R[k].indexOf(v);
+  if (i === -1) R[k].push(v); else R[k].splice(i, 1);
+}
+
+function tck(k, v, el) {
+  el.classList.toggle('on');
+  if (!Array.isArray(R[k])) R[k] = [];
+  const i = R[k].indexOf(v);
+  if (i === -1) R[k].push(v); else R[k].splice(i, 1);
+}
+
+// ── STARS
+function hS(n) {
+  document.querySelectorAll('.star').forEach((s,i) => {
+    s.style.color = i < n ? '#f5c842' : 'rgba(255,255,255,.12)';
+    s.style.transform = i < n ? 'scale(1.12)' : 'scale(1)';
+  });
+  document.getElementById('slbl').textContent = ST[n];
+}
+function uS() {
+  const sel = R.q21_calificacion_general || 0;
+  document.querySelectorAll('.star').forEach((s,i) => {
+    s.style.color = i < sel ? '#f5c842' : 'rgba(255,255,255,.12)';
+    s.style.transform = 'scale(1)';
+  });
+  document.getElementById('slbl').textContent = sel ? ST[sel] : 'Toca una estrella para calificar';
+}
+function rateS(n) {
+  R.q21_calificacion_general = n;
+  document.querySelectorAll('.star').forEach((s,i) => { s.style.color = i < n ? '#f5c842' : 'rgba(255,255,255,.12)'; });
+  document.getElementById('slbl').textContent = ST[n];
+  hideE('e-q21');
+}
+
+// ── SUBMIT
+function appSubmit() {
+  if (!validate(5)) return;
+  R.timestamp = new Date().toISOString();
+  const rks = ['q5_dominio','q6_claridad','q7_dudas','q8_dinamismo','q9_teoria_practica','q10_comprension','q11_diseno_material','q13_ejemplos','q14_preparacion','q16_situaciones_reales','q17_tiempo_practica','q18_seguridad'];
+  const vals = rks.map(k => R[k]).filter(Boolean);
+  R._avg_rating = vals.length ? (vals.reduce((a,b) => a+b, 0) / vals.length).toFixed(1) : null;
+  console.log('📊 TMLF Evaluación de Reacción:', JSON.stringify(R, null, 2));
+  sendGAS(R); // ← Envía a Google Sheets vía Apps Script
+
+  // ── Guardar en localStorage (para Panel de Administrador)
+  try {
+    const saved = JSON.parse(localStorage.getItem('tmlf_evals') || '[]');
+    saved.push({ ...R, id: Date.now() });
+    localStorage.setItem('tmlf_evals', JSON.stringify(saved));
+  } catch(e) { console.warn('localStorage save failed', e); }
+  document.getElementById('fsc').textContent = R.q21_calificacion_general + '★';
+  go(6);
+}
+
+// ══════════════════════════════════════════════════════════
+// ADMIN PANEL — namespace A
+// Contraseña por defecto: tmlf2026
+// Para cambiar: reemplazar el valor de A.PWD por btoa('nueva_contraseña')
+// Ej: btoa('tmlf2026') => 'dG1sZjIwMjY='
+// ══════════════════════════════════════════════════════════
+const A = {
+  PWD: 'dG1sZjIwMjY=', // tmlf2026
+  useDemo: true,
+  allData: [],
+  filtered: [],
+  openRows: new Set(),
+
+  // ── DEMO DATA
+  DEMO: (function() {
+    function mk(d,h,training,tipo,trainer,t2,mod,tR,cR,cant,util,pR,falta,mejoras,stars){
+      const dt=new Date(); dt.setDate(dt.getDate()+d); dt.setHours(h,Math.floor(Math.random()*59),0,0);
+      const all=[...tR,...cR,...pR], avg=(all.reduce((a,b)=>a+b,0)/all.length).toFixed(1);
+      return {id:dt.getTime(),timestamp:dt.toISOString(),q1_training:training,q2_tipo:tipo,
+        q3_trainer:trainer,q3b_has_secondary:!!t2,q3b_trainer:t2||null,q4_modalidad:mod,
+        q5_dominio:tR[0],q6_claridad:tR[1],q7_dudas:tR[2],q8_dinamismo:tR[3],q9_teoria_practica:tR[4],
+        q10_comprension:cR[0],q11_diseno_material:cR[1],q12_cantidad:cant,q13_ejemplos:cR[2],q14_preparacion:cR[3],
+        q15_mas_util:util,q16_situaciones_reales:pR[0],q17_tiempo_practica:pR[1],q18_seguridad:pR[2],
+        q19_falta:falta,q20_mejoras:mejoras||null,q21_calificacion_general:stars,_avg_rating:avg};
+    }
+    return [
+      mk(-1,10,'COMMON CORE VAWA','Common Core','Karen Reyna',null,'Online',[5,4,5,4,5],[4,5,4,5],'Adecuada',['Casos prácticos','Material visual'],[4,4,5],['Más práctica'],'Me gustaría más tiempo para ejercicios prácticos.',5),
+      mk(-1,14,'ENTREVISTA VISA T','Orientation','Andrea Zendejas',null,'Presencial',[5,5,5,5,5],[5,5,5,5],'Adecuada',['Simulador','Roleplay'],[5,4,5],[],'Excelente sesión. Andrea domina el tema perfectamente.',5),
+      mk(-2,9,'ARGUMENTACIÓN','Ongoing','Diego Romo',null,'Online',[4,3,4,3,4],[3,4,3,4],'Adecuada',['Teoría','Ejemplos'],[3,4,3],['Más ejemplos'],'El material visual podría mejorar con más diagramas.',4),
+      mk(-2,16,'CUSTOMER SERVICE FOLLOW UP','Ongoing','Sofia Vazquez','Mariana Diaz','Presencial',[5,5,5,5,5],[5,5,5,5],'Adecuada',['Roleplay','Casos prácticos'],[5,5,5],[],'Muy buen ritmo. Me siento lista para aplicarlo.',5),
+      mk(-3,11,'VISA T: ARGUMENTACIÓN Y CVL','Taller','Joham Burgos',null,'Online',[4,4,5,4,4],[4,3,4,4],'Adecuada',['Casos prácticos','Material visual'],[4,3,4],['Más práctica','Más tiempo'],'Faltó un poco más de práctica guiada al final.',4),
+      mk(-4,10,'COMPLIANCE POLICY, QUALITY CRITERIA, PRINCIPIOS DE EDICIÓN','Ongoing','Karen Reyna',null,'Online',[5,5,4,4,5],[5,4,4,5],'Adecuada',['Teoría','Material visual'],[4,4,5],[],null,5),
+      mk(-5,9,'TIPOS DE ABUSO Y ABUSOMETRO','Ongoing','Mariana Diaz',null,'Presencial',[4,4,4,3,4],[3,4,3,4],'Adecuada',['Casos prácticos','Ejemplos'],[3,4,4],['Más ejemplos'],'Los ejemplos de casos reales ayudan mucho.',4),
+      mk(-5,15,'EVIDENCIAS VISA T','Taller','Brenda Dominguez',null,'Online',[5,4,5,4,5],[4,4,5,5],'Adecuada',['Material visual','Casos prácticos'],[4,4,5],['Más simuladores'],'Sería ideal tener un simulador adicional.',5),
+      mk(-6,10,'REDACCIÓN EN AFFIDAVITS','Taller','Nidia Nava',null,'Presencial',[3,3,3,2,3],[3,2,3,3],'Adecuada',['Teoría','Ejemplos'],[2,3,3],['Mejor explicación','Más tiempo'],'El tema es complejo, necesitamos más sesiones.',3),
+      mk(-7,11,'FORMAS VAWA','Orientation','Andrea Zendejas',null,'Online',[5,5,5,5,5],[5,5,5,5],'Adecuada',['Material visual','Simulador'],[5,4,5],[],null,5),
+      mk(-8,10,'GMC - INADMISIBILIDAD Y DELITOS','Ongoing','Diego Romo',null,'Presencial',[4,3,3,3,4],[3,3,3,4],'Demasiada',['Teoría'],[3,2,3],['Más ejemplos','Mejor material visual'],'La explicación fue muy técnica. Necesito más ejemplos.',4),
+      mk(-9,14,'TALLER: AFFIDAVIT / STATEMENT','Taller','Sofia Vazquez',null,'Presencial',[5,5,5,5,5],[5,5,5,5],'Adecuada',['Roleplay','Retroalimentación del trainer'],[5,4,5],[],'Me encantó el taller. Muy dinámico y útil.',5),
+      mk(-10,10,'ORIENTATION VISA T 1.0','Orientation','Karen Reyna',null,'Online',[5,5,5,5,5],[5,5,5,5],'Adecuada',['Teoría','Casos prácticos','Material visual'],[5,4,5],[],'Perfecta introducción para nuevos colaboradores.',5),
+      mk(-11,9,'LEGAL ARGUMENTS: TOULMIN AND IRAC','Actualización','Joham Burgos',null,'Online',[4,3,4,3,4],[4,3,3,3],'Demasiada',['Teoría','Ejemplos'],[3,3,3],['Más práctica','Más tiempo'],'Faltó profundizar en casos difíciles.',4),
+      mk(-12,15,'MANEJO DE CL. TÉCNICAS DE PERSUASIÓN E IMPROVISACIÓN','Ongoing','Mariana Diaz',null,'Presencial',[4,4,5,4,4],[4,4,4,4],'Adecuada',['Roleplay','Casos prácticos'],[4,4,4],[],'Las técnicas son muy aplicables al día a día.',4),
+      mk(-14,10,'VISA T RFE','Actualización','Andrea Zendejas','Brenda Dominguez','Online',[5,5,5,5,5],[5,5,5,5],'Adecuada',['Casos prácticos','Simulador'],[5,4,5],[],null,5),
+      mk(-15,11,'VAWA+','Ongoing','Brenda Dominguez',null,'Presencial',[4,5,4,4,5],[4,5,4,5],'Adecuada',['Material visual','Casos prácticos'],[4,4,5],[],null,5),
+      mk(-18,9,'INFERENCIAS 2.0','Actualización','Nidia Nava',null,'Online',[3,2,3,2,3],[2,2,2,3],'Demasiada',['Teoría'],[2,2,2],['Mejor explicación','Más ejemplos'],'Necesita más ejemplos y práctica guiada.',3),
+      mk(-20,10,'CRITERIOS VISA T','Ongoing','Karen Reyna',null,'Online',[5,5,5,5,5],[5,5,5,5],'Adecuada',['Casos prácticos','Retroalimentación del trainer'],[5,5,5],[],'Uno de los mejores trainings. Totalmente aplicable.',5),
+      mk(-22,14,'CUSTOMER SERVICE RFE','Actualización','Sofia Vazquez',null,'Presencial',[4,5,4,5,4],[4,4,4,5],'Adecuada',['Casos prácticos','Roleplay'],[4,3,4],['Más práctica'],'Todo claro. Solo faltó más tiempo para el roleplay.',4),
+    ];
+  })(),
+
+  // ── AUTH
+  showLogin() {
+    document.getElementById('adm-modal').style.display='flex';
+    document.getElementById('adm-pwd').value='';
+    document.getElementById('adm-err').textContent='';
+    setTimeout(()=>document.getElementById('adm-pwd').focus(),100);
+  },
+  closeLogin(e) {
+    if (!e || e.target===document.getElementById('adm-modal'))
+      document.getElementById('adm-modal').style.display='none';
+  },
+  togglePwd() {
+    const i=document.getElementById('adm-pwd');
+    i.type = i.type==='password' ? 'text' : 'password';
+  },
+  login() {
+    const pwd=document.getElementById('adm-pwd').value;
+    if (atob(this.PWD)===pwd) {
+      document.getElementById('adm-modal').style.display='none';
+      document.getElementById('adm-panel').classList.add('open');
+      document.body.style.overflow='hidden';
+      this.load();
+    } else {
+      document.getElementById('adm-err').textContent='Contraseña incorrecta. Intenta de nuevo.';
+      document.getElementById('adm-pwd').value='';
+      document.getElementById('adm-pwd').focus();
+      const box=document.querySelector('.adm-modal-box');
+      box.style.animation='none'; box.offsetHeight;
+      box.style.animation='shake .35s ease';
+    }
+  },
+  close() {
+    document.getElementById('adm-panel').classList.remove('open');
+    document.body.style.overflow='';
+  },
+
+  // ── DATA
+  async load() {
+    const hasGAS = GAS_URL && GAS_URL !== 'PEGA_TU_URL_AQUÍ';
+
+    if (hasGAS && !this.useDemo) {
+      // Intentar leer desde Google Sheets
+      const ok = await this.fetchFromSheets();
+      if (ok) return;
+    }
+
+    // Fallback: localStorage o demo
+    const real = JSON.parse(localStorage.getItem('tmlf_evals') || '[]');
+    const hasReal = real.length > 0;
+
+    if (hasReal && !this.useDemo) {
+      this.allData = real.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+      this._setBadge('LOCAL', 'real');
+      document.getElementById('adm-toggle-btn').textContent = 'Ver datos demo';
+      document.getElementById('adm-toggle-btn').disabled = false;
+    } else {
+      this.allData = [...this.DEMO].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+      this._setBadge('DATOS DEMO', 'demo');
+      const label = hasGAS ? 'Sincronizar con Sheets' : (hasReal ? `Datos locales (${real.length})` : 'Sin datos reales aún');
+      const togBtn = document.getElementById('adm-toggle-btn');
+      togBtn.textContent = label;
+      togBtn.disabled = !hasReal && !hasGAS;
+      if (hasGAS) {
+        togBtn.onclick = () => { A.useDemo = false; A.load(); };
+      }
+    }
+    this.buildFilters();
+    this.filter();
+  },
+
+  async fetchFromSheets() {
+    const btn = document.getElementById('adm-toggle-btn');
+    const prevText = btn.textContent;
+    btn.textContent = '⟳ Cargando…';
+    btn.disabled = true;
+
+    try {
+      const data = await this._jsonp(GAS_URL + '?action=read&callback=__gasCallback', 10000);
+      if (data && data.ok && Array.isArray(data.data)) {
+        this.allData = data.data;
+        this._setBadge('GOOGLE SHEETS · ' + data.total, 'real');
+        btn.textContent = '🔄 Actualizar';
+        btn.disabled = false;
+        btn.onclick = () => A.fetchFromSheets().then(() => { A.buildFilters(); A.filter(); });
+        this.buildFilters();
+        this.filter();
+        return true;
+      }
+    } catch(e) {
+      console.warn('GAS fetch failed:', e.message || e);
+    }
+    btn.textContent = prevText;
+    btn.disabled = false;
+    return false;
+  },
+
+  _jsonp(url, timeout) {
+    return new Promise((resolve, reject) => {
+      const cbName = '__gasCallback_' + Date.now();
+      // Override callback name in URL
+      const finalUrl = url.replace('__gasCallback', cbName);
+      let settled = false;
+      const timer = setTimeout(() => {
+        if (!settled) { settled = true; cleanup(); reject(new Error('Timeout')); }
+      }, timeout);
+      function cleanup() {
+        clearTimeout(timer);
+        delete window[cbName];
+        const s = document.getElementById('__jsonp_script');
+        if (s) s.remove();
+      }
+      window[cbName] = function(data) {
+        if (!settled) { settled = true; cleanup(); resolve(data); }
+      };
+      const script = document.createElement('script');
+      script.id = '__jsonp_script';
+      script.src = finalUrl;
+      script.onerror = () => { if (!settled) { settled = true; cleanup(); reject(new Error('Script load error')); } };
+      document.head.appendChild(script);
+    });
+  },
+
+  _setBadge(text, type) {
+    const b = document.getElementById('adm-data-badge');
+    b.textContent = text;
+    b.className = 'adm-data-badge ' + type;
+  },
+
+  toggleSource() {
+    const hasGAS = GAS_URL && GAS_URL !== 'PEGA_TU_URL_AQUÍ';
+    const real = JSON.parse(localStorage.getItem('tmlf_evals') || '[]');
+    if (!real.length && !hasGAS) return;
+    this.useDemo = !this.useDemo;
+    this.openRows.clear();
+    this.load();
+  },
+
+  // ── FILTERS
+  buildFilters() {
+    const trainers=[...new Set(this.allData.map(e=>e.q3_trainer).filter(Boolean))].sort();
+    const trainings=[...new Set(this.allData.map(e=>e.q1_training).filter(Boolean))].sort();
+    const tSel=document.getElementById('af-trainer');
+    const trSel=document.getElementById('af-training');
+    tSel.innerHTML='<option value="">Todos los trainers</option>'+trainers.map(t=>`<option>${t}</option>`).join('');
+    trSel.innerHTML='<option value="">Todos los trainings</option>'+trainings.map(t=>`<option>${t}</option>`).join('');
+  },
+  filter() {
+    const ft=document.getElementById('af-trainer').value;
+    const ftr=document.getElementById('af-training').value;
+    const ftipo=document.getElementById('af-tipo').value;
+    const fd=document.getElementById('af-desde').value;
+    const fh=document.getElementById('af-hasta').value;
+    this.filtered=this.allData.filter(e=>{
+      if (ft && e.q3_trainer!==ft) return false;
+      if (ftr && e.q1_training!==ftr) return false;
+      if (ftipo && e.q2_tipo!==ftipo) return false;
+      if (fd && e.timestamp.slice(0,10)<fd) return false;
+      if (fh && e.timestamp.slice(0,10)>fh) return false;
+      return true;
+    });
+    this.renderAll();
+  },
+  clearFilters() {
+    ['af-trainer','af-training','af-tipo','af-desde','af-hasta'].forEach(id=>{ document.getElementById(id).value=''; });
+    this.filter();
+  },
+
+  // ── HELPERS
+  avg(arr){ const v=arr.filter(x=>x!=null&&!isNaN(x)); return v.length?(v.reduce((a,b)=>a+b,0)/v.length):0; },
+  avgOf(evs,keys){ return this.avg(evs.flatMap(e=>keys.map(k=>e[k]))); },
+  fmtDate(ts){ const d=new Date(ts); return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'}); },
+  fmtTime(ts){ const d=new Date(ts); return d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}); },
+  stars(n,max=5){ let s=''; for(let i=1;i<=max;i++) s+=`<span class="${i<=n?'':'off'}">★</span>`; return s; },
+  avgCls(v){ return v>=4.5?'hi':v>=3.5?'md':'lo'; },
+
+  // ── RENDER ALL
+  renderAll() { this.renderKPIs(); this.renderCharts(); this.renderTable(); this.renderComments(); },
+
+  renderKPIs() {
+    const f=this.filtered, n=f.length;
+    const sAvg=this.avg(f.map(e=>e.q21_calificacion_general));
+    const tAvg=this.avgOf(f,['q5_dominio','q6_claridad','q7_dudas','q8_dinamismo','q9_teoria_practica']);
+    const cAvg=this.avgOf(f,['q10_comprension','q11_diseno_material','q13_ejemplos','q14_preparacion']);
+    const trainers=[...new Set(f.map(e=>e.q3_trainer).filter(Boolean))];
+    document.getElementById('ak-total').textContent=n;
+    document.getElementById('ak-total-sub').textContent=trainers.length+' trainer'+(trainers.length===1?'':'s');
+    document.getElementById('ak-stars').textContent=n?sAvg.toFixed(1)+'★':'—';
+    document.getElementById('ak-trainer').textContent=n?tAvg.toFixed(1)+'/5':'—';
+    document.getElementById('ak-content').textContent=n?cAvg.toFixed(1)+'/5':'—';
+  },
+
+  renderCharts() {
+    const f=this.filtered;
+    // Stars distribution
+    const counts=[0,0,0,0,0];
+    f.forEach(e=>{ if(e.q21_calificacion_general) counts[e.q21_calificacion_general-1]++; });
+    const mx=Math.max(...counts,1);
+    const clrs=['red','red','amber','gold','gold'];
+    let h='';
+    for(let i=4;i>=0;i--){
+      const pct=Math.round(counts[i]/mx*100);
+      h+=`<div class="adm-bar-item">
+        <span class="adm-bar-lbl">${i+1}★</span>
+        <div class="adm-bar-track"><div class="adm-bar-fill ${clrs[i]}" style="width:${pct}%"></div></div>
+        <span class="adm-bar-cnt">${counts[i]} · ${f.length?Math.round(counts[i]/f.length*100):0}%</span>
+      </div>`;
+    }
+    document.getElementById('adm-stars-chart').innerHTML=h||'<span style="color:var(--slate);font-size:13px">Sin datos</span>';
+    // Dimension averages
+    const dims=[
+      {n:'Desempeño del Trainer',k:['q5_dominio','q6_claridad','q7_dudas','q8_dinamismo','q9_teoria_practica']},
+      {n:'Calidad del Contenido', k:['q10_comprension','q11_diseno_material','q13_ejemplos','q14_preparacion']},
+      {n:'Práctica & Operación',  k:['q16_situaciones_reales','q17_tiempo_practica','q18_seguridad']},
+    ];
+    let dh='';
+    dims.forEach(d=>{
+      const val=f.length?this.avgOf(f,d.k):0;
+      dh+=`<div class="adm-dim-item">
+        <div class="adm-dim-hdr"><span class="adm-dim-name">${d.n}</span><span class="adm-dim-score">${f.length?val.toFixed(1):'—'}</span></div>
+        <div class="adm-dim-track"><div class="adm-dim-fill" style="width:${(val/5*100).toFixed(1)}%"></div></div>
+      </div>`;
+    });
+    document.getElementById('adm-dim-chart').innerHTML=dh;
+  },
+
+  renderTable() {
+    const body=document.getElementById('adm-tbl-body');
+    document.getElementById('adm-res-cnt').textContent=this.filtered.length+' resultado'+(this.filtered.length===1?'':'s');
+    if (!this.filtered.length) {
+      body.innerHTML='<div class="adm-empty"><span class="adm-empty-icon">📊</span><div class="adm-empty-ttl">Sin resultados</div><div class="adm-empty-sub">Ajusta los filtros</div></div>';
+      return;
+    }
+    const self=this;
+    body.innerHTML=this.filtered.map(e=>{
+      const tA=self.avg([e.q5_dominio,e.q6_claridad,e.q7_dudas,e.q8_dinamismo,e.q9_teoria_practica]);
+      const cA=self.avg([e.q10_comprension,e.q11_diseno_material,e.q13_ejemplos,e.q14_preparacion]);
+      const pA=self.avg([e.q16_situaciones_reales,e.q17_tiempo_practica,e.q18_seguridad]);
+      const ov=self.avg([tA,cA,pA]);
+      const isOpen=self.openRows.has(e.id);
+      return `<div class="adm-tbl-row" id="ar-${e.id}">
+        <div class="adm-tbl-cells adm-tbl-cols" onclick="A.toggleRow(${e.id})">
+          <div class="adm-td dt"><span>${self.fmtDate(e.timestamp)}</span><span>${self.fmtTime(e.timestamp)}</span></div>
+          <div class="adm-td b" title="${e.q1_training}">${e.q1_training}</div>
+          <div class="adm-td b">${e.q3_trainer||'—'}${e.q3b_has_secondary?`<br/><span style="font-size:11px;color:var(--slate)">+ ${e.q3b_trainer}</span>`:''}</div>
+          <div class="adm-td">${e.q2_tipo||'—'}</div>
+          <div class="adm-td"><span class="adm-stars">${self.stars(e.q21_calificacion_general||0)}</span></div>
+          <div class="adm-td"><span class="adm-avg ${self.avgCls(ov)}">${ov.toFixed(1)}</span></div>
+          <div class="adm-td" style="display:flex;justify-content:center">
+            <button class="adm-exp-btn ${isOpen?'open':''}">${isOpen?'−':'+'}</button>
+          </div>
+        </div>
+        <div class="adm-detail ${isOpen?'open':''}">${isOpen?self.buildDetail(e):''}</div>
+      </div>`;
+    }).join('');
+  },
+
+  buildDetail(e) {
+    const tA=this.avg([e.q5_dominio,e.q6_claridad,e.q7_dudas,e.q8_dinamismo,e.q9_teoria_practica]);
+    const cA=this.avg([e.q10_comprension,e.q11_diseno_material,e.q13_ejemplos,e.q14_preparacion]);
+    const pA=this.avg([e.q16_situaciones_reales,e.q17_tiempo_practica,e.q18_seguridad]);
+    const mkRows=rows=>rows.map(([l,v])=>`
+      <div class="adm-det-row"><span class="adm-det-lbl">${l}</span><span class="adm-det-val">${v||'—'}/5</span></div>
+      <div class="adm-det-bar"><div class="adm-det-fill" style="width:${((v||0)/5*100).toFixed(0)}%"></div></div>`).join('');
+    const util=(e.q15_mas_util||[]).length
+      ?`<div class="adm-chip-row">${e.q15_mas_util.map(c=>`<span class="adm-chip-g">${c}</span>`).join('')}</div>`
+      :'<span style="color:var(--slate);font-size:12px">—</span>';
+    const falta=(e.q19_falta||[]).length
+      ?`<div class="adm-chip-row">${e.q19_falta.map(c=>`<span class="adm-chip-r">${c}</span>`).join('')}</div>`
+      :'<span style="color:var(--slate);font-size:12px">Nada, estuvo completo</span>';
+    const comment=e.q20_mejoras
+      ?`<div class="adm-comment-box">"${e.q20_mejoras}"</div>`
+      :'<span style="color:var(--slate);font-size:12px;font-style:italic">Sin comentarios</span>';
+    return `<div class="adm-det-grid">
+      <div class="adm-det-sec"><div class="adm-det-ttl">Trainer · ${tA.toFixed(1)}/5</div>
+        ${mkRows([['Domina el tema',e.q5_dominio],['Claridad',e.q6_claridad],['Resolución dudas',e.q7_dudas],['Dinamismo',e.q8_dinamismo],['Teoría ↔ Operación',e.q9_teoria_practica]])}
+      </div>
+      <div class="adm-det-sec"><div class="adm-det-ttl">Contenido · ${cA.toFixed(1)}/5</div>
+        ${mkRows([['Comprensión',e.q10_comprension],['Diseño / Material',e.q11_diseno_material],['Ejemplos',e.q13_ejemplos],['Preparación',e.q14_preparacion]])}
+        <div class="adm-det-row" style="margin-top:8px"><span class="adm-det-lbl">Cantidad</span><span class="adm-det-val">${e.q12_cantidad||'—'}</span></div>
+        <div style="margin-top:10px"><div class="adm-det-ttl" style="margin-bottom:4px">Parte más útil</div>${util}</div>
+      </div>
+      <div class="adm-det-sec"><div class="adm-det-ttl">Práctica · ${pA.toFixed(1)}/5</div>
+        ${mkRows([['Situaciones reales',e.q16_situaciones_reales],['Tiempo práctica',e.q17_tiempo_practica],['Seguridad post-training',e.q18_seguridad]])}
+        <div style="margin-top:10px"><div class="adm-det-ttl" style="margin-bottom:4px">¿Qué hizo falta?</div>${falta}</div>
+      </div>
+    </div>
+    <div style="margin-top:4px"><div class="adm-det-ttl" style="margin-bottom:4px">Comentario</div>${comment}</div>`;
+  },
+
+  toggleRow(id) {
+    if (this.openRows.has(id)) this.openRows.delete(id); else this.openRows.add(id);
+    this.renderTable();
+    setTimeout(()=>{ const el=document.getElementById('ar-'+id); if(el) el.scrollIntoView({behavior:'smooth',block:'nearest'}); },50);
+  },
+
+  renderComments() {
+    const wrap=document.getElementById('adm-comments');
+    const wc=this.filtered.filter(e=>e.q20_mejoras&&e.q20_mejoras.trim());
+    document.getElementById('adm-cm-cnt').textContent=wc.length+' comentario'+(wc.length===1?'':'s');
+    if (!wc.length) { wrap.innerHTML='<div class="adm-empty" style="padding:28px"><span style="font-size:13px;color:var(--slate)">No hay comentarios para los filtros seleccionados</span></div>'; return; }
+    const self=this;
+    wrap.innerHTML=wc.map(e=>`<div class="adm-comment-item">
+      <div>
+        <div class="adm-cm-meta">
+          <span class="adm-cm-trainer">${e.q3_trainer||'—'}</span>
+          <span class="adm-cm-dot"></span>
+          <span class="adm-cm-training">${e.q1_training}</span>
+          <span class="adm-cm-dot"></span>
+          <span class="adm-stars" style="font-size:11px">${self.stars(e.q21_calificacion_general||0)}</span>
+        </div>
+        <div class="adm-cm-txt">"${e.q20_mejoras}"</div>
+      </div>
+      <div class="adm-cm-date">${self.fmtDate(e.timestamp)}<br/>${self.fmtTime(e.timestamp)}</div>
+    </div>`).join('');
+  },
+};
+
+// ── shake animation for wrong password
+const shakeStyle=document.createElement('style');
+shakeStyle.textContent='@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}';
+document.head.appendChild(shakeStyle);
+
+// ── Close admin panel on Escape key
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') {
+    if (document.getElementById('adm-modal').style.display!=='none') A.closeLogin();
+    else if (document.getElementById('adm-panel').classList.contains('open')) A.close();
+  }
+});
+</script>
+</body>
+</html>
