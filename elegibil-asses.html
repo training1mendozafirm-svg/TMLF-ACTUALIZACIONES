@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eligibility Intake Assessment — Inmigración</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F5F3EF;
+    --surface: #FDFCFA;
+    --border: #E2DDD6;
+    --border-dark: #C8C2B8;
+    --text: #1A1714;
+    --text-muted: #6B6560;
+    --text-faint: #9E9890;
+    --accent: #2D4A8A;
+    --accent-light: #EBF0FA;
+    --accent-mid: #4A6DB5;
+    --suf-bg: #EBF5EE; --suf-border: #7DC494; --suf-text: #1E5C32;
+    --par-bg: #FEF5E7; --par-border: #F0B429; --par-text: #7A4F00;
+    --ins-bg: #FDECEC; --ins-border: #F08080; --ins-text: #8B1A1A;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .shell {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 1.5rem 4rem;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    padding: 2.5rem 0 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+  }
+  .site-header .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-mid);
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .site-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 34px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .site-header p {
+    color: var(--text-muted);
+    font-size: 14px;
+    max-width: 540px;
+  }
+
+  /* ── NAME GATE ── */
+  #nameGate {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  #nameGate h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 6px;
+  }
+  #nameGate p { font-size: 13px; color: var(--text-muted); margin-bottom: 1.25rem; }
+  #nameInput {
+    width: 100%;
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    border: 1px solid var(--border-dark);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--text);
+    margin-bottom: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  #nameInput:focus { border-color: var(--accent); }
+  .btn-start {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-start:hover { background: #243d75; }
+  .btn-start:active { transform: scale(0.98); }
+
+  /* ── PROGRESS ── */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .progress-track {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 99px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  }
+  .progress-label { font-size: 12px; color: var(--text-faint); white-space: nowrap; }
+
+  /* ── SECTION NAV ── */
+  .section-nav {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .snav-btn {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 14px;
+    border-radius: 99px;
+    border: 1px solid var(--border-dark);
+    background: var(--surface);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .snav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .snav-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .snav-btn.done { border-color: #7DC494; color: #1E5C32; background: #EBF5EE; }
+  .snav-btn.done.active { background: #2E7D4F; border-color: #2E7D4F; color: #fff; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .card-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 99px;
+    background: var(--accent-light);
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .card-body {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.75;
+    border-left: 3px solid var(--border);
+    padding-left: 14px;
+  }
+
+  /* ── QUESTIONS ── */
+  .q-block { margin-bottom: 1.25rem; }
+  .q-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+  .q-num {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+  textarea {
+    width: 100%;
+    min-height: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--border-dark);
+    border-radius: 10px;
+    padding: 12px 14px;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  textarea:focus { border-color: var(--accent); background: #fff; }
+  textarea:disabled { opacity: 0.75; cursor: not-allowed; }
+
+  /* ── RESULT BLOCKS ── */
+  .result-block {
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 8px;
+    display: none;
+  }
+  .result-block.show { display: block; }
+  .result-block.suficiente { background: var(--suf-bg); border: 1px solid var(--suf-border); }
+  .result-block.parcial    { background: var(--par-bg); border: 1px solid var(--par-border); }
+  .result-block.insuficiente { background: var(--ins-bg); border: 1px solid var(--ins-border); }
+  .res-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .res-badge {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 99px;
+  }
+  .suficiente .res-badge { background: #c8edcf; color: var(--suf-text); }
+  .parcial    .res-badge { background: #fde4a0; color: var(--par-text); }
+  .insuficiente .res-badge { background: #f9c4c4; color: var(--ins-text); }
+  .res-score {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+  }
+  .suficiente .res-score { color: var(--suf-text); }
+  .parcial    .res-score { color: var(--par-text); }
+  .insuficiente .res-score { color: var(--ins-text); }
+  .res-line { font-size: 13px; line-height: 1.6; margin-top: 4px; }
+  .res-found { color: var(--suf-text); }
+  .res-missing { color: var(--ins-text); margin-top: 4px; }
+
+  /* ── LOADING ── */
+  .loading-row {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    font-size: 13px;
+    color: var(--text-faint);
+  }
+  .loading-row.show { display: flex; }
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid var(--border-dark);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── BUTTONS ── */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1.25rem;
+  }
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 9px 20px;
+    border-radius: 10px;
+    border: 1px solid var(--border-dark);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn:hover { background: var(--bg); border-color: var(--accent); color: var(--accent); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn-primary:hover { background: #243d75; color: #fff; border-color: #243d75; }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  /* ── QUIZ SECTION ── */
+  .quiz-intro {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .quiz-intro h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 6px;
+  }
+  .quiz-intro p { font-size: 13px; color: var(--text-muted); }
+
+  .quiz-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 10px;
+    transition: border-color 0.2s;
+  }
+  .quiz-item.answered { border-color: var(--border-dark); }
+  .quiz-q {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 12px;
+    line-height: 1.55;
+  }
+  .quiz-q .qnum {
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px;
+    color: var(--accent-mid);
+    margin-right: 6px;
+  }
+  .quiz-options {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .opt-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 7px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border-dark);
+    background: var(--bg);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .opt-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .opt-btn.selected-sí { background: var(--suf-bg); border-color: var(--suf-border); color: var(--suf-text); }
+  .opt-btn.selected-no { background: var(--ins-bg); border-color: var(--ins-border); color: var(--ins-text); }
+  .opt-btn.selected-depende { background: var(--par-bg); border-color: var(--par-border); color: var(--par-text); }
+  .opt-btn:disabled { cursor: not-allowed; opacity: 0.7; }
+
+  .quiz-feedback {
+    margin-top: 12px;
+    font-size: 13px;
+    line-height: 1.65;
+    display: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: var(--suf-bg); color: var(--suf-text); border: 1px solid var(--suf-border); }
+  .quiz-feedback.wrong   { background: var(--ins-bg); color: var(--ins-text); border: 1px solid var(--ins-border); }
+  .quiz-feedback.partial { background: var(--par-bg); color: var(--par-text); border: 1px solid var(--par-border); }
+
+  /* ── SUMMARY ── */
+  .summary-hero {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+  }
+  .summary-hero h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    font-weight: 400;
+    margin-bottom: 6px;
+  }
+  .summary-hero .name-display {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+  .score-big {
+    font-family: 'DM Serif Display', serif;
+    font-size: 64px;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .score-sub { font-size: 13px; color: var(--text-muted); }
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 1.5rem 0 0;
+  }
+  .metric-cell {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+  }
+  .metric-cell .val { font-family: 'DM Serif Display', serif; font-size: 26px; }
+  .metric-cell .lbl { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
+  .green-val { color: var(--suf-text); }
+  .amber-val { color: var(--par-text); }
+  .red-val   { color: var(--ins-text); }
+
+  .results-list { margin-bottom: 1.5rem; }
+  .res-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    gap: 12px;
+  }
+  .res-row:last-child { border-bottom: none; }
+  .res-row-name { color: var(--text); flex: 1; }
+  .mini-badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 99px;
+    white-space: nowrap;
+  }
+  .mb-suf { background: var(--suf-bg); color: var(--suf-text); }
+  .mb-par { background: var(--par-bg); color: var(--par-text); }
+  .mb-ins { background: var(--ins-bg); color: var(--ins-text); }
+
+  .btn-print {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 24px;
+    border-radius: 10px;
+    border: 1px solid var(--border-dark);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+    width: 100%;
+    margin-top: 8px;
+  }
+  .btn-print:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+
+  @media print {
+    .btn-row, .section-nav, .btn-print, .progress-wrap, #nameGate { display: none !important; }
+    .card, .quiz-item { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header class="site-header">
+    <div class="eyebrow">Orientación · Área de filtrado y elegibilidad</div>
+    <h1>Eligibility Intake Assessment</h1>
+    <p>Evaluación de suficiencia para abogados de inmigración. Incluye análisis de expedientes y cuestionario de criterios.</p>
+  </header>
+
+  <div id="nameGate">
+    <h2>Antes de comenzar</h2>
+    <p>Ingresa tu nombre completo para personalizar tu evaluación y resumen final.</p>
+    <input type="text" id="nameInput" placeholder="Nombre completo" />
+    <br>
+    <button class="btn-start" onclick="startAssessment()">Comenzar evaluación</button>
+  </div>
+
+  <div id="mainApp" style="display:none">
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <span class="progress-label" id="progressLabel">0 / 7 secciones</span>
+    </div>
+    <div class="section-nav" id="sectionNav"></div>
+    <div id="pageContent"></div>
+  </div>
+
+</div>
+
+<script>
+const CASES = [
+  {
+    id:0, tag:"VAWA + Removal of Conditions",
+    title:"Expediente 1 — Valentina, 34 años, colombiana",
+    body:"Obtuvo Green Card condicional hace 16 meses como cónyuge de ciudadano americano. Reporta que su esposo la golpeó en dos ocasiones; tiene fotos, un reporte médico de urgencias y mensajes de texto donde él la amenaza. Su esposo se niega a firmar el I-751 y la amenaza con 'llamar a migración' si ella lo deja.",
+    questions:[
+      "¿Puede presentar VAWA y el I-751 waiver simultáneamente, o son excluyentes entre sí?",
+      "¿Qué evidencia ya tiene y qué evidencia adicional recomendarías reunir?",
+      "¿Aceptas el caso para la firma? Justifica tu decisión."
+    ],
+    rubric:[
+      {keywords:["no son excluyentes","pueden coexistir","simultáneamente","i-751 waiver por abuso","vawa independiente","ambos procesos","no se excluyen"],required:["i-751","vawa"],hint:"Debe señalar que VAWA (I-360) y el I-751 waiver por abuso son vías distintas pero complementarias; no se excluyen."},
+      {keywords:["fotos","reporte médico","mensajes","declaración jurada","affidavit","testigos","orden de protección","police report","registros médicos","historial"],required:["fotos","reporte"],hint:"Debe identificar la evidencia existente y sugerir fuentes adicionales: affidavit, testigos, órdenes de protección."},
+      {keywords:["sí acepto","acepto el caso","caso viable","evidencia sólida","documentación suficiente","procede","recomiendo aceptar"],required:[],hint:"Debe dar una postura clara con justificación basada en la evidencia y viabilidad del proceso."}
+    ]
+  },
+  {
+    id:1, tag:"Visa U + Waiver",
+    title:"Expediente 2 — Diego, 31 años, hondureño",
+    body:"Fue víctima de asalto a mano armada mientras trabajaba. Cooperó con la policía, identificó al agresor y tiene la certificación I-918B firmada. Sin embargo, tiene una entrada sin inspección y una orden de deportación en ausencia dictada hace 4 años cuando no se le notificó correctamente.",
+    questions:[
+      "¿La orden de deportación en ausencia es una barra absoluta para la Visa U?",
+      "¿Qué waiver(s) aplicarían y bajo qué estándar se evalúan?",
+      "¿Aceptas el caso? ¿Qué riesgos concretos adviertes al cliente?"
+    ],
+    rubric:[
+      {keywords:["no es barra absoluta","no es absoluta","waiver disponible","deferred action","no impide automáticamente","no es una barra"],required:["waiver"],hint:"La orden de deportación no es barra absoluta para Visa U; USCIS puede emitir deferred action y existe waiver bajo INA 212(d)(3)."},
+      {keywords:["212(d)(3)","inadmisibilidad","discrecional","humanitarian","public interest","law enforcement","interés público","entrada sin inspección"],required:["212"],hint:"Debe mencionar el waiver bajo INA 212(d)(3) y el estándar discrecional: interés humanitario, público y beneficio a la aplicación de la ley."},
+      {keywords:["riesgo","detención","orden de deportación","reapertura","motion to reopen","precaución","advertir","deferred action"],required:[],hint:"Debe advertir sobre el riesgo de ejecutar la orden durante el proceso y mencionar motion to reopen."}
+    ]
+  },
+  {
+    id:2, tag:"DACA + REG AOS",
+    title:"Expediente 3 — Camila, 22 años, mexicana",
+    body:"Llegó a EE.UU. a los 4 años cruzando la frontera sin inspección. Tiene DACA activo y renovado. Su novio, ciudadano americano, quiere casarse con ella y peticionarla. Nunca ha tenido ningún otro estatus migratorio. Camila pregunta si el matrimonio 'le arregla los papeles automáticamente.'",
+    questions:[
+      "¿La entrada sin inspección bloquea el AOS aunque tenga DACA?",
+      "¿El advance parole usado para viajar puede crear una entrada inspectada que habilite el AOS?",
+      "¿Cuál es tu recomendación de ruta y por qué?"
+    ],
+    rubric:[
+      {keywords:["sí bloquea","entrada sin inspección","no es elegible para aos","no puede ajustar","requiere entrada inspectada","245(a)","bloquea el ajuste"],required:["inspección"],hint:"Correcto: la entrada sin inspección bloquea el AOS bajo INA §245(a). DACA no crea entrada inspectada por sí mismo."},
+      {keywords:["sí puede","advance parole","entrada inspectada","viaje con advance parole","regresa como parolada","habilita aos"],required:["advance parole"],hint:"Sí: si viajó y regresó con advance parole, esa entrada cuenta como inspectada y puede habilitar el AOS."},
+      {keywords:["advance parole","proceso consular","i-601a","waiver","nunca ha viajado","alternativa consular","ruta consular"],required:[],hint:"Debe plantear ambas rutas: si usó advance parole → AOS posible; si no → proceso consular con waiver I-601A."}
+    ]
+  },
+  {
+    id:3, tag:"N-400 + FOIA",
+    title:"Expediente 4 — Don Ernesto, 61 años, guatemalteco",
+    body:"LPR desde hace 8 años. Casado con ciudadana americana desde hace 10 años. Quiere naturalizarse pero menciona que 'antes de la green card hubo unos problemas con migración' que no recuerda bien. No tiene papeles de ese proceso anterior.",
+    questions:[
+      "¿Cumple el requisito de presencia continua bajo la ruta de 3 años?",
+      "¿Recomendarías un FOIA antes de presentar el N-400? ¿Por qué?",
+      "¿Qué riesgo concreto corre si hay algo en su expediente que desconoce?"
+    ],
+    rubric:[
+      {keywords:["sí cumple","8 años como lpr","3 años casado","ruta de 3 años","casado con ciudadana","elegible por matrimonio","cumple presencia"],required:["3 años","cumple"],hint:"Con 8 años como LPR y 10 de matrimonio cumple la ruta de 3 años bajo INA §319(a). Hay que confirmar ausencias."},
+      {keywords:["sí recomendar","foia antes","expediente previo","historial migratorio","sorpresas","verificar","antecedentes","recomiendo foia"],required:["foia"],hint:"El FOIA es esencial cuando hay historial incierto; permite revisar el expediente antes de exponerlo al N-400."},
+      {keywords:["negación","denial","barra de buen carácter","good moral character","deportación","orden","fraude","misrepresentation","riesgo de negación"],required:["riesgo"],hint:"Riesgo: si hay orden de deportación, fraude previo o barra de buen carácter, el N-400 puede negarse y activar remoción."}
+    ]
+  },
+  {
+    id:4, tag:"Visa T + Proceso Consular",
+    title:"Expediente 5 — Brenda, 20 años, venezolana",
+    body:"Entró hace 2 años con visa de turista vencida. Fue captada por una red que prometía trabajo en salones de belleza; terminó trabajando sin pago, sin poder salir del local y con sus documentos retenidos. Tiene miedo de reportarlo porque le dijeron que 'la deportarían primero a ella.'",
+    questions:[
+      "¿Cumple los elementos básicos para calificar para Visa T?",
+      "¿La cooperación con autoridades es obligatoria o existen excepciones aplicables?",
+      "¿Considerarías proceso consular como vía alternativa o complementaria? ¿En qué escenario?"
+    ],
+    rubric:[
+      {keywords:["sí cumple","trata laboral","labor trafficking","fraude","coacción","documentos retenidos","víctima de trata","elementos de trata"],required:["trata","cumple"],hint:"Sí: hay indicios claros de trata laboral (fraude, coerción, documentos retenidos). Cumple los elementos básicos."},
+      {keywords:["no es obligatoria","excepción","trauma","miedo","no puede cooperar","waiver de cooperación","physical or psychological trauma"],required:["excepción"],hint:"La cooperación no es absoluta; hay excepciones por trauma severo. USCIS puede otorgar waiver de cooperación."},
+      {keywords:["no sería ideal","proceso consular no aplica","t visa es preferible","si sale del país","complementaria si tiene visa válida","alternativa limitada"],required:[],hint:"El proceso consular sería difícil: está fuera de estatus con barra de 3 años. La Visa T es la ruta más apropiada."}
+    ]
+  },
+  {
+    id:5, tag:"Visa K1 + I-90",
+    title:"Expediente 6 — Patricia, 47 años, peruana",
+    body:"Entró con Visa K1 hace 7 años, se casó, ajustó estatus y obtuvo Green Card. Su tarjeta venció hace 18 meses y nunca la renovó porque 'pensaba que estaba tramitando la ciudadanía.' Su N-400 fue negada por ausencias prolongadas. Ahora su empresa le exige Green Card vigente para un ascenso.",
+    questions:[
+      "¿Cuál es la urgencia legal y práctica de tener el I-90 al día?",
+      "¿La negación del N-400 afecta su estatus de residente permanente?",
+      "¿Qué proceso priorizas y en qué orden?"
+    ],
+    rubric:[
+      {keywords:["urgencia","trabajo","viajar","prueba de estatus","evidencia de lpr","renovar","empleo","i-90 urgente"],required:["urgencia","i-90"],hint:"Urgencia práctica: necesita I-90 para demostrar estatus LPR en el empleo y viajar. Sin tarjeta vigente enfrenta problemas graves."},
+      {keywords:["no afecta","el estatus permanece","negación no cancela","sigue siendo lpr","no pierde residencia"],required:["no afecta"],hint:"La negación del N-400 no revoca el estatus de residente permanente. Son trámites independientes."},
+      {keywords:["primero i-90","después n-400","renovar tarjeta primero","luego ciudadanía","i-90 es prioridad","orden correcto"],required:["i-90","primero"],hint:"Orden correcto: primero I-90 (urgente por empleo), luego abordar causales de negación del N-400 y replantear naturalizaión."}
+    ]
+  }
+];
+
+const QUIZ = [
+  {q:"Cliente salvadoreño con DACA quiere tramitar I-90 porque su EAD venció.",answer:"no",explain:"El I-90 es exclusivo para LPR (residentes permanentes). DACA no otorga residencia; el EAD se renueva con la solicitud de DACA.",distractor:false},
+  {q:"Víctima con Visa U aprobada, casada con ciudadano, ¿puede hacer AOS antes de los 3 años de aprobación?",answer:"sí",explain:"Sí: puede ajustar por la petición de matrimonio (I-130) aunque no hayan pasado los 3 años del I-918.",distractor:false},
+  {q:"Cliente nicaragüense con PIP aprobado quiere visitar a su mamá en su país de origen.",answer:"no",explain:"Sin advance parole, salir del país cancela el parole. No puede viajar sin perder el PIP.",distractor:false},
+  {q:"LPR boliviana con I-90 en trámite quiere viajar al exterior, ¿puede regresar sin problema?",answer:"sí",explain:"Sí, con I-551 stamp o ADIT stamp válido en el pasaporte como evidencia de estatus LPR vigente.",distractor:false},
+  {q:"Cliente dominicana con VAWA aprobado y green card condicional, ¿puede presentar I-751 sola sin el peticionario?",answer:"sí",explain:"Sí: bajo el waiver de abuso del I-751, no necesita la firma del peticionario. El VAWA es base suficiente.",distractor:false},
+  {q:"Mexicano con DACA usó advance parole para ir a México y regresó. ¿Puede hacer AOS con peticionario ciudadano?",answer:"sí",explain:"Sí: el regreso con advance parole crea entrada inspectada bajo INA §245(a), habilitando el ajuste de estatus.",distractor:true},
+  {q:"Proceso consular con I-601A aprobado. El cliente viaja y el cónsul le aplica barra de 10 años por convicción criminal. ¿El waiver I-601A cubre esa barra?",answer:"no",explain:"No: el I-601A cubre únicamente la barra por presencia ilegal. Barras por condenas criminales requieren un waiver distinto (I-601).",distractor:true},
+  {q:"Guatemalteca con orden de supervisión activa, ¿puede aplicar a DACA si cumple todos los demás criterios?",answer:"sí",explain:"Sí: la orden de supervisión no es barra automática para DACA. No confundir con orden de deportación.",distractor:false},
+  {q:"LPR ecuatoriano con 6 años de residencia tuvo un viaje de 7 meses. ¿Cumple la presencia continua para N-400?",answer:"no",explain:"No: viajes de más de 6 meses interrumpen la presunción de continuidad bajo INA §316. Requiere análisis adicional.",distractor:false},
+  {q:"Hondureña víctima con Visa U quiere incluir a su hijo de 19 años como derivado en la petición.",answer:"no",explain:"Los hijos derivados en Visa U deben ser menores de 21 años al presentar la petición, no al momento de aprobación.",distractor:false},
+  {q:"Cliente colombiano con TPS quiere ajustar estatus por matrimonio con ciudadana. Entró sin inspección. ¿Puede hacer AOS?",answer:"depende",explain:"Depende del circuito federal. Algunos circuitos permiten el AOS basado en TPS como 'inspección y admisión'; otros no. Requiere análisis jurisdiccional urgente.",distractor:true},
+  {q:"LPR peruano con condena por DUI simple (misdemeanor) hace 4 años, ¿puede naturalizarse ahora?",answer:"depende",explain:"Depende: si el DUI ocurrió dentro del período de 5 años de buen carácter moral, puede afectar la elegibilidad. Requiere análisis de la condena específica.",distractor:true},
+  {q:"Venezolana con parole humanitario vigente, ¿puede ser peticionada para AOS por su esposo ciudadano?",answer:"sí",explain:"Sí: el parole humanitario constituye entrada inspectada y admitida, habilitando el AOS bajo INA §245(a).",distractor:false},
+  {q:"Cliente mexicano con visa de turista vencida hace 3 años quiere hacer proceso consular. ¿Hay barra de inadmisibilidad?",answer:"sí",explain:"Sí: presencia ilegal mayor a 1 año activa la barra de 10 años. Necesitará I-601A antes de la entrevista consular.",distractor:false},
+  {q:"FOIA solicitado hace 4 meses, sin respuesta aún. El cliente quiere presentar N-400 ya. ¿Es recomendable?",answer:"depende",explain:"Es una decisión estratégica: puede presentarse, pero hay riesgo si el expediente contiene sorpresas. La recomendación depende del historial conocido del cliente.",distractor:true},
+  {q:"Cliente con Visa T aprobada, ¿puede pedir ajuste de estatus de inmediato?",answer:"no",explain:"No de inmediato: debe esperar 3 años con T visa, o hasta que concluya la investigación/proceso, lo que ocurra primero.",distractor:false},
+  {q:"I-751 presentado hace 8 meses, aún pendiente. ¿El cliente puede trabajar y viajar?",answer:"sí",explain:"Sí: el I-797 de recibo del I-751 extiende automáticamente el estatus y el EAD por 18 a 24 meses adicionales.",distractor:false},
+  {q:"Guatemalteca en proceso de remoción activo quiere aplicar a Visa U. ¿Puede hacerlo?",answer:"sí",explain:"Sí: Visa U no requiere estar en estatus. USCIS puede emitir deferred action durante el proceso, suspendiendo la remoción.",distractor:false},
+  {q:"Cliente boliviana con K1 que nunca se casó con el peticionario dentro de los 90 días. ¿Tiene opciones con esa visa?",answer:"no",explain:"No: la K1 pierde su base si no se formaliza el matrimonio en 90 días. Debe salir o explorar una vía migratoria completamente independiente.",distractor:false},
+  {q:"PIP aprobado para cónyuge de militar. ¿Sus hijos menores calificaban automáticamente como derivados?",answer:"depende",explain:"Depende: pueden calificar como derivados si fueron incluidos en la petición original. No es automático; requería petición explícita por cada menor.",distractor:true}
+];
+
+let userName = "";
+let currentSection = -1;
+let caseAnswers = CASES.map(c => c.questions.map(() => ""));
+let caseResults = CASES.map(c => c.questions.map(() => null));
+let caseSubmitted = CASES.map(() => false);
+let quizAnswers = new Array(QUIZ.length).fill(null);
+let quizSubmitted = false;
+
+function startAssessment() {
+  const val = document.getElementById("nameInput").value.trim();
+  if (!val) { document.getElementById("nameInput").focus(); return; }
+  userName = val;
+  document.getElementById("nameGate").style.display = "none";
+  document.getElementById("mainApp").style.display = "block";
+  currentSection = 0;
+  render();
+}
+
+function updateProgress() {
+  const total = CASES.length + 1;
+  const done = caseSubmitted.filter(Boolean).length + (quizSubmitted ? 1 : 0);
+  const pct = Math.round(done / total * 100);
+  document.getElementById("progressFill").style.width = pct + "%";
+  document.getElementById("progressLabel").textContent = done + " / " + total + " secciones";
+}
+
+function renderNav() {
+  const nav = document.getElementById("sectionNav");
+  nav.innerHTML = "";
+  CASES.forEach((c, i) => {
+    const btn = document.createElement("button");
+    btn.className = "snav-btn" + (i === currentSection ? " active" : "") + (caseSubmitted[i] ? " done" : "");
+    btn.textContent = "Exp. " + (i+1);
+    btn.onclick = () => { currentSection = i; render(); };
+    nav.appendChild(btn);
+  });
+  const qBtn = document.createElement("button");
+  qBtn.className = "snav-btn" + (currentSection === 99 ? " active" : "") + (quizSubmitted ? " done" : "");
+  qBtn.textContent = "Cuestionario";
+  qBtn.onclick = () => { currentSection = 99; render(); };
+  nav.appendChild(qBtn);
+  if (caseSubmitted.every(Boolean) && quizSubmitted) {
+    const sBtn = document.createElement("button");
+    sBtn.className = "snav-btn" + (currentSection === 999 ? " active" : "");
+    sBtn.textContent = "Resumen final";
+    sBtn.onclick = () => { currentSection = 999; render(); };
+    nav.appendChild(sBtn);
+  }
+}
+
+function render() {
+  updateProgress();
+  renderNav();
+  if (currentSection === 99) renderQuiz();
+  else if (currentSection === 999) renderSummary();
+  else renderCase(currentSection);
+}
+
+function renderCase(idx) {
+  const c = CASES[idx];
+  const pg = document.getElementById("pageContent");
+  let html = `<div class="card">
+    <span class="card-tag">${c.tag}</span>
+    <div class="card-title">${c.title}</div>
+    <div class="card-body">${c.body}</div>
+  </div>`;
+  c.questions.forEach((q, qi) => {
+    const res = caseResults[idx][qi];
+    let resHtml = "";
+    if (res) {
+      const cls = res.level;
+      const lbl = cls === "suficiente" ? "Suficiente" : cls === "parcial" ? "Parcial" : "Insuficiente";
+      resHtml = `<div class="result-block ${cls} show">
+        <div class="res-header">
+          <span class="res-badge">${lbl}</span>
+          <span class="res-score">${res.score}/100</span>
+        </div>
+        ${res.found ? `<div class="res-line res-found">&#10003; ${res.found}</div>` : ""}
+        ${res.missing && res.missing !== "Ninguno" ? `<div class="res-line res-missing">&#9650; ${res.missing}</div>` : ""}
+      </div>`;
+    }
+    html += `<div class="card q-block">
+      <div class="q-label"><span class="q-num">${qi+1}</span>${q}</div>
+      <textarea id="ta_${qi}" placeholder="Escribe tu análisis aquí..." ${caseSubmitted[idx]?"disabled":""}>${caseAnswers[idx][qi]}</textarea>
+      <div class="loading-row" id="ld_${qi}"><div class="spinner"></div>Evaluando con IA...</div>
+      ${resHtml}
+    </div>`;
+  });
+  const isLast = idx === CASES.length - 1;
+  if (!caseSubmitted[idx]) {
+    html += `<div class="btn-row">
+      <button class="btn" onclick="goSection(-1)" ${idx===0?"disabled":""}>&#8592; Anterior</button>
+      <button class="btn btn-primary" id="evalBtn" onclick="submitCase(${idx})">Evaluar respuestas</button>
+    </div>`;
+  } else {
+    html += `<div class="btn-row">
+      <button class="btn" onclick="goSection(-1)" ${idx===0?"disabled":""}>&#8592; Anterior</button>
+      <button class="btn btn-primary" onclick="goSection(1)">${isLast?"Ir al cuestionario &#8594;":"Siguiente expediente &#8594;"}</button>
+    </div>`;
+  }
+  pg.innerHTML = html;
+  c.questions.forEach((_, qi) => {
+    const ta = document.getElementById("ta_"+qi);
+    if (ta) ta.addEventListener("input", () => { caseAnswers[idx][qi] = ta.value; });
+  });
+}
+
+function goSection(dir) {
+  if (dir === 1) {
+    if (currentSection === CASES.length - 1) currentSection = 99;
+    else if (currentSection === 99) { if (caseSubmitted.every(Boolean) && quizSubmitted) currentSection = 999; }
+    else currentSection = Math.min(CASES.length - 1, currentSection + 1);
+  } else {
+    if (currentSection === 99) currentSection = CASES.length - 1;
+    else if (currentSection === 999) currentSection = 99;
+    else currentSection = Math.max(0, currentSection - 1);
+  }
+  render();
+}
+
+async function submitCase(idx) {
+  const c = CASES[idx];
+  const btn = document.getElementById("evalBtn");
+  if (btn) btn.disabled = true;
+  c.questions.forEach((_, qi) => {
+    const ta = document.getElementById("ta_"+qi);
+    if (ta) { caseAnswers[idx][qi] = ta.value; ta.disabled = true; }
+  });
+  for (let qi = 0; qi < c.questions.length; qi++) {
+    document.getElementById("ld_"+qi).classList.add("show");
+    const ans = caseAnswers[idx][qi].trim();
+    let res;
+    if (ans.length < 15) {
+      res = {level:"insuficiente",score:0,found:"Sin respuesta.",missing:c.rubric[qi].hint};
+    } else {
+      res = await evalWithAI(c, qi, ans);
+    }
+    caseResults[idx][qi] = res;
+    document.getElementById("ld_"+qi).classList.remove("show");
+    const cls = res.level;
+    const lbl = cls==="suficiente"?"Suficiente":cls==="parcial"?"Parcial":"Insuficiente";
+    const div = document.createElement("div");
+    div.className = `result-block ${cls} show`;
+    div.innerHTML = `<div class="res-header"><span class="res-badge">${lbl}</span><span class="res-score">${res.score}/100</span></div>
+      ${res.found?`<div class="res-line res-found">&#10003; ${res.found}</div>`:""}
+      ${res.missing&&res.missing!=="Ninguno"?`<div class="res-line res-missing">&#9650; ${res.missing}</div>`:""}`;
+    const blocks = document.querySelectorAll(".q-block");
+    if (blocks[qi]) blocks[qi].appendChild(div);
+  }
+  caseSubmitted[idx] = true;
+  updateProgress();
+  renderNav();
+  const btnRow = document.querySelector(".btn-row");
+  const isLast = idx === CASES.length - 1;
+  if (btnRow) btnRow.innerHTML = `
+    <button class="btn" onclick="goSection(-1)" ${idx===0?"disabled":""}>&#8592; Anterior</button>
+    <button class="btn btn-primary" onclick="goSection(1)">${isLast?"Ir al cuestionario &#8594;":"Siguiente expediente &#8594;"}</button>`;
+}
+
+async function evalWithAI(caseObj, qi, answer) {
+  const rubric = caseObj.rubric[qi];
+  const prompt = `Eres evaluador experto en derecho de inmigración de EE.UU. Evalúa la respuesta de un abogado en ejercicio de intake.
+
+Caso: ${caseObj.title}
+Contexto: ${caseObj.body}
+Pregunta: ${caseObj.questions[qi]}
+Respuesta: ${answer}
+Criterios clave: ${rubric.hint}
+
+Responde SOLO con JSON sin backticks:
+{"level":"suficiente"|"parcial"|"insuficiente","score":0-100,"found":"qué identificó correctamente (1-2 oraciones)","missing":"qué omitió o erró (1-2 oraciones, o Ninguno si está completo)"}`;
+  try {
+    const r = await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:400,messages:[{role:"user",content:prompt}]})
+    });
+    const d = await r.json();
+    const txt = d.content.map(i=>i.text||"").join("").replace(/```json|```/g,"").trim();
+    return JSON.parse(txt);
+  } catch(e) {
+    const a = answer.toLowerCase();
+    const hits = rubric.keywords.filter(k=>a.includes(k.toLowerCase())).length;
+    const reqOk = rubric.required.length===0||rubric.required.every(r=>a.includes(r.toLowerCase()));
+    const lvl = hits>=3&&reqOk?"suficiente":hits>=1?"parcial":"insuficiente";
+    return {level:lvl,score:lvl==="suficiente"?82:lvl==="parcial"?55:25,found:"Análisis local aplicado.",missing:rubric.hint};
+  }
+}
+
+function renderQuiz() {
+  const pg = document.getElementById("pageContent");
+  let html = `<div class="quiz-intro">
+    <h2>Cuestionario de criterios de elegibilidad</h2>
+    <p>20 escenarios de criterio rápido. Selecciona Sí / No / Depende para cada uno. Las preguntas marcadas en cursiva tienen una respuesta que puede ser contraintuitiva.</p>
+  </div>`;
+  QUIZ.forEach((item, i) => {
+    const ans = quizAnswers[i];
+    html += `<div class="quiz-item${ans?' answered':''}" id="qi_${i}">
+      <div class="quiz-q"><span class="qnum">${i+1}.</span>${item.distractor?`<em>${item.q}</em>`:item.q}</div>
+      <div class="quiz-options">
+        ${["sí","no","depende"].map(opt=>`<button class="opt-btn${ans===opt?' selected-'+opt:''}" onclick="answerQuiz(${i},'${opt}')" ${quizSubmitted?"disabled":""}>${opt.charAt(0).toUpperCase()+opt.slice(1)}</button>`).join("")}
+      </div>
+      <div class="quiz-feedback${quizSubmitted?' show':''} ${quizSubmitted?(ans===item.answer?'correct':item.answer==='depende'||ans==='depende'?'partial':'wrong'):''}" id="qf_${i}">
+        ${quizSubmitted?`<strong>${ans===item.answer?"&#10003; Correcto":"&#9650; Respuesta esperada: "+item.answer.toUpperCase()}</strong> — ${item.explain}`:""}
+      </div>
+    </div>`;
+  });
+  const answered = quizAnswers.filter(Boolean).length;
+  if (!quizSubmitted) {
+    html += `<div class="btn-row">
+      <button class="btn" onclick="goSection(-1)">&#8592; Anterior</button>
+      <button class="btn btn-primary" id="quizSubmitBtn" onclick="submitQuiz()" ${answered<QUIZ.length?"disabled":""}>Evaluar cuestionario (${answered}/${QUIZ.length})</button>
+    </div>`;
+  } else {
+    const correct = quizAnswers.filter((a,i)=>a===QUIZ[i].answer).length;
+    html += `<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;text-align:center;">
+      <div style="font-family:'DM Serif Display',serif;font-size:36px;color:var(--accent);margin-bottom:4px;">${correct}/${QUIZ.length}</div>
+      <div style="font-size:13px;color:var(--text-muted);">respuestas correctas</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn" onclick="goSection(-1)">&#8592; Anterior</button>
+      <button class="btn btn-primary" onclick="currentSection=999;render()">Ver resumen final &#8594;</button>
+    </div>`;
+  }
+  pg.innerHTML = html;
+}
+
+function answerQuiz(i, opt) {
+  if (quizSubmitted) return;
+  quizAnswers[i] = opt;
+  const answered = quizAnswers.filter(Boolean).length;
+  const submitBtn = document.getElementById("quizSubmitBtn");
+  if (submitBtn) {
+    submitBtn.disabled = answered < QUIZ.length;
+    submitBtn.textContent = `Evaluar cuestionario (${answered}/${QUIZ.length})`;
+  }
+  const item = document.getElementById("qi_"+i);
+  if (item) {
+    item.classList.add("answered");
+    item.querySelectorAll(".opt-btn").forEach(b => {
+      b.className = "opt-btn";
+      const bOpt = b.textContent.toLowerCase();
+      if (bOpt === opt) b.className = "opt-btn selected-"+opt;
+    });
+  }
+}
+
+function submitQuiz() {
+  quizSubmitted = true;
+  updateProgress();
+  renderNav();
+  renderQuiz();
+}
+
+function scoreLevel(results) {
+  const suf = results.filter(r=>r&&r.level==="suficiente").length;
+  const total = results.length;
+  if (suf===total) return "suficiente";
+  if (suf>=Math.ceil(total/2)) return "parcial";
+  return "insuficiente";
+}
+
+function renderSummary() {
+  let sufC=0,parC=0,insC=0;
+  CASES.forEach((_,i)=>{
+    const lvl=scoreLevel(caseResults[i]);
+    if(lvl==="suficiente")sufC++;
+    else if(lvl==="parcial")parC++;
+    else insC++;
+  });
+  const quizCorrect = quizAnswers.filter((a,i)=>a===QUIZ[i].answer).length;
+  const quizPct = Math.round(quizCorrect/QUIZ.length*100);
+  const totalScore = Math.round((sufC/CASES.length*100 + quizPct)/2);
+
+  const pg = document.getElementById("pageContent");
+  let html = `<div class="summary-hero">
+    <h2>Evaluación completada</h2>
+    <div class="name-display">${userName}</div>
+    <div class="score-big" style="color:${totalScore>=75?"var(--suf-text)":totalScore>=50?"var(--par-text)":"var(--ins-text)"}">${totalScore}<span style="font-size:28px;color:var(--text-muted)">/100</span></div>
+    <div class="score-sub">Puntuación general combinada</div>
+    <div class="metrics-grid">
+      <div class="metric-cell"><div class="val green-val">${sufC}</div><div class="lbl">Exp. suficientes</div></div>
+      <div class="metric-cell"><div class="val" style="color:var(--accent)">${quizCorrect}/${QUIZ.length}</div><div class="lbl">Cuestionario</div></div>
+      <div class="metric-cell"><div class="val ${totalScore>=75?"green-val":totalScore>=50?"amber-val":"red-val"}">${totalScore}%</div><div class="lbl">Puntuación global</div></div>
+    </div>
+  </div>`;
+
+  html += `<div class="card"><div class="card-title" style="margin-bottom:12px">Resultados por expediente</div><div class="results-list">`;
+  CASES.forEach((c,i)=>{
+    const lvl=scoreLevel(caseResults[i]);
+    const badge=lvl==="suficiente"?"mb-suf":lvl==="parcial"?"mb-par":"mb-ins";
+    const label=lvl==="suficiente"?"Suficiente":lvl==="parcial"?"Parcial":"Insuficiente";
+    html+=`<div class="res-row"><span class="res-row-name">${c.tag}</span><span class="mini-badge ${badge}">${label}</span></div>`;
+  });
+  const qLvl=quizPct>=75?"suficiente":quizPct>=50?"parcial":"insuficiente";
+  const qBadge=qLvl==="suficiente"?"mb-suf":qLvl==="parcial"?"mb-par":"mb-ins";
+  html+=`<div class="res-row"><span class="res-row-name">Cuestionario de criterios (${quizCorrect}/${QUIZ.length} correctas)</span><span class="mini-badge ${qBadge}">${quizPct}%</span></div>`;
+  html+=`</div></div>`;
+  html+=`<button class="btn-print" onclick="window.print()">&#128438; Imprimir / guardar como PDF</button>`;
+  pg.innerHTML = html;
+}
+</script>
+</body>
+</html>
