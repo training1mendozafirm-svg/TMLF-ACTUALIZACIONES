@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación de Elegibilidad Migratoria — VAWA · Visa T · Visa U</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F5F0;
+  --surface:#FFFFFF;
+  --surface2:#F2EFE9;
+  --border:#E0DBD0;
+  --border2:#C8C1B0;
+  --text:#1A1714;
+  --text2:#6B6459;
+  --text3:#9C9289;
+  --accent:#2C4A3E;
+  --accent-light:#E8F0ED;
+  --vawa:#4A3B8C;
+  --vawa-light:#EDEAF7;
+  --vawa-mid:#8B7DC8;
+  --t:#1A6B4A;
+  --t-light:#E5F2EC;
+  --t-mid:#4DAA82;
+  --u:#1A4A7A;
+  --u-light:#E5EDF7;
+  --u-mid:#4D82BE;
+  --green:#27500A;
+  --green-bg:#EAF3DE;
+  --green-border:#C0DD97;
+  --red:#791F1F;
+  --red-bg:#FCEBEB;
+  --red-border:#F7C1C1;
+  --amber:#633806;
+  --amber-bg:#FAEEDA;
+  --amber-border:#FAC775;
+  --radius:10px;
+  --radius-sm:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  font-size:14px;
+  line-height:1.6;
+  min-height:100vh;
+}
+.page-header{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:28px 40px 24px;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+.page-header-inner{
+  max-width:860px;
+  margin:0 auto;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:20px;
+}
+.page-title{
+  font-family:'DM Serif Display',serif;
+  font-size:26px;
+  font-weight:400;
+  color:var(--text);
+  line-height:1.2;
+  margin-bottom:4px;
+}
+.page-subtitle{
+  font-size:12px;
+  color:var(--text3);
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+}
+.global-score{
+  text-align:right;
+  flex-shrink:0;
+}
+.global-score-num{
+  font-family:'DM Serif Display',serif;
+  font-size:28px;
+  color:var(--text);
+  line-height:1;
+}
+.global-score-label{
+  font-size:11px;
+  color:var(--text3);
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+  margin-top:2px;
+}
+.tabs-wrap{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  position:sticky;
+  top:89px;
+  z-index:90;
+}
+.tabs{
+  max-width:860px;
+  margin:0 auto;
+  display:flex;
+  padding:0 40px;
+  gap:0;
+}
+.tab{
+  padding:12px 20px;
+  font-size:13px;
+  font-weight:500;
+  font-family:'DM Sans',sans-serif;
+  border:none;
+  background:none;
+  cursor:pointer;
+  color:var(--text3);
+  border-bottom:2px solid transparent;
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--text);border-bottom-color:var(--text)}
+.tab-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:18px;
+  height:18px;
+  padding:0 5px;
+  border-radius:9px;
+  font-size:10px;
+  margin-left:6px;
+  background:var(--surface2);
+  color:var(--text3);
+}
+.tab.active .tab-badge{background:var(--text);color:var(--surface)}
+.main{
+  max-width:860px;
+  margin:0 auto;
+  padding:32px 40px 60px;
+}
+.section{display:none}
+.section.active{display:block}
+.info-banner{
+  padding:12px 16px;
+  border-radius:var(--radius-sm);
+  font-size:12.5px;
+  line-height:1.7;
+  margin-bottom:16px;
+  border-left:3px solid;
+}
+.info-banner.vawa{background:var(--vawa-light);color:var(--vawa);border-color:var(--vawa-mid)}
+.info-banner.visa-t{background:var(--t-light);color:var(--t);border-color:var(--t-mid)}
+.info-banner.visa-u{background:var(--u-light);color:var(--u);border-color:var(--u-mid)}
+.info-banner strong{font-weight:500}
+.score-bar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 16px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  margin-bottom:20px;
+  font-size:13px;
+  color:var(--text2);
+}
+.score-val{font-size:15px;font-weight:500;color:var(--text);margin-left:auto}
+.case-grid{display:flex;flex-direction:column;gap:8px}
+.case-card{
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  background:var(--surface);
+  transition:border-color 0.25s,box-shadow 0.25s;
+}
+.case-card:hover{box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.case-card.answered-correct{border-color:var(--green-border);background:#FAFDF6}
+.case-card.answered-wrong{border-color:var(--red-border);background:#FFFAFA}
+.case-header{
+  padding:14px 18px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  user-select:none;
+}
+.case-number{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  font-weight:500;
+  flex-shrink:0;
+  background:var(--surface2);
+  color:var(--text3);
+  border:1px solid var(--border);
+}
+.case-title{
+  flex:1;
+  font-size:14px;
+  font-weight:500;
+  color:var(--text);
+  line-height:1.4;
+}
+.status-icon{font-size:15px;font-weight:600;flex-shrink:0}
+.chevron{
+  font-size:10px;
+  color:var(--text3);
+  transition:transform 0.2s;
+  flex-shrink:0;
+  border:1px solid var(--border);
+  border-radius:50%;
+  width:22px;
+  height:22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.case-card.open .chevron{transform:rotate(180deg)}
+.case-body{
+  display:none;
+  padding:0 18px 18px;
+  border-top:1px solid var(--border);
+}
+.case-card.open .case-body{display:block}
+.scenario-box{
+  background:var(--surface2);
+  border-radius:var(--radius-sm);
+  padding:14px 16px;
+  margin:14px 0;
+  font-size:13.5px;
+  color:var(--text);
+  line-height:1.7;
+  border-left:2px solid var(--border2);
+}
+.answer-zone{margin:16px 0 8px}
+.answer-label{
+  font-size:11px;
+  font-weight:500;
+  color:var(--text3);
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  margin-bottom:10px;
+}
+.answer-btns{display:flex;gap:8px;flex-wrap:wrap}
+.answer-btn{
+  padding:9px 20px;
+  font-size:13px;
+  font-weight:500;
+  font-family:'DM Sans',sans-serif;
+  border-radius:var(--radius-sm);
+  cursor:pointer;
+  transition:all 0.15s;
+  border:1px solid;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.btn-elegible{background:var(--green-bg);color:var(--green);border-color:var(--green-border)}
+.btn-elegible:hover:not(:disabled){background:#d5edbb;border-color:#97C459}
+.btn-no{background:var(--red-bg);color:var(--red);border-color:var(--red-border)}
+.btn-no:hover:not(:disabled){background:#fad5d5;border-color:#F09595}
+.btn-cond{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-border)}
+.btn-cond:hover:not(:disabled){background:#f5d98a;border-color:#EF9F27}
+.answer-btn:disabled{opacity:0.45;cursor:not-allowed}
+.answer-btn.selected-correct{outline:2.5px solid var(--green);outline-offset:2px}
+.answer-btn.selected-wrong{outline:2.5px solid #E24B4A;outline-offset:2px}
+.feedback-banner{
+  display:none;
+  align-items:flex-start;
+  gap:10px;
+  padding:11px 14px;
+  border-radius:var(--radius-sm);
+  font-size:13px;
+  margin:10px 0;
+  line-height:1.5;
+}
+.feedback-banner.show{display:flex}
+.feedback-correct{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.feedback-wrong{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.feedback-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.reveal-btn{
+  width:100%;
+  padding:10px;
+  font-size:13px;
+  font-family:'DM Sans',sans-serif;
+  border:1px dashed var(--border2);
+  border-radius:var(--radius-sm);
+  background:none;
+  cursor:pointer;
+  color:var(--text2);
+  margin-top:10px;
+  transition:all 0.15s;
+  display:none;
+}
+.reveal-btn.unlocked{display:block}
+.reveal-btn:hover{background:var(--surface2);color:var(--text);border-style:solid}
+.analysis-content{display:none;margin-top:6px}
+.analysis-content.shown{display:block}
+.verdict{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:11px 14px;
+  border-radius:var(--radius-sm);
+  font-size:13px;
+  font-weight:500;
+  margin:12px 0;
+}
+.verdict-elegible{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.verdict-no{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.verdict-condicional{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border)}
+.verdict-icon{font-size:17px}
+.analysis-section{margin-top:14px}
+.analysis-section h4{
+  font-size:11px;
+  font-weight:500;
+  color:var(--text3);
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  margin-bottom:8px;
+}
+.analysis-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.analysis-list li{
+  font-size:13px;
+  color:var(--text);
+  padding-left:22px;
+  position:relative;
+  line-height:1.55;
+}
+.analysis-list li.pro::before{content:'✓';position:absolute;left:4px;color:var(--green);font-weight:600}
+.analysis-list li.con::before{content:'✗';position:absolute;left:4px;color:var(--red);font-weight:600}
+.analysis-list li.warn::before{content:'⚠';position:absolute;left:2px;color:#854F0B}
+
+/* Results */
+.results-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:24px;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.results-header h2{
+  font-family:'DM Serif Display',serif;
+  font-size:22px;
+  font-weight:400;
+}
+.print-btn{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 20px;
+  font-size:13px;
+  font-weight:500;
+  font-family:'DM Sans',sans-serif;
+  border:1px solid var(--border2);
+  border-radius:var(--radius-sm);
+  background:var(--surface);
+  cursor:pointer;
+  color:var(--text);
+  transition:all 0.15s;
+}
+.print-btn:hover{background:var(--surface2);border-color:var(--text)}
+.total-banner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:20px 24px;
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+  background:var(--surface);
+  margin-bottom:20px;
+  flex-wrap:wrap;
+  gap:16px;
+}
+.total-big{
+  font-family:'DM Serif Display',serif;
+  font-size:36px;
+  line-height:1;
+  color:var(--text);
+}
+.total-label{font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px}
+.total-pct{font-size:13px;color:var(--text2);margin-top:3px}
+.metrics-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-bottom:20px;
+}
+.metric-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px;
+}
+.metric-title{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px}
+.metric-num{font-family:'DM Serif Display',serif;font-size:30px;color:var(--text);line-height:1}
+.metric-denom{font-size:14px;color:var(--text3);margin-left:2px}
+.metric-sub{font-size:12px;color:var(--text2);margin-top:4px}
+.bar-track{height:5px;background:var(--surface2);border-radius:3px;margin-top:12px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width 0.8s cubic-bezier(.4,0,.2,1)}
+.results-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:4px}
+.results-table th{
+  text-align:left;padding:8px 12px;
+  color:var(--text3);font-weight:500;
+  border-bottom:1px solid var(--border);
+  font-size:11px;text-transform:uppercase;
+  letter-spacing:0.04em;background:var(--surface2);
+}
+.results-table th:first-child{border-radius:var(--radius-sm) 0 0 0}
+.results-table th:last-child{border-radius:0 var(--radius-sm) 0 0}
+.results-table td{
+  padding:9px 12px;
+  border-bottom:1px solid var(--border);
+  color:var(--text);
+  vertical-align:middle;
+}
+.results-table tbody tr:last-child td{border-bottom:none}
+.results-table tbody tr:hover td{background:var(--surface2)}
+.table-wrap{
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  margin-bottom:24px;
+}
+.pill{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 10px;border-radius:20px;
+  font-size:11px;font-weight:500;white-space:nowrap;
+}
+.pill-elegible{background:var(--green-bg);color:var(--green)}
+.pill-no{background:var(--red-bg);color:var(--red)}
+.pill-condicional{background:var(--amber-bg);color:var(--amber)}
+.pill-pending{background:var(--surface2);color:var(--text3)}
+.result-check{font-size:14px;font-weight:600}
+.empty-state{
+  text-align:center;padding:48px 24px;
+  color:var(--text3);font-size:13px;
+  border:1px dashed var(--border);
+  border-radius:var(--radius);
+}
+
+@media(max-width:600px){
+  .page-header{padding:20px 20px 16px}
+  .tabs{padding:0 20px}
+  .main{padding:24px 20px 48px}
+  .metrics-grid{grid-template-columns:1fr}
+  .page-header-inner{flex-direction:column;align-items:flex-start}
+  .global-score{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="page-header-inner">
+    <div>
+      <div class="page-title">Evaluación de Elegibilidad Migratoria</div>
+      <div class="page-subtitle">Capacitación en derecho migratorio · VAWA · Visa T · Visa U</div>
+    </div>
+    <div class="global-score">
+      <div class="global-score-num" id="global-num">0 / 0</div>
+      <div class="global-score-label">puntaje global</div>
+    </div>
+  </div>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('vawa',this)">VAWA <span class="tab-badge" id="badge-vawa">10</span></button>
+    <button class="tab" onclick="switchTab('visa-t',this)">Visa T <span class="tab-badge" id="badge-visa-t">10</span></button>
+    <button class="tab" onclick="switchTab('visa-u',this)">Visa U <span class="tab-badge" id="badge-visa-u">10</span></button>
+    <button class="tab" onclick="switchTab('resultados',this)">Resultados <span class="tab-badge" id="badge-resultados">—</span></button>
+  </div>
+</div>
+
+<main class="main">
+
+<div id="vawa" class="section active">
+  <div class="info-banner vawa"><strong>VAWA — Violence Against Women Act:</strong> Permite a víctimas de violencia doméstica cometida por ciudadano americano o residente permanente solicitar residencia de forma independiente. El solicitante debe haber sufrido abuso, ser persona de buen carácter moral y haber residido con el abusador.</div>
+  <div class="score-bar">📋 Puntaje VAWA <span class="score-val" id="score-vawa">0 / 0</span></div>
+  <div class="case-grid" id="vawa-cases"></div>
+</div>
+
+<div id="visa-t" class="section">
+  <div class="info-banner visa-t"><strong>Visa T — Víctimas de Trata de Personas:</strong> Protege a víctimas de trata sexual o laboral. Requiere demostrar que se es víctima de una forma grave de tráfico, presencia en EE.UU. a consecuencia del tráfico, colaboración con autoridades (salvo menores de 18 o incapaces), y que sufriría daño extremo si fuera deportado.</div>
+  <div class="score-bar">📋 Puntaje Visa T <span class="score-val" id="score-visa-t">0 / 0</span></div>
+  <div class="case-grid" id="visa-t-cases"></div>
+</div>
+
+<div id="visa-u" class="section">
+  <div class="info-banner visa-u"><strong>Visa U — Víctimas de Crímenes:</strong> Para víctimas de crímenes calificados con abuso físico o mental sustancial. Requiere certificación I-918B de agencia de orden público, asistencia a la investigación o persecución, y que el crimen ocurrió en EE.UU. o violó leyes federales.</div>
+  <div class="score-bar">📋 Puntaje Visa U <span class="score-val" id="score-visa-u">0 / 0</span></div>
+  <div class="case-grid" id="visa-u-cases"></div>
+</div>
+
+<div id="resultados" class="section">
+  <div id="results-content">
+    <div class="empty-state">Responde algunos casos para ver tus resultados aquí.</div>
+  </div>
+</div>
+
+</main>
+
+<script>
+const scores={vawa:{correct:0,total:0},'visa-t':{correct:0,total:0},'visa-u':{correct:0,total:0}};
+const caseLog=[];
+
+const vawaCases=[
+{n:1,title:"María — Cónyuge de ciudadano americano con historial de abuso físico",verdict:"elegible",veredictoLabel:"ELEGIBLE para VAWA",scenario:"María, de 34 años, es mexicana y entró a EE.UU. con visa de turista hace 6 años. Contrajo matrimonio con John, ciudadano americano, hace 4 años. John la ha golpeado repetidamente, la ha amenazado con denunciarla a ICE si se queja, y le impide trabajar o salir sola. María tiene una orden de protección expedida por un tribunal de Texas. No tiene antecedentes penales.",pros:["Casada con ciudadano americano (peticionario calificado)","Sufrió abuso físico y coerción documentados","Convivió con el abusador","Orden de protección como evidencia de abuso","Sin antecedentes criminales — buen carácter moral","No hay órdenes finales de deportación previas"],cons:[],warns:["Verificar que el matrimonio sea válido y no fraudulento","Documentar la convivencia con evidencia adicional"]},
+{n:2,title:"Carlos — Hijo adulto de residente permanente abusado de niño",verdict:"condicional",veredictoLabel:"CONDICIONAL — Requiere análisis de edad",scenario:"Carlos, de 26 años, es salvadoreño. Su padre, residente permanente legal, lo trajo a EE.UU. a los 12 años. El padre lo sometió a abuso físico y emocional severo durante años. Carlos nunca presentó solicitud. Actualmente trabaja y no tiene antecedentes penales.",pros:["Padre es residente permanente (peticionario calificado para hijos)","Sufrió abuso comprobable en EE.UU.","Convivió con el abusador","Buen carácter moral"],cons:["La categoría de hijo bajo VAWA requiere ser menor de 21 años al momento de presentar, o bajo 25 años si el abuso causó el retraso"],warns:["Evaluar si aplica excepción por retraso causado por el abuso","Puede necesitar argumentar excepciones al límite de edad"]},
+{n:3,title:"Ana — Esposa abusada de ciudadano americano con condena por DUI",verdict:"condicional",veredictoLabel:"CONDICIONAL — Barra por carácter moral posible",scenario:"Ana, de 28 años, de Honduras, lleva 3 años casada con un ciudadano americano que la golpea con frecuencia. Tiene una condena por conducir bajo los efectos del alcohol (DUI) de hace 2 años, sin incidentes posteriores. Quiere presentar VAWA.",pros:["Casada con ciudadano americano","Abuso físico documentado","Convivencia con el abusador comprobable"],cons:["Un DUI puede afectar la determinación de buen carácter moral según el período considerado","USCIS evalúa los últimos 3 años de conducta"],warns:["Evaluar si el DUI constituye barra absoluta o discrecional","Preparar evidencia de rehabilitación y conducta posterior","Puede requerir waiver de inadmisibilidad"]},
+{n:4,title:"Sofía — Víctima de abuso por exmarido que perdió la ciudadanía",verdict:"no",veredictoLabel:"NO ELEGIBLE bajo VAWA",scenario:"Sofía fue abusada severamente por su exmarido durante el matrimonio. Él era ciudadano americano pero fue deportado y perdió la ciudadanía por fraude. El divorcio se finalizó hace 4 años.",pros:["Sufrió abuso grave documentado","Buen carácter moral"],cons:["El exmarido ya no es ciudadano americano ni residente permanente","Han pasado más de 2 años desde el divorcio — plazo vencido"],warns:["Evaluar Visa U si hay crimen reportado","Consultar si hay fundamentos alternativos de elegibilidad"]},
+{n:5,title:"Pedro — Esposo abusado por esposa ciudadana americana",verdict:"elegible",veredictoLabel:"ELEGIBLE — VAWA protege a hombres también",scenario:"Pedro, de 41 años, venezolano, lleva 5 años casado con una ciudadana americana. Su esposa lo golpea regularmente, lo amenaza con destruir su documentación migratoria y lo humilla en público. Pedro documentó las agresiones con fotos y reportes médicos. No tiene antecedentes penales.",pros:["VAWA aplica igualmente a víctimas masculinas","Casado con ciudadana americana","Abuso físico y psicológico documentado","Convivencia comprobada","Buen carácter moral","Evidencia médica disponible"],cons:[],warns:["Capacitar al cliente de que VAWA no discrimina por género","Preparar declaración detallada del abuso"]},
+{n:6,title:"Lupe — Abuso de prometido ciudadano americano sin matrimonio",verdict:"no",veredictoLabel:"NO ELEGIBLE bajo VAWA",scenario:"Lupe, de 24 años, guatemalteca, entró con visa K-1 para casarse con su prometido ciudadano americano. El prometido comenzó a abusarla antes de la boda. Nunca se casaron. La visa K-1 expiró.",pros:["Abuso físico real y documentable","Presencia en EE.UU."],cons:["VAWA requiere que el abusador sea cónyuge, excoónyuge, padre o hijo con estatus calificado","Un prometido sin matrimonio no es un peticionario calificado bajo VAWA"],warns:["Evaluar elegibilidad para Visa U si se denunció el crimen","Revisar si hay excepción limitada para víctimas con visa K-1"]},
+{n:7,title:"Elena — Hija adulta abusada por padre ciudadano americano",verdict:"condicional",veredictoLabel:"CONDICIONAL — Analizar excepción de edad",scenario:"Elena tiene 23 años y es colombiana. Su padre, ciudadano americano, abusó de ella física y sexualmente desde los 14 hasta los 18 años. El abuso causó graves traumas psicológicos que le impidieron buscar ayuda migratoria antes. Actualmente está en EE.UU. con estatus vencido.",pros:["Padre es ciudadano americano (peticionario calificado)","Abuso severo y prolongado documentable","El abuso ocurrió cuando era menor","Evidencia médica y psicológica disponible"],cons:["Tenía más de 21 años cuando consideró presentar"],warns:["VAWA permite extensión hasta los 25 años si el abuso fue factor central en el retraso","Documentar psicológicamente el impacto del abuso en el retraso","Buscar certificación de profesional de salud mental"]},
+{n:8,title:"Roberto — Abuso por padrastro residente permanente, menor de edad",verdict:"elegible",veredictoLabel:"ELEGIBLE — Padrastro con LPR califica",scenario:"Roberto tiene 17 años, es peruano y llegó a EE.UU. a los 10 años. Su padrastro, residente permanente legal, lo ha golpeado y abusado emocionalmente durante años. La madre no abusa pero tampoco protege a Roberto. Él es menor de edad.",pros:["Menor de edad (bajo 21) — dentro del límite de edad","Padrastro con LPR califica como peticionario bajo VAWA","Abuso físico documentable","Convivencia comprobada","Puede presentar de forma independiente o con representante"],cons:[],warns:["Asegurar representación por tutor o abogado dado que es menor","Coordinar con servicios de protección si es necesario"]},
+{n:9,title:"Carmen — Divorciada hace 3 años, quiere presentar VAWA ahora",verdict:"no",veredictoLabel:"NO ELEGIBLE — Fuera del plazo de 2 años",scenario:"Carmen se divorció de su exesposo ciudadano americano hace 3 años. Él la maltrataba física y emocionalmente. Recién ahora se enteró que podía haber presentado VAWA. No tiene otros fundamentos migratorios.",pros:["Abuso real y documentable","Exmarido era ciudadano americano","Buen carácter moral"],cons:["VAWA establece un plazo máximo de 2 años desde el divorcio para presentar","Han pasado 3 años — plazo vencido sin excepciones aplicables"],warns:["Evaluar Visa U si el abuso constituyó un crimen denunciado","Explorar cancelación de remoción si tiene 10 años de residencia continua"]},
+{n:10,title:"Diana — Abuso por hermano ciudadano americano",verdict:"no",veredictoLabel:"NO ELEGIBLE — Hermano no es peticionario calificado",scenario:"Diana, de 30 años, cubana con TPS, fue abusada por su hermano ciudadano americano con quien vivió durante 2 años. El hermano nunca fue su peticionario migratorio.",pros:["Abuso físico real","Convivencia con el abusador","Presencia en EE.UU. con TPS"],cons:["VAWA solo cubre abuso por cónyuge/excónyuge, padre/padrastro, o hijo mayor de 21 — no hermanos","El hermano no tiene relación peticionaria calificada bajo VAWA"],warns:["Evaluar Visa U si el abuso constituyó crimen denunciado","El TPS puede dar tiempo para explorar otras opciones"]}
+];
+
+const visaTCases=[
+{n:1,title:"Valentina — Reclutada con promesa de trabajo, explotada sexualmente",verdict:"elegible",veredictoLabel:"ELEGIBLE para Visa T",scenario:"Valentina, de 19 años, venezolana, fue reclutada a los 17 años con promesa de empleo en restaurante. Al llegar a EE.UU. le quitaron su pasaporte y fue forzada a trabajar en un burdel durante 14 meses. Fue rescatada en una operación del FBI y cooperó con la investigación.",pros:["Víctima de trata sexual — forma grave calificada","Presencia en EE.UU. a consecuencia directa de la trata","Cooperación demostrada con autoridades federales (FBI)","Sufrimiento extremo si fuera deportada"],cons:[],warns:["Documentar certificación LEA del FBI","Asegurar acompañamiento psicológico durante el proceso","Considerar derivación de familiares directos si califican"]},
+{n:2,title:"Marcos — Trabajador agrícola en condiciones de servidumbre",verdict:"elegible",veredictoLabel:"ELEGIBLE — Trata laboral documentada",scenario:"Marcos, de 35 años, guatemalteco, vino a trabajar en una granja de Florida. El empleador le retuvo los documentos, lo amenazó con deportarlo si se quejaba, lo alojó en condiciones infrahumanas y le descontó montos abusivos. Marcos escapó y reportó al Departamento de Trabajo y a la policía local.",pros:["Trata laboral mediante fraude y coacción — forma grave calificada","Documentos retenidos como elemento de control","Cooperó con autoridades (DOL y policía local)","Sufrimiento extremo si fuera deportado"],cons:[],warns:["Obtener certificación de DOL o agencia policial","Documentar condiciones de trabajo con testimonios y fotografías"]},
+{n:3,title:"Lucía — Víctima de trata que se niega a cooperar con la policía",verdict:"condicional",veredictoLabel:"CONDICIONAL — Evaluar razones de no cooperación",scenario:"Lucía, de 22 años, hondureña, fue víctima de trata sexual durante 2 años. Tiene miedo extremo de sus traficantes y se niega a cooperar con la policía porque teme represalias contra su familia en Honduras. Un trabajador social certificó su condición de víctima.",pros:["Víctima de trata confirmada por trabajador social","Presente a consecuencia de la trata","Sufrimiento extremo documentado"],cons:["La cooperación con LEA es requisito general para Visa T si es mayor de 18","La negativa sin excepción reconocida puede resultar en denegación"],warns:["USCIS puede considerar exención si la cooperación causaría trauma severo adicional","Documentar exhaustivamente el miedo con evidencia psicológica","Considerar Continued Presence como medida inmediata"]},
+{n:4,title:"Niña de 15 años — Explotación sexual rescatada por CPS",verdict:"elegible",veredictoLabel:"ELEGIBLE — Menor exenta de requisito de cooperación",scenario:"Una niña de 15 años, salvadoreña, fue captada por redes de explotación sexual en Texas. Fue rescatada por CPS y está en custodia del Estado. No habla de lo ocurrido y los funcionarios no la han presionado.",pros:["Menor de 18 años — NO requiere cooperación con LEA","Víctima de explotación sexual — forma grave de trata","Presente en EE.UU. a consecuencia de la trata","Sufrimiento extremo comprobable"],cons:[],warns:["Asignar tutor ad litem para representar sus intereses","CPS puede proveer la certificación necesaria"]},
+{n:5,title:"Jorge — Víctima de trabajo forzado que cruzó la frontera voluntariamente",verdict:"elegible",veredictoLabel:"ELEGIBLE — La entrada voluntaria no descalifica",scenario:"Jorge, de 28 años, mexicano, cruzó la frontera voluntariamente pagando a un coyote. Le prometieron trabajo legal en construcción. Al llegar fue vendido a una banda criminal que lo puso a trabajar en condiciones de esclavitud durante 8 meses. Escapó y reportó a las autoridades.",pros:["La entrada voluntaria inicial no descalifica — lo que importa es que fue víctima de trata una vez en EE.UU.","Explotación laboral mediante fuerza y fraude comprobable","Cooperó con autoridades","Presente a consecuencia de la explotación"],cons:[],warns:["Documentar claramente la línea entre entrada voluntaria y el inicio de la explotación","La voluntariedad inicial no afecta el análisis de elegibilidad"]},
+{n:6,title:"Rosa — Fue traficada, regresó a su país voluntariamente y volvió",verdict:"no",veredictoLabel:"NO ELEGIBLE — Nexo causal roto",scenario:"Rosa fue víctima de trata en EE.UU. hace 3 años. Escapó, regresó voluntariamente a México, vivió allí 18 meses y luego regresó a EE.UU. de forma independiente. Ahora quiere solicitar Visa T.",pros:["Fue víctima de trata en el pasado","Tiene evidencia del abuso original"],cons:["Visa T requiere presencia en EE.UU. COMO CONSECUENCIA DIRECTA de la trata","Su regreso voluntario y re-entrada independiente rompieron el nexo causal"],warns:["Evaluar si hay nueva victimización en el re-ingreso que establezca un nuevo nexo","Considerar Visa U si hay crimen policial denunciado"]},
+{n:7,title:"Tomás — Trata confirmada pero cometió delito grave bajo coacción",verdict:"condicional",veredictoLabel:"CONDICIONAL — Waiver de inadmisibilidad requerido",scenario:"Tomás, de 31 años, hondureño, fue forzado por sus traficantes a transportar drogas bajo amenaza de muerte. Fue arrestado y condenado por posesión con intención de distribución. Cumplió sentencia y ahora solicita Visa T.",pros:["Víctima comprobable de trata","La comisión del delito fue bajo coacción directa","El delito ocurrió como parte de la explotación"],cons:["Condena por delito relacionado con drogas es barra de inadmisibilidad","Requiere waiver de inadmisibilidad bajo INA 245(l)"],warns:["USCIS tiene discreción para otorgar waiver si la inadmisibilidad fue resultado directo de la trata","Documentar exhaustivamente la coacción y el nexo entre el delito y la trata"]},
+{n:8,title:"Isabel — Traficada por su propia familia",verdict:"elegible",veredictoLabel:"ELEGIBLE — Relación familiar no excluye la Visa T",scenario:"Isabel, de 20 años, guatemalteca indígena, fue vendida por sus padres a una red de explotación sexual en Los Ángeles. Sus padres recibieron dinero a cambio. Fue rescatada por una ONG y cooperó con ICE y el FBI.",pros:["Víctima de trata sexual — forma grave calificada","Cooperó con ICE y FBI","El traficante siendo familiar no excluye la Visa T","Sufrimiento extremo documentado"],cons:[],warns:["El conflicto emocional con la cooperación debe manejarse con apoyo psicológico","Documentar que la cooperación fue libre e informada"]},
+{n:9,title:"Familia Pérez — Esposa e hijos de víctima principal de Visa T",verdict:"elegible",veredictoLabel:"ELEGIBLES como derivados de la víctima principal",scenario:"El señor Pérez obtuvo la Visa T como víctima de trata laboral. Su esposa e hijos de 8 y 12 años viven en El Salvador. Quiere traerlos. La esposa nunca fue víctima de trata.",pros:["Cónyuge e hijos menores son derivados elegibles de la Visa T del solicitante principal","No necesitan ser víctimas de trata por sí mismos","Pueden solicitar desde el exterior mediante proceso consular"],cons:[],warns:["Si el titular es mayor de 21: puede derivar cónyuge, hijos menores y padres","Documentar relación familiar con actas de nacimiento y matrimonio certificadas"]},
+{n:10,title:"Andrés — Llegó por programa J-1 y fue explotado laboralmente",verdict:"elegible",veredictoLabel:"ELEGIBLE — El estatus inicial legal no descalifica",scenario:"Andrés, de 24 años, colombiano, vino con visa J-1 para un programa de trabajo y viaje. Su empleador le retuvo el pasaporte, le descontó montos ilegales y lo amenazó con reportarlo a migración si protestaba. Trabajó en condiciones abusivas 11 meses. Reportó a las autoridades.",pros:["La entrada con visa legal no descalifica","Trata laboral mediante fraude y coacción comprobable","Retención de documentos es elemento de control documentable","Cooperó con autoridades"],cons:[],warns:["Documentar el momento exacto en que la relación legítima se convirtió en explotación","El sponsor del programa J-1 puede ser parte de la investigación"]}
+];
+
+const visaUCases=[
+{n:1,title:"Gabriela — Víctima de asalto agravado que cooperó con la policía",verdict:"elegible",veredictoLabel:"ELEGIBLE para Visa U",scenario:"Gabriela, de 29 años, guatemalteca indocumentada, fue víctima de un asalto agravado a punta de pistola en Chicago. Resultó herida. Reportó el crimen a la policía, cooperó en la identificación del agresor y fue testigo clave en el juicio. La policía de Chicago le certificó su cooperación mediante el formulario I-918B.",pros:["Asalto agravado es crimen calificado bajo Visa U","Sufrió abuso físico sustancial","Cooperó activamente con la policía y el fiscal","Certificación I-918B obtenida","El crimen ocurrió en EE.UU."],cons:[],warns:["Verificar que el I-918B esté completamente lleno sin ambigüedades","Documentar el abuso físico con registros médicos"]},
+{n:2,title:"Fernando — Víctima de violencia doméstica sin denuncia policial",verdict:"no",veredictoLabel:"NO ELEGIBLE sin certificación I-918B",scenario:"Fernando, de 36 años, hondureño, fue víctima de violencia doméstica perpetrada por su compañero de pareja. Nunca denunció a la policía por miedo. Quiere solicitar la Visa U ahora, 3 años después de los hechos.",pros:["La violencia doméstica es crimen calificado","Tiene evidencia médica del abuso"],cons:["Sin denuncia policial, ninguna agencia puede emitir el I-918B","El I-918B es requisito ABSOLUTO — sin él no hay solicitud válida"],warns:["Evaluar si puede reportar ahora y si la agencia aún puede investigar","Considerar VAWA como alternativa si el agresor tenía estatus migratorio calificado"]},
+{n:3,title:"Esperanza — Víctima de extorsión por crimen organizado",verdict:"elegible",veredictoLabel:"ELEGIBLE — Extorsión es crimen calificado",scenario:"Esperanza, de 45 años, mexicana con TPS, fue víctima de extorsión sistemática por pandilla que amenazaba de muerte a su familia. Sufrió estrés postraumático severo. Cooperó con el FBI en una investigación mayor. El FBI emitió el I-918B.",pros:["Extorsión es crimen calificado bajo Visa U","Sufrió abuso mental sustancial (PTSD diagnosticado)","Cooperó con agencia federal — certificación válida","Crimen ocurrió en EE.UU."],cons:[],warns:["Documentar el PTSD con profesional certificado","El FBI puede ser agencia certificante válida"]},
+{n:4,title:"Miguel — Víctima de robo simple sin lesiones",verdict:"no",veredictoLabel:"NO ELEGIBLE — Robo simple no es crimen calificado",scenario:"Miguel, de 33 años, nicaragüense indocumentado, fue víctima de un robo a mano limpia — le quitaron su teléfono y cartera sin violencia física. Reportó a la policía y quiere solicitar Visa U.",pros:["Cooperó con la policía","Crimen ocurrió en EE.UU."],cons:["El robo simple NO está en la lista de crímenes calificados para Visa U","Visa U requiere un crimen de la lista taxativa: violación, asalto agravado, trata, secuestro, violencia doméstica, homicidio, entre otros"],warns:["Verificar si hubo algún elemento adicional que eleve el crimen","Explorar otras alternativas migratorias"]},
+{n:5,title:"Claudia — Testigo de asesinato, víctima de intimidación posterior",verdict:"elegible",veredictoLabel:"ELEGIBLE — Intimidación de testigos es crimen calificado",scenario:"Claudia, de 38 años, salvadoreña, presenció un asesinato cometido por pandilleros. Después de declarar ante la policía, fue amenazada de muerte y su casa fue atacada. Sufrió lesiones leves. Siguió cooperando con el fiscal. La oficina del fiscal le expidió el I-918B.",pros:["Intimidación de testigos es crimen calificado","Sufrió abuso físico y mental sustancial","Cooperó con fiscalía — certificación válida del fiscal","Crimen en EE.UU."],cons:[],warns:["Documentar todas las amenazas y el ataque con evidencia física","El fiscal puede ser agencia certificante válida"]},
+{n:6,title:"Ramón — Víctima de secuestro y tortura ocurrido en México",verdict:"no",veredictoLabel:"NO ELEGIBLE — El crimen no ocurrió en EE.UU.",scenario:"Ramón, de 27 años, mexicano con visa de trabajo, fue secuestrado y torturado en México hace 2 años. Cruzó a EE.UU. buscando seguridad y ahora quiere solicitar Visa U por ese secuestro.",pros:["El secuestro es crimen gravísimo y calificado bajo Visa U","Sufrió abuso físico extremo"],cons:["Visa U requiere que el crimen ocurrió EN EE.UU. o violó leyes federales americanas","El crimen ocurrió en México — fuera de jurisdicción de Visa U"],warns:["Evaluar solicitud de asilo si hay persecución por parte del Estado o pandillas","Considerar Convention Against Torture (CAT) como protección alternativa"]},
+{n:7,title:"Familia Chen — Hija víctima de abuso sexual, padres como derivados",verdict:"elegible",veredictoLabel:"ELEGIBLES como derivados de víctima menor",scenario:"La hija de la familia Chen, de 12 años, fue víctima de abuso sexual por un vecino en California. Los padres, inmigrantes indocumentados, cooperaron con la policía. La policía emitió I-918B para la niña. Los padres quieren obtener también protección.",pros:["Abuso sexual es crimen calificado","Cooperación con la policía documentada","Padres pueden calificar como derivados de víctima menor de 21"],cons:[],warns:["La solicitud principal va a nombre de la niña","Los padres son derivados — su elegibilidad depende de la aprobación de la hija","Hermanos menores también pueden calificar como derivados"]},
+{n:8,title:"David — Víctima de asalto con orden final de deportación",verdict:"condicional",veredictoLabel:"CONDICIONAL — Orden de deportación no es barra automática",scenario:"David, de 32 años, dominicano, tiene orden final de deportación de hace 1 año por no presentarse a una audiencia. Fue víctima de asalto agravado hace 6 meses, cooperó con la policía y obtuvo el I-918B.",pros:["Asalto agravado es crimen calificado","Certificación I-918B obtenida","Sufrió abuso físico sustancial","Una Visa U aprobada puede ser base para reabrir el caso ante el juez"],cons:["Tiene orden final de deportación — riesgo de remoción inminente"],warns:["Presentar Motion to Reopen simultáneamente con la Visa U","Solicitar deferred action mientras se procesa","Requiere representación urgente y especializada"]},
+{n:9,title:"Patricia — Víctima de fraude laboral grave y extorsión migratoria",verdict:"condicional",veredictoLabel:"CONDICIONAL — Depende del tipo específico de fraude",scenario:"Patricia, de 41 años, peruana, fue víctima de un empleador que le retuvo salarios, le falsificó firmas en documentos y la amenazó con denunciarla a ICE. Reportó al Departamento de Trabajo y a la policía.",pros:["Fraude con documentos puede calificar","Extorsión mediante amenaza migratoria puede calificar","Cooperó con DOL y policía","El DOL puede ser agencia certificante"],cons:["El robo de salarios simple puede NO estar en la lista calificada","Depende de cómo el fiscal o DOL tipifican el crimen"],warns:["Analizar si los hechos configuran extorsión (crimen calificado)","Trabajar con DOL para que el I-918B refleje el crimen más grave calificado"]},
+{n:10,title:"Luis — Cooperó inicialmente pero retiró su cooperación",verdict:"condicional",veredictoLabel:"CONDICIONAL — Retiro de cooperación puede revocar certificación",scenario:"Luis, de 38 años, ecuatoriano, fue víctima de violencia doméstica. Cooperó inicialmente con la policía y obtuvo el I-918B. Meses después retiró su cooperación porque se reconcilió con el agresor. La Visa U aún no ha sido adjudicada.",pros:["Violencia doméstica es crimen calificado","I-918B obtenido originalmente","Sufrió abuso sustancial documentado"],cons:["La agencia certificante puede revocar el I-918B si la víctima retira la cooperación","USCIS puede denegar si la certificación fue retirada antes de la adjudicación"],warns:["Evaluar si la reconciliación fue voluntaria o producto de coacción adicional","Conversar con el cliente sobre el riesgo real de revocar la cooperación","Considerar VAWA como alternativa si el agresor tenía estatus calificado"]}
+];
+
+function pct(c,t){return t===0?0:Math.round(c/t*100);}
+
+function updateGlobal(){
+  const c=scores.vawa.correct+scores['visa-t'].correct+scores['visa-u'].correct;
+  const t=scores.vawa.total+scores['visa-t'].total+scores['visa-u'].total;
+  document.getElementById('global-num').textContent=c+' / '+t;
+  const b=document.getElementById('badge-resultados');
+  b.textContent=t>0?c+'/'+t:'—';
+}
+
+function updateScore(section){
+  const s=scores[section];
+  document.getElementById('score-'+section).textContent=s.correct+' / '+s.total;
+  updateGlobal();
+}
+
+function buildCards(cases,containerId,section){
+  const cont=document.getElementById(containerId);
+  cases.forEach(c=>{
+    const vClass=c.verdict==='elegible'?'verdict-elegible':c.verdict==='no'?'verdict-no':'verdict-condicional';
+    const vIcon=c.verdict==='elegible'?'✓':c.verdict==='no'?'✗':'⚠';
+    const prosHtml=c.pros.map(p=>`<li class="pro">${p}</li>`).join('');
+    const consHtml=c.cons.map(p=>`<li class="con">${p}</li>`).join('');
+    const warnsHtml=c.warns.map(p=>`<li class="warn">${p}</li>`).join('');
+    const card=document.createElement('div');
+    card.className='case-card';
+    card.dataset.verdict=c.verdict;
+    card.dataset.section=section;
+    card.dataset.answered='false';
+    card.dataset.caseTitle=c.title;
+    card.innerHTML=`
+      <div class="case-header" onclick="toggleCard(this)">
+        <div class="case-number">${c.n}</div>
+        <div style="flex:1"><div class="case-title">${c.title}</div></div>
+        <span class="status-icon"></span>
+        <div class="chevron">&#8964;</div>
+      </div>
+      <div class="case-body">
+        <div class="scenario-box">${c.scenario}</div>
+        <div class="answer-zone">
+          <div class="answer-label">Tu veredicto:</div>
+          <div class="answer-btns">
+            <button class="answer-btn btn-elegible" onclick="submitAnswer(this,'elegible')">✓ Elegible</button>
+            <button class="answer-btn btn-no" onclick="submitAnswer(this,'no')">✗ No elegible</button>
+            <button class="answer-btn btn-cond" onclick="submitAnswer(this,'condicional')">⚠ Condicional</button>
+          </div>
+        </div>
+        <div class="feedback-banner"></div>
+        <button class="reveal-btn" onclick="revealAnalysis(this)">👁 Ver análisis de elegibilidad</button>
+        <div class="analysis-content">
+          <div class="verdict ${vClass}"><span class="verdict-icon">${vIcon}</span> ${c.veredictoLabel}</div>
+          ${c.pros.length?`<div class="analysis-section"><h4>Factores a favor</h4><ul class="analysis-list">${prosHtml}</ul></div>`:''}
+          ${c.cons.length?`<div class="analysis-section" style="margin-top:12px"><h4>Factores en contra / Barras</h4><ul class="analysis-list">${consHtml}</ul></div>`:''}
+          ${c.warns.length?`<div class="analysis-section" style="margin-top:12px"><h4>Consideraciones y alertas</h4><ul class="analysis-list">${warnsHtml}</ul></div>`:''}
+        </div>
+      </div>`;
+    cont.appendChild(card);
+  });
+}
+
+function toggleCard(header){
+  header.closest('.case-card').classList.toggle('open');
+}
+
+function submitAnswer(btn,chosen){
+  const body=btn.closest('.case-body');
+  const card=body.closest('.case-card');
+  if(card.dataset.answered==='true') return;
+  card.dataset.answered='true';
+  const correct=card.dataset.verdict;
+  const section=card.dataset.section;
+  const isCorrect=chosen===correct;
+  scores[section].total++;
+  if(isCorrect) scores[section].correct++;
+  updateScore(section);
+  caseLog.push({section,title:card.dataset.caseTitle,chosen,correct,isCorrect});
+  body.querySelectorAll('.answer-btn').forEach(b=>b.disabled=true);
+  if(isCorrect){
+    btn.classList.add('selected-correct');
+  } else {
+    btn.classList.add('selected-wrong');
+    body.querySelectorAll('.answer-btn').forEach(b=>{
+      if((b.getAttribute('onclick')||'').includes("'"+correct+"'")) b.classList.add('selected-correct');
+    });
+  }
+  const fb=body.querySelector('.feedback-banner');
+  fb.classList.add('show');
+  const labels={elegible:'Elegible',no:'No elegible',condicional:'Condicional'};
+  if(isCorrect){
+    fb.className='feedback-banner show feedback-correct';
+    fb.innerHTML='<span class="feedback-icon">✓</span><span>Correcto — tu análisis coincide con el veredicto. Revisa el análisis completo para reforzar los fundamentos.</span>';
+  } else {
+    fb.className='feedback-banner show feedback-wrong';
+    fb.innerHTML=`<span class="feedback-icon">✗</span><span>Incorrecto — el veredicto es <strong>${labels[correct]}</strong>. Revisa el análisis para identificar las barras o criterios que pasaste por alto.</span>`;
+  }
+  const si=card.querySelector('.status-icon');
+  si.textContent=isCorrect?'✓':'✗';
+  si.style.color=isCorrect?'var(--green)':'var(--red)';
+  card.classList.add(isCorrect?'answered-correct':'answered-wrong');
+  body.querySelector('.reveal-btn').classList.add('unlocked');
+}
+
+function revealAnalysis(btn){
+  btn.closest('.case-body').querySelector('.analysis-content').classList.add('shown');
+  btn.style.display='none';
+}
+
+function switchTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='resultados') renderResults();
+}
+
+const secLabels={vawa:'VAWA','visa-t':'Visa T','visa-u':'Visa U'};
+const barColors={vawa:'#7F77DD','visa-t':'#1D9E75','visa-u':'#378ADD'};
+const labels={elegible:'Elegible',no:'No elegible',condicional:'Condicional'};
+
+function renderResults(){
+  const sv=scores.vawa,st=scores['visa-t'],su=scores['visa-u'];
+  const totalC=sv.correct+st.correct+su.correct;
+  const totalT=sv.total+st.total+su.total;
+  const totalPct=pct(totalC,totalT);
+  if(totalT===0){
+    document.getElementById('results-content').innerHTML='<div class="empty-state">Responde algunos casos para ver tus resultados aquí.</div>';
+    return;
+  }
+  const allCases=[
+    ...vawaCases.map(c=>({...c,section:'vawa'})),
+    ...visaTCases.map(c=>({...c,section:'visa-t'})),
+    ...visaUCases.map(c=>({...c,section:'visa-u'}))
+  ];
+  const tableRows=allCases.map(c=>{
+    const log=caseLog.find(l=>l.title===c.title&&l.section===c.section);
+    if(log){
+      return `<tr>
+        <td style="white-space:nowrap">${secLabels[log.section]}</td>
+        <td>${log.title}</td>
+        <td><span class="pill pill-${log.chosen}">${labels[log.chosen]}</span></td>
+        <td><span class="pill pill-${log.correct}">${labels[log.correct]}</span></td>
+        <td style="text-align:center;font-size:15px;font-weight:600;color:${log.isCorrect?'var(--green)':'var(--red)'}">${log.isCorrect?'✓':'✗'}</td>
+      </tr>`;
+    } else {
+      return `<tr>
+        <td style="white-space:nowrap">${secLabels[c.section]}</td>
+        <td>${c.title}</td>
+        <td colspan="3"><span class="pill pill-pending">Sin responder</span></td>
+      </tr>`;
+    }
+  }).join('');
+
+  document.getElementById('results-content').innerHTML=`
+    <div class="results-header">
+      <h2>Resultados de la evaluación</h2>
+      <button class="print-btn" onclick="printResults()">🖨 Imprimir resultados</button>
+    </div>
+    <div class="total-banner">
+      <div>
+        <div class="total-label">Puntaje global</div>
+        <div class="total-big">${totalC}<span style="font-size:20px;color:var(--text3)"> / ${totalT}</span></div>
+        <div class="total-pct">${totalPct}% de acierto</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+        ${['vawa','visa-t','visa-u'].map(s=>`<div style="font-size:12px;color:var(--text2)">${secLabels[s]}: <strong>${scores[s].correct}/${scores[s].total}</strong> (${pct(scores[s].correct,scores[s].total)}%)</div>`).join('')}
+      </div>
+    </div>
+    <div class="metrics-grid">
+      ${['vawa','visa-t','visa-u'].map(s=>{
+        const sc=scores[s];const p=pct(sc.correct,sc.total);
+        return `<div class="metric-card">
+          <div class="metric-title">${secLabels[s]}</div>
+          <div><span class="metric-num">${sc.correct}</span><span class="metric-denom"> / ${sc.total}</span></div>
+          <div class="metric-sub">${p}% · ${sc.total-sc.correct} error${sc.total-sc.correct!==1?'es':''}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${p}%;background:${barColors[s]}"></div></div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead><tr><th>Proceso</th><th>Caso</th><th>Tu respuesta</th><th>Correcto</th><th style="text-align:center">Resultado</th></tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+    </div>
+    <p style="font-size:11px;color:var(--text3);text-align:center">Herramienta de capacitación en derecho migratorio · No constituye asesoría legal</p>
+  `;
+}
+
+function printResults(){
+  const sv=scores.vawa,st=scores['visa-t'],su=scores['visa-u'];
+  const totalC=sv.correct+st.correct+su.correct;
+  const totalT=sv.total+st.total+su.total;
+  const allCases=[
+    ...vawaCases.map(c=>({...c,section:'vawa'})),
+    ...visaTCases.map(c=>({...c,section:'visa-t'})),
+    ...visaUCases.map(c=>({...c,section:'visa-u'}))
+  ];
+  const rows=allCases.map(c=>{
+    const log=caseLog.find(l=>l.title===c.title&&l.section===c.section);
+    if(log) return `<tr><td>${secLabels[log.section]}</td><td>${log.title}</td><td>${labels[log.chosen]}</td><td>${labels[log.correct]}</td><td style="text-align:center;font-weight:700;color:${log.isCorrect?'#27500A':'#791F1F'}">${log.isCorrect?'✓':'✗'}</td></tr>`;
+    return `<tr><td>${secLabels[c.section]}</td><td>${c.title}</td><td colspan="3" style="color:#999">Sin responder</td></tr>`;
+  }).join('');
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Resultados — Evaluación Migratoria</title>
+  <style>body{font-family:Georgia,serif;max-width:900px;margin:40px auto;padding:0 24px;color:#111;font-size:13px}
+  h1{font-size:22px;margin-bottom:4px}p.sub{color:#777;margin-bottom:24px;font-size:11px;text-transform:uppercase;letter-spacing:0.04em}
+  .grid{display:flex;gap:16px;margin-bottom:24px}.card{flex:1;border:1px solid #ddd;border-radius:8px;padding:14px}
+  .card label{font-size:10px;text-transform:uppercase;letter-spacing:0.05em;color:#888;display:block;margin-bottom:6px}
+  .card .big{font-size:26px;font-weight:700;line-height:1}.card .sm{font-size:12px;color:#666;margin-top:3px}
+  table{width:100%;border-collapse:collapse}th{text-align:left;padding:7px 10px;border-bottom:2px solid #222;font-size:11px;text-transform:uppercase;letter-spacing:0.04em}
+  td{padding:7px 10px;border-bottom:1px solid #e5e5e5;vertical-align:top}
+  tr:last-child td{border-bottom:none}.footer{margin-top:32px;font-size:10px;color:#aaa;border-top:1px solid #eee;padding-top:12px;text-align:center}
+  </style></head><body>
+  <h1>Evaluación de Elegibilidad Migratoria</h1>
+  <p class="sub">Reporte de resultados · ${new Date().toLocaleDateString('es-MX',{year:'numeric',month:'long',day:'numeric'})}</p>
+  <div class="grid">
+    <div class="card"><label>Puntaje global</label><div class="big">${totalC} / ${totalT}</div><div class="sm">${pct(totalC,totalT)}% de acierto</div></div>
+    <div class="card"><label>VAWA</label><div class="big">${sv.correct} / ${sv.total}</div><div class="sm">${pct(sv.correct,sv.total)}%</div></div>
+    <div class="card"><label>Visa T</label><div class="big">${st.correct} / ${st.total}</div><div class="sm">${pct(st.correct,st.total)}%</div></div>
+    <div class="card"><label>Visa U</label><div class="big">${su.correct} / ${su.total}</div><div class="sm">${pct(su.correct,su.total)}%</div></div>
+  </div>
+  <table><thead><tr><th>Proceso</th><th>Caso</th><th>Tu respuesta</th><th>Correcto</th><th>Resultado</th></tr></thead>
+  <tbody>${rows}</tbody></table>
+  <div class="footer">Herramienta de capacitación en derecho migratorio · Uso interno · No constituye asesoría legal</div>
+  </body></html>`);
+  w.document.close();
+  setTimeout(()=>w.print(),400);
+}
+
+buildCards(vawaCases,'vawa-cases','vawa');
+buildCards(visaTCases,'visa-t-cases','visa-t');
+buildCards(visaUCases,'visa-u-cases','visa-u');
+</script>
+</body>
+</html>
