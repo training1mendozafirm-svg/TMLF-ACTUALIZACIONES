@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Análisis Visa T · TMLF Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ── */
+:root{
+  --ink:#1a1712;--ink2:#312e28;--ink3:#5c5648;
+  --page:#faf6ef;--page2:#f3ede0;--page3:#ece4d4;
+  --card:#ffffff;
+  --navy:#1c2130;--navy2:#252d42;--navy3:#2e3850;
+  --gold:#c5a028;--gold2:#e0b830;--gold3:#f5e9c0;--gold4:#fdf6e3;
+  --sage:#5c8862;--sage2:#8ab090;--sage3:#e4f0e5;
+  --red:#8a1818;--red2:#c93030;--red3:#fde6e6;
+  --blue:#2a4a8a;--blue3:#e6ecf8;
+  --amber:#8a5a00;--amber3:#fef3d8;
+  --exc-c:#1a5e36;--exc-bg:#e5f4ec;
+  --ade-c:#7a5e00;--ade-bg:#fef7de;
+  --ins-c:#a04a00;--ins-bg:#fef0e2;
+  --rie-c:#8a1818;--rie-bg:#fde6e6;
+  --border:#e4ddd0;--border2:#d0c8b8;
+  --shadow:0 2px 12px rgba(0,0,0,.08);
+  --shadow2:0 4px 28px rgba(0,0,0,.14);
+  --r:10px;--rs:6px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{height:100%;}
+body{font-family:var(--fb);background:var(--page);color:var(--ink);height:100%;font-size:14px;line-height:1.65;}
+
+/* ── SCREEN MANAGEMENT ── */
+.screen{display:none!important;}
+#s-cover.on{display:flex!important;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--navy);position:relative;overflow:hidden;padding:3rem 2rem;text-align:center;}
+#s-selector.on{display:block!important;}
+#s-case.on{display:flex!important;flex-direction:column;height:100vh;overflow:hidden;}
+#s-results.on{display:block!important;}
+#s-admin.on{display:flex!important;flex-direction:column;min-height:100vh;background:var(--page);}
+
+/* ═══════════════════════════════════════
+   ADMIN — LOGIN
+═══════════════════════════════════════ */
+.admin-login-wrap{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  background:var(--navy);min-height:100vh;
+}
+.admin-login-box{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);
+  border-top:3px solid var(--gold);border-radius:var(--r);
+  padding:2.5rem 2.8rem;width:100%;max-width:380px;text-align:center;
+}
+.admin-login-box h2{font-family:var(--fd);font-size:2rem;color:#f2ead8;margin-bottom:.3rem;}
+.admin-login-box p{font-size:13px;color:rgba(242,234,216,.5);margin-bottom:1.8rem;}
+.admin-inp{
+  width:100%;padding:.85rem 1.1rem;border-radius:var(--rs);
+  border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);
+  color:#f2ead8;font-family:var(--fb);font-size:14px;outline:none;
+  transition:border-color .2s;margin-bottom:.9rem;letter-spacing:.1em;
+}
+.admin-inp:focus{border-color:var(--gold2);}
+.admin-login-err{color:#ff8888;font-size:12.5px;margin-bottom:.7rem;display:none;}
+
+/* ═══════════════════════════════════════
+   ADMIN — DASHBOARD
+═══════════════════════════════════════ */
+.admin-dash{display:none;flex-direction:column;flex:1;}
+.admin-dash.on{display:flex;}
+
+.admin-topbar{
+  background:var(--navy);padding:.9rem 1.8rem;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+  border-bottom:2px solid var(--gold);
+}
+.admin-topbar h1{font-family:var(--fd);font-size:1.5rem;color:#f2ead8;}
+.admin-topbar h1 em{color:var(--gold2);font-style:italic;}
+.admin-topbar-right{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;}
+.admin-exit-btn{
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);
+  color:rgba(242,234,216,.8);border-radius:var(--rs);padding:.4rem .95rem;
+  font-size:12.5px;font-family:var(--fb);cursor:pointer;transition:all .2s;
+}
+.admin-exit-btn:hover{background:rgba(255,255,255,.16);}
+.admin-refresh-btn{
+  background:var(--gold);border:none;color:#1a0e00;border-radius:var(--rs);
+  padding:.4rem .95rem;font-size:12.5px;font-family:var(--fb);font-weight:600;
+  cursor:pointer;transition:all .2s;
+}
+.admin-refresh-btn:hover{background:var(--gold2);}
+
+.admin-body{flex:1;overflow-y:auto;padding:1.5rem 1.8rem;}
+
+/* Stats strip */
+.admin-stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:.9rem;margin-bottom:1.5rem;
+}
+.stat-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:1rem 1.2rem;text-align:center;
+}
+.stat-card .sval{font-family:var(--fd);font-size:2.2rem;font-weight:700;color:var(--navy);line-height:1;}
+.stat-card .slbl{font-size:11.5px;color:var(--ink3);margin-top:.3rem;font-weight:500;}
+.stat-card.gold .sval{color:var(--amber);}
+.stat-card.sage .sval{color:var(--exc-c);}
+
+/* Filter bar */
+.admin-filters{
+  display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:1.2rem;align-items:center;
+}
+.admin-filters select,.admin-filters input{
+  border:1.5px solid var(--border);border-radius:var(--rs);
+  padding:.55rem .9rem;font-family:var(--fb);font-size:13px;color:var(--ink);
+  background:var(--card);outline:none;transition:border-color .2s;
+}
+.admin-filters select:focus,.admin-filters input:focus{border-color:var(--gold);}
+.admin-filters input{min-width:200px;}
+.admin-filters label{font-size:12px;color:var(--ink3);font-weight:500;}
+
+/* Submissions table */
+.admin-table-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--border);background:var(--card);margin-bottom:1.5rem;}
+.admin-tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:780px;}
+.admin-tbl thead tr{background:var(--navy2);}
+.admin-tbl thead th{
+  color:#f2ead8;padding:.7rem .9rem;text-align:left;
+  font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:600;
+  cursor:pointer;user-select:none;white-space:nowrap;
+}
+.admin-tbl thead th:hover{background:var(--navy3);}
+.admin-tbl thead th.sort-asc::after{content:' ↑';}
+.admin-tbl thead th.sort-desc::after{content:' ↓';}
+.admin-tbl tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.admin-tbl tbody tr:last-child{border-bottom:none;}
+.admin-tbl tbody tr:hover{background:var(--gold4);}
+.admin-tbl td{padding:.7rem .9rem;vertical-align:middle;color:var(--ink2);}
+.admin-tbl td:first-child{font-weight:600;color:var(--ink);}
+.score-pill{
+  display:inline-flex;align-items:center;gap:.35rem;
+  padding:.2rem .65rem;border-radius:20px;font-size:11.5px;font-weight:600;
+}
+.pill-exc{background:var(--exc-bg);color:var(--exc-c);}
+.pill-ade{background:var(--ade-bg);color:var(--ade-c);}
+.pill-ins{background:var(--ins-bg);color:var(--ins-c);}
+.pill-rie{background:var(--rie-bg);color:var(--rie-c);}
+.caso-badge{
+  display:inline-block;padding:.2rem .65rem;border-radius:20px;
+  font-size:11px;font-weight:600;background:var(--blue3);color:var(--blue);
+}
+.empty-state{padding:3rem;text-align:center;color:var(--ink3);}
+.empty-state .es-icon{font-size:3rem;margin-bottom:.8rem;}
+.empty-state p{font-size:14px;}
+.admin-loading{padding:2rem;text-align:center;color:var(--ink3);font-size:13px;}
+
+/* ── DETAIL DRAWER ── */
+.detail-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);
+  z-index:200;display:none;
+}
+.detail-overlay.on{display:block;}
+.detail-drawer{
+  position:fixed;top:0;right:0;bottom:0;width:min(700px,95vw);
+  background:var(--page);overflow-y:auto;z-index:201;
+  transform:translateX(100%);transition:transform .3s ease;
+  box-shadow:-4px 0 30px rgba(0,0,0,.2);display:flex;flex-direction:column;
+}
+.detail-drawer.on{transform:translateX(0);}
+.detail-header{
+  background:var(--navy);padding:1.1rem 1.5rem;flex-shrink:0;
+  border-bottom:2px solid var(--gold);
+  display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;
+}
+.detail-header-info h3{font-family:var(--fd);font-size:1.5rem;color:#f2ead8;}
+.detail-header-info p{font-size:12px;color:rgba(242,234,216,.55);margin-top:.2rem;}
+.detail-close-btn{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  color:#f2ead8;border-radius:var(--rs);padding:.4rem .8rem;
+  font-size:18px;cursor:pointer;line-height:1;flex-shrink:0;
+}
+.detail-scores{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;
+  padding:1rem 1.5rem;background:var(--page2);border-bottom:1px solid var(--border2);
+  flex-shrink:0;
+}
+.dscore{text-align:center;}
+.dscore .dv{font-family:var(--fd);font-size:1.6rem;font-weight:700;line-height:1;}
+.dscore .dl{font-size:10.5px;color:var(--ink3);margin-top:.15rem;}
+.detail-body{padding:1.2rem 1.5rem;flex:1;}
+.det-section{margin-bottom:1.5rem;}
+.det-sec-title{
+  font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--ink3);margin-bottom:.7rem;padding-bottom:.4rem;
+  border-bottom:2px solid var(--border);display:flex;align-items:center;gap:.5rem;
+}
+.det-sec-title .sec-ico{font-size:14px;}
+.det-chk-row{display:flex;align-items:center;gap:.5rem;padding:.35rem .5rem;border-radius:var(--rs);margin-bottom:.2rem;font-size:12.5px;}
+.det-chk-row.chk-yes{background:var(--exc-bg);color:var(--exc-c);}
+.det-chk-row.chk-no{background:var(--page);color:var(--ink3);}
+.det-chk-grid{display:grid;grid-template-columns:1fr 1fr;gap:.3rem;margin-bottom:.8rem;}
+.det-text-block{background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:.8rem 1rem;font-size:12.5px;color:var(--ink2);line-height:1.65;margin-bottom:.6rem;white-space:pre-wrap;}
+.det-text-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:.3rem;}
+.det-empty{font-size:12px;color:var(--ink3);font-style:italic;padding:.5rem;}
+.det-emp-tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.det-emp-tbl th{background:var(--navy2);color:#f2ead8;padding:.5rem .7rem;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;}
+.det-emp-tbl td{padding:.55rem .7rem;border-bottom:1px solid var(--border);vertical-align:top;}
+.det-emp-tbl tr:last-child td{border-bottom:none;}
+.det-emp-tbl tr:nth-child(even) td{background:var(--page);}
+.fuerza-tag{font-size:11px;font-weight:600;padding:.15rem .5rem;border-radius:20px;white-space:nowrap;}
+.ft-alto{background:var(--exc-bg);color:var(--exc-c);}
+.ft-medio{background:var(--ade-bg);color:var(--ade-c);}
+.ft-bajo{background:var(--rie-bg);color:var(--rie-c);}
+.ft-ind{background:var(--blue3);color:var(--blue);}
+.ft-none{background:var(--page2);color:var(--ink3);}
+.uscis-qblock{background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:.8rem 1rem;margin-bottom:.6rem;}
+.uscis-qblock .uq{font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:.4rem;}
+.uscis-qblock .ua{font-size:12.5px;color:var(--ink2);line-height:1.65;white-space:pre-wrap;}
+.uscis-qblock .ua-empty{font-size:12px;color:var(--ink3);font-style:italic;}
+
+/* Spinner */
+@keyframes spin{to{transform:rotate(360deg);}}
+.spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:.5rem;}
+
+/* ═══════════════════════════════════
+   COVER SCREEN
+═══════════════════════════════════ */
+#s-cover::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% -10%,rgba(197,160,40,.2) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 60% at 90% 100%,rgba(92,136,98,.1) 0%,transparent 70%);
+  pointer-events:none;
+}
+#s-cover::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent,var(--gold),var(--sage2),var(--gold),transparent);
+}
+.cover-eyebrow{
+  font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold);border:1px solid rgba(197,160,40,.35);border-radius:20px;
+  padding:.3rem 1rem;margin-bottom:2.5rem;display:inline-block;position:relative;
+}
+.cover-title{
+  font-family:var(--fd);font-size:clamp(2.6rem,5.5vw,4.4rem);font-weight:600;
+  color:#f2ead8;line-height:1.1;margin-bottom:.7rem;position:relative;
+}
+.cover-title em{color:var(--gold2);font-style:italic;}
+.cover-sub{
+  font-family:var(--fd);font-size:clamp(1rem,2vw,1.4rem);font-weight:400;
+  color:rgba(242,234,216,.6);margin-bottom:.5rem;position:relative;
+}
+.cover-rule{
+  width:60px;height:2px;background:linear-gradient(90deg,var(--gold),var(--sage2));
+  margin:1.5rem auto;border-radius:2px;position:relative;
+}
+.cover-desc{
+  max-width:560px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  border-left:3px solid var(--gold);border-radius:var(--r);
+  padding:1.1rem 1.4rem;color:rgba(242,234,216,.75);font-size:13px;line-height:1.72;
+  margin-bottom:2.8rem;text-align:left;position:relative;
+}
+.cover-desc strong{color:var(--gold2);}
+.cover-btn{
+  background:linear-gradient(135deg,var(--gold),#9a7010);color:#1a0e00;
+  border:none;border-radius:var(--r);padding:.9rem 3rem;
+  font-family:var(--fb);font-size:15px;font-weight:600;cursor:pointer;
+  letter-spacing:.04em;transition:all .3s;box-shadow:0 4px 22px rgba(197,160,40,.4);
+  position:relative;
+}
+.cover-btn:hover{transform:translateY(-2px);box-shadow:0 6px 32px rgba(197,160,40,.55);}
+.cover-footer{position:relative;margin-top:3rem;color:rgba(242,234,216,.28);font-size:11px;letter-spacing:.1em;text-transform:uppercase;}
+
+/* ═══════════════════════════════════
+   SELECTOR SCREEN
+═══════════════════════════════════ */
+.sel-header{
+  background:var(--navy);padding:1.4rem 2.5rem;
+  display:flex;align-items:center;gap:1.2rem;
+  border-bottom:2px solid var(--gold);
+}
+.sel-header h1{font-family:var(--fd);font-size:1.7rem;font-weight:600;color:#f2ead8;}
+.sel-header h1 span{color:var(--gold2);font-style:italic;}
+.ghost-btn{
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);
+  color:#f2ead8;border-radius:var(--rs);padding:.45rem .95rem;
+  cursor:pointer;font-size:13px;font-family:var(--fb);transition:all .2s;
+}
+.ghost-btn:hover{background:rgba(255,255,255,.16);}
+.sel-body{max-width:1140px;margin:0 auto;padding:2.5rem 2rem;}
+.sel-intro{text-align:center;margin-bottom:2.5rem;}
+.sel-intro p{color:var(--ink3);font-size:14px;max-width:580px;margin:0 auto;}
+
+/* Book-style case cards */
+.case-shelf{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:1.8rem;}
+.book-card{
+  background:var(--card);border-radius:var(--r);overflow:hidden;
+  box-shadow:var(--shadow);cursor:pointer;
+  transition:transform .25s,box-shadow .25s;
+  display:flex;flex-direction:column;
+  border:1px solid var(--border);
+}
+.book-card:hover{transform:translateY(-5px) rotate(.3deg);box-shadow:var(--shadow2);}
+.book-spine{height:6px;background:linear-gradient(90deg,var(--gold),var(--sage2));}
+.book-spine.s2{background:linear-gradient(90deg,var(--navy3),var(--gold));}
+.book-spine.s3{background:linear-gradient(90deg,var(--sage),var(--navy2));}
+.book-cover-area{
+  background:var(--navy2);padding:1.8rem 1.6rem 1.4rem;
+  display:flex;flex-direction:column;gap:.8rem;
+}
+.book-num{
+  font-family:var(--fd);font-size:3.8rem;font-weight:700;
+  color:rgba(197,160,40,.2);line-height:1;align-self:flex-end;
+}
+.book-title{font-family:var(--fd);font-size:1.5rem;font-weight:600;color:#f2ead8;line-height:1.2;}
+.book-label{font-size:12px;color:rgba(242,234,216,.55);font-style:italic;margin-top:.1rem;}
+.book-tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.3rem;}
+.tag{
+  font-size:11px;font-weight:500;padding:.2rem .65rem;border-radius:20px;
+  border:1px solid;letter-spacing:.02em;
+}
+.tg{background:var(--gold3);color:var(--amber);border-color:#d4b840;}
+.tr{background:var(--red3);color:var(--red);border-color:#d46060;}
+.ts{background:var(--sage3);color:var(--exc-c);border-color:var(--sage2);}
+.tn{background:var(--blue3);color:var(--blue);border-color:#90a8d8;}
+.book-body{padding:1.4rem 1.6rem;flex:1;}
+.book-overview{font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:1rem;}
+.book-diff{display:flex;align-items:center;gap:.5rem;font-size:12px;color:var(--ink3);}
+.diff-dot{width:8px;height:8px;border-radius:50%;}
+.book-footer{
+  padding:.9rem 1.6rem;border-top:1px solid var(--border);
+  font-size:13px;font-weight:500;color:var(--amber);
+  background:var(--gold4);display:flex;align-items:center;gap:.5rem;
+  transition:all .2s;
+}
+.book-card:hover .book-footer{background:var(--gold3);color:#6a4400;}
+
+/* ═══════════════════════════════════
+   CASE VIEW — BOOK LAYOUT
+═══════════════════════════════════ */
+.case-topbar{
+  background:var(--navy);padding:.8rem 1.5rem;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  border-bottom:2px solid var(--gold);
+}
+.topbar-left{display:flex;align-items:center;gap:.9rem;}
+.topbar-left h2{font-family:var(--fd);font-size:1.25rem;color:#f2ead8;}
+.topbar-left h2 em{color:var(--gold2);font-style:italic;}
+.topbar-right{display:flex;align-items:center;gap:.8rem;}
+.prog-bar{display:flex;gap:.3rem;align-items:center;}
+.prog-pip{width:22px;height:5px;border-radius:3px;background:rgba(255,255,255,.15);transition:all .3s;}
+.prog-pip.done{background:var(--sage2);}
+.prog-pip.now{background:var(--gold2);}
+.change-case-btn{
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);
+  color:rgba(242,234,216,.8);border-radius:var(--rs);padding:.4rem .9rem;
+  font-size:12px;font-family:var(--fb);cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;gap:.4rem;
+}
+.change-case-btn:hover{background:rgba(255,255,255,.16);color:#f2ead8;}
+
+/* ── The book body ── */
+.book-layout{
+  display:flex;flex:1;overflow:hidden;min-height:0;
+}
+
+/* Left page — expediente, always visible */
+.page-left{
+  width:40%;flex-shrink:0;
+  overflow-y:auto;
+  background:var(--page2);
+  border-right:1px solid var(--border2);
+  position:relative;
+}
+/* Subtle page-edge shadow */
+.page-left::after{
+  content:'';position:absolute;top:0;right:0;bottom:0;width:6px;
+  background:linear-gradient(to right,transparent,rgba(0,0,0,.07));
+  pointer-events:none;
+}
+.page-left-inner{padding:1.5rem 1.6rem;}
+
+.exp-book-header{
+  background:var(--navy2);border-radius:var(--r);padding:1.1rem 1.2rem;
+  margin-bottom:1.1rem;border-left:3px solid var(--gold);
+}
+.exp-book-header .eyebrow{
+  font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;
+  color:var(--gold);margin-bottom:.35rem;
+}
+.exp-book-header h3{
+  font-family:var(--fd);font-size:1.45rem;font-weight:600;color:#f2ead8;line-height:1.2;
+}
+.exp-book-header .overview{
+  font-size:12px;color:rgba(242,234,216,.6);margin-top:.35rem;line-height:1.55;
+}
+.exp-book-header .book-tags{margin-top:.6rem;}
+.exp-hint{
+  background:var(--blue3);border:1px solid #b0c4e8;border-left:3px solid var(--blue);
+  border-radius:var(--rs);padding:.6rem .9rem;font-size:11.5px;color:#243672;
+  line-height:1.6;margin-bottom:1rem;
+}
+
+/* Expediente blocks inside the page */
+.exp-stack{display:flex;flex-direction:column;gap:.65rem;}
+.blk{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--rs);padding:.9rem 1rem;
+}
+.blk.warn{border-left:3px solid var(--gold);background:var(--gold4);}
+.blk.danger{border-left:3px solid var(--red2);background:var(--red3);}
+.blk.info{border-left:3px solid var(--blue);background:var(--blue3);}
+.blk.sage{border-left:3px solid var(--sage);background:var(--sage3);}
+.blk h4{
+  font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--ink3);margin-bottom:.45rem;
+}
+.blk p,.blk li{font-size:12.5px;color:var(--ink2);line-height:1.62;}
+.blk ul{padding-left:1rem;}
+.blk li{margin-bottom:.2rem;}
+
+/* Right page — analysis workspace */
+.page-right{
+  flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;
+  background:var(--page);
+}
+.analysis-tabs{
+  display:flex;overflow-x:auto;background:var(--card);
+  border-bottom:2px solid var(--border2);flex-shrink:0;
+  scrollbar-width:none;padding:0 1rem;
+}
+.analysis-tabs::-webkit-scrollbar{display:none;}
+.atab{
+  padding:.75rem 1.1rem;border:none;background:none;cursor:pointer;
+  font-family:var(--fb);font-size:12.5px;font-weight:500;color:var(--ink3);
+  border-bottom:3px solid transparent;margin-bottom:-2px;
+  transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:.35rem;
+}
+.atab:hover{color:var(--ink);background:var(--page);}
+.atab.on{color:var(--gold);border-bottom-color:var(--gold);font-weight:600;}
+.atab .ico{font-size:13px;}
+
+.analysis-body{flex:1;overflow-y:auto;min-height:0;padding:1.5rem;}
+.apanel{display:none;}
+.apanel.on{display:block;}
+
+/* ── Analysis components ── */
+.section-head{
+  display:flex;align-items:center;gap:.9rem;
+  background:var(--navy2);border-radius:var(--r);
+  padding:1rem 1.3rem;margin-bottom:1.2rem;color:#f2ead8;
+}
+.sec-badge{
+  width:38px;height:38px;border-radius:50%;background:var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--fd);font-size:1.2rem;font-weight:700;color:#1a0e00;flex-shrink:0;
+}
+.section-head h3{font-family:var(--fd);font-size:1.3rem;font-weight:600;}
+.section-head p{font-size:12px;color:rgba(242,234,216,.65);margin-top:.15rem;}
+
+.qblock{background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:.9rem;overflow:hidden;}
+.qlabel{
+  background:var(--page);border-bottom:1px solid var(--border);
+  padding:.55rem 1rem;font-size:11px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.09em;color:var(--ink3);
+}
+.qbody{padding:1rem 1.1rem;}
+.qtext{font-size:13.5px;color:var(--ink2);margin-bottom:.8rem;font-weight:500;}
+
+.chk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.4rem;margin-bottom:.9rem;}
+.chk{
+  display:flex;align-items:flex-start;gap:.5rem;padding:.55rem .7rem;
+  border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;
+  transition:all .18s;background:var(--page);
+}
+.chk:hover{border-color:#d4b840;background:var(--gold4);}
+.chk input{width:15px;height:15px;accent-color:var(--gold);flex-shrink:0;margin-top:2px;cursor:pointer;}
+.chk label{font-size:12.5px;color:var(--ink2);cursor:pointer;line-height:1.35;}
+.chk input:checked ~ label{color:var(--amber);font-weight:500;}
+
+.jlabel{font-size:11.5px;font-weight:600;color:var(--ink3);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.07em;}
+textarea.jta{
+  width:100%;min-height:80px;border:1px solid var(--border);border-radius:var(--rs);
+  padding:.7rem .9rem;font-family:var(--fb);font-size:13px;color:var(--ink2);
+  background:var(--page);resize:vertical;transition:border-color .2s;line-height:1.6;
+}
+textarea.jta:focus{outline:none;border-color:var(--gold);background:var(--card);}
+.charct{font-size:10.5px;color:var(--ink3);text-align:right;margin-top:.25rem;}
+
+/* EMP table */
+.emp-wrap{overflow-x:auto;margin-bottom:1rem;}
+.emp-tbl{width:100%;border-collapse:collapse;font-size:12.5px;min-width:700px;}
+.emp-tbl thead tr{background:var(--navy2);}
+.emp-tbl thead th{
+  color:#f2ead8;padding:.7rem .9rem;text-align:left;
+  font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:600;
+}
+.emp-tbl tbody tr{border-bottom:1px solid var(--border);}
+.emp-tbl tbody tr:nth-child(even){background:var(--page);}
+.emp-tbl td{padding:.7rem .9rem;vertical-align:top;}
+.emp-tbl td:first-child{font-weight:600;font-size:12.5px;color:var(--ink);width:120px;border-right:2px solid var(--border);}
+.emp-tbl textarea{width:100%;min-height:56px;border:1px solid var(--border);border-radius:var(--rs);padding:.45rem .6rem;font-family:var(--fb);font-size:12px;color:var(--ink2);background:var(--card);resize:vertical;}
+.emp-tbl textarea:focus{outline:none;border-color:var(--gold);}
+.emp-tbl select{width:100%;border:1px solid var(--border);border-radius:var(--rs);padding:.45rem .6rem;font-family:var(--fb);font-size:12px;color:var(--ink2);background:var(--card);cursor:pointer;}
+.emp-tbl select:focus{outline:none;border-color:var(--gold);}
+.row-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:.4rem;}
+
+/* Risk analysis */
+.risk-grid{display:flex;flex-direction:column;gap:.9rem;}
+.rq{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.1rem;}
+.rq-num{font-family:var(--fd);font-size:1.5rem;font-weight:700;color:rgba(197,160,40,.25);float:right;margin-left:.5rem;line-height:1;}
+.rq h4{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:.4rem;}
+.rq .rhint{font-size:11.5px;color:var(--ink3);margin-bottom:.6rem;font-style:italic;}
+
+/* Submit bar */
+.submit-bar{
+  border-top:2px solid var(--border);background:var(--card);
+  padding:1.1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.8rem;
+  flex-shrink:0;
+}
+.submit-note{font-size:12.5px;color:var(--ink3);}
+.submit-note strong{color:var(--ink);}
+.btn-eval{
+  background:linear-gradient(135deg,var(--navy),var(--navy3));color:#f2ead8;
+  border:none;border-radius:var(--r);padding:.8rem 2rem;
+  font-family:var(--fb);font-size:13.5px;font-weight:600;cursor:pointer;
+  transition:all .25s;box-shadow:var(--shadow);
+}
+.btn-eval:hover{box-shadow:var(--shadow2);transform:translateY(-1px);}
+.btn-sec{
+  background:var(--page);border:1.5px solid var(--border);color:var(--ink);
+  border-radius:var(--r);padding:.65rem 1.3rem;font-family:var(--fb);
+  font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;
+}
+.btn-sec:hover{border-color:var(--gold);color:var(--amber);}
+
+/* Info/warn boxes */
+.ibox{background:var(--blue3);border:1px solid #a8b8e0;border-left:3px solid var(--blue);border-radius:var(--rs);padding:.65rem .9rem;font-size:12.5px;color:#243672;line-height:1.65;margin-bottom:.9rem;}
+.wbox{background:var(--amber3);border:1px solid #d4b040;border-left:3px solid var(--gold);border-radius:var(--rs);padding:.65rem .9rem;font-size:12.5px;color:#4a3800;line-height:1.65;margin-bottom:.9rem;}
+
+/* ═══════════════════════════════════
+   RESULTS SCREEN
+═══════════════════════════════════ */
+.res-header{
+  background:var(--navy);padding:1.8rem 2.5rem;border-bottom:2px solid var(--gold);
+}
+.res-header h2{font-family:var(--fd);font-size:1.9rem;font-weight:600;color:#f2ead8;}
+.res-header h2 em{color:var(--gold2);font-style:italic;}
+.res-header p{color:rgba(242,234,216,.6);font-size:13px;margin-top:.3rem;}
+.res-body{max-width:1080px;margin:0 auto;padding:2rem;}
+
+.score-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.9rem;margin-bottom:2.2rem;}
+.score-tile{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem;text-align:center;}
+.score-tile .lv{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;padding:.25rem .6rem;border-radius:20px;display:inline-block;margin-bottom:.4rem;}
+.score-tile .sn{font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:.25rem;}
+.score-tile .sp{font-family:var(--fd);font-size:2rem;font-weight:700;line-height:1;}
+.lv-exc .lv{background:var(--exc-bg);color:var(--exc-c);}
+.lv-exc .sp{color:var(--exc-c);}
+.lv-ade .lv{background:var(--ade-bg);color:var(--ade-c);}
+.lv-ade .sp{color:var(--ade-c);}
+.lv-ins .lv{background:var(--ins-bg);color:var(--ins-c);}
+.lv-ins .sp{color:var(--ins-c);}
+.lv-rie .lv{background:var(--rie-bg);color:var(--rie-c);}
+.lv-rie .sp{color:var(--rie-c);}
+
+.fb-sec{margin-bottom:1.8rem;}
+.fb-sec h3{font-family:var(--fd);font-size:1.35rem;font-weight:600;color:var(--ink);margin-bottom:.8rem;padding-bottom:.4rem;border-bottom:2px solid var(--border);}
+.fb-blk{background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:.9rem;overflow:hidden;}
+.fb-blk-hd{padding:.7rem 1.1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.fb-blk-hd h4{font-size:13.5px;font-weight:600;color:var(--ink);}
+.fb-blk-bd{padding:1rem 1.1rem;}
+.fb-row{display:flex;align-items:flex-start;gap:.6rem;margin-bottom:.45rem;font-size:12.5px;}
+.fb-row .ic{font-size:14px;flex-shrink:0;margin-top:1px;}
+.fb-row.ok .ic{color:var(--exc-c);}
+.fb-row.bad .ic{color:var(--red2);}
+.fb-row.mis .ic{color:var(--amber);}
+.fb-row.neu .ic{color:var(--ink3);}
+.model-box{background:var(--sage3);border:1px solid var(--sage2);border-radius:var(--rs);padding:.8rem 1rem;font-size:12.5px;color:var(--ink2);line-height:1.68;margin-top:.7rem;}
+.model-box strong{color:var(--exc-c);font-size:11px;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.3rem;}
+.user-box{background:var(--page);border:1px solid var(--border);border-radius:var(--rs);padding:.8rem 1rem;font-size:12.5px;color:var(--ink2);line-height:1.68;}
+.user-box strong{color:var(--ink3);font-size:11px;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.3rem;}
+.alert-list{list-style:none;padding:0;}
+.alert-list li{padding:.55rem .8rem .55rem 2rem;position:relative;font-size:12.5px;border-bottom:1px solid var(--border);}
+.alert-list li:last-child{border-bottom:none;}
+.alert-list li::before{content:'⚠';position:absolute;left:.6rem;color:var(--amber);}
+.pq-list li{padding:.55rem .8rem .55rem 1.8rem;position:relative;font-size:12.5px;border-bottom:1px solid var(--border);}
+.pq-list li:last-child{border-bottom:none;}
+.pq-list li::before{content:'?';position:absolute;left:.6rem;color:var(--blue);font-weight:700;}
+.sem{display:inline-flex;align-items:center;gap:.35rem;font-size:12px;font-weight:600;}
+.sem-dot{width:9px;height:9px;border-radius:50%;}
+.sem.alto{color:var(--exc-c);} .sem.alto .sem-dot{background:var(--exc-c);}
+.sem.medio{color:var(--ade-c);} .sem.medio .sem-dot{background:var(--ade-c);}
+.sem.bajo{color:var(--rie-c);} .sem.bajo .sem-dot{background:var(--rie-c);}
+.sem.ind{color:var(--blue);} .sem.ind .sem-dot{background:var(--blue);}
+
+.res-actions{display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;padding:1.5rem 0;border-top:2px solid var(--border);margin-top:.5rem;}
+.btn-print{background:var(--card);border:1.5px solid var(--border);color:var(--ink);border-radius:var(--r);padding:.7rem 1.4rem;font-family:var(--fb);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;}
+.btn-print:hover{border-color:var(--sage);color:var(--exc-c);}
+.btn-primary{background:linear-gradient(135deg,var(--gold),#9a7010);color:#1a0e00;border:none;border-radius:var(--r);padding:.75rem 1.8rem;font-family:var(--fb);font-size:13.5px;font-weight:600;cursor:pointer;transition:all .25s;box-shadow:var(--shadow);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:var(--shadow2);}
+.btn-dark{background:var(--navy);color:#f2ead8;border:none;border-radius:var(--r);padding:.75rem 1.8rem;font-family:var(--fb);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;}
+.btn-dark:hover{background:var(--navy2);}
+
+/* ── Responsive ── */
+@media print{
+  #s-cover,#s-selector,#s-case{display:none!important;}
+  #s-results{display:block!important;}
+  .res-actions{display:none!important;}
+  .fb-blk{break-inside:avoid;}
+}
+@media(max-width:920px){
+  .book-layout{flex-direction:column;overflow:visible;}
+  #s-case.on{height:auto;overflow:visible;}
+  .page-left{width:100%;border-right:none;border-bottom:1px solid var(--border2);max-height:42vh;overflow-y:auto;}
+  .page-left::after{display:none;}
+  .page-right{overflow:visible;}
+  .analysis-body{overflow:visible;}
+}
+@media(max-width:640px){
+  .case-shelf{grid-template-columns:1fr;}
+  .chk-grid{grid-template-columns:1fr 1fr;}
+  .emp-tbl{font-size:11.5px;}
+  .atab{padding:.6rem .7rem;font-size:11.5px;}
+  .sel-header{padding:1.2rem 1.5rem;}
+  .res-body{padding:1.5rem 1rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- ════ COVER ════ -->
+<div id="s-cover" class="screen on">
+  <div class="cover-eyebrow">TMLF Academy · Simulador Legal Avanzado</div>
+  <h1 class="cover-title">Simulador Avanzado de<br><em>Análisis Visa T</em></h1>
+  <p class="cover-sub">Proceso · Medio · Fin · Criterios de Elegibilidad</p>
+  <div class="cover-rule"></div>
+  <div class="cover-desc">
+    <strong>Aviso formativo:</strong> Este simulador utiliza casos anonimizados con fines exclusivamente formativos. Los hechos y la estructura de explotación de cada caso provienen de documentos reales con todos los datos identificadores eliminados. <strong>El objetivo no es memorizar respuestas: es justificar el análisis legal con evidencia del expediente.</strong>
+  </div>
+  <!-- Identificación del colaborador -->
+  <div style="position:relative;width:100%;max-width:380px;margin-bottom:1.5rem;">
+    <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(197,160,40,.8);margin-bottom:.5rem;">Tu nombre completo</label>
+    <input id="inp-nombre" type="text" placeholder="Escribe tu nombre antes de comenzar…"
+      style="width:100%;padding:.85rem 1.1rem;border-radius:var(--r);border:1.5px solid rgba(197,160,40,.4);
+             background:rgba(255,255,255,.07);color:#f2ead8;font-family:var(--fb);font-size:14px;
+             outline:none;transition:border-color .2s;"
+      onfocus="this.style.borderColor='var(--gold2)'"
+      onblur="this.style.borderColor='rgba(197,160,40,.4)'"
+    >
+    <p id="cover-name-err" style="display:none;color:#ff9090;font-size:12px;margin-top:.4rem;">Por favor escribe tu nombre para continuar.</p>
+  </div>
+  <button class="cover-btn" onclick="startSimulator()">Seleccionar caso →</button>
+  <div class="cover-footer">
+    The Mendoza Law Firm · TMLF Learning Center ·
+    <span onclick="goTo('s-admin')" style="cursor:pointer;color:rgba(197,160,40,.4);transition:color .2s;" onmouseover="this.style.color='rgba(197,160,40,.8)'" onmouseout="this.style.color='rgba(197,160,40,.4)'">Admin</span>
+  </div>
+</div>
+
+<!-- ════ SELECTOR ════ -->
+<div id="s-selector" class="screen">
+  <div class="sel-header">
+    <button class="ghost-btn" onclick="goTo('s-cover')">← Portada</button>
+    <h1>Selecciona un <span>Caso</span></h1>
+  </div>
+  <div class="sel-body">
+    <div class="sel-intro"><p>Tres casos reales anonimizados de distinta complejidad. Lee el expediente completo antes de responder. Justifica cada respuesta con hechos específicos del caso.</p></div>
+    <div class="case-shelf" id="case-shelf"></div>
+  </div>
+</div>
+
+<!-- ════ CASE VIEW ════ -->
+<div id="s-case" class="screen">
+  <div class="case-topbar">
+    <div class="topbar-left">
+      <h2 id="case-title-bar">Caso <em></em></h2>
+    </div>
+    <div class="topbar-right">
+      <div class="prog-bar" id="prog-bar">
+        <div class="prog-pip now" title="A. Proceso"></div>
+        <div class="prog-pip" title="B. Medio"></div>
+        <div class="prog-pip" title="C. Fin"></div>
+        <div class="prog-pip" title="D. Elegibilidad"></div>
+        <div class="prog-pip" title="Matriz EMP"></div>
+        <div class="prog-pip" title="Riesgo USCIS"></div>
+      </div>
+      <button class="change-case-btn" onclick="goTo('s-selector')">⇄ Cambiar caso</button>
+      <div style="font-size:11.5px;color:rgba(242,234,216,.55);padding-left:.5rem;border-left:1px solid rgba(255,255,255,.15);">
+        <span id="nombre-topbar" style="color:rgba(242,234,216,.8);font-weight:500;"></span>
+      </div>
+    </div>
+  </div>
+  <div class="book-layout">
+    <!-- LEFT PAGE: Expediente permanente -->
+    <div class="page-left">
+      <div class="page-left-inner" id="expediente-panel"></div>
+    </div>
+    <!-- RIGHT PAGE: Analysis workspace -->
+    <div class="page-right">
+      <div class="analysis-tabs" id="analysis-tabs">
+        <button class="atab on" data-p="ap-proceso" onclick="switchPanel('ap-proceso',this)"><span class="ico">🔍</span>A. Proceso</button>
+        <button class="atab" data-p="ap-medio" onclick="switchPanel('ap-medio',this)"><span class="ico">⚖️</span>B. Medio</button>
+        <button class="atab" data-p="ap-fin" onclick="switchPanel('ap-fin',this)"><span class="ico">🎯</span>C. Fin</button>
+        <button class="atab" data-p="ap-elig" onclick="switchPanel('ap-elig',this)"><span class="ico">📑</span>D. Elegibilidad</button>
+        <button class="atab" data-p="ap-emp" onclick="switchPanel('ap-emp',this)"><span class="ico">📊</span>Matriz EMP</button>
+        <button class="atab" data-p="ap-uscis" onclick="switchPanel('ap-uscis',this)"><span class="ico">🏛️</span>Riesgo USCIS</button>
+      </div>
+      <div class="analysis-body">
+        <div id="ap-proceso" class="apanel on"></div>
+        <div id="ap-medio" class="apanel"></div>
+        <div id="ap-fin" class="apanel"></div>
+        <div id="ap-elig" class="apanel"></div>
+        <div id="ap-emp" class="apanel"></div>
+        <div id="ap-uscis" class="apanel">
+          <div id="uscis-inner"></div>
+          <div class="submit-bar">
+            <div class="submit-note"><strong>¿Listo?</strong> Asegúrate de haber completado todas las secciones.</div>
+            <div style="display:flex;gap:.7rem;flex-wrap:wrap;">
+              <button class="btn-sec" onclick="switchPanel('ap-emp',document.querySelector('[data-p=ap-emp]'))">← Matriz EMP</button>
+              <button class="btn-eval" onclick="evaluateCase()">Evaluar análisis →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ ADMIN ════ -->
+<div id="s-admin" class="screen">
+
+  <!-- LOGIN STATE -->
+  <div class="admin-login-wrap" id="admin-login">
+    <div class="admin-login-box">
+      <h2>Panel de <em>Administración</em></h2>
+      <p>Simulador Visa T · TMLF Academy</p>
+      <input class="admin-inp" id="admin-pwd" type="password" placeholder="Contraseña de acceso" onkeydown="if(event.key==='Enter')adminLogin()">
+      <div class="admin-login-err" id="admin-err">Contraseña incorrecta. Inténtalo de nuevo.</div>
+      <button class="cover-btn" style="width:100%;margin-bottom:.8rem;" onclick="adminLogin()">Ingresar →</button>
+      <button class="ghost-btn" style="width:100%;justify-content:center;" onclick="goTo('s-cover')">← Volver al simulador</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD STATE -->
+  <div class="admin-dash" id="admin-dash">
+    <div class="admin-topbar">
+      <h1>Panel de <em>Administración</em></h1>
+      <div class="admin-topbar-right">
+        <span id="admin-last-update" style="font-size:11.5px;color:rgba(242,234,216,.4);"></span>
+        <button class="admin-refresh-btn" onclick="adminRefresh()">↻ Actualizar</button>
+        <button class="admin-exit-btn" onclick="goTo('s-selector')">← Simulador</button>
+        <button class="admin-exit-btn" onclick="adminLogout()">Cerrar sesión</button>
+      </div>
+    </div>
+    <div class="admin-body">
+      <!-- Stats -->
+      <div class="admin-stats" id="admin-stats"></div>
+      <!-- Filters -->
+      <div class="admin-filters">
+        <label>Filtrar por:</label>
+        <select id="fil-caso" onchange="adminRender()">
+          <option value="">Todos los casos</option>
+          <option value="1">Caso 1 — El Guardián de la Deuda</option>
+          <option value="2">Caso 2 — La Planta</option>
+          <option value="3">Caso 3 — La Compañía</option>
+        </select>
+        <select id="fil-nivel" onchange="adminRender()">
+          <option value="">Todos los niveles</option>
+          <option value="Excelente">Excelente</option>
+          <option value="Adecuado">Adecuado</option>
+          <option value="Insuficiente">Insuficiente</option>
+          <option value="Riesgoso">Riesgoso</option>
+        </select>
+        <input id="fil-nombre" type="text" placeholder="Buscar colaborador…" oninput="adminRender()">
+        <button class="btn-sec" onclick="clearFilters()">✕ Limpiar</button>
+      </div>
+      <!-- Table -->
+      <div id="admin-table-area"></div>
+    </div>
+  </div>
+
+  <!-- DETAIL OVERLAY -->
+  <div class="detail-overlay" id="det-overlay" onclick="closeDetail()"></div>
+  <div class="detail-drawer" id="det-drawer">
+    <div class="detail-header">
+      <div class="detail-header-info">
+        <h3 id="det-nombre">—</h3>
+        <p id="det-meta">—</p>
+      </div>
+      <button class="detail-close-btn" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="detail-scores" id="det-scores"></div>
+    <div class="detail-body" id="det-body"></div>
+  </div>
+
+</div>
+
+<!-- ════ RESULTS ════ -->
+<div id="s-results" class="screen">
+  <div class="res-header">
+    <h2>Resultados del <em>Análisis</em></h2>
+    <p id="res-subtitle">Evaluación por niveles: Excelente · Adecuado · Insuficiente · Riesgoso</p>
+    <p id="res-save-status" style="font-size:11.5px;margin-top:.4rem;color:rgba(242,234,216,.45);">📤 Guardando respuestas…</p>
+  </div>
+  <div class="res-body" id="res-body"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  CONFIGURACIÓN — PEGA AQUÍ LA URL DE TU APPS SCRIPT
+// ═══════════════════════════════════════════════════════
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyjv0sos8fJO1l8dgHvi8zkRhy-3JvRU4Qpe9rG_bIf6KCob4BMReFyl3vPNM0bAzicxw/exec';
+
+// Genera un ID único para la sesión
+const SESSION_ID = 'SIM-' + Date.now() + '-' + Math.random().toString(36).slice(2,7).toUpperCase();
+let NOMBRE_COLABORADOR = '';
+
+// ═══════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════
+const SCREENS=['s-cover','s-selector','s-case','s-results','s-admin'];
+function goTo(id){
+  SCREENS.forEach(s=>{
+    const el=document.getElementById(s);
+    el.classList.remove('on');
+    el.classList.add('screen');
+  });
+  const target=document.getElementById(id);
+  target.classList.remove('screen');
+  target.classList.add('on');
+  window.scrollTo(0,0);
+}
+
+function startSimulator(){
+  const inp=document.getElementById('inp-nombre');
+  const err=document.getElementById('cover-name-err');
+  const nombre=(inp.value||'').trim();
+  if(!nombre){
+    err.style.display='block';
+    inp.focus();
+    return;
+  }
+  err.style.display='none';
+  NOMBRE_COLABORADOR=nombre;
+  // Mostrar el nombre en la topbar del caso
+  const nb=document.getElementById('nombre-topbar');
+  if(nb) nb.textContent=nombre;
+  goTo('s-selector');
+}
+
+function switchPanel(pid, btn){
+  document.querySelectorAll('.apanel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.atab').forEach(b=>b.classList.remove('on'));
+  document.getElementById(pid).classList.add('on');
+  if(btn) btn.classList.add('on');
+  // Scroll analysis body to top
+  const ab=document.querySelector('.analysis-body');
+  if(ab) ab.scrollTop=0;
+  // Progress
+  const order=['ap-proceso','ap-medio','ap-fin','ap-elig','ap-emp','ap-uscis'];
+  const idx=order.indexOf(pid);
+  document.querySelectorAll('.prog-pip').forEach((p,i)=>{
+    p.classList.remove('now','done');
+    if(i<idx) p.classList.add('done');
+    else if(i===idx) p.classList.add('now');
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+let CC=null; // current case
+let UA={}; // user answers
+
+// ═══════════════════════════════════════════════════════
+//  CASE DATA
+// ═══════════════════════════════════════════════════════
+const CASES={
+
+// ── CASO 1 ──────────────────────────────────────────
+1:{id:1,title:'El Guardián de la Deuda',
+  spine:'s1',
+  tags:['Peonaje','Control por deuda','Amenazas familiares','Fuerza física'],
+  tagClasses:['tr','tg','tr','tr'],
+  diff:'Alto',diffColor:'#c93030',
+  overview:'Menor de edad reclutado mediante engaño con promesa de trabajo en rancho, sometido a peonaje por deuda, amenazas directas con fotos reales de familia y agresión física durante ~4-5 años.',
+  blocks:[
+    {l:'Contexto inicial',t:'',c:'El cliente llegó a EE. UU. siendo menor de edad (entre 15 y 17 años), proveniente de un estado del occidente de México. Sin documentos, sin red de apoyo. Buscaba trabajo en el estacionamiento de una tienda de materiales de construcción para enviar dinero a su familia en México.'},
+    {l:'Reclutamiento',t:'',c:'Un hombre desconocido se acercó y le ofreció trabajo cuidando un rancho: $450 dólares por semana, comida incluida, sin costo de renta. Le dijo que luego podría traer amigos. El cliente, siendo menor y sin opciones, aceptó.'},
+    {l:'Engaño al llegar',t:'warn',c:'Al llegar descubrió que no era ningún rancho. El trabajo real consistía en vigilar a personas que se prostituían. Le dijeron que "ya estaba adentro y no se podía salir." El cliente tenía entre 15 y 17 años.'},
+    {l:'Primera retención — amenazas con fotos',t:'danger',c:'Al intentar irse tras una semana, los tratantes enviaron fotografías reales de sus padres y la ubicación exacta de su hogar en México. Dijeron: "¿Son tus papás? Tenemos gente aquí y allá. Vamos a ir por ellos." Ante esa evidencia, el cliente regresó.'},
+    {l:'Condiciones iniciales',t:'',c:'Pago irregular: ~$300 al mes. Alimentación mínima (solo sándwiches). Podía salir brevemente a la tienda pero debía regresar bajo amenaza de represalia contra su familia. Los tratantes también tenían información de sus familiares en EE. UU.'},
+    {l:'Deportación y retorno forzado',t:'info',c:'Detenido por migración en una salida autorizada. El tratante lo obligó a asistir a cortes migratorias para no "calentar el trabajo." Sin abogado ni asesoría, firmó salida voluntaria. Los mismos tratantes lo regresaron a México y luego lo volvieron a cruzar.'},
+    {l:'Re-cruce forzado y frontera',t:'danger',c:'La misma red lo cruzó de regreso. Lo colocaron a cuidar una casa de paso en la frontera. Fue detenido por migración entre 4 y 5 veces; cada vez lo regresaban y en 1-2 semanas lo volvían a cruzar.'},
+    {l:'Georgia: peonaje por deuda',t:'danger',c:'En el último cruce (~2012-2013) lo trasladaron al sureste. Al llegar, le dijeron que debía $5,000 por ese cruce. Le descontarían la mitad por el trabajo en la frontera; para el resto, debía vigilar personas en una casa de ese estado.'},
+    {l:'Sistema de vigilancia cruzada',t:'warn',c:'En la casa: el cliente, un vigilante asignado por los tratantes, y una mujer explotada. El cliente vigilaba al vigilante (para que reportara el dinero real al jefe) y el vigilante lo vigilaba a él. Jornada 9am–9pm, todos los días, sin días libres. Vivía ahí mismo.'},
+    {l:'Amenazas con información actualizada',t:'danger',c:'Le mostraron fotografías actualizadas de su familia y hermanos en México. Le indicaron la ubicación exacta de su domicilio. Le dijeron que tenían cámaras en todas las casas. El cliente entendió que la amenaza no era teórica.'},
+    {l:'Agresión física',t:'danger',c:'Al decirle al vigilante que quería escapar, este lo reportó. El cliente fue golpeado con una tabla. Secuela física permanente: no puede acostarse de espalda en superficies duras. Le dijeron: "La próxima, matamos a tu familia y los ponemos a trabajar por ti." Dejó de intentar escapar.'},
+    {l:'Robo y deuda creciente',t:'warn',c:'Terceros irrumpieron, ataron y golpearon a todos (incluyendo al cliente) y robaron el dinero. El jefe exigió que los presentes pagaran el dinero robado. La deuda del cliente, en lugar de bajar, aumentó. Sin salida posible.'},
+    {l:'Fin del esquema',t:'sage',c:'Al pagar lo que los tratantes decían que debía por el último cruce, le ofrecieron quedarse con "pago real." Rechazó. Se fue. El contacto cesó gradualmente ~1 año después.'},
+    {l:'Cooperación con autoridades',t:'info',c:'No denunció personalmente por miedo a migración y represalia. Compartió la información de la casa con un amigo del trabajo, quien hizo la denuncia. La policía acudió y detuvo a los implicados. Ahora el cliente está dispuesto a cooperar directamente.'},
+    {l:'⚠ Áreas de posible debilidad',t:'danger',c:'',list:['Fechas imprecisas y pérdida de memoria documentada.','Cooperación fue indirecta (a través de tercero).','El cliente describe el golpe como "leve," aunque tiene secuela permanente.','Su rol como vigilante puede generar preguntas sobre participación voluntaria.','Algunos períodos del control no están completamente documentados.']},
+  ],
+  pOpts:[
+    {id:'rec',l:'Reclutamiento',ok:true},
+    {id:'tra',l:'Transporte',ok:true},
+    {id:'tras',l:'Traslado',ok:true},
+    {id:'alb',l:'Albergue',ok:true},
+    {id:'rcep',l:'Recepción',ok:true},
+    {id:'ret',l:'Retención / Control',ok:true},
+  ],
+  pModel:'Todos los actos del proceso están presentes y documentados. Reclutamiento: estacionamiento de tienda de materiales, promesa de rancho. Transporte: múltiples cruces organizados por la red. Traslado: de frontera a Georgia en el último cruce. Albergue: casas controladas por tratantes durante años. Recepción: en Georgia por la misma red. Retención: amenazas con fotos reales de familia, golpiza, deuda creciente, vigilancia cruzada, imposibilidad práctica de huir.',
+  pAlerts:['El cliente estuvo bajo control continuo desde ~15 hasta ~20 años de edad.','Los múltiples re-cruces fueron organizados por los mismos tratantes — no hubo estancia independiente.','La retención no era solo física: el miedo racional por la familia era el mecanismo principal.','Área de indagación: ¿hay evidencia del número de caso policial de la redada posterior?'],
+  mOpts:[
+    {id:'fraude',l:'Fraude',ok:true},
+    {id:'fuerza',l:'Fuerza física',ok:true},
+    {id:'coer',l:'Coerción',ok:true},
+    {id:'amz',l:'Amenazas directas',ok:true},
+    {id:'vulner',l:'Abuso de vulnerabilidad migratoria',ok:true},
+    {id:'deuda',l:'Deuda como control',ok:true},
+    {id:'cpsic',l:'Control psicológico',ok:true},
+    {id:'afam',l:'Amenazas contra familia',ok:true},
+    {id:'vigil',l:'Vigilancia',ok:true},
+    {id:'rmiedo',l:'Retención por miedo',ok:true},
+    {id:'manlab',l:'Manipulación laboral ordinaria',ok:false},
+    {id:'exsex',l:'Explotación sexual directa (del cliente)',ok:false},
+  ],
+  mModel:'Fraude: prometieron rancho; trabajo real era vigilar explotación sexual. Fuerza: golpe con tabla, secuela permanente. Coerción activa durante toda la situación. Amenazas directas: fotos reales de padres, frase "tenemos gente aquí y allá." Deuda: $5,000 + lo del robo = instrumento de control, no deuda comercial. Vulnerabilidad migratoria: menor de edad, sin documentos, sin red, sin derechos conocidos. Control psicológico y vigilancia: sistema cruzado documentado. Retención por miedo: el cliente mismo explica que no salía por lo que le harían a su familia. NO APLICA: explotación sexual directa del cliente (él vigilaba, no fue explotado sexualmente); manipulación laboral ordinaria no es el término técnico correcto.',
+  mAlerts:['Las amenazas a la familia son el eje del control: son creíbles porque las fotos eran reales.','El miedo razonable está muy bien sustentado: menor de edad, golpeado, familia amenazada con información real.','Área de indagación: ¿hay corroboración del reporte policial de la redada?','RIESGO: no confundir el rol del cliente (vigilante) con víctima de explotación sexual directa — son hechos distintos.'],
+  fOpts:[
+    {id:'explab',l:'Explotación laboral ordinaria',ok:false},
+    {id:'sinv',l:'Servidumbre involuntaria',ok:true},
+    {id:'peon',l:'Peonaje',ok:true},
+    {id:'deudav',l:'Deuda vinculante',ok:true},
+    {id:'escl',l:'Esclavitud',ok:false},
+    {id:'exsex2',l:'Explotación sexual (del cliente)',ok:false},
+  ],
+  fModel:'Peonaje: argumento más sólido para la etapa de Georgia — fue colocado a trabajar para saldar deuda impuesta unilateralmente por los tratantes ($5,000 + lo del robo). Deuda vinculante: no era deuda comercial sino instrumento diseñado para ser impagable. Servidumbre involuntaria: vigilancia forzada bajo amenazas sin posibilidad real de salida. Explotación laboral ordinaria NO es el fin: no trabajaba en un contexto laboral convencional. Esclavitud: no seleccionar sin evidencia de pérdida total de personalidad jurídica. Explotación sexual: no aplica al cliente directamente.',
+  fAlerts:['Peonaje (18 U.S.C. §1581): requiere que la deuda sea el instrumento que quitó la libertad. Aquí está claramente presente.','La deuda aumentó artificialmente (añadieron el robo): eso evidencia intencionalidad de mantener el control.','Debilidad: recibía algo de dinero ocasionalmente. Preparar argumento de que los pagos simbólicos no cambiaban el control real.','Área de indagación: ¿qué otras tareas específicas realizaba además de vigilar?'],
+  eqs:[
+    {id:'esquema',l:'¿Cómo se acredita el esquema de trata?',model:'Esquema documentado: reclutador con descripción física, promesa fraudulenta, albergue controlado, múltiples víctimas, jerarquía operativa (jefe–vigilante), control por deuda y amenazas, múltiples cruces organizados por la misma red. Presencia en varios estados. La denuncia policial posterior corrobora que la casa existía y la operación fue desmantelada: es evidencia objetiva del esquema.'},
+    {id:'cooper',l:'¿Qué cooperación existe y qué debe fortalecerse?',model:'Cooperación existente: indirecta (a través de amigo); policía actuó y detuvo a implicados. Esto puede calificar bajo el estándar de "cooperación razonable" dadas las circunstancias documentadas de miedo. Para fortalecer: declaración directa del cliente, identificación de tratantes (tiene descripciones físicas), número de caso policial de la redada, explorar si FBI u Homeland Security tienen investigación activa relacionada.'},
+    {id:'presencia',l:'¿La presencia en EE. UU. está causalmente conectada con la trata?',model:'Sí — es uno de los elementos más sólidos. El cliente llegó por primera vez como menor dentro del primer esquema de la red. Todos sus cruces posteriores fueron organizados y ejecutados por los mismos tratantes. Nunca tuvo entrada o estancia independiente: su presencia en cada etapa fue directamente controlada o consecuencia de la actividad de trata. La presencia actual en el sureste es consecuencia directa del último cruce organizado por los tratantes (~2012-2013).'},
+    {id:'hardship',l:'¿Qué argumentos de hardship son causales vs. solo refuerzo?',model:'CAUSALES (derivan directamente de la trata): (1) Secuela física documentada por la agresión — requiere evaluación médica formal. (2) Impacto psicológico: problemas de sueño persistentes, pérdida de memoria posiblemente traumática, hipervigilancia probable — requiere evaluación psicológica. (3) Situación de seguridad en estado de origen: familia amenazada, desplazada, bienes perdidos, autoridades locales comprometidas. REFUERZO (válidos pero no causales): hijas ciudadanas americanas, esposa ciudadana embarazada, trabajo y arraigo de 12+ años.'},
+  ],
+  empM:{
+    proceso:{h:'Reclutamiento en tienda de materiales; transporte múltiple por tratantes; albergue en casas controladas; traslado frontera→sureste; retención por deuda y amenazas.',e:'Promesa de rancho vs. trabajo real; fotos de familia como instrumento; deuda $5,000; jornada 9am-9pm sin días libres.',f:'Alto',r:'Fechas imprecisas; cooperación inicialmente indirecta; períodos en frontera no todos documentados.'},
+    medio:{h:'Fraude; amenazas con fotos reales; fuerza física (tabla); deuda como control; vigilancia cruzada; vulnerabilidad de menor migrante.',e:'Fotos enviadas de padres; golpe con tabla (secuela permanente); deuda creció por robo; jornadas sin libertad.',f:'Alto',r:'El cliente minimiza el golpe ("fue leve") a pesar de secuela. Sin evidencia corroborada del sistema de cámaras.'},
+    fin:{h:'Vigilancia forzada para saldar deuda impuesta; sin libertad de salida; deuda aumentó artificialmente.',e:'$5,000 de deuda por cruce; se añadió el dinero robado; oferta final de "pago real" implica que antes no había pago.',f:'Alto',r:'Recibía algunos pagos ocasionales. Su rol de vigilante puede generar preguntas de participación.'},
+    cooperacion:{h:'Denuncia indirecta a través de amigo; policía actuó; ahora dispuesto a cooperar directamente.',e:'Policía "fue y se los llevaron" según declaración; cliente tiene descripciones físicas de tratantes.',f:'Medio',r:'Sin número de caso policial en declaración. Cooperación directa debe formalizarse urgente.'},
+    presencia:{h:'Cada cruce fue organizado por la red; nunca tuvo entrada o estancia independiente.',e:'Múltiples cruces 2007-2013 todos bajo control de tratantes; llegada a Georgia organizada por la misma red.',f:'Alto',r:'Períodos fuera de EE. UU. (salida voluntaria + regreso) deben documentarse como parte del esquema, no como rupturas.'},
+    hardship:{h:'Secuela física permanente en espalda; trauma psicológico; hijas ciudadanas; familia desplazada en México.',e:'No puede acostarse de espalda en superficie dura desde el golpe; problemas de sueño y memoria persistentes.',f:'Alto',r:'Secuela física sin evaluación médica formal. Impacto psicológico no documentado por profesional aún.'},
+  },
+  uscisM:[
+    {q:'¿Qué podría generar un RFE?',a:'(1) Cooperación indirecta: USCIS puede cuestionar que la denuncia la hizo un tercero. Reforzar con evidencia del reporte policial. (2) Fechas imprecisas y lapsos de memoria: preparar declaración suplementaria que contextualice la afectación cognitiva. (3) El rol del cliente como vigilante dentro del esquema: aclarar que fue impuesto bajo coerción y deuda. (4) Ausencia de documentación médica de la secuela física.'},
+    {q:'¿Qué parte del caso requiere corroboración?',a:'(1) Reporte policial o número de caso de la redada posterior — evidencia objetiva del esquema. (2) Registros de corte migratoria que documenten las audiencias. (3) Evaluación médica de la lesión en espalda. (4) Evaluación psicológica del trauma (PTSD, pérdida de memoria). (5) Testimonio del amigo que hizo la denuncia, si es posible.'},
+    {q:'¿Qué hechos podrían verse como explotación laboral común y no trata?',a:'Que recibía algunos pagos (aunque irregulares) podría usarse para minimizar el control. Las salidas breves a la tienda podrían verse como libertad de movimiento. "Fue leve" del propio cliente puede minimizar la fuerza. El argumento debe enfocarse en que la deuda y las amenazas hacían imposible la salida real, independientemente de los pagos simbólicos.'},
+    {q:'¿Qué se necesita para elevar el caso a argumento sólido Visa T?',a:'(1) Formalizar cooperación directa con autoridades (declaración, identificación de tratantes). (2) Número de caso policial de la redada. (3) Evaluación médica de la lesión en espalda. (4) Evaluación psicológica por trauma. (5) Documentar situación actual de la familia en México (desplazamiento, pérdida de bienes). (6) Declaración complementaria que clarifique su rol como coaccionado.'},
+    {q:'¿Dónde pueden haber inconsistencias?',a:'El cliente dice que el golpe "no fue mucho" pero describe secuela física permanente: contradicción interna que debe manejarse antes de la solicitud. Los lapsos de memoria afectan precisión de fechas (años son aproximados). La afirmación de que "ya no me llamaban" puede interpretarse como libertad de salida — preparar argumento de que la deuda fue lo que retuvo, no una jaula física perpetua.'},
+    {q:'¿Qué preguntas debe hacer el entrevistador antes de cerrar el caso?',a:'¿Fue al médico por la lesión de espalda en algún momento? ¿Tiene el número de caso del departamento policial que acudió a la redada? ¿Le mostraron documentos escritos de la deuda en algún momento? ¿Con qué frecuencia le mencionaban la deuda y quién específicamente? ¿Puede identificar físicamente a los tratantes? ¿Hay otros testigos del período en Georgia?'},
+  ],
+},
+
+// ── CASO 2 ──────────────────────────────────────────
+2:{id:2,title:'La Planta',
+  spine:'s2',
+  tags:['Vulnerabilidad migratoria','Represalia sistemática','Servidumbre involuntaria'],
+  tagClasses:['tg','tr','tn'],
+  diff:'Muy alto (caso difícil)',diffColor:'#8a1818',
+  overview:'Pareja con entrada legal, sin estatus vigente, contratada en planta procesadora de aves. Condiciones cambiadas, amenaza implícita del supervisor sobre estatus migratorio, represalias por queja y aumento prometido nunca cumplido. Caso con elementos de trata pero con áreas críticas de debilidad.',
+  blocks:[
+    {l:'Contexto inicial',t:'',c:'La cliente y su esposo ingresaron el 16 de agosto de 2010 con visa de turista, con dos hijos. Se establecieron en un estado del sur. Una hija nació en EE. UU. (ciudadana americana, 11 años, recientemente operada del corazón). Llevan ~16 años en EE. UU. Sin estatus migratorio vigente.'},
+    {l:'Reclutamiento',t:'',c:'En 2022, un conocido del esposo los refirió a un contratista de una planta procesadora de aves. El contratista los contrató a ambos por teléfono para el área de sanitación nocturna.'},
+    {l:'Condiciones prometidas',t:'info',c:'Horario nocturno: lun-jue 1:00am–5:30am, vier 1:00am–8:30am, dom 11:00pm–5:30am. Aunque trabajaran ~32h, les pagarían 40h. Salario: $15/h (la cliente negoció desde $14). Dos áreas de limpieza asignadas. Aumento en cada renovación de contrato.'},
+    {l:'Cambio de condiciones',t:'warn',c:'Al terminar sus dos áreas, no les permitían retirarse ni descansar: los enviaban a limpiar áreas adicionales. Esto aplicaba selectivamente a ellos, no a los trabajadores con documentos ni a los amigos del supervisor. Al reclamar la desigualdad, les cargaban más trabajo como represalia.'},
+    {l:'⚡ Amenaza del supervisor (evento central)',t:'danger',c:'En junta grupal, el supervisor dijo: "Nosotros sabemos cómo están trabajando ustedes acá, así que yo les voy a estar ayudando, pero ustedes también tienen que ayudarnos a nosotros." Y añadió: "Preocúpense por su familia." La cliente lo interpretó como advertencia directa relacionada con su estatus migratorio.'},
+    {l:'Ejemplo aleccionador: la compañera',t:'warn',c:'Una compañera se lesionó la mano y fue sola al médico. El supervisor la reprendió públicamente y la despidieron. El mensaje para todos: si te sales de la línea, pierdes el trabajo.'},
+    {l:'Represalias sistemáticas por queja',t:'danger',c:'Cada vez que la cliente reclamaba algo, la consecuencia era inmediata: más trabajo, vigilancia más estrecha, o warning formal. Quienes la agredían no recibían ninguna consecuencia.'},
+    {l:'Agresión física y management inactivo',t:'warn',c:'Una compañera la empujó en dos ocasiones. Reportó al supervisor y al manager. El manager solo dijo que debían "llevarse bien." Le dieron un warning formal a la cliente — quien fue la agredida. A la agresora no le hicieron nada.'},
+    {l:'Promesas de aumento incumplidas',t:'warn',c:'En cada conversación sobre el aumento prometido, el contratista cambiaba el tema, ponía pretextos, o dejaba de ir a la planta. El contrato fue renovado. El aumento nunca llegó.'},
+    {l:'Evento crítico: operación de la hija',t:'danger',c:'La hija ciudadana americana necesitó operación de corazón (hospital a 4h). El esposo pidió permiso con anticipación. Al regresar, el supervisor dijo "no me acordaba." Les hicieron firmar warnings a ambos. Los documentos estaban en inglés; al pedir traducción, el manager se negó. Descontaron las horas del sábado en que faltaron por la operación de su hija.'},
+    {l:'Penalizaciones adicionales',t:'',c:'Descuento de $40-50 si llegan tarde aunque sea 1 minuto (1:06 o 1:07am). El supervisor avisa sin previo aviso si deben trabajar el sábado. El horario de domingos fue extendido (11pm→10pm) sin consulta.'},
+    {l:'⚠ Áreas de posible debilidad — CRÍTICAS',t:'danger',c:'',list:['Entrada legal en 2010: la presencia es anterior al esquema de trata por 12 años — punto más débil del caso.','No hubo retención física: los clientes pueden moverse libremente.','La amenaza del supervisor fue implícita, nunca directa ni documentada formalmente.','El caso puede clasificarse como explotación laboral grave o discriminación laboral sin alcanzar umbral de trata.','No hay amenazas contra familia en México ni fuera del contexto laboral.']},
+  ],
+  pOpts:[
+    {id:'rec',l:'Reclutamiento',ok:true},
+    {id:'tra',l:'Transporte (controlado por el esquema)',ok:false},
+    {id:'tras',l:'Traslado (controlado por el esquema)',ok:false},
+    {id:'alb',l:'Albergue (controlado por el esquema)',ok:false},
+    {id:'rcep',l:'Recepción (controlada por el esquema)',ok:false},
+    {id:'ret',l:'Retención / Control',ok:true},
+  ],
+  pModel:'Solo dos actos del proceso están documentados. Reclutamiento: referido por conocido, contratado con condiciones específicas prometidas. Retención: permanecen por dependencia económica y miedo documentado. Transporte, traslado, albergue y recepción NO aplican al esquema de explotación: los clientes ya vivían en el estado con vivienda independiente. SEÑALAR COMO ÁREA DÉBIL: sin control del movimiento físico, el "proceso" está incompleto para el estándar de Visa T.',
+  pAlerts:['Este es el punto que más debilita el caso como Visa T: sin control del movimiento físico, el proceso está incompleto.','La retención debe argumentarse desde la dependencia económica y el miedo documentado, no desde restricción física.','Área de indagación: ¿hay evidencia de que el contratista seleccionaba específicamente a trabajadores indocumentados?','RIESGO: no seleccionar transporte/traslado/albergue sin evidencia que los conecte al esquema de explotación.'],
+  mOpts:[
+    {id:'fraude',l:'Fraude (condiciones cambiadas)',ok:true},
+    {id:'fuerza',l:'Fuerza física del empleador',ok:false},
+    {id:'coer',l:'Coerción implícita',ok:true},
+    {id:'amz',l:'Amenazas directas documentadas',ok:false},
+    {id:'vulner',l:'Abuso de vulnerabilidad migratoria',ok:true},
+    {id:'deuda',l:'Deuda como control',ok:false},
+    {id:'cpsic',l:'Control psicológico',ok:false},
+    {id:'afam',l:'Amenazas contra familia en México',ok:false},
+    {id:'vigil',l:'Vigilancia como represalia',ok:true},
+    {id:'rmiedo',l:'Retención por miedo razonable',ok:true},
+    {id:'manlab',l:'Manipulación / abuso laboral',ok:true},
+    {id:'abeco',l:'Abuso económico',ok:true},
+  ],
+  mModel:'Fraude parcial: condiciones prometidas (aumento en cada renovación) nunca cumplidas; trabajo extra no acordado. Abuso de vulnerabilidad migratoria: el supervisor declaró públicamente que conocía el estatus de los trabajadores y condicionó su "ayuda" a la no denuncia — el elemento mejor documentado. Coerción implícita: advertencia "preocúpense por su familia" + despido de la compañera lesionada son mecanismos de coerción contextual documentados. Represalia + vigilancia post-reclamo: sistemática y documentada. Abuso económico: aumento incumplido, descuentos injustos, horas extra no pagadas. SIN EVIDENCIA DE: fuerza física del empleador (la agresión la cometió una compañera), amenazas directas, deuda como control, amenazas contra familia en México.',
+  mAlerts:['La coerción es implícita: esto debilita el argumento ante USCIS.','La frase "preocúpense por su familia" requiere interpretación contextual — no es amenaza directa.','Área de indagación: ¿hay testigos de esa junta grupal que puedan corroborar lo dicho por el supervisor?','RIESGO: seleccionar "fuerza física del empleador" es incorrecto — la agresión física fue de una compañera de trabajo.'],
+  fOpts:[
+    {id:'explab',l:'Explotación laboral',ok:true},
+    {id:'sinv',l:'Servidumbre involuntaria (argumentable)',ok:true},
+    {id:'peon',l:'Peonaje',ok:false},
+    {id:'deudav',l:'Deuda vinculante',ok:false},
+    {id:'escl',l:'Esclavitud',ok:false},
+    {id:'exsex2',l:'Explotación sexual',ok:false},
+  ],
+  fModel:'Explotación laboral: el fin más claro y mejor documentado — trabajo extra no pagado, aumento incumplido, penalizaciones injustas, represalia por queja. Servidumbre involuntaria: argumentable pero DÉBIL — para sostenerla se necesita demostrar que no podían irse por razones más allá de la necesidad económica general. El miedo documentado (represalias, despido de compañera, advertencia del supervisor) puede construir ese argumento, pero es frágil. Peonaje NO aplica: sin deuda como instrumento de control. CRÍTICO: este es el caso donde el límite entre violación laboral ordinaria y trata es el más difuso de los tres.',
+  fAlerts:['El caso más vulnerable de los tres para argumentar trata. USCIS puede clasificarlo como violación laboral (FLSA).','La servidumbre involuntaria requiere miedo razonable y específico, no solo el miedo general a perder empleo.','Área de indagación: ¿han intentado buscar otro trabajo? ¿Qué los ha impedido concretamente?','RIESGO: confundir la angustia general de vivir sin papeles con el medio coercitivo específico de la trata.'],
+  eqs:[
+    {id:'esquema',l:'¿Cómo se acredita el esquema de trata?',model:'Este es el elemento más difícil. Para acreditar "esquema" se necesita demostrar que el empleador/contratista usó intencionalmente el estatus migratorio como instrumento de control para obtener trabajo forzado. Evidencia más fuerte: la declaración pública del supervisor en junta grupal. Para fortalecer: ¿hay otros trabajadores sin papeles en la misma situación? ¿El contratista recluta específicamente a migrantes indocumentados? ¿Hay patrón sistemático de represalia contra quienes reclaman?'},
+    {id:'cooper',l:'¿Qué cooperación existe o debe establecerse?',model:'No ha habido cooperación significativa previa. Ahora ha iniciado contacto (agencia pendiente de especificar en la declaración). Para fortalecer: Department of Labor es la vía más natural para este caso laboral. OSHA es relevante por las represalias ante el accidente laboral de la compañera. El National Human Trafficking Hotline puede dirigir a las agencias correctas. La cooperación en este caso es más reciente y menos establecida que en el Caso 1.'},
+    {id:'presencia',l:'¿La presencia en EE. UU. está causalmente conectada con la trata?',model:'PUNTO MÁS DÉBIL DEL CASO. La cliente entró en 2010 con visa de turista, por motivos independientes al esquema laboral que comenzó en 2022. Hay 12 años de presencia antes del inicio de la explotación. La ley requiere que la presencia sea "a causa de" la trata. El argumento disponible es que permanece en EE. UU. por la situación de explotación y el miedo generado — pero eso es diferente a que la trata causó su llegada. RIESGO ALTO de que USCIS considere insuficiente la conexión causal.'},
+    {id:'hardship',l:'¿Qué argumentos de hardship son sólidos vs. solo refuerzo?',model:'SÓLIDOS: (1) Hija ciudadana americana con condición cardíaca crónica que requiere seguimiento médico semestral — documentado y verificable. (2) Ansiedad documentada por la propia cliente. (3) Situación de inseguridad en ciudad de origen: delincuencia activa documentada. REFUERZO: 16 años de arraigo, esposo en la misma situación, hija mayor que tuvo que regresar a México. RIESGO: no mezclar la deportación de la hija mayor como hardship de la madre — son argumentos distintos.'},
+  ],
+  empM:{
+    proceso:{h:'Reclutamiento documentado. Retención por miedo y dependencia económica.',e:'Contratista prometió condiciones; supervisor conoce estatus públicamente; represalias sistemáticas documentadas.',f:'Medio',r:'Transporte, traslado y albergue NO aplican al esquema. El proceso está incompleto — es el área más débil.'},
+    medio:{h:'Fraude parcial; abuso de vulnerabilidad migratoria (claro); coerción implícita; represalia como vigilancia; abuso económico.',e:'"Preocúpense por su familia" en junta grupal; aumento nunca dado; warnings injustos; descuento de horas por operación de hija.',f:'Medio',r:'Sin amenazas directas ni fuerza física del empleador. Coerción implícita requiere interpretación contextual.'},
+    fin:{h:'Explotación laboral (claro). Servidumbre involuntaria (argumentable, débil).',e:'Trabajo extra no compensado; represalia por queja; aumento incumplido; impossibilidad de reclamar sin consecuencias.',f:'Bajo',r:'El caso se parece más a violación laboral grave. El umbral de servidumbre involuntaria es difícil de alcanzar.'},
+    cooperacion:{h:'No hay cooperación previa significativa. Ahora dispuesta. Pendiente formalizar con agencia.',e:'Declaración menciona contacto iniciado con autoridad (agencia no especificada).',f:'Bajo',r:'Cooperación no formalizada. Urge establecer contacto con DOL o FBI.'},
+    presencia:{h:'Presencia en EE. UU. desde 2010 (entrada legal). Esquema comenzó en 2022.',e:'Entrada documentada: 16 ago 2010, visa de turista. Explotación laboral comenzó 12 años después.',f:'Bajo',r:'PUNTO MÁS DÉBIL: la presencia no fue causada por la trata. La trata encontró a una persona ya presente.'},
+    hardship:{h:'Hija ciudadana con condición cardíaca; 16 años de arraigo; ansiedad documentada.',e:'Operación de corazón documentada; citas de seguimiento cada 6 meses; hija mayor tuvo que regresar a México.',f:'Alto',r:'El hardship es genuinamente fuerte, pero debe separarse del argumento de presencia causal — son análisis distintos.'},
+  },
+  uscisM:[
+    {q:'¿Qué podría generar un RFE?',a:'(1) Ausencia de conexión causal entre presencia 2010 y trata 2022: USCIS preguntará directamente. (2) Naturaleza de la coerción implícita: frase ambigua del supervisor sin más evidencia. (3) Cooperación sin formalizar y agencia no especificada en la declaración. (4) Si el caso se ve como violación laboral (FLSA, OSHA) y no trata: USCIS puede remitir a DOL.'},
+    {q:'¿Qué parte del caso requiere corroboración?',a:'(1) Testigos de la junta donde el supervisor dijo "preocúpense por su familia" — es la evidencia de coerción más importante. (2) Registros de trabajo que muestren trabajo extra no pagado. (3) El warning que firmó por la operación de la hija — ¿tiene copia? (4) Comunicaciones escritas del supervisor o contratista. (5) Registros médicos de la hija (operación y citas de seguimiento).'},
+    {q:'¿Qué hechos podrían verse como explotación laboral común y no trata?',a:'La mayoría de los hechos describen violaciones a FLSA: overtime no pagado, aumento incumplido, descuentos injustificados, cambio unilateral de horario. El acoso y la represalia son violaciones de OSHA. El riesgo real: USCIS puede ver este caso como queja de DOL o EEOC, no como trata.'},
+    {q:'¿Qué se necesita para elevar el caso a argumento sólido Visa T?',a:'(1) Demostrar que el contratista/supervisor INTENCIONALMENTE seleccionaba trabajadores indocumentados porque no podían denunciar. (2) Testimonios de otros trabajadores en la misma situación. (3) Establecer que el miedo era específico al estatus migratorio, razonablemente fundado, y distinto al miedo general de perder empleo. (4) Formalizar cooperación urgente con DOL o FBI.'},
+    {q:'¿Dónde pueden haber inconsistencias?',a:'La cliente menciona que "corrieron a la hermana de la líder" — eso significa que el supervisor SÍ actuó en algún momento, lo que puede contra-argumentarse como proceso de queja disponible. El hecho de que siguió trabajando años podría interpretarse como ausencia de coerción suficiente. La entrada legal de 2010 es un hecho documentado que USCIS tendrá en el expediente.'},
+    {q:'¿Qué preguntas debe hacer el entrevistador antes de cerrar el caso?',a:'¿Hay registros de pago que muestren trabajo extra no compensado? ¿Cuántos otros trabajadores sin papeles había en sanitación? ¿Alguno puede corroborar la junta del supervisor? ¿El contratista trabaja en otras plantas con trabajadores indocumentados? ¿Han buscado trabajo en otro lugar y qué los ha impedido concretamente? ¿Tienen copia del warning que firmaron por la operación de la hija?'},
+  ],
+},
+
+// ── CASO 3 ──────────────────────────────────────────
+3:{id:3,title:'La Compañía',
+  spine:'s3',
+  tags:['Explotación laboral prolongada','Coerción económica','Dependencia laboral'],
+  tagClasses:['tg','ts','tn'],
+  diff:'Alto',diffColor:'#7a5e00',
+  overview:'Hombre reclutado mediante promesa de trabajo seguro, sometido a años de explotación laboral por un empleador que era su única fuente de ingreso y vivienda, con jornadas extremas, pagos retenidos, lesiones sin cobertura y control psicológico por dependencia inducida.',
+  blocks:[
+    {l:'Contexto inicial',t:'',c:'El cliente llegó a EE. UU. a los 20 años en febrero de 2008, de un estado del centro de México. Sin preparatoria completa. Sin red de contactos en EE. UU. Lleva ~18 años sin regresar a México. Ha criado durante 14 años a un menor nacido en Houston (ciudadano americano). Registrado como padre del menor en escuela y hospital. Adopción denegada por falta de documentos.'},
+    {l:'Reclutamiento',t:'',c:'Un amigo de toda la vida, ya en Utah, le escribió: "Vente, ya tengo trabajo para ti. Es trabajo seguro porque ahí trabaja pura familia, todos del mismo pueblo." El cliente, sin opciones laborales en México, aceptó basándose en esa promesa de seguridad y red de confianza.'},
+    {l:'Cruce por desierto y cautiverio con coyotes',t:'warn',c:'Cruzó el desierto en condiciones extremas. Al llegar, el coyote los dejó en un apartamento y desapareció ~una semana. Sin comida suficiente, sin información de ubicación, sin poder salir. Los cuidadores eran "recios con sus órdenes": obedecer sin cuestionar, no hacer ruido. Dependencia total de lo que el coyote les llevara.'},
+    {l:'Uso de documentos sin consentimiento',t:'warn',c:'Los coyotes preguntaron quién tenía identificación. El cliente mostró su credencial de elector. Lo llevaron a una agencia vehicular con un americano desconocido y le dijeron: "Tú nada más di que sí y dale tu credencial." Resultó que sacaron placas vehiculares a su nombre sin que él entendiera el propósito. ÁREA DE INDAGACIÓN: ¿qué pasó con esas placas?'},
+    {l:'Inicio de trabajo y condiciones',t:'danger',c:'Llegó el 3 de marzo de 2008. Trabajo inmediato para empresa de construcción especializada en restaurantes. Salario: $350/semana. Jornada: lun-sáb 7:00am–8:00pm (13h), a veces domingos. Nunca le pagaron overtime. Nunca emitieron documentos fiscales. No hubo orientación ni adaptación.'},
+    {l:'Dependencia total: trabajo y vivienda',t:'danger',c:'Todos los trabajadores eran del mismo pueblo. El empleador era la única fuente de trabajo conocida en todo el estado. Vivían en la casa del hermano del empleador (~$500/mes entre todos). Un encargado los sobrcobraba. Cuando reclamaban pagos tardíos, el hermano mediaba pero los pagos seguían incompletos. Entorno laboral y residencial controlado por la familia del empleador.'},
+    {l:'Promesas incumplidas y "labia" del patrón',t:'warn',c:'El empleador prometió bonos y aumentos en múltiples ocasiones. Cada vez que alguien iba a reclamar, el empleador "empezaba con su labia": hablaba tan convincentemente que el trabajador terminaba cediendo y aceptando las mismas condiciones. El cliente aprendió plomería, gas, soldadura, tile, drywall y terminados — trabajo de nivel profesional — sin que el salario lo reflejara jamás.'},
+    {l:'Amenaza psicológica de dependencia',t:'warn',c:'Cuando alguno amenazaba con irse: "Váyanse. Van a regresar. No van a encontrar un mejor patrón aquí en Utah que yo, que los trate como yo." El cliente admite que al principio ese argumento le causaba miedo genuino: era el único empleador que conocían en todo el estado.'},
+    {l:'Retrasos en pago y control económico',t:'danger',c:'En múltiples ocasiones el empleador se retrasó 2-3 meses en pagar el total. Pagaba solo la mitad de la quincena y el resto quedaba indefinido. El cliente sobrevivía con trabajitos por cuenta propia ($100-150). Con lo que le pagaba el empleador no le alcanzaba para renta, seguro, teléfono, gasolina y remesas. Comía "pura marucha."'},
+    {l:'Trabajo en propiedades personales del empleador',t:'warn',c:'El empleador los llevaba a trabajar en su casa y en las de sus hermanos. Lo enmarcaba como pregunta: "¿Quieren ir?" Pero el contexto de dependencia total hacía imposible negarse. Pago: $20 y comida por día completo de trabajo en propiedades personales del empleador.'},
+    {l:'Lesiones sin cobertura médica',t:'danger',c:'Cortadura de dedo pulgar con metal: fue al médico meses después, costo $1,800 que pagó él mismo. El empleador no aportó nada. Hombros dañados permanentemente de cargar hojas de sheetrock >12 pies: declinaba soltarlas porque el empleador decía que "el material era dinero." Sin equipo de protección adecuado. Herramienta propia descontada del sueldo. Hasta hoy no puede cargar cosas pesadas por tiempo prolongado.'},
+    {l:'Fin del esquema',t:'sage',c:'Al conocer personas externas y comparar salarios, entendió que era explotado. Buscó trabajo en compañías distintas. Al decirle al empleador que se iba, este respondió: "OK, que te vaya bien." Sin represalias. Sin consecuencias.'},
+    {l:'⚠ Áreas de posible debilidad',t:'danger',c:'',list:['No hubo amenazas directas del empleador contra el cliente ni su familia.','No hubo retención física: el cliente podía moverse y eventualmente se fue sin consecuencias.','El vínculo entre coyotes y empleador NO está establecido en la declaración — pueden ser actores independientes.','El cliente reconoce que en algún punto podría haber buscado trabajo en otro lugar.','El esquema puede clasificarse como explotación laboral grave (FLSA) sin los medios coercitivos suficientes para trata.']},
+  ],
+  pOpts:[
+    {id:'rec',l:'Reclutamiento',ok:true},
+    {id:'tra',l:'Transporte',ok:true},
+    {id:'tras',l:'Traslado',ok:true},
+    {id:'alb',l:'Albergue',ok:true},
+    {id:'rcep',l:'Recepción',ok:true},
+    {id:'ret',l:'Retención / Control',ok:true},
+  ],
+  pModel:'Todos los actos del proceso tienen evidencia, pero con distintos niveles de fuerza. Reclutamiento: promesa fraudulenta de trabajo seguro con "pura familia del mismo pueblo." Transporte: cruce por desierto organizado por coyotes. Traslado: llevado de frontera a Utah. Albergue: apartamento de coyotes ~semana y media, luego casa del hermano del empleador. Recepción: directamente en el entorno de la empresa. Retención: dependencia económica y miedo psicológico. PROBLEMA CRÍTICO: la declaración no establece que coyotes y empleador actuaran coordinadamente. Si son actores independientes, el proceso de trata tiene una ruptura estructural.',
+  pAlerts:['El vínculo coyotes-empleador es el hueco más importante a investigar.','Si el empleador reclutó específicamente a personas recién llegadas sin red, eso refuerza el esquema.','Área de indagación: ¿el amigo que lo reclutó tenía algún acuerdo con el empleador? ¿El empleador enviaba a buscar trabajadores a México?','La retención fue psicológica y económica, no física. Documentar el mecanismo de dependencia con detalle.'],
+  mOpts:[
+    {id:'fraude',l:'Fraude',ok:true},
+    {id:'fuerza',l:'Fuerza física directa del empleador',ok:false},
+    {id:'coer',l:'Coerción directa',ok:false},
+    {id:'amz',l:'Amenazas directas',ok:false},
+    {id:'vulner',l:'Abuso de vulnerabilidad migratoria',ok:true},
+    {id:'deuda',l:'Deuda implícita / retención de pago',ok:true},
+    {id:'cpsic',l:'Control psicológico',ok:true},
+    {id:'afam',l:'Amenazas contra familia',ok:false},
+    {id:'vigil',l:'Vigilancia activa',ok:false},
+    {id:'rmiedo',l:'Retención por miedo',ok:true},
+    {id:'manlab',l:'Manipulación / abuso laboral',ok:true},
+    {id:'abeco',l:'Abuso económico',ok:true},
+  ],
+  mModel:'Fraude: prometieron trabajo seguro; la realidad fue 13h/día sin overtime, sin documentos fiscales, sin equipo de protección, salario insuficiente para subsistir. Control psicológico: "no van a encontrar mejor patrón" — el cliente mismo dice que le causaba miedo genuino y que "uno terminaba cediendo." Es el eje del caso. Abuso de vulnerabilidad migratoria: sin papeles, sin conocer sus derechos, sin red fuera del empleador. Abuso económico: pagos retenidos 2-3 meses, overtime nunca pagado, $20 por día en propiedades personales del empleador. Retención por miedo: económica y psicológica. SIN EVIDENCIA DE: fuerza física del empleador, amenazas directas, amenazas contra familia, coerción directa, vigilancia activa.',
+  mAlerts:['El control psicológico es sutil pero documentado: el propio cliente describe el mecanismo exacto.','El abuso económico es el más fácil de corroborar: registros de pago, comparación con salarios de mercado.','RIESGO: no seleccionar coerción directa o amenazas — no hay evidencia. La dependencia no es lo mismo que coerción directa.','Los $1,800 del médico y las herramientas descontadas son evidencia de abuso económico documentable.'],
+  fOpts:[
+    {id:'explab',l:'Explotación laboral',ok:true},
+    {id:'sinv',l:'Servidumbre involuntaria (argumentable)',ok:true},
+    {id:'peon',l:'Peonaje',ok:false},
+    {id:'deudav',l:'Deuda vinculante',ok:false},
+    {id:'escl',l:'Esclavitud',ok:false},
+    {id:'exsex2',l:'Explotación sexual',ok:false},
+  ],
+  fModel:'Explotación laboral: el fin más documentado y menos contestable — jornadas extremas sin overtime, salario insuficiente, lesiones sin cobertura. Servidumbre involuntaria: argumentable pero DÉBIL — el propio cliente se fue al final sin consecuencias, lo que debilita significativamente este argumento. Peonaje NO aplica formalmente: aunque hay pagos retenidos y descuentos, no hay una "deuda" explícita usada como instrumento de control comparable al Caso 1. CRÍTICO: este es el caso donde el fin de explotación laboral es sólido, pero elevarlo a servidumbre involuntaria para Visa T requiere mayor evidencia del mecanismo coercitivo.',
+  fAlerts:['El cliente se fue sin consecuencias — ese es el mayor debilitador del argumento de servidumbre involuntaria.','El abuso económico sostenido sin poder ahorrar ni avanzar puede argumentarse como ciclo de subsistencia forzada.','Área de indagación: ¿en algún momento el empleador le dijo explícitamente que no podía irse? ¿Qué pasó cuando otros intentaron irse antes?','RIESGO: seleccionar peonaje sin evidencia de una deuda específica como instrumento de control es un error de clasificación.'],
+  eqs:[
+    {id:'esquema',l:'¿Cómo se acredita el esquema de trata?',model:'Es el punto más difícil. Para acreditar "esquema" vs. violación laboral ordinaria se necesita intencionalidad de control. Elementos disponibles: reclutamiento específico de personas vulnerables del mismo pueblo, condiciones radicalmente distintas a las prometidas, estructura de dependencia diseñada (vivienda del hermano, único empleador), promesas sistemáticamente incumplidas como retención. Área de indagación crítica: ¿hay otros trabajadores del mismo pueblo con la misma experiencia? El patrón sistemático es la clave.'},
+    {id:'cooper',l:'¿Qué cooperación existe y qué debe fortalecerse?',model:'La cooperación más relevante es de 2013: el cliente cooperó con la policía en una investigación de homicidio (situación no relacionada) — proporcionó declaración, huellas, fotos, y estuvo dispuesto a testificar. Eso establece un precedente de cooperación genuina con autoridades y es un activo importante de credibilidad. Para el caso de trata: reporte formal ante DOL (violaciones laborales documentables) y si se establece el esquema, ante FBI u HSI.'},
+    {id:'presencia',l:'¿La presencia en EE. UU. está causalmente conectada con la trata?',model:'Argumento moderado. El cliente cruzó específicamente porque le prometieron trabajo en Utah — ese cruce fue el acto de reclutamiento. La llegada fue directa a la red del empleador. Sin embargo, la ruptura posible: si los coyotes y el empleador actuaban independientemente, la cadena de trata tiene una interrupción. Si el amigo reclutador estaba a su vez siendo controlado por el empleador, la conexión causal se fortalece. Requiere investigación del rol del amigo reclutador.'},
+    {id:'hardship',l:'¿Qué argumentos de hardship son sólidos?',model:'SÓLIDOS: (1) Separación del menor ciudadano americano de 14 años criado como hijo por 14 años — única figura paterna, consta en registros escolares y hospitalarios (documentable y verificable). (2) Daño físico permanente: hombros y dedo sin atención médica formal — requiere evaluación. (3) 18 años de arraigo en EE. UU. sin visita a México. (4) Dependencia de padres adultos mayores en México que él sostiene. RIESGO: el menor no fue adoptado legalmente. USCIS puede cuestionar el peso del argumento.'},
+  ],
+  empM:{
+    proceso:{h:'Reclutamiento con promesa fraudulenta; transporte por coyotes; albergue en apartamento de coyotes y casa del empleador; recepción en Utah; retención por dependencia económica y miedo.',e:'Cruce por desierto feb 2008; ~semana en apartamento de coyotes; llegada directa a casa del hermano del empleador; único empleador en el estado.',f:'Medio',r:'Vínculo coyotes-empleador no establecido. Si son actores independientes, el proceso de trata tiene una ruptura estructural.'},
+    medio:{h:'Fraude en condiciones prometidas; control psicológico por dependencia inducida; abuso económico sistemático; abuso de vulnerabilidad migratoria; retención por miedo.',e:'$350/sem para 13h/día sin overtime; pagos retenidos 2-3 meses; "no van a encontrar mejor patrón"; $20 por día en propiedades personales del empleador.',f:'Medio',r:'Sin amenazas directas ni fuerza física. El control fue psicológico-económico, más difícil de probar ante USCIS.'},
+    fin:{h:'Explotación laboral (sólida). Servidumbre involuntaria (argumentable, débil).',e:'13h/día sin overtime; salario insuficiente; lesiones sin cobertura; sin prestaciones ni documentos fiscales.',f:'Medio',r:'El cliente se fue sin consecuencias. Eso debilita servidumbre. La explotación laboral grave es el argumento principal.'},
+    cooperacion:{h:'Cooperación con policía en 2013 (homicidio, no relacionado). Ahora dispuesto a cooperar sobre explotación laboral.',e:'Declaró a policía 2013, proporcionó huellas y fotos; estaba listo para testificar; caso resuelto por culpabilidad del agresor.',f:'Medio',r:'La cooperación de 2013 no fue sobre trata. Para Visa T necesita reportar el caso laboral ante la agencia correspondiente.'},
+    presencia:{h:'Cruce organizado por coyotes para ir al empleo prometido. Llegada directa a red del empleador.',e:'Entró por desierto feb 2008 motivado por la promesa de trabajo; llegó el 3 de marzo directamente a Utah.',f:'Medio',r:'Vínculo coyotes-empleador no establecido. Si el amigo actuó por su cuenta, la causalidad se debilita significativamente.'},
+    hardship:{h:'Menor ciudadano de 14 años criado como hijo; daño físico permanente; padres dependientes en México; 18 años fuera de México.',e:'Registrado como padre en escuela y hospital; hombros dañados de cargar sheetrock; paga cuidador para sus padres en México.',f:'Alto',r:'La adopción legal fue denegada. USCIS puede cuestionar el peso del argumento del menor sin lazo legal formal.'},
+  },
+  uscisM:[
+    {q:'¿Qué podría generar un RFE?',a:'(1) Ruptura posible entre coyotes y empleador: USCIS preguntará cómo se conecta el cruce con el esquema de explotación laboral. (2) El cliente se fue sin consecuencias: USCIS puede argumentar que podía haberse ido antes voluntariamente. (3) Servidumbre involuntaria sin restricción física es difícil de sostener solo con dependencia económica. (4) La deuda con el IRS ($15,000 de empleo posterior) — asegurarse de que no se mezcle con el argumento de trata.'},
+    {q:'¿Qué parte del caso requiere corroboración?',a:'(1) Relación entre el amigo reclutador y el empleador: ¿el amigo fue instruido para reclutar? (2) Testimonios de otros trabajadores del mismo pueblo en la misma empresa. (3) Registros de pago del empleador (talones de cheque o transferencias). (4) Evaluación médica de hombros y dedo. (5) Registros escolares y hospitalarios que establezcan el rol de padre del menor.'},
+    {q:'¿Qué hechos podrían verse como explotación laboral común y no trata?',a:'La totalidad de los hechos laborales (overtime no pagado, salario insuficiente, sin prestaciones) son violaciones documentables de FLSA. El cliente admite que el amigo lo invitó de buena fe. El cliente se fue libremente al final. El empleador nunca amenazó directamente. Estos hechos configuran violación laboral grave, pero USCIS puede no ver el elemento coercitivo suficiente para calificar como trata.'},
+    {q:'¿Qué se necesita para elevar el caso a argumento sólido Visa T?',a:'(1) Establecer la conexión coyotes-empleador como parte de un esquema unificado, o al menos que el empleador conscientemente recibía trabajadores vulnerables recién llegados. (2) Testimonios de al menos otro trabajador del mismo grupo. (3) Documentar el mecanismo de control psicológico con precisión. (4) Evaluaciones médica y psicológica. (5) Formalizar cooperación con DOL y DOJ.'},
+    {q:'¿Dónde pueden haber inconsistencias?',a:'El cliente dice que "uno terminaba cediendo" — implica que SÍ consideró irse y fue convencido. Eso es fortaleza para control psicológico pero también puede verse como decisión voluntaria. Los trabajos de fin de semana se enmarcaban como "¿quieren ir?" — forma de pregunta que puede usarse contra el argumento de coerción.'},
+    {q:'¿Qué preguntas debe hacer el entrevistador antes de cerrar el caso?',a:'¿El amigo reclutador tenía algún acuerdo con el empleador? ¿El empleador le dio algo al amigo por traerlo? ¿Hay otros trabajadores del mismo pueblo que puedan testificar? ¿En algún momento el empleador le dijo explícitamente que no podía irse? ¿Qué pasó con los otros que se fueron antes que él? ¿Ha ido al médico por los hombros o el dedo desde que salió? ¿Tiene algún recibo o comprobante de pago de ese período?'},
+  ],
+},
+}; // end CASES
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+function initShelf(){
+  const shelf=document.getElementById('case-shelf');
+  shelf.innerHTML='';
+  Object.values(CASES).forEach(c=>{
+    const tags=c.tags.map((t,i)=>`<span class="tag ${c.tagClasses[i]}">${t}</span>`).join('');
+    shelf.innerHTML+=`
+    <div class="book-card" onclick="openCase(${c.id})">
+      <div class="book-spine ${c.spine}"></div>
+      <div class="book-cover-area">
+        <div class="book-num">${String(c.id).padStart(2,'0')}</div>
+        <div class="book-title">${c.title}</div>
+        <div class="book-label">${c.tags[0]} · ${c.tags[1]}</div>
+        <div class="book-tags">${tags}</div>
+      </div>
+      <div class="book-body">
+        <p class="book-overview">${c.overview}</p>
+        <div class="book-diff"><span class="diff-dot" style="background:${c.diffColor}"></span>Nivel de análisis: <strong>${c.diff}</strong></div>
+      </div>
+      <div class="book-footer">Abrir expediente →</div>
+    </div>`;
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  OPEN CASE
+// ═══════════════════════════════════════════════════════
+function openCase(id){
+  CC=CASES[id];
+  UA={proceso:{},medio:{},fin:{},elig:{},emp:{},uscis:{}};
+  document.getElementById('case-title-bar').innerHTML=`Caso ${id} — <em>${CC.title}</em>`;
+  buildExpediente();
+  buildProceso();
+  buildMedio();
+  buildFin();
+  buildElig();
+  buildEMP();
+  buildUSCIS();
+  switchPanel('ap-proceso',document.querySelector('[data-p="ap-proceso"]'));
+  goTo('s-case');
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDER: EXPEDIENTE (left panel)
+// ═══════════════════════════════════════════════════════
+function buildExpediente(){
+  const c=CC;
+  const tags=c.tags.map((t,i)=>`<span class="tag ${c.tagClasses[i]}">${t}</span>`).join('');
+  let html=`
+  <div class="exp-book-header">
+    <div class="eyebrow">Expediente · Caso ${c.id}</div>
+    <h3>${c.title}</h3>
+    <p class="overview">${c.overview}</p>
+    <div class="book-tags">${tags}</div>
+  </div>
+  <div class="exp-hint">📋 Lee todos los bloques antes de responder. Las <strong>tarjetas en rojo</strong> señalan áreas débiles del caso.</div>
+  <div class="exp-stack">`;
+  c.blocks.forEach(b=>{
+    html+=`<div class="blk${b.t?' '+b.t:''}"><h4>${b.l}</h4>`;
+    if(b.c) html+=`<p>${b.c}</p>`;
+    if(b.list){html+=`<ul>`;b.list.forEach(i=>{html+=`<li>${i}</li>`;});html+=`</ul>`;}
+    html+=`</div>`;
+  });
+  html+=`</div>`;
+  document.getElementById('expediente-panel').innerHTML=html;
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDER: ANALYSIS PANELS
+// ═══════════════════════════════════════════════════════
+function chkGrid(opts,sec){
+  let h=`<div class="chk-grid">`;
+  opts.forEach(o=>{
+    h+=`<label class="chk">
+      <input type="checkbox" id="${sec}_${o.id}" onchange="recChk('${sec}','${o.id}',this.checked)">
+      <label for="${sec}_${o.id}">${o.l}</label>
+    </label>`;
+  });
+  return h+`</div>`;
+}
+function jta(id,ph,rows=3){
+  return `<div class="jlabel">Justificación con evidencia del caso:</div>
+  <textarea class="jta" id="${id}" rows="${rows}" placeholder="${ph}" oninput="recTxt('${id}',this.value);upCt(this,'${id}_ct')"></textarea>
+  <div class="charct" id="${id}_ct">0 caracteres</div>`;
+}
+function recChk(sec,id,v){if(!UA[sec])UA[sec]={};UA[sec][id]=v;}
+function recTxt(id,v){const p=id.indexOf('_');const sec=id.slice(0,p);const k=id.slice(p+1);if(!UA[sec])UA[sec]={};UA[sec][k]=v;}
+function upCt(el,cid){const c=document.getElementById(cid);if(c)c.textContent=el.value.length+' caracteres';}
+function recEMP(r,col,v){if(!UA.emp[r])UA.emp[r]={};UA.emp[r][col]=v;}
+
+function buildProceso(){
+  document.getElementById('ap-proceso').innerHTML=`
+  <div class="section-head"><div class="sec-badge">A</div><div><h3>Identificación del PROCESO</h3><p>Reclutamiento · Transporte · Traslado · Albergue · Recepción · Retención</p></div></div>
+  <div class="ibox">Selecciona ÚNICAMENTE los actos que tienen evidencia directa en el expediente. No selecciones lo que no puedas citar con un hecho específico.</div>
+  <div class="qblock"><div class="qlabel">A.1 — Actos del proceso presentes</div><div class="qbody">
+    <div class="qtext">¿Qué actos del proceso están documentados en el expediente?</div>
+    ${chkGrid(CC.pOpts,'proceso')}
+    ${jta('proceso_j1','Cita el hecho específico del expediente que sustenta cada acto que seleccionaste. ¿Qué parte del proceso está ausente o es débil?')}
+  </div></div>
+  <div class="qblock"><div class="qlabel">A.2 — Hechos de apoyo y áreas de indagación</div><div class="qbody">
+    <div class="qtext">¿Qué parte del proceso requiere mayor evidencia o podría cuestionarse? ¿Qué le faltaría indagar al entrevistador?</div>
+    ${jta('proceso_j2','Señala qué elementos del proceso están ausentes o son débiles y qué pregunta faltaría hacer para fortalecerlos.')}
+  </div></div>
+  <div style="display:flex;justify-content:flex-end;margin-top:1rem;">
+    <button class="btn-eval" style="font-size:13px;padding:.65rem 1.5rem;" onclick="switchPanel('ap-medio',document.querySelector('[data-p=ap-medio]'))">B. Medio →</button>
+  </div>`;
+}
+
+function buildMedio(){
+  document.getElementById('ap-medio').innerHTML=`
+  <div class="section-head"><div class="sec-badge">B</div><div><h3>Identificación del MEDIO</h3><p>Fraude · Fuerza · Coerción · Amenazas · Vulnerabilidad · Deuda · Control psicológico</p></div></div>
+  <div class="ibox">El "medio" es el cómo del control. Puede ser directo (amenaza, golpe) o indirecto (dependencia, miedo contextual). Identifica el tipo con precisión: no todo medio aplica en todos los casos.</div>
+  <div class="qblock"><div class="qlabel">B.1 — Medios coercitivos presentes</div><div class="qbody">
+    <div class="qtext">¿Qué medios están documentados? Selecciona solo los que puedes sustentar con evidencia textual del expediente.</div>
+    ${chkGrid(CC.mOpts,'medio')}
+    ${jta('medio_j1','Para cada medio seleccionado, cita el hecho específico del expediente. Distingue entre coerción directa, indirecta y contextual.')}
+  </div></div>
+  <div class="qblock"><div class="qlabel">B.2 — Tipo y alcance de la coerción</div><div class="qbody">
+    <div class="qtext">¿La coerción es directa, indirecta o contextual? ¿Hay miedo razonable documentado? ¿Por qué una persona en la misma situación no habría podido irse libremente?</div>
+    ${jta('medio_j2','Describe el tipo de coerción y el miedo razonable. Usa hechos específicos del expediente para sostener el argumento.')}
+  </div></div>
+  <div style="display:flex;justify-content:space-between;margin-top:1rem;">
+    <button class="btn-sec" onclick="switchPanel('ap-proceso',document.querySelector('[data-p=ap-proceso]'))">← A. Proceso</button>
+    <button class="btn-eval" style="font-size:13px;padding:.65rem 1.5rem;" onclick="switchPanel('ap-fin',document.querySelector('[data-p=ap-fin]'))">C. Fin →</button>
+  </div>`;
+}
+
+function buildFin(){
+  document.getElementById('ap-fin').innerHTML=`
+  <div class="section-head"><div class="sec-badge">C</div><div><h3>Identificación del FIN</h3><p>Explotación laboral · Servidumbre involuntaria · Peonaje · Deuda vinculante · Esclavitud</p></div></div>
+  <div class="ibox">El "fin" es el propósito de la explotación. Selecciona la categoría legal más precisa y justifica por qué esa aplica y no las otras.</div>
+  <div class="qblock"><div class="qlabel">C.1 — Fin de explotación</div><div class="qbody">
+    <div class="qtext">¿Cuál es el fin documentado? Selecciona la categoría que mejor aplica según los hechos del expediente.</div>
+    ${chkGrid(CC.fOpts,'fin')}
+    ${jta('fin_j1','¿Por qué esa categoría y no otra? Cita los hechos que la sostienen.')}
+  </div></div>
+  <div class="qblock"><div class="qlabel">C.2 — Fortalezas y debilidades del argumento</div><div class="qbody">
+    <div class="qtext">¿Qué hechos sostienen el fin que identificaste? ¿Qué hechos podrían usarse en contra de ese argumento ante USCIS?</div>
+    ${jta('fin_j2','Sé honesto con las áreas débiles. Señala qué faltaría para elevar el argumento o qué parte podría cuestionarse.')}
+  </div></div>
+  <div style="display:flex;justify-content:space-between;margin-top:1rem;">
+    <button class="btn-sec" onclick="switchPanel('ap-medio',document.querySelector('[data-p=ap-medio]'))">← B. Medio</button>
+    <button class="btn-eval" style="font-size:13px;padding:.65rem 1.5rem;" onclick="switchPanel('ap-elig',document.querySelector('[data-p=ap-elig]'))">D. Elegibilidad →</button>
+  </div>`;
+}
+
+function buildElig(){
+  let qh='';
+  CC.eqs.forEach((q,i)=>{
+    qh+=`<div class="qblock"><div class="qlabel">D.${i+1} — ${q.l}</div><div class="qbody">
+      <div class="qtext">${q.l}</div>
+      ${jta('elig_'+q.id,'Escribe tu análisis basado en los hechos del expediente. Señala si algún elemento requiere mayor indagación.',4)}
+    </div></div>`;
+  });
+  document.getElementById('ap-elig').innerHTML=`
+  <div class="section-head"><div class="sec-badge">D</div><div><h3>Criterios de Elegibilidad Visa T</h3><p>Esquema de trata · Presencia causal · Cooperación · Dificultad extrema</p></div></div>
+  <div class="wbox">⚠ La dificultad extrema por sí sola no acredita la Visa T. No confundas argumentos de hardship con la conexión causal entre la trata y la presencia en EE. UU.</div>
+  ${qh}
+  <div style="display:flex;justify-content:space-between;margin-top:1rem;">
+    <button class="btn-sec" onclick="switchPanel('ap-fin',document.querySelector('[data-p=ap-fin]'))">← C. Fin</button>
+    <button class="btn-eval" style="font-size:13px;padding:.65rem 1.5rem;" onclick="switchPanel('ap-emp',document.querySelector('[data-p=ap-emp]'))">Matriz EMP →</button>
+  </div>`;
+}
+
+function buildEMP(){
+  const rows=[
+    {k:'proceso',l:'Proceso',color:'#4a7cc9'},
+    {k:'medio',l:'Medio',color:var_rie=>'#c93030'},
+    {k:'fin',l:'Fin',color:'#5c8862'},
+    {k:'cooperacion',l:'Cooperación',color:'#c5a028'},
+    {k:'presencia',l:'Presencia causal',color:'#8a2abc'},
+    {k:'hardship',l:'Dificultad extrema',color:'#7a5c3a'},
+  ];
+  const colors=['#4a7cc9','#c93030','#5c8862','#c5a028','#8a2abc','#7a5c3a'];
+  let trows='';
+  rows.forEach((r,i)=>{
+    trows+=`<tr>
+      <td><span class="row-dot" style="background:${colors[i]}"></span>${r.l}</td>
+      <td><textarea id="emp_${r.k}_h" rows="3" placeholder="Hechos del expediente..." oninput="recEMP('${r.k}','h',this.value)"></textarea></td>
+      <td><textarea id="emp_${r.k}_e" rows="3" placeholder="Evidencia textual..." oninput="recEMP('${r.k}','e',this.value)"></textarea></td>
+      <td><select id="emp_${r.k}_f" onchange="recEMP('${r.k}','f',this.value)">
+        <option value="">— Seleccionar —</option>
+        <option>Alto</option><option>Medio</option><option>Bajo</option><option>Requiere indagación</option>
+      </select></td>
+      <td><textarea id="emp_${r.k}_r" rows="3" placeholder="Riesgo o área débil..." oninput="recEMP('${r.k}','r',this.value)"></textarea></td>
+    </tr>`;
+  });
+  document.getElementById('ap-emp').innerHTML=`
+  <div class="section-head"><div class="sec-badge" style="font-size:.9rem;letter-spacing:.02em;">EMP</div><div><h3>Matriz de Análisis EMP</h3><p>Consolida tu análisis por elemento. Si un área no tiene evidencia, selecciona "Requiere indagación".</p></div></div>
+  <div class="ibox">La columna "Evidencia textual" debe poder citarse directamente del expediente.</div>
+  <div class="emp-wrap">
+  <table class="emp-tbl">
+    <thead><tr><th>Elemento</th><th>Hechos identificados</th><th>Evidencia textual</th><th>Nivel de fuerza</th><th>Riesgo / área débil</th></tr></thead>
+    <tbody>${trows}</tbody>
+  </table></div>
+  <div style="display:flex;justify-content:space-between;margin-top:1rem;">
+    <button class="btn-sec" onclick="switchPanel('ap-elig',document.querySelector('[data-p=ap-elig]'))">← D. Elegibilidad</button>
+    <button class="btn-eval" style="font-size:13px;padding:.65rem 1.5rem;" onclick="switchPanel('ap-uscis',document.querySelector('[data-p=ap-uscis]'))">Riesgo USCIS →</button>
+  </div>`;
+}
+
+function buildUSCIS(){
+  let qh='';
+  CC.uscisM.forEach((q,i)=>{
+    qh+=`<div class="rq">
+      <span class="rq-num">${String(i+1).padStart(2,'0')}</span>
+      <h4>${q.q}</h4>
+      <p class="rhint">Colócate en el rol de revisor de USCIS: ¿qué cuestionarías? ¿Qué te convencería?</p>
+      ${jta('uscis_q'+i,'Escribe tu análisis de riesgo. ¿Qué podría debilitar el caso y cómo se mitigaría?',3)}
+    </div>`;
+  });
+  document.getElementById('uscis-inner').innerHTML=`
+  <div class="section-head"><div class="sec-badge" style="font-size:.75rem;letter-spacing:.02em;">USCIS</div><div><h3>Análisis de Riesgo USCIS</h3><p>Anticipa las objeciones del oficial revisor y explica cómo se mitigarían desde el expediente.</p></div></div>
+  <div class="wbox">🏛️ Sección avanzada. Responde como si fueras tú quien tuviera que defender este caso ante una RFE.</div>
+  <div class="risk-grid">${qh}</div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  EVALUATION
+// ═══════════════════════════════════════════════════════
+function collectAll(){
+  // textareas
+  const ids=['proceso_j1','proceso_j2','medio_j1','medio_j2','fin_j1','fin_j2'];
+  ids.forEach(id=>{const el=document.getElementById(id);if(el){const p=id.indexOf('_');const sec=id.slice(0,p);const k=id.slice(p+1);if(!UA[sec])UA[sec]={};UA[sec][k]=el.value||'';}});
+  CC.eqs.forEach(q=>{const el=document.getElementById('elig_'+q.id);if(el){if(!UA.elig)UA.elig={};UA.elig[q.id]=el.value||'';}});
+  CC.uscisM.forEach((q,i)=>{const el=document.getElementById('uscis_q'+i);if(el)UA.uscis['q'+i]=el.value||'';});
+  ['proceso','medio','fin','cooperacion','presencia','hardship'].forEach(r=>{
+    ['h','e','f','r'].forEach(col=>{const el=document.getElementById(`emp_${r}_${col}`);if(el){if(!UA.emp[r])UA.emp[r]={};UA.emp[r][col]=el.value||'';}});
+  });
+}
+
+function scoreChk(opts,sel){
+  const ok=opts.filter(o=>o.ok);const bad=opts.filter(o=>!o.ok);
+  let c=0,m=0,w=0;
+  ok.forEach(o=>{if((sel||{})[o.id])c++;else m++;});
+  bad.forEach(o=>{if((sel||{})[o.id])w++;});
+  const pct=ok.length?Math.max(0,Math.round((c/ok.length)*100-w*15)):0;
+  return{c,m,w,pct};
+}
+function tScore(v){const l=(v||'').trim().length;return l>300?100:l>150?70:l>50?40:0;}
+function lvl(p){return p>=80?{n:'Excelente',k:'exc'}:p>=60?{n:'Adecuado',k:'ade'}:p>=35?{n:'Insuficiente',k:'ins'}:{n:'Riesgoso',k:'rie'};}
+
+function evaluateCase(){
+  collectAll();
+  const pS=scoreChk(CC.pOpts,UA.proceso);
+  const mS=scoreChk(CC.mOpts,UA.medio);
+  const fS=scoreChk(CC.fOpts,UA.fin);
+  const pt=Math.round(pS.pct*.6+(tScore(UA.proceso.j1||'')+tScore(UA.proceso.j2||''))*.5*.4);
+  const mt=Math.round(mS.pct*.6+(tScore(UA.medio.j1||'')+tScore(UA.medio.j2||''))*.5*.4);
+  const ft=Math.round(fS.pct*.6+(tScore(UA.fin.j1||'')+tScore(UA.fin.j2||''))*.5*.4);
+  const et=Math.round(CC.eqs.map(q=>tScore(UA.elig[q.id]||'')).reduce((a,b)=>a+b,0)/CC.eqs.length);
+  const empRows=['proceso','medio','fin','cooperacion','presencia','hardship'];
+  const empMatch=empRows.filter(r=>CC.empM[r].f===((UA.emp[r]||{}).f||'')).length;
+  const empFill=empRows.filter(r=>((UA.emp[r]||{}).h||'').trim().length>20).length;
+  const empt=Math.round((empMatch/6)*60+(empFill/6)*40);
+  const ust=Math.round(CC.uscisM.map((q,i)=>tScore(UA.uscis['q'+i]||'')).reduce((a,b)=>a+b,0)/CC.uscisM.length);
+  const secs=[{n:'Proceso',s:pt},{n:'Medio',s:mt},{n:'Fin',s:ft},{n:'Elegibilidad',s:et},{n:'Matriz EMP',s:empt},{n:'Riesgo USCIS',s:ust}];
+  const overall=Math.round(secs.reduce((a,s)=>a+s.s,0)/secs.length);
+
+  // Guardar en Google Sheets
+  const scores={overall,proceso:pt,medio:mt,fin:ft,elig:et,emp:empt,uscis:ust};
+  sendToSheets(scores, secs);
+
+  renderResults(secs,overall,{pS,mS,fS},empRows,empMatch);
+  goTo('s-results');
+}
+
+// ═══════════════════════════════════════════════════════
+//  ENVÍO A GOOGLE SHEETS
+// ═══════════════════════════════════════════════════════
+function sendToSheets(scores, secs){
+  if(!SCRIPT_URL || SCRIPT_URL === 'PEGA_AQUI_LA_URL_DE_TU_IMPLEMENTACION'){
+    console.warn('[Simulador] SCRIPT_URL no configurada — los datos no se están guardando.');
+    const st=document.getElementById('res-save-status');
+    if(st) st.style.display='none';
+    return;
+  }
+  try{
+    const payload={
+      sesionId:      SESSION_ID,
+      nombre:        NOMBRE_COLABORADOR || 'Anónimo',
+      casoId:        CC.id,
+      casoTitulo:    CC.title,
+      scores:        scores,
+      ua:{
+        proceso:     UA.proceso  || {},
+        medio:       UA.medio    || {},
+        fin:         UA.fin      || {},
+        elig:        UA.elig     || {},
+        emp:         UA.emp      || {},
+        uscis:       UA.uscis    || {},
+        // Enviar también los textos de las preguntas USCIS
+        uscisPreguntas: CC.uscisM.map(q=>q.q),
+      },
+    };
+    const formData=new URLSearchParams();
+    formData.append('data', JSON.stringify(payload));
+    // Fire-and-forget: no esperamos respuesta (CORS en Apps Script)
+    fetch(SCRIPT_URL,{method:'POST',body:formData})
+      .then(()=>{
+        console.log('[Simulador] Datos enviados a Sheets ✓');
+        const st=document.getElementById('res-save-status');
+        if(st) st.textContent='✓ Respuestas guardadas en Google Sheets.';
+      })
+      .catch(e=>{
+        console.warn('[Simulador] Error al enviar datos:', e);
+        const st=document.getElementById('res-save-status');
+        if(st) st.textContent='⚠ No se pudo conectar con Sheets. Verifica la URL del script.';
+      });
+  }catch(e){
+    console.warn('[Simulador] Error construyendo payload:', e);
+  }
+}
+
+function semTag(f){
+  const m={Alto:'alto',Medio:'medio',Bajo:'bajo','Requiere indagación':'ind'};
+  const k=m[f]||'ind';
+  return `<span class="sem ${k}"><span class="sem-dot"></span>${f||'—'}</span>`;
+}
+
+function renderResults(secs,overall,scores,empRows,empMatch){
+  const ov=lvl(overall);
+  document.getElementById('res-subtitle').textContent=`Caso ${CC.id}: ${CC.title} — Resultado global: ${ov.n} (${overall}%)`;
+  const ovColor={exc:'#e8f8ef',ade:'#fef8de',ins:'#fef0e0',rie:'#fde6e6'}[ov.k];
+
+  // Score tiles
+  let tiles=`<div class="score-tile lv-${ov.k}" style="grid-column:span 2;background:${ovColor};border-color:var(--border2);">
+    <div class="lv">${ov.n}</div><div class="sn">Puntaje Global</div><div class="sp">${overall}%</div></div>`;
+  secs.forEach(s=>{const l=lvl(s.s);tiles+=`<div class="score-tile lv-${l.k}"><div class="lv">${l.n}</div><div class="sn">${s.n}</div><div class="sp">${s.s}%</div></div>`;});
+
+  // Check feedback helper
+  function chkFb(opts,sel){
+    return opts.map(o=>{
+      const on=!!(sel||{})[o.id];
+      if(o.ok&&on) return `<div class="fb-row ok"><span class="ic">✓</span><span><strong>${o.l}</strong> — Correctamente identificado.</span></div>`;
+      if(o.ok&&!on) return `<div class="fb-row mis"><span class="ic">⚠</span><span><strong>${o.l}</strong> — Presente en el caso y no fue identificado.</span></div>`;
+      if(!o.ok&&on) return `<div class="fb-row bad"><span class="ic">✗</span><span><strong>${o.l}</strong> — Seleccionado incorrectamente: no aplica a este caso o no tiene evidencia suficiente.</span></div>`;
+      return `<div class="fb-row neu"><span class="ic">—</span><span style="color:var(--ink3);">${o.l} — Correctamente no seleccionado.</span></div>`;
+    }).join('');
+  }
+  function txtFb(uv,model){
+    const t=(uv||'').trim();
+    const ub=`<div class="user-box"><strong>Tu respuesta:</strong>${t.length>50?'<br>'+t:'<em style="color:var(--ink3)"> [Sin respuesta o muy breve]</em>'}</div>`;
+    const mb=`<div class="model-box"><strong>Respuesta modelo:</strong><br>${model}</div>`;
+    return ub+mb;
+  }
+  function alertFb(alerts){
+    return `<ul class="alert-list">`+alerts.map(a=>`<li>${a}</li>`).join('')+`</ul>`;
+  }
+
+  // EMP table comparison
+  let empCmp=`<table class="emp-tbl"><thead><tr><th>Elemento</th><th>Tu fuerza</th><th>Modelo</th><th>Riesgo/área débil (modelo)</th></tr></thead><tbody>`;
+  empRows.forEach(r=>{
+    const uf=((UA.emp[r]||{}).f)||'—';
+    const mf=CC.empM[r].f;
+    const match=uf===mf;
+    empCmp+=`<tr style="${match?'':'background:var(--rie-bg);'}"><td><strong>${{proceso:'Proceso',medio:'Medio',fin:'Fin',cooperacion:'Cooperación',presencia:'Presencia',hardship:'Hardship'}[r]}</strong></td><td>${semTag(uf)} ${match?'✓':''}</td><td>${semTag(mf)}</td><td style="font-size:12px;color:var(--ink3);">${CC.empM[r].r}</td></tr>`;
+  });
+  empCmp+=`</tbody></table>`;
+
+  // USCIS feedback
+  let uscFb='';
+  CC.uscisM.forEach((q,i)=>{
+    uscFb+=`<div class="fb-blk"><div class="fb-blk-hd"><h4>${q.q}</h4></div><div class="fb-blk-bd">${txtFb(UA.uscis['q'+i],q.a)}</div></div>`;
+  });
+
+  // Interview questions (from last USCIS entry)
+  const lastQ=CC.uscisM[CC.uscisM.length-1].a;
+  const pqs=lastQ.split('?').filter(p=>p.trim().length>10).map(p=>`<li>${p.trim()}?</li>`).join('');
+
+  document.getElementById('res-body').innerHTML=`
+  <div class="score-grid">${tiles}</div>
+
+  <div class="fb-sec"><h3>Retroalimentación: Proceso</h3>
+    <div class="fb-blk"><div class="fb-blk-hd"><h4>Elementos seleccionados vs. modelo</h4></div><div class="fb-blk-bd">${chkFb(CC.pOpts,UA.proceso)}</div></div>
+    <div class="fb-blk"><div class="fb-blk-hd"><h4>Respuesta modelo</h4></div><div class="fb-blk-bd">${txtFb((UA.proceso||{}).j1,CC.pModel)}${alertFb(CC.pAlerts)}</div></div>
+  </div>
+
+  <div class="fb-sec"><h3>Retroalimentación: Medio</h3>
+    <div class="fb-blk"><div class="fb-blk-hd"><h4>Medios seleccionados vs. modelo</h4></div><div class="fb-blk-bd">${chkFb(CC.mOpts,UA.medio)}</div></div>
+    <div class="fb-blk"><div class="fb-blk-hd"><h4>Respuesta modelo</h4></div><div class="fb-blk-bd">${txtFb((UA.medio||{}).j1,CC.mModel)}${alertFb(CC.mAlerts)}</div></div>
+  </div>
+
+  <div class="fb-sec"><h3>Retroalimentación: Fin</h3>
+    <div class="fb-blk"><div class="fb-blk-hd"><h4>Fin seleccionado vs. modelo</h4></div><div class="fb-blk-bd">${chkFb(CC.fOpts,UA.fin)}</div></div>
+    <div class="fb-blk"><div class="fb-blk-hd"><h4>Respuesta modelo</h4></div><div class="fb-blk-bd">${txtFb((UA.fin||{}).j1,CC.fModel)}${alertFb(CC.fAlerts)}</div></div>
+  </div>
+
+  <div class="fb-sec"><h3>Retroalimentación: Elegibilidad Visa T</h3>
+    ${CC.eqs.map(q=>`<div class="fb-blk"><div class="fb-blk-hd"><h4>${q.l}</h4></div><div class="fb-blk-bd">${txtFb((UA.elig||{})[q.id],q.model)}</div></div>`).join('')}
+  </div>
+
+  <div class="fb-sec"><h3>Comparación: Matriz EMP</h3>
+    <div class="fb-blk"><div class="fb-blk-hd"><h4>Tu selección de fuerza vs. modelo — filas en rojo no coinciden</h4></div><div class="fb-blk-bd" style="overflow-x:auto;">${empCmp}</div></div>
+  </div>
+
+  <div class="fb-sec"><h3>Análisis de Riesgo USCIS</h3>${uscFb}</div>
+
+  <div class="fb-sec"><h3>Señales de alerta del caso</h3>
+    <div class="fb-blk"><div class="fb-blk-bd">${alertFb([...CC.pAlerts,...CC.mAlerts,...CC.fAlerts])}</div></div>
+  </div>
+
+  <div class="fb-sec"><h3>Preguntas clave pendientes en entrevista</h3>
+    <div class="fb-blk"><div class="fb-blk-bd"><ul class="pq-list">${pqs}</ul></div></div>
+  </div>
+
+  <div class="res-actions">
+    <button class="btn-print" onclick="window.print()">🖨 Imprimir / PDF</button>
+    <button class="btn-print" onclick="copyRes()">📋 Copiar resumen</button>
+    <button class="btn-dark" onclick="openCase(${CC.id})">↩ Reiniciar este caso</button>
+    <button class="btn-primary" onclick="goTo('s-selector')">⇄ Elegir otro caso →</button>
+  </div>`;
+}
+
+function copyRes(){
+  const sub=document.getElementById('res-subtitle').textContent;
+  const boxes=document.querySelectorAll('.model-box');
+  let txt=`SIMULADOR VISA T — TMLF ACADEMY\n${sub}\n\n`;
+  boxes.forEach(b=>{txt+=b.innerText+'\n\n';});
+  navigator.clipboard.writeText(txt).then(()=>alert('Resumen copiado al portapapeles.')).catch(()=>alert('Usa Ctrl+A y Ctrl+C sobre la página.'));
+}
+
+// Init
+initShelf();
+</script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+//  ADMIN PANEL
+// ═══════════════════════════════════════════════════════════════════════
+const ADMIN_PWD   = 'TMLF2025admin';
+let   adminData   = null;   // Raw data from Sheets
+let   adminAuthed = false;
+let   sortCol     = 'Fecha';
+let   sortDir     = 'desc';
+
+// ── AUTH ──────────────────────────────────────────────────────────────
+function adminLogin(){
+  const pwd = (document.getElementById('admin-pwd').value||'').trim();
+  if(pwd !== ADMIN_PWD){
+    document.getElementById('admin-err').style.display='block';
+    document.getElementById('admin-pwd').value='';
+    return;
+  }
+  document.getElementById('admin-err').style.display='none';
+  adminAuthed = true;
+  document.getElementById('admin-login').style.display='none';
+  document.getElementById('admin-dash').classList.add('on');
+  adminLoad();
+}
+
+function adminLogout(){
+  adminAuthed = false;
+  adminData   = null;
+  document.getElementById('admin-pwd').value='';
+  document.getElementById('admin-dash').classList.remove('on');
+  document.getElementById('admin-login').style.display='flex';
+  goTo('s-cover');
+}
+
+// Reset login form when entering admin screen
+const _origGoTo = goTo;
+// Override goTo to reset admin login state on entry
+function goTo(id){
+  SCREENS.forEach(s=>{
+    const el=document.getElementById(s);
+    el.classList.remove('on');
+    el.classList.add('screen');
+  });
+  const target=document.getElementById(id);
+  target.classList.remove('screen');
+  target.classList.add('on');
+  window.scrollTo(0,0);
+  if(id==='s-admin'){
+    if(!adminAuthed){
+      document.getElementById('admin-login').style.display='flex';
+      document.getElementById('admin-dash').classList.remove('on');
+    }
+  }
+}
+
+// ── DATA LOADING ──────────────────────────────────────────────────────
+async function adminLoad(){
+  showAdminLoading();
+  try{
+    const url = SCRIPT_URL + '?action=getData&key=' + encodeURIComponent(ADMIN_PWD);
+    const res  = await fetch(url, {redirect:'follow'});
+    const json = await res.json();
+    if(json.error) throw new Error(json.error);
+    adminData = json;
+    const now = new Date();
+    document.getElementById('admin-last-update').textContent =
+      'Actualizado ' + now.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+    adminRender();
+  }catch(e){
+    document.getElementById('admin-table-area').innerHTML =
+      `<div class="empty-state"><div class="es-icon">⚠️</div>
+       <p style="color:var(--red);">Error al cargar datos: ${e.message}</p>
+       <p style="font-size:12px;margin-top:.5rem;">Verifica que el Apps Script esté implementado y que el script tenga el doGet actualizado.</p></div>`;
+    document.getElementById('admin-stats').innerHTML='';
+  }
+}
+
+function adminRefresh(){ adminLoad(); }
+function showAdminLoading(){
+  document.getElementById('admin-table-area').innerHTML =
+    `<div class="admin-loading"><span class="spinner"></span> Cargando datos de Google Sheets…</div>`;
+  document.getElementById('admin-stats').innerHTML='';
+}
+
+// ── RENDER DASHBOARD ─────────────────────────────────────────────────
+function adminRender(){
+  if(!adminData) return;
+  const rows = adminData.resumen || [];
+  if(!rows.length){
+    renderStats([]);
+    document.getElementById('admin-table-area').innerHTML =
+      `<div class="admin-table-wrap"><div class="empty-state"><div class="es-icon">📭</div>
+       <p>No hay respuestas registradas todavía.</p></div></div>`;
+    return;
+  }
+
+  // Apply filters
+  const fCaso   = (document.getElementById('fil-caso')?.value  ||'').toLowerCase();
+  const fNivel  = (document.getElementById('fil-nivel')?.value ||'').toLowerCase();
+  const fNombre = (document.getElementById('fil-nombre')?.value||'').toLowerCase().trim();
+
+  let filtered = rows.filter(r=>{
+    if(fCaso   && String(r['Caso #']||'').toLowerCase()!==fCaso)   return false;
+    if(fNivel  && (r['Nivel Global']||'').toLowerCase()!==fNivel)  return false;
+    if(fNombre && !(r['Colaborador']||'').toLowerCase().includes(fNombre)) return false;
+    return true;
+  });
+
+  // Sort
+  filtered.sort((a,b)=>{
+    let va=a[sortCol]||'', vb=b[sortCol]||'';
+    if(!isNaN(va)&&!isNaN(vb)){va=Number(va);vb=Number(vb);}
+    if(va<vb) return sortDir==='asc'?-1:1;
+    if(va>vb) return sortDir==='asc'?1:-1;
+    return 0;
+  });
+
+  renderStats(filtered);
+  renderTable(filtered);
+}
+
+function clearFilters(){
+  document.getElementById('fil-caso').value='';
+  document.getElementById('fil-nivel').value='';
+  document.getElementById('fil-nombre').value='';
+  adminRender();
+}
+
+// ── STATS STRIP ───────────────────────────────────────────────────────
+function renderStats(rows){
+  const total = rows.length;
+  const avg   = total ? Math.round(rows.reduce((a,r)=>a+Number(r['Score Global']||0),0)/total) : 0;
+  const excs  = rows.filter(r=>r['Nivel Global']==='Excelente').length;
+  const casos = [...new Set(rows.map(r=>r['Caso #']))].filter(Boolean);
+  const byCase= {};
+  casos.forEach(c=>{ byCase[c]=rows.filter(r=>r['Caso #']==c).length; });
+
+  let caseHtml = casos.sort().map(c=>
+    `<div class="stat-card"><div class="sval">${byCase[c]}</div><div class="slbl">Caso ${c}</div></div>`
+  ).join('');
+
+  document.getElementById('admin-stats').innerHTML =
+    `<div class="stat-card"><div class="sval">${total}</div><div class="slbl">Intentos totales</div></div>
+     <div class="stat-card gold"><div class="sval">${avg}%</div><div class="slbl">Score promedio</div></div>
+     <div class="stat-card sage"><div class="sval">${excs}</div><div class="slbl">Calificación Excelente</div></div>
+     ${caseHtml}`;
+}
+
+// ── SUBMISSIONS TABLE ─────────────────────────────────────────────────
+function renderTable(rows){
+  if(!rows.length){
+    document.getElementById('admin-table-area').innerHTML =
+      `<div class="admin-table-wrap"><div class="empty-state"><div class="es-icon">🔍</div>
+       <p>Ningún resultado coincide con los filtros aplicados.</p></div></div>`;
+    return;
+  }
+
+  const cols = [
+    {k:'Fecha',        l:'Fecha'},
+    {k:'Hora',         l:'Hora'},
+    {k:'Colaborador',  l:'Colaborador'},
+    {k:'Caso #',       l:'Caso'},
+    {k:'Score Global', l:'Global'},
+    {k:'Nivel Global', l:'Nivel'},
+    {k:'Score Proceso',l:'Proceso'},
+    {k:'Score Medio',  l:'Medio'},
+    {k:'Score Fin',    l:'Fin'},
+    {k:'Score Elegibilidad',l:'Elig.'},
+    {k:'Score Matriz EMP',  l:'EMP'},
+    {k:'Score Riesgo USCIS',l:'USCIS'},
+  ];
+
+  const headers = cols.map(c=>{
+    const cls = c.k===sortCol ? 'sort-'+sortDir : '';
+    return `<th class="${cls}" onclick="setSort('${c.k}')">${c.l}</th>`;
+  }).join('') + '<th>Detalle</th>';
+
+  const bodyRows = rows.map((r,i)=>{
+    const nv  = nivelPill(r['Nivel Global']);
+    const caso = r['Caso #'];
+    const sesId = r['Sesión ID'];
+    const scs = [r['Score Proceso'],r['Score Medio'],r['Score Fin'],r['Score Elegibilidad'],r['Score Matriz EMP'],r['Score Riesgo USCIS']]
+      .map(s=>scoreBg(Number(s||0)));
+    return `<tr onclick="openDetail('${sesId}')">
+      <td>${r['Fecha']||'—'}</td>
+      <td>${r['Hora']||'—'}</td>
+      <td><strong>${r['Colaborador']||'—'}</strong></td>
+      <td><span class="caso-badge">Caso ${caso||'?'}</span></td>
+      <td><strong style="color:${scoreColor(Number(r['Score Global']||0))}">${r['Score Global']||0}%</strong></td>
+      <td>${nv}</td>
+      ${scs.map(sc=>`<td>${sc}</td>`).join('')}
+      <td><button class="btn-sec" style="font-size:11.5px;padding:.3rem .7rem;" onclick="event.stopPropagation();openDetail('${sesId}')">Ver →</button></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('admin-table-area').innerHTML =
+    `<div class="admin-table-wrap">
+       <table class="admin-tbl">
+         <thead><tr>${headers}</tr></thead>
+         <tbody>${bodyRows}</tbody>
+       </table>
+     </div>
+     <p style="font-size:12px;color:var(--ink3);margin-top:.5rem;">${rows.length} registro(s) · Haz clic en cualquier fila para ver el detalle completo.</p>`;
+}
+
+function setSort(col){
+  if(sortCol===col) sortDir=sortDir==='asc'?'desc':'asc';
+  else{sortCol=col;sortDir='desc';}
+  adminRender();
+}
+
+// ── HELPERS: COLOR / PILLS ────────────────────────────────────────────
+function nivelPill(n){
+  const cls={Excelente:'pill-exc',Adecuado:'pill-ade',Insuficiente:'pill-ins',Riesgoso:'pill-rie'}[n]||'pill-ins';
+  return `<span class="score-pill ${cls}">${n||'—'}</span>`;
+}
+function scoreColor(v){return v>=80?'var(--exc-c)':v>=60?'var(--ade-c)':v>=35?'var(--ins-c)':'var(--rie-c)';}
+function scoreBg(v){
+  const c=scoreColor(v);
+  return `<span style="font-weight:600;color:${c}">${v}%</span>`;
+}
+function fuerzaTag(f){
+  const m={Alto:'ft-alto',Medio:'ft-medio',Bajo:'ft-bajo','Requiere indagación':'ft-ind'};
+  return `<span class="fuerza-tag ${m[f]||'ft-none'}">${f||'—'}</span>`;
+}
+function nivelColor(n){return{Excelente:'var(--exc-c)',Adecuado:'var(--ade-c)',Insuficiente:'var(--ins-c)',Riesgoso:'var(--rie-c)'}[n]||'var(--ink3)';}
+
+// ── DETAIL DRAWER ─────────────────────────────────────────────────────
+function openDetail(sesionId){
+  if(!adminData) return;
+
+  // Find rows in every sheet by sesionId
+  const SID = 'Sesión ID';
+  const res   = (adminData.resumen ||[]).find(r=>r[SID]===sesionId) || {};
+  const proc  = (adminData.proceso ||[]).find(r=>r[SID]===sesionId) || {};
+  const med   = (adminData.medio   ||[]).find(r=>r[SID]===sesionId) || {};
+  const fin   = (adminData.fin     ||[]).find(r=>r[SID]===sesionId) || {};
+  const elig  = (adminData.elig    ||[]).find(r=>r[SID]===sesionId) || {};
+  const empRws= (adminData.emp     ||[]).filter(r=>r[SID]===sesionId);
+  const uscisR= (adminData.uscis   ||[]).filter(r=>r[SID]===sesionId);
+
+  // Header
+  document.getElementById('det-nombre').textContent = res['Colaborador'] || 'Colaborador';
+  document.getElementById('det-meta').textContent   =
+    `Caso ${res['Caso #']||'?'} — ${res['Título del caso']||''} · ${res['Fecha']||''} ${res['Hora']||''} · ID: ${sesionId}`;
+
+  // Scores strip
+  const sc=[
+    {l:'Global',    v:res['Score Global'],    n:res['Nivel Global']},
+    {l:'Proceso',   v:res['Score Proceso'],   n:res['Nivel Proceso']},
+    {l:'Medio',     v:res['Score Medio'],     n:res['Nivel Medio']},
+    {l:'Fin',       v:res['Score Fin'],        n:res['Nivel Fin']},
+    {l:'Elig.',     v:res['Score Elegibilidad'],n:res['Nivel Elegibilidad']},
+    {l:'EMP',       v:res['Score Matriz EMP'], n:res['Nivel EMP']},
+    {l:'USCIS',     v:res['Score Riesgo USCIS'],n:res['Nivel USCIS']},
+  ];
+  document.getElementById('det-scores').innerHTML = sc.map(s=>
+    `<div class="dscore">
+      <div class="dv" style="color:${scoreColor(Number(s.v||0))}">${s.v||0}%</div>
+      <div class="dl">${s.l}</div>
+    </div>`
+  ).join('');
+
+  // Body
+  let body = '';
+
+  // A. PROCESO
+  body += detSection('🔍','A. Proceso', `Score: <strong style="color:${scoreColor(Number(res['Score Proceso']||0))}">${res['Score Proceso']||0}%</strong>`);
+  body += `<div class="det-chk-grid">`;
+  [{k:'Reclutamiento'},{k:'Transporte'},{k:'Traslado'},{k:'Albergue'},{k:'Recepción'},{k:'Retención/Control'}].forEach(f=>{
+    const v = proc[f.k]||'— No';
+    const yes = v.includes('✓');
+    body+=`<div class="det-chk-row ${yes?'chk-yes':'chk-no'}">${yes?'✓':'—'} ${f.k}</div>`;
+  });
+  body += `</div>`;
+  body += detTextField('Justificación A.1', proc['Justificación A.1']);
+  body += detTextField('Justificación A.2', proc['Justificación A.2']);
+
+  // B. MEDIO
+  body += detSection('⚖️','B. Medio',`Score: <strong style="color:${scoreColor(Number(res['Score Medio']||0))}">${res['Score Medio']||0}%</strong>`);
+  body += `<div class="det-chk-grid">`;
+  ['Fraude','Fuerza física','Coerción','Amenazas directas','Vulnerabilidad migratoria','Deuda como control','Control psicológico','Amenazas contra familia','Vigilancia','Retención por miedo','Manipulación laboral','Abuso económico'].forEach(f=>{
+    const v = med[f]||'— No';
+    const yes = v.includes('✓');
+    body+=`<div class="det-chk-row ${yes?'chk-yes':'chk-no'}">${yes?'✓':'—'} ${f}</div>`;
+  });
+  body += `</div>`;
+  body += detTextField('Justificación B.1', med['Justificación B.1']);
+  body += detTextField('Justificación B.2', med['Justificación B.2']);
+
+  // C. FIN
+  body += detSection('🎯','C. Fin',`Score: <strong style="color:${scoreColor(Number(res['Score Fin']||0))}">${res['Score Fin']||0}%</strong>`);
+  body += `<div class="det-chk-grid">`;
+  ['Explotación laboral','Servidumbre involuntaria','Peonaje','Deuda vinculante','Esclavitud','Explotación sexual'].forEach(f=>{
+    const v = fin[f]||'— No';
+    const yes = v.includes('✓');
+    body+=`<div class="det-chk-row ${yes?'chk-yes':'chk-no'}">${yes?'✓':'—'} ${f}</div>`;
+  });
+  body += `</div>`;
+  body += detTextField('Justificación C.1', fin['Justificación C.1']);
+  body += detTextField('Justificación C.2', fin['Justificación C.2']);
+
+  // D. ELEGIBILIDAD
+  body += detSection('📑','D. Elegibilidad',`Score: <strong style="color:${scoreColor(Number(res['Score Elegibilidad']||0))}">${res['Score Elegibilidad']||0}%</strong>`);
+  ['D.1 — Esquema de trata','D.2 — Cooperación con autoridades','D.3 — Presencia causal','D.4 — Dificultad extrema'].forEach(q=>{
+    body += detTextField(q, elig[q]);
+  });
+
+  // E. MATRIZ EMP
+  body += detSection('📊','Matriz EMP',`Score: <strong style="color:${scoreColor(Number(res['Score Matriz EMP']||0))}">${res['Score Matriz EMP']||0}%</strong>`);
+  if(empRws.length){
+    body += `<table class="det-emp-tbl"><thead><tr><th>Elemento</th><th>Hechos</th><th>Evidencia</th><th>Fuerza</th><th>Riesgo</th></tr></thead><tbody>`;
+    empRws.forEach(r=>{
+      body+=`<tr>
+        <td><strong>${r['Elemento']||'—'}</strong></td>
+        <td>${r['Hechos identificados']||'<em style="color:var(--ink3)">Sin respuesta</em>'}</td>
+        <td>${r['Evidencia textual']||'<em style="color:var(--ink3)">Sin respuesta</em>'}</td>
+        <td>${fuerzaTag(r['Nivel de fuerza'])}</td>
+        <td style="font-size:11.5px;">${r['Riesgo / área débil']||'—'}</td>
+      </tr>`;
+    });
+    body += `</tbody></table>`;
+  } else {
+    body += `<p class="det-empty">Sin datos de Matriz EMP para esta sesión.</p>`;
+  }
+
+  // F. USCIS
+  body += detSection('🏛️','Análisis de Riesgo USCIS',`Score: <strong style="color:${scoreColor(Number(res['Score Riesgo USCIS']||0))}">${res['Score Riesgo USCIS']||0}%</strong>`);
+  if(uscisR.length){
+    uscisR.forEach(r=>{
+      const resp = r['Respuesta del colaborador']||'';
+      body+=`<div class="uscis-qblock">
+        <div class="uq">${r['Pregunta #']||''}. ${r['Pregunta']||'—'}</div>
+        <div class="${resp.trim()?'ua':'ua-empty'}">${resp.trim()||'Sin respuesta'}</div>
+      </div>`;
+    });
+  } else {
+    body += `<p class="det-empty">Sin datos de USCIS para esta sesión.</p>`;
+  }
+
+  document.getElementById('det-body').innerHTML = body;
+
+  // Open drawer
+  document.getElementById('det-overlay').classList.add('on');
+  document.getElementById('det-drawer').classList.add('on');
+}
+
+function closeDetail(){
+  document.getElementById('det-overlay').classList.remove('on');
+  document.getElementById('det-drawer').classList.remove('on');
+}
+
+function detSection(ico, title, extra=''){
+  return `<div class="det-section"><div class="det-sec-title"><span class="sec-ico">${ico}</span>${title} <span style="margin-left:auto;font-weight:400;font-size:11.5px;">${extra}</span></div>`;
+}
+function detTextField(label, val){
+  const v=(val||'').toString().trim();
+  return `<div class="det-text-label">${label}</div>
+    <div class="det-text-block">${v||'<span style="color:var(--ink3);font-style:italic;">Sin respuesta</span>'}</div>`;
+}
+</script>
