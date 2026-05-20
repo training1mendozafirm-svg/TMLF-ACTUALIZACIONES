@@ -279,9 +279,63 @@ td{padding:11px 16px;font-size:13px;vertical-align:middle;}
   .comp-mid{padding:12px 0;}
   .m-block{flex-direction:column;padding:32px 24px;gap:24px;}
 }
+
+/* ── PREVIEW MODAL ── */
+#preview-modal{
+  position:fixed;inset:0;z-index:500;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(13,27,46,.7);backdrop-filter:blur(6px);
+}
+#preview-modal.open{display:flex;}
+.pm-box{
+  width:92vw;max-width:1180px;height:90vh;
+  background:var(--white);border-radius:16px;
+  display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 24px 80px rgba(0,0,0,.35);
+  animation:pmIn .28s ease;
+}
+@keyframes pmIn{from{opacity:0;transform:scale(.97);}to{opacity:1;transform:scale(1);}}
+.pm-header{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 20px;border-bottom:1px solid var(--border);
+  background:var(--navy);flex-shrink:0;
+}
+.pm-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;
+  color:var(--white);flex:1;}
+.pm-badge{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;padding:3px 10px;border-radius:20px;
+  background:rgba(201,168,76,.15);color:var(--gold2);border:1px solid rgba(201,168,76,.3);}
+.pm-close{
+  width:32px;height:32px;border-radius:8px;border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.08);color:rgba(255,255,255,.8);
+  font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .18s;flex-shrink:0;
+}
+.pm-close:hover{background:rgba(255,255,255,.18);color:var(--white);}
+.pm-iframe{flex:1;border:none;width:100%;background:var(--bg);}
+.t26-btn-preview{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  padding:7px 14px;border-radius:7px;text-decoration:none;transition:all .18s;
+  background:linear-gradient(135deg,rgba(201,168,76,.18),rgba(201,168,76,.1));
+  border:1px solid rgba(201,168,76,.4);color:var(--gold2);cursor:pointer;align-self:flex-start;
+}
+.t26-btn-preview:hover{background:var(--gold);border-color:var(--gold);color:var(--navy);}
 </style>
 </head>
 <body>
+
+<!-- PREVIEW MODAL -->
+<div id="preview-modal">
+  <div class="pm-box">
+    <div class="pm-header">
+      <span class="pm-badge">2026 · Vista previa</span>
+      <div class="pm-title" id="pm-title"></div>
+      <button class="pm-close" onclick="closePreview()">✕</button>
+    </div>
+    <iframe class="pm-iframe" id="pm-iframe" src="" allow="fullscreen"></iframe>
+  </div>
+</div>
 
 <!-- TOPBAR -->
 <div id="topbar">
@@ -382,7 +436,8 @@ td{padding:11px 16px;font-size:13px;vertical-align:middle;}
         <p class="ch-desc">La nueva generación de materiales: interactivos, digitales, con UX/UI ejecutivo y enfocados en la autonomía del colaborador.</p>
       </div>
             <div class="t26-grid">
-        <div class="t26"><div class="t26-top"><span class="t26-badge">2026 · Activo</span><span class="t26-yr">26</span></div><div class="t26-name">Compliance Diligence</div><div class="t26-tags"><span class="t26-tag">Compliance</span><span class="t26-tag">E-Learning</span><span class="t26-tag">SCORM</span></div><p class="t26-desc">Training interactivo de diligencia y cumplimiento normativo para el equipo de Compliance de TMLF.</p><a href="https://training1mendozafirm-svg.github.io/TMLF-ACTUALIZACIONES/ComplianceDiligence.html" target="_blank" class="t26-btn">Ver material →</a></div>
+        <div class="t26"><div class="t26-top"><span class="t26-badge">2026 · Activo</span><span class="t26-yr">26</span></div><div class="t26-name">Compliance Diligence</div><div class="t26-tags"><span class="t26-tag">Compliance</span><span class="t26-tag">E-Learning</span><span class="t26-tag">SCORM</span></div><p class="t26-desc">Training interactivo de diligencia y cumplimiento normativo para el equipo de Compliance de TMLF.</p><button class="t26-btn-preview" onclick="openPreview('Compliance Diligence','https://training1mendozafirm-svg.github.io/TMLF-ACTUALIZACIONES/ComplianceDiligence.html')">👁 Ver aquí</button></div>
+        <div class="t26"><div class="t26-top"><span class="t26-badge">2026 · Activo</span><span class="t26-yr">26</span></div><div class="t26-name">Bar Complaints</div><div class="t26-tags"><span class="t26-tag">Compliance</span><span class="t26-tag">E-Learning</span><span class="t26-tag">SCORM</span></div><p class="t26-desc">Training interactivo sobre Bar Complaints para el equipo de Compliance. Nuevo formato e-learning TMLF 2026.</p><button class="t26-btn-preview" onclick="openPreview('Bar Complaints','https://training1mendozafirm-svg.github.io/TMLF-ACTUALIZACIONES/barcompliance.html')">👁 Ver aquí</button></div>
         <div class="t26"><div class="t26-top"><span class="t26-badge">2026 · Activo</span><span class="t26-yr">26</span></div><div class="t26-name">Common Core Visa T 2026</div><div class="t26-tags"><span class="t26-tag">Visa T</span><span class="t26-tag">VAWA</span><span class="t26-tag">Moodle</span></div><p class="t26-desc">Versión portalizada con simuladores, votación en vivo y reportes automáticos vía Google Sheets.</p><a href="https://training1mendozafirm-svg.github.io/TMLF-ACTUALIZACIONES/trainingvisat.html" target="_blank" class="t26-btn">Ver material →</a></div>
         <div class="t26"><div class="t26-top"><span class="t26-badge">2026 · Activo</span><span class="t26-yr">26</span></div><div class="t26-name">Call Backs</div><div class="t26-tags"><span class="t26-tag">Customer Service</span><span class="t26-tag">Simulador</span><span class="t26-tag">E-Learning</span></div><p class="t26-desc">Training interactivo de estrategias de callback para el equipo operativo. Simuladores y práctica guiada.</p><a href="https://training1mendozafirm-svg.github.io/TMLF-ACTUALIZACIONES/callbacks2.html" target="_blank" class="t26-btn">Ver material →</a></div>
       </div>
@@ -670,7 +725,24 @@ function goHome(){
   document.getElementById('s-home').scrollTop=0;
 }
 
-// ═════ INIT ═════
+// ═════ PREVIEW MODAL ═════
+function openPreview(title, url){
+  document.getElementById('pm-title').textContent = title;
+  document.getElementById('pm-iframe').src = url;
+  document.getElementById('preview-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closePreview(){
+  document.getElementById('preview-modal').classList.remove('open');
+  document.getElementById('pm-iframe').src = '';
+  document.body.style.overflow = '';
+}
+document.getElementById('preview-modal').addEventListener('click', function(e){
+  if(e.target === this) closePreview();
+});
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') closePreview();
+});
 buildAllItems();
 initAreaTabs();
 renderTable();
