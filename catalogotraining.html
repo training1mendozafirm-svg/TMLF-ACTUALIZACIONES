@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evolución del Área de Training · TMLF</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f3ef; --white:#fff; --navy:#0d1b2e; --navy2:#1a2d47;
+  --gold:#c9a84c; --gold2:#e2c27a;
+  --text:#1a2a3a; --muted:#7a8a9a; --light:#b0bcc8;
+  --border:#e4e6eb; --border2:#d0d5de;
+  --sh:0 2px 10px rgba(0,0,0,.07); --sh2:0 6px 24px rgba(0,0,0,.11);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;
+  background:var(--bg);color:var(--text);}
+
+/* ── TOPBAR ── */
+#topbar{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:52px;background:rgba(244,243,239,.97);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 40px;gap:12px;
+}
+.tb-brand{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:500;
+  color:var(--navy);letter-spacing:.04em;margin-right:auto;}
+.tb-brand em{font-style:italic;color:var(--gold);}
+.btn-back{
+  display:none;align-items:center;gap:6px;padding:6px 16px;
+  border:1px solid var(--border2);border-radius:7px;background:var(--white);
+  font-size:11.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--navy);cursor:pointer;transition:all .18s;
+}
+.btn-back:hover{background:var(--navy);color:var(--white);border-color:var(--navy);}
+.btn-back.vis{display:flex;}
+#section-label{
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--gold);
+  padding:4px 12px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);
+  border-radius:20px;display:none;
+}
+#section-label.vis{display:block;}
+
+/* ── SCREENS ── */
+.screen{
+  position:fixed;top:52px;left:0;right:0;bottom:0;
+  overflow-y:auto;overflow-x:hidden;
+  transition:opacity .32s ease;
+}
+#s-home{opacity:1;pointer-events:all;z-index:10;}
+#s-content{opacity:0;pointer-events:none;z-index:9;}
+#s-home.out{opacity:0;pointer-events:none;}
+#s-content.in{opacity:1;pointer-events:all;}
+
+/* ── HOME ── */
+.home-wrap{
+  min-height:100%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:40px 32px 60px;text-align:center;
+}
+.home-eyebrow{
+  font-family:'Barlow Condensed',sans-serif;font-size:10.5px;font-weight:700;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--muted);
+  margin-bottom:20px;display:flex;align-items:center;gap:14px;
+}
+.home-eyebrow::before,.home-eyebrow::after{
+  content:'';width:36px;height:1px;background:var(--border2);}
+.home-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(40px,6.5vw,72px);font-weight:300;
+  color:var(--navy);line-height:1.04;margin-bottom:4px;
+}
+.home-sub{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(26px,4vw,48px);font-weight:400;font-style:italic;
+  color:var(--gold);margin-bottom:20px;
+}
+.home-desc{font-size:14.5px;line-height:1.75;color:var(--muted);
+  max-width:520px;margin:0 auto 44px;}
+/* stats */
+.stats{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:48px;}
+.stat{
+  background:var(--white);border:1px solid var(--border);border-radius:12px;
+  padding:16px 18px;min-width:100px;text-align:center;box-shadow:var(--sh);
+  transition:transform .2s,box-shadow .2s;
+}
+.stat:hover{transform:translateY(-2px);box-shadow:var(--sh2);}
+.stat-n{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;
+  color:var(--navy);line-height:1;display:block;margin-bottom:5px;}
+.stat-l{font-size:10px;color:var(--muted);line-height:1.45;letter-spacing:.02em;}
+/* nav buttons */
+.nav-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.nb{
+  display:flex;align-items:center;gap:8px;
+  padding:12px 22px;border-radius:9px;
+  border:1px solid var(--border);background:var(--white);
+  font-size:12.5px;font-weight:600;letter-spacing:.05em;
+  color:var(--text);cursor:pointer;transition:all .2s;
+  box-shadow:var(--sh);
+}
+.nb:hover{border-color:var(--navy);color:var(--navy);transform:translateY(-2px);box-shadow:var(--sh2);}
+.nb.nb-main{
+  background:var(--navy);border-color:var(--navy);color:var(--white);
+}
+.nb.nb-main:hover{background:var(--navy2);border-color:var(--navy2);}
+.nb-ico{font-size:16px;}
+
+/* ── CONTENT SCREEN ── */
+.content-wrap{padding:32px 40px 60px;max-width:1100px;margin:0 auto;}
+.content-header{margin-bottom:28px;}
+.ch-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.ch-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,44px);
+  font-weight:400;color:var(--navy);line-height:1.1;margin-bottom:8px;}
+.ch-title em{font-style:normal;color:var(--gold);}
+.ch-desc{font-size:14px;line-height:1.7;color:var(--muted);max-width:580px;}
+
+/* ── MANUALES ── */
+.m-block{
+  background:var(--navy);border-radius:16px;padding:48px;
+  display:flex;align-items:center;gap:44px;
+  box-shadow:var(--sh2);position:relative;overflow:hidden;
+}
+.m-block::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 55% 70% at 90% 50%,rgba(201,168,76,.07),transparent 70%);}
+.m-icon{flex-shrink:0;width:96px;height:96px;background:rgba(201,168,76,.1);
+  border:1.5px solid rgba(201,168,76,.25);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:42px;}
+.m-body{flex:1;position:relative;}
+.m-ey{font-family:'Barlow Condensed',sans-serif;font-size:9.5px;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.m-title{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:400;
+  color:var(--white);margin-bottom:10px;line-height:1.1;}
+.m-desc{font-size:13.5px;line-height:1.75;color:rgba(255,255,255,.5);
+  margin-bottom:24px;max-width:440px;}
+.m-chips{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px;}
+.m-chip{font-size:12px;color:rgba(255,255,255,.4);display:flex;align-items:center;gap:4px;}
+.m-chip::before{content:'';width:4px;height:4px;background:var(--gold);border-radius:50%;flex-shrink:0;}
+.btn-gold{display:inline-flex;align-items:center;gap:7px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:var(--navy);padding:11px 22px;border-radius:8px;
+  font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  text-decoration:none;border:none;cursor:pointer;
+  box-shadow:0 4px 18px rgba(201,168,76,.3);transition:all .2s;}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(201,168,76,.38);}
+
+/* ── TABLE SECTION (trainings) ── */
+.area-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:20px;}
+.ar{padding:6px 15px;border-radius:20px;border:1px solid var(--border);
+  background:var(--white);font-size:11.5px;font-weight:500;letter-spacing:.02em;
+  color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .18s;}
+.ar:hover{border-color:var(--navy);color:var(--navy);}
+.ar.on{background:var(--navy);border-color:var(--navy);color:var(--white);}
+.ar-n{display:inline-block;font-size:10px;background:rgba(0,0,0,.07);
+  border-radius:10px;padding:1px 6px;margin-left:3px;}
+.ar.on .ar-n{background:rgba(255,255,255,.18);}
+
+.tbl-wrap{background:var(--white);border-radius:14px;border:1px solid var(--border);
+  overflow:hidden;box-shadow:var(--sh);}
+.tbl-search{
+  padding:14px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.tbl-search input{
+  flex:1;border:1px solid var(--border);border-radius:8px;
+  padding:8px 14px;font-size:13px;font-family:'DM Sans',sans-serif;
+  color:var(--text);background:var(--bg);outline:none;transition:border .18s;
+}
+.tbl-search input:focus{border-color:var(--navy);}
+.tbl-search input::placeholder{color:var(--light);}
+.tbl-count{font-size:12px;color:var(--muted);white-space:nowrap;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--bg);border-bottom:2px solid var(--border);}
+th{padding:11px 16px;text-align:left;font-family:'Barlow Condensed',sans-serif;
+  font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:#f9f8f5;}
+td{padding:11px 16px;font-size:13px;vertical-align:middle;}
+.td-num{color:var(--light);font-size:11px;font-weight:500;width:36px;text-align:center;}
+.td-name{font-weight:500;color:var(--navy);max-width:340px;line-height:1.35;}
+.td-tipo span{font-family:'Barlow Condensed',sans-serif;font-size:9.5px;font-weight:700;
+  letter-spacing:.13em;text-transform:uppercase;padding:2.5px 8px;border-radius:20px;}
+.ts{background:rgba(13,27,46,.07);color:var(--navy2);border:1px solid rgba(13,27,46,.12);}
+.tt{background:rgba(201,168,76,.11);color:#7a5c10;border:1px solid rgba(201,168,76,.28);}
+.tv{background:rgba(30,54,85,.08);color:var(--navy2);border:1px solid rgba(30,54,85,.14);}
+.tm{background:var(--bg);color:var(--muted);border:1px solid var(--border);}
+.td-src{font-size:11.5px;color:var(--muted);white-space:nowrap;}
+.td-link a{display:inline-flex;align-items:center;gap:4px;
+  font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--navy);background:var(--bg);border:1px solid var(--border);
+  padding:5px 12px;border-radius:6px;text-decoration:none;
+  transition:all .18s;white-space:nowrap;}
+.td-link a:hover{background:var(--navy);color:var(--white);border-color:var(--navy);}
+.td-link span{font-size:11px;color:var(--light);}
+.tbl-empty{padding:40px;text-align:center;color:var(--muted);font-size:13.5px;}
+
+/* ── COMPARATIVA ── */
+.comp-grid{display:grid;grid-template-columns:1fr 44px 1fr;gap:0;align-items:start;}
+.cc{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:32px;}
+.cc-ahora{border-color:rgba(201,168,76,.35);}
+.cc h3{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;margin-bottom:20px;
+  display:flex;align-items:center;gap:8px;}
+.cc-antes h3{color:var(--muted);}
+.cc-ahora h3{color:var(--gold);}
+.cdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.da{background:var(--border);}
+.dn{background:var(--gold);}
+.cl{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.cl li{display:flex;align-items:flex-start;gap:9px;font-size:13.5px;
+  line-height:1.55;padding:10px 12px;border-radius:8px;}
+.cc-antes .cl li{color:var(--muted);background:var(--bg);}
+.cc-ahora .cl li{color:var(--text);background:rgba(201,168,76,.05);}
+.ci{font-size:14px;flex-shrink:0;}
+.comp-mid{display:flex;align-items:center;justify-content:center;padding-top:80px;}
+.carr{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--gold2));
+  border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;
+  box-shadow:0 4px 14px rgba(201,168,76,.3);}
+
+/* ── 2026 TABLE ── */
+.t26-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
+.t26{background:var(--navy);border-radius:14px;padding:24px;
+  border:1px solid rgba(201,168,76,.12);display:flex;flex-direction:column;
+  transition:all .22s;}
+.t26:hover{transform:translateY(-3px);box-shadow:var(--sh2);border-color:rgba(201,168,76,.28);}
+.t26-top{display:flex;justify-content:space-between;margin-bottom:12px;}
+.t26-badge{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border-radius:20px;
+  background:rgba(201,168,76,.12);color:var(--gold2);border:1px solid rgba(201,168,76,.25);}
+.t26-yr{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;
+  color:rgba(255,255,255,.07);}
+.t26-name{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;
+  color:var(--white);margin-bottom:8px;line-height:1.2;}
+.t26-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;}
+.t26-tag{font-size:10px;color:rgba(255,255,255,.38);background:rgba(255,255,255,.06);
+  padding:2px 8px;border-radius:20px;}
+.t26-desc{font-size:12px;line-height:1.6;color:rgba(255,255,255,.42);flex:1;margin-bottom:16px;}
+.t26-btn{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;padding:7px 14px;border-radius:7px;
+  text-decoration:none;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.26);
+  color:var(--gold2);cursor:pointer;align-self:flex-start;transition:all .18s;}
+.t26-btn:hover{background:var(--gold);border-color:var(--gold);color:var(--navy);}
+
+/* ── IMPACTO ── */
+.imp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
+.ic{border-radius:14px;padding:28px;display:flex;flex-direction:column;gap:12px;transition:all .2s;}
+.ic:hover{transform:translateY(-3px);box-shadow:var(--sh2);}
+.ic-light{background:var(--white);border:1px solid var(--border);}
+.ic-dark{background:var(--navy);border:1px solid rgba(201,168,76,.12);}
+.ic-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));}
+.ic-icon{font-size:30px;line-height:1;}
+.ic-num{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;
+  color:var(--navy);opacity:.1;line-height:1;}
+.ic h3{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;
+  color:var(--navy);line-height:1.2;}
+.ic-dark h3{color:var(--white);}
+.ic-gold h3{color:var(--navy);}
+.ic p{font-size:13px;line-height:1.65;color:var(--muted);}
+.ic-dark p{color:rgba(255,255,255,.44);}
+.ic-gold p{color:rgba(13,27,46,.58);}
+
+/* FOOTER */
+.content-footer{margin-top:48px;padding-top:24px;border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+.cf-brand{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--muted);}
+.cf-brand b{color:var(--navy);}
+.cf-tag{font-size:11px;color:var(--light);letter-spacing:.05em;}
+
+/* RESPONSIVE */
+@media(max-width:760px){
+  .home-wrap{padding:28px 20px 48px;}
+  #topbar{padding:0 20px;}
+  .content-wrap{padding:24px 20px 48px;}
+  .comp-grid{grid-template-columns:1fr;}
+  .comp-mid{padding:12px 0;}
+  .m-block{flex-direction:column;padding:32px 24px;gap:24px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="tb-brand">The Mendoza Law Firm <em>· Training</em></div>
+  <span id="section-label"></span>
+  <button class="btn-back" id="btn-back" onclick="goHome()">← Regresar</button>
+</div>
+
+<!-- HOME SCREEN -->
+<div class="screen" id="s-home">
+  <div class="home-wrap">
+    <div class="home-eyebrow">Portal Ejecutivo</div>
+    <h1 class="home-title">Evolución del Área de Training</h1>
+    <p class="home-sub">The Mendoza Law Firm</p>
+    <p class="home-desc">Producción de materiales de e-learning, simuladores interactivos, portales y herramientas operativas. La transformación del área de Training en una sola vista.</p>
+
+    <div class="stats">
+      <div class="stat"><span class="stat-n">130+</span><div class="stat-l">Trainings<br>documentados</div></div>
+      <div class="stat"><span class="stat-n">9</span><div class="stat-l">Áreas<br>cubiertas</div></div>
+      <div class="stat"><span class="stat-n">3+</span><div class="stat-l">Años de<br>evolución</div></div>
+      <div class="stat"><span class="stat-n">89</span><div class="stat-l">Total<br>manuales</div></div>
+      <div class="stat"><span class="stat-n">15+</span><div class="stat-l">Simuladores<br>interactivos</div></div>
+      <div class="stat"><span class="stat-n">100%</span><div class="stat-l">Digital<br>e-learning</div></div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="nb nb-main" onclick="go('manuales')"><span class="nb-ico">📋</span> Manuales</button>
+      <button class="nb" onclick="go('trainings')"><span class="nb-ico">📁</span> Trainings 2023–2025</button>
+      <button class="nb" onclick="go('t2026')"><span class="nb-ico">🚀</span> Training 2026</button>
+      <button class="nb" onclick="go('comparativa')"><span class="nb-ico">⚖️</span> Antes vs Ahora</button>
+      <button class="nb" onclick="go('impacto')"><span class="nb-ico">✦</span> Impacto</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT SCREEN -->
+<div class="screen" id="s-content">
+  <div class="content-wrap">
+
+    <!-- MANUALES -->
+    <div class="panel" id="p-manuales">
+      <div class="content-header">
+        <div class="ch-eyebrow">Repositorio Operativo</div>
+        <h2 class="ch-title">Directorio de <em>Manuales</em></h2>
+        <p class="ch-desc">Repositorio centralizado de manuales operativos por área de práctica, diseñado para facilitar la consulta y actualización de recursos.</p>
+      </div>
+      <div class="m-block">
+        <div class="m-icon">📚</div>
+        <div class="m-body">
+          <div class="m-ey">Directorio Central</div>
+          <div class="m-title">Manuales por Área</div>
+          <div class="m-desc">Acceso centralizado a todos los manuales operativos del área de Training, organizados por área práctica con consulta inmediata y actualización continua para todo el equipo.</div>
+          <div class="m-chips">
+            <div class="m-chip">89 manuales totales</div>
+            <div class="m-chip">60 en actualización</div>
+            <div class="m-chip">29 en construcción</div>
+            <div class="m-chip">Acceso centralizado</div>
+          </div>
+          <a href="https://training1mendozafirm-svg.github.io/TMLF-ACTUALIZACIONES/direcmanual.html" target="_blank" class="btn-gold">📋 Abrir Directorio de Manuales</a>
+        </div>
+      </div>
+      <div class="content-footer"><div class="cf-brand"><b>The Mendoza Law Firm</b> · Training Department</div><div class="cf-tag">TMLF Academy · TMLF Learning Center</div></div>
+    </div>
+
+    <!-- TRAININGS 2023-2025 -->
+    <div class="panel" id="p-trainings" style="display:none;">
+      <div class="content-header">
+        <div class="ch-eyebrow">Catálogo de Materiales · 2023–2025</div>
+        <h2 class="ch-title">Trainings <em>por Área</em></h2>
+        <p class="ch-desc">Catálogo completo de materiales formativos. Filtra por área o busca por nombre del training.</p>
+      </div>
+      <div class="area-row" id="area-tabs"></div>
+      <div class="tbl-wrap">
+        <div class="tbl-search">
+          <input type="text" id="tbl-search-input" placeholder="Buscar training…" oninput="filterSearch(this.value)">
+          <span class="tbl-count" id="tbl-count"></span>
+        </div>
+        <table>
+          <thead><tr>
+            <th class="td-num">#</th>
+            <th>Nombre del Training</th>
+            <th>Tipo</th>
+            <th>Fuente</th>
+            <th>Material</th>
+          </tr></thead>
+          <tbody id="tbl-body"></tbody>
+        </table>
+        <div class="tbl-empty" id="tbl-empty" style="display:none;">No se encontraron resultados.</div>
+      </div>
+      <div class="content-footer"><div class="cf-brand"><b>The Mendoza Law Firm</b> · Training Department</div><div class="cf-tag">Trainings 2023–2025</div></div>
+    </div>
+
+    <!-- TRAINING 2026 -->
+    <div class="panel" id="p-t2026" style="display:none;">
+      <div class="content-header">
+        <div class="ch-eyebrow">E-Learning · 2026</div>
+        <h2 class="ch-title">Training <em>2026</em></h2>
+        <p class="ch-desc">La nueva generación de materiales: interactivos, digitales, con UX/UI ejecutivo y enfocados en la autonomía del colaborador.</p>
+      </div>
+      <div class="t26-grid">
+        <div class="t26"><div class="t26-top"><span class="t26-badge">2026 · Activo</span><span class="t26-yr">26</span></div><div class="t26-name">Training Customer Service 2026</div><div class="t26-tags"><span class="t26-tag">E-Learning</span><span class="t26-tag">Simulador</span></div><p class="t26-desc">Capacitación completa con simuladores interactivos, evaluaciones y módulos de práctica guiada.</p><a href="#" class="t26-btn">Ver material →</a></div>
+        <div class="t26"><div class="t26-top"><span class="t26-badge">2026 · Activo</span><span class="t26-yr">26</span></div><div class="t26-name">Common Core Visa T 2026</div><div class="t26-tags"><span class="t26-tag">Visa T</span><span class="t26-tag">VAWA</span><span class="t26-tag">Moodle</span></div><p class="t26-desc">Versión portalizada con simuladores, votación en vivo y reportes automáticos vía Google Sheets.</p><a href="#" class="t26-btn">Ver material →</a></div>
+        <div class="t26"><div class="t26-top"><span class="t26-badge">2026 · Activo</span><span class="t26-yr">26</span></div><div class="t26-name">Simuladores de Casos</div><div class="t26-tags"><span class="t26-tag">Simulador</span><span class="t26-tag">EMP</span><span class="t26-tag">Visa T</span></div><p class="t26-desc">Análisis de casos reales con framework EMP, puntaje ponderado y retroalimentación inmediata.</p><a href="#" class="t26-btn">Ver material →</a></div>
+        <div class="t26"><div class="t26-top"><span class="t26-badge">2026 · Activo</span><span class="t26-yr">26</span></div><div class="t26-name">Evaluación de Reacción</div><div class="t26-tags"><span class="t26-tag">Evaluación</span><span class="t26-tag">Reportes</span></div><p class="t26-desc">Encuestas integradas con Google Sheets. Trazabilidad de respuestas y análisis de experiencia.</p><a href="#" class="t26-btn">Ver material →</a></div>
+        <div class="t26"><div class="t26-top"><span class="t26-badge">2026 · Activo</span><span class="t26-yr">26</span></div><div class="t26-name">Centro de Registro Trainers</div><div class="t26-tags"><span class="t26-tag">Trainers</span><span class="t26-tag">Portal</span></div><p class="t26-desc">Portal centralizado para gestión y seguimiento del equipo. Calendario, Kanban y métricas.</p><a href="#" class="t26-btn">Ver material →</a></div>
+        <div class="t26"><div class="t26-top"><span class="t26-badge">2026 · Activo</span><span class="t26-yr">26</span></div><div class="t26-name">Portal Actualizaciones TramCase</div><div class="t26-tags"><span class="t26-tag">TramCase</span><span class="t26-tag">Dashboard</span></div><p class="t26-desc">Dashboard ejecutivo de comunicados con changelogs y guías de plataforma.</p><a href="#" class="t26-btn">Ver material →</a></div>
+        <div class="t26"><div class="t26-top"><span class="t26-badge">2026 · Activo</span><span class="t26-yr">26</span></div><div class="t26-name">Manuales por Área</div><div class="t26-tags"><span class="t26-tag">Repositorio</span><span class="t26-tag">Centralizado</span></div><p class="t26-desc">Directorio centralizado con consulta rápida y actualización continua por área de práctica.</p><a href="https://training1mendozafirm-svg.github.io/TMLF-ACTUALIZACIONES/direcmanual.html" target="_blank" class="t26-btn">Ver material →</a></div>
+        <div class="t26"><div class="t26-top"><span class="t26-badge">2026 · Activo</span><span class="t26-yr">26</span></div><div class="t26-name">Training Operativo Recursos PWI</div><div class="t26-tags"><span class="t26-tag">PWI</span><span class="t26-tag">VAWA</span><span class="t26-tag">Visa T</span></div><p class="t26-desc">Pre-Welcome Interview para Visa T y VAWA. Formularios USCIS, Dropbox y protocolos.</p><a href="#" class="t26-btn">Ver material →</a></div>
+      </div>
+      <div class="content-footer"><div class="cf-brand"><b>The Mendoza Law Firm</b> · Training 2026</div><div class="cf-tag">E-Learning · SCORM · Simuladores</div></div>
+    </div>
+
+    <!-- COMPARATIVA -->
+    <div class="panel" id="p-comparativa" style="display:none;">
+      <div class="content-header">
+        <div class="ch-eyebrow">Transformación del Área</div>
+        <h2 class="ch-title">Antes <em>vs</em> Ahora</h2>
+        <p class="ch-desc">Una comparativa directa de la evolución estructural, metodológica y de alcance del área de Training.</p>
+      </div>
+      <div class="comp-grid">
+        <div class="cc cc-antes">
+          <h3><div class="cdot da"></div>Estado anterior</h3>
+          <ul class="cl">
+            <li><span class="ci">📄</span>Materiales dispersos sin repositorio centralizado</li>
+            <li><span class="ci">🔍</span>Consulta manual de documentos y recursos operativos</li>
+            <li><span class="ci">📉</span>Menor trazabilidad de avance y participación</li>
+            <li><span class="ci">🎨</span>Menor estandarización visual entre materiales</li>
+            <li><span class="ci">👨‍🏫</span>Capacitación más dependiente del instructor</li>
+            <li><span class="ci">📝</span>Evaluaciones manuales sin datos automáticos</li>
+            <li><span class="ci">🗂️</span>Organización sin repositorio formal estructurado</li>
+          </ul>
+        </div>
+        <div class="comp-mid"><div class="carr">→</div></div>
+        <div class="cc cc-ahora">
+          <h3><div class="cdot dn"></div>Estado actual 2026</h3>
+          <ul class="cl">
+            <li><span class="ci">🏛️</span>Portal centralizado con acceso directo a todos los materiales</li>
+            <li><span class="ci">⚡</span>Materiales interactivos con simuladores y evaluaciones digitales</li>
+            <li><span class="ci">📊</span>Reportes automáticos y trazabilidad vía Google Sheets</li>
+            <li><span class="ci">🎨</span>Diseño UX/UI institucional cohesivo en todos los trainings</li>
+            <li><span class="ci">📱</span>E-learning con SCORM, Moodle y acceso autónomo</li>
+            <li><span class="ci">🤖</span>Automatización de registros y scores de participación</li>
+            <li><span class="ci">🗃️</span>Directorio de manuales estructurado y centralizado por área</li>
+          </ul>
+        </div>
+      </div>
+      <div class="content-footer"><div class="cf-brand"><b>The Mendoza Law Firm</b> · Training Department</div><div class="cf-tag">Evolución 2023 → 2026</div></div>
+    </div>
+
+    <!-- IMPACTO -->
+    <div class="panel" id="p-impacto" style="display:none;">
+      <div class="content-header">
+        <div class="ch-eyebrow">Resultados · Valor Generado</div>
+        <h2 class="ch-title">Impacto del <em>Área</em></h2>
+        <p class="ch-desc">Los indicadores que reflejan la evolución y el valor que el área de Training ha generado para la operación de la firma.</p>
+      </div>
+      <div class="imp-grid">
+        <div class="ic ic-dark"><div class="ic-icon">🏛️</div><h3>Centralización de Recursos</h3><p>Todos los materiales formativos en un ecosistema digital accesible para el equipo en cualquier momento.</p></div>
+        <div class="ic ic-gold"><div class="ic-icon">⬆️</div><h3>Profesionalización del Área</h3><p>Evolución de materiales básicos a un sistema con estándares de diseño, metodología y UX/UI ejecutivo.</p></div>
+        <div class="ic ic-light"><div class="ic-num">UX</div><h3>Mejor Experiencia del Colaborador</h3><p>Materiales interactivos y bien diseñados que mejoran la retención y el aprendizaje activo.</p></div>
+        <div class="ic ic-light"><div class="ic-num">⚡</div><h3>Acceso más Rápido</h3><p>Repositorios centralizados que eliminan la búsqueda manual de recursos operativos.</p></div>
+        <div class="ic ic-dark"><div class="ic-icon">🔄</div><h3>Control de Actualizaciones</h3><p>Versionado y comunicación de cambios que mantiene al equipo siempre actualizado.</p></div>
+        <div class="ic ic-light"><div class="ic-num">E</div><h3>Evolución hacia E-Learning</h3><p>Transición completa a SCORM, Moodle, simuladores y evaluaciones automáticas integradas.</p></div>
+      </div>
+      <div class="content-footer"><div class="cf-brand"><b>The Mendoza Law Firm</b> · Training Department</div><div class="cf-tag">TMLF Academy · Portal de Evolución</div></div>
+    </div>
+
+  </div><!-- /content-wrap -->
+</div><!-- /s-content -->
+
+<script>
+// ═══════════ DATA ═══════════
+const CATS=[
+  {id:'cc',name:'Common Core',icon:'🏛️',items:[
+    ['¿Cómo Evitar el Bloqueo de tu Cuenta Outlook?','Material','https://www.canva.com/design/DAGyIM9Sop0/N4-R4jJsY1VyYOl2evwXUg/watch?utm_content=DAGyIM9Sop0&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h49933bdd58'],
+    ['End to End','Material','https://view.genially.com/68b9a218b3c445116a9d326a/horizontal-infographic-diagrams-end-to-end-tmlf'],
+    ['VAWA No VAWA','Material','https://www.canva.com/design/DAGHF5ht_NQ/xvL28InlzZHsyOw3pvO-ig/view?utm_content=DAGHF5ht_NQ&utm_campaign=designshare&utm_medium=link&utm_source=editor'],
+    ['Identidad USA','Material','https://www.canva.com/design/DAF67OkOzI4/SfkMBhu8SVt1LFyUOEn0vA/view?utm_content=DAF67OkOzI4&utm_campaign=designshare&utm_medium=link&utm_source=editor'],
+    ['Plataformas','Material','https://www.canva.com/design/DAF6_5iZ55c/2XURDc59Xfsk8x99l-tqiQ/view?utm_content=DAF6_5iZ55c&utm_campaign=designshare&utm_medium=link&utm_source=editor'],
+    ['Buenas Prácticas TramCase','Material','https://training1mendozafirm-svg.github.io/TMLF-ACTUALIZACIONES/tramcasecompl.html'],
+    ['Recibos y Comunicaciones USCIS','Material','https://www.canva.com/design/DAGsIvZL-kY/4B3WGIAEBoMMuU-042ARMA/view?utm_content=DAGsIvZL-kY&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=he28f2d6510'],
+    ['Protocolo Notices','Material','https://view.genially.com/6866b390b5cf61d10797f217/presentation-protocolo-notices'],
+    ['Tipos de Abuso','Material','https://www.canva.com/design/DAF6KTe7Sd0/lucE5GbJuLmjda25NanMug/view?utm_content=DAF6KTe7Sd0&utm_campaign=designshare&utm_medium=link&utm_source=editor'],
+    ['Soft Skills','Material','https://www.canva.com/design/DAF44REBCOU/LMT3gSB3XOUC6iLhiHyFrA/view?utm_content=DAF44REBCOU&utm_campaign=designshare&utm_medium=link&utm_source=editor'],
+    ['PCL & Rapsheet','Material','https://www.canva.com/design/DAGymFSHGOM/JwO4BhEevBU8cVrrokVsIg/view?utm_content=DAGymFSHGOM&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=he9b1154c06'],
+    ['Atención al Detalle','Material','https://www.canva.com/design/DAGwLLdOkgc/etAoxPPjdQoQt0P_thiPaw/view?utm_content=DAGwLLdOkgc&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h5b7e7b5316'],
+    ['Comunicación y Colaboración','Material','https://www.canva.com/design/DAGwudWG34E/5W6n_rfix6ziOpCRqhwhNg/view?utm_content=DAGwudWG34E&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hcfdd07ac8a'],
+    ['Políticas Antifraude','Material','https://view.genially.com/6924b221f021a8539c5218dc/guide-politicas-antifraude-scc'],
+  ]},
+  {id:'psico',name:'Psicología',icon:'🧠',items:[
+    ['End to End Psych','Sesión','https://view.genially.com/67e2d9b9a2d401007202a64e/presentation-end-to-end'],
+    ['Abuso, Poder y Migración VAWA','Sesión','https://view.genially.com/68371acedc0d38cd55e005a4/presentation-abuso-poder-y-migracion'],
+    ['Técnicas de Entrevista','Sesión','https://view.genially.com/6838a1b274649875ac46fced/presentation-tecnicas-en-entrevista'],
+    ['Manual de Protocolos','Sesión','https://www.canva.com/design/DAGwuWxL80s/mWLxs-ssJZqIBWixmlZzgw/edit?utm_content=DAGwuWxL80s&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Atención al Cliente','Sesión','https://www.canva.com/design/DAF6Xe2kr00/sPg4OJNLJYZmBN0d9qDCWw/view?utm_content=DAF6Xe2kr00&utm_campaign=designshare&utm_medium=link&utm_source=editor'],
+    ['Manejo de Objeciones','Sesión','https://www.canva.com/design/DAGwvfTr1EA/nG0E3QYUKddNcKr5CqBfKA/edit?utm_content=DAGwvfTr1EA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Estructura de Eventos Visa T','Sesión','https://www.canva.com/design/DAGwvc-ymtY/FuQYLGHIMGkoYt6b9m0irA/edit?utm_content=DAGwvc-ymtY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Tratómetro y Agravantes','Sesión','https://www.canva.com/design/DAGwvbujHoA/ZgC8dB20sB2RXLVcOEZyWA/edit?utm_content=DAGwvbujHoA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Folios Psych','Sesión','https://www.canva.com/design/DAGwpIFXkhU/s4Cm3L8e5q9G6pecEParsQ/edit?utm_content=DAGwpIFXkhU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Folios VAWA','Sesión','https://www.canva.com/design/DAGwvuy3m3U/D0Z5XQWJVaJKVeYF-LjmqQ/edit?utm_content=DAGwvuy3m3U&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Folios Visa T','Sesión','https://www.canva.com/design/DAGwvseD10A/GlbW04VDsXHxdwPdMj5QaA/edit?utm_content=DAGwvseD10A&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Folios Visa U','Sesión','https://www.canva.com/design/DAGwvgzcjMs/cwlbL9f2AcrQ1RuC4GOf_Q/edit?utm_content=DAGwvgzcjMs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Folios Visa K1','Sesión','https://www.canva.com/design/DAGwvn57lP8/rHbMvFhYG4PFOoqkAI6epg/edit?utm_content=DAGwvn57lP8&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Introducción P+','Sesión',null],
+    ['Abuso VAWA','Sesión','https://www.canva.com/design/DAGwuaiZSNA/4QPB5RbiVdF9_EeJfRZxsg/edit?utm_content=DAGwuaiZSNA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Análisis de Caso Visa T','Sesión','https://www.canva.com/design/DAGwvYGnmEc/7uMMbKckMGVi-Bcv6aFYPA/edit?utm_content=DAGwvYGnmEc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Entregables VAWA P+','Sesión',null],
+    ['Cooperación con LEA y Formas','Sesión','https://www.canva.com/design/DAGwvZKsl6U/DcBu_ZS2cv0-DndxOayaaQ/edit?utm_content=DAGwvZKsl6U&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Inadmisibilidad Visa T','Sesión','https://www.canva.com/design/DAGwvfzOqvE/kS1eY7S-APFOEV4tIKmvJQ/edit?utm_content=DAGwvfzOqvE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Manejo de Cliente: Improvisación y Persuasión','Sesión','https://www.canva.com/design/DAGwuWeAaH8/WczKpUSrr45sC9kEg6g13w/edit?utm_content=DAGwuWeAaH8&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Script Visa U','Sesión','https://www.canva.com/design/DAGwuUbPe04/6Ue9giqrcu5Kw7pz71k18g/edit?utm_content=DAGwuUbPe04&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Plataformas VAWA P+','Sesión','https://www.canva.com/design/DAGwvSxtdGk/HqljMnUl003OkQEPqkLN8A/edit?utm_content=DAGwvSxtdGk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Evidencias GMC P+ Orgánico','Sesión','https://www.canva.com/design/DAGwoRutdXk/tOf-5imSK5Y4Bh5gbT29gQ/edit?utm_content=DAGwoRutdXk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Entregable Evidencias GMC P+ Orgánico','Sesión','https://www.canva.com/design/DAGwnxDJ0So/CxM0DstmmF8zeNZHWYKnsg/edit?utm_content=DAGwnxDJ0So&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Evidencias Entregables','Sesión','https://www.canva.com/design/DAGKF9QWPyU/Ljc8Y0JBpEmzjfoofyDxYQ/edit?utm_content=DAGKF9QWPyU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Evidencias de Abuso VAWA','Sesión','https://www.canva.com/design/DAGwn8rdqtE/goASji1Wxma7UYm-JFzIrw/edit?utm_content=DAGwn8rdqtE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Entregables Psych P+ Orgánico','Sesión','https://www.canva.com/design/DAGwn2W45yQ/ndKb3ycrWRKzKdiWNLYLmw/edit?utm_content=DAGwn2W45yQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Criterios de Evidencias P+ Orgánico','Sesión','https://www.canva.com/design/DAGwoLCtNjg/0GwKltyNYC0JHh-o5vZ7aw/edit?utm_content=DAGwoLCtNjg&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Actualización Script VAWA PB','Video','https://www.canva.com/design/DAGvWS060zU/OKcO4R3fa85l_PEjZbuyug/edit?utm_content=DAGvWS060zU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Script Multi-Party Litigation VAWA','Sesión','https://www.canva.com/design/DAGwoN90WeI/LY0F5rvZ286jVj92gVGzFA/edit?utm_content=DAGwoN90WeI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Script Multi-Party Litigation Visa T','Sesión','https://www.canva.com/design/DAGwoN90WeI/LY0F5rvZ286jVj92gVGzFA/edit?utm_content=DAGwoN90WeI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Checklist Evidencias VAWA','Sesión','https://www.canva.com/design/DAGwoTw6eyM/UHJCE0GJHV5Z9QRrtBRUWg/edit?utm_content=DAGwoTw6eyM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Evidencias WS','Sesión','https://www.canva.com/design/DAGwoTtvOkA/i5DYreSXJD7AMTiAaTacOw/edit?utm_content=DAGwoTtvOkA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Mere Unkindness & Extreme Cruelty','Sesión','https://www.canva.com/design/DAGwoXzJ7N8/4yg0WKQ0iRq39HVKi7eHxw/edit?utm_content=DAGwoXzJ7N8&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Polite Interruption','Sesión','https://www.canva.com/design/DAGwoVE8udo/q-K_f1MXzfuyCk9k-1BgRg/edit?utm_content=DAGwoVE8udo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['End to End Formatos P+ Orgánico','Sesión','https://www.canva.com/design/DAGwoThubZI/91m-JCW_TcprpvG46zmLJA/edit?utm_content=DAGwoThubZI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Taller de Redacción VAWA Interview','Tallereo','https://www.canva.com/design/DAGwpIJcWsw/XRtcbVpyAmX6JOhwW-wAdA/edit?utm_content=DAGwpIJcWsw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Violencia Doméstica','Sesión','https://www.canva.com/design/DAGwpFjUIUA/xrry2T9OLihPBKYHu9NNcg/edit?utm_content=DAGwpFjUIUA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Speech Evidencias VAWA','Sesión','https://www.canva.com/design/DAGwpPST2Gs/T4jjdVEsVK4uqn0ziiMCkA/edit?utm_content=DAGwpPST2Gs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Speech P+ Orgánico','Sesión','https://www.canva.com/design/DAGwpD0Yiyo/kM3u_UqMjauJWHRKdivh3A/edit?utm_content=DAGwpD0Yiyo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['VAWA P+ Entrevista','Sesión','https://www.canva.com/design/DAGwpZqvaU0/n5Yeva7Lk3OLF6XAtueUcA/edit?utm_content=DAGwpZqvaU0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Script de Visa T','Sesión','https://www.canva.com/design/DAGwpY3Whco/rZy_uUVAOrM3uEdw4fnvvw/edit?utm_content=DAGwpY3Whco&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Taller de Redacción DOE y WS en Visa T','Tallereo','https://www.canva.com/design/DAGwtl0W7Ug/pDeFNPt5JT-YlM46cZ6Q4Q/edit?utm_content=DAGwtl0W7Ug&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['FU Psych P+ Orgánico Plataformas','Sesión','https://www.canva.com/design/DAGwtq9n3gM/Wi-0blEYo9PVLey2OP7apw/edit?utm_content=DAGwtq9n3gM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Técnicas para Encontrar el Abuso y Evidencias','Sesión','https://www.canva.com/design/DAGwtkG_k5I/5DxzOLzyC_ev4K10mNv9dg/edit?utm_content=DAGwtkG_k5I&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Estándares de Atención al Cliente en TMLF','Sesión','https://www.canva.com/design/DAGwuKYZlNo/lu9RDHOq6G-j0IxnAjEcIw/edit?utm_content=DAGwuKYZlNo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Visa T Common Core','Sesión','https://view.genially.com/6824cdbb80cbb852bbd6fb8e/presentation-visa-t-common-core'],
+    ['DOL, FLSA y OSHA (Visa T)','Sesión',null],
+    ['Protocolo Violdellamadas','Sesión',null],
+    ['Entrevistas Fireflies','Sesión',null],
+    ['Psych Litigation End to End','Material','https://www.canva.com/design/DAG0jxH9z2A/axZN01Cg_KRppifagvJgyA/view?utm_content=DAG0jxH9z2A&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h90d2982d51'],
+  ]},
+  {id:'compliance',name:'Compliance',icon:'⚖️',items:[
+    ['Discovery Calls','Sesión','https://www.canva.com/design/DAGwoRs3bNY/2cRkdJXOUFw_beRnCCKVJg/edit?utm_content=DAGwoRs3bNY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['VAWA y Salud Mental','Sesión','https://www.canva.com/design/DAFykcwIulQ/Y8hHibGd5UrIMVYIt1mpKw/edit'],
+    ['DOE y Affidavit','Material','https://www.canva.com/design/DAF4vx5sLUI/PQU88Y0Ivi6jzl0rgwopqA/view?utm_content=DAF4vx5sLUI&utm_campaign=designshare&utm_medium=link&utm_source=editor'],
+    ['Visa U Carátula','Material','https://view.genially.com/691cce26282e2708413dee5f'],
+    ['Tips y Consejos para Editar','Sesión','https://www.canva.com/design/DAGxFmaQhqU/kF931zM0fkjOx4sLom9WEQ/edit?utm_content=DAGxFmaQhqU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Cómo Detectar un Outcome','Sesión','https://www.canva.com/design/DAGxF8SM9OQ/0rB2geVkUchAuxnAPaBHrg/edit?utm_content=DAGxF8SM9OQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Visa U','Tallereo','https://www.canva.com/design/DAGyxgHtwhs/TnZ7QCX9JG_j_F8F__U3gQ/edit?utm_content=DAGyxgHtwhs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Argumentación y DTP para CCC','Sesión','https://www.canva.com/design/DAGx2P_uW54/4HiNnw_Z9pfTFryUVF5XBA/edit?utm_content=DAGx2P_uW54&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Taller Extra de PBB','Tallereo','https://www.canva.com/design/DAG0Y3RENAE/tb_9paqkJTJCh5VkgdV12w/edit?utm_content=DAG0Y3RENAE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Litigation CVL','Tallereo','https://www.canva.com/design/DAG0v3M3dJw/p-fywaWUD3A-h2JCI24Zbg/view?utm_content=DAG0v3M3dJw&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h86259f814f'],
+    ['Visa T Common Core / CVL','Sesión','https://www.canva.com/design/DAG0rpSqyrY/k5IQl5BpHzfOJgNV3ICt1Q/edit'],
+    ['Visa T DVS','Sesión','https://www.canva.com/design/DAGyXIP6AhU/m78uA2bgRih_YOWVmIexNQ/edit?utm_content=DAGyXIP6AhU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Visa T Actualizaciones 2025','Sesión','https://www.canva.com/design/DAGzrS25XDc/XgeQrWdzOdfwUDZT81CuPw/edit?utm_content=DAGzrS25XDc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Visa K1','Sesión','https://www.canva.com/design/DAG3GTO9U6w/YL5Wzeft-jfil3QW4x1iXA/edit?utm_content=DAG3GTO9U6w&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['VAWA +','Sesión','https://www.canva.com/design/DAFqPAC7WOo/DIhDEsYVz7yESvoVtpWMMQ/edit'],
+    ['Análisis de Formatos','Sesión','https://www.canva.com/design/DAF4vuD8A6U/LgOABgSHtM58qPLK58cPyQ/edit?utm_content=DAF4vuD8A6U&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Desarrollo WRR','Sesión','https://drive.google.com/file/d/1jPraOeReXJzLMAk3yv8b0xlyt7BbpTVt/view?usp=sharing'],
+    ['Técnicas Complex para Edición','Sesión','https://www.canva.com/design/DAF-M4sE6LQ/4VcaC_LFjtHjJibyGIucMw/edit?utm_content=DAF-M4sE6LQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Permanent Bar Teoría','Material','https://view.genially.com/6884f04e667980b780676203/presentation-el-permanent-bar-y-su-argumentacion-parte-teorica'],
+    ['Identificar Permanent Bar','Material','https://view.genially.com/68b9b106bad981cd3b8cd571/presentation-permanent-bar-como-identificarlo'],
+    ['Políticas Antifraude','Material','https://view.genially.com/6924b221f021a8539c5218dc/guide-politicas-antifraude-scc'],
+    ['SCORM Taller Antifraude','Material','http://15.235.114.79/moodle/mod/scorm/view.php?id=6594'],
+    ['SCORM Actualizaciones VAWA Dic 2025','Material','http://15.235.114.79/moodle/mod/scorm/view.php?id=6348'],
+    ['Impacto Operativo Actualizaciones Dic 2025','Material','https://view.genially.com/697795a2d427e7d132219252'],
+    ['Bar Complaints Addendum','Material','https://view.genially.com/69a1aa840194c89cb586b83b'],
+    ['Bar Complaints Clasificación','Material','https://view.genially.com/69a5cb455e1df20fcd3ed48c'],
+    ['Aprendizajes CAD Resumen','Material','https://www.canva.com/design/DAG_uAQ5s5M/qZS3EBc3blCGONViPSiVtA/watch?utm_content=DAG_uAQ5s5M&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hbaaa2cf105'],
+    ['Aprendizajes CAD E-Learning','Material','https://view.genially.com/697776d2f5f7de2ceb50751a/interactive-content-aprendizaje-de-sesiones-cad-con-mgm'],
+    ['CVL Litigation','Material','https://www.canva.com/design/DAG0v3M3dJw/p-fywaWUD3A-h2JCI24Zbg/view?utm_content=DAG0v3M3dJw&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h86259f814f'],
+    ['Affidavit Litigation','Material','https://www.canva.com/design/DAG1CARFoV8/xG-S_xI4PDwKduhKbOO7Vg/edit?utm_content=DAG1CARFoV8&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['CIMT','Material','https://www.canva.com/design/DAGVPgAuas4/3asYnxfby_3xv1UXO0uyOA/edit?utm_content=DAGVPgAuas4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Escritura y Edición Visa U','Material','https://www.canva.com/design/DAG32QWct7I/bnyM_potv6eRXG8XP23xow/view?utm_content=DAG32QWct7I&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hba269e8e57'],
+    ['Estrategias Complex Visa U','Material','https://www.canva.com/design/DAG324TRMc8/yCIBATzyb71mso-cLfXpGQ/view?utm_content=DAG324TRMc8&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hd1dab10647'],
+    ['Enmiendas en DCL Visa U','Material','https://www.canva.com/design/DAG5Dig8Ajk/XSlivRee-C0-dIoh2CivZQ/view?utm_content=DAG5Dig8Ajk&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hb4f5e3896b'],
+    ['Inadmisibilidades y Riesgos','Material','https://view.genially.com/691245e17e4a36015fb0c96d'],
+    ['Compliance Wording','Sesión',null],
+  ]},
+  {id:'packets',name:'Packets',icon:'📦',items:[
+    ['REG AOS','Sesión','https://www.canva.com/design/DAGwcWf-u3k/-NxDKzHq0K5N988JRtaE9A/view?utm_content=DAGwcWf-u3k&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h70c8738309'],
+    ['Vaciado de Información','Sesión','https://www.canva.com/design/DAGwdc0Dy1s/dqNrRxbGLVmq2ZHbkmaByQ/view?utm_content=DAGwdc0Dy1s&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hfd52db952f'],
+    ['Análisis de Formatos VAWA+','Sesión','https://www.canva.com/design/DAGwdQURh5Q/rXxCPDqJgh180Ikh5Eu95g/view?utm_content=DAGwdQURh5Q&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h901ca2350f'],
+    ['Visa K1 Packets','Sesión','https://www.canva.com/design/DAGzMkNHYwg/dBO-11BS-qE5tzzPon9dYQ/view?utm_content=DAGzMkNHYwg&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h055f1584f6'],
+    ['Uso de Plataformas Packets','Tallereo','https://www.canva.com/design/DAGowEHHIL0/8vRsyTBJO_1R-w4O35spqw/view?utm_content=DAGowEHHIL0&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h1b9d57362e'],
+    ['Visa U Packets','Sesión','https://www.canva.com/design/DAGi4FxBiyI/uTqM2xoslPgNQqi9quJP4Q/view?utm_content=DAGi4FxBiyI&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h61937969b8'],
+    ['Recibos y Comunicaciones USCIS','Sesión','https://www.canva.com/design/DAGsIvZL-kY/4B3WGIAEBoMMuU-042ARMA/view?utm_content=DAGsIvZL-kY&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=he28f2d6510'],
+    ['Inadmisibilidad y Delitos','Sesión','https://www.canva.com/design/DAGrYOYHgWA/HvusIz5VGBj5gnuAqbUJyg/view?utm_content=DAGrYOYHgWA&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h82c2efb556'],
+  ]},
+  {id:'visat',name:'Visa T',icon:'📋',items:[
+    ['Visa T Common Core / CVL','Sesión','https://www.canva.com/design/DAG0rpSqyrY/k5IQl5BpHzfOJgNV3ICt1Q/edit'],
+    ['Visa T DVS','Sesión','https://www.canva.com/design/DAGyXIP6AhU/m78uA2bgRih_YOWVmIexNQ/edit?utm_content=DAGyXIP6AhU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Visa T Actualizaciones 2025','Sesión','https://www.canva.com/design/DAGzrS25XDc/XgeQrWdzOdfwUDZT81CuPw/edit?utm_content=DAGzrS25XDc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Teoría del Caso','Sesión','https://www.canva.com/design/DAGjsT1nHjw/QfxhAj_Z8VNV7f-D14lpwA/edit'],
+    ['Técnicas Complex para Edición','Sesión','https://www.canva.com/design/DAF-M4sE6LQ/4VcaC_LFjtHjJibyGIucMw/edit?utm_content=DAF-M4sE6LQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Compliance Wording','Sesión',null],
+  ]},
+  {id:'pmo',name:'PMO',icon:'📊',items:[
+    ['Análisis de Datos y Pensamiento Estratégico','Sesión','https://www.canva.com/design/DAGPHDaQasA/6KcvqW5TUkKly5jPtT9Tyg/edit?ui=eyJIIjp7IkEiOnRydWV9fQ'],
+    ['¿Cómo Calculas tus Metas?','Sesión','https://www.canva.com/design/DAGoikDGN0E/hwTlnh6eKaSOYe5ymbJgug/edit'],
+  ]},
+  {id:'pp',name:'Paquete Plus',icon:'✨',items:[
+    ['Taller de Redacción DOE de Abuso y GMC','Tallereo','https://www.canva.com/design/DAGwnlU8fOA/oH9y9ZpVz_oV8g-vRTS4Ig/edit?utm_content=DAGwnlU8fOA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Evidencias, GMC & Bonafides Psic','Sesión','https://www.canva.com/design/DAGDJ_-LFfc/gnDFTU7VhY0fC8dw7lD4Gg/edit'],
+    ['DOE Guidelines','Tallereo','https://www.canva.com/design/DAGEkJdOfIc/Kd6gDJ2D6OwFDqgAic4b2Q/edit'],
+    ['Construcción Witness Statement','Tallereo','https://www.canva.com/design/DAGHLd9DNMI/7Ztz-JoRzSgfTq_WlSbMyQ/edit?utm_content=DAGHLd9DNMI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Construcción Affidavits y DOE GMC','Tallereo','https://www.canva.com/design/DAGG5jYY2zw/5L6nlXyCVPktsMVVjhLr0A/edit?utm_content=DAGG5jYY2zw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Cortes y Reportes Especiales','Sesión','https://www.canva.com/design/DAGwuU7Y-Ns/CBafvHvlDfdkFKu_Q22KZQ/edit?utm_content=DAGwuU7Y-Ns&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Affidavits','Sesión','https://www.canva.com/design/DAGwuRecUOc/UAvIso7ml-ZtDFo82HW9oA/edit?utm_content=DAGwuRecUOc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Cortes FU P+','Sesión','https://www.canva.com/design/DAGwuIeljEY/CH3fNQy9348C-ov5nuF0kw/edit?utm_content=DAGwuIeljEY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['FOIA','Sesión','https://www.canva.com/design/DAGwjPXP1LA/LlOAn5MXeWb36bimUkqyYg/edit?utm_content=DAGwjPXP1LA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+  ]},
+  {id:'ss',name:'Soft Skills',icon:'💡',items:[
+    ['Planeación','Sesión','https://docs.google.com/presentation/d/1s7kShWVu1QDFqEIfjaQb4GW48Z-AZ-l5/edit?usp=sharing'],
+    ['Comunicación','Sesión','https://docs.google.com/presentation/d/1o6ouHQGnvcj0HT2gMv12T9ri4Jc1dxuq/edit?usp=sharing'],
+    ['Toma de Decisiones','Sesión','https://docs.google.com/presentation/d/1JmeuYkTmgYUK2avkWY7Mxt-rXr9p1kuu/edit?usp=sharing'],
+    ['Liderazgo','Sesión','https://docs.google.com/presentation/d/1ZCLqFcTbuKHcbL4VXlB3kclySPDOgfTp/edit?usp=sharing'],
+    ['Negociación','Sesión','https://docs.google.com/presentation/d/196TCfFF3-N0rlKy0XROWvvtzmrwigveP/edit?usp=sharing'],
+    ['Atención al Detalle','Sesión','https://docs.google.com/presentation/d/1pnFtiYSUtYRXwDRLtcvttiGhcxRZO2Si/edit?usp=sharing'],
+    ['Smart Feedback','Sesión','https://www.canva.com/design/DAFzs5m_R5w/joXmXTtMicuJWVBU_PMFsA/edit?utm_content=DAFzs5m_R5w&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Soft Skills Express','Sesión','https://www.canva.com/design/DAF44REBCOU/f--FwB52OYun-vjGSPBp7w/edit?utm_content=DAF44REBCOU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Expresión y Desenvolvimiento','Tallereo',null],
+  ]},
+  {id:'cs',name:'Customer Service & FU',icon:'📞',items:[
+    ['DVS / FU Criterios de Evidencias de Abuso VAWA','Sesión','https://www.canva.com/design/DAGwnpLZtVk/SQ-Yio1zmoLiw_h0DIXVhQ/edit?utm_content=DAGwnpLZtVk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+    ['Visas Humanitarias','Sesión','https://www.canva.com/design/DAGwoFRx4cw/YHzk9ud6KEToBgp8sXR9bA/edit?utm_content=DAGwoFRx4cw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton'],
+  ]},
+];
+
+// ═════ HELPERS ═════
+function srcLabel(u){
+  if(!u)return'—';
+  if(u.includes('canva.com'))return'🎨 Canva';
+  if(u.includes('genially.com'))return'✨ Genially';
+  if(u.includes('github.io'))return'🌐 Portal';
+  if(u.includes('moodle'))return'📚 SCORM';
+  if(u.includes('google.com'))return'📄 Drive';
+  return'🔗 Link';
+}
+function tipoCls(t){
+  const s=(t||'').toLowerCase();
+  if(s==='sesión'||s==='sesion')return'ts';
+  if(s==='tallereo')return'tt';
+  if(s==='video')return'tv';
+  return'tm';
+}
+
+// ═════ TRAINING TABLE STATE ═════
+let allItems=[];
+let currentCat='all';
+let currentSearch='';
+
+function buildAllItems(){
+  allItems=[];
+  CATS.forEach(c=>c.items.forEach(i=>allItems.push({name:i[0],tipo:i[1],url:i[2],cat:c.id,catName:c.name})));
+}
+
+function initAreaTabs(){
+  const total=allItems.length;
+  let h=`<button class="ar on" data-cat="all" onclick="filterCat('all')">Todos <span class="ar-n">${total}</span></button>`;
+  CATS.forEach(c=>{
+    h+=`<button class="ar" data-cat="${c.id}" onclick="filterCat('${c.id}')">${c.icon} ${c.name} <span class="ar-n">${c.items.length}</span></button>`;
+  });
+  document.getElementById('area-tabs').innerHTML=h;
+}
+
+function filterCat(id){
+  currentCat=id;
+  currentSearch='';
+  document.getElementById('tbl-search-input').value='';
+  document.querySelectorAll('.ar').forEach(b=>b.classList.toggle('on',b.dataset.cat===id));
+  renderTable();
+}
+
+function filterSearch(q){
+  currentSearch=q.toLowerCase().trim();
+  renderTable();
+}
+
+function renderTable(){
+  let rows=allItems.filter(r=>{
+    const catOk=currentCat==='all'||r.cat===currentCat;
+    const searchOk=!currentSearch||r.name.toLowerCase().includes(currentSearch);
+    return catOk&&searchOk;
+  });
+  document.getElementById('tbl-count').textContent=rows.length+' resultado'+(rows.length!==1?'s':'');
+  const empty=document.getElementById('tbl-empty');
+  const tbody=document.getElementById('tbl-body');
+  if(rows.length===0){tbody.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  tbody.innerHTML=rows.map((r,i)=>`<tr>
+    <td class="td-num">${i+1}</td>
+    <td class="td-name">${r.name}</td>
+    <td class="td-tipo"><span class="${tipoCls(r.tipo)}">${r.tipo||'Material'}</span></td>
+    <td class="td-src">${srcLabel(r.url)}</td>
+    <td class="td-link">${r.url
+      ?`<a href="${r.url}" target="_blank">Ver →</a>`
+      :`<span>Sin enlace</span>`
+    }</td>
+  </tr>`).join('');
+}
+
+// ═════ NAVIGATION ═════
+const LABELS={manuales:'Manuales',trainings:'Trainings 2023–2025',t2026:'Training 2026',comparativa:'Antes vs Ahora',impacto:'Impacto'};
+
+function go(id){
+  // hide all panels
+  document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
+  document.getElementById('p-'+id).style.display='block';
+  // transition screens
+  document.getElementById('s-home').classList.add('out');
+  document.getElementById('s-content').classList.add('in');
+  // topbar
+  const lbl=document.getElementById('section-label');
+  lbl.textContent=LABELS[id]||id;
+  lbl.classList.add('vis');
+  document.getElementById('btn-back').classList.add('vis');
+  // scroll content to top
+  document.getElementById('s-content').scrollTop=0;
+}
+
+function goHome(){
+  document.getElementById('s-home').classList.remove('out');
+  document.getElementById('s-content').classList.remove('in');
+  document.getElementById('section-label').classList.remove('vis');
+  document.getElementById('btn-back').classList.remove('vis');
+  document.getElementById('s-home').scrollTop=0;
+}
+
+// ═════ INIT ═════
+buildAllItems();
+initAreaTabs();
+renderTable();
+</script>
+</body>
+</html>
