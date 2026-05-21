@@ -543,6 +543,16 @@ header{position:sticky;top:0;z-index:500;background:rgba(248,243,234,.96);backdr
 </div><!-- /app -->
 
 
+<div class="modal" id="m-area" onclick="if(event.target===this)closeModal('m-area')">
+  <div class="modal-box" style="max-width:700px;">
+    <div class="modal-hd" id="m-area-hd">
+      <div class="modal-hd-title" id="m-area-title"></div>
+      <button class="modal-x" onclick="closeModal('m-area')">&#215;</button>
+    </div>
+    <div class="modal-body" id="m-area-body"></div>
+  </div>
+</div>
+
 <!-- Trainer Modals -->
 <div class="modal" id="m-tr-detail" onclick="if(event.target===this)closeModal('m-tr-detail')">
   <div class="modal-box" style="max-width:780px;">
@@ -1353,50 +1363,62 @@ function openArea(aid) {
   const pct = Math.round((done / s.modules.length) * 100);
   const lvlPills = { Trainee:'p-navy', Specialist:'p-gold', Expert:'p-green' };
 
-  document.getElementById('area-detail').innerHTML = `
-    <div style="background:${s.color};border-radius:var(--r-xl);padding:36px 44px;margin-bottom:24px;position:relative;overflow:hidden;">
-      <div style="position:absolute;right:36px;top:50%;transform:translateY(-50%);font-size:72px;opacity:.2;">${s.emoji}</div>
-      <div style="position:relative;z-index:1;">
-        <div style="font-family:var(--font-m);font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.5);text-transform:uppercase;margin-bottom:8px;">${s.area}</div>
-        <h1 style="font-family:var(--font-d);font-size:34px;font-weight:900;color:white;margin-bottom:10px;">${s.name}</h1>
-        <p style="font-size:14px;color:rgba(255,255,255,.7);max-width:480px;margin-bottom:20px;">${s.desc}</p>
-        <div style="display:flex;gap:24px;flex-wrap:wrap;">
-          <div><div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--gold-light);">${s.earnedCredits}/${s.totalCredits}</div><div style="font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:1px;">Créditos</div></div>
-          <div><div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--gold-light);">${done}/${s.modules.length}</div><div style="font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:1px;">Módulos</div></div>
-          <div><div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--gold-light);">${pct}%</div><div style="font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:1px;">Avance</div></div>
-        </div>
-      </div>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;">
-      <span class="pill p-navy">● Trainee</span>
-      <span class="pill p-gold">● Specialist</span>
-      <span class="pill p-green">● Expert</span>
-    </div>
-    <div class="rm-line-wrap">
-      <div class="rm-vline"></div>
-      ${s.modules.map(mod => {
-        const isLocked = mod.status === 'locked';
-        return `
-        <div class="rm-row">
-          <div class="rm-dot ${mod.status}">${mod.status==='done'?'✓':mod.status==='active'?'▶':mod.status==='locked'?'🔒':''}</div>
-          <div class="rm-card rm-${mod.status}">
-            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <span class="pill ${lvlPills[mod.level]||'p-gray'}">${mod.level}</span>
-                <strong style="font-size:14px;color:var(--navy);">${mod.title}</strong>
-              </div>
-              <span style="font-family:var(--font-m);font-size:11px;color:var(--text-soft);">+${mod.credits} cr.</span>
-            </div>
-            <div style="font-size:12px;color:var(--text-soft);margin-bottom:10px;">${mod.desc}</div>
-            ${isLocked
-              ? `<span class="pill p-gray">🔒 Bloqueado</span>`
-              : mod.status==='done'
-                ? `<span class="pill p-green">✓ Completado</span>`
-                : `<button class="btn btn-navy btn-sm" onclick="completeModule('${s.id}','${mod.id}')">Marcar completado →</button>`}
-          </div>
-        </div>`;
-      }).join('')}
-    </div>`;
+  // Build modules HTML separately to avoid nested backtick issues
+  let modulesHtml = '';
+  s.modules.forEach(mod => {
+    const isLocked = mod.status === 'locked';
+    const isDone   = mod.status === 'done';
+    const isActive = mod.status === 'active';
+    const lvlPill  = lvlPills[mod.level] || 'p-gray';
+    const dotIcon  = isDone ? '✓' : isActive ? '▶' : isLocked ? '🔒' : '';
+    let actionHtml = '';
+    if (isLocked) {
+      actionHtml = '<span class="pill p-gray">🔒 Bloqueado</span>';
+    } else if (isDone) {
+      actionHtml = '<span class="pill p-green">✓ Completado</span>';
+    } else {
+      actionHtml = '<button class="btn btn-navy btn-sm" onclick="completeModule(\'' + s.id + '\',\'' + mod.id + '\')">Marcar completado →</button>';
+    }
+    modulesHtml += '<div class="rm-row">'
+      + '<div class="rm-dot ' + mod.status + '">' + dotIcon + '</div>'
+      + '<div class="rm-card rm-' + mod.status + '">'
+        + '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px;">'
+          + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">'
+            + '<span class="pill ' + lvlPill + '">' + mod.level + '</span>'
+            + '<strong style="font-size:14px;color:var(--navy);">' + mod.title + '</strong>'
+          + '</div>'
+          + '<span style="font-family:var(--font-m);font-size:11px;color:var(--text-soft);">+' + mod.credits + ' cr.</span>'
+        + '</div>'
+        + '<div style="font-size:12px;color:var(--text-soft);margin-bottom:10px;">' + (mod.desc || '') + '</div>'
+        + actionHtml
+      + '</div>'
+    + '</div>';
+  });
+
+  document.getElementById('area-detail').innerHTML =
+    '<div style="background:' + s.color + ';border-radius:var(--r-xl);padding:36px 44px;margin-bottom:24px;position:relative;overflow:hidden;">'
+      + '<div style="position:absolute;right:36px;top:50%;transform:translateY(-50%);font-size:72px;opacity:.2;">' + s.emoji + '</div>'
+      + '<div style="position:relative;z-index:1;">'
+        + '<div style="font-family:var(--font-m);font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.5);text-transform:uppercase;margin-bottom:8px;">' + s.area + '</div>'
+        + '<h1 style="font-family:var(--font-d);font-size:34px;font-weight:900;color:white;margin-bottom:10px;">' + s.name + '</h1>'
+        + '<p style="font-size:14px;color:rgba(255,255,255,.7);max-width:480px;margin-bottom:20px;">' + s.desc + '</p>'
+        + '<div style="display:flex;gap:24px;flex-wrap:wrap;">'
+          + '<div><div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--gold-light);">' + s.earnedCredits + '/' + s.totalCredits + '</div><div style="font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:1px;">Créditos</div></div>'
+          + '<div><div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--gold-light);">' + done + '/' + s.modules.length + '</div><div style="font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:1px;">Módulos</div></div>'
+          + '<div><div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--gold-light);">' + pct + '%</div><div style="font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:1px;">Avance</div></div>'
+        + '</div>'
+      + '</div>'
+    + '</div>'
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;">'
+      + '<span class="pill p-navy">● Trainee</span>'
+      + '<span class="pill p-gold">● Specialist</span>'
+      + '<span class="pill p-green">● Expert</span>'
+    + '</div>'
+    + '<div class="rm-line-wrap">'
+      + '<div class="rm-vline"></div>'
+      + modulesHtml
+    + '</div>';
+
   showSec('s-area');
 }
 
@@ -1701,20 +1723,75 @@ function quickAssignGroup(gid) {
 function renderAdminAreas() {
   document.getElementById('admin-areas').innerHTML = SCHOOLS.map(s => {
     const byLvl = {T:s.modules.filter(m=>m.level==='Trainee').length, S:s.modules.filter(m=>m.level==='Specialist').length, E:s.modules.filter(m=>m.level==='Expert').length};
-    return `
-    <div class="card" style="padding:0;overflow:hidden;">
-      <div style="background:${s.color};padding:14px 16px;display:flex;align-items:center;gap:10px;">
-        <span style="font-size:22px;">${s.emoji}</span>
-        <div><div style="font-family:var(--font-m);font-size:9px;color:rgba(255,255,255,.5);letter-spacing:2px;text-transform:uppercase;">${s.area}</div><div style="font-family:var(--font-d);font-size:15px;font-weight:700;color:white;">${s.name}</div></div>
-      </div>
-      <div style="padding:12px 16px;">
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
-          <span class="pill p-navy">T:${byLvl.T}</span><span class="pill p-gold">S:${byLvl.S}</span><span class="pill p-green">E:${byLvl.E}</span>
-        </div>
-        <div style="font-size:12px;color:var(--text-soft);">${s.modules.length} módulos · ${s.totalCredits} cr.</div>
-      </div>
-    </div>`;
+    const colabs = USERS.filter(u => u.role === 'colab');
+    const enrolled = colabs.filter(u => cd(u.id).areasOn.includes(s.id)).length;
+    return '<div class="card" style="padding:0;overflow:hidden;cursor:pointer;transition:box-shadow .2s;" onclick="openAreaModal(\'' + s.id + '\')" onmouseover="this.style.boxShadow=\'var(--sh-md)\'" onmouseout="this.style.boxShadow=\'none\'">'
+      + '<div style="background:' + s.color + ';padding:14px 16px;display:flex;align-items:center;gap:10px;">'
+        + '<span style="font-size:22px;">' + s.emoji + '</span>'
+        + '<div><div style="font-family:var(--font-m);font-size:9px;color:rgba(255,255,255,.5);letter-spacing:2px;text-transform:uppercase;">' + s.area + '</div>'
+        + '<div style="font-family:var(--font-d);font-size:15px;font-weight:700;color:white;">' + s.name + '</div></div>'
+      + '</div>'
+      + '<div style="padding:12px 16px;">'
+        + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">'
+          + '<span class="pill p-navy">T:' + byLvl.T + '</span>'
+          + '<span class="pill p-gold">S:' + byLvl.S + '</span>'
+          + '<span class="pill p-green">E:' + byLvl.E + '</span>'
+          + '<span class="pill p-green">👥 ' + enrolled + '</span>'
+        + '</div>'
+        + '<div style="font-size:12px;color:var(--text-soft);margin-bottom:10px;">' + s.modules.length + ' módulos · ' + s.totalCredits + ' cr.</div>'
+        + '<div style="font-size:11px;color:var(--blue);font-weight:600;">Ver módulos →</div>'
+      + '</div>'
+    + '</div>';
   }).join('');
+}
+
+function openAreaModal(aid) {
+  const s = SCHOOLS.find(x => x.id === aid);
+  if (!s) return;
+  const lvlPills = { Trainee:'p-navy', Specialist:'p-gold', Expert:'p-green' };
+  const lvlColors = { Trainee:'#1a3a9e', Specialist:'#8b6914', Expert:'#2e7d5e' };
+
+  // Group modules by level
+  const levels = ['Trainee', 'Specialist', 'Expert'];
+  let modulesHtml = '';
+  levels.forEach(lvl => {
+    const mods = s.modules.filter(m => m.level === lvl);
+    if (!mods.length) return;
+    modulesHtml += '<div style="margin-bottom:20px;">'
+      + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">'
+        + '<span class="pill ' + lvlPills[lvl] + '" style="font-size:12px;">' + lvl + '</span>'
+        + '<span style="font-size:11px;color:var(--text-soft);font-family:var(--font-m);">' + mods.length + ' módulos</span>'
+      + '</div>'
+      + '<div style="display:flex;flex-direction:column;gap:6px;">';
+    mods.forEach((mod, i) => {
+      modulesHtml += '<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--beige);border-radius:10px;border-left:3px solid ' + lvlColors[lvl] + ';">'
+        + '<div style="width:24px;height:24px;border-radius:50%;background:' + lvlColors[lvl] + ';color:white;display:flex;align-items:center;justify-content:center;font-family:var(--font-m);font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;">' + (i+1) + '</div>'
+        + '<div style="flex:1;min-width:0;">'
+          + '<div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:3px;">' + mod.title + '</div>'
+          + '<div style="font-size:11px;color:var(--text-soft);line-height:1.5;">' + (mod.desc || '') + '</div>'
+        + '</div>'
+        + '<div style="text-align:right;flex-shrink:0;">'
+          + '<div style="font-family:var(--font-m);font-size:12px;font-weight:700;color:var(--navy);">+' + mod.credits + '</div>'
+          + '<div style="font-size:9px;color:var(--text-soft);">cr.</div>'
+        + '</div>'
+      + '</div>';
+    });
+    modulesHtml += '</div></div>';
+  });
+
+  document.getElementById('m-area-title').textContent = s.name;
+  document.getElementById('m-area-hd').style.background = s.color;
+  document.getElementById('m-area-body').innerHTML =
+    '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">'
+      + '<div class="kpi" style="flex:1;min-width:80px;"><div class="kpi-num" style="color:var(--navy);font-size:28px;">' + s.modules.length + '</div><div class="kpi-lbl">Módulos</div></div>'
+      + '<div class="kpi" style="flex:1;min-width:80px;"><div class="kpi-num" style="color:var(--gold);font-size:28px;">' + s.totalCredits + '</div><div class="kpi-lbl">Créditos</div></div>'
+      + '<div class="kpi" style="flex:1;min-width:80px;"><div class="kpi-num" style="color:var(--blue);font-size:28px;">' + s.modules.filter(m=>m.level==='Trainee').length + '</div><div class="kpi-lbl">Trainee</div></div>'
+      + '<div class="kpi" style="flex:1;min-width:80px;"><div class="kpi-num" style="color:#8b6914;font-size:28px;">' + s.modules.filter(m=>m.level==='Specialist').length + '</div><div class="kpi-lbl">Specialist</div></div>'
+      + '<div class="kpi" style="flex:1;min-width:80px;"><div class="kpi-num" style="color:var(--green);font-size:28px;">' + s.modules.filter(m=>m.level==='Expert').length + '</div><div class="kpi-lbl">Expert</div></div>'
+    + '</div>'
+    + modulesHtml;
+
+  openModal('m-area');
 }
 
 function setTrCat(cat) {
