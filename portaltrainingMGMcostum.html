@@ -329,6 +329,9 @@ body{display:flex;flex-direction:column;min-height:100vh}
     <div class="sb-item" id="sb-casereview" onclick="showSection('casereview',this)" title="Case Review">
       <div class="sb-area"></div><span>Case Review</span>
     </div>
+    <div class="sb-item" id="sb-crwbw" onclick="showSection('crwbw',this)" title="Case Review (Word by Word)">
+      <div class="sb-area"></div><span>Case Review (WbW)</span>
+    </div>
   </div>
   <div class="sb-footer"><p>TMLF ACADEMY v2.0<br>2025 Uso interno</p></div>
 </nav>
@@ -384,6 +387,12 @@ body{display:flex;flex-direction:column;min-height:100vh}
       <div class="area-card-foot"><div class="area-stat"><span class="dot"></span>Area activa</div><button class="btn-area">Abrir <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div>
     </div>
   </div>
+  <div class="area-card" onclick="showSection('crwbw',document.getElementById('sb-crwbw'))">
+      <div class="area-card-head"><div class="area-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="12" y1="9" x2="12" y2="9"/></svg></div><div><h3>Case Review (Word by Word)</h3><p>Revision detallada palabra por palabra de documentos, calidad narrativa y consistencia de evidencia.</p></div></div>
+      <div class="tab-chips"><span class="tab-chip">Tipo Contacto</span><span class="tab-chip">Llamadas</span><span class="tab-chip">Script</span><span class="tab-chip">SOP</span><span class="tab-chip">Arbol</span><span class="tab-chip">Data</span></div>
+      <div class="area-card-foot"><div class="area-stat"><span class="dot"></span>Area activa</div><button class="btn-area">Abrir <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div>
+    </div>
+  </div>
   <div class="two-col">
     
     <div class="panel"><div class="panel-hdr"><span class="panel-title">Estado del Portal</span></div><table class="ct"><tr><th>Area</th><th>Estado</th><th>Secciones</th></tr><tr><td>Callbacks</td><td><span class="sbadge sb-act">Activo</span></td><td><span class="badge tag-gold">6 pestanas</span></td></tr><tr><td>Customer Service</td><td><span class="sbadge sb-act">Activo</span></td><td><span class="badge tag-gold">6 pestanas</span></td></tr><tr><td>Rescreening</td><td><span class="sbadge sb-act">Activo</span></td><td><span class="badge tag-gold">6 pestanas</span></td></tr><tr><td>Case Review</td><td><span class="sbadge sb-act">Activo</span></td><td><span class="badge tag-gold">6 pestanas</span></td></tr></table></div>
@@ -393,6 +402,7 @@ body{display:flex;flex-direction:column;min-height:100vh}
 <section class="section" id="section-cs"></section>
 <section class="section" id="section-rescreening"></section>
 <section class="section" id="section-casereview"></section>
+<section class="section" id="section-crwbw"></section>
 </main>
 <div id="nm" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center">
   <div style="background:var(--white);border-radius:var(--radius-xl);padding:28px;width:400px;max-width:90vw;box-shadow:var(--shadow-l)">
@@ -406,12 +416,19 @@ body{display:flex;flex-direction:column;min-height:100vh}
 <script>
 var ARBOL_HTML={};
 ARBOL_HTML['callbacks']='<div class="gb"><p>Haz clic en cada tipo de llamada para expandir su flujo de decisión. Los nodos <span style="color:var(--gold);font-weight:600">◆ dorados</span> son puntos de decisión.</p></div><div class="fl-ac-item">  <div class="fl-ac-head" onclick="flToggle(this,\'fl-cb-1\')">    <div class="fl-ac-title"><div class="fl-ac-num">1</div>Travel</div>    <svg class="fl-ac-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>  </div>  <div class="fl-ac-body" id="fl-cb-1"><div class="fl-ac-inner"><div class="fl-wrap"><div class="fl-node fl-start">TRAVEL REQUEST</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step"><strong>Paralegal revisa:</strong><ul><li>Estatus del caso</li><li>Vigencia de documentos</li></ul></div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Reúne información relevante</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Comparte información al abogado</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-atty">Attorney Callback</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Abogado brinda asesoría</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-decision">¿Se requiere escalación interna?</div><div class="fl-split-h">      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label yes">SÍ</div>        <div class="fl-node fl-escalate">↑ Escalar con área correspondiente</div>      </div>      <div style="width:2px;background:var(--border);flex-shrink:0;margin-top:0"></div>      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label no">NO</div>        <div class="fl-node fl-close">✓ Cerrar seguimiento</div>      </div>    </div></div></div></div></div><div class="fl-ac-item">  <div class="fl-ac-head" onclick="flToggle(this,\'fl-cb-2\')">    <div class="fl-ac-title"><div class="fl-ac-num">2</div>Cliente Upset</div>    <svg class="fl-ac-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>  </div>  <div class="fl-ac-body" id="fl-cb-2"><div class="fl-ac-inner"><div class="fl-subsection"><div class="fl-subsection-title">A) Molestia por tiempos internos</div><div class="fl-wrap"><div class="fl-node fl-start">CLIENTE MOLESTO — Tiempos Internos</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Paralegal revisa estatus</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-decision">¿Puede acelerarse antes del callback?</div><div class="fl-split-h">      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label yes">SÍ</div>        <div class="fl-node fl-escalate">↑ Escalar con área correspondiente</div>      </div>      <div style="width:2px;background:var(--border);flex-shrink:0;margin-top:0"></div>      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label no">NO</div>        <div class="fl-node fl-step" style="text-align:center">Documentar situación</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Informar proceso y avances al abogado</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Enviar enlaces, recibos y evidencia</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-atty">Attorney Callback</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Abogado brinda asesoría al cliente</div>      </div>    </div></div></div><div class="fl-subsection"><div class="fl-subsection-title">B) Molestia por procesos USCIS</div><div class="fl-wrap"><div class="fl-node fl-start">CLIENTE MOLESTO — Procesos USCIS</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step"><strong>Paralegal revisa:</strong><ul><li>Recibos</li><li>Timeline breve del caso</li></ul></div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Comparte información al abogado</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-atty">Attorney Callback</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Abogado brinda asesoría</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-decision">¿Requiere escalación interna?</div><div class="fl-split-h">      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label yes">SÍ</div>        <div class="fl-node fl-escalate">↑ Escalar con área correspondiente</div>      </div>      <div style="width:2px;background:var(--border);flex-shrink:0;margin-top:0"></div>      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label no">NO</div>        <div class="fl-node fl-close">✓ Cerrar seguimiento</div>      </div>    </div></div></div></div></div></div><div class="fl-ac-item">  <div class="fl-ac-head" onclick="flToggle(this,\'fl-cb-3\')">    <div class="fl-ac-title"><div class="fl-ac-num">3</div>FOIA Interpretation</div>    <svg class="fl-ac-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>  </div>  <div class="fl-ac-body" id="fl-cb-3"><div class="fl-ac-inner"><div class="fl-wrap"><div class="fl-node fl-start">FOIA INTERPRETATION</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Paralegal recibe resultados FOIA</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Comparte resultados al abogado</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Attorney revisa información</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-atty">Attorney Callback</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Abogado interpreta resultados al cliente</div></div></div></div></div><div class="fl-ac-item">  <div class="fl-ac-head" onclick="flToggle(this,\'fl-cb-4\')">    <div class="fl-ac-title"><div class="fl-ac-num">4</div>Rejection / Decision Notification</div>    <svg class="fl-ac-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>  </div>  <div class="fl-ac-body" id="fl-cb-4"><div class="fl-ac-inner"><div class="fl-wrap"><div class="fl-node fl-start">REJECTION / DECISION NOTIFICATION</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step"><strong>Paralegal recolecta:</strong><ul><li>Notices / recibos</li><li>Timeline del caso</li></ul></div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Comparte información al abogado</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-atty">Attorney Callback</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Abogado brinda explicación y asesoría</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-decision">¿Se requiere escalación?</div><div class="fl-split-h">      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label yes">SÍ</div>        <div class="fl-node fl-escalate">↑ Escalar con área correspondiente</div>      </div>      <div style="width:2px;background:var(--border);flex-shrink:0;margin-top:0"></div>      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label no">NO</div>        <div class="fl-node fl-close">✓ Cerrar seguimiento</div>      </div>    </div></div></div></div></div><div class="fl-ac-item">  <div class="fl-ac-head" onclick="flToggle(this,\'fl-cb-5\')">    <div class="fl-ac-title"><div class="fl-ac-num">5</div>Change of Strategy</div>    <svg class="fl-ac-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>  </div>  <div class="fl-ac-body" id="fl-cb-5"><div class="fl-ac-inner"><div class="fl-wrap"><div class="fl-node fl-start">CHANGE OF STRATEGY</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Screening call inicial</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Paralegal documenta resultados</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Comparte screening al abogado</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Attorney revisa estrategia del caso</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-atty">Attorney Callback</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Abogado comparte nueva estrategia</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-decision">¿Cliente desea proceder?</div><div class="fl-split-h">      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label yes">SÍ</div>        <div class="fl-node fl-escalate">↑ Escalar e iniciar proceso correspondiente</div>      </div>      <div style="width:2px;background:var(--border);flex-shrink:0;margin-top:0"></div>      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label no">NO</div>        <div class="fl-node fl-close">✓ Cerrar seguimiento</div>      </div>    </div></div></div></div></div><div style="height:16px;border-left:2px dashed var(--border);margin:4px 0 4px 20px"></div><div style="padding:14px 0 8px"><div style="font-family:Barlow Condensed,sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text-s);font-weight:600">Flujo General Resumido</div></div><div class="panel" style="background:var(--navy-d,#081540);border-color:var(--navy)"><div style="color:var(--gold-l);font-family:Barlow Condensed,sans-serif;font-size:11px;letter-spacing:.8px;text-transform:uppercase;margin-bottom:16px;font-weight:600">Flujo General — Callbacks</div><div class="fl-wrap"><div class="fl-node fl-start">SOLICITUD DEL CLIENTE</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Paralegal investiga caso</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Reúne documentos / timeline</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Comparte contexto al abogado</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-atty">Attorney Callback</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Asesoría al cliente</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-decision">¿Requiere escalación?</div><div class="fl-split-h">      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label yes">SÍ</div>        <div class="fl-node fl-escalate">↑ Escalar internamente</div>      </div>      <div style="width:2px;background:var(--border);flex-shrink:0;margin-top:0"></div>      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label no">NO</div>        <div class="fl-node fl-close">✓ Cerrar caso</div>      </div>    </div></div></div>';
+ARBOL_HTML['rescreening']='<div class="gb"><p>Flujo operativo del área de Rescreening. Los nodos <span style="color:var(--gold);font-weight:600">◆ dorados</span> son puntos de decisión.</p></div><div class="panel" style="margin-bottom:16px"><div class="panel-hdr"><span class="panel-title">Flujo: Screening / Discovery Call</span><span class="panel-tag tag-gold">Flujo Principal</span></div><div class="fl-wrap"><div class="fl-node fl-start">SOLICITUD DE SCREENING</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Analista revisa antecedentes del caso</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Agenda llamada con el cliente</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Discovery Call / Preguntas de exploración</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Exploración de posibles alivios migratorios</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Documentación de resultados</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-decision">¿Quién solicitó el Screening?</div><div class="fl-split-h">      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label yes">Abogado</div>        <div class="fl-node fl-step" style="text-align:center">Compartir resultados con abogado solicitante</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-atty">Attorney Callback</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-close">✓ Confirmación de estrategia</div>      </div>      <div style="width:2px;background:var(--border);flex-shrink:0"></div>      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label no">Otra Área</div>        <div class="fl-node fl-step" style="text-align:center">Compartir resultados con área solicitante</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-close">✓ Continuar proceso con el cliente</div>      </div>    </div></div></div><div class="panel" style="margin-bottom:16px"><div class="panel-hdr"><span class="panel-title">Responsabilidades por Rol</span><span class="panel-tag tag-green">Roles</span></div><div style="display:flex;gap:16px;margin-top:4px">  <div style="flex:1;background:#e8f5ee;border:1px solid #1a6b3a;border-radius:var(--radius-l);padding:18px 20px">      <div style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#1a6b3a;font-weight:700;margin-bottom:12px">Responsabilidades del Analista</div>      <ul style="padding-left:16px;font-size:13px;color:var(--text-m);line-height:1.65;list-style:none;padding:0"><li style="margin-bottom:6px">→ Revisar antecedentes del caso</li><li style="margin-bottom:6px">→ Coordinar y agendar la llamada</li><li style="margin-bottom:6px">→ Realizar preguntas de exploración conforme a la solicitud</li><li style="margin-bottom:6px">→ Identificar posibles alivios migratorios</li><li style="margin-bottom:6px">→ Documentar hallazgos relevantes</li><li style="margin-bottom:6px">→ Compartir resultados con el área correspondiente</li></ul>    </div>  <div style="flex:1;background:var(--gold-pale);border:1px solid var(--gold);border-radius:var(--radius-l);padding:18px 20px">      <div style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--warn);font-weight:700;margin-bottom:12px">Responsabilidades del Abogado</div>      <ul style="padding-left:16px;font-size:13px;color:var(--text-m);line-height:1.65;list-style:none;padding:0"><li style="margin-bottom:6px">→ Revisar resultados del screening</li><li style="margin-bottom:6px">→ Confirmar estrategia migratoria</li><li style="margin-bottom:6px">→ Brindar asesoría y orientación al cliente</li></ul>    </div></div></div><div class="panel" style="background:var(--navy);border-color:var(--navy)"><div style="color:var(--gold-l);font-family:Barlow Condensed,sans-serif;font-size:11px;letter-spacing:.8px;text-transform:uppercase;margin-bottom:16px;font-weight:600">Flujo General Resumido — Rescreening</div><div class="fl-wrap"><div class="fl-node fl-start">SOLICITUD RECIBIDA</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Revisión de antecedentes</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Discovery Call</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Exploración de alivios migratorios</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Documentación de resultados</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-escalate">↑ Escalación con abogado o área correspondiente</div></div></div>';
+ARBOL_HTML['crwbw']='<div class="gb"><p>Flujo operativo completo de la operación Outbound — Case Review Word by Word. 5 fases con 7 nodos de decisión. Haz clic en cada fase para expandir.</p></div><div class="fl-ac-item">  <div class="fl-ac-head" onclick="flToggle(this,\'fl-cr-I\')">    <div class="fl-ac-title">      <div class="fl-ac-num">I</div>      Fase 1: Contacto Inicial y Autenticación    </div>    <svg class="fl-ac-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>  </div>  <div class="fl-ac-body" id="fl-cr-I">    <div class="fl-ac-inner"><div class="fl-wrap"><div class="fl-node fl-start">OPERACIÓN OUTBOUND — CASE REVIEW WbW</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-decision"><span style="font-size:10px;font-family:Barlow Condensed,sans-serif;color:var(--gold);font-weight:700;margin-right:6px">Nodo 1</span>¿El cliente responde la llamada?</div><div class="fl-split-h">      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label yes">NO</div>        <div class="fl-node fl-step"><strong>Acciones:</strong><ul><li>Enviar SMS estándar de la firma</li><li>Registrar nota en TramCase: "Intento de contacto - SMS enviado"</li></ul></div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-close">✓ FIN — Cambio de status en sheet</div>      </div>      <div style="width:2px;background:var(--border);flex-shrink:0"></div>      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label yes">SÍ → Nodo 2</div>        <div class="fl-node fl-decision"><span style="font-size:10px;font-family:Barlow Condensed,sans-serif;color:var(--gold);font-weight:700;margin-right:6px">Nodo 2</span>¿Se confirma que es el cliente titular?</div><div class="fl-split-h">      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label no">NO — Tercero</div>        <div class="fl-node fl-step" style="text-align:center">Preguntar alternativa de contacto directo</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-close">✓ FIN — Registrar en TramCase</div>      </div>      <div style="width:2px;background:var(--border);flex-shrink:0"></div>      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label no">NO — Abuser</div>        <div class="fl-node fl-step" style="text-align:center">Indicar cortésmente que se llamará después</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-close">✓ FIN — Terminar llamada</div>      </div>    </div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-decision"><span style="font-size:10px;font-family:Barlow Condensed,sans-serif;color:var(--gold);font-weight:700;margin-right:6px">Nodo 3</span>¿El cliente tiene disponibilidad para la revisión completa?</div><div class="fl-split-h">      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label yes">NO</div>        <div class="fl-node fl-step" style="text-align:center">Agendar Callback en agenda de operación</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-close">✓ FIN</div>      </div>      <div style="width:2px;background:var(--border);flex-shrink:0"></div>      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label no">SÍ</div>        <div style="text-align:center;padding:8px 0"><div style="display:inline-flex;align-items:center;gap:8px;padding:5px 16px;background:var(--navy);color:var(--gold);border-radius:20px;font-family:Barlow Condensed,sans-serif;font-size:11px;letter-spacing:.6px;text-transform:uppercase;font-weight:600">→ Avanzar a Fase 2</div></div>      </div>    </div>      </div>    </div></div></div>  </div></div><div class="fl-ac-item">  <div class="fl-ac-head" onclick="flToggle(this,\'fl-cr-II\')">    <div class="fl-ac-title">      <div class="fl-ac-num">II</div>      Fase 2: Revisión Checklist de Formas    </div>    <svg class="fl-ac-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>  </div>  <div class="fl-ac-body" id="fl-cr-II">    <div class="fl-ac-inner"><div class="fl-wrap"><div class="fl-node fl-decision"><span style="font-size:10px;font-family:Barlow Condensed,sans-serif;color:var(--gold);font-weight:700;margin-right:6px">Nodo 4</span>¿La información del cliente coincide con el Checklist de las formas?</div><div style="background:rgba(196,151,58,.08);border:1px solid rgba(196,151,58,.25);border-radius:var(--radius);padding:10px 14px;margin-top:8px;font-size:12px;color:var(--warn);line-height:1.55"><strong>⚠️ Nota operativa:</strong> Al ser documentos ya radicados ante inmigración, NO se hacen modificaciones ni correcciones bajo ninguna circunstancia.</div><div class="fl-split-h">      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label yes">NO — Inconsistencias</div>        <div class="fl-node fl-step"><strong>Acciones:</strong><ul><li>Registrar información real/nueva en la sheet de operación y en el Checklist</li></ul></div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-step" style="text-align:center">Continuar con el proceso (no se detiene)</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div style="text-align:center;padding:8px 0"><div style="display:inline-flex;align-items:center;gap:8px;padding:5px 16px;background:var(--navy);color:var(--gold);border-radius:20px;font-family:Barlow Condensed,sans-serif;font-size:11px;letter-spacing:.6px;text-transform:uppercase;font-weight:600">→ Avanzar a Fase 3</div></div>      </div>      <div style="width:2px;background:var(--border);flex-shrink:0"></div>      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label no">SÍ</div>        <div style="text-align:center;padding:8px 0"><div style="display:inline-flex;align-items:center;gap:8px;padding:5px 16px;background:var(--navy);color:var(--gold);border-radius:20px;font-family:Barlow Condensed,sans-serif;font-size:11px;letter-spacing:.6px;text-transform:uppercase;font-weight:600">→ Avanzar a Fase 3</div></div>      </div>    </div></div></div>  </div></div><div class="fl-ac-item">  <div class="fl-ac-head" onclick="flToggle(this,\'fl-cr-III\')">    <div class="fl-ac-title">      <div class="fl-ac-num">III</div>      Fase 3: Lectura de la Declaración    </div>    <svg class="fl-ac-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>  </div>  <div class="fl-ac-body" id="fl-cr-III">    <div class="fl-ac-inner"><div class="fl-wrap"><div class="fl-node fl-step" style="text-align:center">Agente realiza lectura de la Declaración palabra por palabra</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-decision"><span style="font-size:10px;font-family:Barlow Condensed,sans-serif;color:var(--gold);font-weight:700;margin-right:6px">Nodo 5</span>¿Existen errores, objeciones o incidencias del cliente?</div><div class="fl-split-h">      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label yes">SÍ — Incidencias</div>        <div class="fl-node fl-step"><strong>Acciones:</strong><ul><li>Documentar detalladamente en la sheet de operación</li><li>Clasificar según Sistema Semáforo</li></ul></div><div style="background:var(--off);border-radius:var(--radius);padding:12px 14px;margin-top:8px;font-size:12px;color:var(--text-m);line-height:1.65;border:1px solid var(--border-l)">      <strong style="color:var(--navy);font-size:12px">Sistema Semáforo:</strong><br>      <span style="color:#1a6b3a">🟢 Verde</span> / <span style="color:#7a4e0a">🟡 Amarillo</span>: Registrar y continuar si el cliente firma.<br>      <span style="color:#a32d2d">🔴 Rojo</span>: Reportar al Líder de Operación + escalar en <code style="font-size:11px">#case-review-correcciones-rojas--compliance</code>    </div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-decision">¿El cliente acepta firmar/proceder?</div><div class="fl-split-h">      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label yes">SÍ</div>        <div style="text-align:center;padding:8px 0"><div style="display:inline-flex;align-items:center;gap:8px;padding:5px 16px;background:var(--navy);color:var(--gold);border-radius:20px;font-family:Barlow Condensed,sans-serif;font-size:11px;letter-spacing:.6px;text-transform:uppercase;font-weight:600">→ Avanzar a Fase 4</div></div>      </div>      <div style="width:2px;background:var(--border);flex-shrink:0"></div>      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label no">NO</div>        <div class="fl-node" style="background:#fce8e8;border:1px solid #e53e3e;color:#a32d2d;border-radius:20px;font-size:12px;font-family:Barlow Condensed,sans-serif;letter-spacing:.5px;text-transform:uppercase;padding:8px 16px;text-align:center">✕ FIN — Caso Escalado</div>      </div>    </div>      </div>      <div style="width:2px;background:var(--border);flex-shrink:0"></div>      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label no">NO — Lectura exitosa</div>        <div style="text-align:center;padding:8px 0"><div style="display:inline-flex;align-items:center;gap:8px;padding:5px 16px;background:var(--navy);color:var(--gold);border-radius:20px;font-family:Barlow Condensed,sans-serif;font-size:11px;letter-spacing:.6px;text-transform:uppercase;font-weight:600">→ Avanzar a Fase 4</div></div>      </div>    </div></div></div>  </div></div><div class="fl-ac-item">  <div class="fl-ac-head" onclick="flToggle(this,\'fl-cr-IV\')">    <div class="fl-ac-title">      <div class="fl-ac-num">IV</div>      Fase 4: Lectura y Consentimiento del Affidavit    </div>    <svg class="fl-ac-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>  </div>  <div class="fl-ac-body" id="fl-cr-IV">    <div class="fl-ac-inner"><div class="fl-wrap"><div class="fl-node fl-step" style="text-align:center">Lectura del documento tipo Affidavit</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-decision"><span style="font-size:10px;font-family:Barlow Condensed,sans-serif;color:var(--gold);font-weight:700;margin-right:6px">Nodo 6</span>¿El cliente expresa dudas o NO está de acuerdo?</div><div class="fl-split-h">      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label yes">SÍ — Dudas / Desacuerdo</div>        <div class="fl-node fl-step" style="text-align:center">Pausar lectura y resolver dudas con scripts autorizados</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-decision">¿Acepta el affidavit tras aclaración?</div><div class="fl-split-h">      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label yes">SÍ</div>        <div class="fl-node fl-step" style="text-align:center">Reiniciar/continuar lectura hasta el final</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div style="text-align:center;padding:8px 0"><div style="display:inline-flex;align-items:center;gap:8px;padding:5px 16px;background:var(--navy);color:var(--gold);border-radius:20px;font-family:Barlow Condensed,sans-serif;font-size:11px;letter-spacing:.6px;text-transform:uppercase;font-weight:600">→ Avanzar a Fase 5</div></div>      </div>      <div style="width:2px;background:var(--border);flex-shrink:0"></div>      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label no">NO</div>        <div class="fl-node" style="background:#fce8e8;border:1px solid #e53e3e;color:#a32d2d;border-radius:20px;font-size:12px;font-family:Barlow Condensed,sans-serif;letter-spacing:.5px;text-transform:uppercase;padding:8px 16px;text-align:center">✕ FIN — Caso Retenido</div>      </div>    </div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-decision">¿El cliente pide hablar con un abogado?</div><div class="fl-split-h">      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label yes">SÍ</div>        <div class="fl-node fl-step" style="text-align:center">Agendar Callback con Attorney</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-escalate">↑ FIN — Caso en Seguimiento</div>      </div>      <div style="width:2px;background:var(--border);flex-shrink:0"></div>      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label no">NO</div>        <div class="fl-node fl-step" style="text-align:center">Continuar lectura hasta el final</div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div style="text-align:center;padding:8px 0"><div style="display:inline-flex;align-items:center;gap:8px;padding:5px 16px;background:var(--navy);color:var(--gold);border-radius:20px;font-family:Barlow Condensed,sans-serif;font-size:11px;letter-spacing:.6px;text-transform:uppercase;font-weight:600">→ Avanzar a Fase 5</div></div>      </div>    </div>      </div>      <div style="width:2px;background:var(--border);flex-shrink:0"></div>      <div class="fl-split-side">        <div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div>        <div class="fl-split-label no">NO — Acepta bajo juramento</div>        <div style="text-align:center;padding:8px 0"><div style="display:inline-flex;align-items:center;gap:8px;padding:5px 16px;background:var(--navy);color:var(--gold);border-radius:20px;font-family:Barlow Condensed,sans-serif;font-size:11px;letter-spacing:.6px;text-transform:uppercase;font-weight:600">→ Avanzar a Fase 5</div></div>      </div>    </div></div></div>  </div></div><div class="fl-ac-item">  <div class="fl-ac-head" onclick="flToggle(this,\'fl-cr-V\')">    <div class="fl-ac-title">      <div class="fl-ac-num">V</div>      Fase 5: Cierre del Caso y Entregables    </div>    <svg class="fl-ac-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>  </div>  <div class="fl-ac-body" id="fl-cr-V">    <div class="fl-ac-inner"><div class="fl-wrap"><div class="fl-node fl-step"><strong>Checklist de Cierre obligatorio (post-llamada):</strong><ul><li>📁 Subir audio de llamada a Dropbox</li><li>📄 Subir Declaración, Checklist y Affidavit validados a Dropbox</li><li>📱 Enviar mensajes de confirmación al cliente (SMS/WhatsApp/Email)</li><li>✅ Tipificar estatus como "Case Review Done" en la sheet de operación</li><li>📝 Añadir observaciones de correcciones/inconsistencias detectadas (si aplica)</li></ul></div><div class="fl-arr"><div class="fl-arr-line"></div><div class="fl-arr-head"></div></div><div class="fl-node fl-close">✓ FIN DEL PROCESO ✓</div></div></div>  </div></div>';
+ARBOL_HTML['cs']='<div class="gb"><p>Matriz de escalación — Customer Service. Identifica el nivel del cliente y sigue el proceso correspondiente.</p></div><div style="background:var(--navy);border-radius:var(--radius-l);padding:20px 22px;margin-bottom:20px">  <div style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--gold-l);margin-bottom:8px;font-weight:600">Objetivo</div>  <p style="font-size:13px;color:rgba(255,255,255,.8);line-height:1.65">Identificar la situación basado en el comportamiento del cliente, el nivel de emergencia y la cantidad de interacciones previas. El objetivo es <strong style="color:var(--gold-l)">EVITAR</strong> que los clientes lleguen a un nivel naranja o rojo.</p></div><div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius-l);padding:20px"><div style="display:flex;align-items:center;gap:10px;margin:20px 0 12px;padding:10px 14px;background:#e8f5ee;border-radius:var(--radius);border-left:4px solid #1a6b3a"><span style="font-size:16px">🟢</span><span style="font-family:\'Cormorant Garamond\',serif;font-size:16px;font-weight:700;color:var(--navy)">Manejable por Asesor — Niveles 1 al 5</span></div><div style="background:#e8f5ee;border:1px solid #1a6b3a;border-radius:var(--radius-l);padding:16px 18px;margin-bottom:10px">      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">        <div style="background:#1a6b3a;color:#fff;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:700;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>        <span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:#1a6b3a;font-weight:600">Manejable · Nivel 1</span>      </div>      <p style="font-size:12px;color:var(--text-m);line-height:1.55;margin-bottom:6px"><strong style="color:var(--navy)">Llamada:</strong> Comportamiento habitual, dudas e información general.</p>      <p style="font-size:12px;color:var(--text-m);line-height:1.55"><strong style="color:var(--navy)">Proceso:</strong> Manejar la llamada de manera habitual. Ser empático e identificar si el caso requiere escalación por tiempos de procesamiento.</p>    </div><div style="background:#e8f5ee;border:1px solid #1a6b3a;border-radius:var(--radius-l);padding:16px 18px;margin-bottom:10px">      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">        <div style="background:#1a6b3a;color:#fff;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:700;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>        <span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:#1a6b3a;font-weight:600">Manejable · Nivel 2</span>      </div>      <p style="font-size:12px;color:var(--text-m);line-height:1.55;margin-bottom:6px"><strong style="color:var(--navy)">Llamada:</strong> El cliente no está satisfecho con el servicio.</p>      <p style="font-size:12px;color:var(--text-m);line-height:1.55"><strong style="color:var(--navy)">Proceso:</strong> Identificar el tipo de caso y corregir la percepción del cliente. Asegurar que el cliente sienta que se le está atendiendo. Hacer escalaciones correspondientes.</p>    </div><div style="background:#e8f5ee;border:1px solid #1a6b3a;border-radius:var(--radius-l);padding:16px 18px;margin-bottom:10px">      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">        <div style="background:#1a6b3a;color:#fff;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:700;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>        <span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:#1a6b3a;font-weight:600">Manejable · Nivel 3</span>      </div>      <p style="font-size:12px;color:var(--text-m);line-height:1.55;margin-bottom:6px"><strong style="color:var(--navy)">Llamada:</strong> El cliente quiere cancelar.</p>      <p style="font-size:12px;color:var(--text-m);line-height:1.55"><strong style="color:var(--navy)">Proceso:</strong> Escuchar con enfoque resolutivo, indagar motivo de cancelación. Llenar el form de Cancellations y dejar nota con la razón.</p>    </div><div style="background:#e8f5ee;border:1px solid #1a6b3a;border-radius:var(--radius-l);padding:16px 18px;margin-bottom:10px">      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">        <div style="background:#1a6b3a;color:#fff;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:700;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">4</div>        <span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:#1a6b3a;font-weight:600">Manejable · Nivel 4</span>      </div>      <p style="font-size:12px;color:var(--text-m);line-height:1.55;margin-bottom:6px"><strong style="color:var(--navy)">Llamada:</strong> Cliente preocupado, llama constantemente por la misma situación.</p>      <p style="font-size:12px;color:var(--text-m);line-height:1.55"><strong style="color:var(--navy)">Proceso:</strong> Revisar la situación con el Team Leader para hacer la mejor escalación. Dejar nota con el contexto.</p>    </div><div style="background:#e8f5ee;border:1px solid #1a6b3a;border-radius:var(--radius-l);padding:16px 18px;margin-bottom:10px">      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">        <div style="background:#1a6b3a;color:#fff;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:700;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">5</div>        <span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:#1a6b3a;font-weight:600">Manejable · Nivel 5</span>      </div>      <p style="font-size:12px;color:var(--text-m);line-height:1.55;margin-bottom:6px"><strong style="color:var(--navy)">Llamada:</strong> Situación constante — se le sigue diciendo lo mismo sin resolver (caso estancado).</p>      <p style="font-size:12px;color:var(--text-m);line-height:1.55"><strong style="color:var(--navy)">Proceso:</strong> Revisar con el Team Leader para la mejor escalación. Dejar nota. Si es necesario, el Team Leader lo reportará a Gerencia.</p>    </div><div style="display:flex;align-items:center;gap:10px;margin:20px 0 12px;padding:10px 14px;background:var(--gold-pale);border-radius:var(--radius);border-left:4px solid var(--warn)"><span style="font-size:16px">🟡</span><span style="font-family:\'Cormorant Garamond\',serif;font-size:16px;font-weight:700;color:var(--navy)">Se Reporta — Nivel 6</span></div><div style="background:var(--gold-pale);border:1px solid var(--gold);border-radius:var(--radius-l);padding:16px 18px;margin-bottom:10px">      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">        <div style="background:var(--gold);color:#fff;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:700;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">6</div>        <span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--warn);font-weight:600">Se Reporta · Nivel 6</span>      </div>      <p style="font-size:12px;color:var(--text-m);line-height:1.55;margin-bottom:6px"><strong style="color:var(--navy)">Llamada:</strong> Situación inusual (fraude de matrimonio, conflictos legales, riesgo de vida) o víctima de fraude.</p>      <p style="font-size:12px;color:var(--text-m);line-height:1.55"><strong style="color:var(--navy)">Proceso:</strong> Notificar al Team Leader para que acompañe durante la llamada. El Team Leader hará escalaciones o enviará correos a los involucrados específicos.</p>    </div><div style="display:flex;align-items:center;gap:10px;margin:20px 0 12px;padding:10px 14px;background:#fde8e8;border-radius:var(--radius);border-left:4px solid #a32d2d"><span style="font-size:16px">🔴</span><span style="font-family:\'Cormorant Garamond\',serif;font-size:16px;font-weight:700;color:var(--navy)">Se Toma por Líder y Se Reporta — Niveles 7 al 10</span></div><div style="background:#fde8e8;border:1px solid #e53e3e;border-radius:var(--radius-l);padding:16px 18px;margin-bottom:10px">      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">        <div style="background:#e53e3e;color:#fff;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:700;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">7</div>        <span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:#a32d2d;font-weight:600">Líder + Reporte · Nivel 7</span>      </div>      <p style="font-size:12px;color:var(--text-m);line-height:1.55;margin-bottom:6px"><strong style="color:var(--navy)">Llamada:</strong> Emergencia de viaje, solicita hablar con abogado, o empleador llama por información del caso.</p>      <p style="font-size:12px;color:var(--text-m);line-height:1.55"><strong style="color:var(--navy)">Proceso:</strong> Verificar documentos de viaje (WP con I-512, I-131 aprobada, pasaporte). Escalar al Team Leader para agendar cita con abogada. Las abogadas verificarán riesgos según historial.</p>    </div><div style="background:#fde8e8;border:1px solid #e53e3e;border-radius:var(--radius-l);padding:16px 18px;margin-bottom:10px">      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">        <div style="background:#e53e3e;color:#fff;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:700;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">8</div>        <span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:#a32d2d;font-weight:600">Líder + Reporte · Nivel 8</span>      </div>      <p style="font-size:12px;color:var(--text-m);line-height:1.55;margin-bottom:6px"><strong style="color:var(--navy)">Llamada:</strong> Cliente molesto/insulta, amenaza demandar, comentarios en redes sociales, hablar con MGM. O familiar/abuser en desacuerdo.</p>      <p style="font-size:12px;color:var(--text-m);line-height:1.55"><strong style="color:var(--navy)">Proceso:</strong> Avisar al Team Leader inmediatamente para que tome la llamada. Team Leader escala con Gerencia → Gerencia reporta a MGM.</p>    </div><div style="background:#fde8e8;border:1px solid #e53e3e;border-radius:var(--radius-l);padding:16px 18px;margin-bottom:10px">      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">        <div style="background:#e53e3e;color:#fff;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:700;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">9</div>        <span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:#a32d2d;font-weight:600">Líder + Reporte · Nivel 9</span>      </div>      <p style="font-size:12px;color:var(--text-m);line-height:1.55;margin-bottom:6px"><strong style="color:var(--navy)">Llamada:</strong> Cliente arrestado/cárcel, nuevo cargo criminal, ICE en su casa, proceso de deportación.</p>      <p style="font-size:12px;color:var(--text-m);line-height:1.55"><strong style="color:var(--navy)">Proceso:</strong> Recopilar: contexto, contacto adicional (familiar no abuser), autoridad presente, fechas. Avisar al Team Leader/Gerencia inmediatamente. BackOffice escala con abogados → Gerencia a MGM.</p>    </div><div style="background:#fde8e8;border:1px solid #e53e3e;border-radius:var(--radius-l);padding:16px 18px;margin-bottom:10px">      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">        <div style="background:#e53e3e;color:#fff;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:700;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">10</div>        <span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:#a32d2d;font-weight:600">Líder + Reporte · Nivel 10</span>      </div>      <p style="font-size:12px;color:var(--text-m);line-height:1.55;margin-bottom:6px"><strong style="color:var(--navy)">Llamada:</strong> Amenaza de Bar Complaint, solicita expediente, amenaza Google Review, o abogada externa contacta en nombre del cliente.</p>      <p style="font-size:12px;color:var(--text-m);line-height:1.55"><strong style="color:var(--navy)">Proceso:</strong> Reportar inmediatamente al Team Leader → toma la llamada. Team Leader reporta a Gerencia → Gerencia a departamentos correspondientes y MGM.</p>    </div></div>';
+
+
+
 
 var AREAS=[
   {id:'callbacks',name:'Callbacks',desc:'Scripts, SOPs, arbol de decisiones y data del equipo de llamadas de retorno y seguimiento.'},
   {id:'cs',name:'Customer Service',desc:'Protocolos de atencion, soporte al cliente, arbol de rutas y metricas por etapa del caso.'},
   {id:'rescreening',name:'Rescreening',desc:'Reclasificacion migratoria: scripts, arbol de decision, SOP y data de seguimiento.'},
-  {id:'casereview',name:'Case Review',desc:'Revision de casos, documentos, calidad, arbol de criterios y metricas en TramCase.'}
+  {id:'casereview',name:'Case Review',desc:'Revision de casos, documentos, calidad, arbol de criterios y metricas en TramCase.'},
+  {id:'crwbw',name:'Case Review (Word by Word)',desc:'Revision detallada palabra por palabra de documentos de caso, calidad narrativa y consistencia de evidencia.'}
 ];
 
 var SCRD=[
@@ -431,7 +448,7 @@ var SOPP=[
 function buildAreaSection(area){
   var el=document.getElementById('section-'+area.id);
   el.innerHTML=
-    '<div class="shr-row"><div><div class="shr-pre">Area Operativa</div><div class="shr-h2">'+area.name+'</div><div class="shr-p">'+area.desc+'</div></div><span class="sbadge sb-act" style="padding:6px 14px;font-size:11px;align-self:flex-start">Activo</span></div><div class="area-tabs-wrap"><div class="area-tabs" id="tabs-'+area.id+'"><button class="tab-btn active" onclick="showTab(\''+area.id+'\',\'tipo\',this)">📋 Tipo de Contacto</button><button class="tab-btn" onclick="showTab(\''+area.id+'\',\'llama\',this)">🎬 Llamadas</button><button class="tab-btn" onclick="showTab(\''+area.id+'\',\'llamb\',this)">📜 Script</button><button class="tab-btn" onclick="showTab(\''+area.id+'\',\'sop\',this)">⚙️ SOP</button><button class="tab-btn" onclick="showTab(\''+area.id+'\',\'arbol\',this)">🌳 Arbol de Decisiones</button><button class="tab-btn" onclick="showTab(\''+area.id+'\',\'data\',this)">📊 DATA</button></div></div>'+
+    '<div class="shr-row"><div><div class="shr-pre">Area Operativa</div><div class="shr-h2">'+area.name+'</div><div class="shr-p">'+area.desc+'</div></div><span class="sbadge sb-act" style="padding:6px 14px;font-size:11px;align-self:flex-start">Activo</span></div><div class="area-tabs-wrap"><div class="area-tabs" id="tabs-'+area.id+'"><button class="tab-btn active" onclick="showTab(\''+area.id+'\',\'tipo\',this)">📋 Tipo de Contacto</button><button class="tab-btn" onclick="showTab(\''+area.id+'\',\'llama\',this)">🎬 Llamadas</button><button class="tab-btn" onclick="showTab(\''+area.id+'\',\'llamb\',this)">📜 Script</button>'+(area.id==='cs'?'<button class="tab-btn" onclick="showTab(\''+area.id+'\',\'sop\',this)">⚙️ SOP</button>':'')+'<button class="tab-btn" onclick="showTab(\''+area.id+'\',\'arbol\',this)">🌳 Arbol de Decisiones</button><button class="tab-btn" onclick="showTab(\''+area.id+'\',\'data\',this)">📊 DATA</button></div></div>'+
     buildTipoTab(area.id,area.name)+
     buildLlamATab(area.id,area.name)+
     buildLlamBTab(area.id,area.name)+
@@ -447,6 +464,18 @@ var TIPO_DATA={
     {tipo:'Notificacion de Decision',  tiempo:'40 min', obs:''},
     {tipo:'Legal Advice',              tiempo:'40 min', obs:''},
     {tipo:'Travel',                    tiempo:'20 min', obs:''}
+  ],
+  rescreening:[
+    {tipo:'DC',            tiempo:'41 min', obs:''},
+    {tipo:'Screening',     tiempo:'22 min', obs:''},
+    {tipo:'Screening',     tiempo:'46 min', obs:''},
+    {tipo:'Discovery Call',tiempo:'5 min',  obs:''},
+    {tipo:'Discovery Call',tiempo:'13 min', obs:''},
+    {tipo:'DC',            tiempo:'38 min', obs:''},
+    {tipo:'Screening',     tiempo:'53 min', obs:''},
+    {tipo:'DC',            tiempo:'10 min', obs:''},
+    {tipo:'DC',            tiempo:'31 min', obs:''},
+    {tipo:'Screening',     tiempo:'22 min', obs:''}
   ]
 };
 
@@ -494,6 +523,48 @@ var LLAMA_A={
       {label:'CL Carlos Mendoza Gonzalez',           url:'https://drive.google.com/file/d/19STVtixsC6780jOm22fWbyrF-FxKjv-L/view?usp=sharing'}
     ]
   }
+,
+  rescreening:{
+    s1:[
+      {label:'Socorro Resendiz', url:'https://drive.google.com/file/d/19jpreWXMEO2lDP9TIvWQjKHsnUJlNfx5/view?usp=sharing'},
+      {label:'Jeremia de Jesus Vicente Guerrero', url:'https://drive.google.com/file/d/1ePgIHvT3I7hlNE1GD4WRu02ck2XFU8Tg/view?usp=sharing'},
+      {label:'Mr. Carmen Guillen', url:'https://drive.google.com/file/d/1ruJUIaGbmZZ3zVbKc-4vr2LJcfOtLOhy/view?usp=sharing'},
+      {label:'Edgar Pinales Almanza', url:'https://drive.google.com/file/d/1amaY2VSbXUajFJ74gOF9B5w5bUyafGDN/view?usp=sharing'},
+      {label:'Maiky Miguel Baez Lara', url:'https://drive.google.com/file/d/1_WsIp4jmubYoFsTq3GOPyvmgLKuSHaX4/view?usp=sharing'}
+    ]
+  ,
+    s2:[
+      {label:'Juana Veronica',   url:'https://drive.google.com/file/d/1zUjdmkkdTxGTICpiwq5_gTA8aQfuarLs/view?usp=sharing'},
+      {label:'Humberto Guillen', url:'https://drive.google.com/file/d/1zbAsTBhPkqy9tWLDk_Ykr-Vb7bC506mD/view?usp=sharing'},
+      {label:'Ma. Concepcion',   url:'https://drive.google.com/file/d/1QXRV2Qgia6ReYH1VDJZ_fSwajsTQJhVo/view?usp=sharing'},
+      {label:'Arturo Gerardo',   url:'https://drive.google.com/file/d/14m4n2ybVicUId2GnLuEBIPHn39CkrAlj/view?usp=sharing'},
+      {label:'Antonia Fernandez',url:'https://drive.google.com/file/d/1HlYLwaIpzELHaSvA53DfsBtMDEPFMAdT/view?usp=sharing'}
+    ]
+  }
+,
+  casereview:{
+    s1:[
+      {label:'Andrea Cruz',              url:'https://drive.google.com/file/d/1crwpNfsxOQLbrJ88v339ITG7071Sbisj/view?usp=sharing'},
+      {label:'Monica Macedo',            url:'https://drive.google.com/file/d/1K_JNQ8v3yEtlzXeMsLsikvsySO-08fod/view?usp=sharing'},
+      {label:'Armando Pena',             url:'https://drive.google.com/file/d/1AkIo_PNxk3I2ThATcWwnHDNMFU78DL4O/view?usp=sharing'},
+      {label:'Susana Carolina Guillen Landaverde', url:''},
+      {label:'Jorge Alejandro',          url:'https://drive.google.com/file/d/13ADU0CCbiXmWfjy0qnjQuZcKscd_Bfte/view?usp=sharing'}
+    ],
+    s2:[
+      {label:'Maria Guadalupe G.',       url:'https://drive.google.com/file/d/12h30ci9ilVtBL_LaXxxIztjCeMYrOGkJ/view?usp=sharing'},
+      {label:'MA Guadalupe Garcia Lario',url:'https://drive.google.com/file/d/1x4OdxmNYzZ_XkT558jVAx8njg0mhRghL/view?usp=sharing'},
+      {label:'Maria Luisa',              url:'https://drive.google.com/file/d/1KUD5Lr11E5eslRIwXRKox-ShXCr6-WlY/view?usp=sharing'}
+    ]
+  },
+  crwbw:{
+    s1:[
+      {label:'Ines Gila Castillo',          url:'https://www.dropbox.com/scl/fi/akjf77n3yvip6l68uub4e/CR-WORD-BY-WORD-DONE-INES-GILA-CASTILLO.mp3?rlkey=qdq1sq2kfl30mel05p1ijmrsi&st=4hranlqj&dl=0'},
+      {label:'Luis Alberto Martinez Castro', url:'https://www.dropbox.com/home/Open%20Cases/Open%20Cases/Martinez%20Castro%20Luis%20Alberto/10.%20Recording?preview=CR+Word-by-Word+Luis+Alberto+Martinez+Castro.mp3&quickview=id%3Ad8U66kS76XAAAAAAAFHUSA'}
+    ],
+    s2:[
+      {label:'Glendy Zucely Garcia Orellana', url:'https://www.dropbox.com/home/Open%20Cases/Open%20Cases/Garcia%20Orellana%20Glendy%20Zucely/RECORDINGS?preview=Recording+CR+Word+by+Word+Done+-+Glendy+Zucely+Garcia+Orellana.mp3&quickview=id%3Ad8U66kS76XAAAAAAAFHU0Q'}
+    ]
+  }
 };
 
 // Convert Drive /view URL to /preview for iframe embedding
@@ -503,6 +574,14 @@ function drivePreviewUrl(url){
   return url;
 }
 
+
+// Detect if URL is a Dropbox audio file
+function isDropboxUrl(url){ return url&&url.indexOf('dropbox.com')>-1; }
+
+// Convert Dropbox dl=0 share link to direct dl=1 for audio
+function dropboxDirectUrl(url){
+  return url.replace('dl=0','dl=1').replace('www.dropbox.com','dl.dropboxusercontent.com');
+}
 // Convert any Google Docs/Sheets/Slides URL to embeddable preview
 function docsPreviewUrl(url){
   // /edit -> /preview for Docs
@@ -512,18 +591,51 @@ function docsPreviewUrl(url){
 // Preview a call in the inline panel (section-aware)
 function selectLlamA(areaId, sectionId, idx, url, label){
   var cleanUrl=url.replace(/&#39;/g,"'");
+  // Handle empty URL
+  if(!cleanUrl||cleanUrl===''){
+    var title=document.getElementById('prev-ttl-'+areaId+'-'+sectionId);
+    var empty=document.getElementById('prev-empty-'+areaId+'-'+sectionId);
+    var iframe=document.getElementById('prev-if-'+areaId+'-'+sectionId);
+    var allCards=document.querySelectorAll('#sec-'+areaId+'-'+sectionId+' .ll-card');
+    allCards.forEach(function(c){c.classList.remove('active');});
+    var card=document.getElementById('llc-'+areaId+'-'+sectionId+'-'+idx);
+    if(card) card.classList.add('active');
+    if(title) title.textContent=label.replace(/&#39;/g,"'");
+    if(iframe) iframe.style.display='none';
+    if(empty){
+      empty.style.display='flex';
+      empty.innerHTML='<div style="text-align:center;padding:32px"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.5" style="width:40px;height:40px;margin-bottom:12px"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><p style="font-size:12px;color:rgba(255,255,255,.4);font-family:Barlow Condensed,sans-serif;letter-spacing:.5px;text-transform:uppercase">URL pendiente</p></div>';
+    }
+    return;
+  }
   var cleanLabel=label.replace(/&#39;/g,"'");
-  // Update card highlight
+  // Highlight active card
   var allCards=document.querySelectorAll('#sec-'+areaId+'-'+sectionId+' .ll-card');
   allCards.forEach(function(c){c.classList.remove('active');});
   var card=document.getElementById('llc-'+areaId+'-'+sectionId+'-'+idx);
   if(card) card.classList.add('active');
-  // Update preview panel
+  // Update title
+  var title=document.getElementById('prev-ttl-'+areaId+'-'+sectionId);
   var iframe=document.getElementById('prev-if-'+areaId+'-'+sectionId);
   var empty=document.getElementById('prev-empty-'+areaId+'-'+sectionId);
-  var title=document.getElementById('prev-ttl-'+areaId+'-'+sectionId);
-  if(!iframe||!empty||!title) return;
-  title.textContent=cleanLabel;
+  if(!iframe||!empty) return;
+  if(title) title.textContent=cleanLabel;
+  // Handle Dropbox audio files
+  if(isDropboxUrl(cleanUrl)){
+    iframe.style.display='none';
+    empty.style.display='flex';
+    empty.innerHTML=
+      '<div style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:32px;text-align:center">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" style="width:48px;height:48px;opacity:.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>'+
+        '<p style="font-size:13px;color:rgba(255,255,255,.7);font-family:Barlow Condensed,sans-serif;letter-spacing:.5px;text-transform:uppercase">'+cleanLabel+'</p>'+
+        '<audio controls style="width:100%;max-width:340px;margin-top:4px" src="'+dropboxDirectUrl(cleanUrl)+'">'+
+          'Tu navegador no soporta audio HTML5.'+
+        '</audio>'+
+        '<a href="'+cleanUrl+'" target="_blank" style="margin-top:8px;color:var(--gold-l);font-size:12px;font-family:Barlow Condensed,sans-serif;letter-spacing:.5px;text-transform:uppercase;text-decoration:none;border:1px solid rgba(196,151,58,.4);padding:6px 16px;border-radius:5px">Abrir en Dropbox ↗</a>'+
+      '</div>';
+    return;
+  }
+  // Google Drive embed
   iframe.src=drivePreviewUrl(cleanUrl);
   empty.style.display='none';
   iframe.style.display='block';
@@ -625,7 +737,8 @@ function buildLlamBTab(id,name){
       var d=data[i];
       var safeUrl=d.url.replace(/'/g,"&#39;");
       var safeLabel=d.label.replace(/'/g,"&#39;");
-      var onclk="previewScript('"+id+"',"+i+",'"+safeUrl+"','"+safeLabel+"')";
+      var noUrl=!d.url||d.url==='';
+      var onclk=noUrl?"alert('URL pendiente: agrega el enlace a SCRIPT_DATA.'+id+' en el codigo.')": "previewScript('"+id+"',"+i+",'"+safeUrl+"','"+safeLabel+"')";
       cards+=
         '<div class="mc mc-media" id="sc-card-'+id+'-'+i+'" onclick="'+onclk+'">'+
           '<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">'+
@@ -637,7 +750,7 @@ function buildLlamBTab(id,name){
           '</div>'+
           '<div class="mc-ft" style="margin-top:auto">'+
             '<span class="badge tag-navy" style="font-size:9px">Script</span>'+
-            '<button class="bm bm-play" onclick="event.stopPropagation();'+onclk+'">'+playIcon+' Previsualizar</button>'+
+            (noUrl?'<span class="badge" style="font-size:9px;background:#fce8e8;color:#a32d2d">URL Pendiente</span>':'<button class="bm bm-play" onclick="event.stopPropagation();'+onclk+'">'+playIcon+' Previsualizar</button>')+
           '</div>'+
         '</div>';
     }
@@ -693,16 +806,68 @@ function buildLlamBTab(id,name){
 }
 
 function buildSOPTab(id,name){
+  if(id!=='cs') return '';
+
+  // Area has SOP documents configured
+  var sopDocs=typeof SOP_DATA!=='undefined'&&SOP_DATA[id];
+  if(sopDocs&&sopDocs.length){
+    var pdfIcon='<svg viewBox="0 0 24 24" fill="none" stroke="#a32d2d" stroke-width="2" style="width:18px;height:18px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>';
+    var playIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>';
+    var cards='';
+    for(var i=0;i<sopDocs.length;i++){
+      var d=sopDocs[i];
+      var noUrl=!d.url||d.url==='';
+      var safeUrl=d.url?d.url.replace(/'/g,"&#39;"):'';
+      var safeLabel=d.label.replace(/'/g,"&#39;");
+      var onclk=noUrl?"alert('URL pendiente para: "+d.label+"')":"previewSOP('"+id+"',"+i+",'"+safeUrl+"','"+safeLabel+"')";
+      cards+=
+        '<div class="mc mc-media" id="sop-card-'+id+'-'+i+'" onclick="'+onclk+'">'+
+          '<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">'+
+            '<div class="mi" style="background:#fde8e8;flex-shrink:0">'+pdfIcon+'</div>'+
+            '<div><h4 style="margin:0 0 4px;font-size:13px">'+d.label+'</h4>'+
+            '<span style="font-size:11px;color:var(--text-s);font-family:Barlow Condensed,sans-serif;letter-spacing:.4px;text-transform:uppercase">PDF</span></div>'+
+          '</div>'+
+          '<div class="mc-ft" style="margin-top:auto">'+
+            '<span class="badge" style="font-size:9px;background:#fde8e8;color:#a32d2d">PDF</span>'+
+            (noUrl?'<span class="badge" style="font-size:9px;background:#fce8e8;color:#a32d2d">URL Pendiente</span>':'<button class="bm bm-play" onclick="event.stopPropagation();'+onclk+'">'+playIcon+' Previsualizar</button>')+
+          '</div>'+
+        '</div>';
+    }
+    var closeCallSop="closeSOP('"+id+"')";
+    var prevPanel=
+      '<div id="sop-prev-'+id+'" style="display:none;margin-top:16px;background:var(--navy);border-radius:var(--radius-l);overflow:hidden;box-shadow:var(--shadow-l)">'+
+        '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px">'+
+          '<div style="display:flex;align-items:center;gap:10px">'+
+            '<svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" style="width:16px;height:16px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'+
+            '<span id="sop-prev-ttl-'+id+'" style="font-family:Barlow Condensed,sans-serif;font-size:13px;letter-spacing:.5px;color:var(--white);font-weight:500"></span>'+
+          '</div>'+
+          '<button onclick="'+closeCallSop+'" style="background:rgba(255,255,255,.12);border:none;color:var(--white);border-radius:5px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif;display:flex;align-items:center;gap:5px">'+
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Cerrar'+
+          '</button>'+
+        '</div>'+
+        '<iframe id="sop-prev-if-'+id+'" src="about:blank" style="width:100%;height:600px;border:none;display:block;background:#fff"></iframe>'+
+      '</div>';
+    return '<div class="tab-content" id="tab-'+id+'-sop">'+
+      '<div class="panel">'+
+        '<div class="panel-hdr"><span class="panel-title">SOP \u2014 '+name+'</span><span class="panel-tag tag-gold">Documentos</span></div>'+
+        '<div class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>Haz clic en <strong>Previsualizar</strong> para abrir el documento aqui abajo.</p></div>'+
+        '<div class="mg">'+cards+'</div>'+prevPanel+
+      '</div></div>';
+  }
+
+  // Generic step-by-step SOP
   var steps='';
   for(var i=0;i<SOPP.length;i++){
     var s=SOPP[i];
-    steps+='<div class="sop-step"><div class="s-num">'+(i+1)+'</div><div class="s-conn"></div><div class="s-body"><h4>'+s.title+'</h4><p>'+s.desc+'</p><span class="s-tag tag-navy">'+s.tag+'</span>'+
-      (i===0?'<div class="s-alert"><strong>Criterio de entrada:</strong> [Placeholder -- define cuando inicia este proceso y sus prerequisitos.]</div>':'')+
+    steps+='<div class="sop-step"><div class="s-num">'+(i+1)+'</div><div class="s-conn"></div>'+
+      '<div class="s-body"><h4>'+s.title+'</h4><p>'+s.desc+'</p><span class="s-tag tag-navy">'+s.tag+'</span>'+
+      (i===0?'<div class="s-alert"><strong>Criterio de entrada:</strong> [Placeholder]</div>':'')+
       '</div></div>';
   }
-  return '<div class="tab-content" id="tab-'+id+'-sop"><div class="panel"><div class="panel-hdr"><span class="panel-title">SOP -- '+name+'</span><span class="panel-tag tag-gold">Procedimiento</span></div><div class="gb"><p>Reemplaza cada paso con el SOP real del area <strong>'+name+'</strong>.</p></div>'+
-    steps+
-    '<div class="divider"></div><p style="font-family:Cormorant Garamond,serif;font-size:17px;font-weight:700;color:var(--navy);margin-bottom:14px">Documentos de Referencia</p><div class="dc"><div class="dchip" onclick="askOpen()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>[Doc. Referencia 1]</div><div class="dchip" onclick="askOpen()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>[Doc. Referencia 2]</div><div class="dchip" onclick="askOpen()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>[Formulario / Template]</div><div class="dchip" onclick="alert(\'Para agregar: copia un dchip.\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>+ Agregar</div></div></div><div class="panel"><div class="panel-hdr"><span class="panel-title">Notas y Observaciones</span></div><div style="background:var(--off);border:2px dashed var(--border);border-radius:var(--radius);padding:24px;text-align:center"><p style="font-size:13px;color:var(--text-s)">Espacio para notas generales: excepciones, casos especiales, contactos de escalacion, restricciones regulatorias.</p></div></div></div>';
+  return '<div class="tab-content" id="tab-'+id+'-sop">'+
+    '<div class="panel"><div class="panel-hdr"><span class="panel-title">SOP \u2014 '+name+'</span><span class="panel-tag tag-gold">Procedimiento</span></div>'+
+    '<div class="gb"><p>Reemplaza cada paso con el SOP real del area <strong>'+name+'</strong>.</p></div>'+
+    steps+'</div></div>';
 }
 
 function makeTreeHtml(id,name){
@@ -722,21 +887,66 @@ function buildArbolTab(id,name){
   return '<div class="tab-content" id="tab-'+id+'-arbol"><div class="panel">'+inner+'</div></div>';
 }
 
+var SOP_DATA={
+  cs:[
+    {label:'Candados de Seguridad',          url:'', icon:'pdf'},
+    {label:'Saber el Estatus del Cliente',   url:'', icon:'pdf'},
+    {label:'Cliente Detenido',               url:'', icon:'pdf'},
+    {label:'Leer las Notas',                 url:'', icon:'pdf'},
+    {label:'Cancelaciones',                  url:'', icon:'pdf'},
+    {label:'Situaciones de Emergencia',      url:'', icon:'pdf'},
+    {label:'Clientes Molestos',              url:'', icon:'pdf'}
+  ]
+};
+
 var SCRIPT_DATA={
   callbacks:[
-    {
-      label:'Script Callbacks',
-      url:'https://docs.google.com/document/d/1qdL9eN4X_z5RwV0trp5QxAo3arz_2yPndGFZx_ywcW8/edit?usp=sharing'
-    }
+    {label:'Script Callbacks', url:'https://docs.google.com/document/d/1qdL9eN4X_z5RwV0trp5QxAo3arz_2yPndGFZx_ywcW8/edit?usp=sharing'}
+  ],
+  cs:[
+    {label:'Llamadas In y Out',                          url:'https://docs.google.com/document/d/1Hy2RIQ0GIUmkhAP6_XDiQeB1nSpIEsUDimKtuuJYzEk/edit?tab=t.0'},
+    {label:'Queja de Tiempos de Procesamiento USCIS',   url:'https://docs.google.com/document/d/1pWBEMlQT5iSXyLuypuIkKmrHw1trzbYvz3l1H5ULSPg/edit?tab=t.0'},
+    {label:'Abuser Call',                                url:'https://docs.google.com/document/d/1B71LkSjvVj_dLISm9I99uylBc_Syx591sLsSI3tnjBw/edit?tab=t.0'},
+    {label:'File Request',                               url:'https://docs.google.com/document/d/1C0YM9dK9NmIGftG7evQMeXltLnb9AjsR5iX_V1RyBYw/edit?tab=t.0'}
+  ],
+  casereview:[
+    {label:'Script de Llamada',       url:'https://docs.google.com/document/d/109Umypns8S3HNM9gQwRXpMu7Ylh8f2LEPpTriii_8m0/edit?usp=sharing'},
+    {label:'Case Review Process 7.0', url:'https://docs.google.com/document/d/1ryDwJVQ9i_LGO2h26wNFlGTrwSLvQdge/edit?usp=sharing'},
+    {label:'Actividades CR',          url:'https://docs.google.com/document/d/1KFhQZLjMexlDzzMrTY_bHN_3tlfgkAHAj4PQEpRlh0Y/edit?usp=sharing'},
+    {label:'Guia de Case Review',     url:'https://drive.google.com/file/d/1XJL5pFACdAnIrknQZy3YR6ppES_OMYEx/view?usp=sharing'},
+    {label:'Correcciones Compliance', url:'https://docs.google.com/spreadsheets/d/19N4pGwcNhBgG5aik23y826r0yD8H0XU205jXQ6yi24s/edit?usp=sharing'}
+  ],
+  crwbw:[
+    {label:'Case Review WbW - Instructivo',          url:''},
+    {label:'Scripts Case Review Word By Word',        url:''},
+    {label:'Script - Casos SID',                      url:''},
+    {label:'T Visa Case Review Checklist',            url:''},
+    {label:'FAQ Case Review Word By Word',            url:''}
+  ],
+  rescreening:[
+    {label:'Script Rescreening', url:'https://docs.google.com/document/d/1pDYpFzp7zo8BE0HQLtVARLA3lzmU0Qrw/edit?usp=sharing'}
   ]
 };
 
 var DATA_LINKS={
   callbacks:[
-    {label:'Daily Callbacks',       url:'https://docs.google.com/spreadsheets/d/1Erv7Nmqp6bl486xxzb2x7eWCI3hkgljYTqwegoX4uFA/edit?usp=sharing',  icon:'sheet'},
-    {label:'Agendas de Callbacks',  url:'https://docs.google.com/spreadsheets/d/1LyGDIxswkCwqDioMVfapF1zqRrs7LasfkgSsjBeNoJc/edit?usp=sharing',  icon:'sheet'},
-    {label:'Mendoza Hub',           url:'https://mendoza-callback-hub-223080314602.us-central1.run.app/',                                           icon:'web'},
-    {label:'Solicitud de Callbacks',url:'https://docs.google.com/spreadsheets/d/1-FmFojiIFLn2TUd2LJ11qfU815_2eldwHcug4LHsGy8/edit?usp=sharing',  icon:'sheet'}
+    {label:'Daily Callbacks',        url:'https://docs.google.com/spreadsheets/d/1Erv7Nmqp6bl486xxzb2x7eWCI3hkgljYTqwegoX4uFA/edit?usp=sharing', icon:'sheet'},
+    {label:'Agendas de Callbacks',   url:'https://docs.google.com/spreadsheets/d/1LyGDIxswkCwqDioMVfapF1zqRrs7LasfkgSsjBeNoJc/edit?usp=sharing', icon:'sheet'},
+    {label:'Mendoza Hub',            url:'https://mendoza-callback-hub-223080314602.us-central1.run.app/',                                          icon:'web'},
+    {label:'Solicitud de Callbacks', url:'https://docs.google.com/spreadsheets/d/1-FmFojiIFLn2TUd2LJ11qfU815_2eldwHcug4LHsGy8/edit?usp=sharing', icon:'sheet'}
+  ],
+  casereview:[
+    {label:'Case Review - Operacion', url:'https://docs.google.com/spreadsheets/d/1T8RVA773Rk3T3OzdubDr1CfPdYGvNClJgjobvYcnfNk/edit?usp=sharing', icon:'sheet'}
+  ],
+  cs:[
+    {label:'Customer Service - Operacion', url:'https://docs.google.com/spreadsheets/d/13MHV1AzQtYfXIxM4vDLhel0bms2xaTClf6fiRVxrf0I/edit?gid=1781986141#gid=1781986141', icon:'sheet'}
+  ],
+  crwbw:[
+    {label:'Case Review WbW - Operacion', url:'https://docs.google.com/spreadsheets/d/15snTHxaIOo66n_zpYQ3eXljm8hDowhKPmOQtm3Zx-yQ/edit?gid=1769912316#gid=1769912316', icon:'sheet'}
+  ],
+  rescreening:[
+    {label:'Daily',                  url:'https://docs.google.com/spreadsheets/d/1tBAfgVD0kVI5fJJnTdO7mJVCtFI6sxWmiviytjKMzCQ/edit?usp=sharing', icon:'sheet'},
+    {label:'Solicitud de Callbacks', url:'https://docs.google.com/spreadsheets/d/1-FmFojiIFLn2TUd2LJ11qfU815_2eldwHcug4LHsGy8/edit?usp=sharing', icon:'sheet'}
   ]
 };
 
@@ -753,6 +963,79 @@ function resourcePreviewUrl(url, icon){
 }
 
 function buildDataTab(id,name){
+  // ── Callbacks: KPIs + Recursos ────────────────────────────────────────────
+  if(id==='callbacks'){
+    var links=DATA_LINKS['callbacks']||[];
+    var sheetIcon='<svg viewBox="0 0 24 24" fill="none" stroke="#1a6b3a" stroke-width="2" style="width:18px;height:18px"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>';
+    var webIcon='<svg viewBox="0 0 24 24" fill="none" stroke="#1B3FA0" stroke-width="2" style="width:18px;height:18px"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
+    var playIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>';
+    var cards='';
+    for(var i=0;i<links.length;i++){
+      var d=links[i];
+      var safeUrl=d.url.replace(/'/g,"&#39;");
+      var safeLabel=d.label.replace(/'/g,"&#39;");
+      var onclk="previewDataLink('callbacks',"+i+",'"+safeUrl+"','"+safeLabel+"','"+d.icon+"')";
+      var bgColor=d.icon==='sheet'?'#e8f5ee':d.icon==='web'?'#e8f0fe':d.icon==='doc'?'#e8f0fe':'var(--gold-pale)';
+      var docIcon2='<svg viewBox="0 0 24 24" fill="none" stroke="#3182ce" stroke-width="2" style="width:18px;height:18px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+      var iconSvg=d.icon==='web'?webIcon:d.icon==='doc'?docIcon2:sheetIcon;
+      var badgeLabel=d.icon==='sheet'?'Sheets':d.icon==='web'?'Web App':d.icon==='doc'?'Docs':'Docs';
+      cards+=
+        '<div class="mc mc-media" id="dl-card-callbacks-'+i+'" onclick="'+onclk+'">'+
+          '<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">'+
+            '<div class="mi" style="background:'+bgColor+';flex-shrink:0">'+iconSvg+'</div>'+
+            '<div><h4 style="margin:0 0 4px;font-size:13px">'+d.label+'</h4>'+
+            '<span style="font-size:11px;color:var(--text-s);font-family:Barlow Condensed,sans-serif;letter-spacing:.4px;text-transform:uppercase">'+badgeLabel+'</span></div>'+
+          '</div>'+
+          '<div class="mc-ft" style="margin-top:auto">'+
+            '<span class="badge" style="font-size:9px;background:var(--off2);color:var(--text-s)">'+badgeLabel+'</span>'+
+            '<button class="bm bm-play" onclick="event.stopPropagation();'+onclk+'">'+playIcon+' Previsualizar</button>'+
+          '</div>'+
+        '</div>';
+    }
+    var closeCall="closeDataLink('callbacks')";
+    var previewPanel=
+      '<div id="dl-prev-callbacks" style="display:none;margin-top:16px;background:var(--navy);border-radius:var(--radius-l);overflow:hidden;box-shadow:var(--shadow-l)">'+
+        '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px">'+
+          '<div style="display:flex;align-items:center;gap:10px">'+
+            '<svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" style="width:16px;height:16px"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>'+
+            '<span id="dl-prev-ttl-callbacks" style="font-family:Barlow Condensed,sans-serif;font-size:13px;letter-spacing:.5px;color:var(--white);font-weight:500"></span>'+
+          '</div>'+
+          '<button onclick="'+closeCall+'" style="background:rgba(255,255,255,.12);border:none;color:var(--white);border-radius:5px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:DM Sans,sans-serif;display:flex;align-items:center;gap:5px">'+
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Cerrar'+
+          '</button>'+
+        '</div>'+
+        '<iframe id="dl-prev-if-callbacks" src="about:blank" style="width:100%;height:580px;border:none;display:block;background:#fff"></iframe>'+
+      '</div>';
+
+    return '<div class="tab-content" id="tab-callbacks-data">'+
+      '<div class="panel">'+
+        '<div class="panel-hdr"><span class="panel-title">DATA \u2014 Callbacks</span><span class="panel-tag tag-gold">M\u00e9tricas</span></div>'+
+        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:4px">'+
+          '<div style="background:var(--navy);border-radius:var(--radius-l);padding:36px 24px;text-align:center">'+
+            '<div style="font-family:Cormorant Garamond,serif;font-size:56px;font-weight:700;color:var(--white);line-height:1">26</div>'+
+            '<div style="font-family:Barlow Condensed,sans-serif;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:10px">Total de Casos</div>'+
+          '</div>'+
+          '<div style="background:var(--white);border:2px solid #1a6b3a;border-radius:var(--radius-l);padding:36px 24px;text-align:center">'+
+            '<div style="font-family:Cormorant Garamond,serif;font-size:56px;font-weight:700;color:#1a6b3a;line-height:1">18</div>'+
+            '<div style="font-family:Barlow Condensed,sans-serif;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#1a6b3a;margin-top:10px">Callbacks Done</div>'+
+          '</div>'+
+          '<div style="background:var(--white);border:2px solid var(--gold);border-radius:var(--radius-l);padding:36px 24px;text-align:center">'+
+            '<div style="font-family:Cormorant Garamond,serif;font-size:56px;font-weight:700;color:var(--gold);line-height:1">8</div>'+
+            '<div style="font-family:Barlow Condensed,sans-serif;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--warn);margin-top:10px">Callbacks Pendientes</div>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+      (links.length?
+        '<div class="panel">'+
+          '<div class="panel-hdr"><span class="panel-title">Recursos \u2014 Callbacks</span><span class="panel-tag tag-green">Acceso Directo</span></div>'+
+          '<div class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>Haz clic en <strong>Previsualizar</strong> para abrir el recurso aqui abajo.</p></div>'+
+          '<div class="mg">'+cards+'</div>'+previewPanel+
+        '</div>'
+      :'')+
+    '</div>';
+  }
+
+  // ── Otras \u00e1reas: layout gen\u00e9rico ───────────────────────────────────────────
   var links=DATA_LINKS[id];
   var resourcesSection='';
   if(links&&links.length){
@@ -765,17 +1048,16 @@ function buildDataTab(id,name){
       var safeUrl=d.url.replace(/'/g,"&#39;");
       var safeLabel=d.label.replace(/'/g,"&#39;");
       var onclk="previewDataLink('"+id+"',"+i+",'"+safeUrl+"','"+safeLabel+"','"+d.icon+"')";
-      var bgColor=d.icon==='sheet'?'#e8f5ee':d.icon==='web'?'#e8f0fe':'var(--gold-pale)';
-      var iconSvg=d.icon==='web'?webIcon:sheetIcon;
-      var badgeLabel=d.icon==='sheet'?'Sheets':d.icon==='web'?'Web App':'Docs';
+      var bgColor=d.icon==='sheet'?'#e8f5ee':d.icon==='web'?'#e8f0fe':d.icon==='doc'?'#e8f0fe':'var(--gold-pale)';
+      var docIcon2='<svg viewBox="0 0 24 24" fill="none" stroke="#3182ce" stroke-width="2" style="width:18px;height:18px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+      var iconSvg=d.icon==='web'?webIcon:d.icon==='doc'?docIcon2:sheetIcon;
+      var badgeLabel=d.icon==='sheet'?'Sheets':d.icon==='web'?'Web App':d.icon==='doc'?'Docs':'Docs';
       cards+=
         '<div class="mc mc-media" id="dl-card-'+id+'-'+i+'" onclick="'+onclk+'">'+
           '<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">'+
             '<div class="mi" style="background:'+bgColor+';flex-shrink:0">'+iconSvg+'</div>'+
-            '<div>'+
-              '<h4 style="margin:0 0 4px;font-size:13px">'+d.label+'</h4>'+
-              '<span style="font-size:11px;color:var(--text-s);font-family:Barlow Condensed,sans-serif;letter-spacing:.4px;text-transform:uppercase">'+badgeLabel+'</span>'+
-            '</div>'+
+            '<div><h4 style="margin:0 0 4px;font-size:13px">'+d.label+'</h4>'+
+            '<span style="font-size:11px;color:var(--text-s);font-family:Barlow Condensed,sans-serif;letter-spacing:.4px;text-transform:uppercase">'+badgeLabel+'</span></div>'+
           '</div>'+
           '<div class="mc-ft" style="margin-top:auto">'+
             '<span class="badge" style="font-size:9px;background:var(--off2);color:var(--text-s)">'+badgeLabel+'</span>'+
@@ -800,30 +1082,27 @@ function buildDataTab(id,name){
     resourcesSection=
       '<div class="panel">'+
         '<div class="panel-hdr"><span class="panel-title">Recursos \u2014 '+name+'</span><span class="panel-tag tag-green">Acceso Directo</span></div>'+
-        '<div class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>Haz clic en <strong>Previsualizar</strong> para abrir el recurso directamente aqui abajo.</p></div>'+
-        '<div class="mg">'+cards+'</div>'+
-        previewPanel+
+        '<div class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>Haz clic en <strong>Previsualizar</strong> para abrir el recurso aqui abajo.</p></div>'+
+        '<div class="mg">'+cards+'</div>'+previewPanel+
       '</div>';
   } else {
     resourcesSection=
       '<div class="panel"><div class="panel-hdr"><span class="panel-title">Inventario \u2014 '+name+'</span></div>'+
-      '<div style="overflow-x:auto"><table class="dt">'+
-        '<thead><tr><th>Material</th><th>Tipo</th><th>Estado</th><th>Responsable</th></tr></thead>'+
-        '<tbody>'+
-          '<tr><td>[Script]</td><td><span class="badge tag-navy">Script</span></td><td><span class="sbadge sb-rev">En revision</span></td><td>[Trainer]</td></tr>'+
-          '<tr><td>[SOP]</td><td><span class="badge tag-gold">SOP</span></td><td><span class="sbadge sb-pen">Pendiente</span></td><td>[Trainer]</td></tr>'+
-          '<tr><td>[Material Visual]</td><td><span class="badge tag-green">Visual</span></td><td><span class="sbadge sb-act">Activo</span></td><td>[Trainer]</td></tr>'+
-        '</tbody>'+
-      '</table></div></div>';
+      '<div style="overflow-x:auto"><table class="dt"><thead><tr><th>Material</th><th>Tipo</th><th>Estado</th><th>Responsable</th></tr></thead>'+
+      '<tbody>'+
+        '<tr><td>[Script]</td><td><span class="badge tag-navy">Script</span></td><td><span class="sbadge sb-rev">En revision</span></td><td>[Trainer]</td></tr>'+
+        '<tr><td>[SOP]</td><td><span class="badge tag-gold">SOP</span></td><td><span class="sbadge sb-pen">Pendiente</span></td><td>[Trainer]</td></tr>'+
+        '<tr><td>[Visual]</td><td><span class="badge tag-green">Visual</span></td><td><span class="sbadge sb-act">Activo</span></td><td>[Trainer]</td></tr>'+
+      '</tbody></table></div></div>';
   }
   return '<div class="tab-content" id="tab-'+id+'-data">'+
     '<div class="panel"><div class="panel-hdr"><span class="panel-title">DATA \u2014 '+name+'</span><span class="panel-tag tag-gold">Dashboard</span></div>'+
-    '<div class="gb"><p>Reemplaza los valores -- con datos reales del equipo de <strong>'+name+'</strong>.</p></div>'+
+    '<div class="gb"><p>Reemplaza los valores con datos reales del equipo de <strong>'+name+'</strong>.</p></div>'+
     '<div class="kpi-grid">'+
-      '<div class="kpi-card"><div class="kpi-val">--</div><div class="kpi-lbl">Contactos del Dia</div><div class="kpi-sub">Reemplazar con dato real</div></div>'+
-      '<div class="kpi-card"><div class="kpi-val">--</div><div class="kpi-lbl">Tasa de Contacto</div><div class="kpi-sub">Porcentaje del area</div></div>'+
-      '<div class="kpi-card"><div class="kpi-val">--</div><div class="kpi-lbl">Pendientes</div><div class="kpi-sub">Casos sin resolver</div></div>'+
-      '<div class="kpi-card"><div class="kpi-val">--</div><div class="kpi-lbl">Ultima Actualizacion</div><div class="kpi-sub">Actualizar manualmente</div></div>'+
+      '<div class="kpi-card"><div class="kpi-val">--</div><div class="kpi-lbl">Contactos del Dia</div></div>'+
+      '<div class="kpi-card"><div class="kpi-val">--</div><div class="kpi-lbl">Tasa de Contacto</div></div>'+
+      '<div class="kpi-card"><div class="kpi-val">--</div><div class="kpi-lbl">Pendientes</div></div>'+
+      '<div class="kpi-card"><div class="kpi-val">--</div><div class="kpi-lbl">Ultima Actualizacion</div></div>'+
     '</div></div>'+
     resourcesSection+
   '</div>';
@@ -862,7 +1141,7 @@ function goTo(sec,tab){
 }
 
 // NAVIGATION
-var NAMES={dashboard:'Dashboard',callbacks:'Callbacks',cs:'Customer Service',rescreening:'Rescreening',casereview:'Case Review'};
+var NAMES={dashboard:'Dashboard',callbacks:'Callbacks',cs:'Customer Service',rescreening:'Rescreening',casereview:'Case Review',crwbw:'Case Review (Word by Word)'};
 function showSection(id,el){
   document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
   document.querySelectorAll('.sb-item').forEach(function(s){s.classList.remove('active');});
@@ -965,6 +1244,29 @@ function flToggle(head, bodyId){
   var open=body.classList.contains('open');
   body.classList.toggle('open',!open);
   head.classList.toggle('open',!open);
+}
+
+function previewSOP(areaId, idx, url, label){
+  var panel=document.getElementById('sop-prev-'+areaId);
+  var iframe=document.getElementById('sop-prev-if-'+areaId);
+  var title=document.getElementById('sop-prev-ttl-'+areaId);
+  if(!panel||!iframe||!title) return;
+  var cleanUrl=url.replace(/&#39;/g,"'");
+  var cleanLabel=label.replace(/&#39;/g,"'");
+  document.querySelectorAll('#tab-'+areaId+'-sop .mc-media').forEach(function(c){c.classList.remove('playing');});
+  var card=document.getElementById('sop-card-'+areaId+'-'+idx);
+  if(card) card.classList.add('playing');
+  iframe.src=docsPreviewUrl(cleanUrl);
+  title.textContent=cleanLabel;
+  panel.style.display='block';
+  setTimeout(function(){panel.scrollIntoView({behavior:'smooth',block:'nearest'});},50);
+}
+function closeSOP(areaId){
+  var panel=document.getElementById('sop-prev-'+areaId);
+  var iframe=document.getElementById('sop-prev-if-'+areaId);
+  if(panel) panel.style.display='none';
+  if(iframe) iframe.src='about:blank';
+  document.querySelectorAll('#tab-'+areaId+'-sop .mc-media').forEach(function(c){c.classList.remove('playing');});
 }
 
 // UTILS
