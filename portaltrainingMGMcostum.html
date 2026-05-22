@@ -447,8 +447,26 @@ var SOPP=[
 
 function buildAreaSection(area){
   var el=document.getElementById('section-'+area.id);
+  var hasTipo=(area.id==='callbacks'||area.id==='rescreening');
+  var tipoBtn=hasTipo?'<button class="tab-btn" onclick="showTab(\''+area.id+'\',\'tipo\',this)">📋 Tipo de Contacto</button>':'';
+  var llamaActive=hasTipo?'tab-btn':'tab-btn active';
   el.innerHTML=
-    '<div class="shr-row"><div><div class="shr-pre">Area Operativa</div><div class="shr-h2">'+area.name+'</div><div class="shr-p">'+area.desc+'</div></div><span class="sbadge sb-act" style="padding:6px 14px;font-size:11px;align-self:flex-start">Activo</span></div><div class="area-tabs-wrap"><div class="area-tabs" id="tabs-'+area.id+'"><button class="tab-btn active" onclick="showTab(\''+area.id+'\',\'tipo\',this)">📋 Tipo de Contacto</button><button class="tab-btn" onclick="showTab(\''+area.id+'\',\'llama\',this)">🎬 Llamadas</button><button class="tab-btn" onclick="showTab(\''+area.id+'\',\'llamb\',this)">📜 Script</button>'+(area.id==='cs'?'<button class="tab-btn" onclick="showTab(\''+area.id+'\',\'sop\',this)">⚙️ SOP</button>':'')+'<button class="tab-btn" onclick="showTab(\''+area.id+'\',\'arbol\',this)">🌳 Arbol de Decisiones</button><button class="tab-btn" onclick="showTab(\''+area.id+'\',\'data\',this)">📊 DATA</button></div></div>'+
+    '<div class="shr-row">'+
+      '<div>'+
+        '<div class="shr-pre">Area Operativa</div>'+
+        '<div class="shr-h2">'+area.name+'</div>'+
+        '<div class="shr-p">'+area.desc+'</div>'+
+      '</div>'+
+      '<span class="sbadge sb-act" style="padding:6px 14px;font-size:11px;align-self:flex-start">Activo</span>'+
+    '</div>'+
+    '<div class="area-tabs-wrap"><div class="area-tabs" id="tabs-'+area.id+'">'+
+      tipoBtn+
+      '<button class="'+llamaActive+'" onclick="showTab(\''+area.id+'\',\'llama\',this)">🎬 Llamadas</button>'+
+      '<button class="tab-btn" onclick="showTab(\''+area.id+'\',\'llamb\',this)">📜 Script</button>'+
+      (area.id==='cs'?'<button class="tab-btn" onclick="showTab(\''+area.id+'\',\'sop\',this)">⚙️ SOP</button>':'')+
+      '<button class="tab-btn" onclick="showTab(\''+area.id+'\',\'arbol\',this)">🌳 Arbol de Decisiones</button>'+
+      '<button class="tab-btn" onclick="showTab(\''+area.id+'\',\'data\',this)">📊 DATA</button>'+
+    '</div></div>'+
     buildTipoTab(area.id,area.name)+
     buildLlamATab(area.id,area.name)+
     buildLlamBTab(area.id,area.name)+
@@ -480,6 +498,7 @@ var TIPO_DATA={
 };
 
 function buildTipoTab(id,name){
+  if(id!=='callbacks'&&id!=='rescreening') return '';
   var rows='';
   var data=TIPO_DATA[id];
   if(data&&data.length){
@@ -542,6 +561,14 @@ var LLAMA_A={
     ]
   }
 ,
+  cs:{
+    s1:[
+      {label:'Francisca Moran',        url:'https://drive.google.com/file/d/1cZMoH5afkMlaxnoTPZ5Cqh2nFWw1n9Oh/view?usp=drive_link'}
+    ],
+    s2:[
+      {label:'Jose Pueblito Hernandez', url:'https://drive.google.com/file/d/15iQtiMuZ9tG0tMX8brBGYvmO4ZtyOxFN/view?usp=drive_link'}
+    ]
+  },
   casereview:{
     s1:[
       {label:'Andrea Cruz',              url:'https://drive.google.com/file/d/1crwpNfsxOQLbrJ88v339ITG7071Sbisj/view?usp=sharing'},
@@ -562,7 +589,8 @@ var LLAMA_A={
       {label:'Luis Alberto Martinez Castro', url:'https://www.dropbox.com/home/Open%20Cases/Open%20Cases/Martinez%20Castro%20Luis%20Alberto/10.%20Recording?preview=CR+Word-by-Word+Luis+Alberto+Martinez+Castro.mp3&quickview=id%3Ad8U66kS76XAAAAAAAFHUSA'}
     ],
     s2:[
-      {label:'Glendy Zucely Garcia Orellana', url:'https://www.dropbox.com/home/Open%20Cases/Open%20Cases/Garcia%20Orellana%20Glendy%20Zucely/RECORDINGS?preview=Recording+CR+Word+by+Word+Done+-+Glendy+Zucely+Garcia+Orellana.mp3&quickview=id%3Ad8U66kS76XAAAAAAAFHU0Q'}
+      {label:'Glendy Zucely Garcia Orellana', url:'https://www.dropbox.com/home/Open%20Cases/Open%20Cases/Garcia%20Orellana%20Glendy%20Zucely/RECORDINGS?preview=Recording+CR+Word+by+Word+Done+-+Glendy+Zucely+Garcia+Orellana.mp3&quickview=id%3Ad8U66kS76XAAAAAAAFHU0Q'},
+      {label:'Maria Teresa Gonzalez Cabrera',     url:'https://www.dropbox.com/home/Open%20Cases/Open%20Cases/Gonzalez%20Cabrera%20Maria%20Teresa/10%20Recordings?preview=Recording+CR+Word+by+Word+DoneMARIA+TERESA+GONZALEZ+CABRERA.mp3&quickview=id%3Ad8U66kS76XAAAAAAAFHoTg'}
     ]
   }
 };
@@ -721,7 +749,7 @@ function buildLlamATab(id,name){
     // Generic placeholder
     body+=buildSectionBlock(id, 's1', 'Seccion 1', []);
   }
-  return '<div class="tab-content" id="tab-'+id+'-llama"><div class="panel"><div class="panel-hdr"><span class="panel-title">Llamadas — '+name+'</span><span class="panel-tag tag-gold">Google Drive</span></div><div class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>Haz clic en <strong>Previsualizar</strong> para reproducir cada llamada directamente aqui abajo. Organizado por secciones.</p></div>'+
+  return '<div class="tab-content '+(id!=='callbacks'&&id!=='rescreening'?'active':''+'')+'" id="tab-'+id+'-llama"><div class="panel"><div class="panel-hdr"><span class="panel-title">Llamadas — '+name+'</span><span class="panel-tag tag-gold">Google Drive</span></div><div class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>Haz clic en <strong>Previsualizar</strong> para reproducir cada llamada directamente aqui abajo. Organizado por secciones.</p></div>'+
       body+
     '</div></div>';
 }
