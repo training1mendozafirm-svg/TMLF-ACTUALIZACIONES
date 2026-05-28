@@ -4,209 +4,295 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pendientes TRAINING</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f0ede8;
-  --white:#ffffff;
-  --border:#e2ddd7;
-  --text:#18160f;
-  --text2:#6b6257;
-  --text3:#aaa49d;
-  --green:#1a8f5c;   --green-bg:#e6f6ee; --green-card:#25b872;
-  --amber:#c47010;   --amber-bg:#fdf3e5; --amber-card:#e8860e;
-  --red:#bf2c1e;     --red-bg:#fdecea;   --red-card:#d93527;
-  --blue:#1456a8;    --blue-bg:#eaf2fc;
-  --gray:#6b6257;    --gray-bg:#f3f0eb;
-  --r:10px; --r-sm:7px; --r-xs:4px;
-  --sh:0 2px 8px rgba(0,0,0,.1),0 0 0 1px rgba(0,0,0,.05);
-  --sh-md:0 6px 24px rgba(0,0,0,.13),0 0 0 1px rgba(0,0,0,.05);
+  --bg:#f4f5f7;
+  --surface:#ffffff;
+  --surface2:#f8f9fb;
+  --border:#e4e7ec;
+  --border2:#d0d5dd;
+  --text:#101828;
+  --text2:#475467;
+  --text3:#98a2b3;
+  --navy:#0f1c3f;
+  --navy2:#1a2f5e;
+  --accent:#2563eb;
+  --accent-bg:#eff6ff;
+  --green:#059669;   --green-bg:#ecfdf5; --green-card:#10b981; --green-dark:#047857;
+  --amber:#d97706;   --amber-bg:#fffbeb; --amber-card:#f59e0b; --amber-dark:#b45309;
+  --red:#dc2626;     --red-bg:#fef2f2;   --red-card:#ef4444;   --red-dark:#b91c1c;
+  --slate:#4a6580;   --slate-bg:#f0f4f8; --slate-card:#64748b;
+  --r:12px; --r-sm:8px; --r-xs:5px; --r-lg:16px;
+  --sh:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.06);
+  --sh-md:0 4px 16px rgba(16,24,40,.10),0 2px 4px rgba(16,24,40,.06);
+  --sh-lg:0 12px 40px rgba(16,24,40,.14),0 4px 8px rgba(16,24,40,.06);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-.app{max-width:1160px;margin:0 auto;padding:1.5rem 1.25rem 3rem;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
 
-/* TOP */
-.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;gap:12px;flex-wrap:wrap;}
-.top h1{font-size:20px;font-weight:700;letter-spacing:-.03em;}
-.top-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.wnav{display:flex;align-items:center;gap:4px;background:#fff;border:1px solid var(--border);border-radius:var(--r-sm);padding:3px;box-shadow:var(--sh);}
-.wnav button{background:transparent;border:none;cursor:pointer;width:28px;height:28px;border-radius:5px;font-size:16px;color:var(--text2);display:flex;align-items:center;justify-content:center;transition:background .12s;}
-.wnav button:hover{background:var(--bg);}
-.wnav span{font-size:12px;color:var(--text2);min-width:148px;text-align:center;font-weight:500;}
-.btn{display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:var(--r-sm);padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;background:#fff;color:var(--text2);font-family:inherit;transition:all .15s;box-shadow:var(--sh);}
-.btn:hover{background:var(--bg);}
-.btn.on{border-color:var(--blue);color:var(--blue);background:var(--blue-bg);}
-.btn.danger-outline{border-color:var(--red);color:var(--red);background:var(--red-bg);}
+/* ── TOPBAR ─────────────────────────────────────────────── */
+.topbar{background:var(--navy);border-bottom:1px solid rgba(255,255,255,.08);padding:0 1.5rem;height:56px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:100;}
+.topbar-l{display:flex;align-items:center;gap:12px;}
+.topbar-logo{width:28px;height:28px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.topbar-title{font-size:14px;font-weight:700;color:#fff;letter-spacing:-.01em;}
+.topbar-sub{font-size:11px;color:rgba(255,255,255,.45);font-weight:500;margin-left:2px;}
+.topbar-r{display:flex;align-items:center;gap:8px;}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#34d399;display:inline-block;margin-right:4px;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.sync-lbl{font-size:11px;color:rgba(255,255,255,.5);font-weight:500;}
+#syncStatus{font-size:11px;color:rgba(255,255,255,.45);font-weight:500;margin-right:4px;}
 
-/* STATS */
+/* ── TOOLBAR ────────────────────────────────────────────── */
+.toolbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;height:52px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.toolbar-l{display:flex;align-items:center;gap:8px;}
+.toolbar-r{display:flex;align-items:center;gap:8px;}
+.wnav{display:flex;align-items:center;gap:2px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:3px;}
+.wnav button{background:transparent;border:none;cursor:pointer;width:26px;height:26px;border-radius:5px;font-size:14px;color:var(--text2);display:flex;align-items:center;justify-content:center;transition:all .12s;}
+.wnav button:hover{background:var(--border);color:var(--text);}
+.wnav span{font-size:12px;color:var(--text2);min-width:156px;text-align:center;font-weight:600;letter-spacing:-.01em;}
+.tbtn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:var(--r-sm);padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;background:var(--surface);color:var(--text2);font-family:inherit;transition:all .15s;box-shadow:var(--sh);white-space:nowrap;}
+.tbtn:hover{background:var(--surface2);border-color:var(--border2);}
+.tbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 1px 2px rgba(37,99,235,.3);}
+.tbtn.primary:hover{background:#1d4ed8;border-color:#1d4ed8;}
+.tbtn.on{border-color:var(--accent);color:var(--accent);background:var(--accent-bg);}
+.tbtn.danger{border-color:#fca5a5;color:var(--red);background:var(--red-bg);}
+.tbtn.danger:hover{background:#fee2e2;}
+.tbtn-icon{font-size:13px;}
+
+/* ── MAIN ───────────────────────────────────────────────── */
+.main{max-width:1280px;margin:0 auto;padding:1.25rem 1.5rem 3rem;}
+
+/* ── STATS ──────────────────────────────────────────────── */
 .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:1.25rem;}
-.stat{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh);}
-.stat-lbl{font-size:10px;color:var(--text3);margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
-.stat-val{font-size:32px;font-weight:700;color:var(--text);letter-spacing:-.04em;line-height:1;}
-.stat-sub{font-size:11px;color:var(--text3);margin-top:4px;font-weight:500;}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh);position:relative;overflow:hidden;}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0;}
+.stat.s-blue::before{background:var(--accent);}
+.stat.s-green::before{background:var(--green-card);}
+.stat.s-amber::before{background:var(--amber-card);}
+.stat.s-red::before{background:var(--red-card);}
+.stat.s-slate::before{background:var(--slate-card);}
+.stat-lbl{font-size:10px;color:var(--text3);margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;}
+.stat-val{font-size:30px;font-weight:800;color:var(--text);letter-spacing:-.04em;line-height:1;}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:5px;font-weight:500;}
 .stat-val.g{color:var(--green);}
 .stat-val.r{color:var(--red);}
 .stat-val.a{color:var(--amber);}
+.stat-val.b{color:var(--accent);}
 
-/* FILTERS */
-.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;}
-.fb{border:1px solid var(--border);border-radius:999px;padding:5px 15px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:var(--text2);font-family:inherit;transition:all .15s;box-shadow:var(--sh);}
-.fb:hover{background:var(--bg);}
-.fb.active{background:var(--text);border-color:var(--text);color:#fff;}
-
-/* LEGEND */
-.legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:1.1rem;align-items:center;}
+/* ── SECTION HEADER ────────────────────────────────────── */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem;gap:10px;flex-wrap:wrap;}
+.sec-hdr-l{display:flex;align-items:center;gap:12px;}
+.filters{display:flex;gap:5px;flex-wrap:wrap;}
+.fb{border:1px solid var(--border);border-radius:999px;padding:4px 13px;font-size:11px;font-weight:600;cursor:pointer;background:var(--surface);color:var(--text2);font-family:inherit;transition:all .15s;box-shadow:var(--sh);}
+.fb:hover{background:var(--surface2);}
+.fb.active{background:var(--navy);border-color:var(--navy);color:#fff;}
+.legend{display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
 .li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);font-weight:500;}
-.ld{width:10px;height:10px;border-radius:3px;}
-.ldiv{width:1px;height:14px;background:var(--border);}
+.ld{width:9px;height:9px;border-radius:2px;}
 
-/* GRID */
-.grid7{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
-.dcol{display:flex;flex-direction:column;}
-.dhdr{font-size:10px;font-weight:700;color:var(--text3);text-align:center;padding:6px 2px 4px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border);margin-bottom:8px;}
-.dhdr.th{color:var(--blue);}
-.ddate{font-size:18px;font-weight:700;color:var(--text);text-align:center;padding:2px 0 7px;letter-spacing:-.02em;}
-.ddate.td{color:var(--blue);}
+/* ── CALENDAR GRID ──────────────────────────────────────── */
+.cal-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh);overflow:hidden;}
+.grid7{display:grid;grid-template-columns:repeat(7,1fr);}
+.dcol{display:flex;flex-direction:column;border-right:1px solid var(--border);}
+.dcol:last-child{border-right:none;}
+.dhdr{font-size:9px;font-weight:700;color:var(--text3);text-align:center;padding:8px 4px 4px;text-transform:uppercase;letter-spacing:.09em;background:var(--surface2);border-bottom:1px solid var(--border);}
+.dhdr.th{color:var(--accent);}
+.ddate{font-size:20px;font-weight:800;color:var(--text);text-align:center;padding:4px 4px 8px;letter-spacing:-.03em;}
+.ddate.td{color:var(--accent);}
+.ddate.td-wrap{position:relative;display:inline-block;margin:0 auto;}
+.dcards{padding:6px;display:flex;flex-direction:column;gap:5px;min-height:80px;}
+.notask{font-size:10px;color:var(--text3);text-align:center;padding:16px 4px;font-style:italic;}
 
-/* CARD */
-.tc{border-radius:var(--r-sm);padding:9px 10px;margin-bottom:6px;cursor:pointer;position:relative;overflow:hidden;transition:transform .12s,box-shadow .12s;box-shadow:var(--sh);}
-.tc:hover{transform:translateY(-2px);box-shadow:var(--sh-md);}
-.tc.od-glow{box-shadow:0 2px 8px rgba(217,53,39,.3),0 0 0 2px rgba(217,53,39,.35);}
-.tc.od-glow:hover{box-shadow:0 6px 20px rgba(217,53,39,.35),0 0 0 2px rgba(217,53,39,.5);}
+/* ── CARD ───────────────────────────────────────────────── */
+.tc{border-radius:var(--r-sm);padding:8px 10px;cursor:pointer;position:relative;overflow:hidden;transition:transform .12s,box-shadow .12s;box-shadow:0 1px 4px rgba(0,0,0,.12);}
+.tc:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.18);}
+.tc.od-glow{box-shadow:0 0 0 2px rgba(239,68,68,.5),0 2px 8px rgba(239,68,68,.25);}
+.tc.od-glow:hover{box-shadow:0 0 0 2px rgba(239,68,68,.7),0 6px 20px rgba(239,68,68,.3);}
+.strip{position:absolute;top:0;left:0;width:4px;height:100%;background:rgba(255,255,255,.35);}
+.inner{padding-left:8px;}
+.tt{font-size:10px;font-weight:700;line-height:1.35;margin-bottom:3px;color:#fff;letter-spacing:-.01em;}
+.ttime{font-size:8.5px;font-weight:500;color:rgba(255,255,255,.75);margin-bottom:2px;display:flex;align-items:center;gap:3px;}
+.tresp{font-size:9px;font-weight:600;color:rgba(255,255,255,.9);margin-bottom:3px;display:flex;align-items:center;gap:3px;flex-wrap:wrap;}
+.rname{background:rgba(255,255,255,.22);border-radius:3px;padding:1px 5px;}
+.rmore{background:rgba(0,0,0,.15);border-radius:3px;padding:1px 4px;font-size:8px;}
+.pb{height:3px;border-radius:2px;background:rgba(255,255,255,.2);margin-top:4px;overflow:hidden;}
+.pf{height:100%;border-radius:2px;background:rgba(255,255,255,.65);transition:width .3s;}
+.dbadge{display:inline-flex;align-items:center;gap:2px;border-radius:3px;padding:2px 5px;font-size:8px;font-weight:700;margin-top:4px;background:rgba(0,0,0,.2);color:rgba(255,255,255,.9);text-transform:uppercase;letter-spacing:.04em;}
+.dbadge.hi{background:rgba(255,255,255,.9);color:var(--red-dark);}
 
-.strip{position:absolute;top:0;left:0;width:5px;height:100%;}
-.inner{padding-left:7px;}
-.tt{font-size:10.5px;font-weight:700;line-height:1.3;margin-bottom:4px;color:#fff;}
-.ttime{font-size:9px;font-weight:500;color:rgba(255,255,255,.8);margin-bottom:3px;}
-.tresp{font-size:10px;font-weight:600;color:rgba(255,255,255,.9);margin-bottom:4px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
-.rname{background:rgba(255,255,255,.25);border-radius:3px;padding:1px 5px;}
-.rmore{background:rgba(0,0,0,.15);border-radius:3px;padding:1px 5px;font-size:9px;}
-.pb{height:3.5px;border-radius:2px;background:rgba(255,255,255,.25);margin-top:5px;overflow:hidden;}
-.pf{height:100%;border-radius:2px;background:rgba(255,255,255,.7);}
-.dbadge{display:inline-flex;align-items:center;gap:3px;border-radius:var(--r-xs);padding:2px 6px;font-size:9px;font-weight:700;margin-top:5px;background:rgba(255,255,255,.22);color:#fff;text-transform:uppercase;letter-spacing:.03em;}
-.dbadge.hi{background:rgba(255,255,255,.85);color:var(--red);}
+.card-green{background:linear-gradient(135deg,#10b981,#059669);}
+.card-amber{background:linear-gradient(135deg,#f59e0b,#d97706);}
+.card-red{background:linear-gradient(135deg,#ef4444,#dc2626);}
+.card-slate{background:linear-gradient(135deg,#64748b,#475569);}
 
-/* card bg by state */
-.card-green{background:var(--green-card);}
-.card-amber{background:var(--amber-card);}
-.card-red{background:var(--red-card);}
-.card-gray{background:#8a8480;}
-
-.notask{font-size:10px;color:var(--text3);text-align:center;padding:12px 4px;}
-.addbtn{width:100%;border:1.5px dashed var(--border);border-radius:var(--r-xs);padding:5px;font-size:10px;color:var(--text3);background:transparent;cursor:pointer;display:none;align-items:center;justify-content:center;gap:3px;margin-top:3px;font-family:inherit;font-weight:600;transition:all .15s;}
-.addbtn:hover{background:#fff;}
+.addbtn{width:100%;border:1.5px dashed var(--border2);border-radius:var(--r-xs);padding:5px;font-size:10px;color:var(--text3);background:transparent;cursor:pointer;display:none;align-items:center;justify-content:center;gap:3px;font-family:inherit;font-weight:600;transition:all .15s;}
+.addbtn:hover{background:var(--surface2);color:var(--text2);}
 .emode .addbtn{display:flex;}
 
-/* SIN FECHA */
-.sfsec{margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1.25rem;}
-.sflbl{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.05em;}
-.sfrow{display:flex;flex-wrap:wrap;gap:10px;}
-.sfc{border-radius:var(--r-sm);padding:10px 12px;width:175px;cursor:pointer;position:relative;overflow:hidden;transition:transform .12s,box-shadow .12s;box-shadow:var(--sh);}
-.sfc:hover{transform:translateY(-2px);box-shadow:var(--sh-md);}
-.pdate{font-size:9px;font-style:italic;color:rgba(255,255,255,.75);margin-top:3px;font-weight:500;}
+/* ── SIN FECHA ──────────────────────────────────────────── */
+.sfsec{margin-top:1.25rem;}
+.sflbl{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.06em;}
+.sflbl::before{content:'';display:inline-block;width:3px;height:14px;background:var(--text3);border-radius:2px;}
+.sfrow{display:flex;flex-wrap:wrap;gap:8px;}
+.sfc{border-radius:var(--r-sm);padding:10px 12px;width:180px;cursor:pointer;position:relative;overflow:hidden;transition:transform .12s,box-shadow .12s;box-shadow:0 1px 4px rgba(0,0,0,.12);}
+.sfc:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.18);}
+.pdate{font-size:8.5px;font-style:italic;color:rgba(255,255,255,.7);margin-top:3px;font-weight:500;}
 
-/* MODAL */
-.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+/* ── MODAL OVERLAY ──────────────────────────────────────── */
+.mo{display:none;position:fixed;inset:0;background:rgba(15,28,63,.45);z-index:300;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
 .mo.open{display:flex;}
-.mb{background:#fff;border-radius:var(--r);border:1px solid var(--border);padding:1.5rem;width:380px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:var(--sh-md);}
-.mhdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;gap:10px;}
-.mtitle{font-size:15px;font-weight:700;color:var(--text);line-height:1.4;}
-.mclose{background:transparent;border:none;cursor:pointer;color:var(--text3);font-size:22px;line-height:1;padding:0;flex-shrink:0;}
-.mclose:hover{color:var(--text);}
+.mb{background:var(--surface);border-radius:var(--r-lg);border:1px solid var(--border);padding:0;width:420px;max-width:95vw;max-height:92vh;overflow-y:auto;box-shadow:var(--sh-lg);}
+.mhdr{display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.5rem 0;margin-bottom:1rem;gap:10px;border-bottom:1px solid var(--border);padding-bottom:1rem;}
+.mtitle{font-size:15px;font-weight:700;color:var(--text);line-height:1.4;letter-spacing:-.02em;}
+.mclose{background:transparent;border:1px solid var(--border);cursor:pointer;color:var(--text3);font-size:18px;line-height:1;padding:0;flex-shrink:0;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;transition:all .12s;}
+.mclose:hover{background:var(--surface2);color:var(--text);}
+.mbody{padding:0 1.5rem 1.5rem;}
 .mr{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;font-size:13px;color:var(--text2);}
-.mr span{color:var(--text);}
+.mr span{color:var(--text);font-weight:500;}
 .chip{display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:600;margin:2px;}
-.sbadge{display:inline-flex;align-items:center;gap:5px;border-radius:var(--r-xs);padding:4px 10px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;}
-.infobox{border-radius:0 var(--r-xs) var(--r-xs) 0;padding:10px 14px;margin-top:10px;font-size:13px;line-height:1.6;}
-.infobox strong{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
-.od-alert{background:var(--red-bg);border:1px solid #f5b0a8;border-radius:var(--r-sm);padding:10px 14px;margin-bottom:14px;display:flex;gap:8px;align-items:flex-start;}
+.sbadge{display:inline-flex;align-items:center;gap:5px;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
+.infobox{border-radius:0 var(--r-sm) var(--r-sm) 0;padding:10px 14px;margin-top:10px;font-size:13px;line-height:1.6;}
+.infobox strong{display:block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;opacity:.8;}
+.od-alert{background:var(--red-bg);border:1px solid #fca5a5;border-radius:var(--r-sm);padding:10px 14px;margin-bottom:14px;display:flex;gap:8px;align-items:flex-start;}
 .od-alert .ico{font-size:18px;flex-shrink:0;}
 .od-alert .txt{font-size:12px;color:var(--red);font-weight:600;line-height:1.5;}
-.od-alert .txt small{font-weight:400;display:block;}
+.od-alert .txt small{font-weight:400;display:block;color:var(--red-dark);}
 
-/* RESUMEN MODAL */
+/* ── RESUMEN MODAL ──────────────────────────────────────── */
 .rsm-header{margin-bottom:16px;}
-.rsm-header h2{font-size:16px;font-weight:700;color:var(--text);}
+.rsm-header h2{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.02em;}
 .rsm-header p{font-size:12px;color:var(--text2);margin-top:3px;}
 .rsm-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);gap:10px;}
 .rsm-row:last-child{border-bottom:none;}
 .rsm-reason{font-size:13px;color:var(--text);font-weight:500;}
-.rsm-count{background:var(--red-bg);color:var(--red);border-radius:999px;padding:3px 12px;font-size:13px;font-weight:700;min-width:32px;text-align:center;}
-.rsm-bar-wrap{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin:0 10px;}
+.rsm-count{background:var(--red-bg);color:var(--red);border-radius:999px;padding:3px 12px;font-size:12px;font-weight:700;min-width:32px;text-align:center;}
+.rsm-bar-wrap{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin:0 10px;}
 .rsm-bar{height:100%;background:var(--red-card);border-radius:3px;transition:width .4s;}
 .rsm-total{margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:13px;}
 .rsm-total span{font-weight:700;color:var(--text);}
 .rsm-empty{font-size:13px;color:var(--text3);text-align:center;padding:24px 0;}
 
-/* FORM */
-.dvsel{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;}
-.dvopt{border-radius:var(--r-sm);border:1.5px solid var(--border);padding:9px 4px;text-align:center;cursor:pointer;font-size:10px;font-weight:700;color:var(--text2);background:transparent;transition:all .15s;line-height:1.4;font-family:inherit;text-transform:uppercase;letter-spacing:.03em;}
-.dvopt:hover{background:var(--bg);}
-.dvopt.so{border-color:var(--green);background:var(--green-bg);color:var(--green);}
-.dvopt.sl{border-color:var(--red);background:var(--red-bg);color:var(--red);}
-.dvopt.sr{border-color:var(--amber);background:var(--amber-bg);color:var(--amber);}
-.dvopt.sp{border-color:var(--blue);background:var(--blue-bg);color:var(--blue);}
+/* ── FORM ───────────────────────────────────────────────── */
+.dvsel{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:10px;}
+.dvopt{border-radius:var(--r-sm);border:1.5px solid var(--border);padding:8px 4px;text-align:center;cursor:pointer;font-size:9.5px;font-weight:700;color:var(--text2);background:var(--surface2);transition:all .15s;line-height:1.4;font-family:inherit;text-transform:uppercase;letter-spacing:.03em;}
+.dvopt:hover{border-color:var(--border2);background:var(--surface);}
+.dvopt.so{border-color:var(--green);background:var(--green-bg);color:var(--green-dark);}
+.dvopt.sl{border-color:var(--red);background:var(--red-bg);color:var(--red-dark);}
+.dvopt.sr{border-color:var(--amber);background:var(--amber-bg);color:var(--amber-dark);}
+.dvopt.sp{border-color:var(--accent);background:var(--accent-bg);color:var(--accent);}
+.dvopt.sw{border-color:var(--slate);background:var(--slate-bg);color:var(--slate);}
 .ff{margin-bottom:12px;}
-.fl{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.05em;}
-.fi{width:100%;border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 10px;font-size:13px;font-family:inherit;background:#fff;color:var(--text);transition:border-color .15s;}
-.fi:focus{outline:none;border-color:var(--blue);}
+.fl{font-size:10px;font-weight:700;color:var(--text2);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.06em;}
+.fi{width:100%;border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 10px;font-size:13px;font-family:inherit;background:var(--surface);color:var(--text);transition:border-color .15s,box-shadow .15s;}
+.fi:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.12);}
 .fr2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.fa{display:flex;gap:8px;margin-top:16px;}
-.bp{flex:1;background:var(--text);color:#fff;border:none;border-radius:var(--r-sm);padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
-.bp:hover{background:#333;}
-.bs{flex:1;background:transparent;color:var(--text2);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px;font-size:13px;cursor:pointer;font-family:inherit;}
-.bs:hover{background:var(--bg);}
-.bd{background:transparent;color:var(--red);border:1px solid #f5b0a8;border-radius:var(--r-sm);padding:10px 13px;font-size:13px;cursor:pointer;font-family:inherit;}
+.fa{display:flex;gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid var(--border);}
+.bp{flex:1;background:var(--navy);color:#fff;border:none;border-radius:var(--r-sm);padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;}
+.bp:hover{background:var(--navy2);}
+.bs{flex:1;background:transparent;color:var(--text2);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px;font-size:13px;cursor:pointer;font-family:inherit;transition:all .15s;}
+.bs:hover{background:var(--surface2);}
+.bd{background:transparent;color:var(--red);border:1px solid #fca5a5;border-radius:var(--r-sm);padding:10px 13px;font-size:13px;cursor:pointer;font-family:inherit;transition:all .15s;}
 .bd:hover{background:var(--red-bg);}
-.pcs{display:flex;flex-wrap:wrap;gap:8px;}
-.pc{display:flex;align-items:center;gap:5px;cursor:pointer;}
-.pc input{cursor:pointer;accent-color:var(--text);}
-.pc label{font-size:13px;color:var(--text);cursor:pointer;}
-.sct{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 10px;padding-top:14px;border-top:1px solid var(--border);}
-.rbox{background:var(--amber-bg);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 14px;margin-bottom:10px;border-left:3px solid var(--amber);}
-.rbox label{font-size:11px;color:var(--amber);font-weight:700;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;}
+.pcs{display:flex;flex-wrap:wrap;gap:6px;}
+.pc{display:flex;align-items:center;gap:5px;cursor:pointer;background:var(--surface2);border:1px solid var(--border);border-radius:999px;padding:4px 10px;transition:all .12s;}
+.pc:hover{border-color:var(--border2);}
+.pc input{cursor:pointer;accent-color:var(--navy);width:13px;height:13px;}
+.pc label{font-size:12px;color:var(--text);cursor:pointer;font-weight:500;}
+.pc:has(input:checked){background:var(--navy);border-color:var(--navy);}
+.pc:has(input:checked) label{color:#fff;}
+.sct{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin:16px 0 10px;padding-top:14px;border-top:1px solid var(--border);}
+.rbox{background:var(--amber-bg);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 14px;margin-bottom:10px;border-left:3px solid var(--amber-card);}
+.rbox label{font-size:10px;color:var(--amber-dark);font-weight:700;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;}
 .rbox .fi{margin-bottom:8px;}
-.lbox{background:var(--red-bg);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 14px;margin-bottom:10px;border-left:3px solid var(--red);}
-.lbox label{font-size:11px;color:var(--red);font-weight:700;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;}
-.pws{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:2rem;width:300px;text-align:center;box-shadow:var(--sh-md);}
-.pws h2{font-size:16px;font-weight:700;margin-bottom:6px;}
-.pws p{font-size:13px;color:var(--text2);margin-bottom:16px;}
+.lbox{background:var(--red-bg);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 14px;margin-bottom:10px;border-left:3px solid var(--red-card);}
+.lbox label{font-size:10px;color:var(--red-dark);font-weight:700;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;}
+.wbox{background:var(--slate-bg);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 14px;margin-bottom:10px;border-left:3px solid var(--slate-card);}
+.wbox label{font-size:10px;color:var(--slate);font-weight:700;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;}
+
+/* ── PASSWORD MODAL ─────────────────────────────────────── */
+.pws{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:2rem;width:320px;text-align:center;box-shadow:var(--sh-lg);}
+.pws h2{font-size:17px;font-weight:700;margin-bottom:6px;letter-spacing:-.02em;}
+.pws p{font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5;}
 .pwerr{font-size:12px;color:var(--red);margin-top:8px;min-height:18px;font-weight:600;}
 
-@media(max-width:760px){.stats{grid-template-columns:repeat(3,1fr);}.grid7{grid-template-columns:repeat(4,1fr);}}
-@media(max-width:500px){.grid7{grid-template-columns:repeat(2,1fr);}}
+/* ── PROGRESS BAR DETAIL ────────────────────────────────── */
+.prog-bar{height:6px;border-radius:4px;background:var(--border);overflow:hidden;margin-bottom:12px;}
+.prog-fill{height:100%;border-radius:4px;transition:width .4s;}
+
+/* ── EMPTY STATE ────────────────────────────────────────── */
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--text3);}
+.empty-state .ico{font-size:32px;margin-bottom:8px;}
+.empty-state p{font-size:13px;font-weight:500;}
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+@media(max-width:900px){.stats{grid-template-columns:repeat(3,1fr);}.grid7{grid-template-columns:repeat(4,1fr);}}
+@media(max-width:600px){.grid7{grid-template-columns:repeat(2,1fr);}.stats{grid-template-columns:repeat(2,1fr);}.topbar-sub{display:none;}}
+@media(max-width:400px){.grid7{grid-template-columns:repeat(1,1fr);}}
 </style>
 </head>
 <body>
-<div class="app" id="app">
-  <div class="top">
-    <h1>📋 Pendientes TRAINING</h1>
-    <div class="top-r">
-      <div class="wnav">
-        <button onclick="cw(-1)">‹</button>
-        <span id="wlbl"></span>
-        <button onclick="cw(1)">›</button>
-      </div>
-      <button class="btn danger-outline" onclick="openResumen()">⚠ Ver razones de atraso</button>
-      <button class="btn" id="edbtn" onclick="toggleEd()">🔒 <span id="edlbl">Editor</span></button>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-l">
+    <div class="topbar-logo">📋</div>
+    <div>
+      <div class="topbar-title">Pendientes TRAINING</div>
     </div>
   </div>
+  <div class="topbar-r">
+    <span class="sync-dot" id="syncDot"></span>
+    <span id="syncStatus">Conectando...</span>
+  </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="toolbar-l">
+    <div class="wnav">
+      <button onclick="cw(-1)" title="Semana anterior">‹</button>
+      <span id="wlbl"></span>
+      <button onclick="cw(1)" title="Semana siguiente">›</button>
+    </div>
+    <div class="filters" id="filters"></div>
+  </div>
+  <div class="toolbar-r">
+    <button class="tbtn" onclick="openResumen()"><span class="tbtn-icon">⚠</span> Atrasos</button>
+    <button class="tbtn" id="edbtn" onclick="toggleEd()"><span class="tbtn-icon">🔒</span> <span id="edlbl">Editor</span></button>
+    <button class="tbtn primary" id="newTaskBtn" onclick="openNew('')" style="display:none"><span class="tbtn-icon">＋</span> Nueva tarea</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- STATS -->
   <div class="stats" id="stats"></div>
-  <div class="filters" id="filters"></div>
-  <div class="legend" id="legend"></div>
-  <div class="grid7" id="grid"></div>
+
+  <!-- LEGEND + CALENDAR -->
+  <div class="sec-hdr">
+    <div class="legend" id="legend"></div>
+  </div>
+
+  <div class="cal-wrap">
+    <div class="grid7" id="grid"></div>
+  </div>
+
+  <!-- SIN FECHA -->
   <div id="sfsec"></div>
 </div>
 
+<!-- MODALS -->
 <div class="mo" id="mo"><div class="mb" id="mb"></div></div>
 <div class="mo" id="pwmo">
   <div class="pws">
-    <h2>🔒 Modo editor</h2>
-    <p>Ingresa la contraseña para editar tareas y fechas</p>
-    <input class="fi" type="password" id="pwi" placeholder="Contraseña" onkeydown="if(event.key==='Enter')chkpw()" style="text-align:center">
+    <div style="font-size:32px;margin-bottom:8px;">🔒</div>
+    <h2>Modo Editor</h2>
+    <p>Ingresa la contraseña para crear, editar y eliminar tareas</p>
+    <input class="fi" type="password" id="pwi" placeholder="Contraseña" onkeydown="if(event.key==='Enter')chkpw()" style="text-align:center;letter-spacing:.1em;">
     <div class="pwerr" id="pwerr"></div>
-    <div class="fa" style="margin-top:14px">
+    <div class="fa" style="margin-top:14px;border:none;padding:0;">
       <button class="bs" onclick="closepw()">Cancelar</button>
       <button class="bp" onclick="chkpw()">Entrar</button>
     </div>
@@ -214,63 +300,104 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 </div>
 
 <script>
-const PW='2026equipo', TODAY='2026-05-26';
-const REASONS=['Falta de feedback','Falta de recursos','Cambio de prioridades','Problema técnico','Dependencia externa','Otro'];
-const PEOPLE=['Mariana','Joham','Brenda','Diego','Andrea'];
-const PC={Mariana:['#dceefb','#0d3e6e'],Joham:['#fdefc8','#6a3e08'],Brenda:['#fce4ee','#6a1f3a'],Diego:['#d8f0e4','#0a4a37'],Andrea:['#e8e4f8','#35286a'],Todos:['#e8e4de','#3a3530']};
-const DV={pending:{lbl:'Por entregar',icon:'🕐'},ontime:{lbl:'✓ A tiempo',icon:'✓'},late:{lbl:'Con retraso',icon:'⚠'},rescheduled:{lbl:'Reprogramado',icon:'↺'}};
+const PW      = '2026equipo';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzQVfxj0AK65e80QLmHrUPo2FGYCSiFUH6xX9sQW7oaT7Y0Yg0OKTFwzEwykUaxdvtzvQ/exec';
+const TODAY   = new Date().toISOString().slice(0,10);
 
-// Card color by progress / status
-function cardClass(t) {
-  if(isOverdue(t)) return 'card-red';
-  if(t.delivery==='late') return 'card-red';
-  if(t.delivery==='rescheduled') return 'card-amber';
-  if(t.delivery==='ontime') return 'card-green';
-  // by progress
-  if(t.progress >= 80) return 'card-green';
-  if(t.progress >= 50) return 'card-amber';
-  return 'card-green'; // below 50 = green (just started)
+const REASONS = ['Falta de feedback','Falta de recursos','Cambio de prioridades','Problema técnico','Dependencia externa','Otro'];
+const PEOPLE  = ['Mariana','Joham','Brenda','Diego','Andrea'];
+const PC      = {Mariana:['#dbeafe','#1e40af'],Joham:['#fef3c7','#92400e'],Brenda:['#fce7f3','#9d174d'],Diego:['#d1fae5','#065f46'],Andrea:['#ede9fe','#4c1d95'],Todos:['#f1f5f9','#334155']};
+const DV      = {pending:{lbl:'Por entregar',icon:'🕐'},ontime:{lbl:'A tiempo',icon:'✓'},late:{lbl:'Con retraso',icon:'⚠'},rescheduled:{lbl:'Reprogramado',icon:'↺'},waiting:{lbl:'En espera del área',icon:'⏳'}};
+
+let tasks=[], nid=1, woff=0, filt='Todos', isEd=false, selDv='pending';
+let _lastModified=0, _pollTimer=null, _syncing=false;
+
+/* ══ JSONP / GAS ══════════════════════════════════════════ */
+function jsonp(params){
+  return new Promise((resolve,reject)=>{
+    const fn='_cb_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+    const qs=Object.entries({...params,callback:fn}).map(([k,v])=>encodeURIComponent(k)+'='+encodeURIComponent(v)).join('&');
+    const s=document.createElement('script');
+    const timer=setTimeout(()=>{cleanup();reject('timeout');},9000);
+    window[fn]=data=>{cleanup();resolve(data);};
+    function cleanup(){clearTimeout(timer);delete window[fn];s.remove();}
+    s.onerror=()=>{cleanup();reject('error');};
+    s.src=GAS_URL+'?'+qs;
+    document.head.appendChild(s);
+  });
+}
+function gasPost(params){fetch(GAS_URL,{method:'POST',mode:'no-cors',body:new URLSearchParams(params)});}
+
+/* ══ SYNC ═════════════════════════════════════════════════ */
+function setSyncStatus(msg,ok){
+  const el=document.getElementById('syncStatus');
+  const dot=document.getElementById('syncDot');
+  if(el) el.textContent=msg;
+  if(dot) dot.style.background=ok===false?'#f87171':ok===true?'#34d399':'#fbbf24';
 }
 
-// Wait — spec: rojo=retraso, naranja=50-80%, verde=bajo 50%
-// So: verde < 50, naranja 50-80, rojo = retraso OR > 80? Let me re-read:
-// "rojo para lo que tiene retraso / naranja 50-80% / verde bajo de 50%"
-// verde = <50%, naranja = 50-80%, rojo = retraso (overdue or delivery=late/rescheduled)
-// What about 80-100% not overdue? -> use green (delivered on time would be ontime)
-// I'll treat: rojo=overdue|late|rescheduled, naranja=50-80, verde=<50 (and ontime=green always)
-function resolveCardClass(t) {
-  if(isOverdue(t)||t.delivery==='late'||t.delivery==='rescheduled') return 'card-red';
-  if(t.delivery==='ontime') return 'card-green';
-  if(t.progress>=50&&t.progress<=80) return 'card-amber';
-  if(t.progress>80) return 'card-green';
-  return 'card-green'; // <50
+function loadFromSheet(){
+  setSyncStatus('Cargando...',null);
+  jsonp({action:'getTasks'})
+    .then(data=>{
+      tasks=data.tasks||[];
+      _lastModified=data.lastModified||0;
+      nid=tasks.length?Math.max(...tasks.map(t=>t.id))+1:1;
+      render();
+      setSyncStatus('Sincronizado '+fmtHora(),true);
+      startPolling();
+    })
+    .catch(()=>{setSyncStatus('Sin conexión',false);startPolling();});
 }
-// Correction per spec literally: verde=bajo 50, naranja=50-80, rojo=retraso
-// below 50 -> verde; 50-80 -> naranja; retraso -> rojo; >80 non-overdue -> keep green
-function getCardClass(t) {
-  if(isOverdue(t)||t.delivery==='late'||t.delivery==='rescheduled') return 'card-red';
-  if(t.delivery==='ontime') return 'card-green';
+
+function startPolling(){
+  if(_pollTimer)clearInterval(_pollTimer);
+  _pollTimer=setInterval(()=>{
+    if(_syncing)return;
+    jsonp({action:'ping'})
+      .then(data=>{
+        if(data.lastModified&&data.lastModified!==_lastModified){
+          _lastModified=data.lastModified;
+          silentReload();
+        }
+      }).catch(()=>{});
+  },3000);
+}
+
+function silentReload(){
+  _syncing=true;
+  setSyncStatus('Actualizando...',null);
+  jsonp({action:'getTasks'})
+    .then(data=>{
+      tasks=data.tasks||[];
+      _lastModified=data.lastModified||0;
+      nid=tasks.length?Math.max(...tasks.map(t=>t.id))+1:1;
+      if(!document.getElementById('mo').classList.contains('open'))render();
+      setSyncStatus('Sincronizado '+fmtHora(),true);
+    })
+    .catch(()=>{setSyncStatus('Error de sync',false);})
+    .finally(()=>{_syncing=false;});
+}
+
+function fmtHora(){return new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});}
+
+/* ══ CARD COLOR ═══════════════════════════════════════════ */
+function getCardClass(t){
+  if(t.delivery==='waiting')return 'card-slate';
+  if(isOverdue(t)||t.delivery==='late'||t.delivery==='rescheduled')return 'card-red';
+  if(t.delivery==='ontime')return 'card-green';
   const p=t.progress;
-  if(p>=50&&p<=80) return 'card-amber';
-  return 'card-green';
+  if(p>=50&&p<=80)return 'card-green';
+  return 'card-amber';
 }
-
-let tasks=[
-  {id:1,title:'Script LSU — envío a revisión',project:'LSU',date:'2026-05-26',time:'Hoy',progress:50,people:['Mariana'],status:'en progreso',noDate:false,delivery:'pending',reason:'',note:'',newDate:''},
-  {id:2,title:'Training PR — revisión final',project:'PR',date:'2026-05-28',time:'9:00 AM',progress:100,people:['Todos'],status:'listo',noDate:false,delivery:'ontime',reason:'',note:'',newDate:''},
-  {id:3,title:'Training Compliance',project:'Compliance',date:'2026-05-28',time:'',progress:90,people:['Brenda','Diego'],status:'en progreso',noDate:false,delivery:'pending',reason:'',note:'',newDate:''},
-  {id:4,title:'Training LSU',project:'LSU',date:'2026-05-27',time:'',progress:70,people:['Joham','Mariana'],status:'en progreso',noDate:false,delivery:'pending',reason:'',note:'',newDate:''},
-  {id:5,title:'Training Customer',project:'Customer',date:'2026-05-30',time:'',progress:40,people:['Joham','Mariana','Andrea','Brenda'],status:'pendiente',noDate:false,delivery:'pending',reason:'',note:'',newDate:''},
-  {id:6,title:'Training Rescreening Apoyo',project:'Rescreening',date:'',time:'',progress:0,people:['Joham','Brenda','Diego'],status:'sin fecha',noDate:true,delivery:'pending',reason:'',note:'',newDate:''},
-];
-let nid=7,woff=0,filt='Todos',isEd=false,selDv='pending';
 
 function isOverdue(t){
-  if(t.noDate||!t.date) return false;
-  if(t.delivery==='ontime'||t.delivery==='late'||t.delivery==='rescheduled') return false;
+  if(t.noDate||!t.date)return false;
+  if(t.delivery==='ontime'||t.delivery==='late'||t.delivery==='rescheduled'||t.delivery==='waiting')return false;
   return t.date<TODAY;
 }
 
+/* ══ DATE HELPERS ═════════════════════════════════════════ */
 function wdays(off){
   const b=new Date(TODAY+'T12:00:00'),dy=b.getDay(),diff=dy===0?-6:1-dy;
   const m=new Date(b);m.setDate(b.getDate()+diff+off*7);
@@ -279,28 +406,29 @@ function wdays(off){
 function dstr(d){return d.toISOString().slice(0,10);}
 function fmtd(d){return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short'});}
 function fmtFull(s){return new Date(s+'T12:00:00').toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});}
-
 function respLine(people){
   if(!people||!people.length)return '';
   if(people.includes('Todos'))return `<span class="rname">Todo el equipo</span>`;
   const rest=people.length-1;
-  return `<span class="rname">${people[0]}</span>${rest>0?`<span class="rmore">y ${rest} más</span>`:''}`;
+  return `<span class="rname">${people[0]}</span>${rest>0?`<span class="rmore">+${rest}</span>`:''}`;
 }
 
+/* ══ INIT UI ══════════════════════════════════════════════ */
 function initUI(){
-  document.getElementById('filters').innerHTML=['Todos',...PEOPLE].map(p=>
-    `<button class="fb${p==='Todos'?' active':''}" onclick="sf('${p}')">${p}</button>`
-  ).join('');
+  document.getElementById('filters').innerHTML=
+    ['Todos',...PEOPLE].map(p=>`<button class="fb${p==='Todos'?' active':''}" onclick="sf('${p}')">${p}</button>`).join('');
   document.getElementById('legend').innerHTML=
-    `<div class="li"><div class="ld" style="background:var(--green-card)"></div>Avance &lt; 50%</div>`+
-    `<div class="li"><div class="ld" style="background:var(--amber-card)"></div>Avance 50–80%</div>`+
-    `<div class="li"><div class="ld" style="background:var(--red-card)"></div>Retraso / Vencida</div>`;
+    `<div class="li"><div class="ld" style="background:var(--amber-card)"></div>Avance &lt;50%</div>`+
+    `<div class="li"><div class="ld" style="background:var(--green-card)"></div>Avance 50–80%</div>`+
+    `<div class="li"><div class="ld" style="background:var(--red-card)"></div>Retraso / Vencida</div>`+
+    `<div class="li"><div class="ld" style="background:var(--slate-card)"></div>En espera del área</div>`;
 }
 
 function sf(n){filt=n;document.querySelectorAll('.fb').forEach(b=>b.classList.toggle('active',b.textContent===n));render();}
 function cw(d){woff+=d;render();}
 function vis(){return filt==='Todos'?tasks:tasks.filter(t=>t.people.includes(filt)||t.people.includes('Todos'));}
 
+/* ══ STATS ════════════════════════════════════════════════ */
 function updStats(){
   const v=vis();
   const od=v.filter(t=>isOverdue(t)).length;
@@ -308,35 +436,37 @@ function updStats(){
   const rescheduled=v.filter(t=>t.delivery==='rescheduled').length;
   const atrasadas=od+late+rescheduled;
   const ontime=v.filter(t=>t.delivery==='ontime').length;
+  const waiting=v.filter(t=>t.delivery==='waiting').length;
   document.getElementById('stats').innerHTML=`
-    <div class="stat">
+    <div class="stat s-blue">
       <div class="stat-lbl">Total tareas</div>
-      <div class="stat-val">${v.length}</div>
+      <div class="stat-val b">${v.length}</div>
       <div class="stat-sub">en el sistema</div>
     </div>
-    <div class="stat">
+    <div class="stat s-amber">
       <div class="stat-lbl">En progreso</div>
-      <div class="stat-val">${v.filter(t=>t.status==='en progreso').length}</div>
+      <div class="stat-val a">${v.filter(t=>t.status==='en progreso').length}</div>
       <div class="stat-sub">activas ahora</div>
     </div>
-    <div class="stat">
-      <div class="stat-lbl">Sin confirmar</div>
-      <div class="stat-val">${v.filter(t=>t.status==='pendiente'||t.status==='sin fecha').length}</div>
-      <div class="stat-sub">pendientes de fecha</div>
-    </div>
-    <div class="stat">
+    <div class="stat s-green">
       <div class="stat-lbl">✓ A tiempo</div>
       <div class="stat-val g">${ontime}</div>
       <div class="stat-sub">entregadas ok</div>
     </div>
-    <div class="stat">
+    <div class="stat s-red">
       <div class="stat-lbl">⚠ Con atraso</div>
       <div class="stat-val r">${atrasadas}</div>
       <div class="stat-sub">${od} vencida${od!==1?'s':''} · ${late+rescheduled} reportada${late+rescheduled!==1?'s':''}</div>
     </div>
+    <div class="stat s-slate">
+      <div class="stat-lbl">⏳ En espera</div>
+      <div class="stat-val" style="color:var(--slate)">${waiting}</div>
+      <div class="stat-sub">pendiente del área</div>
+    </div>
   `;
 }
 
+/* ══ RENDER ═══════════════════════════════════════════════ */
 function render(){
   const days=wdays(woff);
   document.getElementById('wlbl').textContent=fmtd(days[0])+' — '+fmtd(days[6]);
@@ -350,8 +480,18 @@ function render(){
       return filt==='Todos'||t.people.includes(filt)||t.people.includes('Todos');
     });
     const col=document.createElement('div');col.className='dcol';
-    col.innerHTML=`<div class="dhdr${isToday?' th':''}">${DLBLS[i]}<br><span class="ddate${isToday?' td':''}">${d.getDate()}</span></div>`;
-    if(!ft.length)col.innerHTML+=`<div class="notask">—</div>`;
+    col.innerHTML=`
+      <div class="dhdr${isToday?' th':''}">${DLBLS[i]}</div>
+      <div style="text-align:center;padding:4px 4px 6px;border-bottom:1px solid var(--border);">
+        <span class="ddate${isToday?' td':''}">${d.getDate()}</span>
+      </div>
+      <div class="dcards" id="dcards_${ds}">
+        ${!ft.length?'<div class="notask">—</div>':''}
+      </div>`;
+    grid.appendChild(col);
+
+    const dcards=document.getElementById('dcards_'+ds);
+    if(ft.length) dcards.innerHTML='';
 
     ft.forEach(t=>{
       const od=isOverdue(t);
@@ -362,7 +502,7 @@ function render(){
       const badgeTxt=od&&t.delivery==='pending'?'⚠ Vencida':`${dv.icon} ${dv.lbl}`;
       const badgeCls=od?'dbadge hi':'dbadge';
       card.innerHTML=`
-        <div class="strip" style="background:rgba(255,255,255,.3)"></div>
+        <div class="strip"></div>
         <div class="inner">
           <div class="tt">${t.title}</div>
           ${t.time?`<div class="ttime">🕐 ${t.time}</div>`:''}
@@ -370,34 +510,39 @@ function render(){
           <div class="pb"><div class="pf" style="width:${t.progress}%"></div></div>
           <div class="${badgeCls}">${badgeTxt}${t.delivery==='rescheduled'&&t.reason?' · '+t.reason:''}</div>
         </div>`;
-      card.onclick=()=>openDetail(t);col.appendChild(card);
+      card.onclick=()=>openDetail(t);
+      dcards.appendChild(card);
     });
 
-    const ab=document.createElement('button');ab.className='addbtn';
-    ab.textContent='+ agregar';ab.onclick=()=>openNew(ds);col.appendChild(ab);
-    grid.appendChild(col);
+    if(isEd){
+      const ab=document.createElement('button');ab.className='addbtn';
+      ab.innerHTML='＋ agregar';ab.onclick=()=>openNew(ds);
+      document.getElementById('dcards_'+ds).appendChild(ab);
+    }
   });
+
   renderSF();updStats();
-  document.getElementById('app').classList.toggle('emode',isEd);
+  document.getElementById('app')?.classList?.toggle('emode',isEd);
+  document.getElementById('newTaskBtn').style.display=isEd?'inline-flex':'none';
 }
 
+/* ══ SIN FECHA ════════════════════════════════════════════ */
 function renderSF(){
   const sec=document.getElementById('sfsec');
   const sf=tasks.filter(t=>t.noDate);
   if(!sf.length){sec.innerHTML='';return;}
-  sec.className='sfsec';
-  sec.innerHTML=`<div class="sflbl">📅 Sin fecha confirmada</div>`;
+  sec.innerHTML=`<div class="sflbl">Sin fecha confirmada</div>`;
   const row=document.createElement('div');row.className='sfrow';
   sf.forEach(t=>{
     const cc=getCardClass(t);
     const c=document.createElement('div');c.className='sfc '+cc;
-    c.innerHTML=`<div class="strip" style="background:rgba(255,255,255,.3)"></div><div class="inner"><div class="tt">${t.title}</div><div class="pdate">🕐 Fecha por confirmar</div><div class="tresp" style="margin-top:5px">${respLine(t.people)}</div></div>`;
+    c.innerHTML=`<div class="strip"></div><div class="inner"><div class="tt">${t.title}</div><div class="pdate">📅 Fecha por confirmar</div><div class="tresp" style="margin-top:4px">${respLine(t.people)}</div></div>`;
     c.onclick=()=>openDetail(t);row.appendChild(c);
   });
   sec.appendChild(row);
 }
 
-/* ---- RESUMEN DE ATRASOS ---- */
+/* ══ RESUMEN ══════════════════════════════════════════════ */
 function openResumen(){
   const atrasadas=tasks.filter(t=>isOverdue(t)||t.delivery==='late'||t.delivery==='rescheduled');
   const counts={};
@@ -413,71 +558,80 @@ function openResumen(){
       <div class="rsm-bar-wrap"><div class="rsm-bar" style="width:${Math.round(n/total*100)}%"></div></div>
       <span class="rsm-count">${n}</span>
     </div>`).join('');
-  // list of delayed tasks
   const taskRows=atrasadas.map(t=>`
     <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);">
       <span style="font-size:12px;flex:1;font-weight:500;color:var(--text)">${t.title}</span>
       <span style="font-size:11px;color:var(--text2)">${t.reason||'—'}</span>
-      <span style="font-size:11px;font-weight:700;color:var(--red);background:var(--red-bg);border-radius:4px;padding:2px 7px">${isOverdue(t)&&t.delivery==='pending'?'Vencida':DV[t.delivery]?.lbl||'—'}</span>
+      <span style="font-size:11px;font-weight:700;color:var(--red);background:var(--red-bg);border-radius:4px;padding:2px 8px">${isOverdue(t)&&t.delivery==='pending'?'Vencida':DV[t.delivery]?.lbl||'—'}</span>
     </div>`).join('');
   document.getElementById('mb').innerHTML=`
     <div class="mhdr">
       <div class="rsm-header">
-        <h2>⚠ Razones de atraso</h2>
+        <h2>Razones de atraso</h2>
         <p>${total} tarea${total!==1?'s':''} con retraso o reprogramada${total!==1?'s':''}</p>
       </div>
       <button class="mclose" onclick="closemo()">×</button>
     </div>
-    ${total===0?`<div class="rsm-empty">🎉 No hay tareas atrasadas. ¡Todo en orden!</div>`:
-    `<div style="margin-bottom:16px;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em">Por motivo</div>
-    ${rows}
-    <div class="rsm-total"><span>Total atrasadas</span><span style="color:var(--red)">${total}</span></div>
-    <div style="margin-top:20px;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Detalle por tarea</div>
-    ${taskRows}`}
-  `;
+    <div class="mbody">
+    ${total===0
+      ?`<div class="rsm-empty">🎉 No hay tareas atrasadas</div>`
+      :`<div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Por motivo</div>
+      ${rows}
+      <div class="rsm-total"><span>Total</span><span style="color:var(--red)">${total}</span></div>
+      <div style="margin-top:20px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Detalle por tarea</div>
+      ${taskRows}`}
+    </div>`;
   document.getElementById('mo').classList.add('open');
 }
 
-/* ---- DETAIL ---- */
+/* ══ DETAIL ═══════════════════════════════════════════════ */
 function openDetail(t){
   if(isEd){renderForm(t);document.getElementById('mo').classList.add('open');return;}
   const od=isOverdue(t);
   const dv=DV[t.delivery]||DV.pending;
-  const avs=t.people.map(per=>{const pc=PC[per]||['#e8e4de','#3a3530'];return`<span class="chip" style="background:${pc[0]};color:${pc[1]}">${per}</span>`;}).join('');
-  const sc={listo:'#14845a','en progreso':'#1456a8',pendiente:'#b05c10','sin fecha':'#6b6257'}[t.status]||'#6b6257';
-  const dc={ontime:'#14845a',late:'#bf2c1e',rescheduled:'#b05c10',pending:'#6b6257'}[t.delivery]||'#6b6257';
+  const avs=t.people.map(per=>{const pc=PC[per]||['#f1f5f9','#334155'];return`<span class="chip" style="background:${pc[0]};color:${pc[1]}">${per}</span>`;}).join('');
+  const sc={listo:'#059669','en progreso':'#2563eb',pendiente:'#d97706','sin fecha':'#64748b'}[t.status]||'#64748b';
+  const dc={ontime:'#059669',late:'#dc2626',rescheduled:'#d97706',pending:'#64748b',waiting:'#4a6580'}[t.delivery]||'#64748b';
+  const pbarColor=t.progress>=50&&t.progress<=80?'var(--green-card)':t.progress<50?'var(--amber-card)':'var(--green-card)';
   document.getElementById('mb').innerHTML=`
-    <div class="mhdr"><span class="mtitle">${t.title}</span><button class="mclose" onclick="closemo()">×</button></div>
-    ${od?`<div class="od-alert"><div class="ico">⚠️</div><div class="txt">Tarea vencida<small>La fecha límite fue el ${fmtFull(t.date)} y aún no se marcó como entregada.</small></div></div>`:''}
-    <div class="mr"><span>📁</span><span>${t.project}</span></div>
-    <div class="mr"><span>📅</span><span>${t.noDate?'Fecha por confirmar':fmtFull(t.date)}</span></div>
-    ${t.time?`<div class="mr"><span>🕐</span><span>${t.time}</span></div>`:''}
-    <div class="mr"><span>📊</span><span>${t.progress}% completado</span></div>
-    <div style="height:7px;border-radius:4px;background:#f0ede8;overflow:hidden;margin-bottom:12px">
-      <div style="height:100%;width:${t.progress}%;background:${t.progress>=50&&t.progress<=80?'var(--amber-card)':t.progress<50?'var(--green-card)':'var(--green-card)'};border-radius:4px"></div>
+    <div class="mhdr">
+      <span class="mtitle">${t.title}</span>
+      <button class="mclose" onclick="closemo()">×</button>
     </div>
-    <div class="mr" style="flex-wrap:wrap"><span>👥</span><div style="display:flex;flex-wrap:wrap">${avs}</div></div>
+    <div class="mbody">
+    ${od?`<div class="od-alert"><div class="ico">⚠️</div><div class="txt">Tarea vencida<small>Fecha límite: ${fmtFull(t.date)}</small></div></div>`:''}
+    <div class="mr">📁 <span>${t.project}</span></div>
+    <div class="mr">📅 <span>${t.noDate?'Fecha por confirmar':fmtFull(t.date)}</span></div>
+    ${t.time?`<div class="mr">🕐 <span>${t.time}</span></div>`:''}
+    <div class="mr">📊 <span>${t.progress}% completado</span></div>
+    <div class="prog-bar"><div class="prog-fill" style="width:${t.progress}%;background:${pbarColor}"></div></div>
+    <div class="mr" style="flex-wrap:wrap">👥 <div style="display:flex;flex-wrap:wrap">${avs}</div></div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
       <span class="sbadge" style="background:${sc}18;color:${sc}">${t.status}</span>
       <span class="sbadge" style="background:${od?'var(--red-bg)':dc+'18'};color:${od?'var(--red)':dc}">${dv.icon} ${od&&t.delivery==='pending'?'Vencida':dv.lbl}</span>
     </div>
-    ${(od&&t.delivery==='pending')||t.delivery==='late'?`<div class="infobox" style="background:var(--red-bg);border-left:3px solid var(--red);color:var(--red)"><strong>${od?'¿Qué pasó?':'⚠ Razón del retraso'}</strong>${t.note||'Sin comentarios. El editor puede agregar el motivo.'}</div>`:''}
-    ${t.delivery==='rescheduled'?`<div class="infobox" style="background:var(--amber-bg);border-left:3px solid var(--amber);color:var(--amber)"><strong>↺ Motivo de reprogramación</strong>${t.reason||'Sin especificar'}${t.note?`<div style="margin-top:4px;font-style:italic">${t.note}</div>`:''}${t.newDate?`<div style="margin-top:5px;font-weight:700">Nueva fecha: ${fmtFull(t.newDate)}</div>`:''}</div>`:''}
-  `;
+    ${(od&&t.delivery==='pending')||t.delivery==='late'?`<div class="infobox" style="background:var(--red-bg);border-left:3px solid var(--red-card);color:var(--red-dark)"><strong>${od?'¿Qué pasó?':'Razón del retraso'}</strong>${t.note||'Sin comentarios registrados.'}</div>`:''}
+    ${t.delivery==='rescheduled'?`<div class="infobox" style="background:var(--amber-bg);border-left:3px solid var(--amber-card);color:var(--amber-dark)"><strong>Motivo de reprogramación</strong>${t.reason||'Sin especificar'}${t.note?`<div style="margin-top:4px;font-style:italic">${t.note}</div>`:''}${t.newDate?`<div style="margin-top:5px;font-weight:700">Nueva fecha: ${fmtFull(t.newDate)}</div>`:''}</div>`:''}
+    ${t.delivery==='waiting'?`<div class="infobox" style="background:var(--slate-bg);border-left:3px solid var(--slate-card);color:var(--slate)"><strong>En espera del área</strong>${t.note||'El avance está pendiente de que el área entregue información o validación.'}</div>`:''}
+    </div>`;
   document.getElementById('mo').classList.add('open');
 }
 
-/* ---- FORM ---- */
+/* ══ FORM ═════════════════════════════════════════════════ */
 function renderForm(t){
   const isNew=!t.id;selDv=t.delivery||'pending';
   const od=isOverdue(t);
-  const pOpts=Object.keys({LSU:1,PR:1,Compliance:1,Customer:1,Rescreening:1}).map(k=>`<option value="${k}" ${t.project===k?'selected':''}>${k}</option>`).join('');
+  const pOpts=['LSU','PR','Compliance','Customer','Rescreening'].map(k=>`<option value="${k}" ${t.project===k?'selected':''}>${k}</option>`).join('');
   const sOpts=['pendiente','en progreso','listo','sin fecha'].map(s=>`<option value="${s}" ${t.status===s?'selected':''}>${s}</option>`).join('');
-  const pcs=PEOPLE.map(p=>`<div class="pc"><input type="checkbox" id="pc${p}" value="${p}" ${t.people.includes(p)||t.people.includes('Todos')?'checked':''}><label for="pc${p}">${p}</label></div>`).join('');
+  const pcs=PEOPLE.map(p=>`<div class="pc"><input type="checkbox" id="pc${p}" value="${p}" ${t.people&&(t.people.includes(p)||t.people.includes('Todos'))?'checked':''}><label for="pc${p}">${p}</label></div>`).join('');
   const rOpts=REASONS.map(r=>`<option value="${r}" ${t.reason===r?'selected':''}>${r}</option>`).join('');
   document.getElementById('mb').innerHTML=`
-    <div class="mhdr"><span class="mtitle">${isNew?'Nueva tarea':'Editar tarea'}</span><button class="mclose" onclick="closemo()">×</button></div>
-    ${od?`<div class="od-alert"><div class="ico">⚠️</div><div class="txt">Tarea vencida — marca su estado abajo<small>Indica si se entregó tarde, se reprogramó o cuál fue el motivo.</small></div></div>`:''}
+    <div class="mhdr">
+      <span class="mtitle">${isNew?'Nueva tarea':'Editar tarea'}</span>
+      <button class="mclose" onclick="closemo()">×</button>
+    </div>
+    <div class="mbody">
+    ${od?`<div class="od-alert"><div class="ico">⚠️</div><div class="txt">Tarea vencida — actualiza el estado<small>Indica si se entregó tarde, se reprogramó o cuál fue el motivo.</small></div></div>`:''}
     <div class="ff"><label class="fl">Nombre de la tarea</label><input class="fi" id="ft" type="text" value="${t.title||''}" placeholder="¿Qué hay que entregar?"></div>
     <div class="fr2">
       <div class="ff"><label class="fl">Proyecto</label><select class="fi" id="fpr">${pOpts}</select></div>
@@ -487,7 +641,10 @@ function renderForm(t){
       <div class="ff"><label class="fl">Fecha</label><input class="fi" id="fd" type="date" value="${t.date||''}"></div>
       <div class="ff"><label class="fl">Hora</label><input class="fi" id="fh" type="text" value="${t.time||''}" placeholder="ej. 9:00 AM"></div>
     </div>
-    <div class="ff"><label class="fl">Avance %</label><input class="fi" id="fpg" type="number" min="0" max="100" value="${t.progress||0}"></div>
+    <div class="ff">
+      <label class="fl">Avance — <span id="pgval">${t.progress||0}</span>%</label>
+      <input class="fi" id="fpg" type="range" min="0" max="100" value="${t.progress||0}" oninput="document.getElementById('pgval').textContent=this.value" style="padding:4px 0;cursor:pointer;">
+    </div>
     <div class="ff"><label class="fl">Responsables</label><div class="pcs">${pcs}</div></div>
     <div class="sct">Estado de entrega</div>
     <div class="dvsel">
@@ -495,9 +652,13 @@ function renderForm(t){
       <button class="dvopt${selDv==='ontime'?' so':''}" onclick="sdv('ontime')">✓<br>A tiempo</button>
       <button class="dvopt${selDv==='late'?' sl':''}" onclick="sdv('late')">⚠<br>Con retraso</button>
       <button class="dvopt${selDv==='rescheduled'?' sr':''}" onclick="sdv('rescheduled')">↺<br>Reprogramado</button>
+      <button class="dvopt${selDv==='waiting'?' sw':''}" onclick="sdv('waiting')">⏳<br>En espera</button>
     </div>
     <div id="lbox" style="${selDv==='late'?'':'display:none'}">
-      <div class="lbox"><label>¿Qué causó el retraso?</label><textarea class="fi" id="fln" rows="2" placeholder="Describe brevemente el motivo...">${t.note||''}</textarea></div>
+      <div class="lbox"><label>¿Qué causó el retraso?</label><textarea class="fi" id="fln" rows="2" placeholder="Describe el motivo...">${t.note||''}</textarea></div>
+    </div>
+    <div id="wbox" style="${selDv==='waiting'?'':'display:none'}">
+      <div class="wbox"><label>¿Qué está esperando del área?</label><textarea class="fi" id="fwn" rows="2" placeholder="Ej: Revisión de contenido, materiales, validación...">${t.note||''}</textarea></div>
     </div>
     <div id="rbox" style="${selDv==='rescheduled'?'':'display:none'}">
       <div class="rbox">
@@ -511,9 +672,9 @@ function renderForm(t){
     <div class="fa">
       ${!isNew?`<button class="bd" onclick="delT(${t.id})">🗑</button>`:''}
       <button class="bs" onclick="closemo()">Cancelar</button>
-      <button class="bp" onclick="saveT(${isNew?'null':t.id})">${isNew?'Crear tarea':'Guardar'}</button>
+      <button class="bp" onclick="saveT(${isNew?'null':t.id})">${isNew?'Crear tarea':'Guardar cambios'}</button>
     </div>
-  `;
+    </div>`;
 }
 
 function sdv(v){
@@ -525,20 +686,23 @@ function sdv(v){
     if(v==='ontime'&&tx.includes('tiempo'))b.classList.add('so');
     if(v==='late'&&tx.includes('retraso'))b.classList.add('sl');
     if(v==='rescheduled'&&tx.includes('Reprog'))b.classList.add('sr');
+    if(v==='waiting'&&(tx.includes('espera')||tx.includes('Espera')))b.classList.add('sw');
   });
   document.getElementById('rbox').style.display=v==='rescheduled'?'':'none';
   document.getElementById('lbox').style.display=v==='late'?'':'none';
+  const wb=document.getElementById('wbox');if(wb)wb.style.display=v==='waiting'?'':'none';
 }
 
 function openNew(d){
   selDv='pending';
   renderForm({id:null,title:'',project:'LSU',date:d,time:'',progress:0,people:[],status:'pendiente',noDate:false,delivery:'pending',reason:'',note:'',newDate:''});
   document.getElementById('mo').classList.add('open');
+  setTimeout(()=>document.getElementById('ft')?.focus(),100);
 }
 
 function saveT(id){
   const title=(document.getElementById('ft').value||'').trim();
-  if(!title){alert('Agrega un nombre');return;}
+  if(!title){alert('Agrega un nombre a la tarea');return;}
   const project=document.getElementById('fpr').value;
   const status=document.getElementById('fst').value;
   const date=document.getElementById('fd').value;
@@ -549,22 +713,34 @@ function saveT(id){
   const delivery=selDv;
   const reason=delivery==='rescheduled'&&document.getElementById('frr')?document.getElementById('frr').value:'';
   const note=delivery==='rescheduled'&&document.getElementById('frn')?document.getElementById('frn').value.trim():
-             delivery==='late'&&document.getElementById('fln')?document.getElementById('fln').value.trim():'';
+             delivery==='late'&&document.getElementById('fln')?document.getElementById('fln').value.trim():
+             delivery==='waiting'&&document.getElementById('fwn')?document.getElementById('fwn').value.trim():'';
   const newDate=delivery==='rescheduled'&&document.getElementById('fnd')?document.getElementById('fnd').value:'';
-  const obj={title,project,date,time,progress,people:people.length?people:['Todos'],status,noDate,delivery,reason,note,newDate};
-  if(id===null||id==='null'){tasks.push({id:nid++,...obj});}
-  else{const i=tasks.findIndex(t=>t.id===id);if(i>-1)tasks[i]={id,...obj};}
+  const isNew=id===null||id==='null';
+  const realId=isNew?nid++:Number(id);
+  const obj={id:realId,title,project,date,time,progress,people:people.length?people:['Todos'],status,noDate,delivery,reason,note,newDate};
+  if(isNew){tasks.push(obj);}
+  else{const i=tasks.findIndex(t=>t.id===realId);if(i>-1)tasks[i]=obj;}
+  gasPost({action:'saveTask',task:JSON.stringify(obj)});
   closemo();render();
 }
 
-function delT(id){if(!confirm('¿Eliminar?'))return;tasks=tasks.filter(t=>t.id!==id);closemo();render();}
+function delT(id){
+  if(!confirm('¿Eliminar esta tarea?'))return;
+  tasks=tasks.filter(t=>t.id!==id);
+  gasPost({action:'deleteTask',id});
+  closemo();render();
+}
 function closemo(){document.getElementById('mo').classList.remove('open');}
 document.getElementById('mo').addEventListener('click',e=>{if(e.target.id==='mo')closemo();});
 
 function toggleEd(){
   if(isEd){
-    isEd=false;document.getElementById('edbtn').classList.remove('on');
-    document.getElementById('edbtn').innerHTML='🔒 <span id="edlbl">Editor</span>';render();
+    isEd=false;
+    document.getElementById('edbtn').classList.remove('on');
+    document.getElementById('edbtn').innerHTML='<span class="tbtn-icon">🔒</span> <span id="edlbl">Editor</span>';
+    document.getElementById('newTaskBtn').style.display='none';
+    render();
   } else {
     document.getElementById('pwmo').classList.add('open');
     setTimeout(()=>document.getElementById('pwi').focus(),100);
@@ -572,17 +748,26 @@ function toggleEd(){
 }
 function chkpw(){
   if(document.getElementById('pwi').value===PW){
-    isEd=true;document.getElementById('pwmo').classList.remove('open');
+    isEd=true;
+    document.getElementById('pwmo').classList.remove('open');
     document.getElementById('pwi').value='';document.getElementById('pwerr').textContent='';
     document.getElementById('edbtn').classList.add('on');
-    document.getElementById('edbtn').innerHTML='🔓 <span id="edlbl">Editando</span>';
+    document.getElementById('edbtn').innerHTML='<span class="tbtn-icon">🔓</span> <span id="edlbl">Editando</span>';
+    document.getElementById('newTaskBtn').style.display='inline-flex';
     selDv='pending';render();
-  } else {document.getElementById('pwerr').textContent='Contraseña incorrecta';}
+  } else {
+    document.getElementById('pwerr').textContent='Contraseña incorrecta';
+    document.getElementById('pwi').select();
+  }
 }
-function closepw(){document.getElementById('pwmo').classList.remove('open');document.getElementById('pwi').value='';document.getElementById('pwerr').textContent='';}
+function closepw(){
+  document.getElementById('pwmo').classList.remove('open');
+  document.getElementById('pwi').value='';
+  document.getElementById('pwerr').textContent='';
+}
 document.getElementById('pwmo').addEventListener('click',e=>{if(e.target.id==='pwmo')closepw();});
 
-initUI();render();
+initUI();loadFromSheet();
 </script>
 </body>
 </html>
