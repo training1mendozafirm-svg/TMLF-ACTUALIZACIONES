@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pendientes TRAINING</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0ede8;
+  --white:#ffffff;
+  --border:#e2ddd7;
+  --text:#18160f;
+  --text2:#6b6257;
+  --text3:#aaa49d;
+  --green:#1a8f5c;   --green-bg:#e6f6ee; --green-card:#25b872;
+  --amber:#c47010;   --amber-bg:#fdf3e5; --amber-card:#e8860e;
+  --red:#bf2c1e;     --red-bg:#fdecea;   --red-card:#d93527;
+  --blue:#1456a8;    --blue-bg:#eaf2fc;
+  --gray:#6b6257;    --gray-bg:#f3f0eb;
+  --r:10px; --r-sm:7px; --r-xs:4px;
+  --sh:0 2px 8px rgba(0,0,0,.1),0 0 0 1px rgba(0,0,0,.05);
+  --sh-md:0 6px 24px rgba(0,0,0,.13),0 0 0 1px rgba(0,0,0,.05);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.app{max-width:1160px;margin:0 auto;padding:1.5rem 1.25rem 3rem;}
+
+/* TOP */
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;gap:12px;flex-wrap:wrap;}
+.top h1{font-size:20px;font-weight:700;letter-spacing:-.03em;}
+.top-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.wnav{display:flex;align-items:center;gap:4px;background:#fff;border:1px solid var(--border);border-radius:var(--r-sm);padding:3px;box-shadow:var(--sh);}
+.wnav button{background:transparent;border:none;cursor:pointer;width:28px;height:28px;border-radius:5px;font-size:16px;color:var(--text2);display:flex;align-items:center;justify-content:center;transition:background .12s;}
+.wnav button:hover{background:var(--bg);}
+.wnav span{font-size:12px;color:var(--text2);min-width:148px;text-align:center;font-weight:500;}
+.btn{display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:var(--r-sm);padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;background:#fff;color:var(--text2);font-family:inherit;transition:all .15s;box-shadow:var(--sh);}
+.btn:hover{background:var(--bg);}
+.btn.on{border-color:var(--blue);color:var(--blue);background:var(--blue-bg);}
+.btn.danger-outline{border-color:var(--red);color:var(--red);background:var(--red-bg);}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:1.25rem;}
+.stat{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh);}
+.stat-lbl{font-size:10px;color:var(--text3);margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.stat-val{font-size:32px;font-weight:700;color:var(--text);letter-spacing:-.04em;line-height:1;}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:4px;font-weight:500;}
+.stat-val.g{color:var(--green);}
+.stat-val.r{color:var(--red);}
+.stat-val.a{color:var(--amber);}
+
+/* FILTERS */
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;}
+.fb{border:1px solid var(--border);border-radius:999px;padding:5px 15px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:var(--text2);font-family:inherit;transition:all .15s;box-shadow:var(--sh);}
+.fb:hover{background:var(--bg);}
+.fb.active{background:var(--text);border-color:var(--text);color:#fff;}
+
+/* LEGEND */
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:1.1rem;align-items:center;}
+.li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);font-weight:500;}
+.ld{width:10px;height:10px;border-radius:3px;}
+.ldiv{width:1px;height:14px;background:var(--border);}
+
+/* GRID */
+.grid7{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
+.dcol{display:flex;flex-direction:column;}
+.dhdr{font-size:10px;font-weight:700;color:var(--text3);text-align:center;padding:6px 2px 4px;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border);margin-bottom:8px;}
+.dhdr.th{color:var(--blue);}
+.ddate{font-size:18px;font-weight:700;color:var(--text);text-align:center;padding:2px 0 7px;letter-spacing:-.02em;}
+.ddate.td{color:var(--blue);}
+
+/* CARD */
+.tc{border-radius:var(--r-sm);padding:9px 10px;margin-bottom:6px;cursor:pointer;position:relative;overflow:hidden;transition:transform .12s,box-shadow .12s;box-shadow:var(--sh);}
+.tc:hover{transform:translateY(-2px);box-shadow:var(--sh-md);}
+.tc.od-glow{box-shadow:0 2px 8px rgba(217,53,39,.3),0 0 0 2px rgba(217,53,39,.35);}
+.tc.od-glow:hover{box-shadow:0 6px 20px rgba(217,53,39,.35),0 0 0 2px rgba(217,53,39,.5);}
+
+.strip{position:absolute;top:0;left:0;width:5px;height:100%;}
+.inner{padding-left:7px;}
+.tt{font-size:10.5px;font-weight:700;line-height:1.3;margin-bottom:4px;color:#fff;}
+.ttime{font-size:9px;font-weight:500;color:rgba(255,255,255,.8);margin-bottom:3px;}
+.tresp{font-size:10px;font-weight:600;color:rgba(255,255,255,.9);margin-bottom:4px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+.rname{background:rgba(255,255,255,.25);border-radius:3px;padding:1px 5px;}
+.rmore{background:rgba(0,0,0,.15);border-radius:3px;padding:1px 5px;font-size:9px;}
+.pb{height:3.5px;border-radius:2px;background:rgba(255,255,255,.25);margin-top:5px;overflow:hidden;}
+.pf{height:100%;border-radius:2px;background:rgba(255,255,255,.7);}
+.dbadge{display:inline-flex;align-items:center;gap:3px;border-radius:var(--r-xs);padding:2px 6px;font-size:9px;font-weight:700;margin-top:5px;background:rgba(255,255,255,.22);color:#fff;text-transform:uppercase;letter-spacing:.03em;}
+.dbadge.hi{background:rgba(255,255,255,.85);color:var(--red);}
+
+/* card bg by state */
+.card-green{background:var(--green-card);}
+.card-amber{background:var(--amber-card);}
+.card-red{background:var(--red-card);}
+.card-gray{background:#8a8480;}
+
+.notask{font-size:10px;color:var(--text3);text-align:center;padding:12px 4px;}
+.addbtn{width:100%;border:1.5px dashed var(--border);border-radius:var(--r-xs);padding:5px;font-size:10px;color:var(--text3);background:transparent;cursor:pointer;display:none;align-items:center;justify-content:center;gap:3px;margin-top:3px;font-family:inherit;font-weight:600;transition:all .15s;}
+.addbtn:hover{background:#fff;}
+.emode .addbtn{display:flex;}
+
+/* SIN FECHA */
+.sfsec{margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1.25rem;}
+.sflbl{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.05em;}
+.sfrow{display:flex;flex-wrap:wrap;gap:10px;}
+.sfc{border-radius:var(--r-sm);padding:10px 12px;width:175px;cursor:pointer;position:relative;overflow:hidden;transition:transform .12s,box-shadow .12s;box-shadow:var(--sh);}
+.sfc:hover{transform:translateY(-2px);box-shadow:var(--sh-md);}
+.pdate{font-size:9px;font-style:italic;color:rgba(255,255,255,.75);margin-top:3px;font-weight:500;}
+
+/* MODAL */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+.mo.open{display:flex;}
+.mb{background:#fff;border-radius:var(--r);border:1px solid var(--border);padding:1.5rem;width:380px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:var(--sh-md);}
+.mhdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;gap:10px;}
+.mtitle{font-size:15px;font-weight:700;color:var(--text);line-height:1.4;}
+.mclose{background:transparent;border:none;cursor:pointer;color:var(--text3);font-size:22px;line-height:1;padding:0;flex-shrink:0;}
+.mclose:hover{color:var(--text);}
+.mr{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;font-size:13px;color:var(--text2);}
+.mr span{color:var(--text);}
+.chip{display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:600;margin:2px;}
+.sbadge{display:inline-flex;align-items:center;gap:5px;border-radius:var(--r-xs);padding:4px 10px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;}
+.infobox{border-radius:0 var(--r-xs) var(--r-xs) 0;padding:10px 14px;margin-top:10px;font-size:13px;line-height:1.6;}
+.infobox strong{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.od-alert{background:var(--red-bg);border:1px solid #f5b0a8;border-radius:var(--r-sm);padding:10px 14px;margin-bottom:14px;display:flex;gap:8px;align-items:flex-start;}
+.od-alert .ico{font-size:18px;flex-shrink:0;}
+.od-alert .txt{font-size:12px;color:var(--red);font-weight:600;line-height:1.5;}
+.od-alert .txt small{font-weight:400;display:block;}
+
+/* RESUMEN MODAL */
+.rsm-header{margin-bottom:16px;}
+.rsm-header h2{font-size:16px;font-weight:700;color:var(--text);}
+.rsm-header p{font-size:12px;color:var(--text2);margin-top:3px;}
+.rsm-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);gap:10px;}
+.rsm-row:last-child{border-bottom:none;}
+.rsm-reason{font-size:13px;color:var(--text);font-weight:500;}
+.rsm-count{background:var(--red-bg);color:var(--red);border-radius:999px;padding:3px 12px;font-size:13px;font-weight:700;min-width:32px;text-align:center;}
+.rsm-bar-wrap{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin:0 10px;}
+.rsm-bar{height:100%;background:var(--red-card);border-radius:3px;transition:width .4s;}
+.rsm-total{margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:13px;}
+.rsm-total span{font-weight:700;color:var(--text);}
+.rsm-empty{font-size:13px;color:var(--text3);text-align:center;padding:24px 0;}
+
+/* FORM */
+.dvsel{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;}
+.dvopt{border-radius:var(--r-sm);border:1.5px solid var(--border);padding:9px 4px;text-align:center;cursor:pointer;font-size:10px;font-weight:700;color:var(--text2);background:transparent;transition:all .15s;line-height:1.4;font-family:inherit;text-transform:uppercase;letter-spacing:.03em;}
+.dvopt:hover{background:var(--bg);}
+.dvopt.so{border-color:var(--green);background:var(--green-bg);color:var(--green);}
+.dvopt.sl{border-color:var(--red);background:var(--red-bg);color:var(--red);}
+.dvopt.sr{border-color:var(--amber);background:var(--amber-bg);color:var(--amber);}
+.dvopt.sp{border-color:var(--blue);background:var(--blue-bg);color:var(--blue);}
+.ff{margin-bottom:12px;}
+.fl{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.05em;}
+.fi{width:100%;border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 10px;font-size:13px;font-family:inherit;background:#fff;color:var(--text);transition:border-color .15s;}
+.fi:focus{outline:none;border-color:var(--blue);}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.fa{display:flex;gap:8px;margin-top:16px;}
+.bp{flex:1;background:var(--text);color:#fff;border:none;border-radius:var(--r-sm);padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+.bp:hover{background:#333;}
+.bs{flex:1;background:transparent;color:var(--text2);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px;font-size:13px;cursor:pointer;font-family:inherit;}
+.bs:hover{background:var(--bg);}
+.bd{background:transparent;color:var(--red);border:1px solid #f5b0a8;border-radius:var(--r-sm);padding:10px 13px;font-size:13px;cursor:pointer;font-family:inherit;}
+.bd:hover{background:var(--red-bg);}
+.pcs{display:flex;flex-wrap:wrap;gap:8px;}
+.pc{display:flex;align-items:center;gap:5px;cursor:pointer;}
+.pc input{cursor:pointer;accent-color:var(--text);}
+.pc label{font-size:13px;color:var(--text);cursor:pointer;}
+.sct{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 10px;padding-top:14px;border-top:1px solid var(--border);}
+.rbox{background:var(--amber-bg);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 14px;margin-bottom:10px;border-left:3px solid var(--amber);}
+.rbox label{font-size:11px;color:var(--amber);font-weight:700;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;}
+.rbox .fi{margin-bottom:8px;}
+.lbox{background:var(--red-bg);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:12px 14px;margin-bottom:10px;border-left:3px solid var(--red);}
+.lbox label{font-size:11px;color:var(--red);font-weight:700;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;}
+.pws{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:2rem;width:300px;text-align:center;box-shadow:var(--sh-md);}
+.pws h2{font-size:16px;font-weight:700;margin-bottom:6px;}
+.pws p{font-size:13px;color:var(--text2);margin-bottom:16px;}
+.pwerr{font-size:12px;color:var(--red);margin-top:8px;min-height:18px;font-weight:600;}
+
+@media(max-width:760px){.stats{grid-template-columns:repeat(3,1fr);}.grid7{grid-template-columns:repeat(4,1fr);}}
+@media(max-width:500px){.grid7{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="top">
+    <h1>📋 Pendientes TRAINING</h1>
+    <div class="top-r">
+      <div class="wnav">
+        <button onclick="cw(-1)">‹</button>
+        <span id="wlbl"></span>
+        <button onclick="cw(1)">›</button>
+      </div>
+      <button class="btn danger-outline" onclick="openResumen()">⚠ Ver razones de atraso</button>
+      <button class="btn" id="edbtn" onclick="toggleEd()">🔒 <span id="edlbl">Editor</span></button>
+    </div>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="filters" id="filters"></div>
+  <div class="legend" id="legend"></div>
+  <div class="grid7" id="grid"></div>
+  <div id="sfsec"></div>
+</div>
+
+<div class="mo" id="mo"><div class="mb" id="mb"></div></div>
+<div class="mo" id="pwmo">
+  <div class="pws">
+    <h2>🔒 Modo editor</h2>
+    <p>Ingresa la contraseña para editar tareas y fechas</p>
+    <input class="fi" type="password" id="pwi" placeholder="Contraseña" onkeydown="if(event.key==='Enter')chkpw()" style="text-align:center">
+    <div class="pwerr" id="pwerr"></div>
+    <div class="fa" style="margin-top:14px">
+      <button class="bs" onclick="closepw()">Cancelar</button>
+      <button class="bp" onclick="chkpw()">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PW='2026equipo', TODAY='2026-05-26';
+const REASONS=['Falta de feedback','Falta de recursos','Cambio de prioridades','Problema técnico','Dependencia externa','Otro'];
+const PEOPLE=['Mariana','Joham','Brenda','Diego','Andrea'];
+const PC={Mariana:['#dceefb','#0d3e6e'],Joham:['#fdefc8','#6a3e08'],Brenda:['#fce4ee','#6a1f3a'],Diego:['#d8f0e4','#0a4a37'],Andrea:['#e8e4f8','#35286a'],Todos:['#e8e4de','#3a3530']};
+const DV={pending:{lbl:'Por entregar',icon:'🕐'},ontime:{lbl:'✓ A tiempo',icon:'✓'},late:{lbl:'Con retraso',icon:'⚠'},rescheduled:{lbl:'Reprogramado',icon:'↺'}};
+
+// Card color by progress / status
+function cardClass(t) {
+  if(isOverdue(t)) return 'card-red';
+  if(t.delivery==='late') return 'card-red';
+  if(t.delivery==='rescheduled') return 'card-amber';
+  if(t.delivery==='ontime') return 'card-green';
+  // by progress
+  if(t.progress >= 80) return 'card-green';
+  if(t.progress >= 50) return 'card-amber';
+  return 'card-green'; // below 50 = green (just started)
+}
+
+// Wait — spec: rojo=retraso, naranja=50-80%, verde=bajo 50%
+// So: verde < 50, naranja 50-80, rojo = retraso OR > 80? Let me re-read:
+// "rojo para lo que tiene retraso / naranja 50-80% / verde bajo de 50%"
+// verde = <50%, naranja = 50-80%, rojo = retraso (overdue or delivery=late/rescheduled)
+// What about 80-100% not overdue? -> use green (delivered on time would be ontime)
+// I'll treat: rojo=overdue|late|rescheduled, naranja=50-80, verde=<50 (and ontime=green always)
+function resolveCardClass(t) {
+  if(isOverdue(t)||t.delivery==='late'||t.delivery==='rescheduled') return 'card-red';
+  if(t.delivery==='ontime') return 'card-green';
+  if(t.progress>=50&&t.progress<=80) return 'card-amber';
+  if(t.progress>80) return 'card-green';
+  return 'card-green'; // <50
+}
+// Correction per spec literally: verde=bajo 50, naranja=50-80, rojo=retraso
+// below 50 -> verde; 50-80 -> naranja; retraso -> rojo; >80 non-overdue -> keep green
+function getCardClass(t) {
+  if(isOverdue(t)||t.delivery==='late'||t.delivery==='rescheduled') return 'card-red';
+  if(t.delivery==='ontime') return 'card-green';
+  const p=t.progress;
+  if(p>=50&&p<=80) return 'card-amber';
+  return 'card-green';
+}
+
+let tasks=[
+  {id:1,title:'Script LSU — envío a revisión',project:'LSU',date:'2026-05-26',time:'Hoy',progress:50,people:['Mariana'],status:'en progreso',noDate:false,delivery:'pending',reason:'',note:'',newDate:''},
+  {id:2,title:'Training PR — revisión final',project:'PR',date:'2026-05-28',time:'9:00 AM',progress:100,people:['Todos'],status:'listo',noDate:false,delivery:'ontime',reason:'',note:'',newDate:''},
+  {id:3,title:'Training Compliance',project:'Compliance',date:'2026-05-28',time:'',progress:90,people:['Brenda','Diego'],status:'en progreso',noDate:false,delivery:'pending',reason:'',note:'',newDate:''},
+  {id:4,title:'Training LSU',project:'LSU',date:'2026-05-27',time:'',progress:70,people:['Joham','Mariana'],status:'en progreso',noDate:false,delivery:'pending',reason:'',note:'',newDate:''},
+  {id:5,title:'Training Customer',project:'Customer',date:'2026-05-30',time:'',progress:40,people:['Joham','Mariana','Andrea','Brenda'],status:'pendiente',noDate:false,delivery:'pending',reason:'',note:'',newDate:''},
+  {id:6,title:'Training Rescreening Apoyo',project:'Rescreening',date:'',time:'',progress:0,people:['Joham','Brenda','Diego'],status:'sin fecha',noDate:true,delivery:'pending',reason:'',note:'',newDate:''},
+];
+let nid=7,woff=0,filt='Todos',isEd=false,selDv='pending';
+
+function isOverdue(t){
+  if(t.noDate||!t.date) return false;
+  if(t.delivery==='ontime'||t.delivery==='late'||t.delivery==='rescheduled') return false;
+  return t.date<TODAY;
+}
+
+function wdays(off){
+  const b=new Date(TODAY+'T12:00:00'),dy=b.getDay(),diff=dy===0?-6:1-dy;
+  const m=new Date(b);m.setDate(b.getDate()+diff+off*7);
+  return Array.from({length:7},(_,i)=>{const d=new Date(m);d.setDate(m.getDate()+i);return d;});
+}
+function dstr(d){return d.toISOString().slice(0,10);}
+function fmtd(d){return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short'});}
+function fmtFull(s){return new Date(s+'T12:00:00').toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});}
+
+function respLine(people){
+  if(!people||!people.length)return '';
+  if(people.includes('Todos'))return `<span class="rname">Todo el equipo</span>`;
+  const rest=people.length-1;
+  return `<span class="rname">${people[0]}</span>${rest>0?`<span class="rmore">y ${rest} más</span>`:''}`;
+}
+
+function initUI(){
+  document.getElementById('filters').innerHTML=['Todos',...PEOPLE].map(p=>
+    `<button class="fb${p==='Todos'?' active':''}" onclick="sf('${p}')">${p}</button>`
+  ).join('');
+  document.getElementById('legend').innerHTML=
+    `<div class="li"><div class="ld" style="background:var(--green-card)"></div>Avance &lt; 50%</div>`+
+    `<div class="li"><div class="ld" style="background:var(--amber-card)"></div>Avance 50–80%</div>`+
+    `<div class="li"><div class="ld" style="background:var(--red-card)"></div>Retraso / Vencida</div>`;
+}
+
+function sf(n){filt=n;document.querySelectorAll('.fb').forEach(b=>b.classList.toggle('active',b.textContent===n));render();}
+function cw(d){woff+=d;render();}
+function vis(){return filt==='Todos'?tasks:tasks.filter(t=>t.people.includes(filt)||t.people.includes('Todos'));}
+
+function updStats(){
+  const v=vis();
+  const od=v.filter(t=>isOverdue(t)).length;
+  const late=v.filter(t=>t.delivery==='late').length;
+  const rescheduled=v.filter(t=>t.delivery==='rescheduled').length;
+  const atrasadas=od+late+rescheduled;
+  const ontime=v.filter(t=>t.delivery==='ontime').length;
+  document.getElementById('stats').innerHTML=`
+    <div class="stat">
+      <div class="stat-lbl">Total tareas</div>
+      <div class="stat-val">${v.length}</div>
+      <div class="stat-sub">en el sistema</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">En progreso</div>
+      <div class="stat-val">${v.filter(t=>t.status==='en progreso').length}</div>
+      <div class="stat-sub">activas ahora</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">Sin confirmar</div>
+      <div class="stat-val">${v.filter(t=>t.status==='pendiente'||t.status==='sin fecha').length}</div>
+      <div class="stat-sub">pendientes de fecha</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">✓ A tiempo</div>
+      <div class="stat-val g">${ontime}</div>
+      <div class="stat-sub">entregadas ok</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">⚠ Con atraso</div>
+      <div class="stat-val r">${atrasadas}</div>
+      <div class="stat-sub">${od} vencida${od!==1?'s':''} · ${late+rescheduled} reportada${late+rescheduled!==1?'s':''}</div>
+    </div>
+  `;
+}
+
+function render(){
+  const days=wdays(woff);
+  document.getElementById('wlbl').textContent=fmtd(days[0])+' — '+fmtd(days[6]);
+  const DLBLS=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+  const grid=document.getElementById('grid');grid.innerHTML='';
+
+  days.forEach((d,i)=>{
+    const ds=dstr(d),isToday=ds===TODAY;
+    const ft=tasks.filter(t=>{
+      if(t.noDate)return false;if(t.date!==ds)return false;
+      return filt==='Todos'||t.people.includes(filt)||t.people.includes('Todos');
+    });
+    const col=document.createElement('div');col.className='dcol';
+    col.innerHTML=`<div class="dhdr${isToday?' th':''}">${DLBLS[i]}<br><span class="ddate${isToday?' td':''}">${d.getDate()}</span></div>`;
+    if(!ft.length)col.innerHTML+=`<div class="notask">—</div>`;
+
+    ft.forEach(t=>{
+      const od=isOverdue(t);
+      const cc=getCardClass(t);
+      const dv=DV[t.delivery]||DV.pending;
+      const card=document.createElement('div');
+      card.className='tc '+cc+(od?' od-glow':'');
+      const badgeTxt=od&&t.delivery==='pending'?'⚠ Vencida':`${dv.icon} ${dv.lbl}`;
+      const badgeCls=od?'dbadge hi':'dbadge';
+      card.innerHTML=`
+        <div class="strip" style="background:rgba(255,255,255,.3)"></div>
+        <div class="inner">
+          <div class="tt">${t.title}</div>
+          ${t.time?`<div class="ttime">🕐 ${t.time}</div>`:''}
+          <div class="tresp">${respLine(t.people)}</div>
+          <div class="pb"><div class="pf" style="width:${t.progress}%"></div></div>
+          <div class="${badgeCls}">${badgeTxt}${t.delivery==='rescheduled'&&t.reason?' · '+t.reason:''}</div>
+        </div>`;
+      card.onclick=()=>openDetail(t);col.appendChild(card);
+    });
+
+    const ab=document.createElement('button');ab.className='addbtn';
+    ab.textContent='+ agregar';ab.onclick=()=>openNew(ds);col.appendChild(ab);
+    grid.appendChild(col);
+  });
+  renderSF();updStats();
+  document.getElementById('app').classList.toggle('emode',isEd);
+}
+
+function renderSF(){
+  const sec=document.getElementById('sfsec');
+  const sf=tasks.filter(t=>t.noDate);
+  if(!sf.length){sec.innerHTML='';return;}
+  sec.className='sfsec';
+  sec.innerHTML=`<div class="sflbl">📅 Sin fecha confirmada</div>`;
+  const row=document.createElement('div');row.className='sfrow';
+  sf.forEach(t=>{
+    const cc=getCardClass(t);
+    const c=document.createElement('div');c.className='sfc '+cc;
+    c.innerHTML=`<div class="strip" style="background:rgba(255,255,255,.3)"></div><div class="inner"><div class="tt">${t.title}</div><div class="pdate">🕐 Fecha por confirmar</div><div class="tresp" style="margin-top:5px">${respLine(t.people)}</div></div>`;
+    c.onclick=()=>openDetail(t);row.appendChild(c);
+  });
+  sec.appendChild(row);
+}
+
+/* ---- RESUMEN DE ATRASOS ---- */
+function openResumen(){
+  const atrasadas=tasks.filter(t=>isOverdue(t)||t.delivery==='late'||t.delivery==='rescheduled');
+  const counts={};
+  atrasadas.forEach(t=>{
+    const key=t.reason||(isOverdue(t)&&!t.reason?'Sin motivo registrado':t.reason||'Sin motivo registrado');
+    counts[key]=(counts[key]||0)+1;
+  });
+  const total=atrasadas.length;
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  const rows=sorted.map(([r,n])=>`
+    <div class="rsm-row">
+      <span class="rsm-reason">${r}</span>
+      <div class="rsm-bar-wrap"><div class="rsm-bar" style="width:${Math.round(n/total*100)}%"></div></div>
+      <span class="rsm-count">${n}</span>
+    </div>`).join('');
+  // list of delayed tasks
+  const taskRows=atrasadas.map(t=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);">
+      <span style="font-size:12px;flex:1;font-weight:500;color:var(--text)">${t.title}</span>
+      <span style="font-size:11px;color:var(--text2)">${t.reason||'—'}</span>
+      <span style="font-size:11px;font-weight:700;color:var(--red);background:var(--red-bg);border-radius:4px;padding:2px 7px">${isOverdue(t)&&t.delivery==='pending'?'Vencida':DV[t.delivery]?.lbl||'—'}</span>
+    </div>`).join('');
+  document.getElementById('mb').innerHTML=`
+    <div class="mhdr">
+      <div class="rsm-header">
+        <h2>⚠ Razones de atraso</h2>
+        <p>${total} tarea${total!==1?'s':''} con retraso o reprogramada${total!==1?'s':''}</p>
+      </div>
+      <button class="mclose" onclick="closemo()">×</button>
+    </div>
+    ${total===0?`<div class="rsm-empty">🎉 No hay tareas atrasadas. ¡Todo en orden!</div>`:
+    `<div style="margin-bottom:16px;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em">Por motivo</div>
+    ${rows}
+    <div class="rsm-total"><span>Total atrasadas</span><span style="color:var(--red)">${total}</span></div>
+    <div style="margin-top:20px;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Detalle por tarea</div>
+    ${taskRows}`}
+  `;
+  document.getElementById('mo').classList.add('open');
+}
+
+/* ---- DETAIL ---- */
+function openDetail(t){
+  if(isEd){renderForm(t);document.getElementById('mo').classList.add('open');return;}
+  const od=isOverdue(t);
+  const dv=DV[t.delivery]||DV.pending;
+  const avs=t.people.map(per=>{const pc=PC[per]||['#e8e4de','#3a3530'];return`<span class="chip" style="background:${pc[0]};color:${pc[1]}">${per}</span>`;}).join('');
+  const sc={listo:'#14845a','en progreso':'#1456a8',pendiente:'#b05c10','sin fecha':'#6b6257'}[t.status]||'#6b6257';
+  const dc={ontime:'#14845a',late:'#bf2c1e',rescheduled:'#b05c10',pending:'#6b6257'}[t.delivery]||'#6b6257';
+  document.getElementById('mb').innerHTML=`
+    <div class="mhdr"><span class="mtitle">${t.title}</span><button class="mclose" onclick="closemo()">×</button></div>
+    ${od?`<div class="od-alert"><div class="ico">⚠️</div><div class="txt">Tarea vencida<small>La fecha límite fue el ${fmtFull(t.date)} y aún no se marcó como entregada.</small></div></div>`:''}
+    <div class="mr"><span>📁</span><span>${t.project}</span></div>
+    <div class="mr"><span>📅</span><span>${t.noDate?'Fecha por confirmar':fmtFull(t.date)}</span></div>
+    ${t.time?`<div class="mr"><span>🕐</span><span>${t.time}</span></div>`:''}
+    <div class="mr"><span>📊</span><span>${t.progress}% completado</span></div>
+    <div style="height:7px;border-radius:4px;background:#f0ede8;overflow:hidden;margin-bottom:12px">
+      <div style="height:100%;width:${t.progress}%;background:${t.progress>=50&&t.progress<=80?'var(--amber-card)':t.progress<50?'var(--green-card)':'var(--green-card)'};border-radius:4px"></div>
+    </div>
+    <div class="mr" style="flex-wrap:wrap"><span>👥</span><div style="display:flex;flex-wrap:wrap">${avs}</div></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
+      <span class="sbadge" style="background:${sc}18;color:${sc}">${t.status}</span>
+      <span class="sbadge" style="background:${od?'var(--red-bg)':dc+'18'};color:${od?'var(--red)':dc}">${dv.icon} ${od&&t.delivery==='pending'?'Vencida':dv.lbl}</span>
+    </div>
+    ${(od&&t.delivery==='pending')||t.delivery==='late'?`<div class="infobox" style="background:var(--red-bg);border-left:3px solid var(--red);color:var(--red)"><strong>${od?'¿Qué pasó?':'⚠ Razón del retraso'}</strong>${t.note||'Sin comentarios. El editor puede agregar el motivo.'}</div>`:''}
+    ${t.delivery==='rescheduled'?`<div class="infobox" style="background:var(--amber-bg);border-left:3px solid var(--amber);color:var(--amber)"><strong>↺ Motivo de reprogramación</strong>${t.reason||'Sin especificar'}${t.note?`<div style="margin-top:4px;font-style:italic">${t.note}</div>`:''}${t.newDate?`<div style="margin-top:5px;font-weight:700">Nueva fecha: ${fmtFull(t.newDate)}</div>`:''}</div>`:''}
+  `;
+  document.getElementById('mo').classList.add('open');
+}
+
+/* ---- FORM ---- */
+function renderForm(t){
+  const isNew=!t.id;selDv=t.delivery||'pending';
+  const od=isOverdue(t);
+  const pOpts=Object.keys({LSU:1,PR:1,Compliance:1,Customer:1,Rescreening:1}).map(k=>`<option value="${k}" ${t.project===k?'selected':''}>${k}</option>`).join('');
+  const sOpts=['pendiente','en progreso','listo','sin fecha'].map(s=>`<option value="${s}" ${t.status===s?'selected':''}>${s}</option>`).join('');
+  const pcs=PEOPLE.map(p=>`<div class="pc"><input type="checkbox" id="pc${p}" value="${p}" ${t.people.includes(p)||t.people.includes('Todos')?'checked':''}><label for="pc${p}">${p}</label></div>`).join('');
+  const rOpts=REASONS.map(r=>`<option value="${r}" ${t.reason===r?'selected':''}>${r}</option>`).join('');
+  document.getElementById('mb').innerHTML=`
+    <div class="mhdr"><span class="mtitle">${isNew?'Nueva tarea':'Editar tarea'}</span><button class="mclose" onclick="closemo()">×</button></div>
+    ${od?`<div class="od-alert"><div class="ico">⚠️</div><div class="txt">Tarea vencida — marca su estado abajo<small>Indica si se entregó tarde, se reprogramó o cuál fue el motivo.</small></div></div>`:''}
+    <div class="ff"><label class="fl">Nombre de la tarea</label><input class="fi" id="ft" type="text" value="${t.title||''}" placeholder="¿Qué hay que entregar?"></div>
+    <div class="fr2">
+      <div class="ff"><label class="fl">Proyecto</label><select class="fi" id="fpr">${pOpts}</select></div>
+      <div class="ff"><label class="fl">Estado</label><select class="fi" id="fst">${sOpts}</select></div>
+    </div>
+    <div class="fr2">
+      <div class="ff"><label class="fl">Fecha</label><input class="fi" id="fd" type="date" value="${t.date||''}"></div>
+      <div class="ff"><label class="fl">Hora</label><input class="fi" id="fh" type="text" value="${t.time||''}" placeholder="ej. 9:00 AM"></div>
+    </div>
+    <div class="ff"><label class="fl">Avance %</label><input class="fi" id="fpg" type="number" min="0" max="100" value="${t.progress||0}"></div>
+    <div class="ff"><label class="fl">Responsables</label><div class="pcs">${pcs}</div></div>
+    <div class="sct">Estado de entrega</div>
+    <div class="dvsel">
+      <button class="dvopt${selDv==='pending'?' sp':''}" onclick="sdv('pending')">🕐<br>Por entregar</button>
+      <button class="dvopt${selDv==='ontime'?' so':''}" onclick="sdv('ontime')">✓<br>A tiempo</button>
+      <button class="dvopt${selDv==='late'?' sl':''}" onclick="sdv('late')">⚠<br>Con retraso</button>
+      <button class="dvopt${selDv==='rescheduled'?' sr':''}" onclick="sdv('rescheduled')">↺<br>Reprogramado</button>
+    </div>
+    <div id="lbox" style="${selDv==='late'?'':'display:none'}">
+      <div class="lbox"><label>¿Qué causó el retraso?</label><textarea class="fi" id="fln" rows="2" placeholder="Describe brevemente el motivo...">${t.note||''}</textarea></div>
+    </div>
+    <div id="rbox" style="${selDv==='rescheduled'?'':'display:none'}">
+      <div class="rbox">
+        <label>Motivo de reprogramación</label><select class="fi" id="frr">${rOpts}</select>
+        <label style="margin-top:8px">Detalle adicional</label>
+        <textarea class="fi" id="frn" rows="2" placeholder="Describe el problema...">${t.note||''}</textarea>
+        <label style="margin-top:8px">Nueva fecha propuesta</label>
+        <input class="fi" id="fnd" type="date" value="${t.newDate||''}">
+      </div>
+    </div>
+    <div class="fa">
+      ${!isNew?`<button class="bd" onclick="delT(${t.id})">🗑</button>`:''}
+      <button class="bs" onclick="closemo()">Cancelar</button>
+      <button class="bp" onclick="saveT(${isNew?'null':t.id})">${isNew?'Crear tarea':'Guardar'}</button>
+    </div>
+  `;
+}
+
+function sdv(v){
+  selDv=v;
+  document.querySelectorAll('.dvopt').forEach(b=>{
+    b.className='dvopt';
+    const tx=b.textContent;
+    if(v==='pending'&&tx.includes('entregar'))b.classList.add('sp');
+    if(v==='ontime'&&tx.includes('tiempo'))b.classList.add('so');
+    if(v==='late'&&tx.includes('retraso'))b.classList.add('sl');
+    if(v==='rescheduled'&&tx.includes('Reprog'))b.classList.add('sr');
+  });
+  document.getElementById('rbox').style.display=v==='rescheduled'?'':'none';
+  document.getElementById('lbox').style.display=v==='late'?'':'none';
+}
+
+function openNew(d){
+  selDv='pending';
+  renderForm({id:null,title:'',project:'LSU',date:d,time:'',progress:0,people:[],status:'pendiente',noDate:false,delivery:'pending',reason:'',note:'',newDate:''});
+  document.getElementById('mo').classList.add('open');
+}
+
+function saveT(id){
+  const title=(document.getElementById('ft').value||'').trim();
+  if(!title){alert('Agrega un nombre');return;}
+  const project=document.getElementById('fpr').value;
+  const status=document.getElementById('fst').value;
+  const date=document.getElementById('fd').value;
+  const time=document.getElementById('fh').value.trim();
+  const progress=parseInt(document.getElementById('fpg').value)||0;
+  const people=[...document.querySelectorAll('[id^="pc"]:checked')].map(e=>e.value);
+  const noDate=!date||status==='sin fecha';
+  const delivery=selDv;
+  const reason=delivery==='rescheduled'&&document.getElementById('frr')?document.getElementById('frr').value:'';
+  const note=delivery==='rescheduled'&&document.getElementById('frn')?document.getElementById('frn').value.trim():
+             delivery==='late'&&document.getElementById('fln')?document.getElementById('fln').value.trim():'';
+  const newDate=delivery==='rescheduled'&&document.getElementById('fnd')?document.getElementById('fnd').value:'';
+  const obj={title,project,date,time,progress,people:people.length?people:['Todos'],status,noDate,delivery,reason,note,newDate};
+  if(id===null||id==='null'){tasks.push({id:nid++,...obj});}
+  else{const i=tasks.findIndex(t=>t.id===id);if(i>-1)tasks[i]={id,...obj};}
+  closemo();render();
+}
+
+function delT(id){if(!confirm('¿Eliminar?'))return;tasks=tasks.filter(t=>t.id!==id);closemo();render();}
+function closemo(){document.getElementById('mo').classList.remove('open');}
+document.getElementById('mo').addEventListener('click',e=>{if(e.target.id==='mo')closemo();});
+
+function toggleEd(){
+  if(isEd){
+    isEd=false;document.getElementById('edbtn').classList.remove('on');
+    document.getElementById('edbtn').innerHTML='🔒 <span id="edlbl">Editor</span>';render();
+  } else {
+    document.getElementById('pwmo').classList.add('open');
+    setTimeout(()=>document.getElementById('pwi').focus(),100);
+  }
+}
+function chkpw(){
+  if(document.getElementById('pwi').value===PW){
+    isEd=true;document.getElementById('pwmo').classList.remove('open');
+    document.getElementById('pwi').value='';document.getElementById('pwerr').textContent='';
+    document.getElementById('edbtn').classList.add('on');
+    document.getElementById('edbtn').innerHTML='🔓 <span id="edlbl">Editando</span>';
+    selDv='pending';render();
+  } else {document.getElementById('pwerr').textContent='Contraseña incorrecta';}
+}
+function closepw(){document.getElementById('pwmo').classList.remove('open');document.getElementById('pwi').value='';document.getElementById('pwerr').textContent='';}
+document.getElementById('pwmo').addEventListener('click',e=>{if(e.target.id==='pwmo')closepw();});
+
+initUI();render();
+</script>
+</body>
+</html>
