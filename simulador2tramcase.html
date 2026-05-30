@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TMLF CS Simulator</title>
+<style>
+:root{
+  --navy:#0f1e3a;--navy2:#0a1628;--navy3:#162952;
+  --gold:#c9a84c;--gold2:#e8c87a;
+  --white:#f0f4ff;--gray:#8a9bbf;--gray2:#4a5568;
+  --bg:#f4f6fb;--sidebar:#1a2744;
+  --danger:#e53e3e;--warn:#dd6b20;--green:#38a169;--blue:#3b82f6;
+  --border:#e2e8f0;--bdark:rgba(255,255,255,0.07);
+  --text:#1a202c;--text2:#4a5568;--text3:#718096;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+
+/* ── TOPBAR ── */
+#topbar{height:44px;background:var(--navy2);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;border-bottom:1px solid var(--bdark)}
+.tb-logo{font-size:12px;font-weight:700;color:var(--gold);letter-spacing:2px}
+.tb-sep{width:1px;height:20px;background:var(--bdark)}
+.tb-station{display:flex;align-items:center;gap:6px;font-size:11px;color:#a0aec0}
+.tb-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.tb-queue{margin-left:auto;background:rgba(255,255,255,0.06);border:1px solid var(--bdark);border-radius:12px;padding:3px 10px;font-size:11px;color:#a0aec0}
+#tb-timer{font-size:14px;font-weight:700;color:var(--gold);font-variant-numeric:tabular-nums;display:none;margin-left:4px}
+.tb-score{background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);border-radius:12px;padding:3px 10px;font-size:11px;color:var(--gold)}
+
+/* ── APP ── */
+#app{display:flex;flex:1;overflow:hidden}
+
+/* ── ICON NAV ── */
+#icon-nav{width:48px;background:#162040;display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:4px;border-right:1px solid var(--bdark);flex-shrink:0}
+.nav-ico{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;color:#556a8a;transition:all .15s}
+.nav-ico:hover,.nav-ico.active{background:rgba(201,168,76,0.12);color:var(--gold)}
+
+/* ── CLIENT SIDEBAR ── */
+#client-sidebar{width:230px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+#client-sidebar::-webkit-scrollbar{width:3px}
+#client-sidebar::-webkit-scrollbar-thumb{background:#cbd5e0}
+.cs-top{padding:12px 12px 6px}
+.cs-name-row{display:flex;justify-content:space-between;align-items:flex-start;gap:6px}
+.cs-name{font-size:13px;font-weight:700;color:var(--text);line-height:1.3;flex:1}
+.cs-edit{width:24px;height:24px;border:1px solid var(--border);border-radius:5px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:var(--text3);flex-shrink:0}
+.cs-field{padding:8px 12px;border-top:1px solid var(--border)}
+.cs-fl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.cs-fv{font-size:11px;color:var(--text);line-height:1.4}
+.cs-phone-row{display:flex;align-items:center;gap:7px;background:#f7fafc;border:1px solid var(--border);border-radius:5px;padding:6px 10px;margin:6px 12px 0;cursor:pointer}
+.cs-phone-row:hover{border-color:var(--blue)}
+.cs-pnum{font-size:11px;font-weight:600;flex:1;color:var(--text)}
+.cs-more{font-size:10px;color:var(--blue);padding:4px 12px 8px;cursor:pointer}
+
+/* collapsible sections */
+.cs-section{border-top:1px solid var(--border)}
+.cs-sec-hdr{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;cursor:pointer;font-size:11px;font-weight:700;color:var(--text)}
+.cs-sec-hdr:hover{background:#f7fafc}
+.cs-sec-arr{font-size:11px;color:var(--text3);transition:transform .2s}
+.cs-sec-arr.open{transform:rotate(180deg)}
+.cs-sec-body{display:none;padding:0 12px 10px;font-size:11px;color:var(--text2);line-height:1.6}
+.cs-sec-body.open{display:block}
+.cs-linked{background:#f7fafc;border:1px solid var(--border);border-radius:5px;padding:8px 10px;margin-bottom:6px}
+.cs-linked-name{font-size:11px;font-weight:700;margin-bottom:2px}
+.cs-linked-meta{font-size:10px;color:var(--text3);display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.pill-active{background:#c6f6d5;color:#276749;font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px}
+.risk-sm{padding:2px 7px;border-radius:3px;font-size:10px;font-weight:700;display:inline-block;margin-top:4px}
+.rb-high{background:#fff5f5;color:var(--danger);border:1px solid #fed7d7}
+.rb-med{background:#fffaf0;color:var(--warn);border:1px solid #fbd38d}
+
+/* ── NOTES MAIN ── */
+#notes-main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#fff;min-width:0}
+#case-header{height:46px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0}
+.ch-name{font-size:14px;font-weight:700;color:var(--text)}
+.ch-active{display:flex;align-items:center;gap:4px;background:#f0fff4;border:1px solid #9ae6b4;border-radius:12px;padding:2px 8px;font-size:10px;font-weight:700;color:var(--green)}
+.ch-dot{width:5px;height:5px;border-radius:50%;background:var(--green)}
+.ch-caseid{font-size:11px;color:var(--text3)}
+.ch-spacer{flex:1}
+.ch-btn{width:30px;height:30px;border-radius:5px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--text3)}
+.ch-btn:hover{background:var(--bg)}
+
+/* TABS */
+#crm-tabs{display:flex;border-bottom:1px solid var(--border);padding:0 16px;background:#fff;flex-shrink:0;overflow-x:auto}
+#crm-tabs::-webkit-scrollbar{height:0}
+.crm-tab{padding:9px 12px;font-size:11px;font-weight:600;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+.crm-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.crm-tab:hover:not(.active){color:var(--text)}
+.tab-count{background:#e2e8f0;color:var(--text3);border-radius:10px;padding:1px 5px;font-size:9px;margin-left:3px;font-weight:700}
+.crm-tab.active .tab-count{background:#dbeafe;color:var(--blue)}
+
+/* AI BAR */
+#ai-search{padding:8px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.ai-wrap{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:6px 12px}
+.ai-icon{font-size:13px;color:var(--gold);animation:spin 3s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ai-inp{border:none;background:transparent;flex:1;font-size:11px;color:var(--text3);outline:none;font-family:inherit}
+.ai-go{width:24px;height:24px;background:var(--navy2);border-radius:5px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:var(--gold)}
+
+/* NOTES COUNT */
+#notes-count-bar{padding:6px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.ncb-count{font-size:11px;color:var(--text3)}
+.ncb-actions{display:flex;gap:6px}
+.ncb-btn{font-size:10px;color:var(--text3);cursor:pointer;padding:2px 7px;border-radius:3px;display:flex;align-items:center;gap:3px}
+.ncb-btn:hover{background:var(--bg)}
+
+/* NOTES LIST */
+#notes-list{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+#notes-list::-webkit-scrollbar{width:3px}
+#notes-list::-webkit-scrollbar-thumb{background:#cbd5e0;border-radius:2px}
+.note-item{border-bottom:1px solid var(--border)}
+.note-item-hdr{display:flex;align-items:center;gap:8px;padding:9px 16px;cursor:pointer;transition:background .1s}
+.note-item-hdr:hover{background:#f7fafc}
+.ni-arr{color:var(--text3);font-size:9px;width:10px;flex-shrink:0;transition:transform .15s}
+.ni-arr.open{transform:rotate(90deg)}
+.ni-title{font-size:11px;font-weight:600;color:var(--text);flex:1;line-height:1.3}
+.ni-tag{padding:1px 7px;border-radius:3px;font-size:9px;font-weight:700;flex-shrink:0}
+.tag-llamada{background:#dbeafe;color:#1e40af}
+.tag-seguridad{background:#fef3c7;color:#92400e}
+.tag-alerta{background:#fee2e2;color:#991b1b}
+.tag-accion{background:#d1fae5;color:#065f46}
+.tag-legal{background:#ede9fe;color:#5b21b6}
+.ni-date{font-size:9px;color:var(--text3);flex-shrink:0;white-space:nowrap}
+.note-body-expand{display:none;padding:0 16px 12px 28px;font-size:11px;line-height:1.7;color:var(--text2);animation:fadeIn .15s}
+.note-body-expand.open{display:block}
+.note-body-expand.ALERT{border-left:3px solid var(--danger);background:#fff5f5;margin:0 16px 12px 28px;padding:8px 12px;border-radius:0 5px 5px 0}
+.note-body-expand.WARN{border-left:3px solid var(--warn);background:#fffaf0;margin:0 16px 12px 28px;padding:8px 12px;border-radius:0 5px 5px 0}
+.note-author-line{font-size:9px;color:var(--text3);margin-top:5px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+
+#crm-content{flex:1;overflow-y:auto;padding:14px 16px}
+#crm-content::-webkit-scrollbar{width:3px}
+#crm-content::-webkit-scrollbar-thumb{background:#cbd5e0}
+.timeline-item{display:flex;gap:10px;margin-bottom:14px}
+.tl-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.tl-body{flex:1}
+.tl-title{font-size:11px;font-weight:700;color:var(--text)}
+.tl-desc{font-size:10px;color:var(--text2);line-height:1.5;margin-top:1px}
+.tl-date{font-size:9px;color:var(--text3);margin-top:2px}
+.doc-row{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#fff;border:1px solid var(--border);border-radius:5px;margin-bottom:6px;cursor:pointer;transition:all .1s;font-size:11px}
+.doc-row:hover{border-color:var(--blue);background:#f7fafc}
+.doc-name{flex:1;color:var(--text)}
+.ds-ok{background:#f0fff4;color:var(--green);border:1px solid #9ae6b4;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700}
+.ds-pend{background:#fffaf0;color:var(--warn);border:1px solid #fbd38d;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700}
+.ds-miss{background:#fff5f5;color:var(--danger);border:1px solid #fed7d7;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700}
+.pay-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#fff;border:1px solid var(--border);border-radius:5px;margin-bottom:6px;font-size:11px}
+.alert-row{display:flex;gap:7px;padding:7px 10px;background:#fff5f5;border:1px solid #fed7d7;border-radius:5px;margin-bottom:5px;font-size:11px;color:var(--danger);line-height:1.5}
+#add-note-bar{border-top:1px solid var(--border);padding:8px 16px;background:#fff;flex-shrink:0;display:flex;align-items:center;gap:7px;cursor:pointer;color:var(--text3);font-size:11px}
+
+/* ── RIGHT: CALL PANEL ── */
+#call-panel{width:300px;background:var(--navy2);border-left:1px solid var(--bdark);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+
+/* INCOMING RING */
+#call-incoming{padding:18px 14px 14px;border-bottom:1px solid var(--bdark);display:flex;flex-direction:column;align-items:center;gap:10px;flex-shrink:0}
+.call-status-row{display:flex;align-items:center;gap:5px;font-size:10px;color:#a0aec0;align-self:flex-start}
+.call-sdot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite}
+.call-avatar-big{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#2d4a8a,#1a2744);display:flex;align-items:center;justify-content:center;font-size:28px;border:2px solid rgba(255,255,255,0.1);transition:box-shadow .3s}
+.call-avatar-big.ringing{animation:ringpulse 1.2s infinite}
+@keyframes ringpulse{0%,100%{box-shadow:0 0 0 0 rgba(56,161,105,.5)}60%{box-shadow:0 0 0 14px rgba(56,161,105,0)}}
+.call-type-lbl{font-size:9px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase}
+.call-cname{font-size:14px;font-weight:700;color:#fff;text-align:center;line-height:1.2}
+.call-csub{font-size:10px;color:#7888aa;text-align:center}
+
+/* motive collapsible */
+#motive-wrap{width:100%}
+#motive-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:7px 10px;background:rgba(255,255,255,0.04);border:1px solid var(--bdark);border-radius:5px;font-size:9px;font-weight:700;color:#a0aec0;text-transform:uppercase;letter-spacing:.5px;transition:background .15s}
+#motive-toggle:hover{background:rgba(255,255,255,0.07)}
+#motive-toggle .marr{transition:transform .2s;font-size:10px}
+#motive-toggle.open .marr{transform:rotate(180deg)}
+#motive-body{display:none;background:rgba(255,255,255,0.03);border:1px solid var(--bdark);border-top:none;border-radius:0 0 5px 5px;padding:8px 10px;font-size:10px;color:#a0aec0;line-height:1.6}
+
+/* CALL ACTIONS (ring) */
+#call-action-btns{display:none;flex-direction:column;align-items:center;gap:8px;width:100%}
+.call-ring-actions{display:flex;gap:20px;justify-content:center}
+.call-btn-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
+.call-btn{width:54px;height:54px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:transform .15s}
+.call-btn:hover{transform:scale(1.06)}
+.btn-reject{background:#9b2335}
+.btn-accept{background:#276749;animation:ringpulse 1.2s infinite}
+.call-btn-lbl{font-size:9px;font-weight:600;color:#a0aec0}
+.call-change-case{background:rgba(255,255,255,0.04);border:1px solid var(--bdark);border-radius:16px;padding:5px 14px;font-size:10px;color:#a0aec0;cursor:pointer;text-align:center;width:100%}
+.call-change-case:hover{background:rgba(255,255,255,0.08);color:#fff}
+
+/* LIVE CALL */
+#call-live{flex:1;display:none;flex-direction:column;overflow:hidden}
+
+/* audio viz */
+#audio-viz{height:22px;display:flex;align-items:center;gap:2px;padding:0 12px;border-bottom:1px solid var(--bdark);background:rgba(0,0,0,0.1);flex-shrink:0}
+.viz-bar{width:3px;border-radius:1px;background:var(--gold);min-height:2px;opacity:.7;transition:height .1s}
+
+/* metrics — 2×2 */
+#metrics-bar{padding:7px 10px;border-bottom:1px solid var(--bdark);flex-shrink:0;display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.metric-box{background:rgba(255,255,255,0.03);border:1px solid var(--bdark);border-radius:4px;padding:5px 8px}
+.metric-label{font-size:8px;color:#7888aa;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px}
+.metric-bar-wrap{height:3px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden}
+.metric-fill{height:100%;border-radius:2px;transition:width .5s}
+.metric-val{font-size:10px;font-weight:700;margin-top:2px}
+
+/* hold banner */
+#hold-banner{display:none;background:rgba(237,137,54,0.12);border-bottom:1px solid rgba(237,137,54,0.25);padding:5px 12px;text-align:center;font-size:10px;color:#f6ad55;font-weight:600;flex-shrink:0;animation:pulse-hold 2s infinite}
+@keyframes pulse-hold{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* call controls */
+#call-controls{display:none;justify-content:center;gap:18px;padding:9px 12px;border-bottom:1px solid var(--bdark);background:rgba(0,0,0,0.15);flex-shrink:0}
+.cc-btn{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.cc-icon{width:46px;height:46px;border-radius:14px;background:#1e2d4f;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .15s;border:1px solid rgba(255,255,255,0.07)}
+.cc-icon:hover{background:#253660;border-color:rgba(255,255,255,0.15);transform:scale(1.04)}
+.cc-icon.active{background:#1e3a6e;border-color:rgba(99,179,237,0.5)}
+.cc-icon.danger{background:#7d1f2a;border-color:rgba(229,62,62,0.35)}
+.cc-icon.danger:hover{background:#a02030;transform:scale(1.04)}
+.cc-label{font-size:9px;color:#7888aa;font-weight:500;letter-spacing:.3px}
+
+/* transcript */
+#transcript-area{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:7px}
+#transcript-area::-webkit-scrollbar{width:2px}
+#transcript-area::-webkit-scrollbar-thumb{background:#2d3748}
+.msg{max-width:92%;padding:8px 11px;border-radius:8px;font-size:11px;line-height:1.6;animation:fadeIn .2s}
+.msg.client{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);align-self:flex-start;border-bottom-left-radius:2px;color:#e2e8f0}
+.msg.system{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.18);align-self:center;text-align:center;font-size:10px;color:#63b3ed;max-width:100%;border-radius:5px;padding:5px 10px}
+.msg.agent{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.22);align-self:flex-end;border-bottom-right-radius:2px;color:#e2e8f0}
+.msg-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;opacity:.6}
+.msg.client .msg-label{color:#fc8181}
+.msg.agent .msg-label{color:var(--gold)}
+.emotion-tag{display:inline-block;font-size:8px;padding:1px 5px;border-radius:8px;margin-top:3px;font-weight:700}
+.em-angry{background:rgba(229,62,62,.2);color:#fc8181}
+.em-sad{background:rgba(66,153,225,.2);color:#63b3ed}
+.em-anxious{background:rgba(237,137,54,.2);color:#f6ad55}
+.em-calm{background:rgba(56,161,105,.2);color:#68d391}
+.em-threatening{background:rgba(229,62,62,.35);color:#ff4444;font-weight:900}
+
+/* typing */
+#typing-indicator{padding:0 10px 5px;min-height:18px;font-size:10px;color:#7888aa;font-style:italic;flex-shrink:0}
+.typing-dots{display:inline-flex;gap:2px;align-items:center;margin-left:4px}
+.typing-dots span{width:3px;height:3px;border-radius:50%;background:#7888aa;animation:tdot 1.2s infinite}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes tdot{0%,80%,100%{transform:scale(.8);opacity:.4}40%{transform:scale(1.2);opacity:1}}
+
+/* input */
+#input-area{border-top:1px solid var(--bdark);padding:8px 10px;background:var(--navy2);flex-shrink:0}
+.quick-btns{display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap}
+.qb{background:rgba(255,255,255,0.04);border:1px solid var(--bdark);border-radius:4px;padding:3px 7px;font-size:9px;color:#a0aec0;cursor:pointer;transition:all .15s;white-space:nowrap}
+.qb:hover{color:#fff;border-color:rgba(201,168,76,.4)}
+.input-row{display:flex;gap:7px;align-items:flex-end}
+#user-input{flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:5px;padding:8px 10px;color:#e2e8f0;font-size:11px;font-family:inherit;resize:none;height:52px;outline:none;transition:border-color .15s}
+#user-input:focus{border-color:rgba(201,168,76,.4)}
+#user-input::placeholder{color:#3a4a6a}
+#send-btn{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy2);border:none;border-radius:5px;padding:0 12px;height:52px;font-weight:700;font-size:11px;cursor:pointer;transition:all .15s;white-space:nowrap}
+#send-btn:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(201,168,76,.3)}
+#send-btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+
+/* ── SUPERVISOR ── */
+#sup-toggle{position:fixed;bottom:16px;left:58px;background:var(--navy2);border:1px solid var(--bdark);border-radius:16px;height:28px;padding:0 12px;cursor:pointer;display:flex;align-items:center;gap:5px;z-index:200;font-size:10px;color:#a0aec0;transition:all .15s}
+#sup-toggle:hover{border-color:var(--gold);color:var(--gold)}
+#sup-panel{display:none;position:fixed;bottom:52px;left:58px;background:var(--navy2);border:1px solid var(--bdark);border-radius:8px;padding:12px;width:220px;z-index:300;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.sup-title{font-size:9px;font-weight:700;color:var(--gold);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase}
+.sup-btn{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--bdark);border-radius:4px;padding:6px 9px;color:#cbd5e0;font-size:10px;cursor:pointer;margin-bottom:4px;text-align:left;transition:all .15s}
+.sup-btn:hover{background:rgba(255,255,255,.08)}
+.sup-btn.danger{color:#fc8181;border-color:rgba(229,62,62,.25)}
+.sup-btn.danger:hover{background:rgba(229,62,62,.08)}
+.sup-btn.gold{color:var(--gold);border-color:rgba(201,168,76,.3);margin-top:4px}
+
+/* ── EVAL ── */
+#eval-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:500;overflow-y:auto;padding:20px}
+.eval-container{max-width:740px;margin:0 auto;background:#fff;border-radius:10px;padding:24px;color:var(--text)}
+.eval-title{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:3px}
+.eval-subtitle{font-size:11px;color:var(--text3);margin-bottom:18px}
+.eval-score-big{font-size:60px;font-weight:900;text-align:center;margin:10px 0;font-variant-numeric:tabular-nums}
+.eval-section{margin-bottom:16px}
+.eval-section h3{font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid var(--border);padding-bottom:5px;margin-bottom:8px}
+.eval-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f0f0f0;font-size:11px}
+.eval-positive{color:var(--green);font-weight:700}
+.eval-negative{color:var(--danger);font-weight:700}
+.eval-neutral{color:var(--warn);font-weight:700}
+.critical-moment{background:#fff5f5;border-left:3px solid var(--danger);padding:7px 11px;border-radius:0 4px 4px 0;margin-bottom:6px;font-size:11px;line-height:1.6;color:var(--text2)}
+.missed-note{background:#fffaf0;border-left:3px solid var(--warn);padding:7px 11px;border-radius:0 4px 4px 0;margin-bottom:6px;font-size:11px;color:var(--text2)}
+.emotion-timeline{display:flex;gap:2px;align-items:flex-end;height:44px;margin-top:6px}
+.et-bar{flex:1;border-radius:2px 2px 0 0}
+.eval-close{background:var(--navy2);color:#fff;border:none;border-radius:5px;padding:10px 24px;font-weight:700;font-size:12px;cursor:pointer;margin-top:14px;width:100%}
+
+/* ── SCENARIO SELECT ── */
+#scenario-select{display:none;position:fixed;inset:0;background:rgba(8,16,32,.97);z-index:400;align-items:center;justify-content:center;padding:18px}
+.ss-container{max-width:820px;width:100%}
+.ss-title{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:3px}
+.ss-sub{font-size:12px;color:#7888aa;text-align:center;margin-bottom:20px}
+.ss-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ss-card{background:#0f1e3a;border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:16px;cursor:pointer;transition:all .2s;position:relative}
+.ss-card:hover{transform:translateY(-2px);border-color:var(--gold);box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.ss-card-icon{font-size:22px;margin-bottom:7px}
+.ss-card-title{font-size:12px;font-weight:700;color:#fff;margin-bottom:4px}
+.ss-card-desc{font-size:10px;color:#7888aa;line-height:1.5}
+.ss-diff{position:absolute;top:9px;right:9px;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;text-transform:uppercase}
+.diff-hard{background:rgba(237,137,54,.2);color:#f6ad55;border:1px solid rgba(237,137,54,.35)}
+.diff-extreme{background:rgba(229,62,62,.2);color:#fc8181;border:1px solid rgba(229,62,62,.35)}
+
+/* ── LOADER ── */
+#loader{display:flex;position:fixed;inset:0;background:var(--navy2);z-index:600;align-items:center;justify-content:center;flex-direction:column;gap:12px;transition:opacity .4s}
+.loader-logo{font-size:16px;font-weight:700;color:var(--gold);letter-spacing:3px}
+.loader-bar-wrap{width:160px;height:2px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden}
+.loader-bar{height:100%;background:var(--gold);width:0;animation:lbar 1.4s ease forwards}
+@keyframes lbar{to{width:100%}}
+.loader-text{font-size:10px;color:#7888aa}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">TMLF · CS SIMULATOR</div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-text">Cargando entorno operativo...</div>
+</div>
+
+<!-- SCENARIO SELECT -->
+<div id="scenario-select">
+  <div class="ss-container">
+    <div class="ss-title">⚖️ TMLF CS Simulator</div>
+    <div class="ss-sub">Selecciona un escenario de entrenamiento</div>
+    <div class="ss-grid" id="scenario-grid"></div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="tb-logo">TMLF</div>
+  <div class="tb-sep"></div>
+  <div class="tb-station">
+    <div class="tb-dot"></div>
+    <span>ESTACIÓN CX · EN LÍNEA</span>
+    <span style="color:#4a5568;margin-left:2px">· Brenn D.</span>
+  </div>
+  <div style="flex:1"></div>
+  <div id="tb-timer"></div>
+  <div class="tb-score" id="tb-score">Score: —</div>
+  <div class="tb-queue" id="tb-queue">Cola: 0 en espera</div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- ICON NAV -->
+  <div id="icon-nav">
+    <div class="nav-ico active">🏠</div>
+    <div class="nav-ico">⚖️</div>
+    <div class="nav-ico">📁</div>
+    <div class="nav-ico">👥</div>
+    <div class="nav-ico">💬</div>
+    <div class="nav-ico">📞</div>
+    <div class="nav-ico">🕐</div>
+    <div style="flex:1"></div>
+    <div class="nav-ico">⚙️</div>
+    <div class="nav-ico" style="background:linear-gradient(135deg,#2d4a8a,#1a2744);color:#fff;border:2px solid var(--gold);font-size:11px;font-weight:700">BD</div>
+  </div>
+
+  <!-- CRM -->
+  <div id="crm-wrap" style="display:flex;flex:1;overflow:hidden">
+    <!-- CLIENT SIDEBAR -->
+    <div id="client-sidebar">
+      <div class="cs-top">
+        <div class="cs-name-row">
+          <div class="cs-name" id="cs-name-text">—</div>
+          <div class="cs-edit">✏️</div>
+        </div>
+      </div>
+      <div class="cs-field">
+        <div class="cs-fl">Dirección</div>
+        <div class="cs-fv" id="cs-dir">—</div>
+      </div>
+      <div style="padding:6px 0 0">
+        <div class="cs-phone-row" id="cs-phone-row">
+          <span style="color:var(--green);font-size:13px">📞</span>
+          <span class="cs-pnum" id="cs-phone">—</span>
+          <span style="color:var(--text3);font-size:11px">→</span>
+        </div>
+        <div class="cs-more">+ 1 más</div>
+      </div>
+      <div class="cs-field">
+        <div class="cs-fl">Etapa del Caso</div>
+        <div class="cs-fv" id="cs-stage">—</div>
+      </div>
+      <div class="cs-field">
+        <div class="cs-fl">Área de Práctica</div>
+        <div class="cs-fv" id="cs-area">—</div>
+      </div>
+      <div class="cs-field">
+        <div class="cs-fl">Tipo de Caso</div>
+        <div class="cs-fv" id="cs-type">—</div>
+      </div>
+      <div class="cs-field">
+        <div class="cs-fl">Email</div>
+        <div class="cs-fv" id="cs-email" style="color:var(--blue);font-size:10px;word-break:break-all">—</div>
+      </div>
+
+      <!-- Collapsible sections -->
+      <div class="cs-section">
+        <div class="cs-sec-hdr" onclick="toggleSection('desc')">
+          Descripción <span class="cs-sec-arr" id="arr-desc">▾</span>
+        </div>
+        <div class="cs-sec-body" id="sec-desc"></div>
+      </div>
+      <div class="cs-section">
+        <div class="cs-sec-hdr" onclick="toggleSection('linked')">
+          Casos Vinculados <span class="cs-sec-arr" id="arr-linked">▾</span>
+        </div>
+        <div class="cs-sec-body" id="sec-linked"></div>
+      </div>
+      <div class="cs-section" style="border-bottom:1px solid var(--border)">
+        <div class="cs-sec-hdr" onclick="toggleSection('risk')">
+          Riesgo del Caso <span class="cs-sec-arr" id="arr-risk">▾</span>
+        </div>
+        <div class="cs-sec-body" id="sec-risk"></div>
+      </div>
+    </div>
+
+    <!-- NOTES MAIN -->
+    <div id="notes-main">
+      <div id="case-header">
+        <div class="ch-name" id="ch-name">—</div>
+        <div class="ch-active"><div class="ch-dot"></div>Activo</div>
+        <div class="ch-caseid" id="ch-caseid">—</div>
+        <div class="ch-spacer"></div>
+        <div class="ch-btn">🔍</div>
+        <div class="ch-btn">💬</div>
+      </div>
+      <div id="crm-tabs">
+        <div class="crm-tab active" data-tab="notes">Notas <span class="tab-count" id="tab-count-notes">0</span></div>
+        <div class="crm-tab" data-tab="timeline">Documentos</div>
+        <div class="crm-tab" data-tab="docs">Portal</div>
+        <div class="crm-tab" data-tab="payments">Formularios</div>
+        <div class="crm-tab" data-tab="alerts">Summary</div>
+        <div class="crm-tab" data-tab="dcl">DCL</div>
+        <div class="crm-tab" data-tab="riesgo">Riesgo</div>
+        <div class="crm-tab" data-tab="facturacion">Facturación</div>
+      </div>
+      <div id="ai-search">
+        <div class="ai-wrap">
+          <span class="ai-icon">✦</span>
+          <input class="ai-inp" placeholder="Haz una pregunta sobre las notas de este caso...">
+          <div class="ai-go">→</div>
+        </div>
+      </div>
+      <div id="notes-count-bar">
+        <span class="ncb-count" id="ncb-count">0 notas</span>
+        <div class="ncb-actions">
+          <span class="ncb-btn" onclick="expandAllNotes()">↕ Expandir</span>
+          <span class="ncb-btn" onclick="collapseAllNotes()">✕ Contraer</span>
+        </div>
+      </div>
+      <div id="notes-list"></div>
+      <div id="crm-content" style="display:none"></div>
+      <div id="add-note-bar"><span style="font-size:14px;color:var(--blue)">+</span> Agregar nota...</div>
+    </div>
+  </div>
+
+  <!-- CALL PANEL -->
+  <div id="call-panel">
+    <div id="call-incoming">
+      <div class="call-status-row">
+        <div class="call-sdot"></div>
+        <span id="call-status-text">Esperando llamada...</span>
+      </div>
+      <div class="call-avatar-big" id="call-avatar">👤</div>
+      <div class="call-type-lbl" id="call-type-lbl">ESTACIÓN CX</div>
+      <div class="call-cname" id="call-cname">—</div>
+      <div class="call-csub" id="call-csub">Selecciona un escenario</div>
+      <div id="motive-wrap" style="display:none">
+        <div id="motive-toggle" onclick="toggleMotive()">
+          <span>Motivo probable</span><span class="marr">▾</span>
+        </div>
+        <div id="motive-body"></div>
+      </div>
+      <div id="call-action-btns">
+        <div class="call-ring-actions">
+          <div class="call-btn-wrap">
+            <button class="call-btn btn-reject" onclick="rejectCall()">📵</button>
+            <span class="call-btn-lbl">Rechazar</span>
+          </div>
+          <div class="call-btn-wrap">
+            <button class="call-btn btn-accept" onclick="acceptCall()">📞</button>
+            <span class="call-btn-lbl">Contestar</span>
+          </div>
+        </div>
+        <div class="call-change-case">← Cambiar de caso</div>
+      </div>
+    </div>
+
+    <div id="call-live">
+      <div id="audio-viz"></div>
+      <div id="metrics-bar">
+        <div class="metric-box">
+          <div class="metric-label">Frustración</div>
+          <div class="metric-bar-wrap"><div class="metric-fill" id="m-frustration" style="background:#e53e3e;width:0%"></div></div>
+          <div class="metric-val" id="mv-frustration">0%</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-label">Confianza</div>
+          <div class="metric-bar-wrap"><div class="metric-fill" id="m-trust" style="background:#38a169;width:0%"></div></div>
+          <div class="metric-val" id="mv-trust">0%</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-label">Riesgo Cancel.</div>
+          <div class="metric-bar-wrap"><div class="metric-fill" id="m-cancel" style="background:#dd6b20;width:0%"></div></div>
+          <div class="metric-val" id="mv-cancel">0%</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-label">Bar Complaint</div>
+          <div class="metric-bar-wrap"><div class="metric-fill" id="m-bar" style="background:#c0392b;width:0%"></div></div>
+          <div class="metric-val" id="mv-bar">0%</div>
+        </div>
+      </div>
+      <div id="hold-banner">⏸ En hold — <span id="hold-timer">0:00</span></div>
+      <div id="call-controls">
+        <div class="cc-btn" id="cc-mic-btn" onclick="toggleAgentMic()">
+          <div class="cc-icon" id="cc-mic-ico">🎤</div>
+          <span class="cc-label">Hablar</span>
+        </div>
+        <div class="cc-btn" onclick="toggleMute()">
+          <div class="cc-icon" id="cc-mute">🔊</div>
+          <span class="cc-label" id="cc-mute-lbl">Mute</span>
+        </div>
+        <div class="cc-btn" onclick="toggleHold()">
+          <div class="cc-icon" id="cc-hold">⏸</div>
+          <span class="cc-label">Hold</span>
+        </div>
+        <div class="cc-btn" onclick="triggerTransfer()">
+          <div class="cc-icon">⇄</div>
+          <span class="cc-label">Transf.</span>
+        </div>
+        <div class="cc-btn" onclick="endCall()">
+          <div class="cc-icon danger">📵</div>
+          <span class="cc-label">Colgar</span>
+        </div>
+      </div>
+      <div id="transcript-area"></div>
+      <div id="typing-indicator"></div>
+      <div id="input-area">
+        <div class="quick-btns" id="quick-btns"></div>
+        <div class="input-row">
+          <textarea id="user-input" placeholder="Escribe tu respuesta..." disabled></textarea>
+          <button id="send-btn" disabled>Enviar ▶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUPERVISOR -->
+<div id="sup-toggle" onclick="toggleSupPanel()">🎛️ Supervisor</div>
+<div id="sup-panel">
+  <div class="sup-title">🔒 Panel Supervisor</div>
+  <button class="sup-btn danger" onclick="supAction('aggressive')">😡 Modo agresivo</button>
+  <button class="sup-btn danger" onclick="supAction('cry')">😭 Cliente llora</button>
+  <button class="sup-btn danger" onclick="supAction('cancel')">❌ Amenaza cancelación</button>
+  <button class="sup-btn danger" onclick="supAction('refund')">💰 Pide reembolso</button>
+  <button class="sup-btn danger" onclick="supAction('deport')">⚠️ Menciona deportación</button>
+  <button class="sup-btn danger" onclick="supAction('supervisor')">👔 Pide supervisor</button>
+  <button class="sup-btn danger" onclick="supAction('barcomplaint')">📋 Amenaza Bar Complaint</button>
+  <button class="sup-btn" onclick="supAction('calm')">😌 Reducir tensión</button>
+  <button class="sup-btn gold" onclick="endCall()">📊 Finalizar + Evaluar</button>
+</div>
+
+<!-- EVAL -->
+<div id="eval-overlay">
+  <div class="eval-container">
+    <div class="eval-title">📊 Evaluación de Llamada</div>
+    <div class="eval-subtitle" id="eval-subtitle">—</div>
+    <div style="text-align:center">
+      <div class="eval-score-big" id="eval-score-big">—</div>
+      <div id="eval-grade" style="font-size:13px;font-weight:700;margin-bottom:14px">—</div>
+    </div>
+    <div class="eval-section"><h3>Métricas Finales</h3><div id="eval-metrics-rows"></div></div>
+    <div class="eval-section"><h3>Momentos Críticos</h3><div id="eval-critical"></div></div>
+    <div class="eval-section"><h3>Oportunidades Perdidas</h3><div id="eval-missed"></div></div>
+    <div class="eval-section"><h3>Análisis Psicológico</h3><div id="eval-psych" style="font-size:11px;line-height:1.8;color:var(--text2)"></div></div>
+    <div class="eval-section"><h3>Timeline Emocional</h3><div class="emotion-timeline" id="eval-emotion-timeline"></div></div>
+    <button class="eval-close" onclick="resetSim()">↩ Nuevo Escenario</button>
+  </div>
+</div>
+
+<script>
+// ═══════════ DATA ═══════════
+const SCENARIOS=[{id:'brenda',icon:'👩‍👧',title:'Brenda O. — Esposa / Remoción Orlando',desc:'Dos citas con abogada nunca realizadas. Corte encima. Embarazada. Al límite.',difficulty:'EXTREME',risk:'HIGH',client:{name:'Brenda Ortiz (Esposa de Rodrigo Ortiz Martínez)',caseId:'26263152',type:'Cancelación de Remoción',area:'Remoción — Orlando Immigration Court',stage:'Hearing Próximo',phone:'(863) 842-7582',email:'rodrigo.ortiz93@gmail.com',address:'Orlando, FL 32801\nEstados Unidos',desc:'Caso de Rodrigo Ortiz Martínez. Corte de remoción en Orlando. Moción en preparación. Dos citas con Abogada Reina Lis nunca realizadas. Solicitud de expediente sin respuesta. Pago total completado.',attorney:'Abogada Reina Lis',avatar:'👩‍👧',motive:'Lleva más de un mes esperando llamada de la abogada. Ya le agendaron DOS citas que nunca se realizaron. Corte de remoción encima. Embarazada con hijos. Quiere saber qué está pasando, pide expediente y considera reembolso.',personality:{baseAnger:80,empathyResponse:.6,evasionPenalty:30,ownershipReward:18},emotions:{frustration:82,trust:12,cancelRisk:78,barRisk:55,ownership:0},emotionHistory:[82],initialMessage:"Buenas tardes.",initialEmotion:'anxious'},notes:[{date:'hace 3 días',author:'Marco Hernández',title:'LLAMADA ENTRANTE — Sin resolución',tag:'ALERTA',type:'ALERT',body:'Cliente llama reportando que nadie le ha dado información. Lleva más de un mes esperando. Se notificó al área. Se prometió llamada. Cliente no quedó satisfecha. RIESGO ALTO DE CANCELACIÓN.'},{date:'hace 2 semanas',author:'Sistema',title:'CITA CON ABOGADA REINA LIS — NO REALIZADA (2da vez)',tag:'ALERTA',type:'ALERT',body:'Segunda cita con Abogada Reina Lis NO se realizó. Cliente esperó todo el día. Nadie la contactó.'},{date:'hace 3 semanas',author:'Sistema',title:'PRIMERA CITA ABOGADA — NO REALIZADA',tag:'ALERTA',type:'ALERT',body:'Primera cita agendada con Abogada Reina Lis no se realizó. Reprogramada. PATRÓN DE INCUMPLIMIENTO.'},{date:'hace 1 mes',author:'Legal Dept',title:'Moción en preparación — Sin actualización al cliente',tag:'LEGAL',type:'WARN',body:'Moción en preparación para corte de remoción de Rodrigo Ortiz. NO SE HAN DADO ACTUALIZACIONES AL CLIENTE. Deadline próximo — URGENTE.'},{date:'hace 3 semanas',author:'Cliente (vía llamada)',title:'Solicitud de expediente — SIN RESPUESTA',tag:'ACCION',type:'WARN',body:'Cliente solicitó expediente completo de Rodrigo. Sin respuesta desde hace 3 semanas. PENDIENTE.'},{date:'hace 2 meses',author:'Facturación',title:'PAGO TOTAL — Completado',tag:'LEGAL',type:'INFO',body:'Cliente completó pago total del contrato. NO HAY SALDO PENDIENTE.'}],timeline:[{icon:'📁',color:'#3b82f6',title:'Apertura de caso Remoción',desc:'Caso abierto para Rodrigo Ortiz Martínez.',date:'2023'},{icon:'💳',color:'#38a169',title:'Pago total completado',date:'hace 2 meses'},{icon:'⚖️',color:'#dd6b20',title:'Moción en preparación',desc:'Sin actualizaciones al cliente.',date:'hace 1 mes'},{icon:'📞',color:'#e53e3e',title:'1ra cita abogada — NO realizada',date:'hace 3 semanas'},{icon:'📞',color:'#c0392b',title:'2da cita abogada — NO realizada',desc:'Cliente esperó todo el día.',date:'hace 2 semanas'},{icon:'🗓️',color:'#c0392b',title:'CORTE DE REMOCIÓN — PRÓXIMA',desc:'Orlando Immigration Court.',date:'MUY PRÓXIMO'}],docs:[{name:'Moción — En preparación (sin fecha)',status:'ds-pend',icon:'📋'},{name:'Expediente completo — Solicitado, sin entregar',status:'ds-miss',icon:'📁'},{name:'Contrato — PAGO TOTAL COMPLETADO',status:'ds-ok',icon:'💳'}],payments:[{date:'hace 6 meses',desc:'Pago inicial',amount:'$1,500',status:'ok'},{date:'hace 2 meses',desc:'Pago final — saldo total',amount:'$700',status:'ok'}],alerts:['🚨 DOS CITAS CON ABOGADA NO REALIZADAS','⚖️ CORTE REMOCIÓN ORLANDO — fecha próxima','📁 Expediente solicitado hace 3 semanas — sin respuesta','💳 PAGO TOTAL COMPLETADO','🤰 Cliente embarazada con hijos','⛔ NO volver a prometer "la llaman" sin confirmar','❌ Riesgo cancelación CRÍTICO']},{id:'henry',icon:'👨',title:'Henry V. Cedillos — VAWA AOS / EAD Vencido',desc:'EAD vencido 30/May. Meses pidiendo callbacks. Mandamus en evaluación.',difficulty:'HARD',risk:'HIGH',client:{name:'Henry Vladimir Cedillos Quinteros',caseId:'18386202',type:'VAWA AOS',area:'VAWA AOS (USC/LPR Wife)',stage:'Receipts',phone:'(908) 630-7882',email:'Henryvcedillos93@gmail.com',address:'542 W 7th St. Apt 1L\nPlainfield, NJ 07060\nEstados Unidos',desc:'VAWA AOS (cónyuge abusadora LPR Vanessa Xiomara Guardado). Prima Facie renovada (EAC2231050752, deadline 08/09/2026). EAD vencido 30/May/2026. I-765 renewal presentado Nov 2024 (IOE0928712364). Mandamus en evaluación.',attorney:'Abogada Susana Martinez',avatar:'👨',motive:'Saber qué pasa con su permiso de trabajo y por qué nunca le devuelven las llamadas. Quiere hablar con la abogada antes de que el empleador le cancele el período de gracia.',personality:{baseAnger:65,empathyResponse:.8,evasionPenalty:25,ownershipReward:18},emotions:{frustration:68,trust:22,cancelRisk:50,barRisk:35,ownership:0},emotionHistory:[68],initialMessage:"Buenas tardes.",initialEmotion:'anxious'},notes:[{date:'28 may 2026, 3:44 PM',author:'Developers Mendoza Firm',title:'Call back / Susana Martinez',tag:'LLAMADA',type:'INFO',body:'Se habló con el cliente; se explicaron los tiempos del permiso de trabajo, el e-request enviado y la posibilidad de un writ of mandamus. Prefirió esperar otras 3 semanas y pidió contacto con actualización. No se requiere escalación. CB de seguimiento agendado 18/Jun a la 1:10 PM hora Puerto Rico.'},{date:'28 may 2026, 2:17 PM',author:'Developers Mendoza Firm',title:'CB with Atty Susana Martinez — EAD vence 30 may',tag:'SEGURIDAD',type:'WARN',body:'Cliente preocupado por EAD que vence 30/mayo. Prima Facie como punto a favor. Atty Susana explicó estrategia Mandamus (riesgos: USCIS podría emitir decisión; requiere evidencia sólida). Empleador puede dar ~30 días extra. Acuerdo: esperar ~3 semanas y reconectar.'},{date:'26 may 2026, 4:32 PM',author:'Gabriela Michel Espinoza Perez',title:'INCOMING CALL // DOUBTS',tag:'LLAMADA',type:'INFO',body:'Cliente indica que lleva meses solicitando callback y nunca lo hacen. No ha recibido EAD. Escalado a Callbacks. Behavior: Calm.'},{date:'20 may 2026, 12:05 PM',author:'María Magdalena Ríos Silva',title:'INCOMING CALL / CASE STATUS',tag:'ALERTA',type:'ALERT',body:'CL llamó porque su EAD vence el 30 de mayo. Depende del permiso para trabajar y renovar licencia. Se enviaron solicitudes a USCIS en febrero. Sin respuesta aún. Behavior: Upset.'},{date:'16 may 2026',author:'María Isabel Díaz Robles',title:'Case Review Word-by-Word — Done',tag:'LEGAL',type:'INFO',body:'Segunda revisión del caso palabra por palabra. Cliente inicializó cada página como parte del protocolo.'},{date:'30 abr 2026',author:'Karina Anahi Cardenas',title:'Prima Facie Renewed (02/10/2026)',tag:'LEGAL',type:'INFO',body:'I-360 Receipt Number: EAC2231050752 | Deadline: 08/09/2026'},{date:'3 feb 2026',author:'María Justina Chong González',title:'E-REQUEST OUT OF PROCESSING TIME 765',tag:'LEGAL',type:'INFO',body:'Request ID: SR10342602907RPA — USCIS reviewing.'},{date:'26 feb 2025',author:'Aura Evelyn Arismendi Mejia',title:'Transfer Notice I-485 (02/19/2025)',tag:'LEGAL',type:'INFO',body:'I-485 Receipt: EAC2231050746 — Transfer to NATIONAL BENEFITS CENTER.'},{date:'14 mar 2025',author:'Lucila Nuño Parra',title:'Notice I-131; I-765 (03/07/2025)',tag:'LEGAL',type:'INFO',body:'I-131: IOE0928712365 | I-765: IOE0928712364 — No biometrics needed.'},{date:'3 ene 2025',author:'Ana Perla Ávila Johnson',title:'Supervisor Call — I-765 urgente',tag:'ALERTA',type:'ALERT',body:'CL solo recibió I-131 y necesitaba I-765 para el lunes o lo despedían. Se escaló envío prioritario. Dirección: 542 W 7th St. Apt 1L, Plainfield, NJ 07060.'}],timeline:[{icon:'📁',color:'#3b82f6',title:'Apertura caso VAWA AOS',desc:'Primera petición. EWI 2011. Abuso confirmado.',date:'Mar 2022'},{icon:'✅',color:'#38a169',title:'Prima Facie obtenida',date:'Dic 2022'},{icon:'💳',color:'#38a169',title:'EAD aprobado inicial',date:'Ene 2023'},{icon:'💰',color:'#c9a84c',title:'Pago total completado',date:'Feb 2024'},{icon:'📋',color:'#3b82f6',title:'I-765 Renewal presentado',desc:'IOE0928712364',date:'Nov 2024'},{icon:'📮',color:'#dd6b20',title:'E-Request enviado USCIS',desc:'SR10342602907RPA',date:'Feb 2026'},{icon:'📞',color:'#e53e3e',title:'Múltiples callbacks sin respuesta',date:'Mar-May 2026'},{icon:'⚠️',color:'#c0392b',title:'EAD VENCIDO',desc:'Empleador da ~30 días extra.',date:'30/May/2026'}],docs:[{name:'I-360 VAWA (EAC2231050752)',status:'ds-ok',icon:'📄'},{name:'I-485 AOS (EAC2231050746)',status:'ds-ok',icon:'📄'},{name:'I-765 EAD Renewal — EN PROCESO',status:'ds-pend',icon:'💳'},{name:'EAD Físico — VENCIDO 30/May/2026',status:'ds-miss',icon:'⚠️'},{name:'Prima Facie — Deadline 08/09/2026',status:'ds-ok',icon:'✅'},{name:'Writ of Mandamus — En evaluación',status:'ds-pend',icon:'📋'}],payments:[{date:'Mar 2022',desc:'Retainer',amount:'$2,000',status:'ok'},{date:'Abr 2022',desc:'Gov fees',amount:'$1,225',status:'ok'},{date:'Feb 2024',desc:'Pago final',amount:'$2,600',status:'ok'}],alerts:['⚠️ EAD VENCIDO 30/May — ~30 días extra del empleador','📞 Callbacks prometidos y NO realizados — patrón','📋 Mandamus en evaluación — NO confirmar al cliente','✅ Prima Facie vigente hasta 08/09/2026','🗓️ CB agendado 18/Jun 1:10 PM PR','⛔ NO prometer fechas de aprobación']},{id:'rosa',icon:'👩',title:'Rosa M. — VAWA / Removal',desc:'Corte de deportación próxima. Embarazada. 6 meses sin actualizaciones.',difficulty:'EXTREME',risk:'HIGH',client:{name:'Rosa Marlene Villanueva',caseId:'18312045',type:'VAWA AOS',area:'VAWA AOS (USC/LPR Wife)',stage:'Receipts',phone:'(908) 555-0142',email:'rvillanueva93@gmail.com',address:'247 E Front St, Apt 2B\nPlainfield, NJ 07060\nEstados Unidos',desc:'VAWA AOS. Tiene Prima Facie. Corte de remoción 12/Feb. Moción en preparación. EAD vencido.',attorney:'Abogada Mendoza',avatar:'👩',motive:'Saber qué pasa con permiso de trabajo. Nadie devuelve llamadas. Quiere hablar con abogada antes de que venza licencia el viernes.',personality:{baseAnger:70,empathyResponse:.9,evasionPenalty:25,ownershipReward:20},emotions:{frustration:72,trust:18,cancelRisk:65,barRisk:40,ownership:0},emotionHistory:[72],initialMessage:"Buenas tardes.",initialEmotion:'anxious'},notes:[{date:'20 ene 2025',author:'Karen R.',title:'CLIENTE LLORÓ — RIESGO CRÍTICO',tag:'ALERTA',type:'ALERT',body:'Cliente lloró durante la llamada. Se siente abandonada. Corte de remoción: 12/Feb/2025. RIESGO ALTO BAR COMPLAINT. Requiere atención INMEDIATA. NO PROMETER FECHAS.'},{date:'15 ene 2025',author:'Sistema',title:'SEGUNDA CITA ABOGADA — NO REALIZADA',tag:'ALERTA',type:'ALERT',body:'Segunda llamada con Abogada Mendoza no se realizó. Cliente esperó sin respuesta.'},{date:'22 ene 2025',author:'Legal Dept',title:'Moción en preparación',tag:'LEGAL',type:'WARN',body:'Moción de continuance en preparación. 5-7 días hábiles. NO CONFIRMAR FECHA AL CLIENTE.'},{date:'25 ene 2025',author:'Andrea L.',title:'Solicitud de expediente pendiente',tag:'ACCION',type:'WARN',body:'Cliente solicitó copia de expediente. Pendiente autorización. Sin respuesta al cliente.'}],timeline:[{icon:'📁',color:'#3b82f6',title:'Apertura VAWA AOS',date:'Mar 2023'},{icon:'✅',color:'#38a169',title:'Prima Facie obtenida',date:'Sep 2023'},{icon:'⚖️',color:'#dd6b20',title:'Hearing — continuada',date:'Abr 2024'},{icon:'📞',color:'#e53e3e',title:'4 llamadas sin respuesta',date:'Ene 2025'},{icon:'⚠️',color:'#c0392b',title:'EAD VENCIDO + AUDIENCIA',desc:'12/Feb/2025',date:'Feb 2025'}],docs:[{name:'I-918 VAWA',status:'ds-ok',icon:'📄'},{name:'Prima Facie',status:'ds-ok',icon:'✅'},{name:'EAD — VENCIDO',status:'ds-miss',icon:'💳'},{name:'Motion to Continue — EN PREPARACIÓN',status:'ds-pend',icon:'📋'}],payments:[{date:'Mar 2023',desc:'Pago inicial',amount:'$1,500',status:'ok'},{date:'Ene 2025',desc:'Cuota — vencida',amount:'$500',status:'late'}],alerts:['⚡ AUDIENCIA REMOCIÓN: 12/Feb/2025','⚠️ Motion to Continue — sin fecha confirmada','🚨 RIESGO BAR COMPLAINT ALTO','⛔ NO prometer fechas exactas','🤰 Cliente embarazada (4 meses)']}];
+
+// ═══════════ STATE ═══════════
+let S={scenario:null,client:null,messages:[],timerInt:null,seconds:0,activeTab:'notes',supOpen:false,callActive:false,turnCount:0,criticalMoments:[],emotionHistory:[],loading:false,_callPhase:'greeting',_muted:false,_onHold:false};
+
+// ═══════════ INIT ═══════════
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>{
+    document.getElementById('loader').style.opacity='0';
+    setTimeout(()=>{document.getElementById('loader').style.display='none';showSelect();},400);
+  },1500);
+  buildAudioViz();
+  initTabs();
+  document.getElementById('send-btn').addEventListener('click',sendMessage);
+  document.getElementById('user-input').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
+  if('speechSynthesis' in window){speechSynthesis.getVoices();speechSynthesis.addEventListener('voiceschanged',()=>speechSynthesis.getVoices());}
+});
+
+function showSelect(){
+  const g=document.getElementById('scenario-grid');g.innerHTML='';
+  SCENARIOS.forEach(s=>{
+    const c=document.createElement('div');c.className='ss-card';
+    c.innerHTML=`<span class="ss-diff diff-${s.difficulty.toLowerCase()}">${s.difficulty}</span><div class="ss-card-icon">${s.icon}</div><div class="ss-card-title">${s.title}</div><div class="ss-card-desc">${s.desc}</div>`;
+    c.addEventListener('click',()=>startScenario(s));g.appendChild(c);
+  });
+  document.getElementById('scenario-select').style.display='flex';
+}
+
+function startScenario(sc){
+  document.getElementById('scenario-select').style.display='none';
+  S.scenario=sc;S.client=JSON.parse(JSON.stringify(sc.client));
+  S.messages=[];S.seconds=0;S.turnCount=0;S.criticalMoments=[];S.emotionHistory=[sc.client.emotions.frustration];
+  S.callActive=false;S.loading=false;S._callPhase='greeting';S._muted=false;S._onHold=false;S._fw=false;S._cw=false;
+
+  const c=S.client;
+  document.getElementById('cs-name-text').textContent=c.name;
+  document.getElementById('cs-dir').textContent=c.address;
+  document.getElementById('cs-phone').textContent=c.phone;
+  document.getElementById('cs-stage').textContent=c.stage;
+  document.getElementById('cs-area').textContent=c.area;
+  document.getElementById('cs-type').textContent=c.type;
+  document.getElementById('cs-email').textContent=c.email;
+  document.getElementById('sec-desc').textContent=c.desc;
+  document.getElementById('sec-linked').innerHTML=`<div class="cs-linked"><div class="cs-linked-name">${c.name}</div><div class="cs-linked-meta"><span>${c.caseId}</span>·<span>${c.type}</span>·<span class="pill-active">Activo</span></div></div>`;
+  const rb=document.getElementById('sec-risk');
+  rb.innerHTML=`<div class="risk-sm ${sc.risk==='HIGH'?'rb-high':'rb-med'}">${sc.risk==='HIGH'?'🔴 Riesgo Alto':'🟡 Riesgo Medio'}</div><div style="margin-top:6px;font-size:10px;color:var(--text3)">${sc.desc}</div>`;
+
+  document.getElementById('ch-name').textContent=c.name;
+  document.getElementById('ch-caseid').textContent=c.caseId;
+  document.getElementById('tab-count-notes').textContent=sc.notes.length;
+  document.getElementById('ncb-count').textContent=sc.notes.length+' notas';
+
+  // Call panel — incoming state
+  document.getElementById('call-cname').textContent=c.name;
+  document.getElementById('call-csub').textContent=c.phone+' · '+c.type+' · Caso '+c.caseId;
+  document.getElementById('call-type-lbl').textContent='LLAMADA ENTRANTE';
+  document.getElementById('call-avatar').textContent=c.avatar;
+  document.getElementById('call-avatar').classList.add('ringing');
+  document.getElementById('call-status-text').textContent='Llamada entrante...';
+  document.getElementById('motive-body').textContent=c.motive;
+  document.getElementById('motive-wrap').style.display='block';
+  document.getElementById('call-action-btns').style.display='flex';
+  document.getElementById('tb-queue').textContent='Cola: 2 en espera';
+
+  updateMetrics(S.client.emotions);
+  renderNotes();
+  setupQuickBtns();
+
+  // Ring tone simulation
+  ringTone();
+}
+
+// ring audio
+let ringInt=null;
+function ringTone(){
+  if(!('AudioContext' in window||'webkitAudioContext' in window)) return;
+  let ctx=null;
+  let ringing=true;
+  function ring(){
+    if(!ringing)return;
+    ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const osc=ctx.createOscillator();const gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.frequency.value=440;osc.type='sine';
+    gain.gain.setValueAtTime(0,ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(.15,ctx.currentTime+.05);
+    gain.gain.linearRampToValueAtTime(0,ctx.currentTime+.4);
+    osc.start();osc.stop(ctx.currentTime+.5);
+    setTimeout(()=>{if(ringing)ring();},1800);
+  }
+  ring();
+  S._stopRing=()=>{ringing=false;if(ctx)try{ctx.close();}catch(e){}};
+}
+
+// ═══════════ SECTIONS TOGGLE ═══════════
+function toggleSection(id){
+  const body=document.getElementById('sec-'+id);
+  const arr=document.getElementById('arr-'+id);
+  if(!body)return;
+  const open=body.classList.contains('open');
+  body.classList.toggle('open',!open);
+  arr.classList.toggle('open',!open);
+}
+function toggleMotive(){
+  const b=document.getElementById('motive-body');
+  const t=document.getElementById('motive-toggle');
+  const open=b.style.display==='block';
+  b.style.display=open?'none':'block';
+  t.classList.toggle('open',!open);
+}
+
+// ═══════════ CRM TABS ═══════════
+function initTabs(){
+  document.querySelectorAll('.crm-tab').forEach(t=>{
+    t.addEventListener('click',()=>{
+      document.querySelectorAll('.crm-tab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');S.activeTab=t.dataset.tab;
+      if(S.scenario)renderNotes();
+    });
+  });
+}
+function renderNotes(){
+  const list=document.getElementById('notes-list');
+  const content=document.getElementById('crm-content');
+  const tab=S.activeTab;const s=S.scenario;
+  if(tab==='notes'){
+    list.style.display='flex';content.style.display='none';
+    list.innerHTML=s.notes.map((n,i)=>`
+      <div class="note-item">
+        <div class="note-item-hdr" onclick="toggleNote(${i})">
+          <span class="ni-arr" id="ni-arr-${i}">▶</span>
+          <span class="ni-title">${n.title}</span>
+          ${n.tag?`<span class="ni-tag tag-${n.tag.toLowerCase().replace(/\s/g,'-')}">${n.tag}</span>`:''}
+          <span class="ni-date">${n.date}</span>
+        </div>
+        <div class="note-body-expand ${n.type}" id="ni-body-${i}">
+          ${n.body}
+          <div class="note-author-line">${n.date} · ${n.author}</div>
+        </div>
+      </div>`).join('');
+  } else {
+    list.style.display='none';content.style.display='block';
+    if(tab==='timeline') content.innerHTML=s.timeline.map(t=>`<div class="timeline-item"><div class="tl-dot" style="background:${t.color}"></div><div class="tl-body"><div class="tl-title">${t.icon} ${t.title}</div>${t.desc?`<div class="tl-desc">${t.desc}</div>`:''}<div class="tl-date">${t.date}</div></div></div>`).join('');
+    else if(tab==='docs') content.innerHTML=s.docs.map(d=>`<div class="doc-row"><span>${d.icon}</span><span class="doc-name">${d.name}</span><span class="${d.status}">${d.status==='ds-ok'?'✓ OK':d.status==='ds-pend'?'⏳ Pend.':'✗ Falta'}</span></div>`).join('');
+    else if(tab==='payments') content.innerHTML=s.payments.map(p=>`<div class="pay-row"><span>${p.date} — ${p.desc}</span><span style="font-weight:700">${p.amount}</span><span style="color:${p.status==='ok'?'var(--green)':p.status==='late'?'var(--warn)':'var(--danger)'};font-weight:700">${p.status==='ok'?'✓ Pagado':p.status==='late'?'⚠ Tardío':'✗ Fallido'}</span></div>`).join('');
+    else if(tab==='alerts') content.innerHTML=s.alerts.map(a=>`<div class="alert-row">▸ ${a}</div>`).join('');
+    else content.innerHTML=`<div style="font-size:11px;color:var(--text3);padding:16px 0;text-align:center">Sección disponible próximamente.</div>`;
+  }
+}
+function toggleNote(i){document.getElementById(`ni-body-${i}`).classList.toggle('open');document.getElementById(`ni-arr-${i}`).classList.toggle('open');}
+function expandAllNotes(){document.querySelectorAll('.note-body-expand').forEach(b=>b.classList.add('open'));document.querySelectorAll('.ni-arr').forEach(a=>a.classList.add('open'));}
+function collapseAllNotes(){document.querySelectorAll('.note-body-expand').forEach(b=>b.classList.remove('open'));document.querySelectorAll('.ni-arr').forEach(a=>a.classList.remove('open'));}
+
+// ═══════════ QUICK BTNS ═══════════
+function setupQuickBtns(){
+  const qb=document.getElementById('quick-btns');qb.innerHTML='';
+  [{l:'Validar emoción',t:'Entiendo perfectamente cómo se siente y es completamente válido. Lamento que haya tenido que pasar por esto.'},{l:'Dar ownership',t:'Voy a tomar responsabilidad personal de su caso ahora mismo y me aseguro de que reciba una respuesta concreta hoy.'},{l:'Revisar expediente',t:'Permítame un momento para revisar su expediente completo y darle información precisa.'},{l:'No prometer fecha',t:'Quiero ser transparente: no puedo darle una fecha exacta, pero sí puedo decirle el estado actual de su caso.'}].forEach(q=>{
+    const b=document.createElement('button');b.className='qb';b.textContent=q.l;
+    b.onclick=()=>{document.getElementById('user-input').value=q.t;};qb.appendChild(b);
+  });
+}
+
+// ═══════════ TRANSCRIPT ═══════════
+function addTranscriptMsg(role,text,emotion){
+  const ta=document.getElementById('transcript-area');
+  const div=document.createElement('div');div.className=`msg ${role}`;
+  const label=role==='client'?S.client.name:role==='agent'?'Colaborador':'Sistema';
+  const em={angry:'😡 Enojado/a',anxious:'😰 Ansioso/a',sad:'😢 Triste',calm:'😌 Calmado/a',threatening:'⚠️ Amenazante'};
+  const ec={angry:'em-angry',anxious:'em-anxious',sad:'em-sad',calm:'em-calm',threatening:'em-threatening'};
+  div.innerHTML=`<div class="msg-label">${label}</div>${text}${emotion?`<div><span class="emotion-tag ${ec[emotion]||'em-anxious'}">${em[emotion]||emotion}</span></div>`:''}`;
+  ta.appendChild(div);ta.scrollTop=ta.scrollHeight;
+  S.messages.push({role,text,emotion});
+  if(role==='client'&&emotion&&!S._onHold&&!S._muted) speakClient(text,emotion);
+}
+
+// ═══════════ CALL ACCEPT / REJECT ═══════════
+function rejectCall(){
+  if(S._stopRing) S._stopRing();
+  document.getElementById('call-action-btns').style.display='none';
+  document.getElementById('call-avatar').classList.remove('ringing');
+  document.getElementById('call-status-text').textContent='Llamada rechazada';
+  document.getElementById('call-type-lbl').textContent='SIN LLAMADA';
+  document.getElementById('motive-wrap').style.display='none';
+}
+
+function acceptCall(){
+  if(S._stopRing) S._stopRing();
+  document.getElementById('call-action-btns').style.display='none';
+  document.getElementById('call-avatar').classList.remove('ringing');
+  document.getElementById('call-status-text').textContent='En llamada · '+S.client.name;
+  document.getElementById('call-type-lbl').textContent='EN LLAMADA';
+  document.getElementById('call-incoming').style.paddingBottom='10px';
+  document.getElementById('call-live').style.display='flex';
+  document.getElementById('call-controls').style.display='flex';
+  document.getElementById('tb-timer').style.display='';
+
+  S.callActive=true;
+  startTimer();startAudioVizAnim();
+  document.getElementById('user-input').disabled=false;
+  document.getElementById('send-btn').disabled=false;
+  document.getElementById('user-input').placeholder='Saluda al cliente e identifícate...';
+
+  addTranscriptMsg('system','📞 Llamada conectada · '+S.client.name+' · '+S.client.type);
+  addTranscriptMsg('system','🎙️ Identifícate, saluda al cliente y verifica su identidad antes de dar cualquier información.');
+
+  // El cliente solo espera — no dice nada hasta que el agente hable
+  setTimeout(()=>enableAgentVoiceInput(),300);
+}
+
+// ═══════════ TTS ═══════════
+function speakClient(text,emotion='calm'){
+  if(!('speechSynthesis' in window)) return;
+  const utt=new SpeechSynthesisUtterance(text);
+  utt.lang='es-MX';
+  const voices=speechSynthesis.getVoices();
+  const v=voices.find(v=>v.lang.startsWith('es')&&/female|mujer|mex|lat/i.test(v.name))||voices.find(v=>v.lang.startsWith('es'));
+  if(v) utt.voice=v;
+  const st={calm:{rate:.95,pitch:1},sad:{rate:.85,pitch:.9},anxious:{rate:1.08,pitch:1.15},angry:{rate:1.18,pitch:1.25},threatening:{rate:.9,pitch:.75}};
+  const s=st[emotion]||st.calm;utt.rate=s.rate;utt.pitch=s.pitch;utt.volume=1;
+  speechSynthesis.cancel();speechSynthesis.speak(utt);
+}
+
+// ═══════════ AGENT VOICE INPUT ═══════════
+function enableAgentVoiceInput(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR) return;
+  if(S._srReady) return;
+  S._srReady=true;
+  const recognition=new SR();
+  recognition.lang='es-MX';recognition.interimResults=true;recognition.continuous=false;
+  let listening=false,finalT='';
+  const inp=document.getElementById('user-input');
+  const ico=document.getElementById('cc-mic-ico');
+
+  function startListen(){
+    if(!S.callActive||S._onHold) return;
+    finalT='';inp.value='';listening=true;
+    ico.textContent='🔴';ico.classList.add('active');
+    recognition.start();
+  }
+  function stopListen(){recognition.stop();}
+
+  document.getElementById('cc-mic-btn').onclick=()=>{
+    if(listening) stopListen(); else startListen();
+  };
+  recognition.onresult=ev=>{
+    let interim='';
+    for(let i=ev.resultIndex;i<ev.results.length;i++){
+      const t=ev.results[i][0].transcript;
+      if(ev.results[i].isFinal) finalT+=t; else interim+=t;
+    }
+    inp.value=finalT||interim;
+  };
+  recognition.onerror=()=>{listening=false;ico.textContent='🎤';ico.classList.remove('active');};
+  recognition.onend=()=>{
+    listening=false;ico.textContent='🎤';ico.classList.remove('active');
+    const text=inp.value.trim();
+    if(text) document.getElementById('send-btn').click();
+  };
+}
+
+function toggleAgentMic(){
+  /* handled by enableAgentVoiceInput's onclick */
+}
+
+// ═══════════ PATTERN ENGINE ═══════════
+const PATTERNS={
+  empathy:[/entiendo/i,/comprendo/i,/lamento/i,/siento mucho/i,/tiene razón/i,/sé que/i,/me imagino/i,/debe ser/i,/gracias por/i,/le entiendo/i],
+  ownership:[/yo me encargo/i,/voy a revisar/i,/voy a verificar/i,/permítame revisar/i,/lo voy a escalar/i,/me haré cargo/i,/voy a darle seguimiento/i,/voy a documentar/i,/voy a dejar nota/i,/voy a tomar/i,/me encargo/i],
+  clarity:[/hoy/i,/antes de/i,/a más tardar/i,/en este momento/i,/siguiente paso/i,/confirmar/i,/expediente/i,/abogad/i,/fecha/i],
+  apology:[/disculpa/i,/perdón/i,/lamento/i,/me disculpo/i,/le pido una disculpa/i],
+  escalation:[/supervisor/i,/escalar/i,/equipo legal/i,/abogada/i,/abogado/i],
+  evasion:[/tiene que esperar/i,/solo espere/i,/no puedo hacer nada/i,/eso no depende/i,/así es el proceso/i,/no tengo información/i],
+  falsePromise:[/le van a llamar/i,/ahorita le llaman/i,/pronto le llaman/i,/mañana seguro/i,/se lo prometo/i,/garantizado/i],
+  confrontational:[/cálmese/i,/tranquilícese/i,/usted no entiende/i,/ya le dije/i,/no es mi culpa/i],
+  legalRisk:[/aprobado seguro/i,/no va a pasar nada/i,/no lo van a deportar/i,/ganamos seguro/i]
+};
+function scoreText(text){
+  const r={};
+  for(const[k,regs]of Object.entries(PATTERNS)) r[k]=regs.some(rx=>rx.test(text));
+  r.tooShort=text.trim().length<35;r.longEnough=text.trim().length>=90;
+  r.hasQuestion=/\?/.test(text)||/puede confirmarme|me confirma|dígame|cuénteme/i.test(text);
+  r.hasConcreteAction=/voy a|permítame|en este momento|a más tardar|antes de|hoy|documentar|escalar/i.test(text);
+  r.good=(r.empathy?1:0)+(r.ownership?1:0)+(r.clarity?1:0)+(r.apology?1:0)+(r.escalation?1:0)+(r.hasQuestion?1:0);
+  r.bad=(r.evasion?1:0)+(r.falsePromise?1:0)+(r.confrontational?1:0)+(r.legalRisk?1:0)+(r.tooShort?1:0);
+  return r;
+}
+function localMetricDelta(a){
+  const p=S.client.personality||{empathyResponse:.7,evasionPenalty:20,ownershipReward:15};
+  const em=S.client.emotions;
+  if(a.empathy){em.frustration=Math.max(0,em.frustration-Math.round(10*(p.empathyResponse||.7)));em.trust=Math.min(100,em.trust+8);}
+  if(a.apology){em.frustration=Math.max(0,em.frustration-5);em.trust=Math.min(100,em.trust+4);}
+  if(a.ownership){em.frustration=Math.max(0,em.frustration-8);em.trust=Math.min(100,em.trust+(p.ownershipReward||15));em.cancelRisk=Math.max(0,em.cancelRisk-8);em.ownership=Math.min(100,(em.ownership||0)+15);}
+  if(a.clarity){em.trust=Math.min(100,em.trust+8);em.frustration=Math.max(0,em.frustration-4);}
+  if(a.escalation){em.trust=Math.min(100,em.trust+6);em.cancelRisk=Math.max(0,em.cancelRisk-5);}
+  if(a.longEnough) em.trust=Math.min(100,em.trust+3);
+  if(a.evasion){em.frustration=Math.min(100,em.frustration+(p.evasionPenalty||20));em.trust=Math.max(0,em.trust-12);em.cancelRisk=Math.min(100,em.cancelRisk+14);}
+  if(a.falsePromise){em.frustration=Math.min(100,em.frustration+16);em.trust=Math.max(0,em.trust-18);em.cancelRisk=Math.min(100,em.cancelRisk+12);em.barRisk=Math.min(100,em.barRisk+16);}
+  if(a.confrontational){em.frustration=Math.min(100,em.frustration+25);em.trust=Math.max(0,em.trust-20);em.cancelRisk=Math.min(100,em.cancelRisk+15);em.barRisk=Math.min(100,em.barRisk+18);}
+  if(a.legalRisk){em.frustration=Math.min(100,em.frustration+8);em.trust=Math.max(0,em.trust-18);em.barRisk=Math.min(100,em.barRisk+22);}
+  if(a.tooShort){em.frustration=Math.min(100,em.frustration+8);em.trust=Math.max(0,em.trust-6);}
+  updateMetrics(em);
+}
+function getCoachingTip(a,em){
+  if(a.confrontational) return '🔴 Coach: evita "cálmese". Valida la emoción primero.';
+  if(a.legalRisk) return '🔴 Coach: no hagas afirmaciones legales — riesgo de Bar Complaint.';
+  if(a.falsePromise) return '🔴 Coach: no prometas callbacks sin hora, nombre y acción verificable.';
+  if(a.evasion) return '🟡 Coach: evita "solo espere". Da ownership + siguiente paso concreto.';
+  if(!a.empathy&&!a.apology) return '🟡 Coach: abre con validación emocional antes de explicar.';
+  if(!a.ownership) return '🟡 Coach: usa ownership: "voy a revisar / documentar / escalar".';
+  if(!a.clarity) return '🟡 Coach: agrega plazo, responsable y próximo paso concreto.';
+  if(em.trust>=60) return '🟢 Coach: buen avance. Cierra con resumen y confirmación.';
+  return null;
+}
+
+// ═══════════ SEND / AI ═══════════
+async function sendMessage(){
+  const inp=document.getElementById('user-input');
+  const text=inp.value.trim();
+  if(!text||S.loading) return;
+  inp.value='';S.turnCount++;
+  addTranscriptMsg('agent',text);
+
+  const analysis=scoreText(text);
+  localMetricDelta(analysis);
+  document.getElementById('tb-score').textContent='Score: '+calcScore();
+  const tip=getCoachingTip(analysis,S.client.emotions);
+  if(tip) addTranscriptMsg('system',tip);
+
+  S.loading=true;document.getElementById('send-btn').disabled=true;
+  document.getElementById('typing-indicator').innerHTML=S.client.name+' está escribiendo <span class="typing-dots"><span></span><span></span><span></span></span>';
+
+  const scoreCtx=`ANÁLISIS LOCAL:
+- Empatía: ${analysis.empathy} | Ownership: ${analysis.ownership} | Claridad: ${analysis.clarity} | Disculpa: ${analysis.apology}
+- Evasión: ${analysis.evasion}${analysis.evasion?' ⚠️':''} | Promesa vacía: ${analysis.falsePromise}${analysis.falsePromise?' ⚠️':''} | Confrontacional: ${analysis.confrontational}${analysis.confrontational?' ⚠️':''} | Riesgo legal: ${analysis.legalRisk}${analysis.legalRisk?' ⚠️':''}
+- Score bueno: ${analysis.good}/6 | Score problemas: ${analysis.bad}/5
+Calibra tu reacción emocional según este análisis.`;
+
+  const c=S.client;const em=c.emotions;
+  const phase=S._callPhase||'greeting';
+  const notes=S.scenario.notes.map((n,i)=>`[${i+1}] ${n.date} — ${n.author}: ${n.body}`).join('\n');
+
+  const phaseInstructions=phase==='greeting'
+    ?`FASE: INICIO DE LLAMADA. Solo di "Buenas tardes" o saludo breve. NO des tu nombre, NO expliques motivo, NO des datos. Solo espera a que el agente se identifique y te pida información de seguridad. Si el agente pregunta "¿en qué le puedo ayudar?" sin pedir datos primero → criticalMoment: "No solicitó verificación antes de preguntar el motivo". nextPhase: si te preguntan el nombre → "verification".`
+    :phase==='verification'
+    ?`FASE: VERIFICACIÓN. El agente pide tus datos UNO POR UNO. Responde SOLO lo que te preguntan en este turno:
+- Si piden nombre → solo di tu nombre.
+- Si piden teléfono → solo di: ${c.phone}.
+- Si piden número de cliente → solo di: ${c.caseId}.
+NUNCA des todos los datos juntos. Natural y conversacional. nextPhase: cuando el agente confirme verificación → "active".`
+    :`FASE: LLAMADA ACTIVA. Expresa tu problema real: ${c.initialMessage}. Reacciona según el análisis local recibido. Si el agente fue evasivo, sube frustración. Si fue empático y concreto, baja frustración.`;
+
+  const sys=`Eres ${c.name}, cliente de TMLF llamando a Customer Service.
+CASO: ${c.caseId} — ${c.type} — ${c.area}
+NOTAS CRM:\n${notes}
+ESTADO EMOCIONAL: Frustración ${em.frustration}%, Confianza ${em.trust}%, Cancelación ${em.cancelRisk}%
+
+${scoreCtx}
+${phaseInstructions}
+
+Responde SOLO en JSON sin backticks:
+{"message":"respuesta natural (español, 1-3 oraciones)","emotion":"angry|anxious|sad|calm|threatening","frustrationDelta":número -15 a 20,"trustDelta":número -12 a 20,"cancelDelta":número -8 a 15,"barDelta":número -5 a 12,"ownershipDelta":número 0 a 15,"criticalMoment":"error grave o null","nextPhase":"greeting|verification|active"}`;
+
+  const hist=[];
+  S.messages.filter(m=>m.role!=='system').forEach(m=>hist.push({role:m.role==='client'?'assistant':'user',content:m.text}));
+  hist.push({role:'user',content:text});
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system:sys,messages:hist})});
+    const data=await res.json();
+    const raw=data.content?.map(c=>c.text||'').join('')||'';
+    let parsed;
+    try{parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());}
+    catch{parsed={message:raw,emotion:'anxious',frustrationDelta:3,trustDelta:-2,cancelDelta:1,barDelta:0,ownershipDelta:0,criticalMoment:null,nextPhase:phase};}
+
+    document.getElementById('typing-indicator').innerHTML='';
+    setTimeout(()=>{
+      // Apply API deltas (lighter, engine already applied local)
+      const e=S.client.emotions;
+      e.frustration=Math.max(0,Math.min(100,e.frustration+Math.round((parsed.frustrationDelta||0)*.5)));
+      e.trust=Math.max(0,Math.min(100,e.trust+Math.round((parsed.trustDelta||0)*.5)));
+      e.cancelRisk=Math.max(0,Math.min(100,e.cancelRisk+Math.round((parsed.cancelDelta||0)*.5)));
+      e.barRisk=Math.max(0,Math.min(100,e.barRisk+Math.round((parsed.barDelta||0)*.5)));
+      e.ownership=Math.max(0,Math.min(100,e.ownership+Math.round((parsed.ownershipDelta||0)*.5)));
+      updateMetrics(e);
+
+      addTranscriptMsg('client',parsed.message,parsed.emotion);
+      S.emotionHistory.push(e.frustration);
+      document.getElementById('tb-score').textContent='Score: '+calcScore();
+      if(parsed.criticalMoment) S.criticalMoments.push({turn:S.turnCount,issue:parsed.criticalMoment});
+
+      if(parsed.nextPhase&&parsed.nextPhase!==S._callPhase){
+        S._callPhase=parsed.nextPhase;
+        if(parsed.nextPhase==='verification') document.getElementById('user-input').placeholder='Pide los datos de seguridad uno por uno...';
+        else if(parsed.nextPhase==='active'){
+          document.getElementById('user-input').placeholder='Escribe tu respuesta al cliente...';
+          addTranscriptMsg('system','✅ Identidad verificada — llamada activa');
+        }
+      }
+      if(e.frustration>85&&!S._fw){S._fw=true;addTranscriptMsg('system','🚨 Cliente en nivel crítico de frustración');}
+      if(e.cancelRisk>80&&!S._cw){S._cw=true;addTranscriptMsg('system','⚠️ Riesgo de cancelación crítico');}
+    },300);
+  }catch{
+    document.getElementById('typing-indicator').innerHTML='';
+    addTranscriptMsg('system','⚠ Error de conexión con la API');
+  }
+  S.loading=false;document.getElementById('send-btn').disabled=false;
+}
+
+// ═══════════ METRICS ═══════════
+function updateMetrics(em){
+  ['frustration','trust','cancel','bar'].forEach(id=>{
+    const key={frustration:'frustration',trust:'trust',cancel:'cancelRisk',bar:'barRisk'}[id];
+    const val=em[key];
+    document.getElementById(`m-${id}`).style.width=val+'%';
+    const mv=document.getElementById(`mv-${id}`);
+    mv.textContent=val+'%';
+    mv.style.color=(id==='trust')?(val>60?'#68d391':val>30?'#f6ad55':'#fc8181'):(val>70?'#fc8181':val>40?'#f6ad55':'#68d391');
+  });
+}
+function calcScore(){
+  const em=S.client.emotions;
+  let s=100;s-=(em.frustration-50)*.4;s+=(em.trust-30)*.5;s-=em.cancelRisk*.3;s-=em.barRisk*.3;s+=em.ownership*.4;s-=S.criticalMoments.length*8;
+  return Math.max(0,Math.min(100,Math.round(s)));
+}
+
+// ═══════════ HOLD / MUTE / TRANSFER ═══════════
+let holdInterval=null,holdSecs=0;
+function toggleMute(){
+  S._muted=!S._muted;
+  const ico=document.getElementById('cc-mute');const lbl=document.getElementById('cc-mute-lbl');
+  ico.textContent=S._muted?'🔇':'🔊';ico.classList.toggle('active',S._muted);
+  lbl.textContent=S._muted?'Unmute':'Mute';
+  addTranscriptMsg('system',S._muted?'🔇 Micrófono silenciado':'🔊 Micrófono activado');
+}
+function toggleHold(){
+  S._onHold=!S._onHold;
+  const ico=document.getElementById('cc-hold');const banner=document.getElementById('hold-banner');
+  ico.classList.toggle('active',S._onHold);
+  document.getElementById('user-input').disabled=S._onHold;
+  document.getElementById('send-btn').disabled=S._onHold;
+  if(S._onHold){
+    holdSecs=0;banner.style.display='block';
+    holdInterval=setInterval(()=>{
+      holdSecs++;
+      const m=Math.floor(holdSecs/60),s=holdSecs%60;
+      document.getElementById('hold-timer').textContent=`${m}:${String(s).padStart(2,'0')}`;
+      if(holdSecs===30) addTranscriptMsg('system','⚠️ 30s en hold — informa al cliente el tiempo estimado');
+      if(holdSecs===60){addTranscriptMsg('system','🚨 60s en hold — riesgo de frustración');const e=S.client.emotions;e.frustration=Math.min(100,e.frustration+8);e.trust=Math.max(0,e.trust-5);updateMetrics(e);S.emotionHistory.push(e.frustration);}
+      if(holdSecs===120){addTranscriptMsg('system','🚨 2min en hold — impacto crítico');const e=S.client.emotions;e.frustration=Math.min(100,e.frustration+15);e.cancelRisk=Math.min(100,e.cancelRisk+10);updateMetrics(e);S.criticalMoments.push({turn:S.turnCount,issue:'Hold excesivo: más de 2 minutos'});}
+    },1000);
+    addTranscriptMsg('system','⏸ Cliente en HOLD');
+  } else {
+    clearInterval(holdInterval);banner.style.display='none';
+    addTranscriptMsg('system',`▶ Retomado — hold: ${Math.floor(holdSecs/60)}m ${holdSecs%60}s`);
+    if(holdSecs>45&&S._callPhase==='active'){
+      setTimeout(()=>{
+        const msg=holdSecs>90?'¿Siguen ahí? Llevo mucho tiempo esperando. Esto es exactamente lo que siempre me pasa.':'Gracias por regresar. ¿Pudieron revisar algo?';
+        const emo=holdSecs>90?'angry':'anxious';
+        if(holdSecs>90){const e=S.client.emotions;e.frustration=Math.min(100,e.frustration+12);updateMetrics(e);}
+        addTranscriptMsg('client',msg,emo);
+      },700);
+    }
+    document.getElementById('user-input').disabled=false;document.getElementById('send-btn').disabled=false;
+  }
+}
+function triggerTransfer(){
+  if(S._callPhase==='greeting'){addTranscriptMsg('system','⚠️ Verifica identidad antes de transferir');return;}
+  addTranscriptMsg('system','⇄ Transfiriendo — recuerda hacer warm transfer: presenta al cliente y el motivo');
+  S.criticalMoments.push({turn:S.turnCount,issue:'Transferencia — verificar si se hizo warm transfer correcto'});
+  const e=S.client.emotions;e.frustration=Math.min(100,e.frustration+10);e.trust=Math.max(0,e.trust-8);updateMetrics(e);
+  setTimeout(()=>addTranscriptMsg('client','¿Me pasan con alguien más? Espero que esta persona sí pueda ayudarme, porque ya tuve que explicar todo una vez.','anxious'),900);
+}
+
+// ═══════════ TIMER ═══════════
+function startTimer(){
+  S.timerInt=setInterval(()=>{
+    S.seconds++;
+    const m=String(Math.floor(S.seconds/60)).padStart(2,'0'),s=String(S.seconds%60).padStart(2,'0');
+    document.getElementById('tb-timer').textContent=`${m}:${s}`;
+  },1000);
+}
+
+// ═══════════ AUDIO VIZ ═══════════
+function buildAudioViz(){const v=document.getElementById('audio-viz');for(let i=0;i<18;i++){const b=document.createElement('div');b.className='viz-bar';b.style.height='2px';v.appendChild(b);}}
+function startAudioVizAnim(){const bars=document.querySelectorAll('.viz-bar');setInterval(()=>{if(!S.callActive)return;bars.forEach(b=>{b.style.height=(Math.random()*18+2)+'px';b.style.opacity=.4+Math.random()*.6;});},140);}
+
+// ═══════════ SUPERVISOR ═══════════
+function supAction(action){
+  const em=S.client.emotions;
+  const inject={aggressive:{msg:'Mire, ya estoy HARTO de esta situación. Ustedes no me respetan, no me llaman, no me dan información. ¿Saben cuánto dinero les he pagado?',emotion:'angry',fD:20,tD:-10,cD:10,bD:8},cry:{msg:'Perdón... (sollozos) es que tengo tanto miedo. No sé qué va a pasar con mi familia. Siento que a nadie le importamos.',emotion:'sad',fD:10,tD:-5,cD:5,bD:3},cancel:{msg:'Saben qué, ya busqué otro abogado. ¿Cómo es el proceso para cancelar este contrato?',emotion:'threatening',fD:15,tD:-15,cD:25,bD:10},refund:{msg:'He pagado más de $2,000 y no veo resultados. Quiero que me regresen mi dinero. ¿Con quién hablo?',emotion:'angry',fD:12,tD:-10,cD:15,bD:12},deport:{msg:'Tengo una audiencia de deportación MUY pronto. Si me deportan, ¿quién responde por eso? ¿La firma?',emotion:'threatening',fD:18,tD:-12,cD:8,bD:15},supervisor:{msg:'Quiero hablar con un supervisor AHORA. Usted no me está ayudando.',emotion:'angry',fD:15,tD:-8,cD:10,bD:5},barcomplaint:{msg:'Ya hablé con alguien del State Bar. Si no resuelven esto HOY, presento una queja formal.',emotion:'threatening',fD:20,tD:-15,cD:12,bD:30},calm:{msg:'Bueno... supongo que entiendo que hay procesos. Solo necesito saber que alguien está pendiente.',emotion:'anxious',fD:-15,tD:10,cD:-8,bD:-5}};
+  const a=inject[action];if(!a)return;
+  em.frustration=Math.max(0,Math.min(100,em.frustration+a.fD));em.trust=Math.max(0,Math.min(100,em.trust+a.tD));em.cancelRisk=Math.max(0,Math.min(100,em.cancelRisk+a.cD));em.barRisk=Math.max(0,Math.min(100,em.barRisk+a.bD));
+  updateMetrics(em);S.emotionHistory.push(em.frustration);
+  addTranscriptMsg('client',a.msg,a.emotion);
+  if(S.supOpen)toggleSupPanel();
+}
+function toggleSupPanel(){S.supOpen=!S.supOpen;document.getElementById('sup-panel').style.display=S.supOpen?'block':'none';}
+
+// ═══════════ END CALL / EVAL ═══════════
+async function endCall(){
+  if(S.supOpen)toggleSupPanel();
+  if(S.timerInt)clearInterval(S.timerInt);
+  if(holdInterval)clearInterval(holdInterval);
+  document.getElementById('hold-banner').style.display='none';
+  document.getElementById('call-controls').style.display='none';
+  S.callActive=false;speechSynthesis.cancel();
+
+  const score=calcScore();const em=S.client.emotions;
+  const grade=score>=85?{label:'⭐ Excelente',color:'#38a169'}:score>=70?{label:'✅ Bueno',color:'#c9a84c'}:score>=55?{label:'⚠️ Regular',color:'#dd6b20'}:{label:'❌ Deficiente',color:'#e53e3e'};
+
+  const evalPrompt=`Eres evaluador experto de Customer Service para firma de abogados de inmigración TMLF.
+CLIENTE: ${S.client.name} — ${S.client.type}
+TURNOS: ${S.turnCount} | DURACIÓN: ${Math.floor(S.seconds/60)}m ${S.seconds%60}s
+MÉTRICAS: Frustración ${em.frustration}%, Confianza ${em.trust}%, Cancelación ${em.cancelRisk}%, Bar ${em.barRisk}%, Ownership ${em.ownership}%
+TRANSCRIPCIÓN:
+${S.messages.filter(m=>m.role!=='system').map(m=>`[${m.role==='client'?'CLIENTE':'AGENTE'}]: ${m.text}`).join('\n')}
+Responde SOLO en JSON sin backticks:
+{"psychologicalAnalysis":"análisis 3-4 oraciones","missedOpportunities":["op1","op2","op3"],"riskyPhrases":["frase1"],"strengths":["fortaleza1"],"criticalErrors":["error1"]}`;
+
+  let evalData=null;
+  try{
+    const res2=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,messages:[{role:'user',content:evalPrompt}]})});
+    const data=await res2.json();
+    evalData=JSON.parse(data.content?.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim());
+  }catch{evalData={psychologicalAnalysis:'No se pudo generar análisis automático.',missedOpportunities:['Revisar notas antes de responder','Dar ownership concreto','Validar emoción del cliente'],riskyPhrases:[],strengths:[],criticalErrors:S.criticalMoments.map(c=>c.issue)};}
+
+  document.getElementById('eval-score-big').textContent=score;
+  document.getElementById('eval-score-big').style.color=grade.color;
+  document.getElementById('eval-grade').textContent=grade.label;document.getElementById('eval-grade').style.color=grade.color;
+  document.getElementById('eval-subtitle').textContent=`${S.client.name} · ${S.client.type} · ${Math.floor(S.seconds/60)}m ${S.seconds%60}s · ${S.turnCount} turnos`;
+  document.getElementById('eval-metrics-rows').innerHTML=[{l:'Frustración final',v:em.frustration+'%',c:em.frustration>60?'eval-negative':'eval-positive'},{l:'Confianza final',v:em.trust+'%',c:em.trust>50?'eval-positive':'eval-negative'},{l:'Riesgo cancelación',v:em.cancelRisk+'%',c:em.cancelRisk>50?'eval-negative':'eval-positive'},{l:'Riesgo Bar Complaint',v:em.barRisk+'%',c:em.barRisk>40?'eval-negative':'eval-positive'},{l:'Ownership',v:em.ownership+'%',c:em.ownership>40?'eval-positive':'eval-negative'},{l:'Momentos críticos',v:S.criticalMoments.length,c:S.criticalMoments.length===0?'eval-positive':'eval-negative'},{l:'Score',v:score+'/100',c:score>=70?'eval-positive':score>=55?'eval-neutral':'eval-negative'}].map(r=>`<div class="eval-row"><span style="color:var(--text3)">${r.l}</span><span class="${r.c}">${r.v}</span></div>`).join('');
+  const cd=document.getElementById('eval-critical');
+  cd.innerHTML=(evalData.criticalErrors?.length?evalData.criticalErrors:S.criticalMoments.map(m=>m.issue)).map(e=>`<div class="critical-moment">⚡ ${e}</div>`).join('')||'<div style="color:var(--green);font-size:11px">✅ Sin momentos críticos graves.</div>';
+  document.getElementById('eval-missed').innerHTML=evalData.missedOpportunities?.map(m=>`<div class="missed-note">📋 ${m}</div>`).join('')||'—';
+  document.getElementById('eval-psych').textContent=evalData.psychologicalAnalysis||'—';
+  const etDiv=document.getElementById('eval-emotion-timeline');etDiv.innerHTML='';
+  S.emotionHistory.forEach(v=>{const b=document.createElement('div');b.className='et-bar';b.style.height=(v*.44)+'px';b.style.background=v>70?'#e53e3e':v>40?'#dd6b20':'#38a169';etDiv.appendChild(b);});
+  document.getElementById('eval-overlay').style.display='block';
+}
+
+function resetSim(){
+  document.getElementById('eval-overlay').style.display='none';
+  S={scenario:null,client:null,messages:[],timerInt:null,seconds:0,activeTab:'notes',supOpen:false,callActive:false,turnCount:0,criticalMoments:[],emotionHistory:[],loading:false,_callPhase:'greeting',_muted:false,_onHold:false};
+  document.getElementById('tb-timer').style.display='none';document.getElementById('tb-timer').textContent='00:00';
+  document.getElementById('tb-score').textContent='Score: —';
+  document.getElementById('transcript-area').innerHTML='';document.getElementById('typing-indicator').innerHTML='';
+  document.getElementById('call-live').style.display='none';
+  document.getElementById('user-input').disabled=true;document.getElementById('send-btn').disabled=true;
+  document.getElementById('call-action-btns').style.display='none';
+  document.getElementById('call-cname').textContent='—';document.getElementById('call-csub').textContent='Selecciona un escenario';
+  document.getElementById('call-type-lbl').textContent='ESTACIÓN CX';document.getElementById('call-status-text').textContent='Esperando llamada...';
+  document.getElementById('motive-wrap').style.display='none';document.getElementById('notes-list').innerHTML='';
+  document.getElementById('crm-content').style.display='none';
+  ['frustration','trust','cancel','bar'].forEach(id=>{document.getElementById(`m-${id}`).style.width='0%';document.getElementById(`mv-${id}`).textContent='0%';});
+  showSelect();
+}
+</script>
+</body>
+</html>
