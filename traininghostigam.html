@@ -34,7 +34,384 @@
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  /* ===== ADMIN PANEL ===== */
+  /* ── Admin Nav Tabs ── */
+  .adm-nav-tabs {
+    display:flex; gap:0; border-bottom:2px solid #E3DCE0; margin-bottom:24px; flex-shrink:0;
+  }
+  .adm-nav-tab {
+    padding:11px 22px; border:none; background:none; cursor:pointer;
+    font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700;
+    letter-spacing:2px; text-transform:uppercase; color:#9D8A94;
+    border-bottom:2px solid transparent; margin-bottom:-2px; transition:all 0.2s;
+  }
+  .adm-nav-tab:hover { color:#2B1526; }
+  .adm-nav-tab.active { color:#A52840; border-bottom-color:#A52840; }
+
+  /* ── Refuerzo Report ── */
+  .ref-section { margin-bottom:32px; }
+  .ref-section-title {
+    font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:700;
+    color:#2B1526; margin-bottom:4px;
+  }
+  .ref-section-sub {
+    font-family:'Barlow Condensed',sans-serif; font-size:10px; letter-spacing:2.5px;
+    font-weight:700; text-transform:uppercase; color:#9D8A94; margin-bottom:16px;
+  }
+  .ref-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .ref-card {
+    background:white; border-radius:12px; padding:20px;
+    box-shadow:0 2px 10px rgba(43,21,38,0.06); border:1.5px solid #F2EEF1;
+  }
+  .ref-card.full { grid-column:1/-1; }
+  .ref-card.alert { border-left:4px solid #A52840; }
+  .ref-card.ok    { border-left:4px solid #1F7D4A; }
+  .ref-card.warn  { border-left:4px solid #c07a2a; }
+
+  .ref-card-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:10px; letter-spacing:2.5px;
+    font-weight:800; text-transform:uppercase; color:#9D8A94; margin-bottom:12px;
+  }
+
+  /* Bar chart */
+  .ref-bar-row {
+    display:grid; grid-template-columns:140px 1fr 44px;
+    align-items:center; gap:10px; margin-bottom:10px;
+  }
+  .ref-bar-label { font-size:12.5px; color:#3A2D34; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ref-bar-track { height:10px; background:#F2EEF1; border-radius:6px; overflow:hidden; }
+  .ref-bar-fill  { height:100%; border-radius:6px; transition:width 0.4s ease; }
+  .ref-bar-fill.good { background:linear-gradient(to right,#1F7D4A,#2ea86b); }
+  .ref-bar-fill.warn { background:linear-gradient(to right,#c07a2a,#e09840); }
+  .ref-bar-fill.bad  { background:linear-gradient(to right,#A52840,#d44060); }
+  .ref-bar-pct  { font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; text-align:right; }
+  .ref-bar-pct.good { color:#1F7D4A; }
+  .ref-bar-pct.warn { color:#c07a2a; }
+  .ref-bar-pct.bad  { color:#A52840; }
+
+  /* Heatmap table */
+  .ref-heatmap { width:100%; border-collapse:collapse; font-size:12px; }
+  .ref-heatmap th {
+    padding:8px 10px; background:#F2EEF1;
+    font-family:'Barlow Condensed',sans-serif; font-size:9.5px; letter-spacing:2px;
+    text-transform:uppercase; color:#6A5660; font-weight:700; text-align:left;
+  }
+  .ref-heatmap td { padding:9px 10px; border-bottom:1px solid #F2EEF1; vertical-align:middle; }
+  .ref-heatmap tr:hover td { background:#FAF7F9; }
+  .ref-heat-pill {
+    display:inline-block; padding:3px 9px; border-radius:5px;
+    font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1px;
+  }
+  .ref-heat-pill.bad  { background:#fdf1f2; color:#A52840; }
+  .ref-heat-pill.warn { background:#fdf6ee; color:#c07a2a; }
+  .ref-heat-pill.good { background:#eef7f2; color:#1F7D4A; }
+
+  /* Action cards */
+  .ref-action-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .ref-action-card {
+    background:white; border-radius:10px; padding:16px 18px;
+    border-top:3px solid var(--cc);
+    box-shadow:0 2px 8px rgba(43,21,38,0.06);
+  }
+  .ref-action-icon { font-size:22px; margin-bottom:8px; display:block; }
+  .ref-action-title { font-family:'Cormorant Garamond',serif; font-size:15px; font-weight:700; color:#2B1526; margin-bottom:5px; }
+  .ref-action-text  { font-size:12px; color:#6A5660; line-height:1.6; }
+
+  .adm-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 28px; background: #2B1526;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2); flex-shrink: 0; gap: 12px; flex-wrap: wrap;
+  }
+  .adm-topbar-left { display:flex; align-items:center; gap:14px; }
+  .adm-topbar-right { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .adm-topbar-logo {
+    font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; color:white; letter-spacing:3px;
+  }
+  .adm-topbar-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:2px; text-transform:uppercase; color:var(--gold);
+  }
+  .adm-topbar-course {
+    font-size:12px; color:rgba(255,255,255,0.4); font-family:'DM Sans',sans-serif;
+  }
+
+  .adm-tab-page { flex:1; }
+
+  .adm-body { flex:1; overflow-y:auto; padding:28px 32px; display:flex; flex-direction:column; }
+
+  .adm-kpi-row {
+    display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-bottom:24px;
+  }
+  .adm-kpi {
+    background:white; border-radius:12px; padding:20px 18px;
+    border-top: 3px solid var(--gold); box-shadow: 0 2px 10px rgba(43,21,38,0.07);
+    text-align:center;
+  }
+  .adm-kpi-val {
+    font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:700; color:#2B1526; line-height:1;
+  }
+  .adm-kpi-lbl {
+    font-family:'Barlow Condensed',sans-serif; font-size:10px; letter-spacing:2px;
+    text-transform:uppercase; color:#9D8A94; margin-top:6px;
+  }
+
+  .adm-toolbar {
+    display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap;
+  }
+  .adm-search {
+    flex:1; min-width:220px; padding:10px 14px; border:1.5px solid #E3DCE0;
+    border-radius:8px; font-family:'DM Sans',sans-serif; font-size:13px; outline:none;
+    background:white; color:#2B1526;
+  }
+  .adm-search:focus { border-color:var(--gold); }
+  .adm-select {
+    padding:10px 12px; border:1.5px solid #E3DCE0; border-radius:8px;
+    font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:600;
+    letter-spacing:1px; background:white; color:#2B1526; cursor:pointer; outline:none;
+  }
+  .adm-btn {
+    padding:9px 16px; background:#2B1526; color:white; border:none; border-radius:7px;
+    font-family:'Barlow Condensed',sans-serif; font-size:11.5px; font-weight:700;
+    letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; white-space:nowrap;
+    transition:opacity 0.2s;
+  }
+  .adm-btn:hover { opacity:0.85; }
+  .adm-btn.secondary { background:#6A5660; }
+  .adm-btn.danger { background:#A52840; }
+
+  .adm-table-wrap { background:white; border-radius:12px; overflow:auto; box-shadow:0 2px 12px rgba(43,21,38,0.07); }
+  .adm-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .adm-table thead tr { background:#2B1526; }
+  .adm-table thead th {
+    padding:12px 16px; text-align:left; font-family:'Barlow Condensed',sans-serif;
+    font-size:10.5px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+    color:rgba(255,255,255,0.75); white-space:nowrap;
+  }
+  .adm-table tbody tr { border-bottom:1px solid #F2EEF1; transition:background 0.15s; }
+  .adm-table tbody tr:hover { background:#FAF7F9; }
+  .adm-table tbody td { padding:12px 16px; color:#3A2D34; vertical-align:middle; }
+  .adm-score { font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:700; }
+  .adm-score.pass { color:#1F7D4A; }
+  .adm-score.fail { color:#A52840; }
+  .adm-pct { font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; color:#6A5660; }
+  .adm-badge {
+    display:inline-block; padding:4px 10px; border-radius:5px;
+    font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1px;
+  }
+  .adm-badge.pass { background:#eef7f2; color:#1F7D4A; }
+  .adm-badge.fail { background:#fdf1f2; color:#A52840; }
+  .adm-detail-btn {
+    padding:5px 12px; background:#F2EEF1; border:1px solid #E3DCE0; border-radius:6px;
+    font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700;
+    letter-spacing:1px; cursor:pointer; color:#2B1526; transition:background 0.15s;
+  }
+  .adm-detail-btn:hover { background:#E3DCE0; }
+
+  /* ── Detail Panel ── */
+  .adm-detail-inner {
+    background:white; border-radius:16px; width:100%; max-width:820px;
+    max-height:90vh; overflow-y:auto; padding:32px 36px;
+    box-shadow:0 24px 64px rgba(0,0,0,0.35); position:relative;
+  }
+  .adm-close-detail {
+    position:absolute; top:18px; right:18px; background:#F2EEF1; border:none;
+    border-radius:6px; padding:6px 14px; font-family:'Barlow Condensed',sans-serif;
+    font-size:11px; font-weight:700; letter-spacing:1.5px; cursor:pointer; color:#6A5660;
+  }
+  .adm-detail-header {
+    display:flex; align-items:flex-start; gap:20px; margin-bottom:24px;
+    padding-bottom:20px; border-bottom:1.5px solid #F2EEF1;
+  }
+  .adm-detail-avatar {
+    width:52px; height:52px; border-radius:50%; background:#2B1526;
+    color:var(--gold); display:flex; align-items:center; justify-content:center;
+    font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; flex-shrink:0;
+  }
+  .adm-detail-name { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; color:#2B1526; }
+  .adm-detail-meta { font-size:12.5px; color:#9D8A94; margin-top:3px; }
+  .adm-detail-result {
+    margin-left:auto; text-align:center; padding:12px 20px; border-radius:10px; flex-shrink:0;
+    font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px;
+  }
+  .adm-detail-result.pass { background:#eef7f2; color:#1F7D4A; }
+  .adm-detail-result.fail { background:#fdf1f2; color:#A52840; }
+  .adm-detail-score { font-family:'Cormorant Garamond',serif; font-size:36px; font-weight:700; line-height:1; }
+
+  .adm-detail-tabs { display:flex; gap:4px; margin-bottom:20px; }
+  .adm-tab {
+    padding:8px 18px; border:1.5px solid #E3DCE0; border-radius:7px; background:white;
+    font-family:'Barlow Condensed',sans-serif; font-size:11.5px; font-weight:700;
+    letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; color:#9D8A94;
+    transition:all 0.15s;
+  }
+  .adm-tab.active { background:#2B1526; color:white; border-color:#2B1526; }
+  .adm-tab-content { display:none; }
+  .adm-tab-content.active { display:block; }
+  .adm-section-label {
+    font-family:'Barlow Condensed',sans-serif; font-size:10px; letter-spacing:2.5px;
+    font-weight:800; text-transform:uppercase; color:#9D8A94; margin-bottom:12px;
+  }
+
+  .adm-detail-table { width:100%; border-collapse:collapse; font-size:12.5px; }
+  .adm-detail-table thead th {
+    padding:9px 12px; background:#F2EEF1; font-family:'Barlow Condensed',sans-serif;
+    font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#6A5660;
+    text-align:left; font-weight:700;
+  }
+  .adm-detail-table tbody td { padding:9px 12px; border-bottom:1px solid #F2EEF1; vertical-align:top; }
+  .adm-detail-table tbody tr.row-ok td:last-child { color:#1F7D4A; font-weight:700; }
+  .adm-detail-table tbody tr.row-fail td:last-child { color:#A52840; font-weight:700; }
+  .adm-detail-table tbody tr.row-ok { background:rgba(31,125,74,0.03); }
+  .adm-detail-table tbody tr.row-fail { background:rgba(165,40,64,0.03); }
+
+  /* Loading spinner */
+  .admin-loading {
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:80px 24px; color:#9D8A94; font-size:14px; gap:16px;
+  }
+  .admin-spinner {
+    width:36px; height:36px; border:3px solid #E3DCE0;
+    border-top-color:#A52840; border-radius:50%; animation:spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  #login-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .login-bg {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(165,40,64,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(78,125,144,0.12) 0%, transparent 55%),
+      var(--navy);
+    padding: 24px;
+  }
+  .login-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 48px 44px 40px;
+    width: 100%;
+    max-width: 440px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+  }
+  .login-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 4px;
+    line-height: 1;
+  }
+  .login-brand {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    letter-spacing: 5px;
+    font-weight: 600;
+    color: var(--gold-light);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .login-divider {
+    width: 40px;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 2px;
+    margin: 20px auto;
+    opacity: 0.7;
+  }
+  .login-course {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.92);
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .login-subtitle {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10.5px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .login-form { text-align: left; }
+  .login-field { margin-bottom: 16px; }
+  .login-label {
+    display: block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 7px;
+  }
+  .login-input {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: white;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .login-input::placeholder { color: rgba(255,255,255,0.25); }
+  .login-input:focus {
+    border-color: var(--gold);
+    background: rgba(255,255,255,0.09);
+  }
+  .login-error {
+    font-size: 12.5px;
+    color: #f8a8b4;
+    background: rgba(165,40,64,0.2);
+    border-radius: 6px;
+    padding: 9px 14px;
+    margin-bottom: 14px;
+  }
+  .login-btn {
+    width: 100%;
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 6px;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .login-btn:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .login-btn:active { transform: translateY(0); }
+  .login-footer {
+    font-size: 11.5px;
+    color: rgba(255,255,255,0.28);
+    margin-top: 24px;
+    line-height: 1.6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
 
   html { scroll-behavior: smooth; }
 
@@ -64,8 +441,38 @@
   }
 
   .sidebar-header {
-    padding: 28px 24px 20px;
+    padding: 16px 20px 14px;
     border-bottom: 1px solid rgba(165,40,64,0.25);
+    flex-shrink: 0;
+  }
+
+  .sidebar-user-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 7px 10px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 7px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .sidebar-user-avatar { font-size: 15px; flex-shrink: 0; }
+  .sidebar-user-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.88);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+  }
+  .sidebar-user-depto {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 9.5px;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+    margin-top: 1px;
   }
 
   .sidebar-logo {
@@ -74,30 +481,31 @@
     letter-spacing: 3px;
     color: var(--gold);
     text-transform: uppercase;
-    margin-bottom: 8px;
+    margin-bottom: 3px;
   }
 
   .sidebar-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 15px;
+    font-size: 13.5px;
     font-weight: 600;
     color: var(--white);
-    line-height: 1.4;
+    line-height: 1.35;
   }
 
   /* Progress bar in sidebar */
   .sidebar-progress {
-    padding: 16px 24px;
+    padding: 10px 20px;
     border-bottom: 1px solid rgba(255,255,255,0.07);
+    flex-shrink: 0;
   }
 
   .progress-label {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 10px;
+    font-size: 9px;
     letter-spacing: 2px;
     color: var(--gold);
     text-transform: uppercase;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -121,23 +529,24 @@
   /* Nav items */
   .nav-section {
     flex: 1;
-    padding: 12px 0;
+    padding: 6px 0;
+    overflow-y: auto;
   }
 
   .nav-group-label {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 9px;
+    font-size: 8.5px;
     letter-spacing: 2.5px;
     color: rgba(165,40,64,0.6);
     text-transform: uppercase;
-    padding: 14px 24px 6px;
+    padding: 8px 20px 4px;
   }
 
   .nav-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 24px;
+    gap: 10px;
+    padding: 7px 20px;
     cursor: pointer;
     transition: var(--transition);
     border-left: 3px solid transparent;
@@ -160,15 +569,15 @@
   }
 
   .nav-num {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     background: rgba(255,255,255,0.1);
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 700;
     color: rgba(255,255,255,0.5);
     flex-shrink: 0;
@@ -181,10 +590,10 @@
   }
 
   .nav-text {
-    font-size: 14px;
+    font-size: 12.5px;
     font-weight: 500;
     color: rgba(255,255,255,0.6);
-    line-height: 1.3;
+    line-height: 1.25;
     transition: var(--transition);
   }
 
@@ -1990,12 +2399,53 @@
   <div class="loading-bar-wrap"><div class="loading-bar-fill"></div></div>
 </div>
 
-<div id="app">
+<!-- ===== PANTALLA DE REGISTRO ===== -->
+<div id="login-screen">
+  <div class="login-bg">
+    <div class="login-card">
+      <div class="login-logo">TMLF</div>
+      <div class="login-brand">Training</div>
+      <div class="login-divider"></div>
+      <div class="login-course">Hostigamiento Sexual en el Empleo</div>
+      <div class="login-subtitle">Puerto Rico · Ley 17 · Título VII · Protocolo Interno</div>
+
+      <div class="login-form">
+        <div class="login-field">
+          <label class="login-label">Nombre completo</label>
+          <input type="text" id="login-nombre" class="login-input" placeholder="ej. Ana García López" autocomplete="off"/>
+        </div>
+        <div class="login-field">
+          <label class="login-label">Departamento / Oficina</label>
+          <input type="text" id="login-depto" class="login-input" placeholder="ej. Atención al Cliente" autocomplete="off"/>
+        </div>
+        <div class="login-field">
+          <label class="login-label">Correo electrónico</label>
+          <input type="email" id="login-email" class="login-input" placeholder="nombre@mendozalawfirm.com" autocomplete="off"/>
+        </div>
+        <div id="login-error" class="login-error" style="display:none;">⚠ Por favor completa todos los campos antes de continuar.</div>
+        <button class="login-btn" onclick="startCourse()">▶ &nbsp; Iniciar Capacitación</button>
+      </div>
+
+      <div class="login-footer">
+        <span>🔒</span> Tu información se registra de forma confidencial para efectos de cumplimiento.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="app" style="display:none;">
   <!-- SIDEBAR -->
   <nav id="sidebar">
     <div class="sidebar-header">
       <div class="sidebar-logo">TMLF Training</div>
       <div class="sidebar-title">Hostigamiento Sexual en el Empleo</div>
+      <div class="sidebar-user-badge">
+        <div class="sidebar-user-avatar">👤</div>
+        <div>
+          <div id="sidebar-user-name" class="sidebar-user-name">—</div>
+          <div id="sidebar-user-depto" class="sidebar-user-depto">—</div>
+        </div>
+      </div>
     </div>
     <div class="sidebar-progress">
       <div class="progress-label">
@@ -4702,8 +5152,737 @@ window.selectOption = function(btn, qid, val) {
   }
 };
 
+// ===== LOGIN & REGISTRO =====
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbysyifuWDt3z6Tc-qMznanFuyZO1nhQovo2t5wJj4n9EYHwSQUX-CQCde5Aa6QKfZjf-w/exec';
+
+let userData = { nombre: '', depto: '', email: '', inicio: '' };
+
+function startCourse() {
+  const nombre = document.getElementById('login-nombre').value.trim();
+  const depto  = document.getElementById('login-depto').value.trim();
+  const email  = document.getElementById('login-email').value.trim();
+  const errEl  = document.getElementById('login-error');
+
+  if (!nombre || !depto || !email) {
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  userData = {
+    nombre,
+    depto,
+    email,
+    inicio: new Date().toLocaleString('es-PR', { timeZone: 'America/Puerto_Rico' })
+  };
+
+  // Update sidebar greeting
+  document.getElementById('sidebar-user-name').textContent = nombre;
+  document.getElementById('sidebar-user-depto').textContent = depto;
+
+  // Hide login, show app
+  document.getElementById('login-screen').style.opacity = '0';
+  document.getElementById('login-screen').style.transition = 'opacity 0.4s';
+  setTimeout(() => {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+  }, 400);
+
+  goToScreen('cover');
+}
+
+function sendToSheets(payload) {
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('PEGA_AQUI')) return;
+  const url = APPS_SCRIPT_URL + '?callback=cb_' + Date.now();
+  const script = document.createElement('script');
+  script.src = url + '&data=' + encodeURIComponent(JSON.stringify(payload));
+  document.body.appendChild(script);
+  script.onload = () => script.remove();
+  script.onerror = () => script.remove();
+}
+
+// Patch submitFinalEval to also send data after calling original
+const _origSubmitFinalEval = submitFinalEval;
+window.submitFinalEval = function() {
+  _origSubmitFinalEval();
+
+  // Build payload
+  const mq = moduleSelections;
+  const fq = finalSelections;
+  const payload = {
+    tipo: 'evaluacion_final',
+    nombre:  userData.nombre,
+    depto:   userData.depto,
+    email:   userData.email,
+    inicio:  userData.inicio,
+    fin:     new Date().toLocaleString('es-PR', { timeZone: 'America/Puerto_Rico' }),
+    score_final:    finalScore,
+    pct_final:      Math.round((finalScore / 20) * 100),
+    aprobado:       finalScore >= 16 ? 'Sí' : 'No',
+    respuestas_modulos:  JSON.stringify(mq),
+    respuestas_evaluacion: JSON.stringify(fq),
+    respuestas_casos:    JSON.stringify(caseSelections),
+    resultados_casos:    JSON.stringify(caseResults)
+  };
+  sendToSheets(payload);
+};
+
 // Init
 goToScreen('cover');
+
+// ============================================================
+//  ADMIN PANEL
+// ============================================================
+const ADMIN_PASS = 'TmLf2026';
+let adminData = { responses: [], modulos: [], evaluacion: [], casos: [] };
+let adminFilter = { search: '', status: 'all', sort: 'desc' };
+
+function openAdminLogin() {
+  document.getElementById('admin-overlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('admin-pass-input').focus(), 100);
+}
+
+function closeAdmin() {
+  document.getElementById('admin-overlay').style.display = 'none';
+  document.getElementById('admin-panel').style.display   = 'none';
+  document.getElementById('admin-pass-error').style.display = 'none';
+  document.getElementById('admin-pass-input').value = '';
+}
+
+function checkAdminPass() {
+  const val = document.getElementById('admin-pass-input').value;
+  if (val === ADMIN_PASS) {
+    document.getElementById('admin-overlay').style.display = 'none';
+    document.getElementById('admin-panel').style.display   = 'flex';
+    loadAdminData();
+  } else {
+    const err = document.getElementById('admin-pass-error');
+    err.style.display = 'block';
+    err.textContent   = '⚠ Contraseña incorrecta.';
+    document.getElementById('admin-pass-input').value = '';
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeAdmin();
+  if (e.key === 'Enter' && document.getElementById('admin-overlay').style.display === 'flex') checkAdminPass();
+});
+
+// ── Fetch data from Sheets via JSONP ──
+function loadAdminData() {
+  setAdminStatus('loading');
+  const cbName = 'adminCb_' + Date.now();
+  const url = APPS_SCRIPT_URL + '?callback=' + cbName + '&action=getData';
+  window[cbName] = function(res) {
+    delete window[cbName];
+    if (res && res.status === 'ok') {
+      adminData = res;
+      renderAdminDashboard();
+    } else {
+      setAdminStatus('error', res ? res.message : 'Sin respuesta del servidor.');
+    }
+  };
+  const s = document.createElement('script');
+  s.src = url;
+  s.onerror = () => { setAdminStatus('error', 'No se pudo conectar con Google Sheets.'); delete window[cbName]; };
+  document.body.appendChild(s);
+  setTimeout(() => s.remove(), 8000);
+}
+
+function setAdminStatus(state, msg) {
+  const tab = document.getElementById('adm-tab-participantes');
+  if (!tab) return;
+  if (state === 'loading') {
+    tab.innerHTML = `<div class="admin-loading"><div class="admin-spinner"></div><p>Cargando datos desde Google Sheets…</p></div>`;
+  } else if (state === 'error') {
+    tab.innerHTML = `<div class="admin-loading"><span style="font-size:32px">⚠️</span><p style="color:#A52840;margin-top:12px;">${msg}</p><button class="adm-btn" onclick="loadAdminData()" style="margin-top:16px;">Reintentar</button></div>`;
+  }
+}
+
+function switchAdminTab(btn, tabId) {
+  document.querySelectorAll('.adm-nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.adm-tab-page').forEach(t => t.style.display = 'none');
+  btn.classList.add('active');
+  document.getElementById(tabId).style.display = 'block';
+}
+
+function renderAdminDashboard() {
+  const rows     = adminData.responses || [];
+  const total    = rows.length;
+  const aprobados= rows.filter(r => r.aprobado === 'Sí').length;
+  const scores   = rows.map(r => Number(r.score_final) || 0);
+  const promedio = total ? (scores.reduce((a,b)=>a+b,0)/total).toFixed(1) : '—';
+  const maxScore = total ? Math.max(...scores) : '—';
+  const pctAprob = total ? Math.round(aprobados/total*100) : 0;
+
+  // ── Tab Participantes ──
+  document.getElementById('adm-tab-participantes').innerHTML = `
+    <div class="adm-kpi-row">
+      <div class="adm-kpi"><div class="adm-kpi-val">${total}</div><div class="adm-kpi-lbl">Participantes</div></div>
+      <div class="adm-kpi"><div class="adm-kpi-val">${aprobados}</div><div class="adm-kpi-lbl">Aprobados</div></div>
+      <div class="adm-kpi"><div class="adm-kpi-val">${pctAprob}%</div><div class="adm-kpi-lbl">Tasa Aprobación</div></div>
+      <div class="adm-kpi"><div class="adm-kpi-val">${promedio}</div><div class="adm-kpi-lbl">Promedio Score</div></div>
+      <div class="adm-kpi"><div class="adm-kpi-val">${maxScore}/20</div><div class="adm-kpi-lbl">Score Máximo</div></div>
+    </div>
+    <div class="adm-toolbar">
+      <input class="adm-search" id="adm-search-input" type="text" placeholder="🔍  Buscar nombre, depto o email…" oninput="applyAdminFilter()"/>
+      <select class="adm-select" id="adm-status-filter" onchange="applyAdminFilter()">
+        <option value="all">Todos los estados</option>
+        <option value="Sí">✓ Aprobados</option>
+        <option value="No">✗ No aprobados</option>
+      </select>
+      <select class="adm-select" id="adm-sort-filter" onchange="applyAdminFilter()">
+        <option value="desc">Más recientes primero</option>
+        <option value="asc">Más antiguos primero</option>
+        <option value="score_desc">Mayor score</option>
+        <option value="score_asc">Menor score</option>
+      </select>
+      <button class="adm-btn" onclick="exportCSV()">⬇ Exportar CSV</button>
+      <button class="adm-btn secondary" onclick="loadAdminData()">↺ Actualizar</button>
+    </div>
+    <div class="adm-table-wrap">
+      <table class="adm-table" id="adm-main-table">
+        <thead><tr>
+          <th>#</th><th>Nombre</th><th>Departamento</th><th>Email</th>
+          <th>Inicio</th><th>Fin / Envío</th><th>Score</th><th>%</th><th>Estado</th><th>Detalle</th>
+        </tr></thead>
+        <tbody id="adm-table-body"></tbody>
+      </table>
+    </div>`;
+
+  applyAdminFilter();
+  renderRefuerzoReport();
+}
+
+// ─────────────────────────────────────────────────────────────
+//  REPORTE DE REFUERZO
+// ─────────────────────────────────────────────────────────────
+const Q_META = {
+  // Módulos
+  m1q1:{mod:'Módulo 1',tema:'Marco Legal — Leyes aplicables'},
+  m1q2:{mod:'Módulo 1',tema:'Marco Legal — Ley 17 enmiendas'},
+  m1q3:{mod:'Módulo 1',tema:'Marco Legal — Términos prescriptivos'},
+  m2q1:{mod:'Módulo 2',tema:'Definición — Quid Pro Quo'},
+  m2q2:{mod:'Módulo 2',tema:'Definición — Ambiente hostil'},
+  m2q3:{mod:'Módulo 2',tema:'Definición — Modalidades'},
+  m3q1:{mod:'Módulo 3',tema:'Conductas — Tipos y ejemplos'},
+  m3q2:{mod:'Módulo 3',tema:'Conductas — Verbal vs. físico'},
+  m3q3:{mod:'Módulo 3',tema:'Conductas — Terceros'},
+  m4q1:{mod:'Módulo 4',tema:'Responsabilidad — Vicaria'},
+  m4q2:{mod:'Módulo 4',tema:'Responsabilidad — Patronal directa'},
+  m4q3:{mod:'Módulo 4',tema:'Responsabilidad — Defensa afirmativa'},
+  m5q1:{mod:'Módulo 5',tema:'Querellas — Procedimiento'},
+  m5q2:{mod:'Módulo 5',tema:'Querellas — Plazos'},
+  m5q3:{mod:'Módulo 5',tema:'Querellas — Querellas anónimas'},
+  m6q1:{mod:'Módulo 6',tema:'Investigación — Principios'},
+  m6q2:{mod:'Módulo 6',tema:'Investigación — Imparcialidad'},
+  m6q3:{mod:'Módulo 6',tema:'Investigación — Informe'},
+  m7q1:{mod:'Módulo 7',tema:'Medidas Provisionales — Activación'},
+  m7q2:{mod:'Módulo 7',tema:'Medidas Provisionales — Tipos'},
+  m7q3:{mod:'Módulo 7',tema:'Medidas Provisionales — Tiempo'},
+  m8q1:{mod:'Módulo 8',tema:'Represalias — Definición'},
+  m8q2:{mod:'Módulo 8',tema:'Represalias — Protección testigos'},
+  m8q3:{mod:'Módulo 8',tema:'Represalias — Confidencialidad'},
+  m9q1:{mod:'Módulo 9',tema:'Términos Prescriptivos — Plazos'},
+  m9q2:{mod:'Módulo 9',tema:'Términos Prescriptivos — Licencia Ley 83'},
+  m9q3:{mod:'Módulo 9',tema:'Términos Prescriptivos — Foros'},
+  // Evaluación Final
+  ef1:{mod:'Eval Final P.I', tema:'Marco Legal — Constitución PR'},
+  ef2:{mod:'Eval Final P.I', tema:'Marco Legal — Ley 17 definición'},
+  ef3:{mod:'Eval Final P.I', tema:'Quid Pro Quo — Explícito'},
+  ef4:{mod:'Eval Final P.I', tema:'Ambiente hostil — Criterios'},
+  ef5:{mod:'Eval Final P.I', tema:'Responsabilidad Patronal — Vicaria'},
+  ef6:{mod:'Eval Final P.I', tema:'Procedimiento — Presentación querella'},
+  ef7:{mod:'Eval Final P.I', tema:'Investigación — Plazos'},
+  ef8:{mod:'Eval Final P.I', tema:'Medidas Provisionales'},
+  ef9:{mod:'Eval Final P.I', tema:'Represalias — Ley 115'},
+  ef10:{mod:'Eval Final P.I',tema:'Términos prescriptivos — Ley 17'},
+  ef11:{mod:'Eval Final P.I',tema:'Confidencialidad — Obligaciones'},
+  ef12:{mod:'Eval Final P.I',tema:'Deberes del Supervisor'},
+  ef13:{mod:'Eval Final P.I',tema:'Licencia especial — Ley 83'},
+  ef14:{mod:'Eval Final P.I',tema:'Terceros — Responsabilidad'},
+  ef15:{mod:'Eval Final P.I',tema:'Querella anónima — Protocolo'},
+  ef16:{mod:'Eval Final P.II',tema:'Escenario — Quid Pro Quo'},
+  ef17:{mod:'Eval Final P.II',tema:'Escenario — Ambiente hostil'},
+  ef18:{mod:'Eval Final P.II',tema:'Escenario — Represalia'},
+  ef19:{mod:'Eval Final P.II',tema:'Escenario — Investigación'},
+  ef20:{mod:'Eval Final P.II',tema:'Escenario — Responsabilidad patronal'},
+  // Casos
+  c1:{mod:'Casos',tema:'Caso 1 — Quid Pro Quo supervisor'},
+  c2:{mod:'Casos',tema:'Caso 2 — Responsabilidad por tercero'},
+  c3:{mod:'Casos',tema:'Caso 3 — Represalia a testigo'},
+  c4:{mod:'Casos',tema:'Caso 4 — Querella anónima'}
+};
+
+const MOD_LABELS = {
+  m1:'Módulo 1 — Marco Legal', m2:'Módulo 2 — Definición y Modalidades',
+  m3:'Módulo 3 — Conductas',   m4:'Módulo 4 — Responsabilidad Patronal',
+  m5:'Módulo 5 — Querellas',   m6:'Módulo 6 — Investigación',
+  m7:'Módulo 7 — Medidas Provisionales', m8:'Módulo 8 — Represalias',
+  m9:'Módulo 9 — Términos Prescriptivos',
+  'Eval Final P.I':'Evaluación Final — Parte I Teórica',
+  'Eval Final P.II':'Evaluación Final — Parte II Escenarios',
+  'Casos':'Análisis de Casos'
+};
+
+function renderRefuerzoReport() {
+  const tab      = document.getElementById('adm-tab-reporte');
+  const evRows   = adminData.evaluacion || [];
+  const modRows  = adminData.modulos    || [];
+  const casoRows = adminData.casos      || [];
+  const respRows = adminData.responses  || [];
+
+  if (respRows.length === 0) {
+    tab.innerHTML = `<div class="admin-loading"><span style="font-size:32px">📭</span><p style="margin-top:16px;color:#9D8A94;">Aún no hay datos de participantes para analizar.</p></div>`;
+    return;
+  }
+
+  // ── 1. Score por pregunta (% correcto) ──
+  const allRows = [...evRows, ...modRows, ...casoRows];
+  const qStats = {};
+  allRows.forEach(r => {
+    const qid = r.pregunta || r.caso;
+    if (!qid) return;
+    if (!qStats[qid]) qStats[qid] = { correct:0, total:0 };
+    qStats[qid].total++;
+    if (r.resultado === 'Correcto') qStats[qid].correct++;
+  });
+
+  // ── 2. Score por módulo (promedio % correcto de sus preguntas) ──
+  const modStats = {};
+  Object.entries(qStats).forEach(([qid, s]) => {
+    const meta = Q_META[qid];
+    if (!meta) return;
+    const modKey = meta.mod;
+    if (!modStats[modKey]) modStats[modKey] = { correct:0, total:0 };
+    modStats[modKey].correct += s.correct;
+    modStats[modKey].total   += s.total;
+  });
+
+  // ── 3. Score por departamento ──
+  const deptoStats = {};
+  respRows.forEach(r => {
+    const d = r.depto || 'Sin depto';
+    if (!deptoStats[d]) deptoStats[d] = { scores:[], aprobados:0, total:0 };
+    deptoStats[d].scores.push(Number(r.score_final)||0);
+    deptoStats[d].total++;
+    if (r.aprobado === 'Sí') deptoStats[d].aprobados++;
+  });
+
+  // ── 4. Preguntas más falladas ──
+  const falladasAll = Object.entries(qStats)
+    .map(([qid,s]) => ({ qid, pct: s.total ? Math.round(s.correct/s.total*100) : 0, total:s.total, meta: Q_META[qid]||{mod:'?',tema:qid} }))
+    .filter(x => x.total > 0)
+    .sort((a,b) => a.pct - b.pct);
+
+  const criticas  = falladasAll.filter(x => x.pct < 60);
+  const atención  = falladasAll.filter(x => x.pct >= 60 && x.pct < 80);
+  const dominadas = falladasAll.filter(x => x.pct >= 80);
+
+  // Módulos ordenados por % correcto
+  const modSorted = Object.entries(modStats)
+    .map(([mod, s]) => ({ mod, label: MOD_LABELS[mod]||mod, pct: s.total ? Math.round(s.correct/s.total*100) : 0 }))
+    .sort((a,b) => a.pct - b.pct);
+
+  // Deptos ordenados por promedio
+  const deptoSorted = Object.entries(deptoStats)
+    .map(([d, s]) => ({
+      depto: d,
+      prom: s.scores.length ? (s.scores.reduce((a,b)=>a+b,0)/s.scores.length).toFixed(1) : 0,
+      pctAprob: s.total ? Math.round(s.aprobados/s.total*100) : 0,
+      total: s.total
+    }))
+    .sort((a,b) => a.prom - b.prom);
+
+  // Recomendaciones automáticas basadas en los datos
+  const recomendaciones = [];
+  if (criticas.length > 0) {
+    const mods = [...new Set(criticas.map(x=>x.meta.mod))];
+    recomendaciones.push({ icon:'🔴', color:'#A52840', title:'Refuerzo Urgente', text:`${criticas.length} pregunta(s) con menos del 60% de aciertos. Áreas críticas: ${mods.slice(0,3).join(', ')}.` });
+  }
+  if (atención.length > 0) {
+    recomendaciones.push({ icon:'🟡', color:'#c07a2a', title:'Refuerzo Recomendado', text:`${atención.length} pregunta(s) entre 60-79%. Refuerza con casos prácticos y ejemplos adicionales.` });
+  }
+  const weakDepto = deptoSorted.find(d => Number(d.prom) < 14);
+  if (weakDepto) {
+    recomendaciones.push({ icon:'🏢', color:'#4E7D90', title:`Atención: ${weakDepto.depto}`, text:`Promedio de ${weakDepto.prom}/20. Considera una sesión de repaso dirigida a este departamento.` });
+  }
+  if (dominadas.length >= falladasAll.length * 0.7) {
+    recomendaciones.push({ icon:'✅', color:'#1F7D4A', title:'Buen Dominio General', text:`El ${Math.round(dominadas.length/falladasAll.length*100)}% de los temas están por encima del 80% de aciertos.` });
+  }
+
+  // ── Render ──
+  tab.innerHTML = `
+
+    <!-- HEADER REPORTE -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:#2B1526;">Reporte de Refuerzo</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2.5px;color:#9D8A94;text-transform:uppercase;margin-top:3px;">Basado en ${respRows.length} participante(s) · ${falladasAll.length} preguntas analizadas</div>
+      </div>
+      <button class="adm-btn" onclick="exportRefuerzoCSV()">⬇ Exportar Reporte</button>
+    </div>
+
+    <!-- RECOMENDACIONES AUTOMÁTICAS -->
+    ${recomendaciones.length ? `
+    <div class="ref-section">
+      <div class="ref-section-sub">Diagnóstico Automático</div>
+      <div class="ref-action-grid">
+        ${recomendaciones.map(r=>`
+          <div class="ref-action-card" style="--cc:${r.color}">
+            <span class="ref-action-icon">${r.icon}</span>
+            <div class="ref-action-title">${r.title}</div>
+            <div class="ref-action-text">${r.text}</div>
+          </div>`).join('')}
+      </div>
+    </div>` : ''}
+
+    <!-- RENDIMIENTO POR MÓDULO -->
+    <div class="ref-section">
+      <div class="ref-section-title">Rendimiento por Módulo / Sección</div>
+      <div class="ref-section-sub">% de respuestas correctas — de menor a mayor</div>
+      <div class="ref-card full">
+        ${modSorted.map(m => {
+          const cls = m.pct < 60 ? 'bad' : m.pct < 80 ? 'warn' : 'good';
+          return `<div class="ref-bar-row">
+            <div class="ref-bar-label" title="${m.label}">${m.label}</div>
+            <div class="ref-bar-track"><div class="ref-bar-fill ${cls}" style="width:${m.pct}%"></div></div>
+            <div class="ref-bar-pct ${cls}">${m.pct}%</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- GRIDS: CRITICAS + ATENCION -->
+    <div class="ref-grid" style="margin-bottom:14px;">
+
+      <!-- Preguntas críticas -->
+      <div class="ref-card alert">
+        <div class="ref-card-title">🔴 Preguntas Críticas — menos del 60%</div>
+        ${criticas.length === 0
+          ? `<p style="color:#9D8A94;font-size:13px;">Sin preguntas críticas. ¡Excelente!</p>`
+          : `<table class="ref-heatmap"><thead><tr><th>Tema</th><th>Módulo</th><th>Aciertos</th></tr></thead><tbody>
+              ${criticas.slice(0,10).map(x=>`<tr>
+                <td>${x.meta.tema}</td>
+                <td style="color:#9D8A94;font-size:11px;">${x.meta.mod}</td>
+                <td><span class="ref-heat-pill bad">${x.pct}%</span></td>
+              </tr>`).join('')}
+            </tbody></table>`}
+      </div>
+
+      <!-- Preguntas de atención -->
+      <div class="ref-card warn">
+        <div class="ref-card-title">🟡 Requieren Atención — 60% a 79%</div>
+        ${atención.length === 0
+          ? `<p style="color:#9D8A94;font-size:13px;">Ninguna. Todos los temas superan el 80%.</p>`
+          : `<table class="ref-heatmap"><thead><tr><th>Tema</th><th>Módulo</th><th>Aciertos</th></tr></thead><tbody>
+              ${atención.slice(0,10).map(x=>`<tr>
+                <td>${x.meta.tema}</td>
+                <td style="color:#9D8A94;font-size:11px;">${x.meta.mod}</td>
+                <td><span class="ref-heat-pill warn">${x.pct}%</span></td>
+              </tr>`).join('')}
+            </tbody></table>`}
+      </div>
+
+    </div>
+
+    <!-- TEMAS DOMINADOS -->
+    <div class="ref-section">
+      <div class="ref-card ok">
+        <div class="ref-card-title">✅ Temas con Buen Dominio — 80% o más (${dominadas.length} temas)</div>
+        ${dominadas.length === 0
+          ? `<p style="color:#9D8A94;font-size:13px;">Aún sin temas consolidados.</p>`
+          : `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">
+              ${dominadas.map(x=>`<span style="background:#eef7f2;color:#1F7D4A;padding:4px 12px;border-radius:5px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;">${x.meta.tema} (${x.pct}%)</span>`).join('')}
+            </div>`}
+      </div>
+    </div>
+
+    <!-- RENDIMIENTO POR DEPARTAMENTO -->
+    ${deptoSorted.length > 0 ? `
+    <div class="ref-section">
+      <div class="ref-section-title">Rendimiento por Departamento</div>
+      <div class="ref-section-sub">Promedio de score y tasa de aprobación</div>
+      <div class="ref-card full">
+        <table class="ref-heatmap">
+          <thead><tr><th>Departamento</th><th>Participantes</th><th>Promedio</th><th>% Aprobación</th><th>Estado</th></tr></thead>
+          <tbody>
+            ${deptoSorted.map(d => {
+              const cls = Number(d.prom) >= 16 ? 'good' : Number(d.prom) >= 12 ? 'warn' : 'bad';
+              const aprCls = d.pctAprob >= 80 ? 'good' : d.pctAprob >= 60 ? 'warn' : 'bad';
+              return `<tr>
+                <td><strong>${d.depto}</strong></td>
+                <td style="color:#9D8A94;">${d.total}</td>
+                <td><span class="ref-heat-pill ${cls}">${d.prom}/20</span></td>
+                <td><span class="ref-heat-pill ${aprCls}">${d.pctAprob}%</span></td>
+                <td style="font-size:12px;color:#6A5660;">${Number(d.prom)<12?'⚠ Refuerzo urgente':Number(d.prom)<16?'👀 Monitorear':'✓ Buen desempeño'}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>` : ''}
+
+    <!-- TABLA COMPLETA POR PREGUNTA -->
+    <div class="ref-section">
+      <div class="ref-section-title">Detalle Completo por Pregunta</div>
+      <div class="ref-section-sub">Todas las preguntas ordenadas por % de aciertos</div>
+      <div class="adm-table-wrap">
+        <table class="adm-table">
+          <thead><tr>
+            <th>Módulo / Sección</th><th>Tema</th><th>Pregunta</th>
+            <th>Respuestas</th><th>% Correcto</th><th>Acción</th>
+          </tr></thead>
+          <tbody>
+            ${falladasAll.map(x => {
+              const cls = x.pct < 60 ? 'bad' : x.pct < 80 ? 'warn' : 'good';
+              const accion = x.pct < 60 ? '🔴 Refuerzo urgente' : x.pct < 80 ? '🟡 Reforzar' : '✅ Consolidado';
+              return `<tr>
+                <td style="font-size:12px;color:#6A5660;">${x.meta.mod}</td>
+                <td style="font-size:13px;font-weight:500;">${x.meta.tema}</td>
+                <td style="font-size:11.5px;color:#9D8A94;">${x.qid}</td>
+                <td style="font-size:12px;">${x.total}</td>
+                <td><span class="ref-heat-pill ${cls}">${x.pct}%</span></td>
+                <td style="font-size:12px;">${accion}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function exportRefuerzoCSV() {
+  const evRows   = adminData.evaluacion || [];
+  const modRows  = adminData.modulos    || [];
+  const casoRows = adminData.casos      || [];
+  const allRows  = [...evRows, ...modRows, ...casoRows];
+
+  const qStats = {};
+  allRows.forEach(r => {
+    const qid = r.pregunta || r.caso; if (!qid) return;
+    if (!qStats[qid]) qStats[qid] = { correct:0, total:0 };
+    qStats[qid].total++;
+    if (r.resultado === 'Correcto') qStats[qid].correct++;
+  });
+
+  const csvRows = [['Módulo','Tema','ID Pregunta','Total Respuestas','Correctas','% Aciertos','Clasificación']];
+  Object.entries(qStats).sort((a,b) => {
+    const pa = a[1].total ? Math.round(a[1].correct/a[1].total*100) : 0;
+    const pb = b[1].total ? Math.round(b[1].correct/b[1].total*100) : 0;
+    return pa - pb;
+  }).forEach(([qid, s]) => {
+    const meta = Q_META[qid] || { mod:'?', tema:qid };
+    const pct  = s.total ? Math.round(s.correct/s.total*100) : 0;
+    const cls  = pct < 60 ? 'Refuerzo Urgente' : pct < 80 ? 'Reforzar' : 'Consolidado';
+    csvRows.push([meta.mod, meta.tema, qid, s.total, s.correct, pct+'%', cls]);
+  });
+
+  const blob = new Blob([csvRows.map(r=>r.join(',')).join('\n')], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'TMLF_Reporte_Refuerzo_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+function applyAdminFilter() {
+  const rows   = adminData.responses || [];
+  const search = (document.getElementById('adm-search-input')?.value || '').toLowerCase();
+  const status = document.getElementById('adm-status-filter')?.value || 'all';
+  const sort   = document.getElementById('adm-sort-filter')?.value   || 'desc';
+
+  let filtered = rows.filter(r => {
+    const matchSearch = !search ||
+      (r.nombre||'').toLowerCase().includes(search) ||
+      (r.depto||'').toLowerCase().includes(search)  ||
+      (r.email||'').toLowerCase().includes(search);
+    const matchStatus = status === 'all' || r.aprobado === status;
+    return matchSearch && matchStatus;
+  });
+
+  filtered.sort((a, b) => {
+    if (sort === 'asc')        return (a.id||0) - (b.id||0);
+    if (sort === 'desc')       return (b.id||0) - (a.id||0);
+    if (sort === 'score_desc') return (Number(b.score_final)||0) - (Number(a.score_final)||0);
+    if (sort === 'score_asc')  return (Number(a.score_final)||0) - (Number(b.score_final)||0);
+    return 0;
+  });
+
+  const tbody = document.getElementById('adm-table-body');
+  if (!tbody) return;
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:32px;color:#9D8A94;">Sin resultados para los filtros aplicados.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map((r, i) => {
+    const pct   = Number(r.pct_final) || 0;
+    const score = Number(r.score_final) || 0;
+    const aprob = r.aprobado === 'Sí';
+    return `<tr>
+      <td style="color:#9D8A94;font-size:11px;">${r.id || i+1}</td>
+      <td><strong>${r.nombre || '—'}</strong></td>
+      <td>${r.depto || '—'}</td>
+      <td style="font-size:12px;color:#6A5660;">${r.email || '—'}</td>
+      <td style="font-size:11.5px;color:#9D8A94;">${r.inicio || '—'}</td>
+      <td style="font-size:11.5px;color:#9D8A94;">${r.fin || '—'}</td>
+      <td><span class="adm-score ${aprob?'pass':'fail'}">${score}/20</span></td>
+      <td><span class="adm-pct">${pct}%</span></td>
+      <td><span class="adm-badge ${aprob?'pass':'fail'}">${aprob?'✓ Aprobado':'✗ No aprobado'}</span></td>
+      <td><button class="adm-detail-btn" onclick="openParticipantDetail(${r.id||i})">Ver →</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function openParticipantDetail(id) {
+  const row  = (adminData.responses||[]).find(r => r.id == id) || {};
+  const mods = (adminData.modulos||[]).filter(r => r.id_resp == id);
+  const evs  = (adminData.evaluacion||[]).filter(r => r.id_resp == id);
+  const casos= (adminData.casos||[]).filter(r => r.id_resp == id);
+
+  const aprob = row.aprobado === 'Sí';
+
+  const modHtml = buildDetailTable(mods, ['Pregunta','Respuesta','Correcta','Resultado'], r=>[r.pregunta, r.respuesta, r.correcta, r.resultado]);
+  const evHtml  = buildDetailTable(evs,  ['Parte','Pregunta','Respuesta','Correcta','Resultado'], r=>[r.parte, r.pregunta, r.respuesta, r.correcta, r.resultado]);
+  const casoHtml= buildDetailTable(casos,['Caso','Respuesta','Correcta','Resultado'], r=>[r.caso, r.respuesta, r.correcta, r.resultado]);
+
+  const detail = document.getElementById('adm-detail-panel');
+  detail.style.display = 'flex';
+  detail.innerHTML = `
+    <div class="adm-detail-inner">
+      <button class="adm-close-detail" onclick="document.getElementById('adm-detail-panel').style.display='none'">✕ Cerrar</button>
+
+      <div class="adm-detail-header">
+        <div class="adm-detail-avatar">${(row.nombre||'?')[0].toUpperCase()}</div>
+        <div>
+          <div class="adm-detail-name">${row.nombre||'—'}</div>
+          <div class="adm-detail-meta">${row.depto||'—'} &nbsp;·&nbsp; ${row.email||'—'}</div>
+          <div class="adm-detail-meta" style="margin-top:4px;">Inicio: ${row.inicio||'—'} &nbsp;·&nbsp; Fin: ${row.fin||'—'}</div>
+        </div>
+        <div class="adm-detail-result ${aprob?'pass':'fail'}">
+          <div class="adm-detail-score">${row.score_final||0}/20</div>
+          <div>${row.pct_final||0}%</div>
+          <div style="font-size:11px;margin-top:4px;">${aprob?'✓ APROBADO':'✗ NO APROBADO'}</div>
+        </div>
+      </div>
+
+      <div class="adm-detail-tabs">
+        <button class="adm-tab active" onclick="switchDetailTab(this,'dtab-eval')">Evaluación Final</button>
+        <button class="adm-tab" onclick="switchDetailTab(this,'dtab-mods')">Quizzes por Módulo</button>
+        <button class="adm-tab" onclick="switchDetailTab(this,'dtab-casos')">Análisis de Casos</button>
+      </div>
+
+      <div id="dtab-eval" class="adm-tab-content active">
+        <p class="adm-section-label">EVALUACIÓN FINAL — ${(evs.filter(r=>r.resultado==='Correcto')).length}/${evs.length} correctas</p>
+        ${evHtml || '<p style="color:#9D8A94;padding:16px 0;">Sin datos registrados.</p>'}
+      </div>
+      <div id="dtab-mods" class="adm-tab-content">
+        <p class="adm-section-label">QUIZZES DE MÓDULOS — ${(mods.filter(r=>r.resultado==='Correcto')).length}/${mods.length} correctas</p>
+        ${modHtml || '<p style="color:#9D8A94;padding:16px 0;">Sin datos registrados.</p>'}
+      </div>
+      <div id="dtab-casos" class="adm-tab-content">
+        <p class="adm-section-label">ANÁLISIS DE CASOS — ${(casos.filter(r=>r.resultado==='Correcto')).length}/${casos.length} correctos</p>
+        ${casoHtml || '<p style="color:#9D8A94;padding:16px 0;">Sin datos registrados.</p>'}
+      </div>
+    </div>`;
+}
+
+function buildDetailTable(rows, headers, mapper) {
+  if (!rows || rows.length === 0) return '';
+  return `<table class="adm-detail-table">
+    <thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(r => {
+      const cells = mapper(r);
+      const isCorrect = cells[cells.length-1] === 'Correcto';
+      return `<tr class="${isCorrect?'row-ok':'row-fail'}">${cells.map(c=>`<td>${c||'—'}</td>`).join('')}</tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+function switchDetailTab(btn, tabId) {
+  btn.closest('.adm-detail-inner').querySelectorAll('.adm-tab').forEach(t=>t.classList.remove('active'));
+  btn.closest('.adm-detail-inner').querySelectorAll('.adm-tab-content').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+
+function exportCSV() {
+  const rows = adminData.responses || [];
+  if (!rows.length) return;
+  const headers = ['ID','Nombre','Departamento','Email','Inicio','Fin','Score','%','Aprobado'];
+  const csvRows = [headers.join(',')];
+  rows.forEach(r => {
+    csvRows.push([r.id, `"${r.nombre||''}"`, `"${r.depto||''}"`, `"${r.email||''}"`,
+      `"${r.inicio||''}"`, `"${r.fin||''}"`, r.score_final, r.pct_final, r.aprobado].join(','));
+  });
+  const blob = new Blob([csvRows.join('\n')], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'TMLF_Hostigamiento_Respuestas_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
 </script>
+<!-- ===== ADMIN PASSWORD OVERLAY ===== -->
+<div id="admin-overlay" style="display:none; position:fixed; inset:0; z-index:10000; background:rgba(20,8,16,0.85); backdrop-filter:blur(6px); align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:16px; padding:40px 36px; width:100%; max-width:380px; text-align:center; box-shadow:0 24px 64px rgba(0,0,0,0.4);">
+    <div style="font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:700; color:#2B1526; margin-bottom:4px;">Panel Admin</div>
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:10px; letter-spacing:3px; color:#9D8A94; text-transform:uppercase; margin-bottom:24px;">TMLF Training · Acceso Restringido</div>
+    <input id="admin-pass-input" type="password" placeholder="Contraseña de administrador"
+      style="width:100%; padding:12px 16px; border:1.5px solid #E3DCE0; border-radius:8px; font-size:14px; font-family:'DM Sans',sans-serif; outline:none; margin-bottom:10px;"/>
+    <div id="admin-pass-error" style="display:none; color:#A52840; font-size:12.5px; margin-bottom:10px;"></div>
+    <button onclick="checkAdminPass()" style="width:100%; background:#2B1526; color:white; border:none; border-radius:8px; padding:13px; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; cursor:pointer; margin-bottom:10px;">Ingresar</button>
+    <button onclick="closeAdmin()" style="background:none; border:none; color:#9D8A94; font-size:12px; cursor:pointer; font-family:'DM Sans',sans-serif;">Cancelar</button>
+  </div>
+</div>
+
+<!-- ===== ADMIN PANEL ===== -->
+<div id="admin-panel" style="display:none; position:fixed; inset:0; z-index:9998; background:#F2EEF1; flex-direction:column; overflow:hidden;">
+
+  <!-- Admin Topbar -->
+  <div class="adm-topbar">
+    <div class="adm-topbar-left">
+      <span class="adm-topbar-logo">TMLF</span>
+      <span class="adm-topbar-title">Panel de Administrador</span>
+      <span class="adm-topbar-course">Hostigamiento Sexual en el Empleo</span>
+    </div>
+    <div class="adm-topbar-right">
+      <button class="adm-btn secondary" onclick="loadAdminData()">↺ Actualizar datos</button>
+      <button class="adm-btn" onclick="exportCSV()">⬇ Exportar CSV</button>
+      <button class="adm-btn danger" onclick="closeAdmin()">✕ Cerrar</button>
+    </div>
+  </div>
+
+  <!-- Admin Body -->
+  <div id="admin-body" class="adm-body" style="display:flex;flex-direction:column;">
+
+    <!-- NAV TABS -->
+    <div class="adm-nav-tabs">
+      <button class="adm-nav-tab active" onclick="switchAdminTab(this,'adm-tab-participantes')">👥 Participantes</button>
+      <button class="adm-nav-tab" onclick="switchAdminTab(this,'adm-tab-reporte')">📊 Reporte de Refuerzo</button>
+    </div>
+
+    <!-- TAB: PARTICIPANTES -->
+    <div id="adm-tab-participantes" class="adm-tab-page">
+      <div class="admin-loading"><div class="admin-spinner"></div><p>Cargando datos…</p></div>
+    </div>
+
+    <!-- TAB: REPORTE -->
+    <div id="adm-tab-reporte" class="adm-tab-page" style="display:none;">
+      <div class="admin-loading"><div class="admin-spinner"></div><p>Cargando reporte…</p></div>
+    </div>
+
+  </div>
+
+  <!-- Detail Slide Panel -->
+  <div id="adm-detail-panel" style="display:none; position:absolute; inset:0; background:rgba(43,21,38,0.55); backdrop-filter:blur(4px); z-index:100; align-items:center; justify-content:center; padding:24px;">
+  </div>
+</div>
+
+<!-- Admin trigger button (bottom-right corner, subtle) -->
+<button id="admin-trigger-btn" onclick="openAdminLogin()" title="Acceso Administrador"
+  style="position:fixed; bottom:18px; right:18px; z-index:9990; background:#2B1526; color:rgba(255,255,255,0.5); border:none; border-radius:50%; width:38px; height:38px; font-size:16px; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,0.3); transition:opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'" style="opacity:0.6;">⚙</button>
+
 </body>
 </html>
