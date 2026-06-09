@@ -444,9 +444,14 @@ body::before{
     <select class="sel" id="q1" onchange="onTrainingChange(this.value)">
       <option value="">Selecciona el training…</option>
     </select>
-    <div class="otro-reveal" id="otro-q1">
-      <input class="otro-input" id="q1-otro-txt" type="text" placeholder="Escribe el nombre del training…" oninput="sv('q1_training', this.value)"/>
+    <div style="display:flex;align-items:center;gap:8px;margin:10px 0 6px">
+      <div style="flex:1;height:1px;background:rgba(255,255,255,.07)"></div>
+      <span style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--slate)">o escríbelo directamente</span>
+      <div style="flex:1;height:1px;background:rgba(255,255,255,.07)"></div>
     </div>
+    <input class="otro-input" id="q1-otro-txt" type="text"
+      placeholder="Nombre del training…"
+      oninput="onTrainingManual(this.value)"/>
     <div class="verr" id="e-q1">⚠ Selecciona o escribe el training</div>
   </div>
 
@@ -1085,9 +1090,8 @@ function validate(n) {
     const q1otro = document.getElementById('q1-otro-txt').value.trim();
     const q3val = document.getElementById('q3').value;
     const q3otro = document.getElementById('q3-otro-txt').value.trim();
-    if (!q1val) { showE('e-q1'); ok = false; }
-    else if (q1val === 'Otro' && !q1otro) { showE('e-q1'); ok = false; }
-    else { hideE('e-q1'); if (q1val === 'Otro') R.q1_training = q1otro; }
+    if (!q1val && !q1otro) { showE('e-q1'); ok = false; }
+    else { hideE('e-q1'); R.q1_training = q1otro || q1val; }
     if (!q3val) { showE('e-q3'); ok = false; }
     else if (q3val === 'Otro' && !q3otro) { showE('e-q3'); ok = false; }
     else hideE('e-q3');
@@ -1119,10 +1123,25 @@ function hideE(id) { const e = document.getElementById(id); if (e) e.classList.r
 function sv(k, v) { R[k] = v; }
 
 function onTrainingChange(val) {
-  R.q1_training = val === 'Otro' ? null : val;
-  const reveal = document.getElementById('otro-q1');
-  if (reveal) reveal.classList.toggle('open', val === 'Otro');
-  if (val && val !== 'Otro') hideE('e-q1');
+  // Dropdown selected — use that value and clear manual field
+  if (val && val !== 'Otro') {
+    R.q1_training = val;
+    document.getElementById('q1-otro-txt').value = '';
+    hideE('e-q1');
+  } else if (val === 'Otro') {
+    R.q1_training = document.getElementById('q1-otro-txt').value.trim() || null;
+  } else {
+    R.q1_training = document.getElementById('q1-otro-txt').value.trim() || null;
+  }
+}
+
+function onTrainingManual(val) {
+  // User typed manually — use typed value and reset dropdown
+  R.q1_training = val.trim() || null;
+  if (val.trim()) {
+    document.getElementById('q1').value = '';
+    hideE('e-q1');
+  }
 }
 
 function so(k, v, el, gid, eid) {
