@@ -431,6 +431,24 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14
 #ap-trend-svg{display:block;overflow:visible;}
 .trend-empty{display:flex;align-items:center;justify-content:center;height:130px;color:rgba(255,255,255,.2);font-size:.78rem;}
 .ap-table-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;overflow:hidden;}
+
+/* ── TL Chart ── */
+.ap-chart-row-tl{margin-bottom:1rem;}
+.tl-chart-grid{display:flex;flex-direction:column;gap:.8rem;}
+.tl-row{display:grid;grid-template-columns:170px 1fr auto;gap:.85rem;align-items:center;padding:.35rem .2rem;border-radius:6px;transition:background .1s;}
+.tl-row:hover{background:rgba(255,255,255,.03);}
+.tl-name{font-size:.76rem;color:rgba(255,255,255,.75);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tl-bars{display:flex;flex-direction:column;gap:.32rem;}
+.tl-bar-row{display:flex;align-items:center;gap:.5rem;}
+.tl-bar-lbl{font-size:.6rem;color:rgba(255,255,255,.28);width:54px;flex-shrink:0;}
+.tl-track{flex:1;height:7px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;}
+.tl-fill{height:100%;border-radius:4px;transition:width .5s ease;}
+.tl-count-fill{background:rgba(201,168,76,.7);}
+.tl-val-count{font-size:.74rem;font-weight:700;color:#C9A84C;min-width:22px;text-align:right;}
+.tl-val-pct{font-size:.72rem;font-weight:700;min-width:38px;text-align:right;}
+.tl-pass-col{display:flex;flex-direction:column;align-items:center;gap:.18rem;}
+.tl-pass-num{font-size:1.1rem;font-weight:700;color:#fff;line-height:1;}
+.tl-pass-lbl-s{font-size:.58rem;color:rgba(255,255,255,.28);text-transform:uppercase;letter-spacing:.05em;}
 .ap-table-hdr{padding:.82rem 1.15rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.07);}
 .ap-table-ttl{font-weight:600;font-size:.83rem;color:rgba(255,255,255,.8);}
 .ap-count-badge{background:rgba(74,159,232,.15);color:#4A9FE8;font-size:.67rem;font-weight:700;padding:.16rem .5rem;border-radius:20px;}
@@ -777,6 +795,17 @@ table.apt td{padding:.5rem .9rem;color:rgba(255,255,255,.65);vertical-align:midd
         </div>
       </div>
     </div>
+    <!-- TL CHART -->
+    <div class="ap-cc ap-chart-row-tl">
+      <div class="ap-cc-head">
+        <span class="ap-cc-title">Cédulas evaluadas por TL</span>
+        <span class="ap-cc-sub" id="tl-chart-subtitle"></span>
+      </div>
+      <div class="ap-cc-body">
+        <div id="ap-tl-chart"><div class="ap-empty"><p>Sin datos</p></div></div>
+      </div>
+    </div>
+
     <div class="ap-table-card">
       <div class="ap-table-hdr"><span class="ap-table-ttl">Registros de monitoreo</span><span class="ap-count-badge" id="ap-count-badge">0 registros</span></div>
       <div id="ap-table-container"><div class="ap-loading"><div class="ap-spinner"></div>Cargando datos…</div></div>
@@ -1464,6 +1493,77 @@ window._drawTrendChart = function(data) {
 };
 
 // ── Update all charts ─────────────────────────────────────────────
+
+// ── TL chart ─────────────────────────────────────────────────────
+window._drawTLChart = function(data) {
+  var el  = document.getElementById('ap-tl-chart');
+  var sub = document.getElementById('tl-chart-subtitle');
+  if (!el) return;
+
+  var tlMap = {};
+  data.forEach(function(r) {
+    var tl = r['TL del agente'] || ''; if (!tl) return;
+    if (!tlMap[tl]) tlMap[tl] = { count:0, sum:0, pctCnt:0, pass:0, dev:0, fail:0 };
+    tlMap[tl].count++;
+    var p = parseFloat(r['Porcentaje']||'0');
+    if (!isNaN(p)) { if(p>100)p=p/100; tlMap[tl].sum+=p; tlMap[tl].pctCnt++; }
+    var res = r['Resultado']||'';
+    if(res==='Excelente'||res==='Aprobado') tlMap[tl].pass++;
+    else if(res==='En desarrollo') tlMap[tl].dev++;
+    else if(res==='No aprobado')   tlMap[tl].fail++;
+  });
+
+  var tls = Object.keys(tlMap).map(function(tl){
+    var d=tlMap[tl];
+    return { name:tl, count:d.count, avg:d.pctCnt>0?Math.round(d.sum/d.pctCnt):0,
+             pass:d.pass, dev:d.dev, fail:d.fail,
+             passRate:d.count>0?Math.round(d.pass/d.count*100):0 };
+  }).sort(function(a,b){ return b.count-a.count; });
+
+  if(sub) sub.textContent = tls.length+' TL'+(tls.length!==1?'s':'');
+
+  if(!tls.length){
+    el.innerHTML='<div class="ap-empty"><p>No hay datos con TL asignado</p></div>';
+    return;
+  }
+
+  var maxCount = Math.max.apply(null, tls.map(function(t){ return t.count; }));
+  var html = '<div class="tl-chart-grid">';
+
+  tls.forEach(function(tl) {
+    var avgColor = tl.avg>=90?'#2ecc71':tl.avg>=75?'#4A9FE8':tl.avg>=60?'#f9a825':'#ff7675';
+    var countW   = maxCount>0?Math.round(tl.count/maxCount*100):0;
+    var prColor  = tl.passRate>=75?'#2ecc71':tl.passRate>=60?'#f9a825':'#ff7675';
+    var pills='';
+    if(tl.pass) pills+='<span style="background:rgba(39,174,96,.18);color:#2ecc71;padding:.1rem .45rem;border-radius:20px;font-size:.62rem;font-weight:700;">'+tl.pass+' apr.</span> ';
+    if(tl.dev)  pills+='<span style="background:rgba(249,168,37,.15);color:#f9a825;padding:.1rem .45rem;border-radius:20px;font-size:.62rem;font-weight:700;">'+tl.dev+' des.</span> ';
+    if(tl.fail) pills+='<span style="background:rgba(255,118,117,.15);color:#ff7675;padding:.1rem .45rem;border-radius:20px;font-size:.62rem;font-weight:700;">'+tl.fail+' rep.</span>';
+    html+='<div class="tl-row">'+
+      '<div class="tl-name" title="'+tl.name+'">'+tl.name+'</div>'+
+      '<div class="tl-bars">'+
+        '<div class="tl-bar-row">'+
+          '<div class="tl-bar-lbl">Cédulas</div>'+
+          '<div class="tl-track"><div class="tl-fill tl-count-fill" style="width:'+countW+'%;"></div></div>'+
+          '<div class="tl-val-count">'+tl.count+'</div>'+
+        '</div>'+
+        '<div class="tl-bar-row">'+
+          '<div class="tl-bar-lbl">Promedio</div>'+
+          '<div class="tl-track"><div class="tl-fill" style="width:'+Math.min(tl.avg,100)+'%;background:'+avgColor+';"></div></div>'+
+          '<div class="tl-val-pct" style="color:'+avgColor+';">'+tl.avg+'%</div>'+
+        '</div>'+
+        (pills?'<div style="margin-top:.25rem;display:flex;gap:.3rem;flex-wrap:wrap;">'+pills+'</div>':'')+
+      '</div>'+
+      '<div class="tl-pass-col">'+
+        '<div class="tl-pass-num" style="color:'+prColor+';">'+tl.passRate+'%</div>'+
+        '<div class="tl-pass-lbl-s">aprobados</div>'+
+      '</div>'+
+    '</div>';
+  });
+
+  html += '</div>';
+  el.innerHTML = html;
+};
+
 window._apUpdateCharts = function(data) {
   var svg = document.getElementById('ap-donut');
   if(svg) svg.innerHTML = '';
@@ -1471,6 +1571,7 @@ window._apUpdateCharts = function(data) {
   window._drawAgentChart(data);
   window._drawSiteChart(data);
   window._drawTrendChart(data);
+  window._drawTLChart(data);
 };
 
 // ================================================================
