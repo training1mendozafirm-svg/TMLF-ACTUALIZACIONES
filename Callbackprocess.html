@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Callbacks Department | TMLF Learning Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f1923;--slate:#5a6a7a;--steel:#6b8fa8;--ice:#8db8d8;
+  --gold:#c9a84c;--gold-bg:rgba(201,168,76,.09);
+  --white:#fff;--bg:#eef1f5;--shadow:0 8px 28px rgba(15,25,35,.11);--radius:16px;
+  --nav-h:56px;--sidebar-w:272px;
+  --green:#1e6641;--green-bg:rgba(30,102,65,.08);
+  --red:#8b2c2c;--red-bg:rgba(180,50,50,.08);
+  --amber:#7a5200;--amber-bg:rgba(180,130,0,.09);
+  --accent:#1a3a5c;--accent2:#2e5c8a;
+  --sidebar-bg:#0d1e2e;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65}
+.topnav{position:fixed;top:0;left:0;right:0;z-index:300;height:var(--nav-h);background:rgba(10,18,28,.97);backdrop-filter:blur(16px);border-bottom:1px solid rgba(201,168,76,.12);display:flex;align-items:center;padding:0 18px;gap:10px}
+.topnav .brand{font-family:'Cormorant Garamond',serif;font-size:19px;color:#fff;white-space:nowrap;letter-spacing:.3px;display:flex;align-items:center;gap:10px}
+.topnav .brand .seal{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,rgba(201,168,76,.3),rgba(201,168,76,.08));border:1px solid rgba(201,168,76,.3);display:flex;align-items:center;justify-content:center;font-size:14px}
+.topnav .brand span{color:var(--gold)}
+.topnav-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.topnav-pill{padding:5px 14px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.28);color:rgba(201,168,76,.9)}
+.scorm-status{padding:4px 12px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;border:1px solid;transition:all .4s}
+.scorm-status.incomplete{background:rgba(180,130,0,.1);border-color:rgba(180,130,0,.3);color:rgba(180,130,0,.9)}
+.scorm-status.completed{background:rgba(30,102,65,.12);border-color:rgba(30,102,65,.3);color:rgba(74,222,128,.9)}
+.sidebar-toggle{display:none;background:none;border:none;color:#fff;font-size:20px;cursor:pointer;padding:4px 8px}
+@media(max-width:900px){.sidebar-toggle{display:block}}
+.app-shell{display:flex;min-height:100vh;padding-top:var(--nav-h)}
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--sidebar-bg);position:fixed;top:var(--nav-h);bottom:0;left:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.08) transparent;border-right:1px solid rgba(201,168,76,.07);z-index:200;transition:transform .3s ease}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.09);border-radius:3px}
+.sidebar-header{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.05)}
+.sidebar-header .sh-label{font-size:9px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:3px}
+.sidebar-header .sh-title{font-family:'Cormorant Garamond',serif;font-size:15px;color:rgba(255,255,255,.88);font-weight:600;line-height:1.3}
+.sb-group{padding:8px 0}
+.sb-group-label{padding:6px 16px 3px;font-size:8.5px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:rgba(255,255,255,.25)}
+.sb-item{display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;transition:all .18s;position:relative;user-select:none}
+.sb-item:hover{background:rgba(255,255,255,.045)}
+.sb-item.active{background:rgba(141,184,216,.09)}
+.sb-item.active::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:3px;background:var(--gold);border-radius:0 3px 3px 0}
+.sb-item.visited::after{content:'✓';position:absolute;right:14px;font-size:10px;color:rgba(74,222,128,.7);font-weight:800}
+.sb-num{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;background:rgba(255,255,255,.06);color:rgba(255,255,255,.45);transition:all .18s}
+.sb-item.active .sb-num{background:var(--gold);color:var(--ink)}
+.sb-item:hover .sb-num{background:rgba(255,255,255,.1);color:rgba(255,255,255,.75)}
+.sb-item.overview .sb-num{background:rgba(141,184,216,.13);color:var(--ice)}
+.sb-item.overview.active .sb-num{background:var(--ice);color:var(--ink)}
+.sb-text{flex:1;min-width:0}
+.sb-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.55);line-height:1.3;transition:color .18s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-item.active .sb-name{color:rgba(255,255,255,.92)}
+.sb-item:hover .sb-name{color:rgba(255,255,255,.82)}
+.sb-sub{font-size:10px;color:rgba(255,255,255,.28);margin-top:1px}
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0);box-shadow:8px 0 32px rgba(0,0,0,.45)}
+  .sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199}
+  .sb-overlay.show{display:block}
+}
+.progress-bar-wrap{position:fixed;top:var(--nav-h);left:0;right:0;z-index:299;height:3px;background:rgba(255,255,255,.06)}
+.progress-bar-fill{height:3px;background:linear-gradient(90deg,var(--gold),var(--ice));transition:width .5s ease;width:0%}
+.main{margin-left:var(--sidebar-w);flex:1;padding:26px 26px 60px;max-width:100%}
+@media(max-width:900px){.main{margin-left:0;padding:18px 14px 50px}}
+.header{background:linear-gradient(135deg,#0b1f35 0%,#0e2540 45%,#1a3a5c 100%);color:#fff;border-radius:20px;padding:42px 38px 36px;box-shadow:0 16px 40px rgba(10,20,35,.22);position:relative;overflow:hidden;margin-bottom:22px}
+.header::before{content:'';position:absolute;top:-60px;right:-40px;width:270px;height:270px;border:1.5px solid rgba(201,168,76,.1);border-radius:50%;animation:pulse 5s ease-in-out infinite}
+.header::after{content:'';position:absolute;bottom:-70px;right:90px;width:180px;height:180px;border:1.5px solid rgba(37,99,235,.08);border-radius:50%;animation:pulse 6s ease-in-out infinite .8s}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.04);opacity:.85}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.header-seal{position:absolute;top:26px;right:34px;width:62px;height:62px;border:1.5px solid rgba(201,168,76,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;opacity:.5;animation:pulse 4s ease-in-out infinite}
+.header-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;margin-bottom:12px}
+.header-badge .dot{width:5px;height:5px;background:var(--gold);border-radius:50%}
+h1{font-family:'Cormorant Garamond',serif;font-size:36px;letter-spacing:.4px;position:relative;z-index:1;font-weight:700;line-height:1.15}
+.subtitle{font-size:14px;opacity:.76;max-width:52ch;position:relative;z-index:1;margin-top:6px}
+.header-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;position:relative;z-index:1}
+.header-meta-item{display:flex;align-items:center;gap:6px;padding:5px 13px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;font-size:11.5px}
+.header-meta-item span:first-child{opacity:.58}
+.header-meta-item strong{font-weight:700}
+.panel{display:none;animation:fadeUp .28s ease both}
+.panel.active{display:block}
+.block{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(107,143,168,.15);overflow:hidden;margin-bottom:14px}
+.block:last-child{margin-bottom:0}
+.block .btitle{display:flex;align-items:center;gap:10px;padding:15px 18px;background:linear-gradient(180deg,rgba(141,184,216,.16),rgba(141,184,216,.02));border-bottom:1px solid rgba(107,143,168,.13)}
+.block .btitle .bicon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px}
+.block .btitle h3{font-size:15.5px;color:var(--ink);font-family:'Cormorant Garamond',serif;font-weight:700;letter-spacing:.2px;flex:1}
+.block .btitle .mod-badge{margin-left:auto;padding:3px 10px;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;flex-shrink:0}
+.badge-core{background:rgba(26,58,92,.09);color:#1a3a5c;border:1px solid rgba(26,58,92,.17)}
+.badge-gold{background:rgba(201,168,76,.09);color:#7a5200;border:1px solid rgba(201,168,76,.2)}
+.block .bbody{padding:18px}
+.block .bbody p{margin:0 0 10px;font-size:13.5px}
+.block .bbody p:last-child{margin-bottom:0}
+.lo-callout{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:11px;background:rgba(141,184,216,.08);border:1px solid rgba(107,143,168,.13);margin-bottom:13px}
+.lo-callout .lo-icon{font-size:17px;flex-shrink:0;margin-top:1px}
+.lo-callout .lo-text{font-size:12.5px;color:var(--slate);line-height:1.55}
+.lo-callout .lo-text strong{color:var(--ink);display:block;margin-bottom:2px;font-size:13px}
+.alert{margin-top:10px;padding:10px 13px;border-radius:10px;font-size:12.5px;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.alert.info{background:rgba(107,143,168,.08);border:1px solid rgba(107,143,168,.18);color:var(--ink)}
+.alert.gold{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.28);color:var(--amber)}
+.alert.success{background:var(--green-bg);border:1px solid rgba(30,102,65,.2);color:var(--green)}
+.alert-icon{flex-shrink:0;margin-top:1px}
+.alert strong{font-weight:700}
+.principle{margin-top:13px;padding:14px 17px;border-radius:11px;background:linear-gradient(135deg,rgba(15,25,35,.03),rgba(141,184,216,.06));border:1px solid rgba(107,143,168,.17);border-left:3px solid var(--accent)}
+.principle p{margin:0;font-size:14px;font-weight:600;font-style:italic;font-family:'Cormorant Garamond',serif;line-height:1.55;color:var(--ink)}
+.principle .principle-sub{font-weight:500;color:var(--slate);margin-top:4px;font-style:normal;font-family:'DM Sans',sans-serif;font-size:12px}
+.ob-list{display:grid;grid-template-columns:1fr;gap:6px;margin-top:9px}
+@media(min-width:600px){.ob-list{grid-template-columns:1fr 1fr}}
+.ob-item{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;border-radius:10px;background:rgba(141,184,216,.08);border:1px solid rgba(107,143,168,.16)}
+.ob-num{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10.5px;flex-shrink:0;margin-top:1px}
+.ob-item span{font-size:12.5px;font-weight:600;line-height:1.4}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media(max-width:600px){.two-col{grid-template-columns:1fr}}
+.info-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:12.5px;border-radius:11px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.info-table th{background:var(--accent);color:#fff;padding:11px 14px;text-align:left;font-weight:700;font-size:11.5px}
+.info-table td{padding:10px 14px;border-bottom:1px solid rgba(107,143,168,.12);vertical-align:top;line-height:1.5}
+.info-table tr:nth-child(even) td{background:rgba(107,143,168,.04)}
+.info-table tr:last-child td{border-bottom:none}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.chip{padding:4px 10px;border-radius:7px;font-size:11px;font-weight:600;background:rgba(141,184,216,.13);border:1px solid rgba(107,143,168,.17);color:var(--ink)}
+.chip.green{background:var(--green-bg);border-color:rgba(30,102,65,.17);color:var(--green)}
+.chip.amber{background:var(--amber-bg);border-color:rgba(180,130,0,.19);color:var(--amber)}
+.chip.red{background:rgba(180,50,50,.08);border-color:rgba(180,50,50,.18);color:#8b2c2c}
+.critical-rule{background:linear-gradient(135deg,rgba(15,25,35,.96) 0%,rgba(26,58,92,.97) 100%);border-radius:14px;padding:18px 22px;margin:16px 0;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(15,25,35,.18)}
+.critical-rule::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--gold)}
+.critical-rule-label{font-size:9px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:rgba(201,168,76,.7);margin-bottom:8px}
+.critical-rule-text{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:800;color:#fff;line-height:1.3;letter-spacing:.1px;text-transform:uppercase}
+.critical-rule-text em{font-style:normal;color:rgba(201,168,76,.95)}
+.critical-rule-sub{font-size:12px;color:rgba(255,255,255,.58);margin-top:8px;line-height:1.55}
+.critical-rule-sub strong{color:rgba(255,255,255,.82)}
+.page-title{margin-bottom:20px}
+.page-title .pt-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--slate);margin-bottom:5px}
+.page-title h2{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:var(--ink);line-height:1.2}
+.page-title .pt-sub{font-size:13.5px;color:var(--slate);margin-top:5px;max-width:58ch}
+.mod-nav-bar{display:flex;justify-content:space-between;align-items:center;margin-top:22px;padding-top:16px;border-top:1px solid rgba(107,143,168,.15)}
+.mod-nav-btn{padding:10px 22px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s;font-family:'DM Sans',sans-serif}
+.mod-nav-prev{background:rgba(107,143,168,.1);color:var(--slate);border:1px solid rgba(107,143,168,.2)}
+.mod-nav-prev:hover{background:rgba(107,143,168,.2)}
+.mod-nav-next{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 14px rgba(26,58,92,.2)}
+.mod-nav-next:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(26,58,92,.3)}
+mark.hi{background:rgba(201,168,76,.22);color:#5a3e00;border-radius:3px;padding:1px 5px;font-weight:700;border-bottom:2px solid rgba(201,168,76,.5)}
+.role-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:10px}
+.role-card{background:var(--white);border-radius:13px;border:1px solid rgba(107,143,168,.15);overflow:hidden}
+.role-header{display:flex;align-items:center;gap:10px;padding:13px 16px;background:linear-gradient(135deg,rgba(26,58,92,.07),rgba(141,184,216,.08));border-bottom:1px solid rgba(107,143,168,.1)}
+.role-emoji{font-size:20px}
+.role-name{font-size:14px;font-weight:700;color:var(--ink);flex:1}
+.role-badge{padding:3px 9px;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.badge-attorney{background:rgba(201,168,76,.12);color:#7a5200;border:1px solid rgba(201,168,76,.25)}
+.badge-paralegal{background:rgba(26,58,92,.09);color:#1a3a5c;border:1px solid rgba(26,58,92,.2)}
+.badge-pmo{background:rgba(30,102,65,.08);color:#1e6641;border:1px solid rgba(30,102,65,.2)}
+.badge-agente{background:rgba(124,58,237,.08);color:#5b21b6;border:1px solid rgba(124,58,237,.2)}
+.role-body{padding:13px 16px}
+.role-body ul{padding-left:16px;margin:0}
+.role-body li{font-size:12.5px;color:var(--slate);line-height:1.7;margin-bottom:3px}
+.roadmap{display:flex;flex-direction:column;position:relative;padding-left:30px}
+.roadmap::before{content:'';position:absolute;left:10px;top:10px;bottom:10px;width:1.5px;background:linear-gradient(180deg,var(--accent),rgba(107,143,168,.3))}
+.rm-item{display:flex;align-items:flex-start;gap:16px;margin-bottom:18px;position:relative}
+.rm-item:last-child{margin-bottom:0}
+.rm-dot{position:absolute;left:-30px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;top:2px;flex-shrink:0;z-index:1}
+.rm-content{flex:1}
+.rm-level{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--slate);margin-bottom:3px}
+.rm-content h4{font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.rm-content p{font-size:12.5px;color:var(--slate);line-height:1.5}
+/* Completion banner */
+.completion-banner{display:none;background:linear-gradient(135deg,#0d2e1a,#1e4a2a);border:1px solid rgba(30,102,65,.4);border-radius:14px;padding:20px 24px;margin-bottom:18px;position:relative;overflow:hidden}
+.completion-banner.show{display:flex;align-items:center;gap:16px;animation:fadeUp .4s ease}
+.completion-banner::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--green)}
+.cb-icon{font-size:32px;flex-shrink:0}
+.cb-text h4{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:#4ade80;margin-bottom:4px}
+.cb-text p{font-size:12.5px;color:rgba(255,255,255,.6);line-height:1.5}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     SCORM 1.2 API — inicialización al cargar
+     Registra: lesson_status, lesson_location,
+     suspend_data (temas visitados), score
+════════════════════════════════════════════ -->
+<script>
+/* ── SCORM 1.2 wrapper ── */
+var SCORM = (function(){
+  var api = null;
+  var initialized = false;
+
+  function findAPI(win){
+    var attempts = 0;
+    while(win.API == null && win.parent != null && win.parent != win){
+      attempts++;
+      if(attempts > 7) return null;
+      win = win.parent;
+    }
+    return win.API;
+  }
+
+  function getAPI(){
+    var theAPI = findAPI(window);
+    if(theAPI == null && window.opener != null && typeof window.opener != 'undefined'){
+      theAPI = findAPI(window.opener);
+    }
+    return theAPI;
+  }
+
+  function init(){
+    api = getAPI();
+    if(api == null){ console.warn('SCORM: LMS API not found — running in standalone mode'); return false; }
+    var result = api.LMSInitialize('');
+    initialized = (result === 'true' || result === true);
+    return initialized;
+  }
+
+  function get(element){
+    if(!api) return '';
+    return api.LMSGetValue(element);
+  }
+
+  function set(element, value){
+    if(!api) return false;
+    return api.LMSSetValue(element, value);
+  }
+
+  function commit(){
+    if(!api) return false;
+    return api.LMSCommit('');
+  }
+
+  function finish(){
+    if(!api || !initialized) return false;
+    commit();
+    return api.LMSFinish('');
+  }
+
+  return { init:init, get:get, set:set, commit:commit, finish:finish };
+})();
+
+/* ── Estado del curso ── */
+var panels   = ['intro','roles','metodologia','abogado'];
+var visited  = {intro:false, roles:false, metodologia:false, abogado:false};
+var completed = false;
+
+/* ── Inicializar SCORM y restaurar progreso ── */
+window.addEventListener('load', function(){
+  SCORM.init();
+
+  /* Restaurar temas visitados desde suspend_data */
+  var saved = SCORM.get('cmi.suspend_data');
+  if(saved && saved !== ''){
+    try{
+      var data = JSON.parse(saved);
+      visited = data.visited || visited;
+      completed = data.completed || false;
+    } catch(e){}
+  }
+
+  /* Restaurar last_location (último tema visto) */
+  var loc = SCORM.get('cmi.core.lesson_location');
+  var startPanel = (loc && panels.indexOf(loc) > -1) ? loc : 'intro';
+
+  /* Si ya estaba completado, restaurar status */
+  if(completed){
+    SCORM.set('cmi.core.lesson_status', 'completed');
+    SCORM.set('cmi.core.score.raw', '100');
+    SCORM.set('cmi.core.score.min', '0');
+    SCORM.set('cmi.core.score.max', '100');
+  } else {
+    SCORM.set('cmi.core.lesson_status', 'incomplete');
+  }
+  SCORM.commit();
+
+  /* Arrancar en el tema correcto y marcar visitados en sidebar */
+  panels.forEach(function(p){
+    if(visited[p]) document.getElementById('nav-'+p).classList.add('visited');
+  });
+  navTo(startPanel, false);
+  updateProgress();
+  updateStatusBadge();
+});
+
+/* ── Guardar y cerrar al salir ── */
+window.addEventListener('beforeunload', function(){
+  SCORM.finish();
+});
+</script>
+
+<nav class="topnav">
+  <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+  <div class="brand">
+    <div class="seal">📞</div>
+    TMLF <span>Learning Center</span>
+  </div>
+  <div class="topnav-right">
+    <div id="statusBadge" class="scorm-status incomplete">En progreso</div>
+    <div class="topnav-pill">Callbacks Department</div>
+  </div>
+</nav>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" id="globalProgress" style="width:0%"></div>
+</div>
+<div class="sb-overlay" id="sbOverlay" onclick="toggleSidebar()"></div>
+
+<div class="app-shell">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sh-label">TMLF Learning Center</div>
+      <div class="sh-title">Callbacks Department</div>
+    </div>
+    <div class="sb-group">
+      <div class="sb-group-label">Contenido · 4 temas</div>
+
+      <div class="sb-item overview active" id="nav-intro" onclick="nav('intro',0)">
+        <div class="sb-num">📋</div>
+        <div class="sb-text">
+          <div class="sb-name">¿Qué es el área?</div>
+          <div class="sb-sub">Definición y propósito</div>
+        </div>
+      </div>
+      <div class="sb-item" id="nav-roles" onclick="nav('roles',1)">
+        <div class="sb-num">👥</div>
+        <div class="sb-text">
+          <div class="sb-name">Quiénes la conforman</div>
+          <div class="sb-sub">Roles y responsabilidades</div>
+        </div>
+      </div>
+      <div class="sb-item" id="nav-metodologia" onclick="nav('metodologia',2)">
+        <div class="sb-num">⚙️</div>
+        <div class="sb-text">
+          <div class="sb-name">Metodología</div>
+          <div class="sb-sub">Cómo opera el departamento</div>
+        </div>
+      </div>
+      <div class="sb-item" id="nav-abogado" onclick="nav('abogado',3)">
+        <div class="sb-num">⚖️</div>
+        <div class="sb-text">
+          <div class="sb-name">Rol del abogado</div>
+          <div class="sb-sub">Dirección legal del proceso</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- Banner de completado (oculto hasta que se complete) -->
+    <div class="completion-banner" id="completionBanner">
+      <div class="cb-icon">🎓</div>
+      <div class="cb-text">
+        <h4>Módulo completado</h4>
+        <p>Visitaste todos los temas. Tu progreso ha sido registrado en Moodle correctamente.</p>
+      </div>
+    </div>
+
+    <div class="header">
+      <div class="header-seal">📞</div>
+      <div class="header-badge"><div class="dot"></div>TMLF Learning Center · Onboarding</div>
+      <h1>Callbacks Department</h1>
+      <p class="subtitle">Conoce qué hace el área, quiénes la integran, cómo opera y cuál es el rol del abogado en el proceso.</p>
+
+    </div>
+
+    <!-- ══ TEMA 1 ══ -->
+    <div class="panel active" id="panel-intro">
+      <div class="page-title">
+        <div class="pt-label">Tema 1 de 4</div>
+        <h2>¿Qué es el Callbacks Department?</h2>
+        <p class="pt-sub">El área responsable de las llamadas programadas con clientes activos de la firma.</p>
+      </div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">📞</div><h3>Definición del área</h3><div class="mod-badge badge-core">Propósito</div></div>
+        <div class="bbody">
+          <p>El <strong>Callbacks Department</strong> es el área de TMLF encargada de gestionar las llamadas programadas con clientes activos. Su función es responder a solicitudes, actualizar al cliente sobre su caso, resolver inquietudes y garantizar que cada interacción quede documentada y con seguimiento.</p>
+          <div class="principle">
+            <p>"Una callback no es 'llamar para ver cómo está el cliente'. Es una intervención con expediente revisado, propósito claro, roles asignados y documentación al cierre."</p>
+            <div class="principle-sub">Estándar operativo · Callbacks Department · TMLF</div>
+          </div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">🎯</div><h3>¿Por qué existe este departamento?</h3></div>
+        <div class="bbody">
+          <p>La comunicación con el cliente es uno de los puntos más críticos en un despacho de inmigración. Los clientes necesitan saber qué pasa con su caso, sentirse atendidos y recibir información confiable. El Callbacks Department existe para garantizar que ese contacto ocurra de manera ordenada, profesional y trazable.</p>
+          <div class="two-col" style="margin-bottom:0">
+            <div class="lo-callout" style="margin-bottom:0"><div class="lo-icon">✅</div><div class="lo-text"><strong>Lo que resuelve</strong>Clientes sin respuesta, información inconsistente entre llamadas, acuerdos que no se cumplen, falta de seguimiento post-llamada.</div></div>
+            <div class="lo-callout" style="margin-bottom:0"><div class="lo-icon">📌</div><div class="lo-text"><strong>Su valor para la firma</strong>Reduce quejas formales, fortalece la confianza del cliente y protege la reputación de TMLF mediante comunicación de calidad.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">📊</div><h3>Tipos de callback que gestiona el área</h3></div>
+        <div class="bbody">
+          <table class="info-table">
+            <tr><th>Tipo</th><th>Cuándo ocurre</th><th>Prioridad</th></tr>
+            <tr><td><strong>Queja formal</strong></td><td>El cliente expresa insatisfacción con el servicio o el proceso</td><td><span class="chip red">Alta</span></td></tr>
+            <tr><td><strong>Urgencia legal</strong></td><td>Hay una fecha límite, audiencia o trámite inminente</td><td><span class="chip red">Alta</span></td></tr>
+            <tr><td><strong>Actualización de caso</strong></td><td>El cliente solicita información sobre el estado de su trámite</td><td><span class="chip amber">Media</span></td></tr>
+            <tr><td><strong>Seguimiento programado</strong></td><td>Callback agendada como resultado de un acuerdo previo</td><td><span class="chip amber">Media</span></td></tr>
+            <tr><td><strong>Callback proactiva</strong></td><td>TMLF contacta al cliente antes de que él necesite llamar</td><td><span class="chip green">Proactiva</span></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="mod-nav-bar">
+        <span></span>
+        <button class="mod-nav-btn mod-nav-next" onclick="nav('roles',1)">Quiénes la conforman →</button>
+      </div>
+    </div>
+
+    <!-- ══ TEMA 2 ══ -->
+    <div class="panel" id="panel-roles">
+      <div class="page-title">
+        <div class="pt-label">Tema 2 de 4</div>
+        <h2>Quiénes conforman el área</h2>
+        <p class="pt-sub">El departamento opera con cuatro roles definidos, cada uno con responsabilidades específicas y no intercambiables.</p>
+      </div>
+      <div class="alert gold" style="margin-bottom:14px">
+        <span class="alert-icon">📌</span>
+        <div><strong>Actualización estructural 2026.</strong> El rol de <mark class="hi">Escalation Agent fue absorbido por Paralegal</mark>, quien ahora también asume la ejecución de <mark class="hi">Screenings</mark> para clasificar tipo y urgencia del caso.</div>
+      </div>
+      <div class="role-grid">
+        <div class="role-card">
+          <div class="role-header"><div class="role-emoji">⚖️</div><div class="role-name">Attorney</div><span class="role-badge badge-attorney">Dirección Legal</span></div>
+          <div class="role-body"><ul>
+            <li>Lidera la estrategia legal de la callback</li>
+            <li>Conduce la llamada con el cliente</li>
+            <li>Define y valida los acuerdos con el cliente</li>
+            <li>Firma la resolución final del caso</li>
+          </ul></div>
+        </div>
+        <div class="role-card">
+          <div class="role-header"><div class="role-emoji">📋</div><div class="role-name">Paralegal</div><span class="role-badge badge-paralegal">Soporte Operativo</span></div>
+          <div class="role-body"><ul>
+            <li>Revisa el expediente completo antes de la llamada</li>
+            <li>Coordina el briefing previo con el Attorney</li>
+            <li>Apoya activamente durante la callback</li>
+            <li>Registra acuerdos y documenta en TramCase</li>
+            <li>Gestiona escalamientos complejos</li>
+            <li>Ejecuta <strong>Screenings</strong> para clasificar tipo y urgencia del caso</li>
+          </ul></div>
+        </div>
+        <div class="role-card">
+          <div class="role-header"><div class="role-emoji">📊</div><div class="role-name">PMO</div><span class="role-badge badge-pmo">Control y Seguimiento</span></div>
+          <div class="role-body"><ul>
+            <li>Monitorea el proceso de callbacks completo</li>
+            <li>Notifica a las áreas responsables sobre acuerdos</li>
+            <li>Registra y da seguimiento a compromisos y plazos</li>
+            <li>Valida el cierre formal con evidencia de ejecución</li>
+          </ul></div>
+        </div>
+
+      </div>
+      <div class="critical-rule">
+        <div class="critical-rule-label">Principio de roles</div>
+        <div class="critical-rule-text">CADA ROL TIENE UN LÍMITE. <em>RESPETARLO ES PROFESIONALISMO.</em></div>
+        <div class="critical-rule-sub">El Paralegal <strong>no firma acuerdos</strong> sin el Attorney. El PMO <strong>no ejecuta</strong> — supervisa y registra.</div>
+      </div>
+      <div class="mod-nav-bar">
+        <button class="mod-nav-btn mod-nav-prev" onclick="nav('intro',0)">← ¿Qué es el área?</button>
+        <button class="mod-nav-btn mod-nav-next" onclick="nav('metodologia',2)">Metodología →</button>
+      </div>
+    </div>
+
+    <!-- ══ TEMA 3 ══ -->
+    <div class="panel" id="panel-metodologia">
+      <div class="page-title">
+        <div class="pt-label">Tema 3 de 4</div>
+        <h2>Metodología del área</h2>
+        <p class="pt-sub">Cómo opera el Callbacks Department, de la solicitud al cierre formal.</p>
+      </div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">🔄</div><h3>Flujo general de una callback</h3><div class="mod-badge badge-core">Proceso completo</div></div>
+        <div class="bbody">
+          <div class="roadmap">
+            <div class="rm-item"><div class="rm-dot">1</div><div class="rm-content"><div class="rm-level">Paralegal</div><h4>Recepción y clasificación</h4><p>El Paralegal recibe la solicitud, ejecuta el Screening para identificar el tipo de callback y asigna prioridad. Da seguimiento a todo el proceso desde este punto.</p></div></div>
+            <div class="rm-item"><div class="rm-dot">2</div><div class="rm-content"><div class="rm-level">Paralegal</div><h4>Revisión del expediente</h4><p>Antes de cualquier llamada, el Paralegal revisa TramCase, USCIS online, historial de llamadas y comunicaciones recientes. Sin revisión completa no hay preparación real.</p></div></div>
+            <div class="rm-item"><div class="rm-dot">3</div><div class="rm-content"><div class="rm-level">Paralegal + Attorney</div><h4>Briefing previo</h4><p>Sesión de alineación entre Paralegal y Attorney (sin el cliente). Revisan el caso, definen qué se puede comprometer y acuerdan el tono de la llamada.</p></div></div>
+            <div class="rm-item"><div class="rm-dot">4</div><div class="rm-content"><div class="rm-level">Attorney + Paralegal</div><h4>Ejecución de la callback</h4><p>El Attorney conduce la llamada. El Paralegal apoya con datos operativos y toma nota de acuerdos. Se define qué hará el equipo, quién y para cuándo.</p></div></div>
+            <div class="rm-item"><div class="rm-dot">5</div><div class="rm-content"><div class="rm-level">Paralegal · ≤ 30 min post-llamada</div><h4>Documentación</h4><p>Generación de cédula, actualización de TramCase y registro en el Sheet "Callbacks Department Opp". Los acuerdos no documentados no existen operativamente.</p></div></div>
+            <div class="rm-item"><div class="rm-dot">6</div><div class="rm-content"><div class="rm-level">PMO</div><h4>Seguimiento y cierre formal</h4><p>PMO monitorea que los compromisos se cumplan, notifica a las áreas responsables y valida el cierre con evidencia de ejecución.</p></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">🔑</div><h3>Principios operativos del departamento</h3></div>
+        <div class="bbody">
+          <div class="ob-list" style="grid-template-columns:1fr">
+            <div class="ob-item"><div class="ob-num">1</div><span><strong>Preparación real:</strong> Ninguna callback se ejecuta sin revisión previa del expediente en TramCase y USCIS.</span></div>
+            <div class="ob-item"><div class="ob-num">2</div><span><strong>Compromisos verificables:</strong> Solo se promete lo que el equipo puede cumplir. Nunca se hacen compromisos vagos o sin plazo.</span></div>
+            <div class="ob-item"><div class="ob-num">3</div><span><strong>Documentación inmediata:</strong> La cédula post-callback se genera en un máximo de 30 minutos después de la llamada.</span></div>
+            <div class="ob-item"><div class="ob-num">4</div><span><strong>Cierre con evidencia:</strong> Un caso no se considera cerrado hasta que PMO registra la evidencia de ejecución de todos los acuerdos.</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="mod-nav-bar">
+        <button class="mod-nav-btn mod-nav-prev" onclick="nav('roles',1)">← Quiénes la conforman</button>
+        <button class="mod-nav-btn mod-nav-next" onclick="nav('abogado',3)">Rol del abogado →</button>
+      </div>
+    </div>
+
+    <!-- ══ TEMA 4 ══ -->
+    <div class="panel" id="panel-abogado">
+      <div class="page-title">
+        <div class="pt-label">Tema 4 de 4</div>
+        <h2>El rol del abogado en el proceso</h2>
+        <p class="pt-sub">El Attorney no es un participante más — es quien define la dirección legal y valida cada acuerdo con el cliente.</p>
+      </div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">⚖️</div><h3>¿Qué hace el Attorney en una callback?</h3><div class="mod-badge badge-core">Rol central</div></div>
+        <div class="bbody">
+          <p>El Attorney es el único miembro del equipo con autoridad para comprometerse legalmente con el cliente, interpretar el estado del caso y definir la estrategia de respuesta. Su participación convierte una llamada operativa en una intervención legal estructurada.</p>
+          <div class="ob-list" style="margin-top:14px;grid-template-columns:1fr">
+            <div class="ob-item"><div class="ob-num">1</div><span><strong>Lidera la estrategia legal:</strong> Define qué información se comparte con el cliente, qué se puede prometer y cómo se encuadra la situación jurídicamente.</span></div>
+            <div class="ob-item"><div class="ob-num">2</div><span><strong>Conduce la llamada:</strong> El Attorney habla directamente con el cliente. El Paralegal apoya pero no sustituye al Attorney en la dirección de la conversación.</span></div>
+            <div class="ob-item"><div class="ob-num">3</div><span><strong>Valida los acuerdos:</strong> Ningún compromiso legal con el cliente es válido hasta que el Attorney lo confirma. Los acuerdos verbales durante la llamada quedan bajo su responsabilidad.</span></div>
+            <div class="ob-item"><div class="ob-num">4</div><span><strong>Firma el cierre formal:</strong> El Attorney valida que los acuerdos post-callback se ejecutaron correctamente antes de que el caso se cierre en el sistema.</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">🤝</div><h3>Relación Attorney — Paralegal en la callback</h3></div>
+        <div class="bbody">
+          <p style="font-size:13px;color:var(--slate);margin-bottom:14px">Estos dos roles trabajan en tándem antes, durante y después de cada llamada:</p>
+          <table class="info-table">
+            <tr><th>Momento</th><th>Attorney</th><th>Paralegal</th></tr>
+            <tr><td><strong>Antes</strong></td><td>Recibe el brief del caso, define postura legal</td><td>Prepara el expediente, coordina el briefing</td></tr>
+            <tr><td><strong>Durante</strong></td><td>Conduce la llamada, define acuerdos</td><td>Toma notas, apoya con datos operativos, no interrumpe</td></tr>
+            <tr><td><strong>Después</strong></td><td>Valida la cédula y el cierre formal</td><td>Genera la cédula, actualiza TramCase y el Sheet</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="critical-rule">
+        <div class="critical-rule-label">Límite crítico</div>
+        <div class="critical-rule-text">SOLO EL ATTORNEY PUEDE DAR <em>INFORMACIÓN LEGAL AL CLIENTE</em></div>
+        <div class="critical-rule-sub">Ni el Paralegal, ni el PMO, ni el Agente de Llamada pueden interpretar o comentar sobre implicaciones legales del caso con el cliente — aunque sea de manera informal. Hacerlo genera <strong>responsabilidad indebida para la persona y para la firma</strong>.</div>
+      </div>
+      <div class="block">
+        <div class="btitle"><div class="bicon">💬</div><h3>¿Qué NO debe hacer ningún otro rol en lugar del Attorney?</h3></div>
+        <div class="bbody">
+          <table class="info-table">
+            <tr><th>Situación</th><th>Acción incorrecta</th><th>Acción correcta</th></tr>
+            <tr><td>Cliente pregunta si su RFE afectará su caso</td><td>El Paralegal da su opinión "para tranquilizarlo"</td><td>Documentar y transferir al Attorney</td></tr>
+            <tr><td>Cliente pide saber qué tan fuerte es su caso</td><td>El Agente dice "generalmente estos casos se aprueban"</td><td>Agendar callback con el Attorney</td></tr>
+            <tr><td>Cliente pregunta si puede viajar durante el proceso</td><td>El PMO responde con base en casos anteriores</td><td>Escalar inmediatamente al Attorney</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="alert success" style="margin-top:14px" id="completionAlert" style="display:none">
+        <span class="alert-icon">🎓</span>
+        <div><strong>¡Completaste el módulo!</strong> Revisaste los 4 temas. Tu avance fue registrado en Moodle.</div>
+      </div>
+      <div class="mod-nav-bar">
+        <button class="mod-nav-btn mod-nav-prev" onclick="nav('metodologia',2)">← Metodología</button>
+        <button class="mod-nav-btn mod-nav-next" style="background:linear-gradient(135deg,var(--green),#2d9d62)" onclick="nav('intro',0)">↩ Volver al inicio</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+/* ── Navegación con persistencia SCORM ── */
+function nav(id, idx){
+  navTo(id, true);
+}
+
+function navTo(id, save){
+  /* Actualizar UI */
+  panels.forEach(function(p){
+    document.getElementById('panel-'+p).classList.remove('active');
+    document.getElementById('nav-'+p).classList.remove('active');
+  });
+  document.getElementById('panel-'+id).classList.add('active');
+  document.getElementById('nav-'+id).classList.add('active');
+
+  /* Marcar tema como visitado */
+  visited[id] = true;
+  document.getElementById('nav-'+id).classList.add('visited');
+
+  /* Progreso visual */
+  updateProgress();
+
+  /* Verificar si todos los temas fueron visitados */
+  var allVisited = panels.every(function(p){ return visited[p]; });
+  if(allVisited && !completed){
+    completed = true;
+    markCompleted();
+  }
+
+  /* Guardar en SCORM */
+  if(save){
+    SCORM.set('cmi.core.lesson_location', id);
+    SCORM.set('cmi.suspend_data', JSON.stringify({visited:visited, completed:completed}));
+    if(completed){
+      SCORM.set('cmi.core.lesson_status', 'completed');
+      SCORM.set('cmi.core.score.raw', '100');
+      SCORM.set('cmi.core.score.min', '0');
+      SCORM.set('cmi.core.score.max', '100');
+    } else {
+      SCORM.set('cmi.core.lesson_status', 'incomplete');
+      /* Guardar score proporcional de temas visitados */
+      var visitedCount = panels.filter(function(p){ return visited[p]; }).length;
+      SCORM.set('cmi.core.score.raw', String(Math.round(visitedCount / panels.length * 100)));
+      SCORM.set('cmi.core.score.min', '0');
+      SCORM.set('cmi.core.score.max', '100');
+    }
+    SCORM.commit();
+  }
+
+  window.scrollTo({top:0, behavior:'smooth'});
+  if(window.innerWidth <= 900){
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sbOverlay').classList.remove('show');
+  }
+}
+
+function updateProgress(){
+  var visitedCount = panels.filter(function(p){ return visited[p]; }).length;
+  var pct = Math.round(visitedCount / panels.length * 100);
+  document.getElementById('globalProgress').style.width = pct + '%';
+}
+
+function markCompleted(){
+  /* Banner en la parte superior */
+  document.getElementById('completionBanner').classList.add('show');
+  /* Alert en tema 4 */
+  var ca = document.getElementById('completionAlert');
+  if(ca) ca.style.display = 'flex';
+  /* Badge en topnav */
+  updateStatusBadge();
+}
+
+function updateStatusBadge(){
+  var badge = document.getElementById('statusBadge');
+  if(completed){
+    badge.className = 'scorm-status completed';
+    badge.textContent = '✓ Completado';
+  } else {
+    badge.className = 'scorm-status incomplete';
+    badge.textContent = 'En progreso';
+  }
+}
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sbOverlay').classList.toggle('show');
+}
+</script>
+</body>
+</html>
