@@ -730,6 +730,7 @@ table.apt td{padding:.5rem .9rem;color:rgba(255,255,255,.65);vertical-align:midd
       <div class="ap-fg"><label>Desde</label><input type="date" id="af-desde" onchange="window.applyAdminFilters()"/></div>
       <div class="ap-fg"><label>Hasta</label><input type="date" id="af-hasta" onchange="window.applyAdminFilters()"/></div>
       <div class="ap-fg"><label>Agente</label><select id="af-agente" onchange="window.applyAdminFilters()"><option value="">Todos</option></select></div>
+      <div class="ap-fg"><label>TL del agente</label><select id="af-tl" onchange="window.applyAdminFilters()"><option value="">Todos</option></select></div>
       <div class="ap-fg"><label>Site</label><select id="af-site" onchange="window.applyAdminFilters()"><option value="">Todos</option><option value="CUN">CUN</option><option value="CDMX">CDMX</option></select></div>
       <div class="ap-fg"><label>Resultado</label><select id="af-resultado" onchange="window.applyAdminFilters()"><option value="">Todos</option><option value="Excelente">Excelente</option><option value="Aprobado">Aprobado</option><option value="En desarrollo">En desarrollo</option><option value="No aprobado">No aprobado</option></select></div>
       <button class="ap-refresh-btn" onclick="window.reloadAdminData()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg> Actualizar</button>
@@ -1307,7 +1308,7 @@ window._drawAgentChart = function(data) {
     var a = r['Agente']||''; if(!a) return;
     if(!aMap[a]) aMap[a] = { sum:0, cnt:0 };
     var p = parseFloat(r['Porcentaje']||'0');
-    if(!isNaN(p)) { aMap[a].sum += p; aMap[a].cnt++; }
+    if(!isNaN(p)) { if(p>100)p=p/100; aMap[a].sum += p; aMap[a].cnt++; }
   });
   var agents = Object.keys(aMap).map(function(a){
     return { name:a, avg: aMap[a].cnt > 0 ? Math.round(aMap[a].sum/aMap[a].cnt) : 0, cnt: aMap[a].cnt };
@@ -1334,7 +1335,7 @@ window._drawSiteChart = function(data) {
   data.forEach(function(r) {
     var s = r['Site']||''; if(!sites[s]) return;
     var p = parseFloat(r['Porcentaje']||'0');
-    if(!isNaN(p)) { sites[s].sum += p; sites[s].cnt++; }
+    if(!isNaN(p)) { if(p>100)p=p/100; sites[s].sum += p; sites[s].cnt++; }
     var res = r['Resultado']||'';
     if(res==='Excelente'||res==='Aprobado') sites[s].pass++;
   });
@@ -1374,6 +1375,7 @@ window._drawTrendChart = function(data) {
     var wKey = new Date(ms).toISOString().split('T')[0];
     var pct = parseFloat(r['Porcentaje']||'0');
     if(isNaN(pct)) return;
+    if(pct>100) pct=pct/100;
     if(!wMap[wKey]) wMap[wKey] = { sum:0,cnt:0 };
     wMap[wKey].sum += pct; wMap[wKey].cnt++;
   });
@@ -1519,28 +1521,76 @@ function _apSetLoading() {
 }
 
 // ── Cargar datos via JSONP ────────────────────────────────────────
-window.loadAdminData = function() {
+// ── Procesar respuesta de datos ───────────────────────────────────
+function _processAdminData(resp) {
+  if (resp.ok && Array.isArray(resp.data)) {
+    // ✅ Datos recibidos correctamente
+    _adminAllData = resp.data;
+    _apPopulateAgentes(_adminAllData);
+    var f = _apGetFiltered();
+    _apUpdateCards(f);
+    _apRenderTable(f);
+    window._apUpdateCharts(f);
+
+  } else if (resp.ok && resp.msg) {
+    // ⚠ Script activo pero doGet no soporta getData — versión vieja
+    document.getElementById('ap-table-container').innerHTML =
+      '<div class="ap-empty" style="padding:2rem 1.5rem;">' +
+      '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#f9a825" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:.6rem;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' +
+      '<p style="color:#f9a825;font-weight:700;margin:.3rem 0 .5rem;">Script desactualizado</p>' +
+      '<p style="font-size:.78rem;line-height:1.6;max-width:380px;">El Apps Script está activo pero necesita actualizarse.<br>' +
+      '1. Reemplaza <strong>Code.gs</strong> con la versión nueva.<br>' +
+      '2. Implementar → Administrar implementaciones → <strong>Nueva versión → Implementar</strong>.</p>' +
+      '</div>';
+
+  } else {
+    document.getElementById('ap-table-container').innerHTML =
+      '<div class="ap-empty"><p>Error del servidor: ' + (resp.error || 'respuesta inválida') + '</p></div>';
+  }
+}
+
+// ── Carga via JSONP (fallback) ────────────────────────────────────
+function _loadJSONP() {
+  var _timer = setTimeout(function() {
+    document.getElementById('ap-table-container').innerHTML =
+      '<div class="ap-empty"><p>⏱ Tiempo de espera agotado. Verifica que el script esté desplegado como nueva versión.</p></div>';
+  }, 12000);
+
   window._adminDataCB = function(resp) {
-    if (resp.ok) {
-      _adminAllData = resp.data || [];
-      _apPopulateAgentes(_adminAllData);
-      var f = _apGetFiltered();
-      _apUpdateCards(f);
-      _apRenderTable(f);
-      window._apUpdateCharts(f);
-    } else {
-      document.getElementById('ap-table-container').innerHTML =
-        '<div class="ap-empty"><p>Error al cargar: ' + (resp.error || 'desconocido') + '</p></div>';
-    }
+    clearTimeout(_timer);
+    _processAdminData(resp);
   };
+
   var s = document.createElement('script');
   s.src = SCRIPT_URL + '?action=getData&callback=_adminDataCB&t=' + Date.now();
   s.onerror = function() {
+    clearTimeout(_timer);
     document.getElementById('ap-table-container').innerHTML =
-      '<div class="ap-empty"><p>No se pudo conectar con el servidor. Verifica que el script esté desplegado.</p></div>';
+      '<div class="ap-empty"><p>❌ No se pudo conectar. Verifica que el script esté desplegado.</p></div>';
+    if (s.parentNode) document.head.removeChild(s);
   };
   document.head.appendChild(s);
+}
+
+// ── Carga principal: fetch CORS → fallback JSONP ──────────────────
+window.loadAdminData = function() {
+  var url = SCRIPT_URL + '?action=getData&t=' + Date.now();
+
+  fetch(url, { method: 'GET', redirect: 'follow' })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(resp) {
+      _processAdminData(resp);
+    })
+    .catch(function(err) {
+      // fetch falló (posible CORS en algunos entornos) → intentar JSONP
+      console.warn('fetch falló, usando JSONP:', err.message);
+      _loadJSONP();
+    });
 };
+
 window.reloadAdminData = function() {
   _apSetLoading();
   window.loadAdminData();
@@ -1549,15 +1599,29 @@ window.reloadAdminData = function() {
 // ── Dropdown de agentes ───────────────────────────────────────────
 function _apPopulateAgentes(data) {
   var agents = [];
-  data.forEach(function(r){ var a=r['Agente']||''; if(a && agents.indexOf(a)<0) agents.push(a); });
-  agents.sort();
-  var sel = document.getElementById('af-agente');
-  var cur = sel.value;
-  sel.innerHTML = '<option value="">Todos</option>';
+  var tls    = [];
+  data.forEach(function(r){
+    var a = r['Agente']       || ''; if(a && agents.indexOf(a) < 0) agents.push(a);
+    var t = r['TL del agente']|| ''; if(t && tls.indexOf(t)    < 0) tls.push(t);
+  });
+  agents.sort(); tls.sort();
+
+  var selA = document.getElementById('af-agente');
+  var curA = selA.value;
+  selA.innerHTML = '<option value="">Todos</option>';
   agents.forEach(function(a){
-    var o = document.createElement('option'); o.value=a; o.textContent=a;
-    if(a===cur) o.selected=true;
-    sel.appendChild(o);
+    var o = document.createElement('option'); o.value = a; o.textContent = a;
+    if (a === curA) o.selected = true;
+    selA.appendChild(o);
+  });
+
+  var selT = document.getElementById('af-tl');
+  var curT = selT.value;
+  selT.innerHTML = '<option value="">Todos</option>';
+  tls.forEach(function(t){
+    var o = document.createElement('option'); o.value = t; o.textContent = t;
+    if (t === curT) o.selected = true;
+    selT.appendChild(o);
   });
 }
 
@@ -1594,14 +1658,16 @@ window.applyAdminFilters = function() {
 
 function _apGetFiltered() {
   var agente   = document.getElementById('af-agente').value;
+  var tl       = document.getElementById('af-tl').value;
   var site     = document.getElementById('af-site').value;
   var resultado= document.getElementById('af-resultado').value;
   var desde    = document.getElementById('af-desde').value;
   var hasta    = document.getElementById('af-hasta').value;
   return _adminAllData.filter(function(r) {
-    if (agente    && r['Agente']     !== agente)    return false;
-    if (site      && r['Site']       !== site)      return false;
-    if (resultado && r['Resultado']  !== resultado) return false;
+    if (agente    && r['Agente']         !== agente)    return false;
+    if (tl        && r['TL del agente']  !== tl)        return false;
+    if (site      && r['Site']           !== site)      return false;
+    if (resultado && r['Resultado']      !== resultado) return false;
     if (desde || hasta) {
       var raw = r['Fecha revisión'] || '';
       // ISO (2026-06-16) or dd/MM/yyyy
@@ -1630,6 +1696,7 @@ window.clearAdminFilters = function() {
 };
 function _apResetFilters(refresh) {
   document.getElementById('af-agente').value='';
+  document.getElementById('af-tl').value='';
   document.getElementById('af-site').value='';
   document.getElementById('af-resultado').value='';
   document.getElementById('af-desde').value='';
@@ -1653,7 +1720,7 @@ function _apUpdateCards(data) {
   }
   var sum=0, cnt=0, pass=0, dev=0, fail=0;
   data.forEach(function(r){
-    var p=parseFloat(r['Porcentaje']); if(!isNaN(p)) { sum+=p; cnt++; }
+    var p=parseFloat(r['Porcentaje']); if(!isNaN(p)) { if(p>100)p=p/100; sum+=p; cnt++; }
     var res=r['Resultado']||'';
     if(res==='Excelente'||res==='Aprobado') pass++;
     else if(res==='En desarrollo') dev++;
@@ -1676,7 +1743,7 @@ function _apRenderTable(data) {
   }
   var rows='';
   data.forEach(function(r,i){
-    var pct=parseFloat(r['Porcentaje'])||0;
+    var pct=parseFloat(r['Porcentaje'])||0; if(pct>100)pct=pct/100;
     var pctColor=pct>=90?'#27ae60':pct>=75?'#2980b9':pct>=60?'#e67e22':'#e74c3c';
     var resBadge={
       'Excelente':'rb rb-ex','Aprobado':'rb rb-ap','En desarrollo':'rb rb-de','No aprobado':'rb rb-na'
