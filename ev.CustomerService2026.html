@@ -141,14 +141,72 @@ a{color:var(--navy-3);}
 
 /* ===================== REGISTRATION ===================== */
 .reg-screen{
-  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;
+  min-height:100vh;display:flex;align-items:stretch;
   background:
     radial-gradient(circle at 18% 20%, rgba(201,162,39,.10), transparent 45%),
     radial-gradient(circle at 85% 80%, rgba(33,71,124,.18), transparent 45%),
     var(--navy);
 }
+/* ── left panel ── */
+.reg-instr{
+  flex:0 0 340px;padding:56px 40px 48px;
+  display:flex;flex-direction:column;
+  border-right:1px solid rgba(255,255,255,.07);
+  background:rgba(0,0,0,.12);
+}
+.reg-instr .ri-logo{
+  display:flex;align-items:center;gap:12px;margin-bottom:40px;
+}
+.reg-instr .ri-seal{
+  width:40px;height:40px;flex-shrink:0;border:1.5px solid var(--gold);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--gold);font-size:1.1rem;
+}
+.reg-instr .ri-brand{
+  font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.15em;color:rgba(255,255,255,.4);
+  line-height:1.4;
+}
+.reg-instr h2{
+  font-size:1.55rem;color:#fff;font-weight:600;line-height:1.25;margin-bottom:6px;
+}
+.reg-instr .ri-tagline{
+  font-size:.8rem;color:rgba(255,255,255,.4);margin-bottom:32px;letter-spacing:.01em;
+}
+.ri-rules{
+  list-style:none;margin:0;padding:0;
+  display:flex;flex-direction:column;
+  border-top:1px solid rgba(255,255,255,.07);
+}
+.ri-rules li{
+  display:flex;align-items:baseline;gap:12px;
+  padding:13px 0;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.ri-rules li .ri-dot{
+  flex-shrink:0;width:5px;height:5px;border-radius:50%;
+  background:var(--gold);opacity:.7;margin-top:2px;
+}
+.ri-rules li p{
+  margin:0;font-size:.8rem;color:rgba(255,255,255,.6);line-height:1.5;
+}
+.ri-rules li p strong{
+  color:rgba(255,255,255,.88);font-weight:600;display:block;margin-bottom:1px;
+  font-size:.82rem;
+}
+.ri-footer{
+  margin-top:auto;padding-top:28px;
+  font-size:.73rem;color:rgba(255,255,255,.3);line-height:1.5;
+  border-top:1px solid rgba(255,255,255,.07);
+}
+.ri-footer span{color:var(--gold);opacity:.7;}
+/* ── right form area ── */
+.reg-form-wrap{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  padding:40px 48px;
+}
 .reg-card{
-  max-width:560px;width:100%;background:var(--paper);border-radius:14px;padding:42px 44px 38px;
+  max-width:480px;width:100%;background:var(--paper);border-radius:14px;padding:42px 44px 38px;
   box-shadow:var(--shadow);position:relative;border:1px solid var(--line);
 }
 .reg-card::before{
@@ -342,6 +400,13 @@ a{color:var(--navy-3);}
   .main{padding:24px 18px;}
   .reg-form{grid-template-columns:1fr;}
   .field-grid,.intro-grid,.feedback-grid{grid-template-columns:1fr;}
+  .reg-screen{flex-direction:column;}
+  .reg-instr{flex:none;padding:36px 28px 30px;border-right:none;border-bottom:1px solid rgba(255,255,255,.09);}
+  .reg-form-wrap{padding:32px 20px;}
+}
+@media (max-width:600px){
+  .reg-instr{padding:28px 20px;}
+  .reg-card{padding:28px 22px;}
 }
 </style>
 </head>
@@ -369,69 +434,69 @@ const ESCALATION_OPTIONS = [
   {k:'B', t:'Escalar por ClickUp (formulario de llamadas)'},
   {k:'C', t:'Escalar por Slack'},
   {k:'D', t:'Escalar al Team Leader (TL)'},
-  {k:'E', t:'Escalar a Dirección / MGM'},
+  {k:'E', t:'Escalación CRITICAL — notificar al TL de inmediato, sin colgar la llamada'},
 ];
 
 const ORDER_CATS = ['Acción Inmediata','Escalación','Documentación','Comunicación con el Cliente'];
 
 const DATA = {
   theory: [
-    {id:'t01', prompt:'¿Cuál es el canal principal de recepción de llamadas entrantes del asesor Inbound?', options:['8x8 Contact Center','ClickUp','LawPay','Google Chat'], correct:0},
-    {id:'t02', prompt:'¿Cuál es la función principal del asesor Outbound?', options:['Atender llamadas entrantes de clientes con casos activos','Gestionar tareas salientes asignadas por otras áreas y realizar llamadas outbound y de remarcación','Procesar pagos en LawPay exclusivamente','Dar seguimiento únicamente a RFEs en USCIS.gov'], correct:1},
-    {id:'t03', prompt:'En el flujo de llamada perfecta (Inbound), ¿qué se debe hacer ANTES de dar cualquier información al cliente?', options:['Confirmar el motivo exacto de la llamada','Solicitar y verificar los 3 filtros de seguridad (candados)','Pedir 3 minutos para revisar el caso','Ofrecer asistencia adicional al cliente'], correct:1},
-    {id:'t04', prompt:'Si un cliente no pasa los 3 filtros de seguridad, ¿cuál es el Reason of Call correcto a registrar?', options:["'Regular status'", "'Case status'", "\"CI didn't pass security filters\"", "'Needs packet speed up'"], correct:2},
-    {id:'t05', prompt:'Antes de marcar una llamada outbound asignada por ClickUp, ¿qué debe revisar primero el asesor?', options:['La hoja de tiempos de procesamiento vigente','La descripción completa de la tarea en ClickUp para entender qué solicita el cliente y qué área la originó','El formulario de Cancelaciones','El canal de Slack #cs-dvs'], correct:1},
+    {id:'t01', prompt:'¿Cuál es el canal principal de recepción de llamadas entrantes del asesor Inbound?', options:['8x8 Contact Center','El tablero de ClickUp','El portal de LawPay','Google Chat (Hangouts)'], correct:0},
+    {id:'t02', prompt:'¿Cuál es la función principal del asesor Outbound?', options:['Atender únicamente llamadas entrantes de clientes que ya tienen un caso activo en proceso','Gestionar tareas salientes asignadas por otras áreas y realizar llamadas outbound y de remarcación','Procesar pagos en LawPay exclusivamente, sin atender ningún otro tipo de tarea','Dar seguimiento únicamente a RFEs publicados en el portal de USCIS.gov'], correct:1},
+    {id:'t03', prompt:'En el flujo de llamada perfecta (Inbound), ¿qué se debe hacer ANTES de dar cualquier información al cliente?', options:['Confirmar con el cliente el motivo exacto de su llamada','Solicitar y verificar los 3 filtros de seguridad (candados)','Pedir al cliente 3 minutos para revisar su caso','Ofrecer al cliente cualquier asistencia adicional'], correct:1},
+    {id:'t04', prompt:'Si un cliente no pasa los 3 filtros de seguridad, ¿cuál es el Reason of Call correcto a registrar?', options:["'Regular status check inquiry'", "'Case status verification'", "\"CI didn't pass security filters\"", "'Needs packet speed up'"], correct:2},
+    {id:'t05', prompt:'Antes de marcar una llamada outbound asignada por ClickUp, ¿qué debe revisar primero el asesor?', options:['La hoja de tiempos de procesamiento vigente para ese tipo específico de trámite migratorio','La descripción completa de la tarea en ClickUp para entender qué solicita el cliente','El formulario de Cancelaciones dentro del Registro de llamadas correspondiente','El canal de Slack #cs-dvs para revisar avisos generales del equipo'], correct:1},
     {id:'t06', prompt:'Si en TramCase ya existe una nota reciente de que el cliente llamó por su cuenta a CS, ¿qué debe hacer el asesor outbound con su tarea?', options:['Llamar de todas formas para confirmar la información','Marcar la tarea como Completado sin realizar la llamada','Escalar al TL antes de decidir qué hacer','Reagendar la tarea para el día siguiente'], correct:1},
-    {id:'t07', prompt:'En una remarcación automática donde el cliente no contesta, ¿qué significa cambiar el estado de la tarea a "En curso"?', options:['El sistema sigue remarcando indefinidamente','El sistema deja de remarcar y el caso pasa al equipo de TEXTOS para seguimiento','La llamada se marca como Completado de forma permanente','La tarea se cancela automáticamente'], correct:1},
-    {id:'t08', prompt:'¿Cuál es el script de presentación OBLIGATORIO en una remarcación automática?', options:['«Buen día, le habla [nombre], gracias por llamar a The Mendoza Law Firm.»','«Buen día, me comunico de The Mendoza Law Firm, mi nombre es [tu nombre] y el motivo de esta llamada es por una solicitud que nos hizo para que lo contactáramos de vuelta.»','«Buenos días, gracias por comunicarse a The Mendoza Law Firm, le atiende [tu nombre].»','«Le habla [tu nombre] de The Mendoza Law Firm. Por motivos de seguridad, le voy a confirmar sus filtros.»'], correct:1},
-    {id:'t09', prompt:'En una videollamada de CS, ¿qué ventana NO debe compartirse nunca con el cliente?', options:['La página oficial de la abogada','La ventana con TramCase, Dropbox, tiempos de procesamiento, Registro de llamadas y ClickUp','Una presentación de bienvenida preparada','Documentos del cliente que el agente quiera mostrarle'], correct:1},
-    {id:'t10', prompt:'¿Desde qué cuenta debe conectarse el asesor a Google Meet para que la grabación y el transcript se generen automáticamente?', options:['Su cuenta personal de Google','La cuenta "support"','Cualquier cuenta con licencia de Meet','La cuenta de 8x8 Work'], correct:1},
-    {id:'t11', prompt:'Si el cliente tiene un agente de Collections asignado y prefiere pagar con dicho agente, ¿qué debe hacer el asesor de CS?', options:['Procesar el cobro de todas formas en LawPay','Escalar en el formulario de Collections del Registro de llamadas','Decirle al cliente que debe llamar en otro momento','Informarle que no es posible pagar con su agente'], correct:1},
-    {id:'t12', prompt:'Después de procesar un cobro en LawPay, ¿cuáles son las 3 acciones obligatorias post-cobro?', options:['Confirmar el monto verbalmente, agradecer y colgar','Copiar el comprobante, dejarlo en las notas de TramCase y enviarlo por mensaje de texto al cliente desde TramCase','Enviar el comprobante por correo electrónico y cerrar el caso','Registrar el pago en ClickUp y notificar al área de Collections'], correct:1},
-    {id:'t13', prompt:'¿Qué se debe hacer SIEMPRE antes de informar al cliente sobre el estatus de su caso?', options:['Informar con base en la experiencia de casos similares anteriores','Verificar el estatus en el portal oficial de USCIS y complementar con la revisión en TramCase','Preguntar al TL en cada llamada antes de responder','Consultar el canal de Slack #rfe-comunications'], correct:1},
+    
+    {id:'t08', prompt:'¿Cuál es el script de presentación OBLIGATORIO en una remarcación automática?', options:['«Buen día, le habla [nombre] de The Mendoza Law Firm, gracias por comunicarse con nosotros el día de hoy.»','«Buen día, le llamo de The Mendoza Law Firm, soy [tu nombre] y me comunico en respuesta a su solicitud previa de contacto.»','«Buenos días, gracias por comunicarse con The Mendoza Law Firm, en este momento le atiende [tu nombre], ¿en qué le ayudo?»','«Le habla [tu nombre] de The Mendoza Law Firm. Por motivos de seguridad, antes de continuar le voy a confirmar sus filtros de identidad.»'], correct:1},
+    {id:'t09', prompt:'En una videollamada de CS, ¿qué ventana NO debe compartirse nunca con el cliente?', options:['El perfil de redes sociales de la abogada o de la firma para mostrar credenciales','La ventana izquierda: TramCase, Dropbox, tiempos de procesamiento y Registro de llamadas','Una presentación visual preparada de antemano para mostrar las etapas del trámite','Los documentos del propio cliente que el agente haya descargado con anticipación'], correct:1},
+    {id:'t10', prompt:'¿Desde qué cuenta debe conectarse el asesor a Google Meet para que la grabación y el transcript se generen automáticamente?', options:['Su cuenta personal de Google','La cuenta institucional "support"','Cualquier cuenta con licencia de Meet','La cuenta corporativa de 8x8 Work'], correct:1},
+    {id:'t11', prompt:'Si el cliente tiene un agente de Collections asignado y prefiere pagar con dicho agente, ¿qué debe hacer el asesor de CS?', options:['Procesar el cobro de todas formas directamente en LawPay sin más trámite','Escalar en el formulario de Collections del Registro de llamadas','Decirle al cliente que debe llamar a su agente de Collections en otro momento','Informarle que el pago con agente de Collections es la única opción disponible'], correct:1},
+    {id:'t12', prompt:'Después de procesar un cobro en LawPay, ¿cuáles son las 3 acciones obligatorias post-cobro?', options:['Confirmar el monto verbalmente con el cliente, agradecer su tiempo y colgar de inmediato','Copiar el comprobante, dejarlo en las notas de TramCase y enviarlo por mensaje de texto al cliente desde TramCase','Enviar el comprobante únicamente por correo electrónico y cerrar el caso de inmediato','Registrar el pago en una tarea de ClickUp y notificar de inmediato al área de Collections'], correct:1},
+    {id:'t13', prompt:'¿Qué se debe hacer SIEMPRE antes de informar al cliente sobre el estatus de su caso?', options:['Informar al cliente con base únicamente en la experiencia de casos similares atendidos antes','Verificar el estatus en el portal oficial de USCIS y complementar con la revisión en TramCase','Preguntar siempre al TL antes de responder cualquier pregunta sobre el caso','Consultar primero el canal de Slack #rfe-comunications del equipo'], correct:1},
     {id:'t14', prompt:'El caso presenta atraso respecto a los tiempos de USCIS y falta un recibo inicial. ¿Qué acción corresponde?', options:['Generar un E-Request hacia Back Office','Generar un Missing Receipt hacia Back Office','Escalar directamente a Dirección y MGM','Informar al cliente que debe esperar, sin escalar nada'], correct:1},
     {id:'t15', prompt:'En una llamada inbound estándar cuyo motivo fue una consulta de estatus, ¿cuál es el título correcto de la nota en TramCase?', options:["'Outgoing Call / Case status'", "'Incoming Call / Case status'", "'TEXT MSG UPDATE'", "'Outgoing Call / Chat Request'"], correct:1},
-    {id:'t16', prompt:'¿Qué identifica específicamente el título de nota "Outgoing Call / Chat Request"?', options:['Una llamada inbound estándar con consulta de estatus','Una llamada saliente que provino de una tarea de ClickUp, no una outbound genérica','Un mensaje de texto proactivo enviado al cliente','Una nota de emergencia tipo ICE o detención'], correct:1},
-    {id:'t17', prompt:'¿Qué debe verificarse en CADA caso antes de cerrar la nota en TramCase?', options:['Que el cliente tenga correo electrónico registrado','Que el caso tenga número de cliente y fecha de nacimiento — si faltan, completarlos','Que el cliente haya confirmado por escrito la llamada','Que el caso aparezca en LawPay'], correct:1},
-    {id:'t18', prompt:'¿Cuál es el medio PRINCIPAL para registrar TODAS las llamadas con el cliente, inbound y outbound?', options:['Una nota en TramCase únicamente, sin formulario','El formulario de llamadas en ClickUp','El canal de Slack #cs-dvs','Un correo dirigido a Dirección'], correct:1},
+    {id:'t16', prompt:'¿Qué identifica específicamente el título de nota "Outgoing Call / Chat Request"?', options:['Una llamada inbound estándar donde el cliente pregunta por el estatus de su caso','Una llamada saliente que provino de una tarea de ClickUp, no una outbound genérica','Un mensaje de texto proactivo enviado por el agente directamente al cliente','Una nota de emergencia vinculada a una detención o presencia de agentes de ICE'], correct:1},
+    {id:'t17', prompt:'¿Qué campo de la nota en TramCase determina la categoría de la llamada y guía el seguimiento interno por parte del equipo?', options:['El campo Behavior, que describe el tono del cliente durante la llamada','El Reason of Call, que clasifica el motivo principal del contacto y orienta las acciones de seguimiento','El campo Solution, que resume lo que el agente le dijo al cliente','La fecha y hora de la llamada registrada en el encabezado de la nota'], correct:1},
+    {id:'t18', prompt:'¿En qué casos se usa el título de nota "Outgoing Call / Chat Request" en TramCase?', options:['Para toda llamada inbound donde el cliente llama al agente directamente','Para llamadas salientes que provienen de una tarea de ClickUp o de un chat iniciado por el agente','Para cualquier llamada donde el cliente no contesta y se deja un mensaje de voz','Para documentar el envío de mensajes de texto de seguimiento al cliente'], correct:1},
     {id:'t19', prompt:'¿Qué tipos de escalación se realizan DIRECTAMENTE por el formulario de ClickUp?', options:['Cancelación, Back Office, Call Backs y PCR','RFE, Bar Complaint y reportes de Compliance','Travel Call y solicitudes de NTA','Detenciones y citas con ICE'], correct:0},
     {id:'t20', prompt:'¿En qué canal de Slack se reporta que un cliente de la lista de no contacto se comunicó con CS?', options:['#cs-dvs', '#cdmx-oficina', '#compliance-help', '#rfe-comunications'], correct:2},
-    {id:'t21', prompt:'¿Cuándo se utiliza el canal de Slack #rfe-comunications?', options:['Cuando el cliente solicita una consulta con la abogada','Cuando USCIS solicita información extra (RFE) en el caso del cliente','Cuando hay un problema relacionado con el horario de la oficina','Cuando el cliente reporta un posible intento de fraude'], correct:1},
-    {id:'t22', prompt:'¿Cuál es la única forma correcta de ofrecer una callback al cliente?', options:['Cuando el cliente insiste varias veces, se le puede ofrecer directamente','Nunca sin autorización previa del TL: el asesor identifica la necesidad, notifica al TL, el TL autoriza y entonces se ofrece o agenda','Cuando el caso está en estatus regular, sin necesidad de autorización','Cuando el asesor tiene más de un año de antigüedad puede decidir por su cuenta'], correct:1},
-    {id:'t23', prompt:'¿Por qué medios se contacta al Team Leader (TL) para una escalación urgente?', options:['Únicamente por correo electrónico interno','Por Google Chat (Hangouts) o directamente por 8x8','Por el formulario de llamadas de ClickUp','Por mensaje de WhatsApp personal'], correct:1},
+    {id:'t21', prompt:'¿Cuándo se utiliza el canal de Slack #rfe-communications?', options:['Cuando USCIS emite directamente una solicitud de evidencia al expediente del cliente','Cuando el cliente está trabajando con el equipo de RFE de la firma y requiere dar seguimiento a documentos o información solicitada por esa área','Cuando el cliente reporta un problema con los horarios de atención de la oficina','Cuando el cliente solicita una consulta directa con la abogada titular del caso'], correct:1},
+    {id:'t22', prompt:'¿Cuál es la única forma correcta de ofrecer una callback al cliente?', options:['Cuando el cliente insiste varias veces, el asesor puede ofrecerla directamente sin más trámite','Nunca sin autorización previa del TL: se notifica la necesidad y solo si el TL autoriza se ofrece o agenda','Cuando el caso está en estatus regular, no se necesita ninguna autorización previa','Cuando el asesor tiene más de un año de antigüedad, puede decidir esto por su cuenta'], correct:1},
+    {id:'t23', prompt:'¿En cuál de los siguientes escenarios es OBLIGATORIO escalar al Team Leader durante la llamada activa, sin colgar?', options:['Cuando el cliente pregunta el estatus de su caso y el agente necesita revisar TramCase','Cuando el cliente menciona Bar Complaint, solicita el Bar Number, amenaza con demandar, o habla de publicar en redes sociales','Cuando el cliente solicita cambiar la fecha de una consulta programada con anticipación','Cuando el cliente pide que se le envíe un mensaje de texto con el número de su caso'], correct:1},
     {id:'t24', prompt:'Un cliente menciona que ya consultó con otro abogado y solicita hablar con MGM. Según el mapa de escalaciones, esto corresponde a:', options:['Resolver directamente con empatía, sin escalar','Escalar por Slack en #cs-dvs','Escalar a Dirección + MGM vía el TL','Registrar una nota y continuar la llamada sin más acción'], correct:2},
     {id:'t25', prompt:'¿Cuál es la vigencia mínima del EAD requerida para que un cliente pueda viajar (Travel Call)?', options:['6 meses', '9 meses', '11 meses', '18 meses'], correct:2},
-    {id:'t26', prompt:'Un cliente tiene EAD vigente con Advance Parole, pero ha tenido contacto previo con USCIS. ¿Puede viajar?', options:['Sí, sin ninguna restricción','No: no debe cruzar checkpoints ni viajar, aunque tenga el EAD','Sí, siempre que tenga pasaporte vigente','Sí, si lo autoriza el área de Back Office'], correct:1},
-    {id:'t27', prompt:'Un cliente de la lista de no contacto llama y el agente ya pasó los filtros de seguridad y lo identificó en el listado. ¿Qué frase de cierre está HABILITADA por Compliance?', options:['«No podemos hablar con usted, vamos a colgar.»','«Tenemos prohibido contactarlo por instrucción de Compliance.»','«Gracias por la información. Para asegurar que su solicitud se atienda por el canal correcto, vamos a escalarla internamente. Por el momento no podemos continuar con más detalles en esta llamada, pero su solicitud quedará registrada para el seguimiento correspondiente. Le deseamos buen día.»','«No podemos continuar con esta comunicación.»'], correct:2},
-    {id:'t28', prompt:'Después de cerrar una llamada con un cliente en lista de no contacto usando el speech habilitado, ¿qué acción es obligatoria?', options:['Ninguna acción adicional, la llamada queda cerrada','Levantar reporte en Slack #compliance-help informando que el cliente se contactó con CS','Bloquear el número directamente en 8x8','Enviar un correo a Dirección con el audio de la llamada'], correct:1},
-    {id:'t29', prompt:'Si el agente identifica una discrepancia entre lo que dice el cliente y la DCL registrada, ¿qué palabra está PROHIBIDA en la nota de TramCase?', options:['"Revisión"', '"Canalizar"', '"Discrepancia"', '"Proceso"'], correct:2},
-    {id:'t30', prompt:'¿Cuándo se activa el protocolo del Disclaimer Preventivo Anti-Fraude?', options:['Solo cuando el cliente confiesa abiertamente que mintió','Cuando el agente detecta intención de fabricar, exagerar o tergiversar información, sea por desesperación o desconocimiento','Únicamente si el cliente lo solicita expresamente','Solo en casos relacionados con VAWA'], correct:1},
-    {id:'t31', prompt:'Durante el script anti-fraude, ¿qué acción debe realizar el agente?', options:['Colgar la llamada de inmediato tras detectar la señal','Leer el script al cliente y enviarlo por mensaje de texto MIENTRAS continúa la llamada, sin colgar','Esperar a que el cliente termine de hablar y colgar después','Pedir al cliente que llame nuevamente en otro horario'], correct:1},
+    {id:'t26', prompt:'Un cliente tiene EAD vigente con Advance Parole, pero ha tenido contacto previo con USCIS. ¿Puede viajar?', options:['Sí, sin ninguna restricción ni límite de tiempo','No: no debe cruzar checkpoints ni viajar, aunque tenga el EAD','Sí, siempre que cuente con pasaporte vigente al viajar','Sí, únicamente si lo autoriza el área de Back Office'], correct:1},
+    {id:'t27', prompt:'Un cliente de la lista de no contacto llama y el agente ya pasó los filtros de seguridad y lo identificó en el listado. ¿Qué frase de cierre está HABILITADA por Compliance?', options:['«Lamentablemente no podemos hablar con usted en este momento, así que procederemos a colgar esta llamada de inmediato.»','«Tenemos prohibido contactarlo de cualquier forma por una instrucción directa y reciente del área de Compliance de la firma.»','«Gracias por la información, vamos a escalarla internamente y su solicitud quedará registrada para el seguimiento correspondiente. Le deseamos buen día.»','«No podemos continuar de ninguna manera con esta comunicación, así que le pedimos que no vuelva a llamar a este número.»'], correct:2},
+    {id:'t28', prompt:'Después de cerrar una llamada con un cliente en lista de no contacto usando el speech habilitado, ¿qué acción es obligatoria?', options:['Ninguna acción adicional es necesaria, la llamada queda cerrada por completo','Levantar reporte en Slack #compliance-help informando que el cliente se contactó con CS','Bloquear directamente el número del cliente desde el panel de 8x8 del agente','Enviar un correo a Dirección adjuntando el audio completo de la llamada'], correct:1},
+    {id:'t29', prompt:'Si el agente identifica una discrepancia entre lo que dice el cliente y la DCL registrada, ¿qué palabra está PROHIBIDA en la nota de TramCase?', options:['"Revisión interna"', '"Canalización"', '"Discrepancia"', '"Proceso interno"'], correct:2},
+    {id:'t30', prompt:'¿Cuándo se activa el protocolo del Disclaimer Preventivo Anti-Fraude?', options:['Solo cuando el cliente confiesa abiertamente y por escrito que mintió en su declaración inicial','Cuando el agente detecta intención de fabricar o exagerar información, por desesperación o desconocimiento','Únicamente si el cliente lo solicita de forma expresa y por escrito al agente','Solo en casos relacionados específicamente con el trámite de VAWA ante USCIS'], correct:1},
+    {id:'t31', prompt:'Durante el script anti-fraude, ¿qué acción debe realizar el agente?', options:['Colgar la llamada de inmediato en cuanto se detecta cualquier señal de alerta en la conversación','Leer el script y enviarlo por mensaje de texto al cliente, sin colgar la llamada en ningún momento','Esperar a que el cliente termine de hablar completamente y colgar solo al finalizar','Pedirle al cliente que vuelva a llamar en un horario diferente del día actual'], correct:1},
     {id:'t32', prompt:'Si después del script anti-fraude el cliente continúa con incoherencias o señales de fraude, ¿qué debe hacer el agente?', options:['Ignorarlo y continuar normalmente con el resto de la llamada','Reportar de inmediato a Compliance a través del canal/QR habilitado','Decidir por su cuenta si el caso continúa o se rechaza','Documentar con palabras explícitas el intento de fraude detectado en TramCase'], correct:1},
-    {id:'t33', prompt:'Llama un familiar del titular del caso pidiendo información sobre el expediente. ¿Qué debe hacer el agente?', options:['Confirmar si existe un caso activo, pero sin dar más detalles','No confirmar ni negar la existencia de ningún caso, y no dar información aunque sea familiar directo','Dar información general sin datos sensibles','Pedir que el familiar envíe una autorización por correo y luego dar información'], correct:1},
-    {id:'t34', prompt:'Internamente, si el agente identifica que sí existe un caso al recibir la llamada de un tercero no autorizado, ¿qué debe hacer?', options:['Informar al tercero que efectivamente existe un caso','Contactar al titular por canales autorizados, sin informar nada al llamante','Pedir al tercero los datos del titular para confirmarlo','Escalar de inmediato a Dirección antes de cualquier otra acción'], correct:1},
-    {id:'t35', prompt:'En la metodología VDPC, ¿qué representa la letra "P"?', options:['Procedimiento', 'Puente — conectar con la solución', 'Política interna', 'Proceso operativo'], correct:1},
+    {id:'t33', prompt:'Llama un familiar del titular del caso pidiendo información sobre el expediente. ¿Qué debe hacer el agente?', options:['Confirmar de inmediato si existe un caso activo, pero sin dar más detalles','No confirmar ni negar si existe un caso ni dar información, aunque llame un familiar directo','Dar información general del caso sin mencionar datos sensibles','Pedir que el familiar envíe una autorización por correo y luego dar información'], correct:1},
+    {id:'t34', prompt:'Internamente, si el agente identifica que sí existe un caso al recibir la llamada de un tercero no autorizado, ¿qué debe hacer?', options:['Decirle al tercero que sí existe un caso registrado en el sistema a nombre del titular','Contactar al titular por canales autorizados, sin informar nada al llamante','Pedirle al tercero los datos del titular para verificar y confirmar su identidad','Escalar de inmediato a Dirección antes de responder cualquier pregunta del tercero'], correct:1},
+    {id:'t35', prompt:'En la metodología VDPC, ¿qué representa la letra "P"?', options:['Procedimiento operativo estándar', 'Puente — conectar con la solución', 'Política interna de la firma', 'Proceso operativo regular'], correct:1},
     {id:'t36', prompt:'Según la regla del Puente en VDPC, ¿cómo se debe actuar con un cliente muy enojado?', options:['Dando la mayor cantidad de información posible para tranquilizarlo','A mayor molestia, menor explicación: ir más rápido hacia la acción','Repitiendo la disculpa varias veces antes de continuar','Transfiriendo la llamada de inmediato sin resolver nada'], correct:1},
     {id:'t37', prompt:'En la fase de Cierre (C) de VDPC, ¿qué se le debe prometer al cliente?', options:['Resultados específicos y plazos garantizados','Acompañamiento, nunca resultados','Que el caso será aprobado en automático','Un descuento sobre su mensualidad'], correct:1},
     {id:'t38', prompt:'Un cliente informa que fue detenido por ICE. ¿Qué debe hacer el agente ANTES de terminar la llamada?', options:['Decirle que la firma no puede ayudarlo en este tipo de casos','Notificar al TL de inmediato, con máxima prioridad','Pedirle que contrate un abogado externo de inmediato','Transferir la llamada al área de LawPay'], correct:1},
-    {id:'t39', prompt:'Si ICE está actualmente en la puerta del cliente, ¿cuál es la ÚNICA excepción para que el cliente deba responder y abrir?', options:['Si los agentes muestran solo su placa','Si presentan una orden firmada por un juez (judge\'s order) con su nombre','Si insisten en tocar varias veces','Si el cliente tiene documentos migratorios vigentes a la mano'], correct:1},
-    {id:'t40', prompt:'Un cliente menciona "Bar Complaint" o solicita el Bar Number de la abogada. ¿Qué nivel de riesgo y escalación corresponde?', options:['MEDIUM — escalar a Back Office y continuar','HIGH — escalar únicamente a Dirección','CRITICAL — escalar de inmediato a Dirección + MGM + Atty escalation, sin colgar la llamada','LOW — documentar y continuar la llamada con normalidad'], correct:2},
+    {id:'t39', prompt:'Si ICE está actualmente en la puerta del cliente, ¿cuál es la ÚNICA excepción para que el cliente deba responder y abrir?', options:['Si los agentes solamente muestran su placa o credencial','Si presentan una orden firmada por un juez (judge\'s order) con su nombre','Si los agentes insisten en tocar la puerta varias veces','Si el cliente tiene documentos migratorios vigentes a la mano'], correct:1},
+    {id:'t40', prompt:'Un cliente menciona "Bar Complaint" o solicita el Bar Number de la abogada. ¿Qué nivel de riesgo y escalación corresponde?', options:['MEDIUM — escalar a Back Office y continuar la llamada con normalidad','HIGH — escalar únicamente a Dirección sin más acción','CRITICAL — escalar de inmediato a Dirección + MGM + Atty escalation','LOW — documentar en TramCase y continuar la llamada con normalidad'], correct:2},
   ],
   errors: [
     {id:'e01', context:'El agente recibe una llamada y el cliente da su nombre completo y pregunta directamente por el estatus de su caso. El agente revisa TramCase, localiza el caso y le informa el estatus actual sin solicitar más datos.', prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
       'Error: no usó el saludo corporativo completo. Política incumplida: uso del nombre completo de la firma. Acción correcta: repetir el saludo antes de continuar.',
       "Error: no ofreció asistencia adicional al cliente. Política incumplida: paso 7 del flujo de 11 pasos. Acción correcta: preguntar '¿hay algo más en lo que pueda servirle?' antes de dar el estatus.",
-      'Error: no solicitó ni verificó los 3 filtros de seguridad antes de dar información. Política incumplida: candados de seguridad obligatorios en cada llamada. Acción correcta: solicitar nombre completo, número de cliente o fecha de nacimiento, y teléfono/correo/dirección antes de revelar cualquier dato del caso.',
+      'Error: no solicitó ni verificó los 3 filtros de seguridad antes de dar información. Acción correcta: solicitar nombre completo, número de cliente o fecha de nacimiento, y teléfono/correo/dirección antes de revelar cualquier dato del caso.',
       "Error: no pidió 3 minutos para revisar el caso antes de responder. Política incumplida: bloques de espera de 3 minutos. Acción correcta: solicitar 3 minutos y regresar diciendo 'gracias por su espera' antes de informar."
     ], correct:2},
     {id:'e02', context:'El agente realiza una llamada outbound desde una tarea de ClickUp. Al contestar el cliente, el agente se presenta y de inmediato comienza a explicar el motivo de la llamada y detalles del caso.', prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
       'Error: no revisó la tarea de ClickUp antes de marcar. Política incumplida: leer la descripción completa de la tarea antes de llamar. Acción correcta: revisar la tarea y TramCase antes de marcar.',
-      'Error: no aplicó los candados de seguridad antes de hablar de detalles del caso. Política incumplida: los filtros de seguridad son obligatorios para inbound y outbound sin excepción. Acción correcta: confirmar nombre completo, número de cliente o fecha de nacimiento, y teléfono/correo/dirección antes de mencionar cualquier detalle del caso.',
+      'Error: no aplicó los candados de seguridad antes de hablar de detalles del caso. Acción correcta: confirmar nombre completo, número de cliente o fecha de nacimiento, y teléfono/correo/dirección antes de mencionar cualquier detalle del caso.',
       'Error: no se asignó la tarea en ClickUp antes de llamar. Política incumplida: cambiar el estado de Pendiente a En curso al iniciar. Acción correcta: asignarse la tarea antes de marcar.',
       "Error: no usó el título de nota 'Outgoing Call / Chat Request'. Política incumplida: estructura de notas para llamadas desde ClickUp. Acción correcta: usar ese título al documentar."
     ], correct:1},
     {id:'e03', context:"Una mujer llama diciendo ser hermana del titular del caso y solicita conocer el estatus porque 'él está ocupado y me pidió que preguntara'. El agente, para ser útil, le indica que el caso está avanzando y que pronto recibirán noticias de USCIS.", prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
-      'Error: proporcionó información del caso a una tercera persona no autorizada. Política incumplida: protocolo de Terceras Personas — no confirmar ni negar la existencia de ningún caso, ni dar información aunque sea familiar directo. Acción correcta: usar el aviso de confidencialidad y pedir que el titular se comunique directamente.',
+      'Error: proporcionó información del caso a una tercera persona no autorizada. Acción correcta: usar el aviso de confidencialidad y pedir que el titular se comunique directamente.',
       'Error: no verificó los 3 filtros de seguridad con la hermana antes de continuar. Política incumplida: candados de seguridad. Acción correcta: pedirle a la hermana sus propios datos de identidad.',
       'Error: no ofreció agendar una llamada para el titular. Política incumplida: callbacks requieren autorización del TL. Acción correcta: ofrecer un callback al titular.',
       "Error: no documentó la llamada como 'Outgoing Call'. Política incumplida: estructura de notas en TramCase. Acción correcta: registrar la nota con ese título."
@@ -440,22 +505,22 @@ const DATA = {
       'Error: terminó la llamada de forma abrupta sin despedida corporativa. Política incumplida: despedida corporativa obligatoria. Acción correcta: usar la despedida completa con el apellido del cliente.',
       'Error: no escaló la llamada al TL. Política incumplida: toda llamada de un tercero debe escalarse al TL de inmediato. Acción correcta: notificar al TL antes de responder.',
       "Error: no completó la nota en TramCase con el título 'THIRD-PARTY CALL'. Política incumplida: plantilla obligatoria de nota. Acción correcta: usar esa plantilla, sin importar lo que se haya dicho al llamante.",
-      'Error: confirmó la existencia de un caso a nombre del cliente ante una persona no autorizada. Política incumplida: nunca confirmar ni negar la existencia de un caso ante terceros, aunque sean familiares directos. Acción correcta: usar el aviso de confidencialidad sin confirmar ni negar nada, e indicar que el titular debe comunicarse directamente.'
+      'Error: confirmó la existencia de un caso a nombre del cliente ante una persona no autorizada. Acción correcta: usar el aviso de confidencialidad sin confirmar ni negar nada, e indicar que el titular debe comunicarse directamente.'
     ], correct:3},
     {id:'e05', context:"Un cliente molesto por la demora de su caso pide hablar con un abogado. El agente, para calmarlo, le dice 'claro, le agendo una llamada con el área legal para mañana a las 10am' y cuelga sin avisar a nadie más.", prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
       'Error: no aplicó la metodología VDPC completa antes de ofrecer algo. Política incumplida: VDPC es obligatorio para clientes molestos. Acción correcta: validar, disculparse, dar el puente y cerrar antes de ofrecer cualquier solución.',
-      'Error: ofreció y agendó una callback sin autorización previa del TL. Política incumplida: las callbacks SIEMPRE requieren autorización del TL antes de ofrecerse al cliente. Acción correcta: notificar al TL, esperar su autorización y solo entonces ofrecer o agendar la callback.',
+      'Error: ofreció y agendó una callback sin autorización previa del TL. Acción correcta: notificar al TL, esperar su autorización y solo entonces ofrecer o agendar la callback.',
       "Error: no documentó la molestia del cliente en TramCase. Política incumplida: 'lo que no está documentado no existe'. Acción correcta: dejar nota detallada de la molestia.",
       'Error: no verificó el estatus del caso en USCIS antes de ofrecer la llamada. Política incumplida: verificar siempre en USCIS antes de informar. Acción correcta: revisar USCIS antes de prometer cualquier seguimiento.'
     ], correct:1},
     {id:'e06', context:"Durante un proceso de cancelación, el cliente pregunta cuándo recibirá su reembolso. El agente, queriendo tranquilizarlo, le dice 'un asesor le llamará el viernes a las 4pm para darle el detalle del reembolso' sin haber escalado nada todavía.", prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
       'Error: contuvo al cliente por más de 2 minutos antes de escalar. Política incumplida: tiempo máximo de contención de 2 minutos en cancelaciones. Acción correcta: escalar al formulario de Cancelaciones tras 2 minutos de contención.',
       "Error: dio información sobre montos de reembolso sin verificar la nota 'CASE CANCELED'. Política incumplida: nunca dar montos ni tiempos sin esa nota previa. Acción correcta: verificar la nota antes de hablar de montos.",
-      'Error: comprometió una fecha y hora específica de callback sin autorización del TL ni escalación previa. Política incumplida: las callbacks siempre requieren autorización del TL, y las cancelaciones se escalan por el formulario correspondiente. Acción correcta: informar que un área especializada se comunicará, sin comprometer fecha/hora, y escalar por el formulario de Cancelaciones.',
+      'Error: comprometió una fecha y hora específica de callback sin autorización del TL ni escalación previa. Acción correcta: informar que un área especializada se comunicará, sin comprometer fecha/hora, y escalar por el formulario de Cancelaciones.',
       "Error: no usó la frase 'Esa información se le dará en la llamada que va a recibir'. Política incumplida: frase estándar para preguntas sobre montos/tiempos. Acción correcta: usar esa frase exacta."
     ], correct:2},
     {id:'e07', context:"Un cliente ansioso pregunta si su I-360 va a ser aprobada. El agente, queriendo darle confianza, le responde: 'No se preocupe, su caso va a salir aprobado pronto, ya casi sale.'", prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
-      'Error: prometió un resultado (aprobación) al cliente. Política incumplida: en VDPC, la fase de Cierre promete acompañamiento, nunca resultados. Acción correcta: usar frases de cierre que transmitan confianza y acompañamiento, sin garantizar la aprobación ni los tiempos.',
+      'Error: prometió un resultado (aprobación) al cliente. Acción correcta: usar frases de cierre que transmitan confianza y acompañamiento, sin garantizar la aprobación ni los tiempos.',
       'Error: no verificó el estatus en USCIS antes de responder. Política incumplida: verificar siempre el estatus antes de informar. Acción correcta: revisar USCIS y TramCase antes de responder cualquier pregunta sobre el caso.',
       'Error: no usó la metodología VDPC porque el cliente no estaba molesto. Política incumplida: VDPC solo aplica a clientes molestos. Acción correcta: ninguna acción adicional, VDPC no era necesario aquí.',
       'Error: no escaló la pregunta a Back Office. Política incumplida: toda pregunta sobre aprobaciones debe escalarse. Acción correcta: escalar a Back Office la pregunta del cliente.'
@@ -464,79 +529,79 @@ const DATA = {
       'Error: no compartió el video de referencia de la abogada en Facebook. Política incumplida: compartir el video si el cliente lo requiere. Acción correcta: enviar el enlace del video al cliente.',
       "Error: no registró el Reason of Call como 'Trump questions'. Política incumplida: estructura del Registro de llamadas. Acción correcta: registrar ese Reason of Call.",
       "Error: no mencionó la frase 'afortunadamente' adaptada a la etapa del caso. Política incumplida: guion de contención de la sección de Trump/VAWA. Acción correcta: adaptar la frase 'afortunadamente' según la etapa del caso del cliente.",
-      "Error: convirtió un mensaje de confianza/contención en una garantía absoluta de aprobación. Política incumplida: el guion busca generar confianza ('confíe') sin garantizar resultados; nunca se debe prometer una aprobación. Acción correcta: usar el guion de contención (mencionar la experiencia de la abogada y casos previos) sin garantizar el resultado del caso."
+      "Error: convirtió un mensaje de confianza/contención en una garantía absoluta de aprobación. Acción correcta: usar el guion de contención (mencionar la experiencia de la abogada y casos previos) sin garantizar el resultado del caso."
     ], correct:3},
-    {id:'e09', context:"El cliente menciona que quiere ponerse al corriente con su mensualidad. El agente, que ve la tarjeta guardada en LawPay, procesa directamente el cobro del monto que aparece en el sistema y luego informa al cliente 'ya quedó procesado su pago de $150 USD'.", prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
+    {id:'e09', context:"El cliente dice que quiere ponerse al corriente con su mensualidad de $150 USD. El agente, en lugar de leer la fraseología exacta, improvisa: '¿Le parece si le hago el cobro de los $150?' El cliente responde 'sí' y el agente procesa el cargo.", prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
       'Error: no verificó si el cliente tiene un agente de Collections asignado. Política incumplida: verificar agente de Collections antes de cualquier cobro. Acción correcta: preguntar si tiene agente y, de ser así, escalar al formulario de Collections.',
-      "Error: procesó el cobro sin obtener la autorización verbal explícita del cliente mediante la fraseología obligatoria. Política incumplida: la fraseología de autorización ('¿Me autoriza realizar el cobro por el monto de $[monto]...? ¿Lo autoriza?') es obligatoria, esperando confirmación verbal ANTES de procesar. Acción correcta: leer la fraseología exacta, esperar el 'sí' explícito del cliente y solo entonces procesar el cobro.",
+      'Error: usó una versión improvisada de la fraseología en lugar de leerla textualmente. Política incumplida: la fraseología de autorización debe leerse word-for-word sin parafrasear. Acción correcta: leer la fraseología exacta obligatoria completa y esperar el sí explícito antes de procesar el cobro.',
       'Error: no envió el comprobante por mensaje de texto al cliente. Política incumplida: las 3 acciones post-cobro son obligatorias. Acción correcta: enviar el comprobante por TramCase y esperar confirmación de recibido.',
       'Error: no llenó correctamente el concepto del pago en LawPay. Política incumplida: llenar nombre, monto y concepto. Acción correcta: completar todos los campos de LawPay antes de procesar.'
     ], correct:1},
     {id:'e10', context:'El cliente autoriza verbalmente un cobro de $100 USD para su mensualidad. El agente, al llenar LawPay, ingresa por error $150 USD y procesa el cobro sin volver a confirmar con el cliente.', prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
-      'Error: no copió el comprobante de pago. Política incumplida: acciones post-cobro obligatorias. Acción correcta: copiar el comprobante antes de continuar.',
+      'Error: no copió el comprobante de pago ni lo dejó registrado en las notas de TramCase. Política incumplida: las 3 acciones post-cobro son obligatorias en todos los casos. Acción correcta: copiar el comprobante y dejarlo registrado antes de continuar.',
       'Error: no preguntó si el cliente tenía agente de Collections. Política incumplida: verificación previa de Collections. Acción correcta: preguntar antes de cualquier cobro.',
-      'Error: procesó un monto distinto al autorizado verbalmente por el cliente. Política incumplida: la autorización verbal corresponde a un monto específico; cobrar un monto diferente invalida esa autorización. Acción correcta: corregir el monto en LawPay antes de procesar, y si ya se procesó, detenerse, informar al cliente y escalar para corregir el cobro.',
+      'Error: procesó un monto distinto al autorizado verbalmente por el cliente. Acción correcta: corregir el monto en LawPay antes de procesar, y si ya se procesó, detenerse, informar al cliente y escalar para corregir el cobro.',
       "Error: no usó la palabra 'mensualidad' en la fraseología. Política incumplida: fraseología exacta de autorización. Acción correcta: usar la palabra exacta 'mensualidad' o 'pago mensual'."
     ], correct:2},
     {id:'e11', context:"Un cliente llama por tercera vez en el mes preguntando lo mismo sobre su estatus. Dice 'la semana pasada ya me explicaron esto, pero quiero confirmar otra vez'. El agente, sin revisar las notas previas, vuelve a explicar todo desde cero y no marca nada especial en el Registro de llamadas.", prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
-      'Error: no revisó las notas previas en TramCase durante los 3 minutos de revisión, y no marcó el caso en el apartado de Control Operativo pese a ser la tercera llamada en un mes. Política incumplida: revisar siempre notas internas previas, y marcar en Control Operativo cuando el cliente llama más de 3 veces en un mes. Acción correcta: revisar las notas previas antes de responder y registrar el caso en Control Operativo.',
-      'Error: no pidió los 3 filtros de seguridad porque el cliente ya había llamado antes. Política incumplida: los filtros se verifican en cada llamada, sin excepción. Acción correcta: pedir los filtros nuevamente.',
-      'Error: no escaló el caso a Back Office por atraso. Política incumplida: escalar atrasos a Back Office. Acción correcta: escalar el caso por atraso.',
-      'Error: no ofreció una callback al cliente. Política incumplida: callbacks para clientes recurrentes. Acción correcta: ofrecer una callback con autorización del TL.'
+      'Error: no revisó las notas previas en TramCase antes de atender la llamada, lo que generó que el cliente recibiera la misma explicación por tercera vez. Política incumplida: revisar siempre las notas internas previas durante los 3 minutos de revisión. Acción correcta: revisar las notas de TramCase antes de responder y marcar en el Registro de llamadas si el cliente llama de forma recurrente por el mismo tema.',
+      'Error: no pidió los 3 filtros de seguridad porque el cliente ya había llamado antes. Política incumplida: los filtros se verifican en cada llamada, sin excepción. Acción correcta: pedir los 3 filtros de seguridad nuevamente al inicio de la llamada, sin asumir nada por llamadas previas.',
+      'Error: no escaló el caso a Back Office por estar fuera de los tiempos de procesamiento vigentes. Política incumplida: los atrasos se escalan a Back Office mediante Missing Receipt o E-Request. Acción correcta: generar la escalación correspondiente a Back Office.',
+      'Error: no ofreció una callback al cliente, a pesar de ser una llamada recurrente sobre el mismo tema. Política incumplida: las callbacks requieren autorización previa del TL. Acción correcta: notificar al TL y, si lo autoriza, ofrecer y agendar la callback.'
     ], correct:0},
-    {id:'e12', context:"El agente recibe una tarea de ClickUp para llamar a un cliente y darle seguimiento sobre un documento pendiente. Sin revisar TramCase, marca la llamada; el cliente le dice 'ya hablé con ustedes ayer y entregué todo, ¿por qué me vuelven a llamar?'.", prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
-      'Error: no se asignó la tarea en ClickUp antes de llamar. Política incumplida: asignarse la tarea y cambiar su estado al iniciar. Acción correcta: asignarse la tarea antes de marcar.',
-      "Error: no usó el script de identificación del cliente al inicio de la llamada saliente. Política incumplida: script obligatorio '¿es usted el Sr./Sra. [Nombre]?'. Acción correcta: usar el script de identificación.",
-      'Error: no consultó al TL antes de llamar. Política incumplida: consultar al TL si hay duda antes de llamar. Acción correcta: consultar al TL antes de marcar.',
-      'Error: no revisó las últimas notas en TramCase antes de marcar, lo que generó un contacto innecesario e incómodo para el cliente. Política incumplida: verificar en TramCase si el cliente ya se contactó por su cuenta — si ya lo hizo, marcar la tarea como Completado sin llamar. Acción correcta: revisar TramCase antes de marcar; si ya hay una nota reciente de que el cliente entregó la información, marcar la tarea como Completado sin realizar la llamada.'
-    ], correct:3},
+    {id:'e12', context:"El agente encuentra en ClickUp una tarea de seguimiento sobre un documento pendiente de un cliente, se la autoasigna y realiza la llamada de inmediato sin consultar las notas de TramCase. El cliente responde molesto: 'ya hablé con alguien ayer y entregué todo, ¿por qué me vuelven a llamar?'.", prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
+      'Error: se autoasignó la tarea sin revisar primero las notas recientes de TramCase, generando un contacto innecesario que incomodó al cliente. Política incumplida: antes de autoasignarse una tarea de seguimiento, verificar en TramCase si el cliente ya se comunicó. Acción correcta: revisar las notas antes de actuar; si ya resolvió el pendiente, marcar la tarea como Completado sin llamar.',
+      "Error: no usó el script de identificación del cliente al inicio de la llamada saliente. Política incumplida: script obligatorio '¿es usted el Sr./Sra. [Nombre]?'. Acción correcta: iniciar siempre con el script de identificación, confirmando que se está hablando con el titular antes de mencionar cualquier detalle.",
+      'Error: no consultó al TL antes de autoasignarse la tarea. Política incumplida: cualquier tarea de ClickUp debe ser autorizada por el TL antes de ejecutarse. Acción correcta: consultar siempre al TL para obtener autorización antes de autoasignarse cualquier tarea pendiente.',
+      'Error: no documentó la llamada con el título correcto en TramCase después de la llamada fallida. Política incumplida: toda llamada requiere nota en TramCase independientemente del resultado. Acción correcta: registrar la nota con el título correspondiente y marcar el resultado de la llamada.'
+    ], correct:0},
     {id:'e13', context:"Durante una llamada por un tema de pago, el cliente menciona de paso: 'la semana pasada me detuvo migración pero ya salí, solo quería preguntar por mi mensualidad'. El agente procesa el pago y continúa la llamada sin mencionar nada más sobre la detención.", prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
-      'Error: no verificó si el cliente tiene agente de Collections. Política incumplida: verificación previa de Collections. Acción correcta: preguntar antes de procesar el pago.',
-      "Error: no notificó al TL sobre la mención de una detención, asumiendo que ya no era relevante porque el cliente 'ya salió'. Política incumplida: las emergencias —incluida cualquier mención de detención— tienen prioridad absoluta y deben notificarse al TL de inmediato, sin importar cómo las minimice el cliente. Acción correcta: notificar al TL de inmediato, recopilar la información crítica de la detención y hacer el triple registro, además de continuar con el tema del pago.",
-      'Error: no usó la fraseología exacta de autorización de LawPay. Política incumplida: fraseología obligatoria de cobro. Acción correcta: usar la fraseología exacta antes de cobrar.',
-      'Error: no ofreció asistencia adicional al final. Política incumplida: paso 7 del flujo de 11 pasos. Acción correcta: preguntar si hay algo más en qué ayudar.'
+      'Error: no verificó si el cliente tiene un agente de Collections asignado antes de procesar el pago. Política incumplida: la verificación de Collections debe hacerse antes de cualquier cobro. Acción correcta: preguntar por el agente de Collections antes de procesar el pago.',
+      "Error: no notificó al TL sobre la mención de una detención, asumiendo que ya no era relevante porque el cliente 'ya salió'. Acción correcta: notificar al TL de inmediato, recopilar la información crítica de la detención y hacer el triple registro, además de continuar con el tema del pago.",
+      'Error: no usó la fraseología exacta de autorización de LawPay. Política incumplida: fraseología obligatoria de cobro. Acción correcta: leer la fraseología completa de autorización y esperar la confirmación verbal del cliente antes de procesar cualquier cobro.',
+      'Error: no ofreció asistencia adicional al cliente al concluir el tema del pago. Política incumplida: el paso 7 del flujo de 11 pasos exige ofrecer ayuda adicional antes de cerrar. Acción correcta: preguntar si hay algo más en qué pueda ayudar antes de despedirse.'
     ], correct:1},
     {id:'e14', context:"Un cliente informa que tiene una corte migratoria en 48 horas y necesita una copia urgente de su expediente. El agente responde 'está bien, lo voy a anotar' y registra una nota genérica sin escalar nada con prioridad ni pedir los datos del abogado.", prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
-      'Error: no le dijo al cliente que su solicitud sería revisada. Política incumplida: frase de cierre estándar de File Request. Acción correcta: usar la frase de cierre estándar.',
-      'Error: no preguntó si el cliente quería cambiar de abogado. Política incumplida: guion para clientes molestos que quieren cambiar de abogado. Acción correcta: preguntar sobre el cambio de abogado.',
-      'Error: no recopiló los datos del abogado y la corte ni reportó la solicitud con carácter prioritario dado el plazo de 48 horas. Política incumplida: ante una corte próxima, se deben solicitar los datos del abogado (nombre, teléfono con extensión, correo), el tipo de corte y la fecha, y reportar la solicitud de expediente con prioridad. Acción correcta: recopilar esos datos, reportar el File Request como prioritario por la fecha de corte y escalar con el TL.',
-      "Error: no verificó si el caso tenía nota 'CASE CANCELED'. Política incumplida: verificación de cancelación antes de hablar de reembolsos. Acción correcta: verificar la nota antes de continuar."
+      'Error: no le dijo al cliente que su solicitud de expediente sería revisada antes de finalizar la llamada. Política incumplida: la frase de cierre estándar de File Request es obligatoria. Acción correcta: usar la frase de cierre estándar antes de despedirse.',
+      'Error: no preguntó al cliente si deseaba cambiar de abogado, dado el contexto de la solicitud. Política incumplida: existe un guion específico para clientes que mencionan querer cambiar de abogado. Acción correcta: preguntar sobre el posible cambio de abogado antes de continuar.',
+      'Error: no recopiló los datos del abogado y la corte ni reportó la solicitud con carácter prioritario dado el plazo de 48 horas. Acción correcta: recopilar los datos del abogado (nombre, teléfono con extensión, correo), el tipo de corte y la fecha; reportar el File Request como prioritario y escalar con el TL.',
+      "Error: no verificó si el caso ya contaba con la nota 'CASE CANCELED' antes de continuar con la solicitud. Política incumplida: esta verificación es obligatoria antes de hablar de montos o reembolsos. Acción correcta: verificar esa nota antes de continuar con cualquier respuesta."
     ], correct:2},
     {id:'e15', context:"El cliente pregunta cuánto tiempo más tardará su trámite. El agente, sin abrir la hoja de tiempos de procesamiento, responde de memoria: 'normalmente esto tarda unos 8 meses, no se preocupe'.", prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
-      'Error: informó un plazo de memoria sin consultar la hoja de tiempos de procesamiento vigente. Política incumplida: para plazos, consultar SIEMPRE la hoja de tiempos vigente — nunca informar de memoria. Acción correcta: revisar la hoja de tiempos durante los 3 minutos de revisión y dar el plazo vigente, no uno aproximado de memoria.',
+      'Error: informó un plazo de memoria sin consultar la hoja de tiempos de procesamiento vigente. Acción correcta: revisar la hoja de tiempos durante los 3 minutos de revisión y dar el plazo vigente, no uno aproximado de memoria.',
       'Error: no preguntó el motivo de la llamada antes de responder. Política incumplida: paso 3 del flujo, escuchar el motivo sin asumir. Acción correcta: preguntar el motivo antes de dar cualquier información.',
       'Error: no aplicó VDPC porque el cliente no estaba molesto. Política incumplida: VDPC es solo para clientes molestos. Acción correcta: no era necesario aplicar VDPC en este caso.',
       "Error: no marcó el Reason of Call como 'Needs packet speed up'. Política incumplida: Reason of Call para atrasos. Acción correcta: marcar ese Reason of Call."
     ], correct:0},
     {id:'e16', context:"En una videollamada, el cliente pregunta cuánto falta para que llegue su EAD. Aunque el agente tiene la hoja de tiempos abierta en la ventana izquierda (no compartida), responde directamente de memoria sin consultarla, diciendo 'como unas 5 semanas más'.", prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
-      'Error: compartió la ventana incorrecta durante la videollamada. Política incumplida: solo se comparte la ventana derecha. Acción correcta: verificar qué ventana se está compartiendo.',
-      'Error: respondió un plazo de memoria a pesar de tener la hoja de tiempos de procesamiento disponible en la ventana no compartida. Política incumplida: consultar siempre la hoja de tiempos vigente antes de informar plazos, sin importar el canal (llamada o videollamada). Acción correcta: revisar la hoja de tiempos en la ventana izquierda antes de responder, y dar el plazo vigente real.',
-      'Error: no confirmó la conexión de audio y video al inicio. Política incumplida: verificación técnica inicial obligatoria. Acción correcta: confirmar audio, video y conexión al inicio.',
+      'Error: compartió la ventana incorrecta durante la videollamada. Política incumplida: solo se comparte la ventana derecha autorizada. Acción correcta: verificar qué ventana está siendo compartida antes de mostrar información.',
+      'Error: respondió un plazo de memoria aunque tenía la hoja de tiempos disponible en pantalla. Política incumplida: consultar siempre la hoja de tiempos vigente antes de informar plazos. Acción correcta: revisarla en la ventana izquierda y dar el plazo real.',
+      'Error: no confirmó la conexión de audio y video al inicio. Política incumplida: la verificación técnica inicial es obligatoria en videollamadas. Acción correcta: confirmar audio, video y conexión al inicio de cada videollamada.',
       'Error: no documentó la videollamada en el Drive. Política incumplida: las grabaciones y transcripts quedan en Drive/Meetings. Acción correcta: verificar que la grabación y transcript estén activos.'
     ], correct:1},
     {id:'e17', context:"El agente nota que la fecha del incidente que menciona el cliente no coincide con la registrada en la DCL del caso. Escribe en TramCase: 'El cliente indicó que la declaración tiene errores respecto a la fecha del incidente; se detectó discrepancia en la DCL.'", prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
-      'Error: no marcó el Reason of Call correcto para discrepancias. Política incumplida: estructura de Reason of Call. Acción correcta: usar un Reason of Call específico para DCL.',
-      'Error: no escaló la discrepancia al área legal de inmediato por teléfono. Política incumplida: las discrepancias DCL deben escalarse verbalmente y de inmediato. Acción correcta: llamar al área legal antes de colgar.',
-      "Error: registró en la nota palabras prohibidas ('errores', 'discrepancia') y describió explícitamente la naturaleza de la diferencia con la DCL. Política incumplida: instrucción de Compliance Jun 2026 — no se debe registrar ninguna nota que mencione explícitamente errores, discrepancias o problemas con la DCL, ni describir en detalle la diferencia. Acción correcta: usar una de las plantillas habilitadas (Opción A u Opción B), con lenguaje neutral, sin detallar la naturaleza de la discrepancia, y escalar al área correspondiente conforme al proceso.",
-      'Error: no le informó al cliente que su declaración tenía un error. Política incumplida: transparencia con el cliente sobre su expediente. Acción correcta: explicarle al cliente cuál es el error en su DCL.'
+      'Error: no marcó el Reason of Call correcto para este tipo de discrepancias. Política incumplida: la estructura del Registro de llamadas exige un Reason of Call específico y neutral. Acción correcta: usar un Reason of Call neutral relacionado con revisión interna del expediente.',
+      'Error: no escaló la discrepancia al área legal de inmediato por teléfono antes de finalizar la llamada con el cliente. Política incumplida: las discrepancias relacionadas con la DCL deben escalarse de forma verbal e inmediata. Acción correcta: llamar al área legal antes de colgar la llamada.',
+      "Error: registró en la nota palabras prohibidas ('errores', 'discrepancia') y describió la naturaleza de la diferencia con la DCL. Acción correcta: usar una de las plantillas habilitadas (Opción A u Opción B), con lenguaje neutral, sin detallar la discrepancia, y escalar conforme al proceso.",
+      'Error: no le informó al cliente, en ese momento, que su declaración presentaba un error respecto a la fecha mencionada. Política incumplida: transparencia con el cliente sobre el contenido de su expediente. Acción correcta: explicarle al cliente, con detalle, cuál es el error específico detectado en su DCL.'
     ], correct:2},
     {id:'e18', context:"El agente escribe en TramCase: 'Se detecta discrepancia en la DCL: el cliente cambió su versión de los hechos sobre el abuso descrito originalmente. Se notifica al cliente que esto podría afectar su caso.'", prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
-      'Error: no usó el título correcto de nota para llamadas inbound. Política incumplida: estructura de notas (Reason / Solution / Type of case / Behavior / CN). Acción correcta: usar el título correcto según el motivo de la llamada.',
-      "Error: usó lenguaje explícito y prohibido sobre la DCL ('discrepancia', detalles del cambio de versión) y además informó al cliente sobre el problema con su declaración. Política incumplida: la instrucción de Compliance Jun 2026 prohíbe mencionar 'discrepancia' o describir la diferencia, y no corresponde al agente informar al cliente sobre problemas con su DCL. Acción correcta: usar una plantilla neutral habilitada (Opción A o B) sin detalles, sin decir nada al cliente sobre el tema, y escalar internamente conforme al proceso.",
-      'Error: no verificó los 3 filtros de seguridad antes de escribir la nota. Política incumplida: candados de seguridad. Acción correcta: verificar los filtros antes de continuar la llamada.',
-      'Error: no ofreció asistencia adicional antes de cerrar la llamada. Política incumplida: paso 7 obligatorio. Acción correcta: preguntar si hay algo más en qué ayudar.'
+      'Error: no usó el título correcto de nota para esta llamada inbound, afectando la estructura general del registro. Política incumplida: la estructura de notas exige Reason, Solution, Behavior y CN según corresponda. Acción correcta: usar el título correcto según el motivo real de la llamada.',
+      "Error: usó lenguaje prohibido sobre la DCL ('discrepancia', detalles del cambio de versión) e informó al cliente sobre el problema con su declaración. Acción correcta: usar una plantilla neutral habilitada (Opción A o B) sin detalles, sin decir nada al cliente, y escalar conforme al proceso.",
+      'Error: no verificó los 3 filtros de seguridad con el cliente antes de continuar con el tema de la DCL. Política incumplida: los candados de seguridad son obligatorios al inicio de cualquier llamada. Acción correcta: verificar los 3 filtros antes de continuar con cualquier tema del caso.',
+      'Error: no ofreció asistencia adicional al cliente antes de cerrar la llamada relacionada con su expediente. Política incumplida: el paso 7 del flujo de 11 pasos es obligatorio en toda llamada. Acción correcta: preguntar si hay algo más en qué pueda ayudar antes de despedirse.'
     ], correct:1},
     {id:'e19', context:"El agente identifica que el número que llama corresponde a un cliente de la lista de no contacto, después de pasar los filtros de seguridad y confirmar la información en TramCase. Como 'el cliente insistió y sonaba urgente', el agente continúa la llamada con normalidad y le explica el estatus de su caso en detalle.", prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
-      'Error: continuó dando información del caso a un cliente en lista de no contacto en lugar de usar el speech de cierre habilitado por Compliance. Política incumplida: instrucción de Compliance Jun 2026 — al identificar a un cliente en la lista de no contacto, se debe usar el speech de cierre habilitado, mantener tono neutral, y reportar en #compliance-help, sin entrar en discusión ni dar más detalles. Acción correcta: cerrar la llamada con el speech habilitado, dejar nota interna y reportar en #compliance-help.',
-      "Error: no ofreció una callback al cliente. Política incumplida: callbacks requieren autorización del TL. Acción correcta: ofrecer un callback al cliente.",
-      'Error: no aplicó VDPC porque el cliente sonaba urgente, no molesto. Política incumplida: VDPC solo aplica a clientes molestos. Acción correcta: ninguna, VDPC no aplicaba.',
-      "Error: no verificó el estatus del caso en USCIS antes de responder. Política incumplida: verificar siempre USCIS antes de informar estatus. Acción correcta: revisar USCIS antes de dar el estatus."
+      'Error: continuó dando información del caso a un cliente en lista de no contacto en lugar de usar el speech de cierre habilitado por Compliance. Acción correcta: cerrar la llamada con el speech habilitado, dejar nota interna y reportar en #compliance-help.',
+      'Error: no ofreció una callback al cliente identificado en la lista de no contacto. Política incumplida: las callbacks siempre requieren autorización previa del TL. Acción correcta: notificar al TL y, de autorizarse, ofrecer la callback correspondiente.',
+      'Error: no aplicó la metodología VDPC porque el cliente sonaba urgente y no abiertamente molesto. Política incumplida: VDPC se reserva para clientes molestos; en este caso no era el problema principal. Acción correcta: ninguna acción adicional de VDPC era necesaria en este punto.',
+      'Error: no verificó el estatus del caso directamente en USCIS antes de comentar cualquier detalle al cliente. Política incumplida: siempre debe verificarse el estatus en USCIS antes de informar al cliente. Acción correcta: revisar USCIS y TramCase antes de dar cualquier información sobre el estatus.'
     ], correct:0},
     {id:'e20', context:"Tras identificar a un cliente de la lista de no contacto y cerrar la llamada con el speech habilitado, el agente le comenta verbalmente al TL lo ocurrido durante la junta de equipo de la tarde, pensando 'ya avisé, no hace falta más'. No se genera ningún reporte adicional.", prompt:'¿Cuál de las siguientes opciones identifica correctamente el error, la política incumplida y la acción correcta?', options:[
-      'Error: no dejó nota interna en TramCase indicando que se aplicó el protocolo de cierre. Política incumplida: dejar nota interna es obligatorio. Acción correcta: dejar la nota correspondiente en TramCase.',
-      'Error: no usó un tono neutral durante la llamada. Política incumplida: mantener tono neutral y cordial en todo momento. Acción correcta: revisar el tono usado en la llamada.',
-      'Error: no esperó autorización del TL antes de cerrar la llamada. Política incumplida: autorización previa del TL para cierres de llamada. Acción correcta: pedir autorización antes de cerrar.',
-      'Error: no levantó el reporte inmediato y obligatorio en el canal de Slack #compliance-help al finalizar la llamada, sustituyéndolo por un comentario informal al TL más tarde. Política incumplida: instrucción de Compliance Jun 2026 — al finalizar la llamada con un cliente en lista de no contacto, se debe levantar reporte de inmediato en #compliance-help, además de la nota interna en TramCase. Acción correcta: publicar el reporte en #compliance-help inmediatamente al terminar la llamada, sin sustituirlo por comentarios verbales posteriores.'
+      'Error: no dejó nota interna en TramCase indicando que se aplicó el protocolo de cierre con el cliente de la lista de no contacto. Política incumplida: dejar la nota interna correspondiente es obligatorio en todos los casos. Acción correcta: dejar registrada esa nota en TramCase de inmediato.',
+      'Error: no usó un tono neutral y cordial durante toda la llamada con el cliente de la lista de no contacto. Política incumplida: mantener un tono neutral es obligatorio en este tipo de llamadas. Acción correcta: revisar y ajustar el tono usado durante la conversación.',
+      'Error: no esperó autorización del TL antes de cerrar la llamada con el cliente de la lista de no contacto. Política incumplida: el cierre de este tipo de llamadas requiere autorización previa del TL. Acción correcta: pedir autorización al TL antes de cerrar la llamada.',
+      'Error: no levantó el reporte obligatorio en Slack #compliance-help al finalizar la llamada, sustituyéndolo por un comentario informal al TL durante la junta de la tarde. Acción correcta: publicar el reporte en #compliance-help inmediatamente al terminar la llamada, sin sustituirlo por comentarios verbales posteriores.'
     ], correct:3},
   ],
   escalation: [
@@ -549,17 +614,17 @@ const DATA = {
     {id:'esc07', context:'Al revisar el caso, el agente nota que falta el recibo inicial correspondiente al trámite del cliente, quien presenta un atraso respecto a los tiempos de USCIS.', correct:'B'},
     {id:'esc08', context:'Un cliente cuyo caso aparece como CASO CANCELADO, sin callback ni Discovery Call programados, pregunta si puede retomar algún trámite con la firma.', correct:'B'},
     {id:'esc09', context:'Un cliente cuyo expediente está en la etapa de PACKETS (ensamblado) pide que se agilice porque necesita el documento pronto para una entrevista próxima.', correct:'B'},
-    {id:'esc10', context:'Un cliente informa que recibió una carta de USCIS solicitando documentos adicionales para su trámite (RFE).', correct:'C'},
+    {id:'esc10', context:'Un cliente en proceso activo de revisión con el equipo de RFE de la firma llama para preguntar si ya fueron revisados los documentos que envió hace una semana, y si necesita enviar algo más.', correct:'C'},
     {id:'esc11', context:'Un cliente pregunta detalles sobre una consulta que tiene programada con la abogada y quiere saber si puede agregar un tema adicional a tratar.', correct:'C'},
     {id:'esc12', context:'Un cliente llama fuera del horario habitual de atención de la oficina de CDMX y pregunta si puede pasar a dejar documentos en persona esa misma tarde.', correct:'C'},
-    {id:'esc13', context:'El agente identifica que el cliente que llama está en la lista de no contacto. Aplica el speech de cierre habilitado por Compliance, mantiene tono neutral y termina la llamada sin incidentes.', correct:'C'},
-    {id:'esc14', context:'Un cliente llama para preguntar si ya puede enviar documentación adicional en respuesta a un RFE que recibió hace dos semanas.', correct:'C'},
-    {id:'esc15', context:'Un cliente molesto solicita una copia completa de su expediente porque tiene una audiencia migratoria en 48 horas.', correct:'D'},
-    {id:'esc16', context:'Un cliente informa que recibió un documento citándolo a presentarse ante ICE en los próximos días.', correct:'D'},
+    {id:'esc13', context:'El agente identifica que el cliente que llama está en la lista de no contacto. Aplica el speech de cierre habilitado por Compliance, mantiene tono neutral y termina la llamada sin incidentes.', correct:['A','C']},
+    {id:'esc14', context:'Un cliente llama para cancelar su cita de consulta programada para HOY, que comienza en menos de 2 horas.', correct:'D'},
+    {id:'esc15', context:'Un cliente molesto solicita una copia completa de su expediente porque tiene una audiencia migratoria en 48 horas.', correct:['B','D']},
+    {id:'esc16', context:'Un cliente informa que recibió un documento citándolo a presentarse ante ICE en los próximos días.', correct:['B','D']},
     {id:'esc17', context:'Un cliente, ya con nota CASE CANCELED y reembolso en proceso, llama molesto porque ya pasaron 50 días hábiles sin recibir su reembolso.', correct:'D'},
     {id:'esc18', context:'Durante la llamada de un tercero que inicialmente parecía tranquilo, la persona comienza a insistir agresivamente en obtener información del caso y se niega a terminar la llamada.', correct:'D'},
     {id:'esc19', context:'Un cliente cumple con todos los requisitos para viajar (EAD vigente con Advance Parole, sin contacto previo con USCIS, pasaporte vigente y fecha de viaje definida) y solicita agendar su Travel Call.', correct:'D'},
-    {id:'esc20', context:'Un cliente informa, alterado, que un familiar fue detenido por una autoridad (ICE, Sheriff u otra) hace pocas horas y no saben a dónde lo llevaron.', correct:'D'},
+    {id:'esc20', context:'Un cliente informa, alterado, que un familiar fue detenido por una autoridad (ICE, Sheriff u otra) hace pocas horas y no saben a dónde lo llevaron.', correct:['B','D']},
     {id:'esc21', context:'Durante la llamada, el cliente menciona explícitamente que va a presentar un "Bar Complaint" contra la abogada por la demora de su caso.', correct:'E'},
     {id:'esc22', context:'El cliente solicita directamente el número de licencia (Bar Number) de la abogada María Mendoza.', correct:'E'},
     {id:'esc23', context:'El cliente, molesto, afirma de forma directa: "voy a demandar a esta firma por negligencia, ya hablé con un abogado para hacerlo".', correct:'E'},
@@ -575,11 +640,11 @@ const DATA = {
       <p><span class="label">Información irrelevante (distractor):</span> El cliente comenta que se mudó de casa hace un mes y pregunta si debe avisarlo.</p>`,
      questions:[
       {id:'sim1q1', prompt:'¿Qué harías primero?', options:['Aplicar de inmediato la metodología VDPC completa, ya que el cliente suena frustrado.','Dar el saludo corporativo y solicitar/verificar los 3 filtros de seguridad antes de continuar.','Revisar primero la hoja de tiempos de procesamiento para tener la respuesta lista.','Preguntar de inmediato si desea hacer un pago, ya que es la 4ª llamada del mes.'], correct:1},
-      {id:'sim1q2', prompt:'¿Qué información solicitarías / verificarías?', options:['El número de teléfono de un familiar del cliente, por si se pierde la comunicación.','Confirmar en TramCase si ya existe un Missing Receipt levantado y revisar la fecha de envío a USCIS y los tiempos vigentes.','El correo electrónico de la abogada para que el cliente le escriba directamente.','Si el cliente desea agendar una Travel Call mientras espera respuesta de USCIS.'], correct:1},
+      {id:'sim1q2', prompt:'¿Qué información solicitarías / verificarías?', options:['El número de teléfono de un familiar del cliente, por si se llega a perder la comunicación.','Confirmar en TramCase si ya existe un Missing Receipt levantado y revisar los tiempos vigentes.','El correo electrónico de la abogada para que el cliente le escriba directamente.','Si el cliente desea agendar una Travel Call mientras espera respuesta de USCIS.'], correct:1},
       {id:'sim1q3', prompt:'¿Debes escalar esta situación?', options:['No, basta con explicarle al cliente que su caso sigue dentro de tiempos.','Sí, porque el caso presenta atraso y falta documentación (recibo) pendiente de gestionar.','Sí, pero únicamente porque el cliente llamó 4 veces, sin relación con el estatus del caso.','No, este tipo de situación se resuelve solo con la metodología VDPC.'], correct:1},
-      {id:'sim1q4', prompt:'¿A quién corresponde escalar?', options:['Al canal de Slack #cdmx-oficina.','A Dirección y MGM directamente.','A Back Office, mediante el formulario de Missing Receipt en el Registro de llamadas.','Al canal de Slack #rfe-comunications.'], correct:2},
-      {id:'sim1q5', prompt:'¿Qué Reason of Call / nota dejarías en TramCase?', options:['Case status → Regular status, sin notas adicionales.','Case status → Needs packet speed up, y marcar el caso en el apartado de Control Operativo por ser la 4ª llamada del mes.','Payment, documentando el cambio de domicilio del cliente.','Emergency, por tratarse de un caso urgente con USCIS.'], correct:1},
-      {id:'sim1q6', prompt:'¿Qué errores debes evitar en esta llamada?', options:['Informar un plazo aproximado "de memoria" al cliente, y omitir el registro en Control Operativo a pesar de las llamadas recurrentes.','Ofrecer asistencia adicional al final de la llamada.','Verificar los 3 filtros de seguridad antes de dar información.','Documentar la nota en TramCase antes de despedirse.'], correct:0},
+      {id:'sim1q4', prompt:'¿A quién corresponde escalar?', options:['Al canal de Slack #cdmx-oficina del equipo interno de la firma.','A Dirección y MGM de forma directa, sin pasar por ningún formulario.','A Back Office, mediante el formulario de Missing Receipt.','Al canal de Slack #rfe-communications del área de seguimiento correspondiente.'], correct:2},
+      {id:'sim1q5', prompt:'¿Qué Reason of Call / nota dejarías en TramCase?', options:['Case status → Regular status, sin agregar ninguna nota ni mención adicional al Registro.','Case status → Needs packet speed up, marcando el caso en Control Operativo por ser la 4ª llamada.','Payment, documentando únicamente el cambio de domicilio señalado por el cliente.','Emergency, bajo el argumento de que podría tratarse de un caso urgente ante USCIS.'], correct:1},
+      {id:'sim1q6', prompt:'¿Qué errores debes evitar en esta llamada?', options:["Informar un plazo aproximado 'de memoria', y omitir el registro en Control Operativo.",'Ofrecer asistencia adicional al cliente al final de la llamada.','Verificar los 3 filtros de seguridad antes de dar cualquier información.','Documentar correctamente la nota en TramCase antes de despedirse.'], correct:0},
      ]},
     {id:'sim2', title:'Videollamada — revisión de documentos y cambio de domicilio', brief:`<h4>Videollamada agendada — I-485</h4>
       <p><span class="label">Contexto:</span> Videollamada agendada por DVS para revisar documentos del caso I-485. El cliente pide que se le muestre el estatus de su caso.</p>
@@ -588,12 +653,12 @@ const DATA = {
       <p><span class="label">Información relevante:</span> El cliente cambió de domicilio hace 2 semanas y aún no lo ha actualizado en su expediente.</p>
       <p><span class="label">Información irrelevante (distractor):</span> El cliente comenta sobre el clima y pregunta por la salud de la abogada.</p>`,
      questions:[
-      {id:'sim2q1', prompt:'¿Qué harías primero?', options:['Compartir de inmediato la pantalla con TramCase para que el cliente vea su expediente.','Realizar la verificación técnica inicial: confirmar audio, video y conexión, y conectarse desde la cuenta support para activar grabación y transcript.','Preguntar directamente por el nuevo domicilio del cliente.','Pedir 3 minutos para revisar el caso antes de saludar.'], correct:1},
-      {id:'sim2q2', prompt:'¿Qué información solicitarías / verificarías?', options:['Los 3 filtros de seguridad (nombre completo, número de cliente o fecha de nacimiento, y teléfono/correo/dirección) y los datos completos del nuevo domicilio.','El nombre del médico que atendió a la abogada recientemente.','Si el cliente desea cambiar de Team Leader.','El motivo por el que el cliente eligió Google Meet en lugar de 8x8.'], correct:0},
-      {id:'sim2q3', prompt:'¿Debes escalar / dar seguimiento a algo en esta llamada?', options:['No es necesario hacer nada con el cambio de domicilio.','Sí, se debe dejar nota o tarea para que el equipo correspondiente actualice el domicilio en el expediente.','Sí, se debe escalar a Dirección por el cambio de domicilio.','Sí, se debe reportar en #compliance-help.'], correct:1},
-      {id:'sim2q4', prompt:'¿A quién/dónde corresponde dar seguimiento al cambio de domicilio?', options:['Al Team Leader, como emergencia.','Documentarlo en TramCase y, si aplica, dejar la tarea para el equipo correspondiente — no se requiere escalar a Dirección ni TL para un cambio de domicilio.','A Dirección y MGM.','Al canal de Slack #rfe-comunications.'], correct:1},
-      {id:'sim2q5', prompt:'¿Qué Reason of Call / nota dejarías en TramCase?', options:['Incoming Call / Documents, documentando el cambio de domicilio y la revisión realizada durante la videollamada.','Outgoing Call / Chat Request, sin más detalle.','Emergency, por el cambio de domicilio.','TEXT MSG UPDATE, con el mensaje enviado al cliente.'], correct:0},
-      {id:'sim2q6', prompt:'¿Qué errores debes evitar en una videollamada como esta?', options:['Confirmar que la grabación y el transcript estén activos antes de iniciar.','Compartir por error la ventana izquierda (TramCase, Dropbox, tiempos, Registro, ClickUp) en lugar de la ventana derecha.','Verificar los filtros de seguridad antes de mostrar información.','Documentar la nota en TramCase al finalizar.'], correct:1},
+      {id:'sim2q1', prompt:'¿Qué harías primero?', options:['Compartir de inmediato la pantalla con TramCase para que el cliente vea todo su expediente completo.','Realizar la verificación técnica inicial: confirmar audio, video y conexión desde la cuenta support.','Preguntar directamente al cliente por su nuevo domicilio postal actual antes de cualquier otra acción.','Pedirle al cliente 3 minutos de espera para revisar el expediente antes de continuar con el saludo.'], correct:1},
+      {id:'sim2q2', prompt:'¿Qué información solicitarías / verificarías?', options:['Los 3 filtros de seguridad y los datos completos del nuevo domicilio del cliente.','El nombre completo del médico que atendió recientemente a la abogada.','Si el cliente desea cambiar de Team Leader asignado.','El motivo por el cual el cliente eligió usar Google Meet en lugar de 8x8.'], correct:0},
+      {id:'sim2q3', prompt:'¿Debes escalar / dar seguimiento a algo en esta llamada?', options:['No es necesario hacer nada con el cambio de domicilio mencionado durante la llamada.','Sí, hay que dejar nota o tarea para que el equipo correspondiente lo actualice en el sistema.','Sí, se debe escalar directamente a Dirección por cualquier cambio de domicilio detectado.','Sí, este cambio de domicilio debe reportarse de inmediato en el canal #compliance-help.'], correct:1},
+      {id:'sim2q4', prompt:'¿A quién/dónde corresponde dar seguimiento al cambio de domicilio?', options:['Al Team Leader directamente, tratándolo como si fuera una emergencia urgente.','Documentarlo en TramCase y dejar la tarea para el equipo correspondiente.','Directamente a Dirección y MGM, sin documentar nada más.','Al canal de Slack #rfe-comunications, como si fuera un RFE.'], correct:1},
+      {id:'sim2q5', prompt:'¿Qué Reason of Call / nota dejarías en TramCase?', options:['Incoming Call / Documents, documentando el cambio de domicilio detectado.','Outgoing Call / Chat Request, sin agregar detalles adicionales sobre el contenido del caso.','Emergency, únicamente porque se detectó un cambio de domicilio en el expediente del sistema.','TEXT MSG UPDATE, incluyendo el texto del mensaje enviado directamente al cliente.'], correct:0},
+      {id:'sim2q6', prompt:'¿Qué errores debes evitar en una videollamada como esta?', options:['Confirmar que la grabación y el transcript estén activos antes de iniciar la videollamada con el cliente.','Compartir la ventana izquierda interna por error, en lugar de la ventana derecha autorizada para el cliente.','Verificar los 3 filtros de seguridad antes de mostrar cualquier tipo de información al cliente.','Documentar de forma correcta y completa la nota en TramCase al finalizar la videollamada.'], correct:1},
      ]},
     {id:'sim3', title:'Tercero solicita información — caso VAWA', brief:`<h4>Llamada de un presunto esposo — caso VAWA</h4>
       <p><span class="label">Contexto:</span> Llama un hombre diciendo ser el esposo de la clienta y pide información sobre "su" caso porque "ella está ocupada".</p>
@@ -602,12 +667,12 @@ const DATA = {
       <p><span class="label">Información relevante:</span> Se trata de un caso VAWA con un tercero solicitando información — posible relación con el abusador del caso.</p>
       <p><span class="label">Información irrelevante (distractor):</span> El llamante menciona que tienen una cita médica esa tarde.</p>`,
      questions:[
-      {id:'sim3q1', prompt:'¿Qué harías primero?', options:['Confirmar el nombre completo del llamante, si es el titular del caso y, si no lo es, su relación con el cliente — sin dar información del caso.','Confirmar de inmediato que sí existe un caso VAWA a nombre de la esposa.','Explicarle que el caso está ON HOLD por el estatus del abusador.','Pedirle al llamante los 3 filtros de seguridad de la esposa para "verificarla".'], correct:0},
-      {id:'sim3q2', prompt:'¿Qué información solicitarías?', options:['El número de cliente de la esposa, para localizar el caso y dárselo al esposo.','Ninguna información adicional sobre el caso; solo los datos de identidad del llamante para documentar la llamada.','Los datos del abogado del esposo.','El motivo de la cita médica que mencionó el llamante.'], correct:1},
-      {id:'sim3q3', prompt:'¿Debes escalar esta llamada?', options:['Sí, siempre se escala a Dirección cuando llama un esposo.','Depende: si el llamante coopera y la llamada termina conforme al protocolo, no se requiere escalar más allá de documentar; si se torna agresivo o insiste, sí.','No, nunca se documenta ni se escala este tipo de llamadas.','Sí, se debe escalar de inmediato a #compliance-help.'], correct:1},
-      {id:'sim3q4', prompt:'¿A quién corresponde escalar si el llamante se torna agresivo?', options:['A Back Office, mediante el formulario de Missing Receipt.','Al Team Leader de inmediato.','A #rfe-comunications, por tratarse de un caso VAWA.','A Dirección + MGM, sin excepción.'], correct:1},
-      {id:'sim3q5', prompt:'¿Qué nota dejarías en TramCase?', options:['Plantilla obligatoria: THIRD-PARTY CALL / CASE INFORMATION REQUEST, indicando que no se proporcionó información del caso y que el titular debe comunicarse directamente.','Incoming Call / Case status, detallando el estatus ON HOLD del caso VAWA.','Outgoing Call / Chat Request, sin mencionar al llamante.','Emergency, por tratarse de un caso de violencia doméstica.'], correct:0},
-      {id:'sim3q6', prompt:'¿Qué errores debes evitar?', options:['Usar el aviso de confidencialidad antes de terminar la llamada.','Confirmar que existe un caso VAWA a nombre de la esposa, o dar cualquier detalle sobre su estatus ON HOLD al llamante.','Documentar la llamada con la plantilla de terceros.','Mantener un tono calmado durante la llamada.'], correct:1},
+      {id:'sim3q1', prompt:'¿Qué harías primero?', options:['Confirmar el nombre completo del llamante y su relación con el cliente, sin dar información del caso.','Confirmar de inmediato al llamante que sí existe un caso VAWA a nombre de la esposa.','Explicarle directamente que el caso está actualmente ON HOLD por el estatus del abusador.','Pedirle al llamante que proporcione los 3 filtros de seguridad de la esposa para "verificarla".'], correct:0},
+      {id:'sim3q2', prompt:'¿Qué información solicitarías?', options:['El número de cliente de la esposa, para localizar el expediente y entregárselo al esposo llamante.','Ninguna información adicional del caso; únicamente los datos de identidad del propio llamante.','Los datos completos del abogado personal o de defensa del esposo que está llamando.','El motivo exacto de la cita médica que el esposo llamante mencionó tener próximamente.'], correct:1},
+      {id:'sim3q3', prompt:'¿Debes escalar esta llamada?', options:['Sí, siempre se debe escalar a Dirección cuando llama un esposo o familiar.','Depende: si coopera, basta documentar; si insiste o se molesta, sí se escala.','No, nunca se documenta ni se escala ningún tipo de llamada como esta.','Sí, se debe escalar de inmediato al canal de #compliance-help.'], correct:1},
+      {id:'sim3q4', prompt:'¿A quién corresponde escalar si el llamante se torna agresivo?', options:['A Back Office, mediante el formulario de Missing Receipt.','Al Team Leader (TL) de inmediato, por el canal habilitado.','A #rfe-comunications, por tratarse de un caso VAWA.','A Dirección + MGM, sin ninguna excepción.'], correct:1},
+      {id:'sim3q5', prompt:'¿Qué nota dejarías en TramCase?', options:['Plantilla THIRD-PARTY CALL / CASE INFORMATION REQUEST, sin dar información del caso.','Incoming Call / Case status, detallando por completo el estatus ON HOLD del caso VAWA.','Outgoing Call / Chat Request, sin mencionar nada sobre el llamante.','Emergency, por tratarse supuestamente de un caso de violencia doméstica.'], correct:0},
+      {id:'sim3q6', prompt:'¿Qué errores debes evitar?', options:['Usar el aviso de confidencialidad justo antes de terminar la llamada.','Confirmar que existe un caso VAWA, o dar detalles de su estatus al llamante.','Documentar correctamente la llamada con la plantilla de terceros.','Mantener en todo momento un tono calmado durante la llamada.'], correct:1},
      ]},
     {id:'sim4', title:'Pago de mensualidad con agente de Collections asignado', brief:`<h4>Llamada inbound — pago de mensualidad</h4>
       <p><span class="label">Contexto:</span> Cliente llama para ponerse al corriente con su mensualidad de $120 USD.</p>
@@ -616,12 +681,12 @@ const DATA = {
       <p><span class="label">Información relevante:</span> El cliente tiene un agente de Collections ya asignado para temas de pago.</p>
       <p><span class="label">Información irrelevante (distractor):</span> El cliente pregunta por una promoción de descuento que vio en redes sociales (no existe tal promoción).</p>`,
      questions:[
-      {id:'sim4q1', prompt:'¿Qué harías primero?', options:['Procesar el cobro de inmediato ya que el cliente solicitó pagar.','Dar el saludo corporativo, verificar los filtros de seguridad y escuchar el motivo de la llamada (ponerse al corriente con su mensualidad).','Preguntar por la promoción de descuento que vio en redes sociales.','Pedir 2 minutos para documentar antes de hacer cualquier otra cosa.'], correct:1},
-      {id:'sim4q2', prompt:'¿Qué información solicitarías?', options:['Si tiene un agente de Collections asignado (según TramCase) y, de tenerlo, si prefiere pagar con CS o con su agente.','El nombre de la promoción que vio en redes sociales para aplicarla.','Si desea cambiar su domicilio registrado.','Si tiene EAD vigente, por si desea viajar.'], correct:0},
-      {id:'sim4q3', prompt:'¿Debes escalar esta llamada?', options:['No, siempre se procesa el pago directamente en LawPay sin más preguntas.','Depende: si el cliente tiene agente de Collections asignado y prefiere pagar con él, sí se escala; si no tiene agente, se procede directamente.','Sí, siempre se escala a Dirección cualquier pago.','Sí, se debe escalar a #rfe-comunications.'], correct:1},
-      {id:'sim4q4', prompt:'¿A quién corresponde escalar si el cliente prefiere pagar con su agente?', options:['Al formulario de Collections del Registro de llamadas.','A Back Office, sin importar la respuesta del cliente.','Al Team Leader, por tratarse de un pago.','A #cdmx-oficina.'], correct:0},
-      {id:'sim4q5', prompt:'Si se procede con el cobro directo, ¿qué debes documentar?', options:['Nota tipo Payment, con la fraseología de autorización leída textualmente y las 3 acciones post-cobro (copiar comprobante, dejarlo en TramCase y enviarlo por texto al cliente).','Incoming Call / Documents, sin mencionar el pago.','Emergency, por la mensualidad pendiente.','TEXT MSG UPDATE, sin nota adicional en TramCase.'], correct:0},
-      {id:'sim4q6', prompt:'¿Qué errores debes evitar?', options:['Confirmar el nombre y monto correcto antes de procesar.','Cobrar sin preguntar primero por el agente de Collections, o procesar el cobro sin leer la fraseología de autorización y esperar el "sí" explícito del cliente.','Enviar el comprobante de pago al cliente.','Dejar el comprobante en las notas de TramCase.'], correct:1},
+      {id:'sim4q1', prompt:'¿Qué harías primero?', options:['Procesar el cobro de inmediato, ya que el cliente solicitó directamente pagar.','Dar el saludo corporativo, verificar los filtros de seguridad y escuchar el motivo de la llamada.','Preguntar de inmediato por la promoción de descuento que vio en redes sociales.','Pedir al cliente 2 minutos para documentar antes de hacer cualquier otra cosa.'], correct:1},
+      {id:'sim4q2', prompt:'¿Qué información solicitarías?', options:['Si tiene agente de Collections y si prefiere realizar el pago directamente con él.','El nombre exacto y la fuente de la promoción que vio en redes sociales para aplicarla.','Si desea actualizar el domicilio que tiene registrado actualmente en su expediente.','Si tiene su EAD vigente y si tiene pensado realizar algún viaje próximamente.'], correct:0},
+      {id:'sim4q3', prompt:'¿Debes escalar esta llamada?', options:['No, siempre se procesa el pago directamente en LawPay, sin hacer ninguna otra pregunta.','Depende: si tiene agente de Collections asignado, se escala; si no, se procede directo.','Sí, siempre se debe escalar a Dirección cualquier tipo de pago.','Sí, se debe escalar siempre al canal de #rfe-comunications.'], correct:1},
+      {id:'sim4q4', prompt:'¿A quién corresponde escalar si el cliente prefiere pagar con su agente?', options:['Al formulario de Collections del Registro de llamadas.','A Back Office, sin importar la respuesta del cliente.','Al Team Leader (TL), simplemente por tratarse de un pago.','Al canal de Slack #cdmx-oficina.'], correct:0},
+      {id:'sim4q5', prompt:'Si se procede con el cobro directo, ¿qué debes documentar?', options:['Nota tipo Payment con la fraseología de autorización leída y las 3 acciones post-cobro.','Incoming Call / Documents, sin ninguna mención del pago procesado ni del monto cobrado.','Emergency, por tratarse de una mensualidad que lleva tiempo pendiente de pago.','TEXT MSG UPDATE, sin agregar ninguna nota adicional de ningún tipo en TramCase.'], correct:0},
+      {id:'sim4q6', prompt:'¿Qué errores debes evitar?', options:['Confirmar el nombre completo del cliente y el monto exacto antes de procesar el cobro.','Cobrar sin preguntar por el agente de Collections, o sin la autorización explícita del cliente.','Enviar el comprobante de pago correspondiente directamente al cliente.','Dejar una copia del comprobante guardada en las notas de TramCase.'], correct:1},
      ]},
     {id:'sim5', title:'Cancelación, demora en reembolso y amenaza de redes sociales', brief:`<h4>Llamada inbound — caso CASO CANCELADO</h4>
       <p><span class="label">Contexto:</span> Cliente con nota CASE CANCELED registrada hace 50 días hábiles, sin reembolso recibido.</p>
@@ -630,12 +695,12 @@ const DATA = {
       <p><span class="label">Información relevante:</span> Nota CASE CANCELED ya registrada; cambio de cuenta bancaria; amenaza de redes sociales con fecha límite.</p>
       <p><span class="label">Información irrelevante (distractor):</span> El cliente menciona que tiene otro trámite con otra dependencia de gobierno, no relacionado con la firma.</p>`,
      questions:[
-      {id:'sim5q1', prompt:'¿Qué harías primero?', options:['Explicarle de inmediato los tiempos de reembolso (30-45 días).','Aplicar VDPC: validar la emoción del cliente antes de dar cualquier explicación o información.','Decirle que publicar en redes va a afectar su caso.','Transferir la llamada a Dirección sin más.'], correct:1},
-      {id:'sim5q2', prompt:'¿Qué información solicitarías / verificarías?', options:['Si tiene la nota CASE CANCELED registrada y si cambió de cuenta bancaria recientemente.','El nombre de la red social donde piensa publicar.','Si desea agendar una Travel Call.','El motivo de su otro trámite con otra dependencia de gobierno.'], correct:0},
-      {id:'sim5q3', prompt:'¿Debes escalar esta llamada?', options:['No, basta con aplicar VDPC y despedirse.','Sí, por la demora en el reembolso y la amenaza de redes sociales.','Sí, pero solo se reporta en #cs-dvs.','No, se debe esperar a que el cliente se calme por sí solo.'], correct:1},
-      {id:'sim5q4', prompt:'¿A quién corresponde escalar?', options:['Al Team Leader con prioridad (Hangouts o 8x8) por la amenaza de redes sociales, además del formulario de Cancelaciones.','Únicamente a Back Office.','A #rfe-comunications.','A #cdmx-oficina.'], correct:0},
-      {id:'sim5q5', prompt:'¿Qué debes documentar en tiempo real?', options:['Frases clave exactas del cliente, estado de ánimo, la amenaza específica realizada, hora de escalación, estatus del caso y acciones tomadas.','Solo registrar "Cliente molesto, sin más detalle".','Registrar "CASE CANCELED" nuevamente, sin más información.','No es necesario dejar nota si ya se escaló verbalmente al TL.'], correct:0},
-      {id:'sim5q6', prompt:'¿Qué errores debes evitar?', options:['Notificar al TL de inmediato.','Prometer una fecha exacta de reembolso, admitir negligencia de la firma, o minimizar la amenaza de redes sociales.','Verificar la nota CASE CANCELED antes de hablar de montos.','Documentar la conversación en TramCase.'], correct:1},
+      {id:'sim5q1', prompt:'¿Qué harías primero?', options:['Explicarle de inmediato al cliente los tiempos de reembolso de 30 a 45 días.','Aplicar VDPC: validar la emoción del cliente antes de dar cualquier explicación.','Decirle directamente que publicar en redes va a afectar su caso.','Transferir la llamada directamente a Dirección sin más trámite.'], correct:1},
+      {id:'sim5q2', prompt:'¿Qué información solicitarías / verificarías?', options:['Si tiene la nota CASE CANCELED registrada y si cambió de cuenta bancaria.','El nombre exacto de la red social donde piensa publicar su queja.','Si desea agendar una Travel Call próximamente.','El motivo completo de su otro trámite con otra dependencia de gobierno.'], correct:0},
+      {id:'sim5q3', prompt:'¿Debes escalar esta llamada?', options:['No, basta con aplicar VDPC correctamente y despedirse.','Sí, por la demora en el reembolso y la amenaza de redes sociales.','Sí, pero solo se debe reportar en el canal #cs-dvs.','No, se debe esperar a que el cliente se calme por sí solo.'], correct:1},
+      {id:'sim5q4', prompt:'¿A quién corresponde escalar?', options:['Al TL con prioridad, además del formulario de Cancelaciones.','Únicamente al área de Back Office, sin notificar a nadie más.','Al canal de #rfe-comunications, por tratarse de un reembolso.','Al canal de #cdmx-oficina, para que ellos lo resuelvan.'], correct:0},
+      {id:'sim5q5', prompt:'¿Qué debes documentar en tiempo real?', options:['Frases clave, estado de ánimo del cliente, la amenaza específica, hora de escalación y acciones tomadas.','Registrar únicamente "Cliente molesto" como Reason of Call, sin añadir ningún detalle adicional.','Volver a registrar "CASE CANCELED" en la nota de TramCase, sin añadir ninguna información extra.','No es necesario dejar ninguna nota si la escalación verbal al TL ya fue realizada correctamente.'], correct:0},
+      {id:'sim5q6', prompt:'¿Qué errores debes evitar?', options:['Notificar de inmediato al TL por el canal interno habilitado del equipo de trabajo.','Prometer una fecha exacta de reembolso, o minimizar la amenaza de redes sociales.','Verificar que exista la nota CASE CANCELED antes de hablar de cualquier monto o reembolso.','Documentar de forma correcta y completa toda la conversación en las notas de TramCase.'], correct:1},
      ]},
     {id:'sim6', title:'Travel Call — cliente no cumple requisitos', brief:`<h4>Llamada inbound — solicitud de viaje urgente</h4>
       <p><span class="label">Contexto:</span> Cliente quiere viajar a su país de origen por una emergencia familiar en 3 semanas.</p>
@@ -644,12 +709,12 @@ const DATA = {
       <p><span class="label">Información relevante:</span> Vigencia del EAD (8 meses, menor a 11 requeridos), sin Advance Parole, I-131 pendiente.</p>
       <p><span class="label">Información irrelevante (distractor):</span> El cliente menciona que ya compró el boleto de avión.</p>`,
      questions:[
-      {id:'sim6q1', prompt:'¿Qué harías primero?', options:['Decirle que sí puede viajar porque ya compró el boleto.','Revisar en TramCase y preguntar las preguntas obligatorias de viaje: tipo de visa/VAWA, contacto previo con USCIS, corte pendiente, EAD y su vigencia, Advance Parole, I-131, I-360, pasaporte y fecha de viaje.','Agendar de inmediato la Travel Call con el TL.','Decirle que no hay nada que hacer y terminar la llamada.'], correct:1},
-      {id:'sim6q2', prompt:'¿Qué información solicitarías?', options:['La vigencia exacta del EAD, si tiene "Serves as I-512 Advance Parole" y si cuenta con la aprobación de I-131.','El precio del boleto de avión que compró.','Si tiene cuenta de Facebook para seguir a la abogada.','Si desea cambiar de Team Leader.'], correct:0},
-      {id:'sim6q3', prompt:'¿Debes escalar para una llamada con la abogada?', options:['Sí, siempre se agenda la Travel Call sin importar los requisitos.','No amerita llamada con la abogada si no cumple los requisitos (EAD con menos de 11 meses de vigencia y sin Advance Parole/I-131), salvo que el TL lo autorice expresamente.','Sí, se debe escalar a Dirección de inmediato.','No, se le debe decir que cancele su viaje sin más explicación.'], correct:1},
-      {id:'sim6q4', prompt:'¿A quién/cómo se comunica esto al cliente?', options:['Al cliente, informándole empáticamente que por el momento no es recomendable viajar; si insiste, consultar al TL.','A Back Office, para que autorice el viaje.','A #rfe-comunications.','A Dirección + MGM.'], correct:0},
-      {id:'sim6q5', prompt:'¿Qué nota dejarías en TramCase?', options:['Las preguntas de viaje realizadas y las respuestas del cliente, indicando que no cumple los requisitos (vigencia de EAD insuficiente y sin Advance Parole/I-131).','No es necesario dejar nota porque no se autorizó el viaje.','Nota tipo Payment, por el costo del boleto.','Nota tipo Emergency, por la fecha próxima de viaje.'], correct:0},
-      {id:'sim6q6', prompt:'¿Qué errores debes evitar?', options:['Informar empáticamente al cliente.','Agendar la Travel Call sin autorización del TL, o decirle al cliente que sí puede viajar porque ya compró el boleto.','Revisar TramCase antes de responder.','Documentar las respuestas de viaje del cliente.'], correct:1},
+      {id:'sim6q1', prompt:'¿Qué harías primero?', options:['Decirle de inmediato que sí puede viajar porque ya compró su boleto de avión.','Revisar en TramCase y preguntar las preguntas obligatorias de viaje antes de responder.','Agendar de inmediato la Travel Call con el TL, sin revisar nada antes.','Decirle directamente que no hay nada que hacer y terminar la llamada.'], correct:1},
+      {id:'sim6q2', prompt:'¿Qué información solicitarías?', options:['La vigencia exacta del EAD, si tiene Advance Parole y la aprobación de I-131.','El precio exacto del boleto de avión que el cliente ya fue a comprar.','Si tiene una cuenta activa de Facebook para poder seguir a la abogada titular de la firma.','Si desea solicitar un cambio en el Team Leader actualmente asignado a su expediente.'], correct:0},
+      {id:'sim6q3', prompt:'¿Debes escalar para una llamada con la abogada?', options:['Sí, siempre debe agendarse la Travel Call sin importar los requisitos particulares del cliente.','No corresponde agendar Travel Call si el cliente no tiene EAD vigente ni Advance Parole aprobado.','Sí, la situación debe escalarse de forma inmediata a Dirección y MGM directamente.','No, simplemente se le debe indicar al cliente que cancele su viaje sin mayor explicación.'], correct:1},
+      {id:'sim6q4', prompt:'¿A quién/cómo se comunica esto al cliente?', options:['Al cliente, informándole empáticamente que no es recomendable viajar por ahora.','A Back Office, para que ellos sean quienes autoricen directamente el viaje del cliente.','Al canal de Slack #rfe-comunications, por tratarse de un trámite pendiente.','Directamente a Dirección y MGM, sin pasar primero por el TL.'], correct:0},
+      {id:'sim6q5', prompt:'¿Qué nota dejarías en TramCase?', options:['Las preguntas de viaje y las respuestas obtenidas, indicando que el cliente no cumple los requisitos.','No es necesario dejar nota porque finalmente no se llegó a autorizar el viaje solicitado.','Nota tipo Payment, únicamente por el costo total del boleto ya adquirido por el cliente.','Nota tipo Emergency, simplemente por tratarse de una fecha de viaje muy próxima al día de hoy.'], correct:0},
+      {id:'sim6q6', prompt:'¿Qué errores debes evitar?', options:['Informar siempre de forma empática al cliente sobre cualquier decisión tomada.','Agendar la Travel Call sin autorización del TL, o decir que sí puede viajar por tener boleto.','Revisar TramCase y el historial del caso antes de responder cualquier cosa.','Documentar correctamente todas las respuestas de viaje proporcionadas por el cliente.'], correct:1},
      ]},
     {id:'sim7', title:'Emergencia — ICE en la puerta del cliente', brief:`<h4>Llamada inbound — redada en curso</h4>
       <p><span class="label">Contexto:</span> Cliente llama en pánico diciendo que agentes de ICE están afuera de su casa en este momento, tocando la puerta.</p>
@@ -658,12 +723,12 @@ const DATA = {
       <p><span class="label">Información relevante:</span> ICE está presente AHORA, no han mostrado ninguna orden judicial.</p>
       <p><span class="label">Información irrelevante (distractor):</span> El cliente menciona que su hijo está en la escuela.</p>`,
      questions:[
-      {id:'sim7q1', prompt:'¿Qué harías primero?', options:['Pedirle al cliente que cuelgue y llame a la policía local.','Mantener la calma, informarle sus derechos (no abrir la puerta, no responder, permanecer dentro de su casa) y notificar al TL de inmediato como emergencia máxima.','Decirle que abra la puerta para evitar problemas legales.','Pedirle que firme un documento de autorización antes de continuar.'], correct:1},
-      {id:'sim7q2', prompt:'¿Qué información solicitarías?', options:['Si los agentes presentaron una orden firmada por un juez (judge\'s order) con su nombre.','El nombre completo del oficial que está tocando la puerta, exigiendo que se lo confirme antes de continuar.','Si tiene pasaporte vigente para viajar.','El monto de su última mensualidad pagada.'], correct:0},
-      {id:'sim7q3', prompt:'¿Debes escalar esta llamada?', options:['No, esto se resuelve solo informando los derechos del cliente.','Sí, de inmediato y con máxima prioridad — es la emergencia de mayor urgencia.','Sí, pero se puede hacer al finalizar la llamada con calma.','No, se debe transferir la llamada a LawPay.'], correct:1},
-      {id:'sim7q4', prompt:'¿A quién corresponde escalar?', options:['Al Team Leader, de inmediato, como emergencia máxima.','A #cdmx-oficina.','A Back Office, sin prioridad.','A #rfe-comunications.'], correct:0},
-      {id:'sim7q5', prompt:'¿Qué debes hacer respecto a la documentación / recursos para el cliente?', options:['Registro de llamadas → Emergencias, documentando lo ocurrido; compartir la Red Card con el cliente si aplica.','Case status → Regular status.','Payment, sin mención de la situación con ICE.','TEXT MSG UPDATE, sin más detalle.'], correct:0},
-      {id:'sim7q6', prompt:'¿Qué errores debes evitar?', options:['Informar al cliente sus derechos con calma y claridad.','Decirle al cliente que abra la puerta o firme documentos sin asesoría legal, o especular sobre las consecuencias de la situación.','Notificar al TL de inmediato.','Mantener la calma durante toda la llamada.'], correct:1},
+      {id:'sim7q1', prompt:'¿Qué harías primero?', options:['Pedirle al cliente que cuelgue de inmediato y llame directamente a la policía local de su área.','Mantener la calma, informarle sus derechos (no abrir, no firmar) y notificar al TL de inmediato por el canal habilitado.','Decirle al cliente que abra la puerta para evitar complicaciones legales mayores con las autoridades.','Pedirle al cliente que primero firme un documento de autorización antes de continuar la llamada.'], correct:1},
+      {id:'sim7q2', prompt:'¿Qué información solicitarías?', options:['Si los agentes presentaron una orden firmada por un juez con su nombre.','El nombre completo del oficial que está tocando la puerta en ese momento.','Si tiene su pasaporte vigente para un posible viaje.','El monto exacto de su última mensualidad pagada.'], correct:0},
+      {id:'sim7q3', prompt:'¿Debes escalar esta llamada?', options:['No, esto se resuelve simplemente informando los derechos del cliente.','Sí, de inmediato y con máxima prioridad — es la emergencia de mayor urgencia.','Sí, pero se puede hacer hasta el final de la llamada, con calma.','No, se debe transferir la llamada directamente a LawPay.'], correct:1},
+      {id:'sim7q4', prompt:'¿A quién corresponde escalar?', options:['Al Team Leader de inmediato, como emergencia máxima.','Al canal de Slack #cdmx-oficina, para que estén informados.','A Back Office, pero sin asignarle ninguna prioridad especial.','Al canal de #rfe-comunications, por si se relaciona con su trámite.'], correct:0},
+      {id:'sim7q5', prompt:'¿Qué debes hacer respecto a la documentación / recursos para el cliente?', options:['Registro de llamadas → Emergencias, documentando lo ocurrido.','Case status → Regular status, sin más detalle.','Payment, sin ninguna mención de la situación con ICE.','TEXT MSG UPDATE, sin agregar ningún detalle más.'], correct:0},
+      {id:'sim7q6', prompt:'¿Qué errores debes evitar?', options:['Informar al cliente sobre sus derechos con calma y total claridad.','Decirle al cliente que abra la puerta o firme documentos sin asesoría legal.','Notificar al TL de inmediato, sin ninguna demora adicional.','Mantener la calma en todo momento durante la llamada.'], correct:1},
      ]},
     {id:'sim8', title:'Posible fraude — contacto sospechoso por WhatsApp', brief:`<h4>Llamada inbound — reporte de posible estafa</h4>
       <p><span class="label">Contexto:</span> Cliente recibió un mensaje de WhatsApp de un número desconocido pidiéndole $500 USD para "agilizar" su trámite, asegurando ser de la firma.</p>
@@ -672,12 +737,12 @@ const DATA = {
       <p><span class="label">Información relevante:</span> Mensaje de WhatsApp solicitando $500 USD, con capturas de pantalla disponibles.</p>
       <p><span class="label">Información irrelevante (distractor):</span> El cliente pregunta si puede cambiar su número de teléfono registrado.</p>`,
      questions:[
-      {id:'sim8q1', prompt:'¿Qué harías primero?', options:['Decirle al cliente que probablemente sea verdad y que pague para evitar problemas.','Agradecerle al cliente por compartir la información y explicarle que se le harán algunas preguntas para dar seguimiento.','Colgar la llamada de inmediato por seguridad.','Pedirle que bloquee el número sin más.'], correct:1},
-      {id:'sim8q2', prompt:'¿Qué información solicitarías?', options:['La fecha del contacto, el canal exacto (WhatsApp), si tiene capturas de pantalla, qué le solicitaron y si llegó a realizar algún pago.','El nombre completo del remitente del mensaje.','Si desea cambiar su número de teléfono registrado, como prioridad sobre el resto.','El saldo actual de su cuenta bancaria.'], correct:0},
+      {id:'sim8q1', prompt:'¿Qué harías primero?', options:['Decirle al cliente que probablemente sea verdad y que pague para evitar problemas.','Agradecerle al cliente por la información y explicarle que se harán algunas preguntas.','Colgar la llamada de inmediato, alegando de entrada motivos de seguridad interna del área.','Pedirle al cliente que bloquee el número de inmediato y sin más.'], correct:1},
+      {id:'sim8q2', prompt:'¿Qué información solicitarías?', options:['La fecha del contacto, el canal (WhatsApp), si tiene capturas, y qué le solicitaron.','El nombre completo y debidamente verificado del remitente del mensaje fraudulento recibido.','Si desea cambiar su número de teléfono registrado, como prioridad sobre el resto.','El saldo total que actualmente tiene disponible en su cuenta bancaria personal registrada.'], correct:0},
       {id:'sim8q3', prompt:'¿Debes escalar esta llamada?', options:['No, basta con decirle al cliente que ignore el mensaje.','Sí, todo posible intento de fraude se documenta y escala.','Solo si el cliente ya pagó el dinero solicitado.','No, se resuelve únicamente cambiando el número de teléfono registrado.'], correct:1},
-      {id:'sim8q4', prompt:'¿A quién corresponde escalar?', options:['Notificar al supervisor (TL) y registrar como Fraud en el Registro de llamadas → Emergencias.','A #rfe-comunications.','A Back Office, mediante Missing Receipt.','A Dirección + MGM, sin pasar por el TL.'], correct:0},
-      {id:'sim8q5', prompt:'¿Qué debes hacer al cierre de la llamada?', options:['Registrar como Fraud en Emergencias y enviarle al cliente, por mensaje de texto, las redes oficiales y datos de contacto verificados de la firma.','Case status → Regular status, sin mención del posible fraude.','Payment, documentando el monto solicitado por el estafador como si fuera un cobro real.','No es necesario dejar nota, basta con avisar verbalmente al TL.'], correct:0},
-      {id:'sim8q6', prompt:'¿Qué errores debes evitar?', options:['Agradecer al cliente por reportarlo.','Asegurarle al cliente que, si ya pagó, se le devolverá el dinero, o no documentar el canal exacto de contacto ni enviarle las redes oficiales.','Pedir evidencia (capturas de pantalla).','Registrar el caso como Fraud en Emergencias.'], correct:1},
+      {id:'sim8q4', prompt:'¿A quién corresponde escalar?', options:['Notificar al TL y registrar como Fraud en Emergencias.','Al canal de #rfe-comunications del equipo.','A Back Office, mediante el formulario de Missing Receipt.','Directamente a Dirección y MGM, sin pasar por el TL.'], correct:0},
+      {id:'sim8q5', prompt:'¿Qué debes hacer al cierre de la llamada?', options:['Registrar como Fraud en Emergencias y compartir con el cliente las redes y contactos oficiales verificados.','Case status → Regular status, sin ninguna mención del posible fraude en ninguna nota.','Payment, documentando el monto solicitado por el estafador como si fuera un cobro real.','No es necesario dejar ninguna nota escrita, basta con avisar verbalmente al TL del área.'], correct:0},
+      {id:'sim8q6', prompt:'¿Qué errores debes evitar?', options:['Agradecer al cliente por haber reportado de forma oportuna la situación de posible fraude.','Asegurarle que se le devolverá el dinero, o no documentar el canal de contacto.','Solicitar siempre evidencia del fraude, como capturas de pantalla del mensaje sospechoso.','Registrar el caso correctamente como Fraud en el módulo de Emergencias dentro de TramCase.'], correct:1},
      ]},
     {id:'sim9', title:'Señales de fabricación de información — caso VAWA', brief:`<h4>Llamada inbound — evaluación de elegibilidad VAWA</h4>
       <p><span class="label">Contexto:</span> Durante una llamada sobre su elegibilidad VAWA, el cliente dice: "dígame qué tengo que decir para que mi caso se apruebe, yo le contesto lo que usted necesite".</p>
@@ -686,12 +751,12 @@ const DATA = {
       <p><span class="label">Información relevante:</span> La frase del cliente es una señal de alerta directa del Disclaimer Preventivo Anti-Fraude.</p>
       <p><span class="label">Información irrelevante (distractor):</span> El cliente comenta que tiene 3 hijos y todos están en la escuela.</p>`,
      questions:[
-      {id:'sim9q1', prompt:'¿Qué harías primero?', options:['Darle un ejemplo de lo que otros clientes han dicho en casos similares para orientarlo.','Identificar la frase como una señal de alerta de posible fraude y prepararse para leer el script anti-fraude sin colgar la llamada.','Colgar la llamada de inmediato por seguridad.','Decirle que su caso no puede continuar y terminar la llamada.'], correct:1},
-      {id:'sim9q2', prompt:'¿Qué información solicitarías?', options:['Ninguna información adicional sobre "qué decir"; en su lugar, se procede a leer el script anti-fraude.','Le pides que te diga exactamente qué le dijeron otros abogados que debía declarar, para anotarlo.','Cuántos hijos tiene y en qué escuela están, como prioridad.','Si desea agendar una Travel Call.'], correct:0},
-      {id:'sim9q3', prompt:'¿Debes escalar esta situación?', options:['No, nunca se escala este tipo de situación.','Depende: se lee el script primero; si el cliente continúa con incoherencias o señales de fraude después, sí se escala a Compliance.','Sí, siempre se escala a Dirección de inmediato sin leer ningún script.','No, se resuelve dándole ejemplos de lo que debe decir.'], correct:1},
-      {id:'sim9q4', prompt:'¿A quién corresponde escalar si las señales de fraude persisten tras el script?', options:['A Compliance, a través del canal/QR habilitado.','A #cdmx-oficina.','A Back Office mediante Missing Receipt.','A #rfe-comunications.'], correct:0},
-      {id:'sim9q5', prompt:'¿Qué nota / documentación corresponde dejar?', options:['Documentar que se aplicó el disclaimer/script preventivo anti-fraude y que se envió el mensaje solicitando aceptar "ser honesto al hablar de los hechos en mi caso".','Registrar la conversación indicando exactamente qué le dijo el agente que debía declarar para que aprueben su caso.','Case status → Regular status, sin mención de la señal de alerta.','No dejar ninguna nota para evitar comprometer al cliente.'], correct:0},
-      {id:'sim9q6', prompt:'¿Qué errores debes evitar?', options:['Leer el script anti-fraude completo al cliente.','Sugerirle al cliente ejemplos o ideas de qué decir para que su caso "pase", o colgar la llamada sin leer el script.','Enviar el script por mensaje de texto mientras continúa la llamada.','Reportar a Compliance si las señales de fraude persisten.'], correct:1},
+      {id:'sim9q1', prompt:'¿Qué harías primero?', options:['Darle al cliente ejemplos de lo que otros han declarado en situaciones similares para orientarlo.','Identificar la frase como señal de alerta de fraude y prepararse para leer el script anti-fraude.','Colgar la llamada de inmediato, alegando motivos de seguridad.','Decirle directamente que su caso no puede continuar y terminar la llamada sin más explicaciones.'], correct:1},
+      {id:'sim9q2', prompt:'¿Qué información solicitarías?', options:["Ninguna información adicional sobre 'qué decir'; se procede a leer el script anti-fraude.",'Le pides que te diga exactamente qué le dijeron otros abogados que debía declarar, para anotarlo.','Cuántos hijos tiene y en qué escuela están, preguntándolo como prioridad.','Si desea agendar una Travel Call próximamente.'], correct:0},
+      {id:'sim9q3', prompt:'¿Debes escalar esta situación?', options:['No, nunca se debe escalar este tipo de situación a nadie.','Depende: se lee el script primero; si persisten señales de fraude, se escala.','Sí, siempre se escala a Dirección de inmediato sin leer ningún script.','No, se resuelve simplemente dándole ejemplos de lo que debe decir.'], correct:1},
+      {id:'sim9q4', prompt:'¿A quién corresponde escalar si las señales de fraude persisten tras el script?', options:['A Compliance, a través del canal/QR habilitado.','Al canal de Slack #cdmx-oficina.','A Back Office, mediante el formulario de Missing Receipt.','Al canal de #rfe-comunications.'], correct:0},
+      {id:'sim9q5', prompt:'¿Qué nota / documentación corresponde dejar?', options:['Documentar que se aplicó el disclaimer/script anti-fraude y que se envió el mensaje correspondiente.','Registrar la conversación indicando exactamente qué le dijo el agente que debía declarar.','Case status → Regular status, sin ninguna mención de la señal de alerta.','No dejar absolutamente ninguna nota, para evitar comprometer al cliente.'], correct:0},
+      {id:'sim9q6', prompt:'¿Qué errores debes evitar?', options:['Leer el script anti-fraude completo al cliente sin omitir ninguna parte del texto.','Sugerirle ideas de qué decir para que su caso "pase", o colgar antes de terminar de leer el script.','Enviar el script anti-fraude por mensaje de texto mientras la llamada sigue activa.','Reportar de inmediato a Compliance si las señales de fraude continúan persistiendo en la llamada.'], correct:1},
      ]},
     {id:'sim10', title:'Cliente en lista de no contacto con posible discrepancia DCL', brief:`<h4>Llamada inbound — Compliance Jun 2026</h4>
       <p><span class="label">Contexto:</span> Cliente pasa los filtros de seguridad y, al confirmar en TramCase, el agente lo identifica en la lista de no contacto emitida por Compliance.</p>
@@ -700,12 +765,12 @@ const DATA = {
       <p><span class="label">Información relevante:</span> Cliente en lista de no contacto + posible discrepancia DCL mencionada antes de la identificación.</p>
       <p><span class="label">Información irrelevante (distractor):</span> El cliente pregunta por el clima en la oficina de CDMX.</p>`,
      questions:[
-      {id:'sim10q1', prompt:'¿Qué harías primero?', options:['Decirle al cliente de inmediato "no podemos hablar con usted" y colgar.','Mantener un tono neutral y cordial; tras pasar los filtros de seguridad y confirmar en TramCase, identificar al cliente en la lista de no contacto.','Explicarle al cliente que está en una lista de no contacto y por qué.','Discutir con el cliente sobre la fecha del incidente que mencionó.'], correct:1},
-      {id:'sim10q2', prompt:'¿Qué información solicitarías una vez identificado el cliente en la lista?', options:['Ninguna información adicional sobre el caso ni sobre la discrepancia mencionada; se procede a cerrar con el speech habilitado.','Pedirle al cliente que repita la fecha del incidente para confirmar la discrepancia con la DCL.','El motivo exacto por el que está en la lista de no contacto, para explicárselo.','Si desea hacer un pago mientras se resuelve la situación.'], correct:0},
-      {id:'sim10q3', prompt:'¿Debes escalar esta situación?', options:['No, ninguna de las dos situaciones requiere escalación.','Sí, ambas: la presencia del cliente en la lista de no contacto y la posible discrepancia con la DCL.','Solo la discrepancia con la DCL; la lista de no contacto no se reporta.','Solo la lista de no contacto; la discrepancia con la DCL se ignora.'], correct:1},
-      {id:'sim10q4', prompt:'¿A quién/dónde corresponde escalar cada situación?', options:['Reportar en Slack #compliance-help por la lista de no contacto, y dejar nota con plantilla habilitada (Opción A o B) por la posible discrepancia DCL.','A Dirección + MGM por ambas situaciones.','A #rfe-comunications.','A #cdmx-oficina.'], correct:0},
-      {id:'sim10q5', prompt:'¿Qué nota / speech corresponde usar?', options:['Usar el speech de cierre habilitado por Compliance para el no contacto, y para la DCL usar una plantilla neutral habilitada (Opción A o B) sin mencionar "discrepancia" ni detalles.','Escribir en la nota: "Se detectó discrepancia en la DCL respecto a la fecha del incidente".','No dejar ninguna nota porque el cliente está en lista de no contacto.','Escribir en la nota: "Cliente en lista de no contacto, se le informó que no podemos hablar con él".'], correct:0},
-      {id:'sim10q6', prompt:'¿Qué errores debes evitar?', options:['Mantener un tono neutral durante toda la llamada.','Usar frases prohibidas como "no podemos hablar con usted" o "vamos a colgar", o escribir "discrepancia"/"error" en la nota de TramCase, o confirmar/negar el caso del cliente.','Reportar en #compliance-help al finalizar.','Usar una de las plantillas de nota habilitadas para la DCL.'], correct:1},
+      {id:'sim10q1', prompt:'¿Qué harías primero?', options:['Decirle al cliente de inmediato "no podemos hablar con usted" y colgar la llamada.','Mantener un tono neutral y cordial; tras los filtros, identificar al cliente en la lista de no contacto.','Explicarle directamente al cliente que está en una lista de no contacto y por qué.','Discutir abiertamente con el cliente sobre la fecha del incidente que mencionó.'], correct:1},
+      {id:'sim10q2', prompt:'¿Qué información solicitarías una vez identificado el cliente en la lista?', options:['Ninguna información sobre el caso ni la discrepancia; se cierra con el speech habilitado.','Pedirle al cliente que repita la fecha del incidente para confirmar la discrepancia con la DCL.','El motivo exacto por el que está en la lista de no contacto, para explicárselo.','Si desea hacer algún pago mientras se resuelve la situación.'], correct:0},
+      {id:'sim10q3', prompt:'¿Debes escalar esta situación?', options:['No, ninguna de estas dos situaciones requiere escalación alguna.','Sí, ambas: la lista de no contacto y la posible discrepancia con la DCL.','Solo la discrepancia con la DCL; la lista de no contacto no se reporta.','Solo la lista de no contacto; la discrepancia con la DCL se ignora.'], correct:1},
+      {id:'sim10q4', prompt:'¿A quién/dónde corresponde escalar cada situación?', options:['Reportar en #compliance-help por la lista, y usar la plantilla habilitada para la DCL.','A Dirección y MGM directamente por ambas situaciones, sin pasar por Compliance.','Al canal de #rfe-comunications, ya que cubre ambos temas por igual.','Al canal de #cdmx-oficina, para que ellos decidan qué hacer con ambos temas.'], correct:0},
+      {id:'sim10q5', prompt:'¿Qué nota / speech corresponde usar?', options:['Usar el speech de cierre habilitado para el no contacto, y para la DCL una plantilla neutral sin detalles.','Escribir en la nota: "Se detectó discrepancia en la DCL respecto a la fecha del incidente".','No dejar absolutamente ninguna nota porque el cliente está en lista de no contacto.','Escribir en la nota: "Cliente en lista de no contacto, se le informó que no podemos hablar con él".'], correct:0},
+      {id:'sim10q6', prompt:'¿Qué errores debes evitar?', options:['Mantener siempre un tono neutral durante toda la llamada.','Usar frases prohibidas, o escribir "discrepancia"/"error" en la nota de TramCase.','Reportar en #compliance-help inmediatamente al finalizar.','Usar correctamente una de las plantillas de nota habilitadas para la DCL.'], correct:1},
      ]},
   ],
   tramcase: [
@@ -908,26 +973,26 @@ const DATA = {
     ], correctOrder:[1,2,0,3]},
   ],
   compliance: [
-    {id:'c01', prompt:'Un cliente identificado en la lista de no contacto insiste mucho y comienza a llorar diciendo que necesita ayuda urgente. ¿Qué debe hacer el agente?', options:['Hacer una excepción y dar información básica por la urgencia que muestra el cliente','Mantener el speech habilitado por Compliance, sin importar la urgencia emocional, y si insiste o prolonga la llamada, escalar al TL','Decirle al cliente que está en una lista de no contacto y explicarle por qué','Transferir la llamada directamente a Dirección sin reportar en Slack'], correct:1},
+    {id:'c01', prompt:'Un cliente identificado en la lista de no contacto insiste mucho y comienza a llorar diciendo que necesita ayuda urgente. ¿Qué debe hacer el agente?', options:['Hacer una excepción a la política y dar información básica del caso, considerando la urgencia emocional que muestra el cliente','Mantener el speech habilitado por Compliance y, si insiste o prolonga la llamada, escalar al TL','Decirle directamente al cliente que está en una lista de no contacto y explicarle el motivo de esa restricción','Transferir la llamada directamente a Dirección, sin aplicar el speech ni reportar después en Slack'], correct:1},
     {id:'c02', prompt:'¿Cuál de las siguientes frases NO debe usarse al cerrar una llamada con un cliente de la lista de no contacto?', options:['"Gracias por la información, vamos a escalarla internamente."','"Su solicitud quedará registrada para el seguimiento correspondiente."','"No podemos continuar con esta comunicación."','"Le deseamos buen día."'], correct:2},
-    {id:'c03', prompt:'Tras cerrar la llamada con un cliente de la lista de no contacto, el agente decide NO reportar en #compliance-help porque "el cliente no insistió mucho y la llamada fue breve". ¿Es correcto este criterio?', options:['Sí, el reporte solo es obligatorio si el cliente insiste mucho','No, el reporte en #compliance-help es obligatorio siempre que un cliente de la lista se contacte con CS, independientemente de la duración o actitud','Sí, porque ya se aplicó el speech habilitado','No, pero el reporte puede hacerse al día siguiente sin ningún problema'], correct:1},
-    {id:'c04', prompt:'El agente detecta una discrepancia en la DCL y, al notar que "duda" un momento, el cliente pregunta directamente: "¿hay algún problema con mi declaración?". ¿Qué debe responder el agente?', options:['"Sí, hay una discrepancia con la fecha que usted mencionó."','Usar un mensaje neutral que no confirme ni niegue problemas con la declaración, sin usar palabras prohibidas, indicando que se está canalizando conforme al proceso','"No se preocupe, yo lo corrijo en el sistema ahora mismo."','"Eso lo tiene que resolver directamente con su abogado, no es mi función."'], correct:1},
-    {id:'c05', prompt:'¿Cuál de las siguientes opciones corresponde a una plantilla de nota HABILITADA por Compliance para discrepancias con la DCL?', options:['"Se detectó discrepancia en la DCL respecto a la fecha del incidente."','"Se identifica información que requiere revisión interna antes de continuar con el seguimiento. Se canaliza conforme al proceso correspondiente."','"El cliente cambió su versión de los hechos sobre el abuso."','"DCL incorrecta, se requiere corrección inmediata."'], correct:1},
+    {id:'c03', prompt:'Tras cerrar la llamada con un cliente de la lista de no contacto, el agente decide NO reportar en #compliance-help porque "el cliente no insistió mucho y la llamada fue breve". ¿Es correcto este criterio?', options:['Sí, el reporte solo es obligatorio si el cliente insiste mucho o se muestra molesto durante la llamada','No, el reporte en #compliance-help es obligatorio siempre que un cliente de la lista se contacte con CS','Sí, porque ya se aplicó correctamente el speech de cierre habilitado por Compliance','No, pero el reporte puede hacerse más tarde, durante la junta de equipo de la tarde'], correct:1},
+    {id:'c04', prompt:'El agente detecta una discrepancia en la DCL y, al notar que "duda" un momento, el cliente pregunta directamente: "¿hay algún problema con mi declaración?". ¿Qué debe responder el agente?', options:['"Sí, efectivamente hay una discrepancia con la fecha que usted mencionó en su declaración."','Usar un mensaje neutral que no confirme ni niegue problemas con la declaración, sin usar palabras prohibidas','"No se preocupe, yo mismo voy a corregir eso en el sistema en este momento."','"Eso lo tiene que resolver usted directamente con su abogado, eso no me corresponde a mí."'], correct:1},
+    {id:'c05', prompt:'¿Cuál de las siguientes opciones corresponde a una plantilla de nota HABILITADA por Compliance para discrepancias con la DCL?', options:['"Se detectó una discrepancia importante en la DCL respecto a la fecha exacta del incidente reportado."','"Se identifica información que requiere revisión interna antes de continuar con el seguimiento."','"El cliente cambió por completo su versión de los hechos sobre el abuso descrito."','"La DCL del cliente es incorrecta y requiere una corrección inmediata por parte del agente."'], correct:1},
     {id:'c06', prompt:'Un cliente, al ser cuestionado sobre fechas de su caso, dice: "mejor dígame usted qué fecha necesito decir y yo la repito, para que mi caso salga bien". ¿Qué representa esto?', options:['Una solicitud normal de aclaración de fechas, sin mayor relevancia','Una señal de posible intento de fraude que activa el Disclaimer Preventivo Anti-Fraude','Una solicitud que debe resolverse dándole la fecha correcta de inmediato','Un tema que no requiere ninguna acción especial por parte del agente'], correct:1},
-    {id:'c07', prompt:'Durante la aplicación del script anti-fraude, ¿cuál de las siguientes acciones es INCORRECTA?', options:['Leer el script completo al cliente sin colgar la llamada','Enviar el texto del script por mensaje mientras se mantiene la llamada activa','Pausar la llamada, decirle al cliente "espere, voy a consultar con mi supervisor sobre qué hacer con su información" y ponerlo en espera indefinida','Pedirle al cliente que responda al mensaje de texto con "Acepto ser honesto al hablar de los hechos en mi caso"'], correct:2},
-    {id:'c08', prompt:'Después de escuchar el script anti-fraude, el cliente responde: "ok está bien, no le voy a mentir... pero igual, ¿usted me puede decir qué pasa si yo digo que mi esposo me golpeaba aunque no sea cierto?". ¿Qué debe hacer el agente?', options:['Explicarle hipotéticamente qué pasaría en ese escenario','Considerar esto como continuación de señales de fraude/incoherencia y reportar de inmediato a Compliance a través del canal habilitado','Decirle "mejor no mencione nada de eso" y continuar con el resto de la llamada normalmente','Colgar la llamada de inmediato sin ninguna otra acción'], correct:1},
-    {id:'c09', prompt:'Un cliente solicita "provocar" a su abusador para grabar evidencia y poder usarla en su caso de VAWA. ¿Cómo debe interpretarse esto?', options:['Como una estrategia válida que el agente puede sugerir para fortalecer el caso','Como una señal de alerta de posible fabricación/manipulación de evidencia, que activa el protocolo anti-fraude (script + reporte a Compliance)','Como información que no requiere ninguna acción, ya que es decisión personal del cliente','Como un tema que debe resolverse ofreciendo una callback con el abogado para planear la grabación'], correct:1},
+    {id:'c07', prompt:'Durante la aplicación del script anti-fraude, ¿cuál de las siguientes acciones es INCORRECTA?', options:['Leer el script anti-fraude completo al cliente sin colgar ni interrumpir la llamada en ningún momento','Enviar el texto completo del script por mensaje de texto mientras la llamada permanece activa','Pausar la llamada y ponerlo en espera indefinida mientras se consulta "qué hacer" con su información','Pedirle al cliente que responda al mensaje de texto con "Acepto ser honesto al hablar de los hechos en mi caso"'], correct:2},
+    {id:'c08', prompt:'Después de escuchar el script anti-fraude, el cliente responde: "ok está bien, no le voy a mentir... pero igual, ¿usted me puede decir qué pasa si yo digo que mi esposo me golpeaba aunque no sea cierto?". ¿Qué debe hacer el agente?', options:['Explicarle al cliente, hipotéticamente, qué pasaría si presentara esa versión de los hechos','Considerar esto como una señal más de posible fraude y reportarlo de inmediato a Compliance','Decirle "mejor no mencione nada de eso" y continuar con el resto de la llamada normalmente','Colgar la llamada de inmediato, sin reportar nada ni continuar con el resto del protocolo'], correct:1},
+    {id:'c09', prompt:'Un cliente solicita "provocar" a su abusador para grabar evidencia y poder usarla en su caso de VAWA. ¿Cómo debe interpretarse esto?', options:['Como una estrategia válida que el agente puede sugerir para fortalecer el caso','Como una señal de alerta de posible fabricación de evidencia, que activa el protocolo anti-fraude','Como información que no requiere ninguna acción, ya que es decisión personal del cliente','Como un tema que debe resolverse ofreciendo una callback con el abogado para planear la grabación'], correct:1},
     {id:'c10', prompt:'¿Cuál de las siguientes es una "promesa indebida" que el agente NUNCA debe hacer?', options:['"La abogada le acompañará durante todo el proceso."','"Le mantendremos informado de cualquier actualización."','"Le garantizo que su caso será aprobado en los próximos meses."','"Vamos a escalar su solicitud para revisión."'], correct:2},
     {id:'c11', prompt:'La instrucción de Compliance Jun 2026 también prohíbe el uso de siglas o abreviaturas que hagan referencia a la discrepancia DCL en las notas. ¿Cuál de las siguientes opciones viola esa instrucción?', options:['Escribir "Se canaliza conforme al proceso aplicable."','Escribir "SID detectada, se turna a revisión."','Escribir "Se escala para revisión interna."','Escribir "Información en validación."'], correct:1},
-    {id:'c12', prompt:'Un cliente en lista de no contacto pregunta directamente: "¿por qué ya no me pueden ayudar? ¿estoy en alguna lista negra?". ¿Qué NO debe hacer el agente?', options:['Mantener un tono neutral y cordial en todo momento','Confirmar que existe una lista y explicar el motivo de la restricción al cliente','Usar el speech de cierre habilitado por Compliance','Reportar la llamada en #compliance-help al finalizar'], correct:1},
-    {id:'c13', prompt:'Durante una llamada, el cliente pide que el agente "ajuste" la fecha de una cita médica en una nota para que coincida con una fecha que necesita para su caso. ¿Cómo debe clasificarse esta solicitud?', options:['Como una solicitud administrativa normal que el agente puede realizar','Como manipulación de información/fabricación de evidencia, que requiere aplicar el script anti-fraude y reportar a Compliance','Como una solicitud que debe escalarse al área de LawPay','Como una solicitud de reagendar Intake/Consulta'], correct:1},
-    {id:'c14', prompt:'Un agente, al notar una posible discrepancia DCL, decide no escribir nada en la nota "para no meter al cliente en problemas" y continúa la llamada con normalidad. ¿Es correcto este proceder?', options:['Sí, omitir la nota es lo más seguro para el cliente','No: debe usarse una de las plantillas habilitadas (neutral, sin detalles) y escalar conforme al proceso; omitir la documentación no es una opción','Sí, siempre que el cliente lo pida expresamente','No, pero solo si el cliente insiste en corregir su declaración'], correct:1},
-    {id:'c15', prompt:'¿Cuál de las siguientes situaciones NO activa el protocolo anti-fraude?', options:['El cliente dice "dígame qué tengo que decir para que mi caso pase"','El cliente pregunta, de forma genuina y sin pedir instrucciones, sobre los tiempos de procesamiento de su caso','El cliente dice "puedo provocar a mi familiar para que me dé la evidencia que usted necesita"','El cliente dice "no le voy a mentir, eso no pasó, pero igual póngale que sí"'], correct:1},
-    {id:'c16', prompt:'Tras leer el script anti-fraude, el cliente se molesta y dice "¿me están acusando de mentiroso?". ¿Qué debe hacer el agente?', options:['Disculparse por el script y decirle que fue un error del sistema','Aplicar VDPC (validar la reacción del cliente con empatía), reiterar que el script aplica a todos los clientes por igual como estándar de calidad, y continuar con el reporte a Compliance si las señales de fraude persisten','Retirar el script de la conversación y continuar sin mencionar nada más','Escalar de inmediato a Dirección + MGM por la reacción del cliente'], correct:1},
-    {id:'c17', prompt:'Un cliente de la lista de no contacto llama desde un número distinto al registrado. El agente pasa los filtros de seguridad y, al revisar TramCase, confirma que es el mismo cliente de la lista. ¿Qué debe hacer?', options:['Como llama de un número distinto, tratarlo como un cliente nuevo sin restricciones','Aplicar el mismo protocolo de Compliance (speech habilitado + reporte en #compliance-help), ya que la restricción es por cliente, no por número de teléfono','Pedirle que llame desde su número registrado y colgar si no lo hace','Escalar directamente a Dirección sin usar el speech habilitado'], correct:1},
-    {id:'c18', prompt:'¿Cuál de las siguientes acciones representa una manipulación de información por parte del AGENTE (no del cliente)?', options:['Usar las plantillas de nota habilitadas por Compliance para discrepancias DCL','Registrar en TramCase una nota con un Reason distinto al motivo real de la llamada, para "simplificar" el reporte','Verificar el estatus en USCIS antes de informar al cliente','Escalar al TL una duda antes de una llamada outbound'], correct:1},
-    {id:'c19', prompt:'Un cliente comenta, en tono de broma: "ustedes para todo dicen que va a revisión, ¿eso es real o es su forma de decir que no van a hacer nada?". Considerando las plantillas habilitadas por Compliance, ¿cómo debe responder el agente?', options:['Confirmarle que, en efecto, "revisión" es una forma de decir que no se hará nada','Mantener el lenguaje neutral de las plantillas habilitadas, sin confirmar ni negar su comentario, y reafirmar que su solicitud fue canalizada conforme al proceso correspondiente','Explicarle en detalle qué significa "revisión interna" dentro del sistema de la firma','Decirle que tiene razón y ofrecerle una compensación'], correct:1},
-    {id:'c20', prompt:'Durante el cierre de una llamada con un cliente identificado en lista de no contacto, el cliente pregunta directamente: "¿tengo un caso con ustedes o no?". Según el protocolo habilitado, ¿qué debe hacer el agente?', options:['Confirmar que sí tiene un caso, pero sin dar detalles','Negar que tenga un caso, para evitar problemas','No confirmar ni negar la existencia de un caso activo, y usar el speech de cierre habilitado por Compliance','Preguntarle al cliente por qué quiere saberlo antes de responder'], correct:2},
+    {id:'c12', prompt:'Un cliente en lista de no contacto pregunta directamente: "¿por qué ya no me pueden ayudar? ¿estoy en alguna lista negra?". ¿Qué NO debe hacer el agente?', options:['Mantener un tono neutral y cordial en todo momento','Confirmar al cliente que existe una lista y el motivo','Usar el speech de cierre habilitado por Compliance','Reportar la llamada en #compliance-help al finalizar'], correct:1},
+    {id:'c13', prompt:'Durante una llamada, el cliente pide que el agente "ajuste" la fecha de una cita médica en una nota para que coincida con una fecha que necesita para su caso. ¿Cómo debe clasificarse esta solicitud?', options:['Como una solicitud administrativa normal que el agente puede realizar sin mayor revisión','Como manipulación de información, que requiere aplicar el script anti-fraude y reportar a Compliance','Como una solicitud que debe escalarse directamente al área de LawPay para su revisión','Como una simple solicitud de reagendar la cita de Intake o Consulta'], correct:1},
+    {id:'c14', prompt:'Un agente, al notar una posible discrepancia DCL, decide no escribir nada en la nota "para no meter al cliente en problemas" y continúa la llamada con normalidad. ¿Es correcto este proceder?', options:['Sí, omitir cualquier nota es lo más seguro y discreto para el cliente','No: debe usarse una de las plantillas neutrales habilitadas y escalar conforme al proceso','Sí, siempre que sea el propio cliente quien lo pida expresamente','No, pero solo es necesario si el cliente insiste varias veces en corregir su declaración'], correct:1},
+    {id:'c15', prompt:'¿Cuál de las siguientes situaciones NO activa el protocolo anti-fraude?', options:['El cliente dice "dígame qué tengo que decir para que mi caso pase"','El cliente pregunta de forma genuina sobre los tiempos de procesamiento de su caso','El cliente dice "puedo provocar a mi familiar para que me dé la evidencia que usted necesita"','El cliente dice "no le voy a mentir, eso no pasó, pero igual póngale que sí"'], correct:1},
+    {id:'c16', prompt:'Tras leer el script anti-fraude, el cliente se molesta y dice "¿me están acusando de mentiroso?". ¿Qué debe hacer el agente?', options:['Disculparse por el script y decirle al cliente que fue un error generado por el sistema','Aplicar VDPC con empatía y reiterar que el script aplica a todos los clientes por igual','Retirar por completo el script de la conversación y continuar como si no hubiera pasado nada','Escalar de inmediato a Dirección y MGM únicamente por la reacción molesta del cliente'], correct:1},
+    {id:'c17', prompt:'Un cliente de la lista de no contacto llama desde un número distinto al registrado. El agente pasa los filtros de seguridad y, al revisar TramCase, confirma que es el mismo cliente de la lista. ¿Qué debe hacer?', options:['Como llama desde un número diferente, tratarlo como un cliente nuevo sin ninguna restricción','Aplicar el mismo protocolo de Compliance (speech habilitado + reporte), ya que la restricción es por cliente','Pedirle con amabilidad que llame desde su número registrado y finalizar si se niega','Escalar de forma directa a Dirección sin aplicar antes el speech habilitado por Compliance'], correct:1},
+    {id:'c18', prompt:'¿Cuál de las siguientes acciones representa una manipulación de información por parte del AGENTE (no del cliente)?', options:['Usar las plantillas de nota habilitadas por Compliance para discrepancias DCL','Registrar en TramCase una nota con un Reason distinto al motivo real de la llamada','Verificar siempre el estatus en USCIS antes de informar cualquier dato al cliente','Escalar al TL cualquier duda antes de realizar una llamada outbound'], correct:1},
+    {id:'c19', prompt:'Un cliente comenta, en tono de broma: "ustedes para todo dicen que va a revisión, ¿eso es real o es su forma de decir que no van a hacer nada?". Considerando las plantillas habilitadas por Compliance, ¿cómo debe responder el agente?', options:['Confirmarle que, en efecto, "revisión" es una forma de decir que no se hará nada','Mantener el lenguaje neutral de las plantillas habilitadas, sin confirmar ni negar su comentario','Explicarle en detalle qué significa "revisión interna" dentro del sistema de la firma','Decirle que tiene toda la razón y ofrecerle alguna compensación por las molestias'], correct:1},
+    {id:'c20', prompt:'Durante el cierre de una llamada con un cliente identificado en lista de no contacto, el cliente pregunta directamente: "¿tengo un caso con ustedes o no?". Según el protocolo habilitado, ¿qué debe hacer el agente?', options:['Confirmar directamente al cliente que sí tiene un caso, pero sin dar más detalles','Negar directamente que el cliente tenga algún caso, para evitar problemas mayores','No confirmar ni negar la existencia de un caso, y usar el speech de cierre habilitado','Preguntarle al cliente por qué quiere saber eso antes de responder cualquier cosa'], correct:2},
   ],
   mastercase_brief: {html: `
     <h4>Sra. Marisol Andrade Castillo — Caso VAWA (I-360 + I-485)</h4>
@@ -943,141 +1008,141 @@ const DATA = {
   mastercase: [
     {id:'mc01', prompt:'Dado el tono de enojo creciente de la Sra. Andrade desde el inicio de la llamada, ¿qué debe hacer el agente primero, conforme a VDPC, una vez verificados los filtros de seguridad?', options:[
       'Decirle de inmediato que va a escalar a Dirección por las amenazas que podría hacer.',
-      'Validar su sentir y ofrecer una disculpa genuina (Validación y Disculpa de VDPC) antes de continuar con cualquier explicación.',
+      'Validar su sentir y ofrecer una disculpa genuina, conforme a VDPC, antes de continuar.',
       'Explicarle de inmediato, con datos técnicos, por qué su caso está tardando tanto.',
-      'Pedirle que se calme para poder continuar con la llamada.'
+      'Pedirle amablemente que se calme un poco para poder continuar con la llamada.'
     ], correct:1},
     {id:'mc02', prompt:'Sobre el atraso de 19 meses sin recibo de actualización, frente a un estimado de 16–18 meses, ¿qué acción operativa corresponde?', options:[
-      'Generar un Missing Receipt hacia Back Office, ya que el caso está fuera del rango de tiempos vigente y no hay actualización registrada.',
-      'Decirle que espere más tiempo porque USCIS siempre se atrasa.',
-      'Escalar directamente a Dirección únicamente por el atraso.',
-      'Indicarle que vuelva a llamar en un mes para revisar de nuevo.'
+      'Generar un Missing Receipt hacia Back Office, ya que el caso está fuera del rango de tiempos vigente.',
+      'Decirle a la clienta que espere más tiempo, ya que USCIS suele atrasarse en estos trámites.',
+      'Escalar directamente a Dirección y MGM únicamente por el atraso reportado.',
+      'Indicarle a la clienta que vuelva a llamar en un mes para revisar el caso de nuevo.'
     ], correct:0},
     {id:'mc03', prompt:'Antes de confirmar a la clienta cuánto tiempo lleva su caso y compararlo con el tiempo estimado, ¿qué debe hacer el agente?', options:[
-      'Confiar en la fecha que la clienta recuerda sobre la presentación del caso.',
-      'Preguntar al TL cuánto tiempo lleva el caso antes de decir nada.',
-      'Verificar la fecha real de presentación y el estatus en el portal de USCIS, y consultar la hoja de tiempos de procesamiento vigente para este tipo de trámite (I-360).',
-      'Usar el tiempo que recuerda de un caso similar atendido anteriormente.'
+      'Confiar directamente en la fecha que la clienta recuerda sobre la presentación de su caso.',
+      'Preguntar primero al TL cuánto tiempo lleva el caso, antes de decir cualquier cosa.',
+      'Verificar la fecha real de presentación y el estatus en USCIS, y consultar la hoja de tiempos vigente.',
+      'Usar el tiempo aproximado que recuerda de un caso similar que se atendió anteriormente.'
     ], correct:2},
     {id:'mc04', prompt:'Dada la corte en 30 días, ¿qué información debe recopilar el agente para el File Request, además de marcarlo con prioridad?', options:[
-      'Solo el nombre completo del cliente.',
-      'El Bar Number de la abogada de la firma.',
-      'El número de tarjeta registrada en LawPay.',
-      'El nombre y teléfono con extensión del abogado de corte, el tipo de audiencia y la fecha exacta de la corte.'
+      'Solo el nombre completo del cliente, sin recopilar ningún otro dato adicional.',
+      'El Bar Number de la abogada de la firma, para entregárselo directamente a la clienta.',
+      'El número de la tarjeta de crédito registrada en LawPay para procesar el cobro mensual.',
+      'El nombre, teléfono con extensión del abogado de corte, el tipo y la fecha exacta de la audiencia.'
     ], correct:3},
     {id:'mc05', prompt:'¿Cómo debe documentarse esta solicitud de expediente en TramCase respecto a su prioridad?', options:[
-      'Como una solicitud regular, sin marcar urgencia.',
-      'Marcándola como prioritaria por la proximidad de la fecha de corte (30 días) y notificando al TL para acelerar el seguimiento.',
-      'Indicando que se atenderá en el próximo ciclo mensual de revisiones.',
-      'Sin mencionar la fecha de corte, para no generar presión sobre Back Office.'
+      'Como una solicitud regular más, sin marcar ningún tipo de urgencia.',
+      'Marcándola como prioritaria por la proximidad de la fecha de corte y notificando al TL.',
+      'Indicando que esta solicitud se atenderá en el próximo ciclo mensual de revisiones internas.',
+      'Sin mencionar en ningún momento la fecha de corte, para no generar presión sobre Back Office.'
     ], correct:1},
     {id:'mc06', prompt:'La clienta menciona que subirá todo a redes sociales y que tiene el Bar Number de la abogada para reportarla al Colegio de Abogados. ¿Qué nivel de riesgo y acción corresponde?', options:[
-      'MEDIUM — documentar y continuar la llamada con normalidad.',
-      'HIGH — escalar únicamente al TL al finalizar la llamada.',
-      'CRITICAL — escalar de inmediato, sin colgar la llamada, a Dirección + MGM + Atty escalation, por combinar amenaza en redes sociales y mención de Bar Complaint/Bar Number.',
-      'LOW — ofrecerle algún tipo de compensación para calmarla.'
+      'MEDIUM — documentar todo en TramCase y continuar la llamada con normalidad.',
+      'HIGH — escalar únicamente al TL una vez que finalice la llamada.',
+      'CRITICAL — escalar de inmediato, sin colgar la llamada, a Dirección + MGM + Atty escalation.',
+      'LOW — ofrecerle algún tipo de compensación económica para calmar a la clienta.'
     ], correct:2},
     {id:'mc07', prompt:'Mientras se realiza la escalación CRITICAL en tiempo real, ¿qué debe hacer el agente con la clienta en la línea?', options:[
-      'Mantenerla en línea, aplicando VDPC para contenerla, mientras se notifica de inmediato al TL/Dirección por el canal correspondiente.',
-      'Colgar la llamada para poder escalar con calma.',
-      'Pedirle que vuelva a llamar en una hora mientras se revisa el caso.',
-      'Transferir la llamada directamente a Dirección sin avisarle nada a ella.'
+      'Mantenerla en línea, aplicando VDPC para contenerla, mientras se notifica de inmediato al TL.',
+      'Colgar la llamada de inmediato para poder escalar con más calma.',
+      'Pedirle a la clienta que vuelva a llamar en una hora mientras se revisa todo el caso.',
+      'Transferir la llamada directamente a Dirección, sin avisarle absolutamente nada a la clienta.'
     ], correct:0},
     {id:'mc08', prompt:'¿Cuál de las siguientes acciones sería un ERROR adicional al manejar la amenaza de Bar Complaint y redes sociales?', options:[
       'Documentar textualmente lo que dijo la clienta sobre el Bar Complaint y las redes sociales.',
-      'Notificar al TL de inmediato sobre la situación.',
+      'Notificar al TL de inmediato sobre toda la situación ocurrida.',
       'Registrar la escalación CRITICAL tanto en TramCase como en el formulario correspondiente.',
-      'Prometerle a la clienta que la queja al Colegio de Abogados "no le va a hacer nada" a la abogada, para tranquilizarla.'
+      'Prometerle a la clienta que la queja al Colegio de Abogados "no le va a hacer nada" a la abogada.'
     ], correct:3},
     {id:'mc09', prompt:'La clienta tiene EAD vigente con Advance Parole aprobado, pero el sistema muestra que tuvo una entrevista con USCIS hace 4 meses por un trámite anterior. ¿Puede viajar a México en 3 semanas?', options:[
-      'Sí, porque el EAD con Advance Parole siempre permite viajar sin restricciones.',
-      'No: a pesar de contar con EAD y Advance Parole, el contacto previo con USCIS implica que no debe cruzar checkpoints ni viajar, por lo que debe escalarse antes de dar cualquier indicación de viaje.',
-      'Sí, siempre que lleve su pasaporte vigente al cruzar.',
-      'Sí, pero únicamente si viaja por vía aérea.'
+      'Sí, porque contar con el EAD junto con el Advance Parole siempre permite viajar sin ninguna restricción legal.',
+      'No: el contacto previo con USCIS implica que no debe cruzar checkpoints ni viajar, aunque tenga EAD y Advance Parole.',
+      'Sí, siempre y cuando lleve consigo su pasaporte vigente al momento de cruzar la frontera.',
+      'Sí, pero únicamente en caso de que decida viajar por vía aérea y no por tierra.'
     ], correct:1},
     {id:'mc10', prompt:'¿Qué debe hacer el agente respecto a la pregunta de viaje antes de darle a la clienta una respuesta definitiva?', options:[
       'Responder de inmediato con un "sí" para no generarle más molestia, dado el contexto tenso de la llamada.',
-      'Decirle que consulte por su cuenta con un abogado de migración externo.',
-      'Escalar la consulta de viaje al área correspondiente (Travel Call), dado el antecedente de contacto con USCIS, sin confirmar ni negar la posibilidad de viajar hasta tener respuesta.',
-      'Indicarle que cancele su viaje sin dar ninguna explicación adicional.'
+      'Decirle a la clienta que consulte por su propia cuenta con un abogado de migración externo.',
+      'Escalar al área de Travel Call, dado el antecedente de contacto con USCIS, sin confirmar ni negar si puede viajar.',
+      'Indicarle a la clienta que cancele su viaje sin ninguna explicación adicional sobre el motivo.'
     ], correct:2},
     {id:'mc11', prompt:'¿Qué riesgo adicional representa que la clienta planee viajar en 3 semanas mientras también tiene una corte en 30 días?', options:[
-      'Un conflicto de fechas que debe documentarse y comunicarse a las áreas correspondientes (corte y Travel Call), ya que ambos eventos están próximos y podrían afectarse entre sí.',
-      'Ninguno, son temas completamente independientes.',
-      'Solo afecta el cobro de su mensualidad en LawPay.',
-      'Solo afecta el File Request y no el resto del caso.'
+      'Un conflicto de fechas que debe documentarse y comunicarse a las áreas de corte y Travel Call.',
+      'Ninguno: ambos temas son completamente independientes y no requieren ninguna acción.',
+      'Solo afecta el cobro mensual de su mensualidad registrada actualmente en LawPay.',
+      'Solo afecta la solicitud del File Request, sin relación con el resto del caso.'
     ], correct:0},
     {id:'mc12', prompt:'La clienta dice que el incidente fue "en 2021" pero la DCL registrada indica 2019. ¿Cómo debe documentarse esto en TramCase?', options:[
       'Con un texto explícito: "Discrepancia detectada en la DCL: el cliente cambió la fecha del incidente de 2019 a 2021."',
-      'Usando una de las plantillas neutrales habilitadas (Opción A u Opción B), sin mencionar palabras como "discrepancia" o "error", y escalando conforme al proceso de Compliance.',
+      'Usando una de las plantillas neutrales habilitadas (Opción A u Opción B), sin mencionar palabras como "discrepancia" o "error".',
       'No documentando nada, ya que es un detalle menor que no afecta el caso.',
       'Preguntándole a la clienta cuál fecha es la correcta y registrando su respuesta como la versión definitiva en la DCL.'
     ], correct:1},
     {id:'mc13', prompt:'Durante la llamada, ¿debe el agente decirle a la clienta cuál fecha es la "correcta" o explicarle que existe una discrepancia con su DCL?', options:[
-      'Sí, para que ella pueda corregirlo directamente con USCIS.',
-      'Sí, pero solo si la clienta lo pregunta directamente.',
-      'Sí, y además debe pedirle que firme una nueva DCL en ese momento.',
-      'No: no corresponde al agente confirmar, explicar ni resolver discrepancias de la DCL con el cliente; solo debe escalarse internamente por el canal correspondiente.'
+      'Sí, para que la clienta pueda ir a corregirlo directamente ante las oficinas de USCIS.',
+      'Sí, pero únicamente en los casos en que la clienta lo solicite de forma directa y explícita.',
+      'Sí, y debe solicitarle además que firme una nueva DCL durante esa misma llamada en curso.',
+      'No: no corresponde al agente confirmar ni resolver discrepancias de la DCL con el cliente.'
     ], correct:3},
     {id:'mc14', prompt:'¿Qué tipo de Reason of Call sería más adecuado para registrar esta parte de la llamada (tema DCL), evitando lenguaje prohibido?', options:[
-      '"DCL error - fecha incorrecta"',
-      'Un motivo neutral relacionado con revisión interna del expediente, conforme a las plantillas habilitadas, sin nombrar explícitamente la discrepancia.',
-      '"Cliente miente sobre fecha de incidente"',
-      '"Fraude en DCL"'
+      '"DCL error - fecha incorrecta detectada en el expediente del cliente"',
+      'Un motivo neutral relacionado con revisión interna del expediente.',
+      '"Cliente miente sobre la fecha exacta del incidente reportado en su DCL"',
+      '"Fraude detectado directamente en la DCL registrada del cliente"'
     ], correct:1},
     {id:'mc15', prompt:'La clienta sugiere agregar que hubo "abuso económico" aunque no ocurrió, "para que se vea más fuerte el caso". ¿Qué protocolo se activa?', options:[
-      'Ninguno: es una opinión válida de la clienta sobre la estrategia de su propio caso.',
-      'El protocolo de Travel Call, porque afecta indirectamente su viaje.',
-      'El protocolo del Disclaimer Preventivo Anti-Fraude, ya que se detecta la intención de agregar información falsa o exagerada al expediente.',
-      'El protocolo de Bar Complaint, porque afecta directamente a la abogada de la firma.'
+      'Ninguno: la sugerencia de la clienta es válida como parte de la estrategia legal de su propio caso.',
+      'El protocolo de Travel Call, ya que esto podría afectar de forma indirecta el viaje próximo de la clienta.',
+      'El Disclaimer Preventivo Anti-Fraude, al detectarse la intención de incluir información falsa en el expediente.',
+      'El protocolo de Bar Complaint, porque esta situación afecta de manera directa a la abogada de la firma.'
     ], correct:2},
     {id:'mc16', prompt:'¿Cómo debe ejecutarse el script anti-fraude en este momento de la llamada?', options:[
-      'Leyendo el script al cliente y enviándolo por mensaje de texto desde TramCase MIENTRAS continúa la llamada, sin colgar.',
-      'Esperando a que termine la llamada para mencionarlo después por correo electrónico.',
-      'Colgando la llamada de inmediato sin decir nada más.',
+      'Leyendo el script al cliente y enviándolo por mensaje desde TramCase MIENTRAS continúa la llamada.',
+      'Esperando a que termine por completo la llamada para mencionarlo después por correo electrónico.',
+      'Colgando la llamada de inmediato, sin decir absolutamente nada más al respecto.',
       'Ignorándolo, ya que fue "su prima" quien sugirió la idea, no la propia clienta.'
     ], correct:0},
     {id:'mc17', prompt:'Si después del script anti-fraude la clienta insiste en que se agregue esa información aunque no sea verídica, ¿qué debe hacer el agente?', options:[
-      'Aceptar agregarlo en una nota interna "por si ayuda" al caso.',
-      'Reportar de inmediato a Compliance por el canal habilitado, documentando la situación sin detallar acusaciones explícitas en TramCase.',
-      'Decirle que ella misma debe escribirlo directamente en su declaración.',
-      'No hacer nada adicional, ya que el script ya fue leído una vez.'
+      'Aceptar incluirla en una nota interna aunque no haya ocurrido, solo como referencia de contexto.',
+      'Reportar a Compliance por el canal habilitado, documentando sin detallar acusaciones explícitas en TramCase.',
+      'Decirle a la clienta que ella misma debe escribirlo en su declaración ante las autoridades de USCIS.',
+      'No hacer nada adicional, dado que el script anti-fraude ya fue leído previamente en la llamada.'
     ], correct:1},
     {id:'mc18', prompt:'Dado que la clienta mencionó que cambió de número de teléfono hace un mes, ¿qué debe hacer el agente?', options:[
-      'Ignorarlo: no es relevante para los temas principales de la llamada.',
-      'Pedirle que envíe un correo electrónico para actualizar ese dato.',
-      'Escalarlo como un File Request adicional.',
-      'Actualizar el número de contacto en TramCase como parte de la verificación de datos del caso, independientemente del motivo principal de la llamada.'
+      'Ignorarlo por completo: no es relevante para los temas principales de la llamada.',
+      'Pedirle a la clienta que envíe un correo electrónico para actualizar ese dato.',
+      'Escalarlo como un File Request adicional independiente del caso.',
+      'Actualizar el número de contacto en TramCase como parte de la verificación de datos del caso.'
     ], correct:3},
     {id:'mc19', prompt:'¿Qué combinación de Reason(s) of Call reflejaría mejor la complejidad real de esta llamada para fines de reporte interno?', options:[
-      'Únicamente "Regular status".',
-      'Una combinación que refleje los motivos reales: consulta de estatus/atraso, File Request prioritario por corte, escalación CRITICAL por amenaza de Bar Complaint/redes, Travel Call, y revisión interna de expediente — documentando cada componente según corresponda.',
-      'Solo "Trump questions", porque la clienta está molesta por cambios migratorios.',
-      'Solo "Needs packet speed up", ignorando el resto de los temas.'
+      'Únicamente "Regular status", ignorando todos los demás temas tratados en la llamada.',
+      'Combinación de motivos reales: atraso, File Request urgente, escalación CRITICAL, Travel Call y revisión interna.',
+      'Solo "Trump questions", porque la clienta mencionó estar molesta por cambios migratorios recientes.',
+      'Solo "Needs packet speed up", pasando por alto todos los demás temas relevantes de la llamada.'
     ], correct:1},
     {id:'mc20', prompt:'¿Cuál de las siguientes secuencias sería la MÁS adecuada para el inicio de esta llamada, considerando el enojo inicial de la clienta?', options:[
       'Verificar filtros de seguridad → dar el estatus de inmediato para calmarla → continuar con lo demás.',
-      'Aplicar VDPC antes de verificar los filtros de seguridad, porque la prioridad es calmarla.',
-      'Verificar filtros de seguridad → aplicar VDPC (validar, disculparse) → revisar el caso (USCIS + hoja de tiempos + TramCase) antes de responder sobre el atraso.',
-      'Pedirle que se comunique por correo electrónico en lugar de continuar la llamada.'
+      'Aplicar VDPC antes de los filtros de seguridad, bajo el argumento de que calmar a la clienta es la prioridad.',
+      'Verificar filtros → aplicar VDPC (validar y disculparse) → revisar el caso antes de responder sobre el atraso.',
+      'Pedirle a la clienta que se comunique por correo electrónico en lugar de continuar con la llamada.'
     ], correct:2},
     {id:'mc21', prompt:'Considerando todo lo ocurrido en la llamada (atraso, file request urgente, amenaza CRITICAL, travel call, discrepancia DCL, antifraude), ¿a cuántas áreas o canales distintos debería derivarse información de esta llamada, como mínimo?', options:[
-      'A varias: Back Office (Missing Receipt y file request prioritario), TL/Dirección/MGM (escalación CRITICAL), área de Travel Call, y Compliance (DCL y antifraude) — cada una por su canal correspondiente.',
-      'A ninguna: todo se resuelve con una sola nota en TramCase.',
-      'Solo a Dirección, ya que cubre todos los temas por sí sola.',
-      'Solo a Compliance, ya que es el tema más sensible de todos.'
+      'A varias: Back Office (File Request), TL/Dirección/MGM (CRITICAL), Travel Call, y Compliance.',
+      'A ninguna: absolutamente todo se resuelve con una sola nota en TramCase.',
+      'Solo a Dirección, ya que esta área cubre todos los temas por sí sola.',
+      'Solo a Compliance, ya que este es el tema más sensible de todos los mencionados.'
     ], correct:0},
     {id:'mc22', prompt:'Si el agente, abrumado por la cantidad de temas, decide "resumir todo en una sola nota genérica" para ahorrar tiempo, ¿qué problema generaría esto?', options:[
-      'Ninguno: una nota genérica es suficiente si se menciona que "hubo varios temas".',
-      'Solo afectaría el tiempo de respuesta de USCIS, nada más.',
-      'Dificultaría el seguimiento por cada área especializada y podría incumplir las plantillas y reportes obligatorios para escalaciones CRITICAL, Compliance y Travel Call, cada uno con su propio canal y formato.',
-      'Solo afectaría el cobro registrado en LawPay.'
+      'Ninguno: una nota genérica es suficiente, siempre que se mencione que "hubo varios temas" en la llamada.',
+      'Solo afectaría el tiempo de respuesta de USCIS ante la firma, y nada más en el resto del proceso.',
+      'Dificultaría el seguimiento por área especializada e incumpliría las plantillas de CRITICAL, Compliance y Travel Call.',
+      'Solo afectaría el registro del cobro de mensualidad en el sistema de LawPay de la firma.'
     ], correct:2},
     {id:'mc23', prompt:'Durante toda la llamada, ¿qué tono debe mantener el agente al aplicar VDPC con esta clienta, incluso al manejar la amenaza de Bar Complaint?', options:[
-      'Defensivo, para proteger a la firma de la amenaza.',
-      'Indiferente, ya que las amenazas no deben tomarse en serio.',
+      'Defensivo, para proteger en todo momento a la firma de cualquier amenaza.',
+      'Indiferente, ya que ese tipo de amenazas no deben tomarse nunca en serio.',
       'Autoritario, advirtiéndole que sus amenazas podrían afectar negativamente su caso.',
-      'Empático y profesional, validando su frustración sin minimizarla ni prometer resultados, mientras se ejecutan las escalaciones necesarias.'
+      'Empático y profesional, validando su frustración sin minimizarla ni prometer resultados.'
     ], correct:3},
     {id:'mc24', prompt:'¿Cuál de las siguientes frases sería INAPROPIADA para usar con la clienta en esta llamada?', options:[
       '"Entiendo completamente su frustración por el tiempo que ha pasado, y vamos a darle seguimiento a esto de inmediato."',
@@ -1086,9 +1151,9 @@ const DATA = {
       '"Vamos a revisar internamente la información de su expediente; cualquier actualización se le compartirá por los canales correspondientes."'
     ], correct:1},
     {id:'mc25', prompt:'Al cierre de la llamada, siguiendo VDPC, ¿qué debe transmitirle el agente a la clienta?', options:[
-      'Acompañamiento y seguimiento genuino — que sus solicitudes quedaron registradas y serán atendidas por las áreas correspondientes — sin prometer resultados ni plazos específicos.',
-      'Una fecha exacta en la que se resolverá cada uno de los temas planteados.',
-      'Que, dado lo que mencionó sobre el abuso económico, su caso podría ser rechazado.',
+      'Que sus solicitudes quedaron registradas y serán atendidas por las áreas correspondientes, sin prometer resultados ni plazos.',
+      'Una fecha exacta de resolución para cada uno de los temas que planteó durante la llamada.',
+      'Que, dado lo mencionado sobre el abuso económico, su caso corre riesgo de ser rechazado por USCIS.',
       'Que, debido a la cantidad de temas, deberá llamar de nuevo en otra ocasión para tratar cada uno por separado.'
     ], correct:0},
   ]
@@ -1155,7 +1220,14 @@ function evalItem(item){
   const a=STATE.answers[item.id];
   if(item._type==='mcq'||item._type==='escalation'){
     const max=item._weight||1;
-    if(a===undefined) return {earned:0,max};
+    if(a===undefined || (Array.isArray(a) && a.length===0)) return {earned:0,max};
+    if(Array.isArray(item.correct)){
+      // multi-select: exact set match required
+      const sel=Array.isArray(a)?[...a].sort():[];
+      const req=[...item.correct].sort();
+      const correct=sel.length===req.length && sel.every((v,i)=>v===req[i]);
+      return {earned: correct?max:0, max};
+    }
     return {earned: (a===item.correct? max:0), max};
   }
   if(item._type==='notebuild'){
@@ -1181,7 +1253,7 @@ function evalItem(item){
 
 function isAnswered(item){
   const a=STATE.answers[item.id];
-  if(item._type==='mcq'||item._type==='escalation') return a!==undefined;
+  if(item._type==='mcq'||item._type==='escalation') return a!==undefined && !(Array.isArray(a) && a.length===0);
   if(item._type==='notebuild') return a && a.every(v=>v!==undefined && v!=='');
   if(item._type==='order4') return a && a.every(v=>v!==undefined && v!=='');
   return false;
@@ -1224,24 +1296,69 @@ function render(){
 function renderRegister(){
   app.innerHTML=`
   <div class="reg-screen">
-    <div class="reg-card">
-      <div class="reg-head">
-        <div class="seal-lg">M</div>
-        <div class="eyebrow">The Mendoza Law Firm · Mendoza Learning Center</div>
-        <h1>Certificación Operativa<br>Customer Service</h1>
-        <p>Esta evaluación valida si estás preparado/a para atender clientes reales sin supervisión directa. No es un examen escolar: es una certificación de competencia operativa que mide conocimiento, criterio, escalación, compliance y manejo de situaciones críticas.</p>
+
+    <!-- ── LEFT: INSTRUCCIONES ─────────────────────────── -->
+    <div class="reg-instr">
+      <div class="ri-logo">
+        <div class="ri-seal">M</div>
+        <div class="ri-brand">The Mendoza Law Firm<br>Mendoza Learning Center</div>
       </div>
-      <div class="reg-form">
-        <div class="field"><label>Nombre completo</label><input id="r-name" type="text" placeholder="Nombre y apellidos" value="${STATE.reg.name}"></div>
-        <div class="field"><label>Team Leader</label><input id="r-tl" type="text" placeholder="Nombre de tu TL" value="${STATE.reg.tl}"></div>
-        <div class="field"><label>Área</label><input id="r-area" type="text" placeholder="Inbound / Outbound / CS" value="${STATE.reg.area}"></div>
-        <div class="field"><label>Fecha</label><input id="r-date" type="date" value="${STATE.reg.date||todayStr()}"></div>
-        <div class="field full"><label>Correo electrónico</label><input id="r-email" type="email" placeholder="nombre@mendozafirm.com" value="${STATE.reg.email}"></div>
-      </div>
-      <div class="reg-note">La evaluación consta de 8 secciones (220 reactivos en total). Tu progreso se guarda mientras dura esta sesión. Al finalizar recibirás una clasificación operativa y un reporte descargable.</div>
-      <button class="btn btn-primary btn-block" id="r-start">Comenzar evaluación →</button>
-      <div class="err-msg" id="r-err"></div>
+
+      <h2>Antes de<br>comenzar</h2>
+      <p class="ri-tagline">Lee estas instrucciones con atención.</p>
+
+      <ul class="ri-rules">
+        <li>
+          <div class="ri-dot"></div>
+          <p><strong>219 reactivos · 8 secciones</strong>Teoría, Errores, Escalaciones, Simulador, TramCase, Emergencias, Compliance y Caso Maestro.</p>
+        </li>
+        <li>
+          <div class="ri-dot"></div>
+          <p><strong>Calificación mínima: 90 / 100</strong>Debajo de 90 no se considera aprobado para operación independiente.</p>
+        </li>
+        <li>
+          <div class="ri-dot"></div>
+          <p><strong>Individual y sin apoyos</strong>No consultes materiales ni compañeros durante la evaluación.</p>
+        </li>
+        <li>
+          <div class="ri-dot"></div>
+          <p><strong>Navegación por sección</strong>Usa ← Anterior / Siguiente → dentro de cada sección. La barra lateral permite cambiar de sección en cualquier momento.</p>
+        </li>
+        <li>
+          <div class="ri-dot"></div>
+          <p><strong>Progreso solo en sesión</strong>Si cierras o recargas la página, se pierde el progreso.</p>
+        </li>
+        <li>
+          <div class="ri-dot"></div>
+          <p><strong>El cronómetro inicia al comenzar</strong>Asegúrate de tener tiempo y conexión antes de dar clic.</p>
+        </li>
+      </ul>
+
+      <p class="ri-footer">Al finalizar recibirás tu clasificación operativa y un reporte descargable.<br><span>TMLF · Customer Service Certification</span></p>
     </div>
+
+    <!-- ── RIGHT: FORMULARIO DE REGISTRO ───────────────── -->
+    <div class="reg-form-wrap">
+      <div class="reg-card">
+        <div class="reg-head">
+          <div class="seal-lg">M</div>
+          <div class="eyebrow">The Mendoza Law Firm · Mendoza Learning Center</div>
+          <h1>Certificación Operativa<br>Customer Service</h1>
+          <p>Completa tus datos para registrar tu evaluación. El folio generado quedará vinculado a tus resultados.</p>
+        </div>
+        <div class="reg-form">
+          <div class="field"><label>Nombre completo</label><input id="r-name" type="text" placeholder="Nombre y apellidos" value="${STATE.reg.name}"></div>
+          <div class="field"><label>Team Leader</label><input id="r-tl" type="text" placeholder="Nombre de tu TL" value="${STATE.reg.tl}"></div>
+          <div class="field"><label>Área</label><input id="r-area" type="text" placeholder="Inbound / Outbound / CS" value="${STATE.reg.area}"></div>
+          <div class="field"><label>Fecha</label><input id="r-date" type="date" value="${STATE.reg.date||todayStr()}"></div>
+          <div class="field full"><label>Correo electrónico</label><input id="r-email" type="email" placeholder="nombre@mendozafirm.com" value="${STATE.reg.email}"></div>
+        </div>
+        <div class="reg-note">La evaluación consta de 8 secciones (219 reactivos en total). Tu progreso se guarda mientras dura esta sesión.</div>
+        <button class="btn btn-primary btn-block" id="r-start">Comenzar evaluación →</button>
+        <div class="err-msg" id="r-err"></div>
+      </div>
+    </div>
+
   </div>`;
   document.getElementById('r-start').addEventListener('click',()=>{
     const name=document.getElementById('r-name').value.trim();
@@ -1378,7 +1495,7 @@ function renderSection(){
     bodyHtml=renderOrder4(item);
   }
 
-  const isFirst = STATE.currentSection===1 && STATE.currentIndex===0;
+  const isFirst = STATE.currentIndex===0;
   const isLast = STATE.currentSection===SECTIONS.length && STATE.currentIndex===n-1;
 
   return `
@@ -1418,15 +1535,18 @@ function renderMCQ(item, options, letters){
 }
 
 function renderEscalation(item){
-  const a=STATE.answers[item.id];
+  const a=STATE.answers[item.id]||[];
+  const isMulti=Array.isArray(item.correct);
   let optsHtml='';
   ESCALATION_OPTIONS.forEach((opt,i)=>{
-    optsHtml+=`<div class="opt ${a===opt.k?'selected':''}" data-esc-id="${item.id}" data-esc-key="${opt.k}">
+    const sel=Array.isArray(a)?a.includes(opt.k):a===opt.k;
+    optsHtml+=`<div class="opt ${sel?'selected':''}" data-esc-id="${item.id}" data-esc-key="${opt.k}">
       <span class="opt-letter">${opt.k}</span><span class="opt-text">${opt.t}</span>
     </div>`;
   });
+  const hint=isMulti?`<p class="q-hint" style="font-size:0.78rem;color:var(--gold);margin:4px 0 8px">Selecciona todas las que apliquen</p>`:'';
   return `<div class="q-prompt"><span class="scenario">${item.context}</span>¿Cómo debe proceder el asesor?</div>
-  <div class="options">${optsHtml}</div>`;
+  ${hint}<div class="options">${optsHtml}</div>`;
 }
 
 function renderNotebuild(item){
@@ -1579,7 +1699,17 @@ function attachGlobalHandlers(){
   });
   document.querySelectorAll('[data-esc-id]').forEach(el=>{
     el.addEventListener('click',()=>{
-      STATE.answers[el.dataset.escId]=el.dataset.escKey;
+      const id=el.dataset.escId, key=el.dataset.escKey;
+      const item=allItems().find(it=>it.id===id);
+      if(item && Array.isArray(item.correct)){
+        // multi-select: toggle
+        const cur=Array.isArray(STATE.answers[id])?[...STATE.answers[id]]:[];
+        const idx=cur.indexOf(key);
+        if(idx>=0) cur.splice(idx,1); else cur.push(key);
+        STATE.answers[id]=cur;
+      } else {
+        STATE.answers[id]=key;
+      }
       render();
       restoreScroll();
     });
@@ -1607,8 +1737,7 @@ function attachGlobalHandlers(){
 
   const prev=document.getElementById('nav-prev');
   if(prev) prev.addEventListener('click',()=>{
-    if(STATE.currentIndex>0){STATE.currentIndex--;}
-    else if(STATE.currentSection>1){STATE.currentSection--;STATE.currentIndex=buildItemList(SECTIONS[STATE.currentSection-1].key).length-1;}
+    if(STATE.currentIndex>0) STATE.currentIndex--;
     render();window.scrollTo(0,0);
   });
   const next=document.getElementById('nav-next');
