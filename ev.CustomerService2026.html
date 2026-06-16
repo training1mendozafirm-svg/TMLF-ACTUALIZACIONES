@@ -386,6 +386,74 @@ a{color:var(--navy-3);}
 .results-actions{display:flex;justify-content:center;gap:12px;margin:28px 0 6px;}
 
 /* print */
+/* ===================== SECTION COVER ===================== */
+.sec-cover{
+  min-height:calc(100vh - 40px);display:flex;flex-direction:column;
+  padding:0;
+}
+.sc-top{
+  display:flex;align-items:center;gap:14px;
+  padding:28px 36px 0;
+}
+.sc-progress-strip{
+  display:flex;gap:6px;align-items:center;
+}
+.sc-pip{
+  width:28px;height:3px;border-radius:2px;
+  background:var(--line);transition:background .2s;
+}
+.sc-pip.past{background:var(--gold);opacity:.5;}
+.sc-pip.active{background:var(--gold);width:44px;}
+.sc-step{
+  font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.18em;color:var(--ink-soft);
+  margin-left:4px;
+}
+.sc-body{
+  flex:1;display:flex;flex-direction:column;
+  justify-content:center;align-items:flex-start;
+  padding:48px 36px 60px;
+  max-width:680px;
+}
+.sc-icon{
+  font-size:2.8rem;line-height:1;color:var(--gold);
+  margin-bottom:24px;opacity:.85;
+  font-family:'Cormorant Garamond',serif;
+}
+.sc-eyebrow{
+  font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.2em;color:var(--gold);
+  margin-bottom:10px;
+}
+.sc-title{
+  font-size:2.6rem;line-height:1.1;margin-bottom:16px;color:var(--navy);
+  font-weight:600;
+}
+.sc-desc{
+  font-size:.9rem;color:var(--ink-soft);line-height:1.65;
+  margin-bottom:32px;max-width:560px;
+}
+.sc-meta{
+  display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px;
+}
+.sc-chip{
+  display:flex;flex-direction:column;align-items:center;
+  padding:12px 20px;border-radius:10px;
+  background:var(--cream);border:1px solid var(--line);
+  min-width:80px;
+}
+.sc-chip-done{background:var(--ok-bg);border-color:rgba(47,125,79,.2);}
+.sc-chip-val{
+  font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:700;
+  color:var(--navy);line-height:1;
+}
+.sc-chip-done .sc-chip-val{color:var(--ok);}
+.sc-chip-lbl{
+  font-family:'Barlow Condensed',sans-serif;font-size:.65rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft);margin-top:3px;
+}
+.sc-btn{font-size:1rem;padding:15px 36px;border-radius:10px;}
+
 @media print{
   .sidebar,.nav-row,.results-actions,.no-print{display:none !important;}
   .main{padding:0;}
@@ -1165,7 +1233,8 @@ const DATA = {
    ========================================================================= */
 const STATE = {
   screen:'register', // register | overview | section | results
-  reg:{name:'',tl:'',area:'',date:'',email:''},
+  showCover:false,   // true = show section cover before first question
+  reg:{name:'',tl:'',area:'',date:''},
   folio:'',
   currentSection:1,
   currentIndex:0,
@@ -1286,8 +1355,9 @@ const app=document.getElementById('app');
 function render(){
   if(STATE.screen==='register') return renderRegister();
   app.innerHTML = `<div class="app-shell">${renderSidebar()}<div class="main">${
-    STATE.screen==='overview' ? renderOverview() :
-    STATE.screen==='section' ? renderSection() :
+    STATE.screen==='overview'  ? renderOverview() :
+    STATE.screen==='section' && STATE.showCover ? renderSectionCover() :
+    STATE.screen==='section'   ? renderSection() :
     renderResults()
   }</div></div>`;
   attachGlobalHandlers();
@@ -1350,10 +1420,9 @@ function renderRegister(){
           <div class="field"><label>Nombre completo</label><input id="r-name" type="text" placeholder="Nombre y apellidos" value="${STATE.reg.name}"></div>
           <div class="field"><label>Team Leader</label><input id="r-tl" type="text" placeholder="Nombre de tu TL" value="${STATE.reg.tl}"></div>
           <div class="field"><label>Área</label><input id="r-area" type="text" placeholder="Inbound / Outbound / CS" value="${STATE.reg.area}"></div>
-          <div class="field"><label>Fecha</label><input id="r-date" type="date" value="${STATE.reg.date||todayStr()}"></div>
-          <div class="field full"><label>Correo electrónico</label><input id="r-email" type="email" placeholder="nombre@mendozafirm.com" value="${STATE.reg.email}"></div>
+          <div class="field full"><label>Fecha</label><input id="r-date" type="date" value="${STATE.reg.date||todayStr()}"></div>
         </div>
-        <div class="reg-note">La evaluación consta de 8 secciones (219 reactivos en total). Tu progreso se guarda mientras dura esta sesión.</div>
+        <div class="reg-note">8 secciones · 219 reactivos · El progreso se guarda en esta sesión.</div>
         <button class="btn btn-primary btn-block" id="r-start">Comenzar evaluación →</button>
         <div class="err-msg" id="r-err"></div>
       </div>
@@ -1365,12 +1434,9 @@ function renderRegister(){
     const tl=document.getElementById('r-tl').value.trim();
     const area=document.getElementById('r-area').value.trim();
     const date=document.getElementById('r-date').value;
-    const email=document.getElementById('r-email').value.trim();
     const errEl=document.getElementById('r-err');
-    if(!name||!tl||!area||!date||!email){errEl.textContent='Todos los campos son obligatorios.';return;}
-    const emailOk=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    if(!emailOk){errEl.textContent='Ingresa un correo electrónico válido.';return;}
-    STATE.reg={name,tl,area,date,email};
+    if(!name||!tl||!area||!date){errEl.textContent='Todos los campos son obligatorios.';return;}
+    STATE.reg={name,tl,area,date};
     STATE.folio='TMLF-CS-'+date.replace(/-/g,'')+'-'+Math.floor(1000+Math.random()*9000);
     STATE.startTime=Date.now();
     STATE.screen='overview';
@@ -1461,6 +1527,43 @@ function renderOverview(){
   <div class="nav-row">
     <span></span>
     <div class="right"><button class="btn btn-primary" id="go-sec1">Iniciar Sección 1 →</button></div>
+  </div>`;
+}
+
+function renderSectionCover(){
+  const sec=SECTIONS.find(s=>s.id===STATE.currentSection);
+  const items=buildItemList(sec.key);
+  const answered=items.filter(isAnswered).length;
+  const hasPrev=answered>0;
+  const ICONS=['◈','⊘','↑','◎','▤','⚡','⊕','★'];
+  const icon=ICONS[sec.id-1]||'◈';
+  const typeLabels={theory:'Opción múltiple',errors:'Identificación de errores',escalation:'Selección de canal',simulator:'Análisis de caso',tramcase:'Construcción de nota',emergencies:'Ordenamiento de pasos',compliance:'Opción múltiple',mastercase:'Caso integral'};
+  const typeLabel=typeLabels[sec.key]||'';
+  return `
+  <div class="sec-cover">
+    <div class="sc-top">
+      <div class="sc-progress-strip">
+        ${SECTIONS.map(s=>`<div class="sc-pip ${s.id<sec.id?'past':s.id===sec.id?'active':''}"></div>`).join('')}
+      </div>
+      <span class="sc-step">Sección ${sec.id} de ${SECTIONS.length}</span>
+    </div>
+
+    <div class="sc-body">
+      <div class="sc-icon">${icon}</div>
+      <div class="sc-eyebrow">${typeLabel}</div>
+      <h1 class="sc-title">${sec.title}</h1>
+      <p class="sc-desc">${sec.desc}</p>
+
+      <div class="sc-meta">
+        <div class="sc-chip"><span class="sc-chip-val">${items.length}</span><span class="sc-chip-lbl">reactivos</span></div>
+        <div class="sc-chip"><span class="sc-chip-val">${sec.points}</span><span class="sc-chip-lbl">puntos</span></div>
+        ${hasPrev?`<div class="sc-chip sc-chip-done"><span class="sc-chip-val">${answered}</span><span class="sc-chip-lbl">respondidos</span></div>`:''}
+      </div>
+
+      <button class="btn btn-gold sc-btn" id="sc-start">
+        ${hasPrev?`Continuar sección ${sec.id} →`:`Comenzar sección ${sec.id} →`}
+      </button>
+    </div>
   </div>`;
 }
 
@@ -1679,16 +1782,22 @@ function recommendation(total,cls,risk,reinforce){
    HANDLERS
    ========================================================================= */
 function attachGlobalHandlers(){
+  const scStart=document.getElementById('sc-start');
+  if(scStart) scStart.addEventListener('click',()=>{STATE.showCover=false;render();window.scrollTo(0,0);});
+
   document.querySelectorAll('[data-goto-section]').forEach(b=>{
     b.addEventListener('click',()=>{
-      STATE.currentSection=parseInt(b.dataset.gotoSection,10);
+      const newSec=parseInt(b.dataset.gotoSection,10);
+      const changed=newSec!==STATE.currentSection || STATE.screen!=='section';
+      STATE.currentSection=newSec;
       STATE.currentIndex=0;
       STATE.screen='section';
+      STATE.showCover=changed; // show cover only when actually switching section
       render();
     });
   });
   const goSec1=document.getElementById('go-sec1');
-  if(goSec1) goSec1.addEventListener('click',()=>{STATE.currentSection=1;STATE.currentIndex=0;STATE.screen='section';render();});
+  if(goSec1) goSec1.addEventListener('click',()=>{STATE.currentSection=1;STATE.currentIndex=0;STATE.screen='section';STATE.showCover=true;render();});
 
   document.querySelectorAll('[data-mcq-id]').forEach(el=>{
     el.addEventListener('click',()=>{
@@ -1745,7 +1854,11 @@ function attachGlobalHandlers(){
     const sec=SECTIONS.find(s=>s.id===STATE.currentSection);
     const n=buildItemList(sec.key).length;
     if(STATE.currentIndex<n-1){STATE.currentIndex++;}
-    else if(STATE.currentSection<SECTIONS.length){STATE.currentSection++;STATE.currentIndex=0;}
+    else if(STATE.currentSection<SECTIONS.length){
+      STATE.currentSection++;
+      STATE.currentIndex=0;
+      STATE.showCover=true;
+    }
     render();window.scrollTo(0,0);
   });
   const finish=document.getElementById('nav-finish');
