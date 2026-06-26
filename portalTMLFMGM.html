@@ -1,0 +1,3080 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TMLF · The Mendoza Law Firm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+<!-- ═══════════════════════════════════════════
+     CSS — TMLF Knowledge Center
+     ═══════════════════════════════════════════ -->
+<style>
+
+/* ── TOKENS ─────────────────────────────────── */
+:root {
+  --navy-950:  #070E1A;
+  --navy-900:  #0B1829;
+  --navy-800:  #0F2240;
+  --navy-700:  #1A3A5C;
+  --navy-600:  #1E4A73;
+  --blue-500:  #2E7FD6;
+  --blue-400:  #4A90D9;
+  --blue-300:  #7AB3E8;
+  --blue-100:  #DDEDF8;
+  --blue-50:   #EEF5FC;
+  --gray-50:   #F4F7FA;
+  --gray-100:  #EBF0F5;
+  --gray-200:  #D9E3ED;
+  --gray-300:  #B8C8D8;
+  --gray-500:  #7A92A8;
+  --gray-600:  #64748B;
+  --gray-700:  #4A5568;
+  --gray-900:  #1A202C;
+  --white:     #FFFFFF;
+  --success:   #22C55E;
+  --warn:      #F59E0B;
+
+  --sidebar-w: 260px;
+  --sidebar-collapsed: 68px;
+  --header-h: 64px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.04);
+  --shadow-lg: 0 10px 40px rgba(0,0,0,.12), 0 2px 8px rgba(0,0,0,.06);
+  --transition: .22s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── RESET ───────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--gray-50);
+  color: var(--gray-900);
+  overflow: hidden;
+  height: 100dvh;
+}
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; border: none; outline: none; font-family: inherit; }
+input { font-family: inherit; outline: none; border: none; }
+
+/* ── SCROLLBAR ───────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gray-500); }
+
+/* ════════════════════════════════════════════════
+   SPLASH SCREEN
+   ════════════════════════════════════════════════ */
+#splash {
+  position: fixed;
+  inset: 0;
+  background: var(--navy-900);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  gap: 24px;
+  transition: opacity .6s ease, visibility .6s ease;
+}
+#splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.splash-logo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  animation: splashFadeUp .7s ease both;
+}
+.splash-emblem {
+  width: 56px; height: 56px;
+  background: linear-gradient(135deg, var(--blue-500), var(--blue-300));
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+}
+.splash-emblem svg { width: 30px; height: 30px; }
+.splash-wordmark { display: flex; flex-direction: column; }
+.splash-wordmark span:first-child {
+  font-size: 22px; font-weight: 800; color: var(--white);
+  letter-spacing: -.4px;
+}
+.splash-wordmark span:last-child {
+  font-size: 11px; font-weight: 500; color: var(--blue-300);
+  letter-spacing: 2.5px; text-transform: uppercase;
+}
+.splash-subtitle {
+  font-size: 13px; color: var(--gray-500); letter-spacing: .4px;
+  animation: splashFadeUp .7s .15s ease both;
+}
+.splash-bar-wrap {
+  width: 180px; height: 3px; background: var(--navy-700);
+  border-radius: 99px; overflow: hidden;
+  animation: splashFadeUp .7s .25s ease both;
+}
+.splash-bar {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--blue-500), var(--blue-300));
+  border-radius: 99px;
+  animation: loadBar 1.8s .3s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes loadBar { to { width: 100%; } }
+@keyframes splashFadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ════════════════════════════════════════════════
+   APP SHELL
+   ════════════════════════════════════════════════ */
+#app {
+  display: flex;
+  height: 100dvh;
+  opacity: 0;
+  transition: opacity .5s ease;
+}
+#app.visible { opacity: 1; }
+
+/* ════════════════════════════════════════════════
+   SIDEBAR
+   ════════════════════════════════════════════════ */
+#sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  height: 100dvh;
+  background: var(--navy-900);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: width var(--transition), min-width var(--transition);
+  z-index: 100;
+  overflow: hidden;
+}
+#sidebar.collapsed {
+  width: var(--sidebar-collapsed);
+  min-width: var(--sidebar-collapsed);
+}
+
+/* Sidebar — decorative top gradient */
+#sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 200px;
+  background: radial-gradient(ellipse at 20% 0%, rgba(46,127,214,.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Sidebar brand ── */
+.sb-brand {
+  padding: 20px 18px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  flex-shrink: 0;
+  overflow: hidden;
+  min-height: 72px;
+}
+.sb-icon {
+  width: 38px; height: 38px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--blue-500), var(--blue-300));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+}
+.sb-icon svg { width: 20px; height: 20px; }
+.sb-text { overflow: hidden; white-space: nowrap; transition: opacity var(--transition), max-width var(--transition); }
+.sb-text strong {
+  display: block; font-size: 14px; font-weight: 700;
+  color: var(--white); letter-spacing: -.2px;
+}
+.sb-text span {
+  font-size: 10px; font-weight: 500; color: var(--blue-300);
+  letter-spacing: 2px; text-transform: uppercase;
+}
+#sidebar.collapsed .sb-text { opacity: 0; max-width: 0; }
+
+/* ── Nav label ── */
+.sb-nav-label {
+  padding: 20px 18px 8px;
+  font-size: 9px; font-weight: 700; letter-spacing: 2.5px;
+  text-transform: uppercase; color: rgba(255,255,255,.2);
+  white-space: nowrap; overflow: hidden;
+  transition: opacity var(--transition);
+  flex-shrink: 0;
+}
+#sidebar.collapsed .sb-nav-label { opacity: 0; }
+
+/* ── Nav list ── */
+.sb-nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 0 10px; }
+.sb-nav::-webkit-scrollbar { width: 0; }
+
+.sb-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  position: relative;
+  margin-bottom: 2px;
+  transition: background var(--transition);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.sb-item:hover { background: rgba(255,255,255,.06); }
+.sb-item.active {
+  background: rgba(74,144,217,.14);
+}
+/* Active indicator bar */
+.sb-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%) scaleY(0);
+  width: 3px; height: 60%;
+  background: var(--blue-400);
+  border-radius: 0 3px 3px 0;
+  transition: transform var(--transition);
+}
+.sb-item.active::before { transform: translateY(-50%) scaleY(1); }
+
+.sb-item-icon {
+  width: 36px; height: 36px; flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.04);
+  transition: background var(--transition);
+}
+.sb-item.active .sb-item-icon { background: rgba(74,144,217,.2); }
+.sb-item-icon svg { width: 18px; height: 18px; color: var(--gray-500); transition: color var(--transition); }
+.sb-item.active .sb-item-icon svg,
+.sb-item:hover .sb-item-icon svg { color: var(--blue-300); }
+
+.sb-item-label {
+  font-size: 13px; font-weight: 500;
+  color: rgba(255,255,255,.55);
+  transition: color var(--transition), opacity var(--transition), max-width var(--transition);
+}
+.sb-item.active .sb-item-label { color: var(--white); font-weight: 600; }
+.sb-item:hover .sb-item-label { color: rgba(255,255,255,.85); }
+#sidebar.collapsed .sb-item-label { opacity: 0; max-width: 0; }
+
+/* Badge */
+.sb-badge {
+  margin-left: auto; flex-shrink: 0;
+  font-size: 9px; font-weight: 700;
+  background: var(--blue-500);
+  color: var(--white);
+  padding: 2px 6px; border-radius: 99px;
+  letter-spacing: .5px;
+  transition: opacity var(--transition);
+}
+#sidebar.collapsed .sb-badge { opacity: 0; }
+
+/* ── Sidebar footer ── */
+.sb-footer {
+  padding: 14px 10px;
+  border-top: 1px solid rgba(255,255,255,.05);
+  flex-shrink: 0;
+}
+.sb-collapse-btn {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; padding: 10px 10px;
+  background: rgba(255,255,255,.04);
+  border-radius: var(--radius-sm);
+  color: rgba(255,255,255,.4);
+  font-size: 12px; font-weight: 500;
+  transition: background var(--transition), color var(--transition);
+  white-space: nowrap; overflow: hidden;
+}
+.sb-collapse-btn:hover { background: rgba(255,255,255,.08); color: rgba(255,255,255,.7); }
+.sb-collapse-btn svg { width: 18px; height: 18px; flex-shrink: 0; transition: transform var(--transition); }
+#sidebar.collapsed .sb-collapse-btn svg { transform: rotate(180deg); }
+.sb-collapse-btn span { transition: opacity var(--transition); }
+#sidebar.collapsed .sb-collapse-btn span { opacity: 0; }
+
+/* ════════════════════════════════════════════════
+   MAIN COLUMN
+   ════════════════════════════════════════════════ */
+#main-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* ── HEADER ── */
+#header {
+  height: var(--header-h);
+  min-height: var(--header-h);
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-100);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  gap: 16px;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+  z-index: 50;
+}
+
+.hdr-breadcrumb {
+  display: flex; align-items: center; gap: 8px;
+  flex: 1; min-width: 0;
+}
+.hdr-breadcrumb-item {
+  font-size: 13px; color: var(--gray-500);
+  font-weight: 500; white-space: nowrap;
+}
+.hdr-breadcrumb-item.active { color: var(--gray-900); font-weight: 600; }
+.hdr-breadcrumb-sep {
+  font-size: 13px; color: var(--gray-300);
+}
+
+.hdr-search {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  padding: 7px 12px;
+  width: 220px; transition: border-color var(--transition), box-shadow var(--transition);
+}
+.hdr-search:focus-within {
+  border-color: var(--blue-400);
+  box-shadow: 0 0 0 3px rgba(74,144,217,.1);
+}
+.hdr-search svg { width: 15px; height: 15px; color: var(--gray-500); flex-shrink: 0; }
+.hdr-search input {
+  font-size: 13px; color: var(--gray-700); background: transparent;
+  width: 100%;
+}
+.hdr-search input::placeholder { color: var(--gray-300); }
+
+.hdr-clock {
+  font-size: 12px; font-weight: 600; color: var(--gray-600);
+  letter-spacing: .5px; white-space: nowrap;
+  background: var(--gray-50); border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm); padding: 7px 12px;
+}
+
+.hdr-home-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--navy-900);
+  color: var(--white);
+  font-size: 12px; font-weight: 600;
+  padding: 8px 14px; border-radius: var(--radius-sm);
+  transition: background var(--transition), transform var(--transition);
+  letter-spacing: .3px;
+}
+.hdr-home-btn:hover { background: var(--navy-700); transform: translateY(-1px); }
+.hdr-home-btn svg { width: 14px; height: 14px; }
+
+/* ── CONTENT AREA ── */
+#content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px 36px;
+  position: relative;
+}
+
+/* ── Section container ── */
+.section-panel {
+  display: none;
+  animation: fadeSection .28s ease both;
+}
+.section-panel.active { display: block; }
+@keyframes fadeSection {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Page header ── */
+.page-header {
+  margin-bottom: 28px;
+}
+.page-header-inner {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+}
+.page-title {
+  font-size: 24px; font-weight: 800;
+  color: var(--gray-900); letter-spacing: -.4px;
+  line-height: 1.2;
+}
+.page-title span { color: var(--blue-500); }
+.page-subtitle {
+  font-size: 13px; color: var(--gray-500); margin-top: 5px; font-weight: 400;
+}
+.page-tag {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--blue-500);
+  background: var(--blue-50); border: 1px solid var(--blue-100);
+  padding: 4px 10px; border-radius: 99px;
+}
+
+/* ════════════════════════════════════════════════
+   DASHBOARD
+   ════════════════════════════════════════════════ */
+.dash-hero {
+  background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-700) 100%);
+  border-radius: var(--radius-xl);
+  padding: 32px 36px;
+  margin-bottom: 32px;
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 20px;
+}
+/* decorative blob */
+.dash-hero::before {
+  content: '';
+  position: absolute;
+  right: -60px; top: -60px;
+  width: 240px; height: 240px;
+  background: radial-gradient(circle, rgba(74,144,217,.25) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.dash-hero::after {
+  content: '';
+  position: absolute;
+  left: 40%; bottom: -40px;
+  width: 160px; height: 160px;
+  background: radial-gradient(circle, rgba(74,144,217,.12) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.dash-hero-text .greeting {
+  font-size: 12px; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--blue-300); margin-bottom: 8px;
+}
+.dash-hero-text h2 {
+  font-size: 26px; font-weight: 800; color: var(--white);
+  letter-spacing: -.5px; line-height: 1.25; max-width: 360px;
+}
+.dash-hero-text p {
+  font-size: 13px; color: rgba(255,255,255,.5); margin-top: 8px; max-width: 320px;
+}
+.dash-hero-stats {
+  display: flex; gap: 24px; flex-wrap: wrap;
+  position: relative; z-index: 1;
+}
+.dash-stat {
+  text-align: center;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius-md);
+  padding: 14px 20px;
+  backdrop-filter: blur(10px);
+}
+.dash-stat-num {
+  font-size: 22px; font-weight: 800; color: var(--white); letter-spacing: -.5px;
+}
+.dash-stat-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--blue-300); margin-top: 3px;
+}
+
+/* Section cards grid */
+.cards-section-title {
+  font-size: 11px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--gray-500);
+  margin-bottom: 16px;
+}
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+}
+.dash-card {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  position: relative; overflow: hidden;
+}
+.dash-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--blue-500), var(--blue-300));
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+.dash-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--blue-100);
+}
+.dash-card:hover::before { opacity: 1; }
+
+.dc-icon-wrap {
+  width: 48px; height: 48px;
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+}
+.dc-icon-wrap svg { width: 24px; height: 24px; }
+
+.dc-1 .dc-icon-wrap { background: rgba(46,127,214,.1); color: var(--blue-500); }
+.dc-2 .dc-icon-wrap { background: rgba(34,197,94,.1); color: var(--success); }
+.dc-3 .dc-icon-wrap { background: rgba(245,158,11,.1); color: var(--warn); }
+.dc-4 .dc-icon-wrap { background: rgba(139,92,246,.1); color: #8B5CF6; }
+
+.dc-title { font-size: 15px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+.dc-desc  { font-size: 12px; color: var(--gray-500); line-height: 1.6; }
+
+.dc-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 20px; padding-top: 16px;
+  border-top: 1px solid var(--gray-100);
+}
+.dc-status {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600; color: var(--gray-500);
+}
+.dc-status-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--success);
+}
+.dc-open-btn {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 600;
+  color: var(--blue-500);
+  background: var(--blue-50);
+  border: 1px solid var(--blue-100);
+  padding: 6px 12px; border-radius: var(--radius-sm);
+  transition: background var(--transition), color var(--transition);
+}
+.dc-open-btn:hover { background: var(--blue-500); color: var(--white); }
+.dc-open-btn svg { width: 12px; height: 12px; }
+
+/* ════════════════════════════════════════════════
+   SECTION INNER (TABS)
+   ════════════════════════════════════════════════ */
+.section-intro {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+}
+.section-intro-left { display: flex; align-items: center; gap: 14px; }
+.section-intro-ico {
+  width: 44px; height: 44px;
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.section-intro-ico svg { width: 22px; height: 22px; }
+.section-intro-name { font-size: 17px; font-weight: 700; color: var(--gray-900); }
+.section-intro-desc { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--gray-600);
+  background: var(--gray-50); border: 1px solid var(--gray-200);
+  padding: 8px 14px; border-radius: var(--radius-sm);
+  transition: background var(--transition), color var(--transition);
+}
+.back-btn:hover { background: var(--gray-100); color: var(--gray-900); }
+.back-btn svg { width: 13px; height: 13px; }
+
+/* ── Tabs ── */
+.tabs-bar {
+  display: flex; gap: 2px;
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-md);
+  padding: 5px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.tab-btn {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 13px; font-weight: 500; color: var(--gray-600);
+  padding: 9px 16px; border-radius: var(--radius-sm);
+  transition: background var(--transition), color var(--transition);
+  white-space: nowrap;
+}
+.tab-btn:hover { background: var(--gray-50); color: var(--gray-900); }
+.tab-btn.active {
+  background: var(--navy-900); color: var(--white); font-weight: 600;
+}
+.tab-btn svg { width: 14px; height: 14px; }
+
+/* ── Tab content ── */
+.tab-panel { display: none; animation: fadeSection .25s ease both; }
+.tab-panel.active { display: block; }
+
+/* ── Empty state card ── */
+.empty-card {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  padding: 48px 36px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.empty-icon {
+  width: 64px; height: 64px;
+  background: var(--gray-50);
+  border: 1.5px dashed var(--gray-200);
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+}
+.empty-icon svg { width: 28px; height: 28px; color: var(--gray-300); }
+.empty-title { font-size: 15px; font-weight: 700; color: var(--gray-700); margin-bottom: 6px; }
+.empty-desc { font-size: 13px; color: var(--gray-500); max-width: 320px; margin: 0 auto; line-height: 1.6; }
+
+/* ── Placeholder blocks ── */
+.placeholder-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+.placeholder-block {
+  background: var(--white);
+  border: 1.5px dashed var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  text-align: center;
+  transition: border-color var(--transition), background var(--transition);
+}
+.placeholder-block:hover { border-color: var(--blue-300); background: var(--blue-50); }
+.placeholder-block svg { width: 24px; height: 24px; color: var(--gray-300); margin-bottom: 8px; }
+.placeholder-block-label {
+  font-size: 11px; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--gray-400);
+}
+
+/* ── Info banner ── */
+.info-banner {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--blue-50);
+  border: 1px solid var(--blue-100);
+  border-left: 3px solid var(--blue-500);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+.info-banner svg { width: 16px; height: 16px; color: var(--blue-500); flex-shrink: 0; }
+.info-banner p { font-size: 12px; color: var(--blue-500); font-weight: 500; }
+
+/* ── Skeleton rows ── */
+.skeleton-section {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+}
+.skeleton-row {
+  height: 12px; background: var(--gray-100);
+  border-radius: 6px; margin-bottom: 10px;
+  animation: shimmer 1.8s infinite;
+}
+.skeleton-row:last-child { margin-bottom: 0; width: 60%; }
+@keyframes shimmer {
+  0%, 100% { opacity: .5; }
+  50%       { opacity: 1; }
+}
+
+/* ════════════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════
+   CALLS TABLE
+   ════════════════════════════════════════════════ */
+.calls-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+  margin-bottom: 14px;
+}
+.calls-header-left { display: flex; align-items: center; gap: 10px; }
+.calls-count-badge {
+  font-size: 11px; font-weight: 700; letter-spacing: .8px;
+  background: var(--navy-900); color: var(--white);
+  padding: 4px 11px; border-radius: 99px;
+}
+.calls-header-label {
+  font-size: 12px; font-weight: 600; color: var(--gray-600);
+}
+.calls-search-wrap {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  padding: 7px 12px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.calls-search-wrap:focus-within {
+  border-color: var(--blue-400);
+  box-shadow: 0 0 0 3px rgba(74,144,217,.1);
+}
+.calls-search-wrap svg { width: 13px; height: 13px; color: var(--gray-500); flex-shrink: 0; }
+.calls-search-wrap input {
+  font-size: 12px; color: var(--gray-700);
+  background: transparent; width: 180px;
+}
+.calls-search-wrap input::placeholder { color: var(--gray-300); }
+
+.calls-table-wrap {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+}
+.calls-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 13px;
+}
+.calls-table thead tr {
+  border-bottom: 1px solid var(--gray-100);
+}
+.calls-table th {
+  padding: 13px 16px;
+  text-align: left;
+  font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+  text-transform: uppercase; color: var(--gray-500);
+  white-space: nowrap; background: var(--gray-50);
+}
+.calls-table th:first-child { border-radius: var(--radius-md) 0 0 0; }
+.calls-table th:last-child  { border-radius: 0 var(--radius-md) 0 0; }
+.th-center { text-align: center !important; }
+.td-center { text-align: center; }
+
+.calls-table tbody tr {
+  border-bottom: 1px solid var(--gray-100);
+  transition: background var(--transition);
+}
+.calls-table tbody tr:last-child { border-bottom: none; }
+.calls-table tbody tr:hover { background: var(--blue-50); }
+.calls-table td { padding: 13px 16px; vertical-align: middle; }
+
+.call-id {
+  font-size: 12px; font-weight: 600; color: var(--gray-500);
+  font-variant-numeric: tabular-nums; letter-spacing: .3px;
+}
+.call-name {
+  font-weight: 600; color: var(--gray-900);
+}
+.call-tipo {
+  display: inline-block;
+  font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; padding: 3px 9px;
+  border-radius: 99px; white-space: nowrap;
+}
+.call-tipo.vawa     { background: rgba(46,127,214,.1); color: var(--blue-500); }
+.call-tipo.vawa-aos { background: rgba(139,92,246,.1); color: #7C3AED; }
+
+.call-hora {
+  font-size: 12px; font-weight: 700; color: var(--gray-700);
+  font-variant-numeric: tabular-nums;
+  background: var(--gray-50); border: 1px solid var(--gray-200);
+  padding: 3px 8px; border-radius: var(--radius-sm);
+}
+
+/* Link buttons */
+.call-link {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600;
+  padding: 5px 11px; border-radius: var(--radius-sm);
+  text-decoration: none; white-space: nowrap;
+  transition: background var(--transition), color var(--transition), transform var(--transition);
+}
+.call-link svg { width: 12px; height: 12px; }
+.call-link:hover { transform: translateY(-1px); }
+
+.link-dropbox {
+  background: rgba(0,97,224,.08); color: #0061E0;
+  border: 1px solid rgba(0,97,224,.15);
+}
+.link-dropbox:hover { background: #0061E0; color: var(--white); }
+
+.link-gdocs {
+  background: rgba(21,128,61,.08); color: #15803D;
+  border: 1px solid rgba(21,128,61,.15);
+}
+.link-gdocs:hover { background: #15803D; color: var(--white); }
+
+.link-drive {
+  background: rgba(245,158,11,.08); color: #B45309;
+  border: 1px solid rgba(245,158,11,.2);
+}
+.link-drive:hover { background: #D97706; color: var(--white); }
+
+/* ════════════════════════════════════════════════
+   SCRIPTS GRID
+   ════════════════════════════════════════════════ */
+.scripts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+@media (max-width: 1100px) { .scripts-grid { grid-template-columns: 1fr; } }
+
+.script-card {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), border-color var(--transition);
+}
+.script-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--blue-100);
+}
+
+.script-card-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--gray-100);
+  background: var(--gray-50);
+  flex-shrink: 0;
+}
+.script-card-icon {
+  width: 36px; height: 36px; flex-shrink: 0;
+  background: rgba(46,127,214,.1);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--blue-500);
+}
+.script-card-icon svg { width: 17px; height: 17px; }
+.script-card-info { flex: 1; min-width: 0; }
+.script-card-title {
+  font-size: 13px; font-weight: 700; color: var(--gray-900);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.script-card-sub {
+  font-size: 10px; font-weight: 500; color: var(--gray-400);
+  margin-top: 2px; letter-spacing: .4px;
+}
+.script-open-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600;
+  color: var(--blue-500); background: var(--blue-50);
+  border: 1px solid var(--blue-100);
+  padding: 6px 11px; border-radius: var(--radius-sm);
+  white-space: nowrap; flex-shrink: 0;
+  transition: background var(--transition), color var(--transition);
+  text-decoration: none;
+}
+.script-open-btn:hover { background: var(--blue-500); color: var(--white); }
+.script-open-btn svg { width: 12px; height: 12px; }
+
+.script-iframe-wrap {
+  flex: 1; position: relative;
+  height: 460px;
+  background: var(--gray-50);
+}
+.script-iframe-wrap iframe {
+  width: 100%; height: 100%;
+  border: none; display: block;
+}
+
+
+.agent-name {
+  font-size: 12px; font-weight: 600; color: var(--navy-700);
+}
+
+/* Observation preview */
+.obs-preview {
+  font-size: 12px; color: var(--gray-600); line-height: 1.55;
+  margin-bottom: 8px;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+.obs-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600; color: var(--blue-500);
+  background: var(--blue-50); border: 1px solid var(--blue-100);
+  padding: 5px 10px; border-radius: var(--radius-sm);
+  transition: background var(--transition), color var(--transition);
+}
+.obs-btn:hover { background: var(--blue-500); color: var(--white); }
+.obs-btn svg { width: 12px; height: 12px; }
+
+/* ── CASOS -21 SR badges ── */
+.sr21-tipo {
+  display: inline-flex;
+  font-size: 10px; font-weight: 700; letter-spacing: .8px;
+  text-transform: uppercase; padding: 3px 9px;
+  border-radius: 99px; white-space: nowrap;
+}
+.sr21-tipo.usc      { background: rgba(46,127,214,.1);  color: var(--blue-500); }
+.sr21-tipo.nat      { background: rgba(139,92,246,.1);  color: #7C3AED; }
+.sr21-tipo.decision { background: rgba(245,158,11,.1);  color: #B45309; }
+.sr21-tipo.aprobado { background: rgba(34,197,94,.1);   color: #15803D; }
+
+/* ── Waiver table ── */
+.waiver-tipo {
+  display: inline-block;
+  font-size: 10px; font-weight: 700; letter-spacing: .8px;
+  text-transform: uppercase; padding: 3px 9px;
+  border-radius: 99px; white-space: nowrap;
+  background: rgba(139,92,246,.1); color: #7C3AED;
+}
+.waiver-file {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 500; color: var(--gray-500);
+  background: var(--gray-50); border: 1px solid var(--gray-200);
+  padding: 5px 10px; border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+.waiver-file svg { width: 12px; height: 12px; color: var(--gray-400); }
+.waiver-nota-inline {
+  display: flex; align-items: flex-start; gap: 6px;
+  font-size: 12px; color: var(--gray-600); line-height: 1.55;
+}
+.waiver-nota-ok { color: #065F46; }
+.waiver-notas-empty { font-size: 12px; color: var(--gray-300); }
+
+/* ── Gamma launch card ── */
+.gamma-launch-card {
+  display: flex; align-items: center; gap: 20px;
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  box-shadow: var(--shadow-sm);
+  flex-wrap: wrap;
+}
+.gamma-launch-icon {
+  width: 52px; height: 52px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--navy-800), var(--navy-600));
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+}
+.gamma-launch-icon svg { width: 24px; height: 24px; }
+.gamma-launch-text { flex: 1; min-width: 0; }
+.gamma-launch-title {
+  font-size: 16px; font-weight: 700; color: var(--gray-900);
+  letter-spacing: -.2px;
+}
+.gamma-launch-sub {
+  font-size: 12px; color: var(--gray-500); margin-top: 4px;
+}
+.gamma-launch-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--navy-900); color: var(--white);
+  font-size: 13px; font-weight: 600;
+  padding: 11px 20px; border-radius: var(--radius-md);
+  text-decoration: none; white-space: nowrap; flex-shrink: 0;
+  transition: background var(--transition), transform var(--transition);
+}
+.gamma-launch-btn:hover { background: var(--navy-700); transform: translateY(-1px); }
+.gamma-launch-btn svg { width: 14px; height: 14px; }
+
+/* ── RS Outcome badges ── */
+.rs-origen {
+  font-size: 11px; font-weight: 500; color: var(--gray-500);
+}
+.rs-outcome {
+  display: inline-block;
+  font-size: 10px; font-weight: 700; letter-spacing: .8px;
+  text-transform: uppercase; padding: 3px 9px;
+  border-radius: 99px; white-space: nowrap;
+}
+.rs-outcome.labor  { background: rgba(46,127,214,.1);  color: var(--blue-500); }
+.rs-outcome.coyote { background: rgba(139,92,246,.1);  color: #7C3AED; }
+.rs-outcome.vd     { background: rgba(20,184,166,.1);  color: #0F766E; }
+.rs-outcome.revawa { background: rgba(245,158,11,.1);  color: #B45309; }
+
+.rs-multi-links { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+
+/* call-tipo extras */
+.call-tipo.vt { background: rgba(20,184,166,.1); color: #0F766E; }
+
+/* ── RS Modal ── */
+.rs-modal-wide { max-width: 860px !important; }
+.rs-modal-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+.rs-panel {
+  padding: 20px 22px;
+  overflow-y: auto;
+  min-height: 0;
+}
+.rs-panel-right {
+  border-left: 1px solid var(--gray-100);
+  background: var(--gray-50);
+}
+.rs-panel-title {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--gray-500);
+  margin-bottom: 14px;
+}
+.rs-hints-list {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.rs-hints-list li {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 12.5px; color: var(--gray-700); line-height: 1.55;
+}
+.rs-hints-list li::before {
+  content: '';
+  width: 6px; height: 6px; flex-shrink: 0;
+  background: var(--blue-400); border-radius: 50%;
+  margin-top: 6px;
+}
+.rs-timestamps {
+  font-size: 12.5px; color: var(--gray-700); line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 700px) {
+  .rs-modal-body { grid-template-columns: 1fr; }
+  .rs-panel-right { border-left: none; border-top: 1px solid var(--gray-100); }
+}
+
+
+.obs-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(7,14,26,.55);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  opacity: 0; visibility: hidden;
+  transition: opacity .25s ease, visibility .25s ease;
+}
+.obs-modal-overlay.open { opacity: 1; visibility: visible; }
+
+.obs-modal {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  width: 100%; max-width: 600px;
+  max-height: 80dvh;
+  display: flex; flex-direction: column;
+  transform: translateY(14px) scale(.97);
+  transition: transform .28s cubic-bezier(.34,1.36,.64,1);
+  overflow: hidden;
+}
+.obs-modal-overlay.open .obs-modal { transform: translateY(0) scale(1); }
+
+.obs-modal-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 22px 24px 14px;
+  border-bottom: 1px solid var(--gray-100);
+  gap: 16px;
+}
+.obs-modal-client {
+  font-size: 17px; font-weight: 800; color: var(--gray-900); letter-spacing: -.3px;
+}
+.obs-modal-agent {
+  font-size: 12px; color: var(--gray-500); margin-top: 3px; font-weight: 500;
+}
+.obs-modal-titles { flex: 1; min-width: 0; }
+.obs-modal-close {
+  width: 32px; height: 32px; flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  background: var(--gray-50); border: 1px solid var(--gray-200);
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--transition);
+}
+.obs-modal-close:hover { background: var(--gray-200); }
+.obs-modal-close svg { width: 15px; height: 15px; color: var(--gray-600); }
+
+.obs-modal-meta {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--gray-100);
+  background: var(--gray-50);
+  flex-wrap: wrap;
+}
+.obs-meta-tag {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+  text-transform: uppercase; color: var(--blue-500);
+  background: var(--blue-50); border: 1px solid var(--blue-100);
+  padding: 3px 10px; border-radius: 99px;
+}
+.obs-meta-estado {
+  font-size: 12px; color: var(--gray-600); font-weight: 400;
+}
+.obs-meta-estado strong { font-weight: 700; color: var(--gray-800); }
+
+.obs-modal-body {
+  padding: 22px 24px;
+  overflow-y: auto;
+  font-size: 13.5px; color: var(--gray-700); line-height: 1.75;
+  white-space: pre-wrap;
+  flex: 1;
+}
+
+
+
+@media (max-width: 900px) {
+  :root { --sidebar-w: 68px; }
+  #sidebar .sb-text { opacity: 0; max-width: 0; }
+  #sidebar .sb-item-label { opacity: 0; max-width: 0; }
+  #sidebar .sb-nav-label { opacity: 0; }
+  #sidebar .sb-badge { opacity: 0; }
+  #sidebar .sb-collapse-btn span { opacity: 0; }
+  #content { padding: 20px 18px; }
+  #header { padding: 0 16px; gap: 10px; }
+  .hdr-search { width: 140px; }
+  .dash-hero { padding: 24px 20px; }
+  .dash-hero-text h2 { font-size: 20px; }
+}
+
+@media (max-width: 600px) {
+  .dash-grid { grid-template-columns: 1fr; }
+  .placeholder-grid { grid-template-columns: repeat(2, 1fr); }
+  .dash-hero-stats { display: none; }
+  .hdr-clock { display: none; }
+  .hdr-search { display: none; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════
+     SPLASH SCREEN
+     ════════════════════════════════════════════════ -->
+<div id="splash">
+  <div class="splash-logo">
+    <div class="splash-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <div class="splash-wordmark">
+      <span>The Mendoza Law Firm</span>
+      <span>Portal Operativo</span>
+    </div>
+  </div>
+  <div class="splash-subtitle">Cargando portal operativo…</div>
+  <div class="splash-bar-wrap">
+    <div class="splash-bar"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     APP SHELL
+     ════════════════════════════════════════════════ -->
+<div id="app">
+
+  <!-- ──────────────────────────────────────────────
+       SIDEBAR
+       ────────────────────────────────────────────── -->
+  <nav id="sidebar">
+
+    <!-- Brand -->
+    <div class="sb-brand">
+      <div class="sb-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <div class="sb-text">
+        <strong>The Mendoza Law Firm</strong>
+        <span>Portal Operativo</span>
+      </div>
+    </div>
+
+    <!-- Nav label -->
+    <div class="sb-nav-label">Áreas</div>
+
+    <!-- Nav items -->
+    <div class="sb-nav">
+
+      <div class="sb-item active" data-section="dashboard">
+        <div class="sb-item-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+          </svg>
+        </div>
+        <span class="sb-item-label">Dashboard</span>
+      </div>
+
+      <div class="sb-item" data-section="casereview">
+        <div class="sb-item-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </div>
+        <span class="sb-item-label">Case Review W&W</span>
+      </div>
+
+      <div class="sb-item" data-section="customerservice">
+        <div class="sb-item-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.07 6.07l1.06-.99a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+        </div>
+        <span class="sb-item-label">Customer Service</span>
+      </div>
+
+      <div class="sb-item" data-section="resscreening">
+        <div class="sb-item-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+          </svg>
+        </div>
+        <span class="sb-item-label">Resscreening</span>
+      </div>
+
+      <div class="sb-item" data-section="rfe">
+        <div class="sb-item-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+        </div>
+        <span class="sb-item-label">RFE</span>
+        <span class="sb-badge">NEW</span>
+      </div>
+
+    </div><!-- /sb-nav -->
+
+    <!-- Footer -->
+    <div class="sb-footer">
+      <button class="sb-collapse-btn" id="collapseBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        <span>Contraer menú</span>
+      </button>
+    </div>
+
+  </nav><!-- /sidebar -->
+
+  <!-- ──────────────────────────────────────────────
+       MAIN COLUMN
+       ────────────────────────────────────────────── -->
+  <div id="main-col">
+
+    <!-- HEADER -->
+    <header id="header">
+
+      <!-- Breadcrumb -->
+      <div class="hdr-breadcrumb">
+        <span class="hdr-breadcrumb-item">The Mendoza Law Firm</span>
+        <span class="hdr-breadcrumb-sep">/</span>
+        <span class="hdr-breadcrumb-item active" id="breadcrumbCurrent">Dashboard</span>
+      </div>
+
+      <!-- Search -->
+      <div class="hdr-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" placeholder="Buscar documentación…" readonly />
+      </div>
+
+      <!-- Clock -->
+      <div class="hdr-clock" id="clockDisplay">--:--:--</div>
+
+      <!-- Home button -->
+      <button class="hdr-home-btn" onclick="navigateTo('dashboard')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        Home
+      </button>
+
+    </header><!-- /header -->
+
+    <!-- CONTENT -->
+    <main id="content">
+
+      <!-- ════════════════════════════════════════════
+           SECTION: DASHBOARD
+           ════════════════════════════════════════════ -->
+      <div class="section-panel active" id="section-dashboard">
+
+        <!-- Hero banner -->
+        <div class="dash-hero">
+          <div class="dash-hero-text">
+            <div class="greeting">Portal Operativo</div>
+            <h2>The Mendoza<br/>Law Firm</h2>
+            <p>Accede a los recursos, procedimientos y documentación de cada área operativa.</p>
+          </div>
+          <div class="dash-hero-stats">
+            <div class="dash-stat">
+              <div class="dash-stat-num">4</div>
+              <div class="dash-stat-label">Áreas</div>
+            </div>
+            <div class="dash-stat">
+              <div class="dash-stat-num">12</div>
+              <div class="dash-stat-label">Secciones</div>
+            </div>
+            <div class="dash-stat">
+              <div class="dash-stat-num">∞</div>
+              <div class="dash-stat-label">Recursos</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cards -->
+        <div class="cards-section-title">Áreas de operación</div>
+        <div class="dash-grid">
+
+          <!-- Card 1 -->
+          <div class="dash-card dc-1" onclick="navigateTo('casereview')">
+            <div class="dc-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+            </div>
+            <div class="dc-title">Case Review W&W</div>
+            <div class="dc-desc">Procedimientos, guías y recursos de llamadas para revisión de casos Word by Word.</div>
+            <div class="dc-footer">
+              <div class="dc-status"><div class="dc-status-dot"></div> Activo</div>
+              <button class="dc-open-btn">
+                Abrir
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="dash-card dc-2" onclick="navigateTo('customerservice')">
+            <div class="dc-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.07 6.07l1.06-.99a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+            </div>
+            <div class="dc-title">Customer Service</div>
+            <div class="dc-desc">Scripts, SOPs y guías de llamadas para el equipo de atención al cliente.</div>
+            <div class="dc-footer">
+              <div class="dc-status"><div class="dc-status-dot"></div> Activo</div>
+              <button class="dc-open-btn">
+                Abrir
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="dash-card dc-3" onclick="navigateTo('resscreening')">
+            <div class="dc-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+              </svg>
+            </div>
+            <div class="dc-title">Resscreening</div>
+            <div class="dc-desc">Materiales de proceso y recursos de llamadas para el área de Re-screening.</div>
+            <div class="dc-footer">
+              <div class="dc-status"><div class="dc-status-dot"></div> Activo</div>
+              <button class="dc-open-btn">
+                Abrir
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="dash-card dc-4" onclick="navigateTo('rfe')">
+            <div class="dc-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+            </div>
+            <div class="dc-title">RFE</div>
+            <div class="dc-desc">Waivers, análisis de caso, presentaciones y actualizaciones del área de RFE.</div>
+            <div class="dc-footer">
+              <div class="dc-status"><div class="dc-status-dot"></div> Activo</div>
+              <button class="dc-open-btn">
+                Abrir
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+        </div><!-- /dash-grid -->
+      </div><!-- /section-dashboard -->
+
+
+      <!-- ════════════════════════════════════════════
+           SECTION: CASE REVIEW W&W
+           ════════════════════════════════════════════ -->
+      <div class="section-panel" id="section-casereview">
+
+        <div class="section-intro">
+          <div class="section-intro-left">
+            <div class="section-intro-ico" style="background:rgba(46,127,214,.1);color:var(--blue-500);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+            </div>
+            <div>
+              <div class="section-intro-name">Case Review Word by Word</div>
+              <div class="section-intro-desc">Procedimientos y recursos de llamadas para revisión de casos.</div>
+            </div>
+          </div>
+          <button class="back-btn" onclick="navigateTo('dashboard')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+            Volver al Dashboard
+          </button>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-bar" data-group="casereview">
+          <button class="tab-btn active" data-tab="cr-llamadas">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72"/>
+            </svg>
+            Llamadas
+          </button>
+        </div>
+
+        <div class="tab-panel active" id="cr-llamadas">
+
+          <!-- Calls table header -->
+          <div class="calls-header">
+            <div class="calls-header-left">
+              <div class="calls-count-badge">7 llamadas</div>
+              <span class="calls-header-label">Case Review · Word by Word</span>
+            </div>
+            <div class="calls-header-right">
+              <div class="calls-search-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="callsSearchInput" placeholder="Filtrar por cliente o ID…" oninput="filterCalls(this.value)" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Table wrapper -->
+          <div class="calls-table-wrap">
+            <table class="calls-table" id="callsTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Cliente</th>
+                  <th>Tipo</th>
+                  <th>Hora</th>
+                  <th class="th-center">DCL Inglés</th>
+                  <th class="th-center">DCL Español</th>
+                  <th class="th-center">Documento</th>
+                </tr>
+              </thead>
+              <tbody id="callsTableBody">
+
+                <tr>
+                  <td><span class="call-id">29786901</span></td>
+                  <td><span class="call-name">Madelina Díaz Mares</span></td>
+                  <td><span class="call-tipo vawa">VAWA</span></td>
+                  <td><span class="call-hora">8:30</span></td>
+                  <td class="td-center">
+                    <a href="https://www.dropbox.com/scl/fi/j44shemtojfnfc57gkaac/CORRECTIONS-CR-DCL-MADELINA-DIAZ-MARES.docx?rlkey=j7ydp43nyc8oxbnnx3c7npr5e&st=lom1f771&dl=0" target="_blank" class="call-link link-dropbox" title="Abrir DCL en Inglés">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Dropbox
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/1tLja80jb__zKnLmbPS8WJ1mJMo2Tr_Y7urcJ6x8Q5xY/edit?usp=drivesdk" target="_blank" class="call-link link-gdocs" title="Abrir DCL en Español">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                      Docs
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/1ECAk3njNqkhOL2ZAskjHmpx98ASLuDvO/view?usp=drive_link" target="_blank" class="call-link link-drive" title="Abrir Documento">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                      Drive
+                    </a>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-id">29526970</span></td>
+                  <td><span class="call-name">Maria Cristina Reyes Rodríguez</span></td>
+                  <td><span class="call-tipo vawa">VAWA</span></td>
+                  <td><span class="call-hora">9:00</span></td>
+                  <td class="td-center">
+                    <a href="https://www.dropbox.com/scl/fi/d4n4d2evj5ez1swqslfrq/CORRECTIONS-CR-DCL-MARIA-CRISTINA-REYES-ROGRIGUEZ.docx?rlkey=w9ld2klt54gr10p5oxbrlch7y&st=xsnfer8q&dl=0" target="_blank" class="call-link link-dropbox" title="Abrir DCL en Inglés">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Dropbox
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/1P38R0FrQQmb162Y3w-xB6PbhYk8i2JtLDKSAxDSQO48/edit?usp=drivesdk" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                      Docs
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/1rogBoAJPmRzVHNYIBcasuW3q7TKRuaEo/view?usp=drive_link" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                      Drive
+                    </a>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-id">29717892</span></td>
+                  <td><span class="call-name">Jose Daniel Medina Espinoza</span></td>
+                  <td><span class="call-tipo vawa">VAWA</span></td>
+                  <td><span class="call-hora">9:30</span></td>
+                  <td class="td-center">
+                    <a href="https://www.dropbox.com/scl/fi/xq2liys0eparh25eo4y6h/EDITED-CDMX-DCL-JOSE-DANIEL-MEDINA-ESPINOZA.docx?rlkey=gerl87bs09lwybbctig3sr7d4&st=23xk1zng&dl=0" target="_blank" class="call-link link-dropbox">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Dropbox
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/134g9FNuxY-1PWd1RlIvNMy4zv84g0eiZdYivFfVoKxA/edit?usp=drivesdk" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                      Docs
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/1rMlgkQY5DVYxUywLd42f_Mjtc2O6QmhX/view?usp=drive_link" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                      Drive
+                    </a>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-id">29718547</span></td>
+                  <td><span class="call-name">Maria Luisa Zambrano Sigua</span></td>
+                  <td><span class="call-tipo vawa-aos">VAWA AOS</span></td>
+                  <td><span class="call-hora">10:00</span></td>
+                  <td class="td-center">
+                    <a href="https://www.dropbox.com/scl/fi/m0u8u3w22r4m6mq7o0c0s/EDITED-CDMX-MARIA-LUISA-ZAMBRANO-SIGUA-DCL.docx?rlkey=6zl13brztysjcqf9x0mvie0q8&st=8jnv36zd&dl=0" target="_blank" class="call-link link-dropbox">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Dropbox
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/1a8NB9nfSl7Co2SGZ6Wswd3zMWjuKbXOK1VcMiWhO-IU/edit?usp=drivesdk" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                      Docs
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/1Lh89YH5AehruS6RPkxVKheshgSN6nbZV/view?usp=drive_link" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                      Drive
+                    </a>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-id">29874415</span></td>
+                  <td><span class="call-name">Gonzalo Sánchez Vázquez</span></td>
+                  <td><span class="call-tipo vawa">VAWA</span></td>
+                  <td><span class="call-hora">10:30</span></td>
+                  <td class="td-center">
+                    <a href="https://www.dropbox.com/scl/fi/y0a1vww90szsg65erji8r/EDITED-CDMX-Gonzalo-Sanchez-Vazquez-DCL.docx?rlkey=ctxuv105ih7nsrxzcnkmujag1&st=xksejym1&dl=0" target="_blank" class="call-link link-dropbox">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Dropbox
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/181iP14DkOScYTcVe01XMoTlyPl0beUGBZDYKlpBtGrA/edit?usp=drivesdk" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                      Docs
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/1G3iB-y276WZwt4WIcXZ-4dYnLTpvJX3P/view?usp=sharing" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                      Drive
+                    </a>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-id">29327436</span></td>
+                  <td><span class="call-name">Leticia Tapia García</span></td>
+                  <td><span class="call-tipo vawa">VAWA</span></td>
+                  <td><span class="call-hora">11:00</span></td>
+                  <td class="td-center">
+                    <a href="https://www.dropbox.com/scl/fi/grlgcu5ub9or37karq454/EDITED-CDMX-Leticia-Tapia-Garcia-DCL.docx?rlkey=ifjrfwdgfyxeefabnaawxwqd0&st=y5a6wuxv&dl=0" target="_blank" class="call-link link-dropbox">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Dropbox
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/12uX5o1xllQAtoALxmzxbFDMJ0TQbDm2nWrU5dgmH2DI/edit?usp=drivesdk" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                      Docs
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/1Q0AGdCOekdGHuO2nSTNN_-NnPaqsMTv4/view?usp=sharing" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                      Drive
+                    </a>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-id">29787221</span></td>
+                  <td><span class="call-name">Oliva Nava Saucedo</span></td>
+                  <td><span class="call-tipo vawa">VAWA</span></td>
+                  <td><span class="call-hora">11:30</span></td>
+                  <td class="td-center">
+                    <a href="https://www.dropbox.com/scl/fi/jki0wzjyl26egv6ikpsxu/CORRECTIONS-CR-DCL-OLIVA-NAVA-SAUCEDO.docx?rlkey=e86dcwp0wgengp0kpfcwr0ji2&st=lxbxkdg9&dl=0" target="_blank" class="call-link link-dropbox">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Dropbox
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/1WV00VQMsut1fK4L6kN2bC720zOv4swWVz979NfScr2E/edit?usp=drivesdk" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                      Docs
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/1Ez-vIMrbSGUHsI5l47Ee59l5DrkFrrCN/view?usp=sharing" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                      Drive
+                    </a>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div><!-- /calls-table-wrap -->
+
+        </div>
+
+      </div><!-- /section-casereview -->
+
+
+      <!-- ════════════════════════════════════════════
+           SECTION: CUSTOMER SERVICE
+           ════════════════════════════════════════════ -->
+      <div class="section-panel" id="section-customerservice">
+
+        <div class="section-intro">
+          <div class="section-intro-left">
+            <div class="section-intro-ico" style="background:rgba(34,197,94,.1);color:var(--success);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.07 6.07l1.06-.99a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="section-intro-name">Customer Service</div>
+              <div class="section-intro-desc">Scripts, SOPs y guías de llamadas para el equipo de atención al cliente.</div>
+            </div>
+          </div>
+          <button class="back-btn" onclick="navigateTo('dashboard')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+            Volver al Dashboard
+          </button>
+        </div>
+
+        <div class="tabs-bar" data-group="customerservice">
+          <button class="tab-btn active" data-tab="cs-llamadas1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg>
+            Llamadas 1
+          </button>
+          <button class="tab-btn" data-tab="cs-llamadas2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg>
+            Llamadas 2
+          </button>
+          <button class="tab-btn" data-tab="cs-scripts">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Scripts
+          </button>
+        </div>
+
+        <!-- CS Llamadas 1 -->
+        <div class="tab-panel active" id="cs-llamadas1">
+
+          <div class="calls-header">
+            <div class="calls-header-left">
+              <div class="calls-count-badge">7 llamadas</div>
+              <span class="calls-header-label">Customer Service · Llamadas 1</span>
+            </div>
+            <div class="calls-header-right">
+              <div class="calls-search-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" placeholder="Filtrar por agente o cliente…" oninput="filterTable('cs1TableBody', this.value)" />
+              </div>
+            </div>
+          </div>
+
+          <div class="calls-table-wrap">
+            <table class="calls-table">
+              <thead>
+                <tr>
+                  <th style="width:22%">Agente</th>
+                  <th style="width:22%">Cliente</th>
+                  <th class="th-center" style="width:11%">Grabación</th>
+                  <th style="width:45%">Observaciones</th>
+                </tr>
+              </thead>
+              <tbody id="cs1TableBody">
+
+                <tr>
+                  <td><span class="agent-name">Kylie Aylin Bernabé Lomas</span></td>
+                  <td><span class="call-name">María del Carmen Zuñiga Espinoza</span></td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/1pqsTAPXvOsYIfgHVG1GjBxIWhLl269j_/view?usp=drive_link" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                      Ver
+                    </a>
+                  </td>
+                  <td>
+                    <div class="obs-preview">Resolución de dudas · Correo sospechoso de estafa + dudas sobre videos en redes sociales sobre abogada Lozano.</div>
+                    <button class="obs-btn" onclick="openObs(
+                      'María del Carmen Zuñiga Espinoza',
+                      'Kylie Aylin Bernabé Lomas',
+                      'Resolución de dudas',
+                      'calmada',
+                      `La clienta menciona que ha recibido un correo electrónico que le generó dudas, ya que en el correo mencionan que su información es pública. La colaboradora le solicita a la clienta que le mande captura de pantalla del correo que recibió, con la finalidad de asegurarse que no se trate de una estafa.\n\nLa colaboradora corrobora que se trata del correo de estafa, solicitando a la clienta que por favor no abra el link ni siga los pasos que se mencionan en el correo.\n\nCómo segunda duda, la clienta menciona que en redes sociales ha visto videos respecto a la abogada Lozano y el fraude que se ha realizado con casos VAWA, lo cual la alarma. La colaboradora le comenta a la clienta que es importante que haga seguimiento de las noticias que ha subido en sus redes sociales la abogada y que en caso de que se tengan actualizaciones de su caso, nos pondríamos en contacto.`
+                    )">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Ver detalle
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="agent-name">Saul Alejandro Nuñez Ramos</span></td>
+                  <td><span class="call-name">Guillermo Villalobos Andrade</span></td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/15qHAwQlJqXFb6Kw2q1D8wNC8kVzHZod4/view?usp=drive_link" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                      Ver
+                    </a>
+                  </td>
+                  <td>
+                    <div class="obs-preview">Cliente vive en Utah, cita agendada en Texas. Preocupado por la situación. Colaborador escala al área correspondiente.</div>
+                    <button class="obs-btn" onclick="openObs(
+                      'Guillermo Villalobos Andrade',
+                      'Saul Alejandro Nuñez Ramos',
+                      'Sin clasificar',
+                      'angustiado',
+                      `El cliente menciona que hace una semana se contactaron con él para indicarle que tenía una cita, pero se encuentra molesto y preocupado porque vive en Utah y la cita es en Texas. Le dijeron que su cita es para el día viernes y ha tenido contacto con miembros de la firma.\n\nEl colaborador escaló con el área correspondiente para que se pongan en contacto con él y brinden la información necesaria.\n\nEl cliente menciona tener disponibilidad completa, ya que busca tener claridad respecto a este proceso.`
+                    )">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Ver detalle
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="agent-name">Jessika Yareli Ku Hernandez</span></td>
+                  <td><span class="call-name">Jose Guadalupe Arriola Gonzalez</span></td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/1dRUn8yQEkiisOwJbtxsnAspy5MCSysor/view?usp=drive_link" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                      Ver
+                    </a>
+                  </td>
+                  <td>
+                    <div class="obs-preview">Cliente preocupado por nueva ley de Carolina del Norte. Solicita indicaciones sobre qué hacer si se le solicitan documentos.</div>
+                    <button class="obs-btn" onclick="openObs(
+                      'Jose Guadalupe Arriola Gonzalez',
+                      'Jessika Yareli Ku Hernandez',
+                      'Resolución de dudas',
+                      'preocupado',
+                      `El cliente se encuentra preocupado por una nueva ley del norte de Carolina en la que se le pueden llegar a solicitar documentos. Quiere saber qué puede hacer en estos casos y cuáles son las indicaciones que puede seguir.\n\nSe le proporcionó información sobre sus derechos y algunas recomendaciones.`
+                    )">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Ver detalle
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="agent-name">Kylie Aylin Bernabé Lomas</span></td>
+                  <td><span class="call-name">Mario José Martín del Campo Azpeita</span></td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/1HgUmsi3Wg279ehMHaJzQRI1My1V60KLH/view?usp=sharing" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                      Ver
+                    </a>
+                  </td>
+                  <td>
+                    <div class="obs-preview">Solicitud de información sobre prima facie. Consulta tiempos de espera, número de caso y número de recibo ante USCIS.</div>
+                    <button class="obs-btn" onclick="openObs(
+                      'Mario José Martín del Campo Azpeita',
+                      'Kylie Aylin Bernabé Lomas',
+                      'Solicitud de información',
+                      'calmado',
+                      `El cliente marca preguntando por qué no le han enviado su prima facie. La colaboradora indaga en las notas y plataformas para conocer si se cuenta con el documento del cliente. La renovación de la prima facie no se tiene, ya que migración no la ha enviado a la firma.\n\nEl cliente pregunta los tiempos de espera; la colaboradora le informa que se encuentra dentro de los tiempos establecidos por USCIS.\n\nEl cliente menciona que su prima facie se ha estado renovando constantemente, cosa que no ha sucedido en este momento. La colaboradora le hace saber que es USCIS quien determina cuándo enviarlo.\n\nEl cliente solicita el número de caso para revisar en internet, y la colaboradora le informa que debe ingresar con el número de recibo. Se realiza el acuerdo de enviarle sus recibos iniciales por correo.\n\nAl final el cliente pregunta nuevamente por tiempos de espera y consulta si la prima facie aunque no esté vigente le puede funcionar para ampararse ante contacto con migración. La colaboradora confirma que sí.`
+                    )">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Ver detalle
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="agent-name">Saul Alejandro Nuñez Ramos</span></td>
+                  <td><span class="call-name">Silvia Andrade Palos</span></td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/150wF5UEZhs-pThGGzWuaXFf4BWjwr7RT/view?usp=drive_link" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                      Ver
+                    </a>
+                  </td>
+                  <td>
+                    <div class="obs-preview">Consulta sobre posibilidad de viajar y estatus de caso. Se informó conforme al protocolo que no es recomendable viajar.</div>
+                    <button class="obs-btn" onclick="openObs(
+                      'Silvia Andrade Palos',
+                      'Saul Alejandro Nuñez Ramos',
+                      'Consulta general',
+                      'calmada',
+                      `La clienta tenía una consulta sobre la posibilidad de viajar y conocer el estatus de su caso.\n\nSe le informó conforme al protocolo que no es recomendable viajar, y se le proporcionó información sobre el estatus de su caso.`
+                    )">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Ver detalle
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="agent-name">Kylie Aylin Bernabé Lomas</span></td>
+                  <td><span class="call-name">Jhon Fredy Velez Flores</span></td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/19pCxRWie6Lin1TLbCIMX_oe1Gdcvv4qG/view?usp=drive_link" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                      Ver
+                    </a>
+                  </td>
+                  <td>
+                    <div class="obs-preview">Resolución de dudas. Corrección de dirección y consulta sobre avance de caso derivado. Se agenda cita con abogado.</div>
+                    <button class="obs-btn" onclick="openObs(
+                      'Jhon Fredy Velez Flores',
+                      'Kylie Aylin Bernabé Lomas',
+                      'Resolución de dudas',
+                      'calmado',
+                      `El cliente menciona que se han contactado por parte de la firma para realizar la corrección de su dirección y quiere saber que se realizó de manera correcta. En el caso hay una derivada; quisiera saber cómo ha avanzado el proceso.\n\nLa colaboradora revisa en las notas y encuentra actualizaciones, por lo que aplica el proceso correspondiente: agendar una cita con uno de los abogados de la firma para brindar información de las actualizaciones obtenidas.\n\nLa colaboradora le comenta al cliente que en unos minutos se pondrán en contacto para confirmar el cambio de dirección y que, en cuanto a los derivados, se hará la consulta con abogado para conocer qué sigue para el caso.`
+                    )">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Ver detalle
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="agent-name">Kylie Aylin Bernabé Lomas</span></td>
+                  <td><span class="call-name">Mario Antonio Castañeda Rodríguez</span></td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/1fyv6yDmMMVl_IjpsrRf9n0BpLSHIHfhs/view?usp=drive_link" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                      Ver
+                    </a>
+                  </td>
+                  <td>
+                    <div class="obs-preview">Estatus de caso. Cliente consulta si su expediente ya fue enviado a USCIS. Se informa del proceso interno y plazos sin comprometer fecha.</div>
+                    <button class="obs-btn" onclick="openObs(
+                      'Mario Antonio Castañeda Rodríguez',
+                      'Kylie Aylin Bernabé Lomas',
+                      'Estatus de caso',
+                      'calmado',
+                      `El cliente menciona que ya deberían mandar su caso a las oficinas de USCIS y solicita saber si el caso ya fue enviado. La colaboradora revisa notas y encuentra que el caso aún no se envía y sigue siendo trabajado por ciertas áreas.\n\nEl cliente solicita que se agilicen dichos procesos para que el caso sea enviado lo antes posible. Se le brinda la información haciéndole saber que se le dará seguimiento del proceso interno, para que pueda conocer cómo se ha trabajado el caso.\n\nSe le hace saber que se agiliza el proceso, indicando que hay plazos que se deben cumplir, sin comprometer una fecha específica.`
+                    )">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Ver detalle
+                    </button>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+        <!-- CS Llamadas 2 -->
+        <div class="tab-panel" id="cs-llamadas2">
+          <div class="info-banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>Espacio reservado · El contenido de este módulo se agregará próximamente.</p></div>
+          <div class="empty-card">
+            <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+            <div class="empty-title">Llamadas 2 — Contenido en construcción</div>
+            <div class="empty-desc">Espacio preparado para grabaciones, procedimientos y recursos de llamadas del tipo 2.</div>
+          </div>
+          <div class="skeleton-section"><div class="skeleton-row" style="width:90%"></div><div class="skeleton-row" style="width:75%"></div><div class="skeleton-row" style="width:85%"></div><div class="skeleton-row"></div></div>
+        </div>
+
+        <!-- CS Scripts -->
+        <div class="tab-panel" id="cs-scripts">
+
+          <div class="calls-header">
+            <div class="calls-header-left">
+              <div class="calls-count-badge">4 scripts</div>
+              <span class="calls-header-label">Customer Service · Scripts</span>
+            </div>
+          </div>
+
+          <div class="scripts-grid">
+
+            <!-- Script 1 -->
+            <div class="script-card">
+              <div class="script-card-header">
+                <div class="script-card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <div class="script-card-info">
+                  <div class="script-card-title">Llamadas In y Out</div>
+                  <div class="script-card-sub">Google Docs · Script</div>
+                </div>
+                <a href="https://docs.google.com/document/d/1Hy2RIQ0GIUmkhAP6_XDiQeB1nSpIEsUDimKtuuJYzEk/edit?tab=t.0" target="_blank" class="script-open-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  Abrir
+                </a>
+              </div>
+              <div class="script-iframe-wrap">
+                <iframe src="https://docs.google.com/document/d/1Hy2RIQ0GIUmkhAP6_XDiQeB1nSpIEsUDimKtuuJYzEk/preview" frameborder="0" allowfullscreen loading="lazy"></iframe>
+              </div>
+            </div>
+
+            <!-- Script 2 -->
+            <div class="script-card">
+              <div class="script-card-header">
+                <div class="script-card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <div class="script-card-info">
+                  <div class="script-card-title">Queja de Tiempos de Procesamiento en USCIS</div>
+                  <div class="script-card-sub">Google Docs · Script</div>
+                </div>
+                <a href="https://docs.google.com/document/d/1pWBEMlQT5iSXyLuypuIkKmrHw1trzbYvz3l1H5ULSPg/edit?tab=t.0" target="_blank" class="script-open-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  Abrir
+                </a>
+              </div>
+              <div class="script-iframe-wrap">
+                <iframe src="https://docs.google.com/document/d/1pWBEMlQT5iSXyLuypuIkKmrHw1trzbYvz3l1H5ULSPg/preview" frameborder="0" allowfullscreen loading="lazy"></iframe>
+              </div>
+            </div>
+
+            <!-- Script 3 -->
+            <div class="script-card">
+              <div class="script-card-header">
+                <div class="script-card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <div class="script-card-info">
+                  <div class="script-card-title">Abuser Call</div>
+                  <div class="script-card-sub">Google Docs · Script</div>
+                </div>
+                <a href="https://docs.google.com/document/d/1B71LkSjvVj_dLISm9I99uylBc_Syx591sLsSI3tnjBw/edit?tab=t.0" target="_blank" class="script-open-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  Abrir
+                </a>
+              </div>
+              <div class="script-iframe-wrap">
+                <iframe src="https://docs.google.com/document/d/1B71LkSjvVj_dLISm9I99uylBc_Syx591sLsSI3tnjBw/preview" frameborder="0" allowfullscreen loading="lazy"></iframe>
+              </div>
+            </div>
+
+            <!-- Script 4 -->
+            <div class="script-card">
+              <div class="script-card-header">
+                <div class="script-card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <div class="script-card-info">
+                  <div class="script-card-title">File Request</div>
+                  <div class="script-card-sub">Google Docs · Script</div>
+                </div>
+                <a href="https://docs.google.com/document/d/1C0YM9dK9NmIGftG7evQMeXltLnb9AjsR5iX_V1RyBYw/edit?tab=t.0" target="_blank" class="script-open-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  Abrir
+                </a>
+              </div>
+              <div class="script-iframe-wrap">
+                <iframe src="https://docs.google.com/document/d/1C0YM9dK9NmIGftG7evQMeXltLnb9AjsR5iX_V1RyBYw/preview" frameborder="0" allowfullscreen loading="lazy"></iframe>
+              </div>
+            </div>
+
+          </div><!-- /scripts-grid -->
+        </div>
+
+        <!-- CS SOP -->
+
+      </div><!-- /section-customerservice -->
+
+
+      <!-- ════════════════════════════════════════════
+           SECTION: RESSCREENING
+           ════════════════════════════════════════════ -->
+      <div class="section-panel" id="section-resscreening">
+
+        <div class="section-intro">
+          <div class="section-intro-left">
+            <div class="section-intro-ico" style="background:rgba(245,158,11,.1);color:var(--warn);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+              </svg>
+            </div>
+            <div>
+              <div class="section-intro-name">Resscreening</div>
+              <div class="section-intro-desc">Proceso y recursos de llamadas para el área de Re-screening.</div>
+            </div>
+          </div>
+          <button class="back-btn" onclick="navigateTo('dashboard')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            Volver al Dashboard
+          </button>
+        </div>
+
+        <div class="tabs-bar" data-group="resscreening">
+          <button class="tab-btn active" data-tab="rs-proceso">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Proceso
+          </button>
+          <button class="tab-btn" data-tab="rs-llamadas">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg>
+            Llamadas
+          </button>
+        </div>
+
+        <div class="tab-panel active" id="rs-proceso">
+
+          <div class="gamma-launch-card">
+            <div class="gamma-launch-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="3"/>
+                <polyline points="3 9 21 9"/><polyline points="9 21 9 9"/>
+              </svg>
+            </div>
+            <div class="gamma-launch-text">
+              <div class="gamma-launch-title">CDMX · Rescreening Program</div>
+              <div class="gamma-launch-sub">Documento Gamma · Proceso completo del área de Resscreening</div>
+            </div>
+            <a href="https://gamma.app/docs/CDMX-Rescreening-Program-x7946zgvygw4nt7?mode=doc" target="_blank" class="gamma-launch-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Abrir en Gamma
+            </a>
+          </div>
+
+        </div>
+
+        <div class="tab-panel" id="rs-llamadas">
+
+          <div class="calls-header">
+            <div class="calls-header-left">
+              <div class="calls-count-badge">9 llamadas</div>
+              <span class="calls-header-label">Resscreening · Llamadas</span>
+            </div>
+            <div class="calls-header-right">
+              <div class="calls-search-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" placeholder="Filtrar por nombre, tipo o outcome…" oninput="filterTable('rsTableBody', this.value)" />
+              </div>
+            </div>
+          </div>
+
+          <div class="calls-table-wrap">
+            <table class="calls-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Tipo</th>
+                  <th>Origen</th>
+                  <th>Outcome</th>
+                  <th class="th-center">Transcripción</th>
+                  <th class="th-center">Entregable</th>
+                  <th class="th-center">Audio</th>
+                  <th class="th-center">Detalle</th>
+                </tr>
+              </thead>
+              <tbody id="rsTableBody">
+
+                <tr>
+                  <td><span class="call-id">35474854</span></td>
+                  <td><span class="call-name">Reyna Flores Cruz</span></td>
+                  <td><span class="call-tipo vawa">VAWA</span></td>
+                  <td><span class="rs-origen">Compliance (CAD)</span></td>
+                  <td><span class="rs-outcome labor">RECLAS · VISA T LABOR</span></td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/1V5n4chbfEz-WDHw1qMb234kckUWRQLgV/edit?usp=drivesdk" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>Docs
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/1e6CQvppHz2VJW4-kKa_ClCGvdvryomAJb9GLRub1Mhk/edit?usp=sharing" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>Ver
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/1V7Ugw2dWjncUChuTbzBD2M0WkhqSmJvo/view?usp=sharing" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Audio
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <button class="obs-btn" onclick="openRS('Reyna Flores Cruz','VAWA','RECLAS · VISA T LABOR',`Cambio de teoría migratoria de VAWA a posible Visa T.\nTrabajo doméstico obtenido mediante una intermediaria.\nPago de una semana de salario para conseguir el empleo.\nNecesidad económica significativa (renta, bills y un bebé pequeño).\nIncremento de carga laboral respecto a lo acordado.\nHorarios extendidos.\nRetrasos reiterados en el pago.\nRobo de salario por tres semanas.\nDos intervenciones policiales para recuperar el salario.\nAccidente laboral sin apoyo de la empleadora.\nPosible abuso de vulnerabilidad por condición migratoria.\nPosible presencia de fraude/coerción que requiere mayor exploración.`,`01:47 – 04:31\nLa clienta explica la frustración por el cambio de VAWA a una posible Visa T y manifiesta la pérdida de confianza en la firma.\n\n04:31 – 05:48\nEl entrevistador explica el objetivo del rescreening y logra redirigir la conversación hacia la exploración de otros alivios migratorios pese a la resistencia inicial.\n\n08:00 – 16:37\nLa clienta cuestiona repetidamente por qué debe volver a responder preguntas. El entrevistador mantiene la conversación enfocada en explicar la necesidad de profundizar para evaluar una Visa T.\n\n16:42 – 19:53\nComienza la exploración estructurada del posible caso de explotación laboral. Se identifica que consiguió el empleo mediante una intermediaria, pagó una semana de salario y existía una fuerte necesidad económica. Son los primeros hints relevantes para Visa T.\n\n19:53 en adelante\nLa clienta confirma que aceptó el trabajo por la urgencia económica. Se desarrolla la vulnerabilidad financiera y el posible aprovechamiento por parte de terceros.\n\n31:09 – 35:47\nCierre. El entrevistador resume el siguiente paso, ofrece una disculpa institucional y la clienta explica el impacto personal del retraso del caso (fallecimiento de su madre, enfermedad de su padre y deseo de cancelar el caso).`)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Ver
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-id">44668209</span></td>
+                  <td><span class="call-name">Juan Luis Vega Hernandez</span></td>
+                  <td><span class="call-tipo vawa">VAWA</span></td>
+                  <td><span class="rs-origen">Compliance (CAD)</span></td>
+                  <td><span class="rs-outcome labor">RECLAS · VISA T LABOR</span></td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/1gKxy732R7QXIk0gK82xnfB_pvC8QoKDa/edit?usp=drivesdk" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>Docs
+                    </a>
+                  </td>
+                  <td class="td-center rs-multi-links">
+                    <a href="https://docs.google.com/document/d/1Wdm4NpwTKTFa54oHEr57sFDXHvUDWkn31FUXrbJ_FL4/edit" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>1
+                    </a>
+                    <a href="https://docs.google.com/document/d/1Do2n-6v7oGzXg6k6MpKNQU120jOfaTu-NbKHJaxu7CE/edit?usp=sharing" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>2
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/1KEiruqJ1ZklsdUmXweuGhMul5KV_mkQk/view?usp=drive_link" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Audio
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <button class="obs-btn" onclick="openRS('Juan Luis Vega Hernandez','VAWA','RECLAS · VISA T LABOR',`Antecedente de ingreso mediante coyote después de una salida voluntaria.\nCruce con guías violentos y armados.\nAsalto durante el trayecto por personas armadas.\nRestricción para hablar, descansar o pedir agua durante el cruce.\nAmenazas implícitas de abandono durante el trayecto.\nPosible coordinación entre guías y asaltantes.\nViolencia doméstica por parte de la esposa (agresión física documentada).\nControl psicológico y emocional.\nRelaciones sexuales que el cliente refiere mantener por sentirse obligado.\nDaño emocional severo derivado del abuso y de las infidelidades.\nEncargado de landscaping, checando planos y riego.\nJornada de 8 horas con pago semanal.\nReporte inicial de paga a $6 la hora regular.\nInsultos verbales llamándolo "tonto" o "estúpido" en inglés.\nGritos y lenguaje ofensivo casi todos los días.\nPercepción de racismo por parte del patrón hacia los trabajadores.\nTres compañeros de trabajo hispanos sin estatus legal.\nBarrera del idioma que el patrón usa para evadir reclamos.\nEstrés mental y afectación psicológica severa por la presión.\nOmisión de reportes a la policía por miedo al despido.\nTemor a que el patrón use sus recursos para deportarlo a México.`,`00:37 – 05:40\nLa entrevistadora obtiene rápidamente el historial migratorio del cliente (última entrada, salida voluntaria, apelación pendiente, permiso de trabajo).\n\n06:29 – 10:06\nSe desarrolla la dinámica de violencia doméstica. El cliente describe control posesivo, insultos, gritos y una agresión física donde la esposa le lanzó un celular, provocándole una cicatriz.\n\n16:01 – 18:26\nLa entrevistadora explora posibles elementos de coerción sexual.\n\n20:31 – 24:32\nSe documenta el impacto emocional del abuso. El cliente habla del trauma sufrido por su hijo y los pensamientos suicidas derivados de la infidelidad.\n\n25:39 – 33:42\nInicia la exploración del cruce con coyote. El cliente explica el asalto por personas armadas, la imposibilidad de comunicarse, la conducta violenta de los guías y la posible coordinación entre ellos y los asaltantes.\n\n33:42 – 34:18\nLa entrevistadora verifica si existieron amenazas directas, trabajos forzados o coerción adicional durante el trayecto.\n\n00:00 – 15:00\nSe detalla el maltrato diario: gritos, presión, insultos y percepción de racismo. El cliente explica su rol de encargado y la falta de estatus legal de sus compañeros.\n\n15:00 – 25:00\nEl cliente confiesa que no denuncia a la policía por miedo al despido y revela un temor profundo a que el patrón use sus recursos para deportarlo a México.`)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Ver
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-id">12901153</span></td>
+                  <td><span class="call-name">Saul Pineda Yanez</span></td>
+                  <td><span class="call-tipo vawa">VAWA</span></td>
+                  <td><span class="rs-origen">Compliance (CAD)</span></td>
+                  <td><span class="rs-outcome coyote">RECLAS · VISA T COYOTE</span></td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/1vNNIwQPqfrFPaF9O_SKMx2ywxDPBetbw/edit?usp=drivesdk" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>Docs
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/1r44Hxk_SjT9rogQOVKthGbx90VUKeEAQwvmjcqmi16g/edit" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>Ver
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/1-T-Z8jFrwb0ealA_U50TFbuqGXFAvrvM/view?usp=sharing" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Audio
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <button class="obs-btn" onclick="openRS('Saul Pineda Yanez','VAWA','RECLAS · VISA T COYOTE',`Dos cruces con coyote (2000 y 2017).\nEncierro en casa de seguridad.\nAbandono en el desierto.\nInsultos, amenazas y maltrato verbal constante.\nEmpujones durante el trayecto.\nObligado a transportar una mochila con contenido desconocido.\nAmenazas de muerte si se negaba.\nPresencia de personas armadas.\nOrganización criminal controlando el cruce mediante radios.\nExtorsión posterior al cruce.\nAmenazas directas contra su hija para cobrar la deuda.\nPago parcial bajo presión.\nCambio de número telefónico por miedo.\nCliente manifiesta que nunca había revelado estos hechos por temor a afectar su proceso.`,`00:39 – 02:23\nEl entrevistador explica el propósito del rescreening, genera confianza y deja claro que el cliente no debe exagerar ni inventar información.\n\n02:44 – 05:22\nSe obtiene el contexto del primer cruce con coyote: contratación, pago y primeras preguntas abiertas sobre amenazas, intimidación y presión durante el trayecto.\n\n05:22 – 12:58\nEl entrevistador profundiza sobre los insultos, el miedo, el encierro en casa de seguridad, las condiciones del lugar, el abandono en el desierto y la primera detención migratoria.\n\n13:35 – 20:13\nEl cliente revela que fue obligado a transportar una mochila cuyo contenido desconocía, bajo amenazas de desaparición o muerte. También explica que la organización utilizaba migrantes para transportar mercancía. Este es el principal hint para Visa T.\n\n20:13 – 27:11\nEl cliente relata la extorsión posterior al cruce: amenazas contra su hija, cobro de la deuda, envío parcial de dinero y cambio de número telefónico.\n\n27:11 – 30:36\nEl cliente expresa que nunca había contado estos hechos porque pensaba que afectarían su caso.`)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Ver
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-id">40167071</span></td>
+                  <td><span class="call-name">Martha Virginia Cando Duchimaza</span></td>
+                  <td><span class="call-tipo vt">VISA T</span></td>
+                  <td><span class="rs-origen">Customer Service</span></td>
+                  <td><span class="rs-outcome vd">RECLAS · VISA T VD</span></td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/1V7xUSo6r5BixnBTxnM8TRNdqrgXHxXNaoNv742E5Ujk/edit?usp=sharing" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>Docs
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/1da4jXXII8Nx3j3l0wd8-GgswAdTQOv6cw5AOWf-Degw/edit" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>Ver
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/1FrBfchA-fiue6eag-4GQ9iKmls6WU-7v/view?usp=drive_link" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Audio
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <button class="obs-btn" onclick="openRS('Martha Virginia Cando Duchimaza','VISA T','RECLAS · VISA T VD',`Cruce con coyote en 2006.\nRetención en una casa de seguridad durante el ingreso.\nPrimer empleo con salario extremadamente bajo ($20 por jornadas de aproximadamente 10 horas).\nTrabajo forzado realizando masajes hasta provocar lesiones físicas.\nRestricción para comer, tomar agua o ir al baño.\nAmenazas de perder el empleo si solicitaba un descanso o un día libre.\nViolencia doméstica por parte de su expareja.\nControl económico y obligación de realizar todas las labores domésticas.\nAgresiones físicas (fractura de dedo y pérdida del conocimiento tras un empujón).\nIncidente con arrendador armado con cuchillo que ingresó a su habitación.\nReporte policial, arresto del agresor y terapia psicológica posterior.\nTemor de regresar a Ecuador por amenazas relacionadas con coyotes.`,`07:23 – 08:40\nLa entrevistadora explica el objetivo del rescreening, informa que algunas preguntas pueden ser sensibles y genera confianza antes de iniciar la entrevista.\n\n09:13 – 13:58\nSe explora el primer empleo en un Car Wash. La entrevistadora identifica correctamente que no existen suficientes elementos de explotación y continúa explorando otros trabajos.\n\n14:46 – 22:16\nLa cliente describe el primer salón de uñas: jornadas largas, salario extremadamente bajo, masajes forzados, manos inflamadas, prohibición de descansar, tomar agua o ir al baño y amenazas de despido. Aquí aparecen los principales indicadores para una posible Visa T Labor.\n\n22:19 – 30:42\nLa entrevistadora compara correctamente el siguiente empleo y permite que la cliente explique por qué las condiciones eran distintas.\n\n31:02 – 37:54\nComienza la exploración de la relación de pareja. Se obtiene información sobre dependencia económica, labores domésticas obligatorias y primeras señales de violencia doméstica.\n\nPosteriormente en la llamada\nLa cliente relata las agresiones físicas sufridas por su expareja (fractura de dedo y pérdida del conocimiento), así como el incidente con el arrendador que ingresó armado con un cuchillo.`)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Ver
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-id">14872981</span></td>
+                  <td><span class="call-name">Ruben Araujo Calderon</span></td>
+                  <td><span class="call-tipo vawa-aos">VAWA DA</span></td>
+                  <td><span class="rs-origen">Callbacks</span></td>
+                  <td><span class="rs-outcome coyote">RECLAS · VISA T COYOTE</span></td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/1rMx8hdwfF6HPeI8pDpG0kHt_3Zi1fRZM/edit?usp=drive_link" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>Docs
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/1z-wtEg9CQYWu8XwgpEuqsqzvgY8_iwu0ZIgRfprnKjw/edit" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>Ver
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/1EPJbJ1DXLwO-NR100NrurQRAAyUZoT0s/view?usp=drive_link" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Audio
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <button class="obs-btn" onclick="openRS('Ruben Araujo Calderon','VAWA DA / USC CHILDREN','RECLAS · VISA T COYOTE',`Dos cruces con coyote (1999 y 2002).\nRetención en casas de seguridad en ambas ocasiones.\nObligación de cocinar, limpiar baños y realizar labores domésticas.\nPersonas armadas vigilando permanentemente.\nAmenazas con armas de fuego.\nViolencia física contra otros migrantes como mecanismo de intimidación.\nRestricción total de movimiento.\nLiberación condicionada al pago.\nIntento de obtener más dinero de la familia.\nInstrucciones de guardar silencio sobre lo ocurrido.\nTrauma posterior: miedo constante y dificultad para dormir durante aproximadamente un año.\nPagos incompletos en un empleo, aunque sin elementos suficientes para explotación laboral.`,`00:37 – 02:04\nLa entrevistadora explica claramente el propósito del rescreening, aclara que algunas preguntas pueden repetirse y genera confianza antes de comenzar.\n\n03:35 – 10:04\nPrimer cruce con coyote (1999). La entrevistadora profundiza sobre la retención en casa de seguridad, labores de limpieza y cocina, presencia de personas armadas, golpes a otros migrantes y amenazas relacionadas con el pago.\n\n10:40 – 16:20\nSegundo cruce (2002). El cliente describe una casa de seguridad donde permaneció ~15 días, obligado a limpiar y cocinar bajo amenazas diarias con armas de fuego. Este bloque contiene los principales indicadores de posible Visa T.\n\n16:20 – 17:36\nLa entrevistadora explora las consecuencias psicológicas: miedo constante, problemas para dormir y temor a quedarse solo durante aproximadamente un año.\n\n20:19 – 24:48\nExploración del primer empleo en la lechería. Aunque existieron pagos incompletos, la entrevistadora confirma correctamente que no existían amenazas, coerción o restricciones para abandonar el empleo.\n\nPosteriormente en la llamada\nSe explora la relación con la exesposa, identificando control económico, labores domésticas, presión para mantener relaciones íntimas, amenazas con la policía y una agresión física.`)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Ver
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-id">19785301</span></td>
+                  <td><span class="call-name">Andrés Velázquez Santos</span></td>
+                  <td><span class="call-tipo vawa">VAWA</span></td>
+                  <td><span class="rs-origen">Otro</span></td>
+                  <td><span class="rs-outcome coyote">RECLAS · VISA T COYOTE</span></td>
+                  <td class="td-center rs-multi-links">
+                    <a href="https://docs.google.com/document/d/1FpRukXFgkHDdXEuGIynyybbTbi25zrv1/edit?usp=sharing" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>1
+                    </a>
+                    <a href="https://docs.google.com/document/d/1tydePE3eUgrgWlHHDv7_IL40ytSgpkEB/edit?usp=sharing" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>2
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/1ewfOAEZoj1mZ_BQP7YAsEtp9qm5iyyAPF4e6XC7ogSA/edit" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>Ver
+                    </a>
+                  </td>
+                  <td class="td-center rs-multi-links">
+                    <a href="https://drive.google.com/file/d/1sh1mvhDUUaTXQkAci9Zgk3MFbjnkoPif/view?usp=sharing" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>1
+                    </a>
+                    <a href="https://drive.google.com/file/d/1tnA5ZOjoUpKIvoAQl2xuFh5bTaiZ7W2c/view?usp=sharing" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>2
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <button class="obs-btn" onclick="openRS('Andrés Velázquez Santos','VAWA','RECLAS · VISA T COYOTE',`Tres cruces con coyote (1990, 2001 y 2004).\nRetención en Guatemala, México y Estados Unidos.\nCasa de seguridad durante aproximadamente dos semanas.\nObligación de limpiar la casa, la yarda, cocinar y lavar trastes.\nAmenazas de no recibir comida si no obedecían.\nGuardias armados vigilando constantemente.\nAmenazas de muerte si alguien intentaba escapar.\nGolpes contra otros migrantes por no obedecer o por falta de pago.\nAmenazas contra familiares después de la liberación.\nIncremento del costo del cruce bajo amenazas.\nEmpleador ruso que dejó de pagar salario al descubrir que era indocumentado.\nAmenaza con arma por parte del empleador ruso.\nEmpleador coreano que lo obligaba a realizar trabajos domésticos fuera del horario laboral sin pago.\nReporte policial y orden de restricción por agresión física de su hijo Jonathan.`,`01:07 – 02:52\nLa agente explica claramente el objetivo del rescreening y genera confianza antes de iniciar la entrevista.\n\n03:20 – 06:30\nSe documenta el primer ingreso (1990). La entrevistadora identifica correctamente que el primer cruce no generó una posible Visa T y continúa explorando.\n\n07:53 – 16:58\nSe desarrolla el segundo cruce (2001): retención de ~2 semanas, trabajo doméstico forzado, amenazas de hambre, vigilancia armada, amenazas de muerte, golpes a otros migrantes y amenazas contra familiares. Este bloque contiene prácticamente todos los indicadores clásicos de Visa T coyote.\n\n17:49 – 23:46\nSe explora el tercer cruce (2004). Nuevamente aparecen trabajo forzado, amenazas con privación de alimentos, golpes a otros migrantes y coerción.\n\nFinal de la llamada (segunda grabación 01:32 – 04:37)\nSe documenta el incidente con el hijo Jonathan: dos reportes policiales, comparecencia en corte y orden de restricción y protección permanente. Esto es relevante para identificar una posible ruta hacia Visa U.\n\n07:06 – 07:58 (segunda grabación)\nLa entrevistadora identifica que uno de los hijos ciudadanos ha manifestado disposición para ayudar al cliente con una petición familiar.`)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Ver
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-id">17022054</span></td>
+                  <td><span class="call-name">Ana Maria Farfan Velazquez</span></td>
+                  <td><span class="call-tipo vawa">VAWA</span></td>
+                  <td><span class="rs-origen">Otro</span></td>
+                  <td><span class="rs-outcome vd">RECLAS · VISA T VD</span></td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/1zezXBfRFfbWYQdDKSlZJM2dJP_Kjx9is/edit?usp=sharing" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>Docs
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/1vN-EgbxPxdbWZtULI7K2Xp4yU_uFyS7GcFnCblnmdAA/edit" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>Ver
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/1nuHKn35ufhaTR74pb0h1qiBu1nJgcyjn/view?usp=sharing" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Audio
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <button class="obs-btn" onclick="openRS('Ana Maria Farfan Velazquez','VAWA','RECLAS · VISA T VD',`Violencia física reiterada por parte del ex esposo.\nViolencia sexual durante el matrimonio.\nEmbarazo producto de una agresión sexual.\nControl económico.\nAmenazas de reportarla a inmigración para quitarle a su hija.\nUso de los hijos como mecanismo de control.\nRetención de su hija mayor para obligarla a regresar a Estados Unidos.\nReportes policiales contra el ex esposo.\nDetención del agresor y proceso judicial.\nRetención aproximadamente una semana en una casa de seguridad durante el cruce de 2004.\nPrivación de alimentos e higiene durante la retención.\nExtorsión de aproximadamente $3,000 relacionada con el cruce.\nPosible abandono por una agencia de trabajo que la dejó sin transporte ni comunicación en un lugar desconocido.`,`00:47 – 03:25\nLa entrevistadora establece expectativas, explica por qué algunas preguntas pueden repetirse y genera un ambiente de confianza antes de comenzar.\n\n03:40 – 15:13\nSe exploran ambos ingresos a Estados Unidos. En el segundo cruce (2004) aparecen indicadores relevantes: retención en casa de seguridad, imposibilidad de salir, privación de alimentos e higiene, y extorsión económica de $3,000.\n\n17:25 – 24:12\nLa cliente recuerda espontáneamente un incidente con una agencia de trabajo que la abandonó en un pueblo desconocido, sin transporte, teléfono ni recursos.\n\n25:10 – 35:40\nSe desarrolla de forma cronológica toda la historia de violencia doméstica: golpes constantes, violencia sexual, coerción emocional, presión familiar para regresar con el agresor y múltiples episodios de abuso físico.\n\n30:42 – 32:32\nLa entrevistadora profundiza en trabajo doméstico impuesto, violencia sexual, relaciones forzadas y embarazo producto de una agresión sexual.\n\n36:45 – 42:39\nSe documenta el control económico: dependencia financiera, amenazas relacionadas con el dinero, intento de obligarla a compartir una cuenta bancaria y amenazas de denunciarla ante inmigración para quitarle a su hija.\n\n43:40 – 45:32\nLa cliente explica cómo el ex esposo utilizó a su hija para obligarla a regresar a Estados Unidos y cómo finalmente logró salir de la relación.`)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Ver
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-id">45901907</span></td>
+                  <td><span class="call-name">Karla Valeria Hernandez Camargo</span></td>
+                  <td><span class="call-tipo vt">REG AOS</span></td>
+                  <td><span class="rs-origen">Customer Service</span></td>
+                  <td><span class="rs-outcome revawa">RECLAS · VAWA</span></td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/1SbTexEXmljyAcgqpo65N6MS15nKfK4yn/edit?usp=drivesdk" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>Docs
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/159clUyziGMqgb5cXKMqTBxZiuGf2d4v6Uot_dKoic_4/edit" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>Ver
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/1QKaMJB3u4oXv7v41p8vIh5KkrZP-44Wm/view?usp=drive_link" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Audio
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <button class="obs-btn" onclick="openRS('Karla Valeria Hernandez Camargo','REG AOS','RECLAS · VAWA',`Matrimonio con ciudadano estadounidense (entrada con Visa K-1).\nSeparación derivada del consumo de drogas por parte del esposo.\nIntento de agresión física.\nAmenazas constantes de llamar a inmigración para deportarla.\nAmenaza de utilizar el divorcio para provocar su deportación.\nDenuncia policial presuntamente falsa por pornografía infantil.\nNúmero de caso policial existente.\nSolicitud insistente de dinero por parte del esposo.\nDependencia económica derivada de la falta de permiso de trabajo.\nPosible manipulación mediante el estatus migratorio.\nHijo en común con el ciudadano estadounidense.`,`00:26 – 05:17\nLa entrevistadora explica el propósito del rescreening, genera confianza, confirma que la clienta se encuentra en un lugar seguro y aclara que toda la información es confidencial.\n\n06:45 – 09:51\nComienza la exploración de la relación con el esposo. La clienta explica cómo el consumo de drogas cambió completamente la dinámica de la relación y describe el intento de agresión física.\n\n20:31 – 23:32\nLa entrevistadora explora el control económico e identifica uno de los principales indicadores: amenazas migratorias. La clienta explica que el esposo amenaza con llamar a inmigración para que la deporten si se divorcian.\n\n28:08 – 28:52\nMomento más relevante de la llamada. La clienta revela que el esposo llamó a la policía acusándola falsamente de poseer pornografía infantil. Este hecho debió explorarse con mayor profundidad durante la entrevista.\n\n29:03 – 29:44\nLa entrevistadora explora quién sostiene económicamente al hijo tras la separación y obtiene contexto sobre la situación actual del esposo.\n\n40:04 – 42:27\nLa entrevistadora explica que el caso será revisado por el equipo correspondiente y acuerda el mejor horario para contactar nuevamente a la clienta.`)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Ver
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-id">12477670</span></td>
+                  <td><span class="call-name">Horacio Tovar Garnica</span></td>
+                  <td><span class="call-tipo vawa">VAWA</span></td>
+                  <td><span class="rs-origen">Escalación</span></td>
+                  <td><span class="rs-outcome vd">RECLAS · VISA T VD</span></td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/13BWRWUlp_zsuEJJfCo2-OvK1bKrzstqeoQD7FNoN-Wk/edit?usp=sharing" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>Docs
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://docs.google.com/document/d/1cnLPg_Oq4wuMu7LGzp4ZSvsVJYEKKdnd3h75i1BQEBA/edit" target="_blank" class="call-link link-gdocs">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>Ver
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://drive.google.com/file/d/1Q4-Mxcd1z65syKce3olUpj1cHHneqbEh/view?usp=sharing" target="_blank" class="call-link link-drive">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Audio
+                    </a>
+                  </td>
+                  <td class="td-center">
+                    <button class="obs-btn" onclick="openRS('Horacio Tovar Garnica','VAWA','RECLAS · VISA T VD',`Tres ingresos a Estados Unidos con ayuda de coyotes.\nPermanencia en casas de seguridad durante los cruces.\nObligación de limpiar y cocinar mientras esperaba el cruce.\nVigilancia constante por parte de los coyotes.\nPresencia visible de armas.\nObservó cómo golpeaban a otras personas cuyos familiares no habían pagado.\nCaminatas por el desierto sin agua ni comida.\nRelación de aproximadamente diez años con una pareja violenta.\nViolencia física (arañazos y agresiones).\nAmenazas de llamar a inmigración.\nImposición de actividades domésticas bajo amenazas.\nExigencia constante de dinero.\nAmbiente laboral con insultos racistas.\nAmenaza de un supervisor de reportarlo a inmigración.\nRobo de salario por parte de una compañía contratista.`,`00:00 – 02:54\nLa entrevistadora explica el objetivo del rescreening, confirma que el cliente está en un lugar seguro, aclara la confidencialidad y explica por qué algunas preguntas pueden repetirse.\n\n03:01 – 10:22\nInvestigación del historial migratorio y de los cruces con coyote. Se identifican varios indicadores importantes: permanencia en casas de seguridad, limpieza y cocina obligatorias, vigilancia constante, presencia de armas, violencia hacia otros migrantes y condiciones extremas durante el cruce.\n\n10:28 – 20:45\nExploración del historial laboral. La entrevistadora documenta experiencias de discriminación, amenazas migratorias por parte del supervisor, comentarios racistas y robo de salario.\n\n20:46 – 31:00\nSegmento más importante de la llamada. Se explora la relación de pareja anterior donde el cliente relata violencia física, amenazas con llamar a inmigración, imposición de tareas domésticas y exigencias económicas.\n\n31:00 – 38:56\nCierre. Se recopila información familiar, se confirma que el cliente tiene un caso activo con la firma y se explican los siguientes pasos del proceso.`)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Ver
+                    </button>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+      </div><!-- /section-resscreening -->
+
+
+      <!-- ════════════════════════════════════════════
+           SECTION: RFE
+           ════════════════════════════════════════════ -->
+      <div class="section-panel" id="section-rfe">
+
+        <div class="section-intro">
+          <div class="section-intro-left">
+            <div class="section-intro-ico" style="background:rgba(139,92,246,.1);color:#8B5CF6;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+            </div>
+            <div>
+              <div class="section-intro-name">RFE</div>
+              <div class="section-intro-desc">Waivers, análisis de caso, presentaciones y actualizaciones del área RFE.</div>
+            </div>
+          </div>
+          <button class="back-btn" onclick="navigateTo('dashboard')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            Volver al Dashboard
+          </button>
+        </div>
+
+        <div class="tabs-bar" data-group="rfe">
+          <button class="tab-btn active" data-tab="rfe-waivers">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>
+            Waivers
+          </button>
+          <button class="tab-btn" data-tab="rfe-analisis">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            I-130
+          </button>
+          <button class="tab-btn" data-tab="rfe-presentacion">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            CASOS -21 SR
+          </button>
+          <button class="tab-btn" data-tab="rfe-actualizaciones">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.18-5.81"/></svg>
+            Actualizaciones
+          </button>
+        </div>
+
+        <!-- RFE Waivers -->
+        <div class="tab-panel active" id="rfe-waivers">
+
+          <div class="calls-header">
+            <div class="calls-header-left">
+              <div class="calls-count-badge">6 waivers</div>
+              <span class="calls-header-label">RFE · Waivers</span>
+            </div>
+            <div class="calls-header-right">
+              <div class="calls-search-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" placeholder="Filtrar por cliente o tipo…" oninput="filterTable('waiverTableBody', this.value)" />
+              </div>
+            </div>
+          </div>
+
+          <div class="calls-table-wrap">
+            <table class="calls-table">
+              <thead>
+                <tr>
+                  <th style="width:28%">Cliente</th>
+                  <th style="width:16%">Tipo de Caso</th>
+                  <th style="width:20%" class="th-center">Paquete</th>
+                  <th style="width:36%">Notas</th>
+                </tr>
+              </thead>
+              <tbody id="waiverTableBody">
+
+                <tr>
+                  <td><span class="call-name">Yuvani Mario Ramírez Saldaña</span></td>
+                  <td><span class="waiver-tipo">I-130 + I-601A</span></td>
+                  <td class="td-center">
+                    <a href="https://www.dropbox.com/home/Open%20Cases/Open%20Cases/Yuvani%20Mario%20Ram%C3%ADrez%20Salda%C3%B1a/7%20Submmisions?preview=I-601+REJECTION+FILED+COPY-+YUVANI+MARIO+RAMIREZ+SALDANA.pdf&quickview=id%3Ad8U66kS76XAAAAAAAFHVug" target="_blank" class="call-link link-dropbox">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Dropbox
+                    </a>
+                  </td>
+                  <td><span class="waiver-notas-empty">—</span></td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-name">Lázaro González Reyes</span></td>
+                  <td><span class="waiver-tipo">VAWA + 601</span></td>
+                  <td class="td-center">
+                    <a href="https://www.dropbox.com/scl/fi/nl65ppu6rc9b5ylhfzwea/LAZARO-GONZALEZ-REYES-I-485-RFE-WAVER-601-FILED-COPY.pdf?rlkey=afpp64ayakzq9kvls8zsi1kf4&st=lyrcca19&dl=0" target="_blank" class="call-link link-dropbox">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Dropbox
+                    </a>
+                  </td>
+                  <td>
+                    <span class="waiver-nota-inline">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;flex-shrink:0;color:var(--warn)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Permanent bar · No se relaciona la entrada con el abuso.
+                    </span>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-name">Banesa Quintana Quintana</span></td>
+                  <td><span class="waiver-tipo">VAWA 601 + I-212</span></td>
+                  <td class="td-center">
+                    <a href="https://www.dropbox.com/scl/fi/jw46o353nk1gfxidwntpk/FILE-COPY-WAIVER-BANESA-QUINTANA-QUINTANA.pdf?rlkey=n6y3xd3ra11lzv1gx06vvnz25&st=jhs0cyo5&dl=0" target="_blank" class="call-link link-dropbox">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Dropbox
+                    </a>
+                  </td>
+                  <td>
+                    <span class="waiver-nota-inline waiver-nota-ok">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;flex-shrink:0;color:var(--success)"><polyline points="20 6 9 17 4 12"/></svg>
+                      Permanent bar · Sí hay relación entre entradas y abuso.
+                    </span>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-name">María del Carmen Chimal Villar</span></td>
+                  <td><span class="waiver-tipo">I-130 + I-601A</span></td>
+                  <td class="td-center">
+                    <a href="https://www.dropbox.com/home/Open%20Cases/Open%20Cases/Maria%20del%20Carmen%20Chimal%20Villar/7%20Submmisions?preview=READY+TO+PRINT+-+I-601A+-+MARIA+DEL+CARMEN+CHIMAL+VILLAR.pdf" target="_blank" class="call-link link-dropbox">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Dropbox
+                    </a>
+                  </td>
+                  <td><span class="waiver-notas-empty">—</span></td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-name">Juan Alexander Peguero Báez</span></td>
+                  <td><span class="waiver-tipo">I-130 + I-601A</span></td>
+                  <td class="td-center">
+                    <a href="https://www.dropbox.com/preview/Open%20Cases/Open%20Cases/Juan%20Alexander%20Peguero%20Baez/7%20Submissions/VAIVER%20I-601A%20FILED%20COPY-%20JUAN%20ALEXANDER%20PEGUERO%20BAEZ.pdf?role=work" target="_blank" class="call-link link-dropbox">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Dropbox
+                    </a>
+                  </td>
+                  <td>
+                    <span class="waiver-nota-inline">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;flex-shrink:0;color:var(--blue-500)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Proceso consular · Initial receipts.
+                    </span>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-name">Angel Custodio Olvera Brito</span></td>
+                  <td><span class="waiver-tipo">I-601 Entrevista</span></td>
+                  <td class="td-center">
+                    <a href="https://www.dropbox.com/scl/fi/smctsenq2szusx7d8q9qb/READY-FOR-CASE-REVIEW-WAIVER-I-601-ANGEL-CUSTODIO-OLVERA-BRITO.pdf?rlkey=zu3ffbdtj99ppui1i66nqiwcr&st=oomjv9ng&e=2&dl=0" target="_blank" class="call-link link-dropbox">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Dropbox
+                    </a>
+                  </td>
+                  <td>
+                    <div class="obs-preview">Orden de deportación de agosto 1995. No asistió a audiencia. Ingresó con visa F1 en 1998. Documentación con identidad falsa…</div>
+                    <button class="obs-btn" onclick="openObs(
+                      'Angel Custodio Olvera Brito',
+                      'I-601 Entrevista',
+                      'Notas del caso',
+                      '—',
+                      `The CL has a deportation order from August 11, 1995. He did not attend his court hearing, and he did not leave at that time. He departed the US in 1997 for family reasons.\n\nHe obtained an F1 student visa in 1997 and entered the US with that visa in 1998. He has not left the country since.\n\nThe CL states that he has always used his real name and DOB. He states that he did not mention his deportation proceedings when he obtained his student visa.\n\nEl cliente ingresó por primera vez a los Estados Unidos en 1988 sin inspección, aunque no recuerda los detalles exactos. Entre aproximadamente 1992 y 1994, conocidos lo ayudaron a solicitar un permiso de trabajo y un número de Seguro Social utilizando un certificado de nacimiento falso, presentándose como ciudadano guatemalteco. La solicitud fue aprobada, y utilizó los documentos por un breve período de empleo.\n\nLas autoridades de inmigración posteriormente descubrieron el fraude, revocaron el permiso de trabajo y emitieron un Aviso de Comparecencia. El cliente no asistió a la audiencia, lo que finalmente resultó en la orden de deportación.\n\nTras la orden, el cliente no regresó inmediatamente a México. Viajó a Chicago para visitar amigos y luego regresó a México por motivos familiares. Entre 1997 y 1998, obtuvo una visa de estudiante y volvió a ingresar a los Estados Unidos por vía aérea desde Ciudad de México a Chicago, IL. Más tarde regresó a México para renovar su pasaporte y volvió a ingresar nuevamente en 1998.`
+                    )">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Ver detalle
+                    </button>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+        <!-- RFE I-130 -->
+        <div class="tab-panel" id="rfe-analisis">
+
+          <div class="calls-header">
+            <div class="calls-header-left">
+              <div class="calls-count-badge">4 casos</div>
+              <span class="calls-header-label">RFE · I-130</span>
+            </div>
+            <div class="calls-header-right">
+              <div class="calls-search-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" placeholder="Filtrar por cliente o tipo…" oninput="filterTable('i130TableBody', this.value)" />
+              </div>
+            </div>
+          </div>
+
+          <div class="calls-table-wrap">
+            <table class="calls-table">
+              <thead>
+                <tr>
+                  <th style="width:26%">Cliente(s)</th>
+                  <th style="width:16%">Tipo de Caso</th>
+                  <th style="width:20%" class="th-center">Paquete</th>
+                  <th style="width:38%">Análisis</th>
+                </tr>
+              </thead>
+              <tbody id="i130TableBody">
+
+                <!-- Caso 1 -->
+                <tr>
+                  <td>
+                    <span class="call-name">Ana Deise Muñoz Correa</span>
+                    <div style="font-size:11px;color:var(--gray-500);margin-top:4px;line-height:1.6">
+                      Briana Guadalupe Becerril Muñoz<br>Antonio Muñoz Muñoz
+                    </div>
+                  </td>
+                  <td>
+                    <span class="waiver-tipo">VISA K1</span>
+                    <div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px">
+                      <span class="waiver-tipo" style="background:rgba(20,184,166,.1);color:#0F766E">I-130</span>
+                      <span class="waiver-tipo" style="background:rgba(245,158,11,.1);color:#B45309">CRBA</span>
+                    </div>
+                  </td>
+                  <td class="td-center">
+                    <div class="rs-multi-links">
+                      <a href="https://www.dropbox.com/scl/fi/pmzp0pv8kg41r28shzdls/FINAL-CIVIL-PACKET-ALEXIS-JESUS-BECERRIL-VALENCIA-CRBA.pdf?rlkey=b7e4h3v679n59dz6fucbmbjqe&st=lef232x5&dl=0" target="_blank" class="call-link link-dropbox" style="width:100%;justify-content:center">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        CRBA
+                      </a>
+                      <span class="waiver-file" style="width:100%;justify-content:center">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h16V8z"/></svg>
+                        I-130 Ana Deise
+                      </span>
+                      <a href="https://www.dropbox.com/scl/fi/xb49keriqyqtab9vjjq83/READY-FOR-ELP-I-130-ANTONIO-MUNOZ-MUNOZ.pdf?rlkey=6q52fpnrv2xji9stbb4kw0260&st=wm5y9f6h&e=1&dl=0" target="_blank" class="call-link link-dropbox" style="width:100%;justify-content:center">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        I-130 Antonio
+                      </a>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="obs-preview">CRBA out of wedlock · Padre USC. Matrimonio 30 dic 2025. Brianna nació fuera del matrimonio en México (16 ago 2024). Se acredita presencia física del padre y se trabaja DS-5507.</div>
+                    <button class="obs-btn" onclick="openObs(
+                      'Ana Deise Muñoz Correa · Briana Guadalupe · Antonio Muñoz',
+                      'VISA K1 + I-130 + CRBA',
+                      'Análisis I-130 / CRBA',
+                      '—',
+                      `Alexis Jesús Becerril Valencia nació el 22 de diciembre de 1995 en Estados Unidos y contrajo matrimonio con su esposa Ana Deise Muñoz Correa el 30 de diciembre de 2025. Brianna Guadalupe es hija biológica de él y nació en México el 16 de agosto de 2024. Por lo que la niña podría aplicar para un CRBA bajo el siguiente supuesto:\n\nOut of wedlock to a U.S. citizen father\n\nA child born on or after November 14, 1986 will obtain citizenship if:\n\n· El padre USC tiene relación sanguínea con la menor establecida por evidencia.\n· Era ciudadano americano al momento del nacimiento de la niña.\n· Acordó por escrito proveer soporte financiero hasta los 18 años.\n· La niña fue legitimada (certificado de matrimonio posterior al nacimiento).\n· El padre USC estuvo físicamente presente en EE.UU. por cinco años antes del nacimiento de la niña; al menos dos de esos años después de los 14.\n\nHablando con el cliente, él mencionó que cuando nació estuvo viviendo 2 años en Estados Unidos, hasta 1997 que su familia se mudó a México donde habitaron hasta el 2001 y regresaron a Estados Unidos en ese año, donde el cliente ha residido hasta la fecha, por lo que cumple con el requisito de presencia física.\n\nSe trabajó el cuestionario DS-5507 como proof of a written agreement of financial support y se solicitó el certificado de alumbramiento de la beneficiaria para probar relación biológica del padre y la niña.`
+                    )">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Ver análisis
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Caso 2 -->
+                <tr>
+                  <td>
+                    <span class="call-name">Edith Bujanda Ordóñez</span>
+                    <div style="font-size:11px;color:var(--gray-500);margin-top:4px">Hija: Mayreth Chacón Bujanda</div>
+                  </td>
+                  <td><span class="waiver-tipo" style="background:rgba(20,184,166,.1);color:#0F766E">I-130 Consular</span></td>
+                  <td class="td-center"><span class="waiver-notas-empty">—</span></td>
+                  <td>
+                    <div class="obs-preview">I-130 aprobado para esposa Edith (Wife of U.S. Citizen). Mayreth no tiene I-130 propia. Se identifica posible CRBA in wedlock ya que padre Oscar Oman Chacon es USC.</div>
+                    <button class="obs-btn" onclick="openObs(
+                      'Edith Bujanda Ordóñez · Mayreth Chacón Bujanda',
+                      'I-130 Consular Process',
+                      'Análisis I-130 / CRBA',
+                      '—',
+                      `Actualmente ya contamos con un recibo de aprobación de la petición I-130 para su esposa Edith Bujanda, categoría Wife of U.S. Citizen, 201 (b) INA. Sin embargo, cuando se abrió el caso, la estrategia era incluir a Mayreth como derivada de la aplicación principal, por lo que no se le trabajó una I-130 propia (y aún no la tiene).\n\nHaciendo el análisis del caso, como Mayreth es hija biológica del peticionario ciudadano americano, se tiene que trabajar su I-130 debido a que es una immediate relative of a U.S. Citizen.\n\nSin embargo, haciendo un estudio detallado, nos percatamos que Mayreth podría aplicar a una transmisión de ciudadanía por medio de un CRBA in wedlock to a U.S. citizen parent and a parent who is not a U.S. citizen:\n\nA child born on or after November 14, 1986 will obtain citizenship if:\n· The U.S. citizen parent was physically present in the United States or its territories for five years before the child's birth. At least two of these years must be after age 14.\n\nSiguiendo este criterio, como Mayreth es hija biológica del peticionario Oscar Oman Chacon (tal como consta en el acta de nacimiento), y sus padres contrajeron matrimonio el 02 de junio de 2022 y Mayreth nació el 01 de enero de 2023, se cumplen los requisitos para el CRBA in wedlock.\n\nRespecto al requisito de presencia física, el peticionario Oscar Oman Chacon siempre residió y trabajó en Estados Unidos, solo viajaba a México de visita. Se adjuntan taxes y fotografías como evidencia de residencia en EE.UU. al menos 5 años antes del nacimiento de su hija Mayreth.`
+                    )">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Ver análisis
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Caso 3 -->
+                <tr>
+                  <td>
+                    <span class="call-name">Brenda Isabel Aldaco Tinoco</span>
+                    <div style="font-size:11px;color:var(--gray-500);margin-top:4px">Hija: Dora Isabel Nevarez Aldaco</div>
+                  </td>
+                  <td><span class="waiver-tipo" style="background:rgba(20,184,166,.1);color:#0F766E">I-130 Consular</span></td>
+                  <td class="td-center"><span class="waiver-notas-empty">—</span></td>
+                  <td>
+                    <div class="obs-preview">I-130 aprobada para Dora Isabel (Immediate Relative of USC). Se recomienda cambiar estrategia a CRBA out of wedlock. Padre Jose Jesus Nevarez es USC, padres casados el 21 mayo 2021.</div>
+                    <button class="obs-btn" onclick="openObs(
+                      'Brenda Isabel Aldaco Tinoco · Dora Isabel Nevarez Aldaco',
+                      'I-130 Consular Process',
+                      'Análisis I-130 / CRBA',
+                      '—',
+                      `El peticionario es Jose Jesus Nevarez, U.S. Citizen por nacimiento, solicitando a su hija beneficiaria Dora Isabel Nevarez Aldaco, nacida en México el 01 de noviembre de 2018 (6 años actualmente).\n\nActualmente tenemos la petición familiar I-130 aprobada con categoría "Unmarried Child (under age 21) of U.S. Citizen, 201 (b) INA", número de recibo IOE0931282557, ya que la beneficiaria es Immediate Relative of a U.S. Citizen.\n\nRealizando el análisis del caso, nos dimos cuenta que Dora Isabel Nevarez Aldaco es hija biológica del peticionario Jose Jesus Nevarez (tal como consta en el acta de nacimiento adjunta, donde el peticionario aparece como padre biológico con nacionalidad estadounidense).\n\nPor lo que creemos que se debería cambiar la estrategia a un CRBA out of wedlock, ya que su madre (mexicana) y su padre (ciudadano americano por nacimiento) contrajeron matrimonio el 21 de mayo del 2021, atendiendo al siguiente fundamento:\n\nOut of wedlock to a father who is a U.S. citizen:\n\n· Relación sanguínea establecida por evidencia.\n· Padre era USC al momento del nacimiento.\n· Acuerdo escrito de soporte financiero hasta los 18 años.\n· Legitimación: certificado de matrimonio posterior al nacimiento.\n· Presencia física del padre USC: 5 años en EE.UU. antes del nacimiento de la menor, de los cuales al menos 2 años deben ser después de los 14.\n\nReferencia: https://travel.state.gov/content/travel/en/legal/travel-legal-considerations/us-citizenship/Acquisition-US-Citizenship-Child-Born-Abroad.html`
+                    )">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Ver análisis
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Caso 4 -->
+                <tr>
+                  <td>
+                    <span class="call-name">Francisco Javier Marrufo Sánchez</span>
+                    <div style="font-size:11px;color:var(--gray-500);margin-top:4px;line-height:1.6">
+                      Hijo: Javier Mateo Marrufo Cadena<br>
+                      Hija: Mariana Sofía Marrufo Cadena <span style="color:var(--gray-400)">(23 feb 2020)</span>
+                    </div>
+                  </td>
+                  <td><span class="waiver-tipo" style="background:rgba(20,184,166,.1);color:#0F766E">I-130 Consular</span></td>
+                  <td class="td-center"><span class="waiver-notas-empty">—</span></td>
+                  <td>
+                    <div class="obs-preview">Padre USC por nacimiento (18 sept 1997). I-130 aprobadas para ambos hijos. CRBA in wedlock: padres casados 04 ene 2018, Mariana nació 21 feb 2018, Javier nació 23 feb 2020. Se acredita presencia física del padre.</div>
+                    <button class="obs-btn" onclick="openObs(
+                      'Javier Mateo Marrufo Cadena · Mariana Sofía Marrufo Cadena',
+                      'I-130 Consular Process',
+                      'Análisis I-130 / CRBA',
+                      '—',
+                      `Francisco Javier Marrufo Sanchez es ciudadano americano por nacimiento (18 de septiembre de 1997). Está solicitando a sus hijos Mariana Sofia Marrufo Cadena y Javier Mateo Marrufo Cadena, nacidos en México e hijos biológicos del peticionario. Ambos tienen I-130 aprobadas.\n\nFrancisco Javier Marrufo Sanchez contrajo matrimonio con Herminia Cadena Marquez (madre de los niños) el 04 de enero de 2018. Mariana Sofia nació el 21 de febrero de 2018 y Javier Mateo nació el 23 de febrero del 2020.\n\nPor lo que los hijos podrán aplicar para CRBA bajo el siguiente supuesto:\n\nCRBA In wedlock to a U.S. citizen parent and a parent who is not a U.S. citizen\n\nA child born on or after November 14, 1986 will obtain citizenship if:\n· The U.S. citizen parent was physically present in the United States or its territories for five years before the child's birth. At least two of these years must be after age 14.\n\nEsto debido a que los padres ya se encontraban casados al momento del nacimiento de los niños. El padre ciudadano americano debe acreditar presencia física de 5 años en EE.UU. antes del nacimiento de los niños, de los cuales 2 años deben ser después de los 14.\n\nEl cliente mencionó que vivió en EE.UU. desde su nacimiento (18 sept 1997) hasta los 7 años, que fue cuando su familia se mudó a México. Sin embargo, el peticionario regresó a Estados Unidos en 2014, cuando tenía 17 años (3 años y medio antes de que naciera su primera hija), y hasta el momento ha residido en el país, por lo que cumple el requisito de presencia física para que sus hijos puedan aplicar al CRBA.`
+                    )">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Ver análisis
+                    </button>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+        <!-- RFE CASOS -21 SR -->
+        <div class="tab-panel" id="rfe-presentacion">
+
+          <div class="calls-header">
+            <div class="calls-header-left">
+              <div class="calls-count-badge">6 casos</div>
+              <span class="calls-header-label">RFE · Casos -21 SR</span>
+            </div>
+            <div class="calls-header-right">
+              <div class="calls-search-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" placeholder="Filtrar por cliente o tipo…" oninput="filterTable('sr21TableBody', this.value)" />
+              </div>
+            </div>
+          </div>
+
+          <div class="calls-table-wrap">
+            <table class="calls-table">
+              <thead>
+                <tr>
+                  <th style="width:26%">Cliente</th>
+                  <th style="width:18%">Tipo de Caso</th>
+                  <th style="width:14%" class="th-center">Paquete</th>
+                  <th style="width:42%">Notas</th>
+                </tr>
+              </thead>
+              <tbody id="sr21TableBody">
+
+                <tr>
+                  <td><span class="call-name">Bernardo Hernández González</span></td>
+                  <td>
+                    <span class="sr21-tipo decision">DECISION</span>
+                    <span class="sr21-tipo usc" style="margin-top:4px">Hijo USC</span>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://www.dropbox.com/scl/fi/vd4fypjwflh7z4vnrquq6/I-290B-I-485-FILED-COPY-BERNARDO-HERNANDEZ-GONZALEZ.pdf?rlkey=x8lrk0uk93fg3rqa0tsj9l0cf&st=wcvg1mcs&dl=0" target="_blank" class="call-link link-dropbox">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Dropbox
+                    </a>
+                  </td>
+                  <td>
+                    <span class="waiver-nota-inline" style="color:var(--warn)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;flex-shrink:0;color:var(--warn)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Abuser dejó la casa en 2018 cuando tenía 18 años; sin embargo, regresó a vivir con el cliente en agosto de 2025.
+                    </span>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-name">Juan Carlos Castañeda Magallón</span></td>
+                  <td><span class="sr21-tipo usc">Hijo USC</span></td>
+                  <td class="td-center">
+                    <a href="https://www.dropbox.com/scl/fi/n10qw0reuf1k649qk1kyb/RFE-I-360-JUAN-CARLOS-CASTANEDA-MAGALLON.pdf?rlkey=xuxzh6rzo9lcakn1x9q7lc363&st=lofnw3ez&e=2&dl=0" target="_blank" class="call-link link-dropbox">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Dropbox
+                    </a>
+                  </td>
+                  <td>
+                    <span class="waiver-nota-inline">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;flex-shrink:0;color:var(--blue-500)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Caso complex. Vivieron juntos hasta que el abuser tenía 18 años. Se manejó residencia interrumpida viviendo de los 21 a los 22 años del abuser en la evidencia — se envió -21.
+                    </span>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-name">Leonardo Ramírez García</span></td>
+                  <td><span class="sr21-tipo usc">Hijo USC</span></td>
+                  <td class="td-center">
+                    <a href="https://www.dropbox.com/home/Open%20Cases/Open%20Cases/Ramirez%20Garcia%20Leonardo/7.%20Submmisions?preview=RFE+I-360+LEONARDO+RAMIREZ+GARCIA.pdf" target="_blank" class="call-link link-dropbox">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Dropbox
+                    </a>
+                  </td>
+                  <td>
+                    <span class="waiver-nota-inline">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;flex-shrink:0;color:var(--blue-500)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Caso complex. No hay evidencia que sostenga que el abuser vivió en casa de su papá después de los 21. Se manejó que solo los primeros meses cuando el abuser ya tenía más de 21.
+                    </span>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-name">Presbítero Mena Domínguez</span></td>
+                  <td><span class="sr21-tipo nat">Hijo Naturalizado</span></td>
+                  <td class="td-center">
+                    <a href="https://www.dropbox.com/scl/fi/uy1taleuaiihcb879lcrr/RFE-I-360-Presbitero-Mena-Dominguez.pdf?rlkey=1hh789c9pkw8ne5srj22ujmm0&st=qdmpxyud&dl=0" target="_blank" class="call-link link-dropbox">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Dropbox
+                    </a>
+                  </td>
+                  <td>
+                    <span class="waiver-nota-inline" style="color:var(--warn)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;flex-shrink:0;color:var(--warn)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Hay evidencia de SR después de los 21, pero la naturalización es hasta el 14 de octubre del 2021. Dejaron de vivir juntos en el 2014.
+                    </span>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-name">Cira Olarte Azuara</span></td>
+                  <td><span class="sr21-tipo nat">Hijo Naturalizado</span></td>
+                  <td class="td-center">
+                    <a href="https://www.dropbox.com/home/Open%20Cases/Open%20Cases/Mena%20Dominguez%20Presbiterio%3B%20Azuara%20Olarte%20Cira/7%20Submmisions?preview=RFE+I-360+Cira+Olarte+Azuara.pdf" target="_blank" class="call-link link-dropbox">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Dropbox
+                    </a>
+                  </td>
+                  <td>
+                    <span class="waiver-nota-inline" style="color:var(--warn)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;flex-shrink:0;color:var(--warn)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Hay evidencia de SR después de los 21, pero la naturalización es hasta el 14 de octubre del 2021. Dejaron de vivir juntos en el 2014.
+                    </span>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-name">Atayde Ogaz Luevano</span></td>
+                  <td>
+                    <span class="sr21-tipo aprobado">APROBADO</span>
+                    <span class="sr21-tipo usc" style="margin-top:4px">Hijo USC</span>
+                  </td>
+                  <td class="td-center">
+                    <a href="https://www.dropbox.com/home/Open%20Cases/Open%20Cases/Atayde%20Ogaz%20Luevano/7%20Submmisions?preview=RFE+FILED+COPY+-+Atayde+Ogaz+Luevano.pdf" target="_blank" class="call-link link-dropbox">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Dropbox
+                    </a>
+                  </td>
+                  <td>
+                    <span class="waiver-nota-inline waiver-nota-ok">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;flex-shrink:0;color:var(--success)"><polyline points="20 6 9 17 4 12"/></svg>
+                      Vivieron juntos cuando el abuser tenía de 7 a 11 años. Período: 2001–2005.
+                    </span>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+        <!-- RFE Actualizaciones -->
+        <div class="tab-panel" id="rfe-actualizaciones">
+          <div class="info-banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>Espacio reservado · El contenido de este módulo se agregará próximamente.</p></div>
+          <div class="empty-card">
+            <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.18-5.81"/></svg></div>
+            <div class="empty-title">Actualizaciones — Contenido en construcción</div>
+            <div class="empty-desc">Log de cambios, circulares, actualizaciones de política y novedades del área RFE.</div>
+          </div>
+          <div class="skeleton-section"><div class="skeleton-row" style="width:88%"></div><div class="skeleton-row" style="width:65%"></div><div class="skeleton-row" style="width:80%"></div><div class="skeleton-row"></div></div>
+        </div>
+
+      </div><!-- /section-rfe -->
+
+    </main><!-- /content -->
+  </div><!-- /main-col -->
+  <!-- ══════════════════════════════════════════════
+       MODAL — RESSCREENING DETALLE
+       ══════════════════════════════════════════════ -->
+  <div id="rsModal" class="obs-modal-overlay" onclick="closeRSOutside(event)">
+    <div class="obs-modal rs-modal-wide">
+      <div class="obs-modal-header">
+        <div class="obs-modal-titles">
+          <div class="obs-modal-client" id="rsModalClient">—</div>
+          <div class="obs-modal-agent" id="rsModalTipoLabel">—</div>
+        </div>
+        <button class="obs-modal-close" onclick="closeRS()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="obs-modal-meta">
+        <span class="obs-meta-tag" id="rsModalOutcome">—</span>
+      </div>
+      <div class="rs-modal-body">
+        <div class="rs-panel">
+          <div class="rs-panel-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Hints identificados
+          </div>
+          <ul class="rs-hints-list" id="rsModalHints"></ul>
+        </div>
+        <div class="rs-panel rs-panel-right">
+          <div class="rs-panel-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Timestamps de la llamada
+          </div>
+          <div class="rs-timestamps" id="rsModalTimestamps"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+  <div id="obsModal" class="obs-modal-overlay" onclick="closeObsOutside(event)">
+    <div class="obs-modal">
+      <div class="obs-modal-header">
+        <div class="obs-modal-titles">
+          <div class="obs-modal-client" id="obsModalClient">—</div>
+          <div class="obs-modal-agent" id="obsModalAgent">—</div>
+        </div>
+        <button class="obs-modal-close" onclick="closeObs()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="obs-modal-meta">
+        <span class="obs-meta-tag" id="obsModalTipo">—</span>
+        <span class="obs-meta-estado">Estado: <strong id="obsModalEstado">—</strong></span>
+      </div>
+      <div class="obs-modal-body" id="obsModalBody">—</div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+
+<!-- ════════════════════════════════════════════════
+     JAVASCRIPT
+     ════════════════════════════════════════════════ -->
+<script>
+
+/* ── SECTION LABELS (para breadcrumb) ─────────── */
+const SECTION_LABELS = {
+  dashboard:       'Dashboard',
+  casereview:      'Case Review W&W',
+  customerservice: 'Customer Service',
+  resscreening:    'Resscreening',
+  rfe:             'RFE'
+};
+
+/* ── NAVIGATE ──────────────────────────────────── */
+function navigateTo(sectionId) {
+  // Update nav items
+  document.querySelectorAll('.sb-item').forEach(item => {
+    item.classList.toggle('active', item.dataset.section === sectionId);
+  });
+
+  // Update panels
+  document.querySelectorAll('.section-panel').forEach(panel => {
+    panel.classList.toggle('active', panel.id === 'section-' + sectionId);
+  });
+
+  // Update breadcrumb
+  document.getElementById('breadcrumbCurrent').textContent =
+    SECTION_LABELS[sectionId] || sectionId;
+
+  // Scroll to top
+  document.getElementById('content').scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── SIDEBAR NAV ───────────────────────────────── */
+document.querySelectorAll('.sb-item').forEach(item => {
+  item.addEventListener('click', () => navigateTo(item.dataset.section));
+});
+
+/* ── SIDEBAR COLLAPSE ──────────────────────────── */
+document.getElementById('collapseBtn').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+});
+
+/* ── TABS ──────────────────────────────────────── */
+document.querySelectorAll('.tabs-bar').forEach(bar => {
+  bar.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Deactivate siblings
+      bar.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Find the section panel ancestor
+      const sectionPanel = btn.closest('.section-panel');
+      // Deactivate all tab-panels within that section
+      sectionPanel.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      // Activate target
+      const target = sectionPanel.querySelector('#' + btn.dataset.tab);
+      if (target) target.classList.add('active');
+    });
+  });
+});
+
+/* ── CLOCK ─────────────────────────────────────── */
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2, '0');
+  const m = String(now.getMinutes()).padStart(2, '0');
+  const s = String(now.getSeconds()).padStart(2, '0');
+  document.getElementById('clockDisplay').textContent = `${h}:${m}:${s}`;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+/* ── FILTER TABLE (genérico) ───────────────────── */
+function filterTable(tbodyId, query) {
+  const q = query.toLowerCase().trim();
+  document.querySelectorAll('#' + tbodyId + ' tr').forEach(row => {
+    row.classList.toggle('hidden', q.length > 0 && !row.textContent.toLowerCase().includes(q));
+  });
+}
+// Keep backward compat with older filterCalls
+function filterCalls(query) { filterTable('callsTableBody', query); }
+
+/* ── OBSERVATIONS MODAL ────────────────────────── */
+function openObs(cliente, agente, tipo, estado, texto) {
+  document.getElementById('obsModalClient').textContent  = cliente;
+  document.getElementById('obsModalAgent').textContent   = 'Agente: ' + agente;
+  document.getElementById('obsModalTipo').textContent    = tipo;
+  document.getElementById('obsModalEstado').textContent  = estado;
+  document.getElementById('obsModalBody').textContent    = texto;
+  document.getElementById('obsModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeObs() {
+  document.getElementById('obsModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeObsOutside(e) {
+  if (e.target === document.getElementById('obsModal')) closeObs();
+}
+
+/* ── RESSCREENING MODAL ────────────────────────── */
+function openRS(nombre, tipo, outcome, hintsRaw, timestampsRaw) {
+  document.getElementById('rsModalClient').textContent    = nombre;
+  document.getElementById('rsModalTipoLabel').textContent = 'Tipo: ' + tipo;
+  document.getElementById('rsModalOutcome').textContent   = outcome;
+
+  const hintsList = document.getElementById('rsModalHints');
+  hintsList.innerHTML = '';
+  hintsRaw.split('\n').filter(l => l.trim()).forEach(line => {
+    const li = document.createElement('li');
+    li.textContent = line.replace(/^\*\s*/, '').trim();
+    hintsList.appendChild(li);
+  });
+
+  document.getElementById('rsModalTimestamps').textContent = timestampsRaw;
+  document.getElementById('rsModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeRS() {
+  document.getElementById('rsModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeRSOutside(e) {
+  if (e.target === document.getElementById('rsModal')) closeRS();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeObs(); closeRS(); } });
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('splash').classList.add('hidden');
+    document.getElementById('app').classList.add('visible');
+  }, 2200);
+});
+
+
+</script>
+</body>
+</html>
