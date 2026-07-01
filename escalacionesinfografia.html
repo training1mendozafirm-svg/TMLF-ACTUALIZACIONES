@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Distribución de Escalaciones · Mendoza Learning Center</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #EEF2F7;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    max-width: 760px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(27,58,107,0.10);
+  }
+
+  /* HEADER */
+  .header {
+    background: #1B3A6B;
+    padding: 24px 32px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .header-logo {
+    width: 48px; height: 48px;
+    background: #F5A623;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: 700; color: #1B3A6B;
+    flex-shrink: 0;
+    letter-spacing: -1px;
+  }
+  .header-text h1 {
+    font-size: 16px; font-weight: 600; color: #fff;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .header-text p {
+    font-size: 12px; color: #8BADD4; margin-top: 3px;
+  }
+  .header-badge {
+    margin-left: auto;
+    background: rgba(245,166,35,0.18);
+    border: 1px solid #F5A623;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 11px;
+    color: #F5A623;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* BODY */
+  .body {
+    padding: 28px 32px 36px;
+  }
+
+  /* TITLE BAR */
+  .title-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .title-bar h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1B3A6B;
+  }
+  .title-bar::after {
+    content: '';
+    flex: 1;
+    height: 1.5px;
+    background: linear-gradient(90deg, #1B3A6B22 0%, transparent 100%);
+  }
+
+  /* INTRO */
+  .intro {
+    background: #F0F5FF;
+    border-left: 4px solid #1B3A6B;
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin-bottom: 28px;
+    font-size: 13px;
+    color: #3D5A85;
+    line-height: 1.7;
+  }
+  .intro strong { color: #1B3A6B; font-weight: 600; }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #8BADD4;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 0.5px;
+    background: #D8E4F0;
+  }
+
+  /* STAGE CARDS */
+  .stages {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .stage {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid transparent;
+  }
+  .stage-top {
+    padding: 10px 14px 8px;
+  }
+  .stage-num {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .stage-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #fff;
+  }
+  .stage-bottom {
+    background: #fff;
+    padding: 10px 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .stage-sub {
+    font-size: 10px;
+    color: #8899AA;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .stage-area {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .stage.red   { border-color: #C0392B22; }
+  .stage.blue  { border-color: #1B3A6B22; }
+  .stage.teal  { border-color: #0F7B6C22; }
+
+  .stage.red  .stage-top { background: #C0392B; }
+  .stage.blue .stage-top { background: #1B3A6B; }
+  .stage.teal .stage-top { background: #0F7B6C; }
+
+  .stage.red  .stage-num { color: rgba(255,255,255,0.7); }
+  .stage.blue .stage-num { color: rgba(255,255,255,0.7); }
+  .stage.teal .stage-num { color: rgba(255,255,255,0.7); }
+
+  .stage.red  .stage-area { color: #C0392B; }
+  .stage.blue .stage-area { color: #1B3A6B; }
+  .stage.teal .stage-area { color: #0F7B6C; }
+
+  /* TIP BOX */
+  .tip {
+    background: #FFFBF0;
+    border: 1px solid #F5A623;
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 28px;
+  }
+  .tip-icon {
+    width: 36px; height: 36px;
+    background: #FEF0CC;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+  }
+  .tip-content p {
+    font-size: 13px;
+    color: #6B4F00;
+    line-height: 1.65;
+  }
+  .tip-content strong { color: #3D2E00; font-weight: 600; }
+
+  /* FOLDER TABLE */
+  .folder {
+    border: 1px solid #D8E4F0;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .folder-head {
+    background: #1B3A6B;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    padding: 9px 16px;
+    gap: 12px;
+    align-items: center;
+  }
+  .folder-head span {
+    font-size: 11px;
+    color: #8BADD4;
+    font-weight: 500;
+  }
+  .folder-head .col-mod {
+    font-size: 10px;
+    background: #F5A623;
+    color: #1B3A6B;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .folder-head .col-size {
+    font-size: 11px;
+    color: #8BADD4;
+    font-weight: 500;
+  }
+  .folder-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+    padding: 8px 16px;
+    gap: 10px;
+    border-bottom: 1px solid #EEF2F7;
+    transition: background 0.15s;
+  }
+  .folder-row:last-child { border-bottom: none; }
+  .folder-row:hover { background: #F7FAFF; }
+  .folder-row.top { background: #EEF4FF; }
+  .folder-row.top:hover { background: #E5EEFF; }
+
+  .pdf-tag {
+    font-size: 9px;
+    font-weight: 700;
+    color: #C0392B;
+    background: #FDEDEC;
+    padding: 2px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.03em;
+  }
+  .doc-name {
+    font-size: 12px;
+    color: #2C3E50;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .folder-row.top .doc-name { font-weight: 600; color: #1B3A6B; }
+  .doc-date {
+    font-size: 11px;
+    color: #8899AA;
+    white-space: nowrap;
+  }
+  .new-pill {
+    font-size: 9px;
+    font-weight: 700;
+    background: #1B3A6B;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .spacer { width: 56px; }
+
+  /* FOOTER */
+  .footer {
+    background: #F0F5FF;
+    border-top: 1px solid #D8E4F0;
+    padding: 12px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer span {
+    font-size: 10px;
+    color: #8BADD4;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+  .footer .dot { color: #CBD8E8; }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-logo">M</div>
+    <div class="header-text">
+      <h1>Mendoza Learning Center</h1>
+      <p>Guía de referencia rápida · TMLF Operations</p>
+    </div>
+    <div class="header-badge">Uso interno</div>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+
+    <div class="title-bar">
+      <h2>Distribución de Escalaciones</h2>
+    </div>
+
+    <div class="intro">
+      La forma más efectiva de identificar el <strong>case stage</strong> y realizar una escalación correcta es revisar el avance en la <strong>Carpeta 7</strong>. Cada entregable de ensamblado corresponde a una etapa procesal y a un área TMLF específica, idealmente con una nota de seguimiento en Tramcase.
+    </div>
+
+    <div class="section-label">Identificación de etapa por entregable</div>
+
+    <div class="stages">
+
+      <div class="stage red">
+        <div class="stage-top">
+          <div class="stage-num">Etapa 1</div>
+          <div class="stage-title">Sin paquetes o documento con missings</div>
+        </div>
+        <div class="stage-bottom">
+          <div class="stage-sub">Área responsable</div>
+          <div class="stage-area">PWI Ops</div>
+        </div>
+      </div>
+
+      <div class="stage blue">
+        <div class="stage-top">
+          <div class="stage-num">Etapa 2</div>
+          <div class="stage-title">Ready for Case Review</div>
+        </div>
+        <div class="stage-bottom">
+          <div class="stage-sub">Área responsable</div>
+          <div class="stage-area">PCR Ops</div>
+        </div>
+      </div>
+
+      <div class="stage teal">
+        <div class="stage-top">
+          <div class="stage-num">Etapa 3</div>
+          <div class="stage-title">Ready for Atty Review</div>
+        </div>
+        <div class="stage-bottom">
+          <div class="stage-sub">Área responsable</div>
+          <div class="stage-area">Paralegal Packets</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="section-label">Paso clave · Identificar el paquete más reciente</div>
+
+    <div class="tip">
+      <div class="tip-icon">⬇️</div>
+      <div class="tip-content">
+        <p>Para identificar el paquete más actual y el <strong>case stage</strong> más reciente, ordena la Carpeta 7 en DB haciendo clic en <strong>"Última modificación"</strong> hasta que el documento con la fecha más reciente quede en primer lugar.</p>
+      </div>
+    </div>
+
+    <div class="section-label">Ejemplo de ordenamiento en Carpeta 7</div>
+
+    <div class="folder">
+      <div class="folder-head">
+        <span>Nombre</span>
+        <span class="col-mod">↓ Última modificación</span>
+        <span class="col-size">Tamaño</span>
+      </div>
+
+      <div class="folder-row top">
+        <span class="pdf-tag">PDF</span>
+        <span class="doc-name">T-VISA FILED COPY - ROSALBA OLVERA ROJO.pdf</span>
+        <span class="doc-date">9/6/2026 16:00</span>
+        <span class="new-pill">← más reciente</span>
+      </div>
+
+      <div class="folder-row">
+        <span class="pdf-tag">PDF</span>
+        <span class="doc-name">FBI LETTER FILED COPY - ROSALBA OLVERA ROJO.pdf</span>
+        <span class="doc-date">9/6/2026 10:47</span>
+        <span class="spacer"></span>
+      </div>
+
+      <div class="folder-row">
+        <span class="pdf-tag">PDF</span>
+        <span class="doc-name">READY FOR EL PASO - VISA_T - ROSALBA OLVERA ROJO.pdf</span>
+        <span class="doc-date">28/5/2026 14:25</span>
+        <span class="spacer"></span>
+      </div>
+
+      <div class="folder-row">
+        <span class="pdf-tag">PDF</span>
+        <span class="doc-name">UPDATED READY_FOR_ATTY_REVIEW - VISA_T - ROSALBA OLVERA ROJO.pdf</span>
+        <span class="doc-date">21/5/2026 9:47</span>
+        <span class="spacer"></span>
+      </div>
+
+      <div class="folder-row">
+        <span class="pdf-tag">PDF</span>
+        <span class="doc-name">DOCUMENTS READY FOR CASE REVIEW - VISA T - ROSALBA OLVERA ROJO.pdf</span>
+        <span class="doc-date">18/3/2026 9:28</span>
+        <span class="spacer"></span>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <span>Mendoza Learning Center</span>
+    <span class="dot">·</span>
+    <span>Distribución de Escalaciones</span>
+    <span class="dot">·</span>
+    <span>Para uso interno</span>
+  </div>
+
+</div>
+
+</body>
+</html>
