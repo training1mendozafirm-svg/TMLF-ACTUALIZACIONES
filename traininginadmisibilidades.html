@@ -1,0 +1,1262 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Fundamentos de Elegibilidad e Inadmisibilidad | TMLF Learning Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f1923;--slate:#5a6a7a;--steel:#6b8fa8;--ice:#8db8d8;
+  --gold:#c9a84c;--gold-bg:rgba(201,168,76,.09);
+  --white:#fff;--bg:#eef1f5;--shadow:0 8px 28px rgba(15,25,35,.11);--radius:16px;
+  --nav-h:56px;--sidebar-w:280px;
+  --green:#1e6641;--green-bg:rgba(30,102,65,.08);
+  --red:#8b2c2c;--red-bg:rgba(180,50,50,.08);
+  --amber:#7a5200;--amber-bg:rgba(180,130,0,.09);
+  --accent:#1a3a5c;--accent2:#2e5c8a;
+  --sidebar-bg:#0d1e2e;
+  --purple:#7c3aed;--purple-bg:rgba(124,58,237,.08);
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65}
+h1,h2,h3,h4{font-family:'Cormorant Garamond',serif}
+.topnav{position:fixed;top:0;left:0;right:0;z-index:300;height:var(--nav-h);background:rgba(10,18,28,.97);backdrop-filter:blur(16px);border-bottom:1px solid rgba(201,168,76,.12);display:flex;align-items:center;padding:0 18px;gap:10px}
+.topnav .brand{font-family:'Cormorant Garamond',serif;font-size:18px;color:#fff;white-space:nowrap;letter-spacing:.3px;display:flex;align-items:center;gap:10px}
+.topnav .brand .seal{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,rgba(201,168,76,.3),rgba(201,168,76,.08));border:1px solid rgba(201,168,76,.3);display:flex;align-items:center;justify-content:center;font-size:14px}
+.topnav .brand span{color:var(--gold)}
+.topnav-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.topnav-pill{padding:5px 14px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.28);color:rgba(201,168,76,.9)}
+.sidebar-toggle{display:none;background:none;border:none;color:#fff;font-size:20px;cursor:pointer;padding:4px 8px}
+@media(max-width:900px){.sidebar-toggle{display:block}}
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--sidebar-bg);position:fixed;top:var(--nav-h);bottom:0;left:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;border-right:1px solid rgba(201,168,76,.07);z-index:200;transition:transform .3s ease}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.09);border-radius:3px}
+.sidebar-header{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.05)}
+.sidebar-header .sh-label{font-size:9px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:3px}
+.sidebar-header .sh-title{font-family:'Cormorant Garamond',serif;font-size:15px;color:rgba(255,255,255,.88);font-weight:600;line-height:1.3}
+.sidenav{padding:10px 8px 30px}
+.sidenav .sn-group{font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.28);padding:14px 10px 6px}
+.sn-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;color:rgba(255,255,255,.62);font-size:13px;cursor:pointer;transition:.15s;position:relative;border:1px solid transparent}
+.sn-item:hover{background:rgba(255,255,255,.045);color:#fff}
+.sn-item.active{background:linear-gradient(90deg,rgba(201,168,76,.16),rgba(201,168,76,.02));color:#fff;border-color:rgba(201,168,76,.22)}
+.sn-item .ico{width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;background:rgba(255,255,255,.06)}
+.sn-item.done .ico{background:var(--green);color:#fff}
+.sn-item.locked{opacity:.38;cursor:not-allowed}
+.sn-item .chk{margin-left:auto;font-size:11px;color:var(--gold)}
+.progress-bar-wrap{position:fixed;top:var(--nav-h);left:0;right:0;z-index:299;height:3px;background:rgba(255,255,255,.06)}
+.progress-bar-fill{height:3px;background:linear-gradient(90deg,var(--gold),var(--ice));transition:width .5s ease;width:0%}
+.layout{display:flex;padding-top:var(--nav-h)}
+.main{margin-left:var(--sidebar-w);flex:1;padding:30px 30px 70px;max-width:100%}
+@media(max-width:900px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0);box-shadow:8px 0 32px rgba(0,0,0,.45)}.main{margin-left:0}}
+.panel{display:none;animation:fade .35s ease}
+.panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.m-header{background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:var(--radius);padding:30px 32px;color:#fff;margin-bottom:22px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.m-header::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 85% 20%,rgba(201,168,76,.18),transparent 60%)}
+.m-header .tag{display:inline-block;background:rgba(201,168,76,.22);border:1px solid rgba(201,168,76,.4);color:var(--gold);font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:4px 12px;border-radius:999px;margin-bottom:12px}
+.m-header h1{font-size:30px;font-weight:700;margin-bottom:6px;position:relative}
+.m-header p{opacity:.82;font-size:14.5px;max-width:760px;position:relative}
+.meta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;position:relative}
+.meta-chip{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:6px 12px;font-size:12px;display:flex;gap:6px;align-items:center}
+.card{background:var(--white);border-radius:var(--radius);padding:22px 24px;margin-bottom:18px;box-shadow:var(--shadow);border:1px solid rgba(107,143,168,.1)}
+.card h2{font-size:21px;margin-bottom:10px;color:var(--accent)}
+.card h3{font-size:16.5px;margin:14px 0 8px;color:var(--accent)}
+.card p{margin-bottom:10px;font-size:14.5px}
+.card ul,.card ol{margin:8px 0 8px 22px;font-size:14.5px}
+.card li{margin-bottom:5px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:800px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+.box{border-radius:12px;padding:16px 18px;border:1px solid}
+.box-green{background:var(--green-bg);border-color:rgba(30,102,65,.25)}
+.box-blue{background:rgba(107,143,168,.08);border-color:rgba(107,143,168,.28)}
+.box-red{background:var(--red-bg);border-color:rgba(180,50,50,.25)}
+.box-amber{background:var(--amber-bg);border-color:rgba(180,130,0,.28)}
+.box-purple{background:var(--purple-bg);border-color:rgba(124,58,237,.25)}
+.box-gold{background:var(--gold-bg);border-color:rgba(201,168,76,.35)}
+.box h4{font-size:13.5px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:700}
+.box-green h4{color:var(--green)}.box-blue h4{color:var(--accent2)}.box-red h4{color:var(--red)}.box-amber h4{color:var(--amber)}.box-purple h4{color:var(--purple)}.box-gold h4{color:#8a6d1f}
+.box p,.box li{font-size:13.5px}
+.tag-pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;margin:2px 3px 2px 0}
+.pill-green{background:var(--green-bg);color:var(--green)}
+.pill-blue{background:rgba(107,143,168,.15);color:var(--accent2)}
+.pill-red{background:var(--red-bg);color:var(--red)}
+.pill-amber{background:var(--amber-bg);color:var(--amber)}
+.pill-purple{background:var(--purple-bg);color:var(--purple)}
+.acc{border:1px solid rgba(107,143,168,.2);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.acc-h{padding:13px 16px;background:#f6f8fa;cursor:pointer;font-weight:700;font-size:14px;display:flex;justify-content:space-between;align-items:center;color:var(--accent)}
+.acc-h:hover{background:#eef2f5}
+.acc-b{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.acc-b-in{padding:14px 16px;font-size:14px}
+.acc.open .acc-b{max-height:3000px}
+.acc-h .arrow{transition:.3s}
+.acc.open .arrow{transform:rotate(180deg)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0}
+th,td{border:1px solid rgba(107,143,168,.22);padding:8px 10px;text-align:left}
+th{background:var(--accent);color:#fff;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+tr:nth-child(even){background:#f7f9fb}
+.tbl-wrap{overflow-x:auto}
+.timeline{border-left:3px solid var(--gold);margin-left:10px;padding-left:20px}
+.tl-item{position:relative;padding-bottom:18px}
+.tl-item::before{content:'';position:absolute;left:-25px;top:3px;width:11px;height:11px;border-radius:50%;background:var(--gold);border:2px solid #fff;box-shadow:0 0 0 2px var(--gold)}
+.quote{background:#f6f8fa;border-left:4px solid var(--steel);padding:10px 14px;border-radius:0 8px 8px 0;font-style:italic;font-size:14px;margin:8px 0}
+.btn{display:inline-flex;align-items:center;gap:7px;background:var(--accent);color:#fff;border:none;padding:10px 20px;border-radius:9px;font-size:13.5px;font-weight:700;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--accent2)}
+.btn-gold{background:var(--gold);color:#22190a}
+.btn-gold:hover{background:#d9bc63}
+.btn-outline{background:transparent;border:1.5px solid var(--accent);color:var(--accent)}
+.btn-outline:hover{background:rgba(26,58,92,.06)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.q-block{border:1px solid rgba(107,143,168,.22);border-radius:12px;padding:16px 18px;margin-bottom:14px;background:#fbfcfd}
+.q-block .qtext{font-weight:700;font-size:14.5px;margin-bottom:10px;color:var(--ink)}
+.q-opt{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1.5px solid rgba(107,143,168,.25);border-radius:9px;margin-bottom:7px;cursor:pointer;font-size:13.8px;transition:.15s}
+.q-opt:hover{background:rgba(107,143,168,.06)}
+.q-opt.sel{border-color:var(--accent2);background:rgba(107,143,168,.1)}
+.q-opt.correct{border-color:var(--green);background:var(--green-bg)}
+.q-opt.wrong{border-color:var(--red);background:var(--red-bg)}
+.q-opt input{accent-color:var(--accent)}
+.q-fb{display:none;font-size:13px;padding:9px 12px;border-radius:8px;margin-top:6px}
+.q-fb.show{display:block}
+.q-fb.ok{background:var(--green-bg);color:var(--green)}
+.q-fb.bad{background:var(--red-bg);color:var(--red)}
+.score-banner{border-radius:12px;padding:18px 20px;margin:14px 0;text-align:center;font-weight:700;font-size:16px}
+.score-pass{background:var(--green-bg);color:var(--green);border:1.5px solid rgba(30,102,65,.3)}
+.score-fail{background:var(--red-bg);color:var(--red);border:1.5px solid rgba(180,50,50,.3)}
+.lock-note{background:var(--gold-bg);border:1px solid rgba(201,168,76,.35);border-radius:10px;padding:11px 15px;font-size:13px;color:#8a6d1f;margin-top:10px}
+.next-unlock{background:var(--green-bg);border:1px solid rgba(30,102,65,.3);border-radius:10px;padding:12px 15px;font-size:13.5px;color:var(--green);margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.disclaimer{background:#fbeeee;border:1px solid rgba(180,50,50,.28);border-radius:12px;padding:16px 18px;font-size:13px;color:#5c1f1f}
+.progress-ring{width:64px;height:64px;flex-shrink:0}
+.chklist{list-style:none;margin:10px 0}
+.chklist li{padding:9px 12px;background:#f6f8fa;border-radius:8px;margin-bottom:7px;font-size:14px;display:flex;gap:9px}
+.chklist li b{color:var(--accent)}
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(10,18,28,.7);z-index:500;align-items:center;justify-content:center;padding:20px}
+.modal-ov.show{display:flex}
+.modal-box{background:#fff;border-radius:14px;padding:24px;max-width:520px;text-align:center}
+footer.src{font-size:12px;color:var(--slate);text-align:center;padding:22px 0 40px}
+.legend-dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px}
+.mini-note{font-size:12px;color:var(--slate);font-style:italic;margin-top:6px}
+b,strong{color:var(--accent)}
+.hl{background:linear-gradient(180deg,transparent 62%,rgba(201,168,76,.45) 62%);font-weight:700;padding:0 2px}
+.hl-red{background:linear-gradient(180deg,transparent 62%,rgba(180,50,50,.28) 62%);font-weight:700;padding:0 2px;color:var(--red)}
+.hl-green{background:linear-gradient(180deg,transparent 62%,rgba(30,102,65,.28) 62%);font-weight:700;padding:0 2px;color:var(--green)}
+.m-header{background-image:radial-gradient(circle at 85% 20%,rgba(201,168,76,.18),transparent 60%),url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><circle cx="2" cy="2" r="1.6" fill="rgba(255,255,255,0.06)"/></svg>'),linear-gradient(135deg,var(--accent),var(--accent2));background-repeat:no-repeat,repeat,no-repeat}
+.m-icon{position:absolute;top:22px;right:28px;width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:30px;backdrop-filter:blur(4px)}
+.card{position:relative;transition:transform .2s ease,box-shadow .2s ease}
+.card:hover{box-shadow:0 12px 34px rgba(15,25,35,.15)}
+.card h2{display:flex;align-items:center;gap:10px}
+.card h2 .h-ico{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.box{box-shadow:0 3px 10px rgba(15,25,35,.05)}
+.box:hover{box-shadow:0 6px 16px rgba(15,25,35,.09)}
+.imgcard{border-radius:14px;overflow:hidden;position:relative;margin-bottom:14px;box-shadow:var(--shadow)}
+.imgcard img{width:100%;display:block;height:180px;object-fit:cover}
+.imgcard .cap{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,rgba(10,18,28,.88),transparent);color:#fff;padding:14px 16px 10px;font-size:13px;font-weight:700}
+.acc-h{background:linear-gradient(90deg,#f6f8fa,#eef2f6)}
+.acc.open .acc-h{background:linear-gradient(90deg,var(--gold-bg),#f6f8fa);border-left:3px solid var(--gold)}
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+  <div class="brand"><div class="seal">⚖️</div>FUNDAMENTOS DE ELEGIBILIDAD <span>&nbsp;E&nbsp;</span>INADMISIBILIDAD</div>
+  <div class="topnav-right">
+    <div class="topnav-pill">TMLF Learning Center</div>
+  </div>
+</nav>
+<div class="progress-bar-wrap"><div class="progress-bar-fill" id="globalProgress"></div></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sh-label">TMLF Academy · DVS / Intake / Ventas</div>
+      <div class="sh-title">Fundamentos de Elegibilidad e Inadmisibilidad</div>
+    </div>
+    <div class="sidenav" id="sidenav">
+      <div class="sn-group">General</div>
+      <div class="sn-item" data-target="inicio" onclick="showPanel('inicio')"><span class="ico">🏠</span>Inicio</div>
+      <div class="sn-item" data-target="instrucciones" onclick="showPanel('instrucciones')"><span class="ico">ℹ️</span>Instrucciones</div>
+      <div class="sn-item" data-target="ruta" onclick="showPanel('ruta')"><span class="ico">🗺️</span>Ruta de aprendizaje</div>
+      <div class="sn-group">Módulos</div>
+      <div class="sn-item" data-target="mod1" onclick="showPanel('mod1')"><span class="ico">1</span>Elegibilidad vs. Admisibilidad</div>
+      <div class="sn-item" data-target="mod2" onclick="showPanel('mod2')"><span class="ico">2</span>Fundamentos de Admisibilidad</div>
+      <div class="sn-item" data-target="mod3" onclick="showPanel('mod3')"><span class="ico">3</span>Health Grounds</div>
+      <div class="sn-item" data-target="mod4" onclick="showPanel('mod4')"><span class="ico">4</span>Criminal Grounds</div>
+      <div class="sn-item" data-target="mod5" onclick="showPanel('mod5')"><span class="ico">5</span>Security Grounds</div>
+      <div class="sn-item" data-target="mod6" onclick="showPanel('mod6')"><span class="ico">6</span>Public Charge</div>
+      <div class="sn-item" data-target="mod7" onclick="showPanel('mod7')"><span class="ico">7</span>Employment-Based</div>
+      <div class="sn-item" data-target="mod8" onclick="showPanel('mod8')"><span class="ico">8</span>Fraud &amp; Misrepresentation</div>
+      <div class="sn-item" data-target="mod9" onclick="showPanel('mod9')"><span class="ico">9</span>False Claim to Citizenship</div>
+      <div class="sn-item" data-target="mod10" onclick="showPanel('mod10')"><span class="ico">10</span>Unlawful Presence &amp; Removals</div>
+      <div class="sn-item" data-target="mod11" onclick="showPanel('mod11')"><span class="ico">11</span>Excepciones, Waivers y Discreción</div>
+      <div class="sn-group">Cierre</div>
+      <div class="sn-item" data-target="evaluacion" onclick="showPanel('evaluacion')"><span class="ico">📝</span>Evaluación final</div>
+      <div class="sn-item" data-target="practica" onclick="showPanel('practica')"><span class="ico">🎯</span>Componente práctico</div>
+      <div class="sn-item" data-target="fuentes" onclick="showPanel('fuentes')"><span class="ico">📚</span>Fuentes y disclaimer</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- PANEL INICIO -->
+    <div class="panel active" id="panel-inicio">
+      <div class="m-header">
+        <div class="tag">TMLF Learning Center · DVS / Intake / Ventas</div>
+        <div class="m-icon">🏛️</div>
+        <h1>Fundamentos de Elegibilidad e Inadmisibilidad</h1>
+        <p>Identificación inicial de requisitos, causales, red flags y posibles vías de alivio migratorio.</p>
+        <div class="meta-row">
+          
+          <div class="meta-chip">🎓 Nivel Básico–Intermedio</div>
+          <div class="meta-chip">💻 Virtual o híbrida</div>
+          <div class="meta-chip">🏅 Aprobatorio: 85%</div>
+          <div class="meta-chip">🗓 v1.0 · 2026</div>
+        </div>
+      </div>
+      <div class="imgcard">
+        <svg viewBox="0 0 800 180" style="width:100%;height:180px;display:block" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="bgg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a3a5c"/><stop offset="1" stop-color="#0d1e2e"/></linearGradient></defs>
+          <rect width="800" height="180" fill="url(#bgg)"/>
+          <circle cx="700" cy="40" r="90" fill="rgba(201,168,76,.10)"/>
+          <circle cx="60" cy="160" r="60" fill="rgba(139,184,216,.08)"/>
+          <g transform="translate(120,40)" fill="none" stroke="#c9a84c" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="60" y1="0" x2="60" y2="90"/>
+            <line x1="10" y1="20" x2="110" y2="20"/>
+            <circle cx="25" cy="45" r="18"/>
+            <circle cx="95" cy="45" r="18"/>
+            <line x1="60" y1="90" x2="60" y2="105"/>
+            <line x1="30" y1="105" x2="90" y2="105"/>
+          </g>
+          <g transform="translate(330,35)" fill="rgba(255,255,255,.92)">
+            <rect x="0" y="0" width="70" height="95" rx="6" fill="#eef1f5"/>
+            <rect x="10" y="14" width="50" height="6" rx="3" fill="#6b8fa8"/>
+            <rect x="10" y="28" width="35" height="6" rx="3" fill="#8db8d8"/>
+            <circle cx="46" cy="60" r="14" fill="#c9a84c"/>
+            <path d="M40 60 l4 5 l9 -11" stroke="#0d1e2e" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </g>
+          <g transform="translate(460,45)" fill="rgba(255,255,255,.85)" font-family="Cormorant Garamond, serif">
+            <text x="0" y="20" font-size="26" fill="#fff" font-weight="700">TMLF Learning Center</text>
+            <text x="0" y="46" font-size="14" fill="#c9a84c">DVS · Intake · Ventas</text>
+          </g>
+        </svg>
+      </div>
+      <div class="card">
+        <h2><span class="h-ico">📖</span>Bienvenida</h2>
+        <p>Este training te da las bases para distinguir tres niveles de análisis en cada caso que revisas: <b>elegibilidad</b>, <b>admisibilidad</b> y <b>viabilidad/escalación legal</b>. No te convierte en abogado ni te pide serlo — te entrena para <span class="hl">detectar, documentar, profundizar y escalar</span> con criterio.</p>
+        <div class="box box-gold">
+          <h4>Idea central</h4>
+          <p style="font-size:16px;font-style:italic">"La elegibilidad abre la puerta. La admisibilidad determina si la persona puede entrar."</p>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Público objetivo</h2>
+        <div class="grid3">
+          <div class="box box-blue"><p>DVS · Agentes evaluadores</p></div>
+          <div class="box box-blue"><p>Personal de Intake</p></div>
+          <div class="box box-blue"><p>Ventas</p></div>
+          <div class="box box-blue"><p>Colaboradores con análisis migratorio preliminar</p></div>
+          <div class="box box-blue"><p>Personal sin formación jurídica previa</p></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Glosario rápido</h2>
+        <div class="tbl-wrap"><table>
+          <tr><th>Español</th><th>English</th></tr>
+          <tr><td>Elegibilidad</td><td>Eligibility</td></tr>
+          <tr><td>Admisibilidad</td><td>Admissibility</td></tr>
+          <tr><td>Causal de inadmisibilidad</td><td>Ground of Inadmissibility</td></tr>
+          <tr><td>Perdón</td><td>Waiver</td></tr>
+          <tr><td>Carga de la prueba</td><td>Burden of Proof</td></tr>
+          <tr><td>Estándar de prueba</td><td>Standard of Proof</td></tr>
+          <tr><td>Falsa representación</td><td>Misrepresentation</td></tr>
+          <tr><td>Falsa afirmación de ciudadanía</td><td>False Claim to U.S. Citizenship</td></tr>
+          <tr><td>Presencia ilegal</td><td>Unlawful Presence</td></tr>
+          <tr><td>Remoción previa</td><td>Prior Removal</td></tr>
+          <tr><td>Contrabando de extranjeros</td><td>Alien Smuggling</td></tr>
+          <tr><td>Entrada sin inspección</td><td>EWI, Entry Without Inspection</td></tr>
+        </table></div>
+      </div>
+      <button class="btn btn-gold" onclick="showPanel('instrucciones')">Comenzar → Instrucciones</button>
+    </div>
+
+    <!-- PANEL INSTRUCCIONES -->
+    <div class="panel" id="panel-instrucciones">
+      <div class="m-header">
+        <div class="tag">Antes de empezar</div>
+        <div class="m-icon">ℹ️</div>
+        <h1>Instrucciones del training</h1>
+        <p>Cómo navegar, cómo se desbloquean los módulos y qué se espera de ti.</p>
+      </div>
+      <div class="card">
+        <h2>Cómo funciona</h2>
+        <ol>
+          <li>Los módulos se desbloquean en orden. Debes completar la actividad de cada módulo (mínimo 70% de aciertos) para avanzar al siguiente.</li>
+          <li>Tu progreso se guarda automáticamente en este navegador (localStorage). Puedes cerrar y regresar sin perder avance.</li>
+          <li>Al terminar los 11 módulos se desbloquea la <b>Evaluación final</b> (25 preguntas, 85% mínimo para aprobar).</li>
+          <li>El <b>Componente práctico</b> y la sección de <b>Fuentes</b> están disponibles en todo momento.</li>
+          <li>Puedes reintentar cualquier actividad o la evaluación final las veces que necesites.</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h2>Reglas de oro para este puesto</h2>
+        <div class="grid2">
+          <div class="box box-green"><h4>✔ Sí debes</h4><ul>
+            <li>Preguntar, documentar y profundizar.</li>
+            <li>Detectar posibles red flags.</li>
+            <li>Escalar al equipo legal cuando corresponda.</li>
+          </ul></div>
+          <div class="box box-red"><h4>✘ No debes</h4><ul>
+            <li>Prometer una aprobación.</li>
+            <li>Decidir tú mismo que alguien es inadmisible.</li>
+            <li>Emitir conclusiones legales con una sola frase del cliente.</li>
+          </ul></div>
+        </div>
+      </div>
+      <div class="lock-note">💡 Ser elegible no significa que el caso será aprobado. Identificar una causal no significa automáticamente que el caso esté perdido. Una excepción no es lo mismo que un waiver.</div>
+      <button class="btn btn-gold" style="margin-top:16px" onclick="showPanel('ruta')">Continuar → Ruta de aprendizaje</button>
+    </div>
+
+    <!-- PANEL RUTA -->
+    <div class="panel" id="panel-ruta">
+      <div class="m-header">
+        <div class="tag">Mapa del training</div>
+        <div class="m-icon">🗺️</div>
+        <h1>Ruta de aprendizaje</h1>
+        <p>11 módulos + evaluación final + componente práctico.</p>
+      </div>
+      <div class="card">
+        <h2>Resultados de aprendizaje</h2>
+        <ol>
+          <li>Definir elegibilidad y admisibilidad.</li>
+          <li>Diferenciar ambos conceptos.</li>
+          <li>Identificar cuándo debe analizarse INA §212(a).</li>
+          <li>Reconocer las principales categorías de inadmisibilidad.</li>
+          <li>Detectar expresiones del cliente que funcionan como red flags.</li>
+          <li>Realizar preguntas de seguimiento sin formular conclusiones legales.</li>
+          <li>Diferenciar excepción, waiver y discreción.</li>
+          <li>Explicar burden of proof y standard of proof.</li>
+          <li>Distinguir rejection, RFE, NOID y denial.</li>
+          <li>Reconocer la diferencia entre fraude y false claim to U.S. citizenship.</li>
+          <li>Identificar posibles problemas de presencia ilegal, remociones y reingresos.</li>
+          <li>Clasificar información como elegibilidad, admisibilidad o red flag.</li>
+          <li>Preparar información suficiente para escalar un caso al equipo legal.</li>
+          <li>Evitar promesas, inferencias y determinaciones jurídicas fuera de su función.</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h2>Progreso general</h2>
+        <div class="progress-section" id="rutaProgressWrap">
+          <div id="rutaModList"></div>
+        </div>
+      </div>
+      <button class="btn btn-gold" onclick="showPanel('mod1')">Ir al Módulo 1</button>
+    </div>
+    <!-- MÓDULO 1 -->
+    <div class="panel" id="panel-mod1">
+      <div class="m-header">
+        <div class="tag">Módulo 1 de 11</div>
+        <div class="m-icon">⚖️</div>
+        <h1>Elegibilidad vs. Admisibilidad</h1>
+        <p>Objetivo: definir elegibilidad y admisibilidad, diferenciarlas y entender el orden del análisis.</p>
+        <div class="meta-row"><div class="meta-chip">🎓 Básico</div></div>
+      </div>
+
+      <div class="card">
+        <div class="acc open"><div class="acc-h" onclick="toggleAcc(this)">¿Qué es la elegibilidad? <span class="arrow">▾</span></div>
+          <div class="acc-b"><div class="acc-b-in">
+            <p>La elegibilidad responde: <b>"¿La ley permite que esta persona solicite este beneficio?"</b> Es verificar si el solicitante cumple los requisitos específicos del beneficio migratorio que busca, según la INA, sus reglamentos y el USCIS Policy Manual.</p>
+            <div class="box box-green"><h4>Ejemplos de elegibilidad</h4><ul>
+              <li>¿Existe una relación familiar válida para una petición I-130?</li>
+              <li>¿La víctima cooperó con las autoridades para una Visa U?</li>
+              <li>¿El matrimonio es de buena fe para una Green Card por matrimonio?</li>
+              <li>¿Cumple los años de residencia para naturalizarse?</li>
+              <li>¿Existe un familiar calificado para un I-601?</li>
+            </ul></div>
+          </div></div>
+        </div>
+        <div class="acc"><div class="acc-h" onclick="toggleAcc(this)">¿Qué es la admisibilidad? <span class="arrow">▾</span></div>
+          <div class="acc-b"><div class="acc-b-in">
+            <p>La admisibilidad responde: <b>"Aunque pueda solicitarlo, ¿existe algo en su historial que pueda impedir que lo obtenga?"</b> Base legal principal: <b>INA §212(a)</b>.</p>
+          </div></div>
+        </div>
+        <div class="box box-gold"><h4>Idea central</h4><p style="font-size:15.5px;font-style:italic">"La elegibilidad abre la puerta. La admisibilidad determina si la persona puede entrar."</p></div>
+      </div>
+
+      <div class="card">
+        <h2>Comparación introductoria por categoría</h2>
+        <p class="mini-note">Esta comparación es introductoria y no sustituye el análisis legal individual de cada caso.</p>
+        <div class="tbl-wrap"><table>
+          <tr><th>Categoría</th><th>Requisito clave de elegibilidad</th></tr>
+          <tr><td><b>VAWA</b></td><td>Ser cónyuge/hijo(a)/padre-madre de ciudadano o residente; haber sufrido abuso físico o crueldad extrema; matrimonio de buena fe (si aplica).</td></tr>
+          <tr><td><b>Visa U</b></td><td>Víctima de un delito calificado; haber sufrido abuso sustancial; poseer información sobre el delito; colaboración con autoridades.</td></tr>
+          <tr><td><b>Visa T</b></td><td>Víctima de trata de personas; presencia física en EE.UU. como consecuencia de la trata; cooperación razonable; dificultad extrema si es removido.</td></tr>
+          <tr><td><b>Visa K-1</b></td><td>Peticionario ciudadano; intención real de casarse; matrimonio dentro de 90 días; se conocieron en los últimos 2 años (salvo excepciones).</td></tr>
+          <tr><td><b>Regular AOS</b></td><td>Presencia física; inspección/admisión o parole; petición aprobada o concurrente; visa disponible.</td></tr>
+          <tr><td><b>Parole in Place</b></td><td>Familiar inmediato de militar activo, reservista o veterano elegible; presencia física; discreción favorable de USCIS.</td></tr>
+        </table></div>
+      </div>
+
+      <div class="card" id="m1-activity">
+        <h2>Actividad: ¿Elegibilidad, admisibilidad o ninguna?</h2>
+        <p class="mini-note">Clasifica cada frase. Necesitas 70% o más para desbloquear el Módulo 2.</p>
+        <div id="quiz-m1"></div>
+        <button class="btn btn-gold" onclick="gradeQuiz('m1')">Verificar respuestas</button>
+        <div id="result-m1"></div>
+      </div>
+    </div>
+    <!-- MÓDULO 2 -->
+    <div class="panel" id="panel-mod2">
+      <div class="m-header">
+        <div class="tag">Módulo 2 de 11</div>
+        <div class="m-icon">🔍</div>
+        <h1>Fundamentos de la Admisibilidad</h1>
+        <p>Objetivo: comprender qué significa ser admisible, distinguir elegibilidad de admisibilidad y entender cuándo aplica INA §212(a).</p>
+        <div class="meta-row"><div class="meta-chip">🎓 Básico</div></div>
+      </div>
+      <div class="card">
+        <div class="acc open"><div class="acc-h" onclick="toggleAcc(this)">Definición jurídica <span class="arrow">▾</span></div>
+          <div class="acc-b"><div class="acc-b-in">
+            <p>La admisibilidad es la condición jurídica mediante la cual un extranjero demuestra que no está sujeto a ninguna de las causales de inadmisibilidad de la <b>INA §212(a)</b>. Puede aplicar al ingreso a EE.UU., ajuste de estatus, residencia permanente u otros beneficios que la requieran.</p>
+            <p>No todos los beneficios migratorios requieren demostrar admisibilidad, y no debe asumirse que todas las causales aplican a todos los procesos por igual. El solicitante debe demostrar que no está sujeto a una causal o que existe una excepción, waiver u otra forma de alivio.</p>
+          </div></div>
+        </div>
+        <div class="acc"><div class="acc-h" onclick="toggleAcc(this)">Grupos generales de INA §212(a) <span class="arrow">▾</span></div>
+          <div class="acc-b"><div class="acc-b-in">
+            <div class="grid3">
+              <div class="box box-red"><p>🩺 Salud</p></div>
+              <div class="box box-red"><p>⚖️ Conducta criminal</p></div>
+              <div class="box box-red"><p>🛡️ Seguridad</p></div>
+              <div class="box box-red"><p>🎭 Fraude y conductas migratorias</p></div>
+              <div class="box box-red"><p>💰 Causales económicas</p></div>
+              <div class="box box-red"><p>📅 Presencia ilegal y remociones</p></div>
+            </div>
+            <p class="mini-note">El Congreso estableció estas causales para proteger salud pública, seguridad nacional, integridad del sistema migratorio, prevención del fraude, cumplimiento de las leyes migratorias, protección del mercado laboral y seguridad económica del país.</p>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Si escuchas esto… piensa en…</h2>
+        <p class="mini-note">Clasificación preliminar únicamente. Cada frase requiere preguntas adicionales — no es una conclusión legal.</p>
+        <div class="tbl-wrap"><table>
+          <tr><th>Frase del cliente</th><th>Piensa en…</th></tr>
+          <tr><td>"Tengo tuberculosis."</td><td><span class="tag-pill pill-red">Salud</span></td></tr>
+          <tr><td>"Me arrestaron."</td><td><span class="tag-pill pill-red">Criminal</span></td></tr>
+          <tr><td>"Mentí para sacar la visa."</td><td><span class="tag-pill pill-amber">Fraude</span></td></tr>
+          <tr><td>"Usé papeles de otra persona."</td><td><span class="tag-pill pill-amber">Fraude / False Claim</span></td></tr>
+          <tr><td>"Me deportaron."</td><td><span class="tag-pill pill-blue">Prior Removal</span></td></tr>
+          <tr><td>"Entré dos veces."</td><td><span class="tag-pill pill-blue">Unlawful Presence</span></td></tr>
+          <tr><td>"Trabajé con un Social."</td><td><span class="tag-pill pill-amber">Posible fraude, falsa ciudadanía o empleo no autorizado (depende de los hechos)</span></td></tr>
+          <tr><td>"Crucé con un coyote."</td><td><span class="tag-pill pill-red">Alien Smuggling (solo si participó en facilitar el ingreso de <u>otra</u> persona)</span></td></tr>
+          <tr><td>"Tengo una orden de corte."</td><td><span class="tag-pill pill-blue">Remoción / procedimientos migratorios</span></td></tr>
+          <tr><td>"Tengo un castigo de diez años."</td><td><span class="tag-pill pill-blue">Presencia ilegal</span></td></tr>
+        </table></div>
+        <div class="box box-amber"><h4>⚠️ Cuidado con "crucé con un coyote"</h4><p>No clasifiques automáticamente esta frase como alien smuggling. Pagar a un coyote para el propio ingreso <b>no significa</b> necesariamente haber facilitado el ingreso de otra persona. Se requiere investigar participación, ayuda, conocimiento y hechos específicos.</p></div>
+      </div>
+
+      <div class="card">
+        <h2>Burden of Proof y Standard of Proof</h2>
+        <div class="grid2">
+          <div class="box box-purple"><h4>Burden of Proof (carga de la prueba)</h4><p>Recae en el solicitante. Debe demostrar elegibilidad, admisibilidad, los hechos alegados, y la aplicación de una excepción o los requisitos de un waiver, cuando corresponda. USCIS no está obligado a buscar pruebas a favor del solicitante.</p></div>
+          <div class="box box-purple"><h4>Standard of Proof (estándar de prueba)</h4><p>Generalmente, preponderancia de la evidencia: <b>"más probable que no."</b> Este es el estándar usual, aunque no aplica de forma universal a absolutamente todos los contextos.</p></div>
+        </div>
+      </div>
+
+      <div class="card" id="m2-activity">
+        <h2>Actividad: "Si escuchas esto… ¿en qué piensas?"</h2>
+        <p class="mini-note">Necesitas 70% o más para desbloquear el Módulo 3.</p>
+        <div id="quiz-m2"></div>
+        <button class="btn btn-gold" onclick="gradeQuiz('m2')">Verificar respuestas</button>
+        <div id="result-m2"></div>
+      </div>
+    </div>
+    <!-- MÓDULO 3 -->
+    <div class="panel" id="panel-mod3">
+      <div class="m-header">
+        <div class="tag">Módulo 3 de 11</div>
+        <div class="m-icon">🩺</div>
+        <h1>Health Grounds</h1>
+        <p>Base legal: INA §212(a)(1). Identificar condiciones de salud que pueden generar inadmisibilidad y las excepciones disponibles.</p>
+        <div class="meta-row"></div>
+      </div>
+      <div class="card">
+        <div class="grid2">
+          <div class="acc open" style="grid-column:1/-1"><div class="acc-h" onclick="toggleAcc(this)">1. Enfermedades transmisibles de importancia para la salud pública <span class="arrow">▾</span></div>
+            <div class="acc-b"><div class="acc-b-in"><ul><li>Tuberculosis activa</li><li>Gonorrea</li><li>Lepra infecciosa</li><li>Sífilis infecciosa en fase activa</li><li>Otras enfermedades designadas por el CDC</li></ul>
+            <div class="box box-green"><h4>Excepciones</h4><ul><li>La enfermedad fue tratada y ya no es contagiosa.</li><li>No representa una amenaza actual para la salud pública.</li></ul></div></div></div>
+          </div>
+          <div class="acc" style="grid-column:1/-1"><div class="acc-h" onclick="toggleAcc(this)">2. Falta de vacunación requerida <span class="arrow">▾</span></div>
+            <div class="acc-b"><div class="acc-b-in"><p>No haber recibido las vacunas requeridas por los CDC según la edad del solicitante (MMR, polio, Tdap, Hib, Hepatitis B, varicela, influenza, neumococo, Hepatitis A, COVID-19, entre otras).</p>
+            <div class="box box-green"><h4>Excepciones</h4><p>Exención médica, religiosa (creencias sinceras) o por objeción de conciencia.</p></div></div></div>
+          </div>
+          <div class="acc" style="grid-column:1/-1"><div class="acc-h" onclick="toggleAcc(this)">3. Trastorno físico o mental con conducta perjudicial <span class="arrow">▾</span></div>
+            <div class="acc-b"><div class="acc-b-in"><p>Trastorno mental o físico asociado a conducta actual o pasada que representa riesgo, incluyendo conducta violenta o destructiva, autolesión, o decisiones irracionales que ponen en riesgo a otros. USCIS evalúa si existe una amenaza real y actual.</p></div></div>
+          </div>
+          <div class="acc" style="grid-column:1/-1"><div class="acc-h" onclick="toggleAcc(this)">4. Drogadicción o abuso de sustancias <span class="arrow">▾</span></div>
+            <div class="acc-b"><div class="acc-b-in"><p>La adicción o abuso de sustancias hace inadmisible a la persona, con excepción de una adicción o dependencia leve o remota de 30 gramos o menos de marihuana — no aplica a otras drogas.</p></div></div>
+          </div>
+        </div>
+        <div class="box box-blue" style="margin-top:14px"><h4>Lo que debe preguntar el DVS</h4><ul>
+          <li>¿Existe diagnóstico médico?</li><li>¿La condición está activa?</li><li>¿Recibió tratamiento?</li><li>¿Tiene registros médicos?</li>
+          <li>¿Existe conducta perjudicial asociada?</li><li>¿Cuándo ocurrió?</li><li>¿Se encuentra controlada?</li><li>¿Cuenta con vacunas o exención?</li>
+        </ul></div>
+        <div class="box box-red"><h4>Qué no debe concluir</h4><p>No presentar listas médicas como diagnósticos automáticos. Un dato aislado de salud no constituye por sí solo una causal confirmada.</p></div>
+      </div>
+      <div class="card" id="m3-activity">
+        <h2>Actividad: mini casos de salud</h2>
+        <div id="quiz-m3"></div>
+        <button class="btn btn-gold" onclick="gradeQuiz('m3')">Verificar respuestas</button>
+        <div id="result-m3"></div>
+      </div>
+    </div>
+
+    <!-- MÓDULO 4 -->
+    <div class="panel" id="panel-mod4">
+      <div class="m-header">
+        <div class="tag">Módulo 4 de 11</div>
+        <div class="m-icon">🚔</div>
+        <h1>Criminal Grounds</h1>
+        <p>Base legal: INA §212(a)(2). Causales relacionadas con conducta criminal.</p>
+        <div class="meta-row"></div>
+      </div>
+      <div class="card">
+        <h2>Las 8 causales principales</h2>
+        <div class="grid2">
+          <div class="box box-red"><h4>1. CIMT</h4><p>Crimes Involving Moral Turpitude — delitos inherentemente inmorales, viles o contrarios a lo moralmente aceptable. Ej.: robo, fraude, lesiones con intención, violencia doméstica.</p></div>
+          <div class="box box-red"><h4>2. Sustancias controladas</h4><p>Posesión, uso o distribución de drogas ilícitas (excepto 30g o menos de marihuana).</p></div>
+          <div class="box box-red"><h4>3. Múltiples convicciones</h4><p>Dos o más condenas por delitos cometidos el mismo día, con sentencia conjunta de 5 años o más en total.</p></div>
+          <div class="box box-red"><h4>4. Prostitución y actos comerciales relacionados</h4><p>Participar, solicitar, inducir, promover o facilitar actos sexuales comerciales.</p></div>
+          <div class="box box-red"><h4>5. Tráfico ilícito y contrabando</h4><p>Importación/exportación ilícita de bienes, sustancias o dinero.</p></div>
+          <div class="box box-red"><h4>6. Lavado de dinero</h4><p>Transacciones diseñadas para ocultar el origen ilícito de fondos.</p></div>
+          <div class="box box-red"><h4>7. Falsa representación y fraude criminal</h4><p>Fraude o engaño intencional para obtener dinero, propiedad o un beneficio.</p></div>
+          <div class="box box-red"><h4>8. Alcoholismo/adicción actual con conducta relevante</h4><p>Conducta relacionada con abuso de alcohol o sustancias que causa daño o pone en riesgo a otros.</p></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="box box-amber"><h4>⚠️ No asumas automáticamente</h4><p>Un arresto no equivale automáticamente a una condena. DUI/DWI, theft o burglary no siempre generan inadmisibilidad — depende del estatuto, elementos del delito, disposición y sentencia. Se requieren documentos certificados del tribunal.</p></div>
+        <h3>Línea de análisis</h3>
+        <div class="timeline">
+          <div class="tl-item"><b>Arresto</b> → no es condena</div>
+          <div class="tl-item"><b>Cargo</b> → acusación formal</div>
+          <div class="tl-item"><b>Disposición</b> → cómo terminó el caso</div>
+          <div class="tl-item"><b>Condena</b> → declaración de culpabilidad</div>
+          <div class="tl-item"><b>Sentencia</b> → pena impuesta</div>
+          <div class="tl-item"><b>Estatuto aplicable</b> → ley específica violada</div>
+          <div class="tl-item"><b>Revisión legal</b> → análisis del equipo legal</div>
+        </div>
+      </div>
+      <div class="card" id="m4-activity">
+        <h2>Actividad: caso práctico criminal</h2>
+        <div id="quiz-m4"></div>
+        <button class="btn btn-gold" onclick="gradeQuiz('m4')">Verificar respuestas</button>
+        <div id="result-m4"></div>
+      </div>
+    </div>
+
+    <!-- MÓDULO 5 -->
+    <div class="panel" id="panel-mod5">
+      <div class="m-header">
+        <div class="tag">Módulo 5 de 11</div>
+        <div class="m-icon">🛡️</div>
+        <h1>Security Grounds</h1>
+        <p>Base legal: INA §212(a)(3). Causales de alto riesgo relacionadas con seguridad nacional.</p>
+        <div class="meta-row"></div>
+      </div>
+      <div class="card">
+        <div class="grid3">
+          <div class="box box-red"><h4>Actividades terroristas</h4></div>
+          <div class="box box-red"><h4>Espionaje</h4></div>
+          <div class="box box-red"><h4>Sabotaje</h4></div>
+          <div class="box box-red"><h4>Genocidio</h4></div>
+          <div class="box box-red"><h4>Tortura o ejecuciones extrajudiciales</h4></div>
+          <div class="box box-red"><h4>Apoyo material a actividades peligrosas</h4></div>
+        </div>
+        <div class="box box-amber" style="margin-top:14px"><h4>Importante</h4><ul>
+          <li>Son causales de alto riesgo.</li><li>Los waivers son muy limitados.</li>
+          <li>Debe escalarse inmediatamente.</li><li>No se debe confrontar, acusar ni emitir conclusiones durante Intake.</li>
+        </ul></div>
+      </div>
+      <div class="card" id="m5-activity">
+        <h2>Actividad: ¿esto requiere escalación inmediata?</h2>
+        <div id="quiz-m5"></div>
+        <button class="btn btn-gold" onclick="gradeQuiz('m5')">Verificar respuestas</button>
+        <div id="result-m5"></div>
+      </div>
+    </div>
+
+    <!-- MÓDULO 6 -->
+    <div class="panel" id="panel-mod6">
+      <div class="m-header">
+        <div class="tag">Módulo 6 de 11</div>
+        <div class="m-icon">💰</div>
+        <h1>Public Charge</h1>
+        <p>Base legal: INA §212(a)(4). Análisis de Totalidad de Circunstancias.</p>
+        <div class="meta-row"></div>
+      </div>
+      <div class="card">
+        <h2>Totality of Circumstances</h2>
+        <div class="grid3">
+          <div class="box box-blue"><h4>Edad</h4><p>Edad del solicitante y de miembros de familia.</p></div>
+          <div class="box box-blue"><h4>Salud</h4><p>Condiciones físicas/mentales, discapacidades, necesidad de cuidado médico.</p></div>
+          <div class="box box-blue"><h4>Situación familiar</h4><p>Estado civil, miembros del hogar, responsabilidades de cuidado.</p></div>
+          <div class="box box-blue"><h4>Recursos y finanzas</h4><p>Ingresos, activos, patrocinio económico, financiamiento disponible.</p></div>
+          <div class="box box-blue"><h4>Educación y habilidades</h4><p>Nivel educativo, experiencia laboral, capacidad de mantenerse.</p></div>
+        </div>
+        <div class="box box-amber" style="margin-top:14px"><h4>⚠️ No asumas</h4><p>La aplicación de Public Charge depende del beneficio, la categoría y la normativa vigente. No asumas que aplica a todos los casos — por ejemplo, solicitantes de asilo, refugiados, VAWA, SIJS, T Visa, U Visa y ciertos casos especiales suelen tener trato distinto.</p></div>
+      </div>
+      <div class="card" id="m6-activity">
+        <h2>Actividad: análisis de totalidad de circunstancias</h2>
+        <div id="quiz-m6"></div>
+        <button class="btn btn-gold" onclick="gradeQuiz('m6')">Verificar respuestas</button>
+        <div id="result-m6"></div>
+      </div>
+    </div>
+    <!-- MÓDULO 7 -->
+    <div class="panel" id="panel-mod7">
+      <div class="m-header">
+        <div class="tag">Módulo 7 de 11</div>
+        <div class="m-icon">💼</div>
+        <h1>Employment-Based Grounds</h1>
+        <p>Base legal: INA §212(a)(5). Protección del mercado laboral estadounidense.</p>
+        <div class="meta-row"></div>
+      </div>
+      <div class="card">
+        <p>Aplica principalmente a visas de inmigrante basadas en empleo (EB); no aplica a visas de no inmigrante como H-1B. Protege a los trabajadores de EE.UU. evitando que se otorguen empleos sin certificación laboral ni en violación de sus condiciones.</p>
+        <h2>Proceso de certificación laboral (PERM)</h2>
+        <div class="timeline">
+          <div class="tl-item"><b>1. Reclutamiento</b> — el empleador hace esfuerzos de buena fe por contratar a trabajadores de EE.UU.</div>
+          <div class="tl-item"><b>2. Solicitud PERM</b> — el empleador solicita la certificación laboral al Department of Labor.</div>
+          <div class="tl-item"><b>3. Determinación del DOL</b> — el DOL determina si no hay trabajadores calificados disponibles.</div>
+          <div class="tl-item"><b>4. Petición I-140</b> — con la certificación aprobada, el empleador presenta la petición ante USCIS.</div>
+          <div class="tl-item"><b>5. Ajuste o visa inmigrante</b> — el beneficiario puede ajustar estatus (I-485) o solicitar la visa en el consulado.</div>
+        </div>
+        <div class="box box-amber"><h4>⚠️ No confundir</h4><p>Trabajar sin autorización no debe confundirse automáticamente con la causal de certificación laboral de INA §212(a)(5).</p></div>
+      </div>
+      <div class="card" id="m7-activity">
+        <h2>Actividad: ordena correctamente el proceso PERM</h2>
+        <div id="quiz-m7"></div>
+        <button class="btn btn-gold" onclick="gradeQuiz('m7')">Verificar respuestas</button>
+        <div id="result-m7"></div>
+      </div>
+    </div>
+
+    <!-- MÓDULO 8 -->
+    <div class="panel" id="panel-mod8">
+      <div class="m-header">
+        <div class="tag">Módulo 8 de 11</div>
+        <div class="m-icon">🎭</div>
+        <h1>Fraud and Misrepresentation</h1>
+        <p>Base legal: INA §212(a)(6)(C)(i).</p>
+        <div class="meta-row"></div>
+      </div>
+      <div class="card">
+        <h2>Los 5 elementos</h2>
+        <div class="grid3">
+          <div class="box box-amber"><h4>1. Representación</h4><p>El solicitante hizo una declaración, escribió algo o actuó de cierta manera para comunicar un hecho.</p></div>
+          <div class="box box-amber"><h4>2. Falsa</h4><p>La representación era falsa o incorrecta.</p></div>
+          <div class="box box-amber"><h4>3. Voluntaria (willful)</h4><p>La falsedad fue intencional; la persona sabía la verdad y aun así la ocultó o mintió.</p></div>
+          <div class="box box-amber"><h4>4. Material</h4><p>La información tenía la capacidad de influir en la decisión de USCIS.</p></div>
+          <div class="box box-amber"><h4>5. Para obtener un beneficio migratorio</h4><p>La representación falsa fue hecha para obtener o intentar obtener un beneficio bajo la ley migratoria.</p></div>
+        </div>
+        <div class="box box-red" style="margin-top:14px"><h4>❗ No toda información incorrecta es fraude</h4><p>Errores honestos, malentendidos, información incorrecta proporcionada por un tercero (siempre que el solicitante haya sido honesto al responder), no recordar una fecha exacta, o cambios posteriores a la solicitud, no constituyen fraude por sí solos.</p></div>
+        <div class="box box-blue"><h4>Carga de la prueba</h4><p>USCIS tiene la carga de probar cada elemento por preponderancia de la evidencia.</p></div>
+      </div>
+      <div class="card" id="m8-activity">
+        <h2>Actividad: ¿qué elemento falta?</h2>
+        <div id="quiz-m8"></div>
+        <button class="btn btn-gold" onclick="gradeQuiz('m8')">Verificar respuestas</button>
+        <div id="result-m8"></div>
+      </div>
+    </div>
+
+    <!-- MÓDULO 9 -->
+    <div class="panel" id="panel-mod9">
+      <div class="m-header">
+        <div class="tag">Módulo 9 de 11</div>
+        <div class="m-icon">🇺🇸</div>
+        <h1>False Claim to U.S. Citizenship</h1>
+        <p>Base legal: INA §212(a)(6)(C)(ii).</p>
+        <div class="meta-row"></div>
+      </div>
+      <div class="card">
+        <p>Ocurre cuando un extranjero, por cualquier medio o propósito, afirma falsamente ser ciudadano estadounidense para obtener o intentar obtener un beneficio bajo la ley federal de inmigración. <b>No importa si el beneficio fue aprobado o no</b> — la simple afirmación falsa es suficiente.</p>
+        <h3>Ejemplos</h3>
+        <ul>
+          <li>Marcar "Sí" a la pregunta de ciudadanía en un formulario de USCIS (I-9, I-485).</li>
+          <li>Decirle a un oficial de inmigración o de aerolínea que eres ciudadano.</li>
+          <li>Usar un pasaporte o tarjeta de pasaporte de EE.UU. que no te pertenece.</li>
+          <li>Presentar una licencia o identificación estatal que indica "U.S. Citizen" sin serlo.</li>
+        </ul>
+        <div class="box box-amber"><h4>⚠️ No asumas automáticamente</h4><p>No afirmes que cualquier uso de un número de Seguro Social constituye automáticamente false claim; depende de los hechos específicos.</p></div>
+        <h3>Fraud/Misrepresentation vs. False Claim to Citizenship</h3>
+        <div class="tbl-wrap"><table>
+          <tr><th></th><th>Fraud / Misrepresentation</th><th>False Claim to Citizenship</th></tr>
+          <tr><td>Base legal</td><td>INA §212(a)(6)(C)(i)</td><td>INA §212(a)(6)(C)(ii)</td></tr>
+          <tr><td>Conducta</td><td>Mentira material para obtener beneficio</td><td>Afirmar falsamente ser ciudadano de EE.UU.</td></tr>
+          <tr><td>Intención</td><td>Requiere intención de engañar (willful)</td><td>Basta con la afirmación falsa</td></tr>
+          <tr><td>Waiver</td><td>Puede aplicarse I-601 por dificultad extrema a familiar calificado</td><td>No hay waiver general; solo I-601 en casos muy limitados</td></tr>
+        </table></div>
+        <div class="box box-green"><h4>Excepciones (cuándo no aplica)</h4><ul>
+          <li>Menores de 18 años al momento de la afirmación, sin haber obtenido beneficio.</li>
+          <li>Falta de conocimiento de que la afirmación era falsa (error honesto sobre su estatus).</li>
+          <li>No obtuvo ni intentó obtener ningún beneficio migratorio como resultado.</li>
+          <li>Malentendido de idioma, sin intención de afirmar ciudadanía.</li>
+        </ul></div>
+      </div>
+      <div class="card" id="m9-activity">
+        <h2>Actividad: fraude, false claim, empleo no autorizado o información insuficiente</h2>
+        <div id="quiz-m9"></div>
+        <button class="btn btn-gold" onclick="gradeQuiz('m9')">Verificar respuestas</button>
+        <div id="result-m9"></div>
+      </div>
+    </div>
+    <!-- MÓDULO 10 -->
+    <div class="panel" id="panel-mod10">
+      <div class="m-header">
+        <div class="tag">Módulo 10 de 11</div>
+        <div class="m-icon">📅</div>
+        <h1>Unlawful Presence, Removals y Reentradas</h1>
+        <p>Presencia ilegal, barras, remociones y reingresos.</p>
+        <div class="meta-row"></div>
+      </div>
+      <div class="card">
+        <h2>Barras por presencia ilegal</h2>
+        <div class="grid3">
+          <div class="box box-amber"><h4>Barra de 3 años</h4><p>Más de 180 días pero menos de 1 año de presencia ilegal en una sola estadía, seguida de salida y solicitud de regreso dentro de los 3 años.</p></div>
+          <div class="box box-red"><h4>Barra de 10 años</h4><p>1 año o más de presencia ilegal en una sola estadía, seguida de salida o remoción y solicitud de regreso dentro de los 10 años.</p></div>
+          <div class="box box-red"><h4>Inadmisibilidad permanente</h4><p>Más de 1 año de presencia ilegal (en una o varias estadías), salida, y reingreso o intento de reingreso sin admisión ni parole. Normalmente requiere permanecer 10 años fuera antes de solicitar el I-212, salvo excepción aplicable.</p></div>
+        </div>
+        <div class="box box-blue" style="margin-top:14px"><h4>Advance Parole — Matter of Arrabally and Yerrabelly (BIA 2012)</h4><p>Cuando una persona sale de EE.UU. usando un Advance Parole válido, esa salida generalmente <b>no activa</b> las barras de 3 o 10 años, conforme a este precedente, en los alcances descritos en el material.</p></div>
+        <div class="box box-amber"><h4>⚠️ No calcules con frases generales</h4><p>No calcules una barra únicamente con frases generales del cliente. Se requiere reconstruir la cronología completa: fechas de entrada, forma de entrada, salidas, remociones, reingresos, uso de parole y documentos.</p></div>
+      </div>
+      <div class="card">
+        <h2>Conceptos clave</h2>
+        <div class="tbl-wrap"><table>
+          <tr><th>Concepto</th><th>Significado</th></tr>
+          <tr><td>EWI</td><td>Entry Without Inspection — entrada sin inspección.</td></tr>
+          <tr><td>Prior Removal</td><td>Remoción (deportación) anterior registrada.</td></tr>
+          <tr><td>I-212</td><td>Permiso para volver a solicitar admisión tras una remoción.</td></tr>
+        </table></div>
+      </div>
+      <div class="card" id="m10-activity">
+        <h2>Actividad: reconstruir la cronología migratoria</h2>
+        <p class="mini-note">Identifica qué dato falta o qué debe preguntarse antes de sacar una conclusión.</p>
+        <div id="quiz-m10"></div>
+        <button class="btn btn-gold" onclick="gradeQuiz('m10')">Verificar respuestas</button>
+        <div id="result-m10"></div>
+      </div>
+    </div>
+
+    <!-- MÓDULO 11 -->
+    <div class="panel" id="panel-mod11">
+      <div class="m-header">
+        <div class="tag">Módulo 11 de 11</div>
+        <div class="m-icon">📜</div>
+        <h1>Excepciones, Waivers y Discreción</h1>
+        <p>Y el proceso de revisión de USCIS: solicitud → RFE/NOID → aprobación o denial.</p>
+        <div class="meta-row"></div>
+      </div>
+      <div class="card">
+        <h2>Excepción vs. Waiver vs. Discreción</h2>
+        <div class="tbl-wrap"><table>
+          <tr><th></th><th>Excepción</th><th>Waiver (perdón)</th><th>Discreción</th></tr>
+          <tr><td>¿Existe la causal?</td><td>No aplica</td><td>Sí existe</td><td>Puede existir o no</td></tr>
+          <tr><td>¿Se presenta formulario?</td><td>Generalmente no</td><td>Sí (I-601, I-601A, I-212…)</td><td>No — parte de la decisión del oficial</td></tr>
+          <tr><td>¿Quién la concede?</td><td>La propia ley</td><td>USCIS / autoridad competente</td><td>USCIS</td></tr>
+          <tr><td>¿Es automática?</td><td>Sí, si se cumplen requisitos legales</td><td>No, debe solicitarse y aprobarse</td><td>No, decisión caso por caso</td></tr>
+          <tr><td>Ejemplo</td><td>Autopeticionario VAWA exento de Public Charge</td><td>Solicitante con fraude pide un I-601</td><td>Oficial evalúa factores antes de aprobar un beneficio discrecional</td></tr>
+        </table></div>
+      </div>
+      <div class="card">
+        <h2>Formularios de waiver</h2>
+        <div class="grid4">
+          <div class="box box-blue"><h4>I-601</h4><p>Waiver of Grounds of Inadmissibility — perdona la mayoría de causales temporales y permanentes.</p></div>
+          <div class="box box-blue"><h4>I-601A</h4><p>Provisional Unlawful Presence Waiver — perdona presencia ilegal de más de 180 días y menos de 1 año; se solicita desde EE.UU. antes de la entrevista consular.</p></div>
+          <div class="box box-blue"><h4>I-212</h4><p>Permission to Reapply After Removal.</p></div>
+          <div class="box box-blue"><h4>I-192</h4><p>Waiver para determinados no inmigrantes.</p></div>
+        </div>
+        <div class="box box-amber" style="margin-top:14px"><h4>⚠️ No todas las causales tienen waiver</h4><p>El formulario aplicable depende de la causal y el beneficio. Presentar un formulario no garantiza aprobación. El equipo legal debe analizar familiares calificados, hardship, nexo, discreción y evidencia.</p></div>
+      </div>
+      <div class="card">
+        <h2>Proceso de revisión de USCIS</h2>
+        <div class="timeline">
+          <div class="tl-item"><b>1. Solicitud</b> — se presenta el paquete a USCIS.</div>
+          <div class="tl-item"><b>2. Revisión inicial</b> — ¿está completa? Firmas, pago, formularios, documentos.</div>
+          <div class="tl-item"><b>3. Rejection</b> (si no) — USCIS devuelve el paquete sin estudiarlo; no es una decisión de fondo.</div>
+          <div class="tl-item"><b>4. Análisis</b> — USCIS revisa la solicitud y la evidencia.</div>
+          <div class="tl-item"><b>5. ¿Evidencia suficiente?</b></div>
+          <div class="tl-item"><b>6. RFE</b> (Request for Evidence) — si falta evidencia, el caso sigue abierto y debe responderse en plazo.</div>
+          <div class="tl-item"><b>7. NOID</b> (Notice of Intent to Deny) — la evidencia actual podría llevar a negación; hay oportunidad de responder.</div>
+          <div class="tl-item"><b>8. Aprobación</b> — beneficio otorgado.</div>
+          <div class="tl-item"><b>9. Denial</b> — USCIS evaluó el caso y lo negó.</div>
+          <div class="tl-item"><b>10. Motion / Appeal</b> — disponible según el tipo de caso y la autoridad competente.</div>
+        </div>
+        <div class="grid2" style="margin-top:12px">
+          <div class="box box-red"><h4>Rejection</h4><p>No representa una decisión sobre el fondo. Puede deberse a firmas, pago, formulario desactualizado o documentación incompleta.</p></div>
+          <div class="box box-purple"><h4>RFE</h4><p>Solicitud de evidencia adicional. El caso sigue abierto.</p></div>
+          <div class="box box-purple"><h4>NOID</h4><p>USCIS considera que la evidencia puede llevar a negación, pero concede oportunidad de responder.</p></div>
+          <div class="box box-red"><h4>Denial</h4><p>USCIS evaluó el caso completo y decidió que no cumple los requisitos legales.</p></div>
+        </div>
+      </div>
+      <div class="card" id="m11-activity">
+        <h2>Actividad: clasifica cada escenario</h2>
+        <p class="mini-note">Excepción · posible waiver · discreción · sin información suficiente · escalación legal inmediata.</p>
+        <div id="quiz-m11"></div>
+        <button class="btn btn-gold" onclick="gradeQuiz('m11')">Verificar respuestas</button>
+        <div id="result-m11"></div>
+      </div>
+    </div>
+    <!-- EVALUACIÓN FINAL -->
+    <div class="panel" id="panel-evaluacion">
+      <div class="m-header">
+        <div class="tag">Cierre del training</div>
+        <div class="m-icon">📝</div>
+        <h1>Evaluación final</h1>
+        <p>25 preguntas distribuidas entre todos los módulos. Puntaje mínimo aprobatorio: 85%.</p>
+        <div class="meta-row"><div class="meta-chip">📝 25 reactivos</div><div class="meta-chip">🏅 85% mínimo</div><div class="meta-chip">🔁 Reintentos ilimitados</div></div>
+      </div>
+      <div class="imgcard">
+        <svg viewBox="0 0 800 150" style="width:100%;height:150px;display:block" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="bgg2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0d1e2e"/><stop offset="1" stop-color="#2e5c8a"/></linearGradient></defs>
+          <rect width="800" height="150" fill="url(#bgg2)"/>
+          <g transform="translate(340,25)" fill="#c9a84c">
+            <circle cx="50" cy="50" r="42" fill="none" stroke="#c9a84c" stroke-width="4"/>
+            <path d="M32 50 l13 13 l25 -27" fill="none" stroke="#c9a84c" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="30" y1="98" x2="20" y2="120" stroke="#c9a84c" stroke-width="4"/>
+            <line x1="70" y1="98" x2="80" y2="120" stroke="#c9a84c" stroke-width="4"/>
+          </g>
+        </svg>
+      </div>
+      <div id="examLocked" class="card" style="display:none">
+        <div class="lock-note">🔒 Debes completar los 11 módulos para desbloquear la evaluación final.</div>
+      </div>
+      <div id="examOpen" class="card" style="display:block">
+        <p class="mini-note">No se muestran las respuestas correctas antes de enviar. Puedes reintentar cuantas veces sea necesario.</p>
+        <div id="quiz-final"></div>
+        <button class="btn btn-gold" onclick="gradeFinal()">Enviar evaluación</button>
+        <div id="result-final"></div>
+      </div>
+    </div>
+
+    <!-- COMPONENTE PRÁCTICO -->
+    <div class="panel" id="panel-practica">
+      <div class="m-header">
+        <div class="tag">70% práctico</div>
+        <div class="m-icon">🎯</div>
+        <h1>Componente práctico</h1>
+        <p>Cuatro prácticas guiadas para aplicar lo aprendido a casos reales de intake.</p>
+      </div>
+
+      <div class="card">
+        <h2>Las 10 preguntas antes de ofrecer un servicio</h2>
+        <ul class="chklist">
+          <li><b>1.</b> ¿Cómo entró a Estados Unidos: visa, parole, inspección o EWI?</li>
+          <li><b>2.</b> ¿Cuántas veces ha entrado y salido?</li>
+          <li><b>3.</b> ¿Alguna vez fue detenido, deportado o tuvo proceso en Corte de Inmigración?</li>
+          <li><b>4.</b> ¿Ha usado otro nombre, documentos falsos o un número de Seguro Social que no le pertenecía?</li>
+          <li><b>5.</b> ¿Tiene arrestos, cargos, condenas o sentencias?</li>
+          <li><b>6.</b> ¿Con quién tiene relación familiar y cuál es el estatus de esa persona?</li>
+          <li><b>7.</b> ¿Ha sido víctima de violencia, abuso, trata o algún delito?</li>
+          <li><b>8.</b> ¿Cuál es su objetivo migratorio?</li>
+          <li><b>9.</b> ¿Ha presentado solicitudes anteriormente o tiene casos pendientes o negados?</li>
+          <li><b>10.</b> ¿Qué documentos puede proporcionar para respaldar su historia?</li>
+        </ul>
+        <button class="btn btn-outline" onclick="copyChecklist()">📋 Copiar checklist</button>
+      </div>
+
+      <div class="card">
+        <h2>Práctica 1 — Detección de red flags</h2>
+        <p>Revisa estas notas reales de Intake y clasifica cada dato: elegibilidad, admisibilidad o red flag.</p>
+        <div id="quiz-p1"></div>
+        <button class="btn btn-gold" onclick="gradeQuiz('p1')">Verificar respuestas</button>
+        <div id="result-p1"></div>
+      </div>
+
+      <div class="card">
+        <h2>Práctica 2 — Cronología migratoria</h2>
+        <p>Organiza correctamente el orden en que deben registrarse los eventos migratorios de un cliente.</p>
+        <div id="quiz-p2"></div>
+        <button class="btn btn-gold" onclick="gradeQuiz('p2')">Verificar respuestas</button>
+        <div id="result-p2"></div>
+      </div>
+
+      <div class="card">
+        <h2>Práctica 3 — Caso integrador</h2>
+        <div class="quote">Cliente: entró sin inspección en 2003, salió en 2008, regresó con documentos de otra persona. Está casado con una ciudadana y tiene un hijo ciudadano de 18 años. Fue arrestado por theft (cargo desestimado). Trabajó usando un Seguro Social ajeno. No recuerda si afirmó ser ciudadano en un formulario de empleo. Presentó una solicitud migratoria anterior. Recibió una orden de corte. No tiene copia de sus documentos. Fue víctima de violencia doméstica y nunca reportó el abuso. Desea obtener residencia.</div>
+        <div class="acc"><div class="acc-h" onclick="toggleAcc(this)">Ver preguntas guía y respuesta modelo <span class="arrow">▾</span></div>
+          <div class="acc-b"><div class="acc-b-in">
+            <ol>
+              <li><b>¿Qué posible beneficio debe investigarse?</b> Posible VAWA (por el matrimonio y la violencia doméstica no reportada) y/o ajuste vía familiar ciudadano — requiere análisis legal.</li>
+              <li><b>¿Qué posibles causales deben revisarse?</b> Presencia ilegal/reingreso, posible fraude o false claim (uso de documentos/Social ajeno), antecedente criminal (cargo desestimado — verificar disposición certificada).</li>
+              <li><b>¿Qué información falta?</b> Fechas exactas de entrada/salida/reingreso, documentos certificados del arresto, detalles del posible uso de "U.S. Citizen" en el formulario de empleo, estatus de la solicitud anterior.</li>
+              <li><b>¿Qué documentos pediría?</b> Registros de entrada/salida, disposición certificada del tribunal, copia de la solicitud anterior, evidencia de la relación y del abuso.</li>
+              <li><b>¿Qué debe escalarse?</b> Todo el caso al equipo legal — hay múltiples posibles causales cruzadas con posible vía humanitaria (VAWA).</li>
+              <li><b>¿Qué no puede prometerse?</b> Que el caso será aprobado, que no aplicará ninguna causal, o que el problema criminal "no cuenta" porque el cargo fue desestimado.</li>
+            </ol>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Práctica 4 — Simulación de Intake</h2>
+        <p>Guion para el trainer: cliente mayor de 37 años, lenguaje sencillo, escolaridad básica, respuestas desorganizadas, confunde arresto con condena, no recuerda fechas exactas, tuvo varias entradas, usó un número de Seguro Social, menciona un posible beneficio humanitario, y presenta contradicciones que el participante debe aclarar sin sacar conclusiones legales.</p>
+        <h3>Rúbrica de evaluación</h3>
+        <div class="grid3">
+          <div class="box box-blue"><p>Claridad</p></div><div class="box box-blue"><p>Empatía</p></div><div class="box box-blue"><p>Preguntas abiertas</p></div>
+          <div class="box box-blue"><p>Cronología</p></div><div class="box box-blue"><p>Detección de riesgos</p></div><div class="box box-blue"><p>Ausencia de inferencias</p></div>
+          <div class="box box-blue"><p>Documentación</p></div><div class="box box-blue"><p>Escalación</p></div><div class="box box-blue"><p>Manejo de expectativas</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FUENTES -->
+    <div class="panel" id="panel-fuentes">
+      <div class="m-header">
+        <div class="tag">Cierre</div>
+        <div class="m-icon">📚</div>
+        <h1>Fuentes y disclaimer</h1>
+      </div>
+      <div class="card">
+        <h2>Fuentes consultadas</h2>
+        <ul>
+          <li>Immigration and Nationality Act (INA), §212(a).</li>
+          <li>USCIS Policy Manual, Volumen 8 (Admissibility).</li>
+          <li>Material interno "Fundamentos de Elegibilidad y Admisibilidad" — TMLF.</li>
+          <li>Formularios I-601, I-601A, I-192 e I-212.</li>
+          <li>Matter of Arrabally and Yerrabelly (BIA 2012), conforme al alcance descrito en el material.</li>
+          <li><a href="https://www.uscis.gov/policy-manual/volume-8-part-b-chapter-2" target="_blank">www.uscis.gov/policy-manual/volume-8-part-b-chapter-2</a></li>
+          <li><a href="https://www.uscis.gov/laws-and-policy/legislation/immigration-and-nationality-act" target="_blank">www.uscis.gov/laws-and-policy/legislation/immigration-and-nationality-act</a></li>
+          <li><a href="https://www.uscis.gov/es/residencia-permanente-tarjeta-verde/categorias-de-elegibilidad-a-la-residencia-permanente" target="_blank">uscis.gov — Categorías de elegibilidad a la residencia permanente</a></li>
+        </ul>
+      </div>
+      <div class="card disclaimer">
+        <h2 style="color:#5c1f1f">Disclaimer</h2>
+        <p>Este training tiene fines educativos y operativos. No constituye asesoría legal ni sustituye la revisión individual del caso por un abogado. La aplicación de una causal, excepción o waiver depende de los hechos, del beneficio solicitado y de la ley vigente.</p>
+      </div>
+      <div class="card">
+        <h2>Reinicio de progreso</h2>
+        <p class="mini-note">Esto borra tu avance guardado en este navegador (módulos completados y resultado de la evaluación).</p>
+        <button class="btn btn-outline" onclick="resetProgress()">🔄 Reiniciar progreso</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+/* ═══════════════ QUIZ BANK ═══════════════ */
+const QUIZBANK = {
+m1:[
+ {q:'"Está comprometido con un ciudadano estadounidense."',opts:['Elegibilidad','Admisibilidad','Ninguna'],c:0,exp:'Requisito de elegibilidad para Visa K-1.'},
+ {q:'"Fue víctima de un delito calificado."',opts:['Elegibilidad','Admisibilidad','Ninguna'],c:0,exp:'Requisito de elegibilidad para Visa U.'},
+ {q:'"Tiene una orden de deportación."',opts:['Elegibilidad','Admisibilidad','Ninguna'],c:1,exp:'Se relaciona con una posible causal de inadmisibilidad (remoción previa).'},
+ {q:'"Utilizó documentos de otra persona."',opts:['Elegibilidad','Admisibilidad','Ninguna'],c:1,exp:'Posible fraude/false claim — tema de admisibilidad.'},
+ {q:'"Su esposo es residente permanente."',opts:['Elegibilidad','Admisibilidad','Ninguna'],c:0,exp:'Relación familiar: dato de elegibilidad.'},
+ {q:'"Tiene tuberculosis activa."',opts:['Elegibilidad','Admisibilidad','Ninguna'],c:1,exp:'Health ground — tema de admisibilidad.'},
+ {q:'"Tiene un hijo ciudadano de 21 años."',opts:['Elegibilidad','Admisibilidad','Ninguna'],c:0,exp:'Relación familiar calificada — elegibilidad para ciertos beneficios.'},
+ {q:'"Le gusta el clima de Texas."',opts:['Elegibilidad','Admisibilidad','Ninguna'],c:2,exp:'No aporta información legal relevante.'},
+],
+m2:[
+ {q:'"Tengo tuberculosis."',opts:['Salud','Criminal','Fraude','Presencia ilegal'],c:0,exp:'Health grounds — INA §212(a)(1).'},
+ {q:'"Me arrestaron."',opts:['Salud','Criminal','Fraude','Presencia ilegal'],c:1,exp:'Posible criminal ground — requiere disposición certificada.'},
+ {q:'"Mentí para sacar la visa."',opts:['Salud','Criminal','Fraude/Misrepresentation','Presencia ilegal'],c:2,exp:'Posible fraude/misrepresentation — INA §212(a)(6)(C)(i).'},
+ {q:'"Usé papeles de otra persona."',opts:['Salud','Fraude / False Claim','Seguridad','Public Charge'],c:1,exp:'Posible fraude o false claim, según los hechos.'},
+ {q:'"Me deportaron."',opts:['Prior Removal','Salud','Fraude','Empleo'],c:0,exp:'Antecedente de remoción previa.'},
+ {q:'"Entré dos veces."',opts:['Unlawful Presence','Salud','Seguridad','Empleo'],c:0,exp:'Posible tema de presencia ilegal / reingresos.'},
+ {q:'"Trabajé con un Social que no era mío."',opts:['Solo empleo, sin relevancia','Posible fraude, falsa ciudadanía o empleo no autorizado','Siempre es false claim','Siempre es alien smuggling'],c:1,exp:'Depende de los hechos específicos; requiere más preguntas.'},
+ {q:'"Crucé con un coyote."',opts:['Siempre es alien smuggling','Alien smuggling solo si ayudó a otra persona a entrar','Nunca es relevante','Siempre es presencia ilegal'],c:1,exp:'Pagar a un coyote para el propio ingreso no equivale automáticamente a facilitar el ingreso de otra persona.'},
+ {q:'"Tengo una orden de corte."',opts:['Remoción / procedimientos migratorios','Salud','Empleo','Public Charge'],c:0,exp:'Se relaciona con procedimientos de remoción.'},
+ {q:'"Tengo un castigo de diez años."',opts:['Presencia ilegal (barra de 10 años)','Salud','Empleo','Seguridad'],c:0,exp:'Referencia directa a la barra de 10 años por presencia ilegal.'},
+],
+m3:[
+ {q:'Cliente reporta tuberculosis diagnosticada hace 5 años, ya tratada y sin actividad actual. ¿Qué debe hacer el DVS?',opts:['Concluir que es inadmisible','Preguntar por registros médicos que confirmen que ya no es contagiosa','Decir que no hay problema','Ignorar el dato'],c:1,exp:'Debe documentarse el tratamiento y verificar que la condición ya no sea activa.'},
+ {q:'Cliente no tiene comprobante de vacunas requeridas. ¿Cuál es una vía posible?',opts:['No hay ninguna opción','Exención médica, religiosa o de conciencia','Automáticamente es inadmisible sin remedio','Debe mentir en el formulario'],c:1,exp:'Existen exenciones médicas, religiosas y de conciencia.'},
+ {q:'Cliente menciona "depresión" sin conducta peligrosa asociada. ¿Es esto automáticamente inadmisibilidad?',opts:['Sí, cualquier condición mental es inadmisible','No necesariamente — se requiere conducta perjudicial asociada','Sí, siempre','Es irrelevante'],c:1,exp:'No toda condición mental genera inadmisibilidad; se requiere conducta perjudicial asociada.'},
+ {q:'Cliente reporta adicción remota y leve a 20 gramos de marihuana, sin conducta de riesgo. ¿Aplica la excepción?',opts:['No, nunca hay excepción','Sí, existe una excepción específica para 30g o menos de marihuana','Solo si es ciudadano','Solo si tiene receta médica'],c:1,exp:'La excepción de 30g o menos de marihuana no aplica a otras sustancias.'},
+],
+m4:[
+ {q:'Cliente fue arrestado por DUI pero el caso fue desestimado sin condena. ¿Es esto automáticamente un CIMT?',opts:['Sí, todo DUI es CIMT','No, un arresto sin condena no equivale automáticamente a una causal','Sí, siempre genera inadmisibilidad','No es relevante revisarlo'],c:1,exp:'Se requieren documentos certificados de la disposición antes de cualquier conclusión.'},
+ {q:'¿Qué documento es indispensable para analizar un antecedente penal?',opts:['La palabra del cliente','Documentos certificados del tribunal','Una búsqueda en redes sociales','Ninguno, se puede asumir'],c:1,exp:'Se requieren documentos certificados del tribunal para el análisis legal.'},
+ {q:'Cliente reporta dos condenas por delitos cometidos el mismo día con sentencia total de 6 años. ¿Qué causal debe revisarse?',opts:['Public Charge','Múltiples convicciones (INA §212(a)(2))','Empleo','Salud'],c:1,exp:'Coincide con la causal de múltiples convicciones descrita en el material.'},
+ {q:'¿Qué significa "burglary" según el material?',opts:['Robo simple sin definición legal','Entrada ilegal a una estructura con intención de cometer delito; su definición depende de la ley estatal','Es sinónimo exacto de CIMT en todos los casos','Es un delito federal exclusivamente'],c:1,exp:'Definición conforme al material, dependiente de la ley estatal.'},
+],
+m5:[
+ {q:'Cliente menciona haber "ayudado con logística" a un grupo armado en su país de origen. ¿Qué debe hacer el DVS?',opts:['Ignorarlo, no es relevante','Escalar inmediatamente al equipo legal sin confrontar ni concluir','Decirle que está descalificado','Prometer que se resolverá con un waiver'],c:1,exp:'Security grounds son de alto riesgo; requieren escalación inmediata sin conclusiones en Intake.'},
+ {q:'¿Los waivers para causales de seguridad nacional son…?',opts:['Amplios y automáticos','Muy limitados o prácticamente inexistentes','Iguales a los de salud','Garantizados si hay abogado'],c:1,exp:'Conforme al material, los waivers de seguridad son muy limitados.'},
+ {q:'Cliente comenta que perteneció a una organización que el gobierno de su país considera "de oposición armada". ¿Qué acción es correcta?',opts:['Acusarlo directamente','Escalar de inmediato y documentar sin interpretar','Decirle que no calificará nunca','No anotar el dato'],c:1,exp:'Debe documentarse y escalar sin emitir juicios durante Intake.'},
+],
+m6:[
+ {q:'Cliente de 45 años, con ingresos estables y sin dependientes, solicita ajuste de estatus regular. ¿Qué factor pesa a favor?',opts:['Recursos y situación financiera estable','Su edad automáticamente lo descalifica','No aplica análisis de Public Charge nunca','Su nivel educativo es irrelevante'],c:0,exp:'Los recursos financieros son uno de los factores de la Totalidad de Circunstancias.'},
+ {q:'Cliente es solicitante de VAWA. ¿Aplica Public Charge de la misma forma que en un caso regular?',opts:['Sí, siempre igual','No necesariamente — ciertas categorías humanitarias reciben trato distinto','Nunca aplica ningún análisis','Solo aplica si el cliente es menor de edad'],c:1,exp:'La aplicación de Public Charge depende del beneficio y categoría solicitada.'},
+ {q:'¿Quién puede ser relevante para "cubrir" un posible riesgo de Public Charge?',opts:['Un patrocinador económico','Un vecino sin relación legal','Nadie, es automático','El abogado de la contraparte'],c:0,exp:'El patrocinio económico es uno de los factores considerados.'},
+],
+m7:[
+ {q:'Cliente trabajó varios años sin permiso de trabajo. ¿Esto es automáticamente la causal de INA §212(a)(5)?',opts:['Sí, siempre','No — esa causal se refiere a certificación laboral, no a trabajar sin autorización','Solo si es ciudadano','Es irrelevante para el caso'],c:1,exp:'No deben confundirse: trabajar sin autorización es un tema distinto a la certificación laboral (PERM).'},
+ {q:'¿A qué tipo de visas aplica principalmente INA §212(a)(5)?',opts:['Visas de no inmigrante como H-1B','Visas de inmigrante basadas en empleo (EB)','Visas de turista','A ninguna visa'],c:1,exp:'Aplica principalmente a las categorías EB (empleo), no a visas de no inmigrante.'},
+],
+m8:[
+ {q:'El solicitante marcó "No" en la pregunta de arrestos, aunque sí había sido arrestado. ¿Qué elemento del fraude se cumple con esta acción?',opts:['Representación','Voluntaria (willful)','Material','Ninguno'],c:0,exp:'Marcar "No" es el acto de representación — la falsedad/intención se analizan por separado.'},
+ {q:'El solicitante no recordaba una fecha exacta y la puso aproximada de buena fe. ¿Es esto fraude?',opts:['Sí, cualquier error es fraude','No, un error honesto no constituye fraude','Sí, siempre que USCIS lo note','Depende del país de origen'],c:1,exp:'Errores honestos o malentendidos no constituyen fraude.'},
+ {q:'Un preparador de documentos cometió un error al llenar el formulario sin que el cliente lo supiera. ¿Es esto fraude del cliente?',opts:['Sí, automáticamente','No, si el solicitante fue honesto al responder','Sí, siempre es responsabilidad del cliente','Es irrelevante analizarlo'],c:1,exp:'Información incorrecta de un tercero no es fraude si el solicitante fue honesto.'},
+],
+m9:[
+ {q:'Cliente marcó "U.S. Citizen" en un formulario I-9 sin serlo, para obtener empleo. ¿Qué es esto?',opts:['Fraude general','False Claim to U.S. Citizenship','Empleo no autorizado solamente','Nada relevante'],c:1,exp:'Afirmar falsamente ciudadanía para un beneficio (incluido empleo) es false claim.'},
+ {q:'Cliente de 16 años afirmó ser ciudadano por error, sin obtener ningún beneficio. ¿Aplica una excepción?',opts:['No, nunca hay excepción','Sí — menor de 18 años sin haber obtenido beneficio migratorio','Solo si tiene abogado','Solo si lo hizo dos veces'],c:1,exp:'Coincide con la excepción de menores de 18 años sin beneficio obtenido.'},
+ {q:'¿Existe un waiver general para false claim to citizenship?',opts:['Sí, amplio y automático','No, solo I-601 en casos muy limitados','Sí, igual que para presencia ilegal','No existe ningún alivio bajo ninguna circunstancia'],c:1,exp:'Conforme al material, no hay waiver general; solo alivio muy limitado.'},
+],
+m10:[
+ {q:'Cliente dice "entré dos veces" sin dar fechas. ¿Qué debe hacer el DVS antes de calcular una barra?',opts:['Calcular la barra de inmediato','Reconstruir la cronología completa con fechas y forma de cada entrada/salida','Asumir la barra de 10 años','Ignorar el dato'],c:1,exp:'No se debe calcular una barra sin la cronología completa.'},
+ {q:'Cliente salió de EE.UU. usando un Advance Parole válido. Según Matter of Arrabally and Yerrabelly, ¿qué ocurre generalmente con las barras?',opts:['Se activan automáticamente','Generalmente no se activan las barras de 3/10 años por esa salida','Se activa la barra permanente','Depende del clima político'],c:1,exp:'Conforme al precedente citado en el material.'},
+ {q:'Cliente acumuló más de un año de presencia ilegal, salió, y reingresó sin admisión ni parole. ¿Qué puede aplicar?',opts:['Nada, no pasa nada','Posible inadmisibilidad permanente','Solo la barra de 3 años','Automáticamente un waiver aprobado'],c:1,exp:'Este patrón corresponde a la inadmisibilidad permanente descrita en el material.'},
+],
+m11:[
+ {q:'Un autopeticionario de VAWA está exento del análisis de Public Charge. ¿Qué es esto?',opts:['Un waiver','Una excepción','Una discreción','Un error del sistema'],c:1,exp:'La ley establece que la causal no aplica — es una excepción.'},
+ {q:'Un solicitante con fraude migratorio presenta un I-601 para pedir perdón. ¿Qué es esto?',opts:['Una excepción','Un waiver','Una discreción pura','No aplica ninguna figura'],c:1,exp:'La causal existe, pero se solicita que sea perdonada — waiver.'},
+ {q:'Un oficial evalúa factores positivos y negativos antes de aprobar un beneficio que no es automático. ¿Qué es esto?',opts:['Excepción','Waiver','Discreción','Rejection'],c:2,exp:'Es una decisión discrecional caso por caso.'},
+ {q:'Cliente menciona posibles vínculos con actividades de seguridad nacional además de un tema de presencia ilegal. ¿Qué corresponde?',opts:['Solo revisar presencia ilegal','Escalación legal inmediata por el tema de seguridad','Aplicar un waiver estándar','Ignorar el dato de seguridad'],c:1,exp:'Los temas de seguridad requieren escalación inmediata, sin importar otros temas del caso.'},
+],
+p1:[
+ {q:'"PC has 2 USC adult children (the oldest one doesn\'t have PC\'s last name)"',opts:['Elegibilidad','Admisibilidad','Red Flag'],c:2,exp:'Inconsistencia en apellido — requiere aclarar antes de continuar.'},
+ {q:'"PC no previous immigration application."',opts:['Elegibilidad','Admisibilidad','Red Flag'],c:0,exp:'Dato relevante para el historial/elegibilidad del caso.'},
+ {q:'"PC arrived for the first time around 1997. EWI. No contact with immigration. Never left again."',opts:['Elegibilidad','Admisibilidad','Red Flag'],c:1,exp:'Forma de entrada (EWI) y permanencia — tema directo de admisibilidad.'},
+ {q:'"In around 14-15 years ago PC had a DUI."',opts:['Elegibilidad','Admisibilidad','Red Flag'],c:2,exp:'Falta información (disposición, condena) — requiere preguntas adicionales.'},
+ {q:'"PC: oldest son had drug problems in the past."',opts:['Elegibilidad','Admisibilidad','Red Flag'],c:2,exp:'Dato de un tercero que requiere contexto adicional antes de clasificar.'},
+ {q:'"SS to work. With his name."',opts:['Elegibilidad','Admisibilidad','Red Flag'],c:0,exp:'Trabajó con su propio nombre y Social — no indica un problema de fraude por sí solo.'},
+],
+p2:[
+ {q:'¿Qué debe registrarse primero al reconstruir una cronología migratoria?',opts:['La fecha y forma de la primera entrada','El objetivo migratorio actual','El nombre del abogado','El idioma del cliente'],c:0,exp:'La cronología inicia con la primera entrada documentada.'},
+ {q:'Después de registrar una salida, ¿qué dato es indispensable?',opts:['El clima de esa fecha','Si hubo remoción, retorno o intento de retorno','El color del pasaporte','Nada más es necesario'],c:1,exp:'Debe documentarse si hubo remoción o un nuevo intento de ingreso.'},
+ {q:'¿Por qué es importante registrar el uso de Advance Parole en la cronología?',opts:['No es importante','Porque puede afectar si se activan o no las barras de presencia ilegal','Solo por estética del expediente','Porque siempre bloquea el caso'],c:1,exp:'El uso de parole puede tener un efecto distinto sobre las barras, según el precedente citado en el material.'},
+],
+final:[
+ {q:'¿Qué pregunta responde la elegibilidad?',opts:['¿Existe algo que impida el ingreso?','¿La ley permite que esta persona solicite este beneficio?','¿Cuánto tiempo tomará el proceso?','¿El caso será aprobado?'],c:1,exp:'Definición central de elegibilidad.'},
+ {q:'¿Qué pregunta responde la admisibilidad?',opts:['¿La ley permite solicitar el beneficio?','¿Existe algo en el historial que pueda impedir obtenerlo?','¿Cuál es el costo del trámite?','¿El cliente tiene abogado?'],c:1,exp:'Definición central de admisibilidad.'},
+ {q:'La base legal principal de las causales de inadmisibilidad es:',opts:['INA §212(a)','INA §101(a)','8 CFR §1003','USCIS Form I-130'],c:0,exp:'INA §212(a) contiene las causales de inadmisibilidad.'},
+ {q:'¿Ser elegible garantiza que el caso será aprobado?',opts:['Sí, siempre','No — también debe analizarse la admisibilidad y otros factores','Solo si el abogado lo firma','Solo para VAWA'],c:1,exp:'La elegibilidad es solo un paso; también debe analizarse admisibilidad.'},
+ {q:'"Tengo tuberculosis activa" se relaciona principalmente con:',opts:['Health Grounds — INA §212(a)(1)','Criminal Grounds','Security Grounds','Public Charge'],c:0,exp:'Corresponde a causales de salud.'},
+ {q:'La excepción de 30 gramos o menos aplica específicamente a:',opts:['Cualquier sustancia controlada','Únicamente marihuana','Alcohol','Medicamentos con receta'],c:1,exp:'La excepción del material aplica solo a marihuana.'},
+ {q:'Un arresto sin condena…',opts:['Siempre genera inadmisibilidad','No equivale automáticamente a una causal confirmada','Es lo mismo que una condena','Debe ignorarse siempre'],c:1,exp:'Se requiere disposición certificada antes de concluir.'},
+ {q:'¿Qué significa CIMT?',opts:['Crimes Involving Moral Turpitude','Certified Immigration Migration Test','Criminal Inadmissibility Migration Threshold','Ninguna de las anteriores'],c:0,exp:'Delitos que involucran depravación moral.'},
+ {q:'Las causales de Security Grounds generalmente tienen:',opts:['Waivers amplios','Waivers muy limitados o inexistentes','El mismo tratamiento que Health Grounds','Aprobación automática con abogado'],c:1,exp:'Conforme al material, son de alto riesgo y con perdones muy limitados.'},
+ {q:'Public Charge se evalúa mediante:',opts:['Un solo factor financiero','La Totalidad de Circunstancias','Solo la edad del solicitante','Solo el nivel educativo'],c:1,exp:'USCIS evalúa la totalidad de circunstancias, no un solo factor.'},
+ {q:'INA §212(a)(5) se relaciona principalmente con:',opts:['Salud pública','Certificación laboral / mercado laboral','Seguridad nacional','Presencia ilegal'],c:1,exp:'Employment-based grounds — protección del mercado laboral.'},
+ {q:'Los 5 elementos del fraude/misrepresentation incluyen representación, falsa, voluntaria, material y…',opts:['Para obtener un beneficio migratorio','Para viajar internacionalmente','Para obtener empleo exclusivamente','Para pagar menos impuestos'],c:0,exp:'El quinto elemento es que sea para obtener un beneficio bajo la ley migratoria.'},
+ {q:'Un error honesto o malentendido…',opts:['Siempre es fraude','No constituye fraude por sí solo','Es lo mismo que un false claim','Debe reportarse como delito'],c:1,exp:'Conforme al material, los errores honestos no constituyen fraude.'},
+ {q:'False Claim to U.S. Citizenship requiere que el beneficio haya sido aprobado para ser relevante.',opts:['Verdadero','Falso'],c:1,exp:'No importa si el beneficio fue aprobado — la afirmación falsa por sí sola es suficiente.'},
+ {q:'La diferencia clave entre fraude y false claim to citizenship es:',opts:['No hay diferencia','False claim es afirmar falsamente ser ciudadano; fraude es una mentira material más amplia','El fraude solo aplica a menores','El false claim siempre tiene waiver amplio'],c:1,exp:'Son categorías legales distintas con consecuencias distintas.'},
+ {q:'La barra de 10 años se activa quando una persona acumula:',opts:['Menos de 180 días de presencia ilegal','1 año o más de presencia ilegal, sale o es removida, y solicita regreso dentro de 10 años','Cualquier entrada sin inspección','Solo con una condena penal'],c:1,exp:'Definición de la barra de 10 años conforme al material.'},
+ {q:'Según Matter of Arrabally and Yerrabelly, salir con Advance Parole válido…',opts:['Siempre activa la barra de 10 años','Generalmente no activa las barras de 3 o 10 años','Cancela automáticamente el caso','Aplica solo a ciudadanos'],c:1,exp:'Precedente citado en el material sobre el efecto de Advance Parole.'},
+ {q:'Toda entrada sin inspección (EWI) genera automáticamente una barra de presencia ilegal.',opts:['Verdadero','Falso'],c:1,exp:'No debe asumirse automáticamente; se requiere cronología y análisis completo.'},
+ {q:'Una excepción significa que:',opts:['La causal existe pero se perdona','La causal nunca llega a aplicar jurídicamente a esa persona/situación','Es lo mismo que un waiver','Siempre requiere un formulario'],c:1,exp:'Definición de excepción del material.'},
+ {q:'Un waiver significa que:',opts:['La causal no existe','La causal existe pero puede solicitarse que sea perdonada','Es una decisión 100% automática','Nunca requiere evidencia'],c:1,exp:'Definición de waiver del material.'},
+ {q:'La discreción migratoria implica que:',opts:['USCIS evalúa factores positivos y negativos antes de decidir','El resultado siempre es automático','Solo aplica a casos criminales','Nunca la ejerce USCIS'],c:0,exp:'Definición de discreción del material.'},
+ {q:'La carga de la prueba (burden of proof) recae generalmente en:',opts:['USCIS','El solicitante','El abogado de la contraparte','El gobierno del país de origen'],c:1,exp:'El solicitante tiene la carga de demostrar elegibilidad y admisibilidad.'},
+ {q:'El estándar de prueba usual es "preponderancia de la evidencia", que significa:',opts:['Más allá de toda duda razonable','Más probable que no','Evidencia perfecta y absoluta','No se requiere evidencia'],c:1,exp:'Definición del estándar de "más probable que no."'},
+ {q:'Una Rejection significa que:',opts:['USCIS negó el caso tras analizarlo por completo','La solicitud tiene errores iniciales y no puede ser procesada','Es lo mismo que un Denial','Se agotaron las apelaciones'],c:1,exp:'Rejection ocurre por errores iniciales — no es una decisión sobre el fondo.'},
+ {q:'Un RFE (Request for Evidence) significa que:',opts:['El caso está cerrado y negado','USCIS solicita evidencia adicional y el caso sigue abierto','Es una apelación','Es un tipo de waiver'],c:1,exp:'RFE mantiene el caso abierto solicitando más evidencia.'},
+],
+};
+
+const MODULES=['mod1','mod2','mod3','mod4','mod5','mod6','mod7','mod8','mod9','mod10','mod11'];
+const MODLABELS={mod1:'Elegibilidad vs. Admisibilidad',mod2:'Fundamentos de Admisibilidad',mod3:'Health Grounds',mod4:'Criminal Grounds',mod5:'Security Grounds',mod6:'Public Charge',mod7:'Employment-Based',mod8:'Fraud & Misrepresentation',mod9:'False Claim to Citizenship',mod10:'Unlawful Presence & Removals',mod11:'Excepciones, Waivers y Discreción'};
+const KEYMAP={mod1:'m1',mod2:'m2',mod3:'m3',mod4:'m4',mod5:'m5',mod6:'m6',mod7:'m7',mod8:'m8',mod9:'m9',mod10:'m10',mod11:'m11'};
+
+/* ═══════════════ STATE ═══════════════ */
+function getState(){
+  try{ return JSON.parse(localStorage.getItem('tmlf_elegadmiss_state')||'{}'); }catch(e){ return {}; }
+}
+function saveState(s){ localStorage.setItem('tmlf_elegadmiss_state', JSON.stringify(s)); }
+let STATE = Object.assign({completed:{}, examBest:0, examPassed:false, answers:{}}, getState());
+
+/* ═══════════════ RENDER QUIZZES ═══════════════ */
+function renderQuiz(key, containerId){
+  const data = QUIZBANK[key];
+  const el = document.getElementById(containerId);
+  if(!el || !data) return;
+  el.innerHTML = data.map((item,qi)=>{
+    const opts = item.opts.map((o,oi)=>`<div class="q-opt" data-oi="${oi}" onclick="selectOpt('${key}',${qi},${oi},this)"><input type="radio" name="${key}_${qi}" ${''}> ${o}</div>`).join('');
+    return `<div class="q-block" id="${key}_q${qi}">
+      <div class="qtext">${qi+1}. ${item.q}</div>
+      <div class="q-opts">${opts}</div>
+      <div class="q-fb" id="${key}_fb${qi}"></div>
+    </div>`;
+  }).join('');
+}
+function selectOpt(key,qi,oi,node){
+  const block = document.getElementById(key+'_q'+qi);
+  block.querySelectorAll('.q-opt').forEach(n=>n.classList.remove('sel'));
+  node.classList.add('sel');
+  node.querySelector('input').checked = true;
+  if(!STATE.answers[key]) STATE.answers[key]={};
+  STATE.answers[key][qi]=oi;
+  saveState(STATE);
+}
+function gradeSet(key){
+  const data = QUIZBANK[key];
+  const ans = STATE.answers[key]||{};
+  let correct=0, answered=0;
+  data.forEach((item,qi)=>{
+    const block = document.getElementById(key+'_q'+qi);
+    const fb = document.getElementById(key+'_fb'+qi);
+    const chosen = ans[qi];
+    block.querySelectorAll('.q-opt').forEach((n,oi)=>{
+      n.classList.remove('correct','wrong');
+      if(oi===item.c) n.classList.add('correct');
+      else if(oi===chosen && chosen!==item.c) n.classList.add('wrong');
+    });
+    if(chosen!==undefined){ answered++; if(chosen===item.c) correct++; }
+    fb.className='q-fb show '+(chosen===item.c?'ok':'bad');
+    fb.textContent = (chosen===item.c? '✔ Correcto. ':'✘ Incorrecto. ') + item.exp;
+  });
+  return {correct, total:data.length, answered};
+}
+
+/* ═══════════════ MODULE QUIZ GRADING ═══════════════ */
+function gradeQuiz(mkey){
+  // mkey can be m1..m11 or p1/p2
+  const res = gradeSet(mkey);
+  const modId = Object.keys(KEYMAP).find(m=>KEYMAP[m]===mkey);
+  let resultId = 'result-'+mkey;
+  const el = document.getElementById(resultId);
+  if(!el) return;
+  if(res.answered < res.total){
+    el.innerHTML = `<div class="score-banner score-fail">Responde todas las preguntas antes de verificar (${res.answered}/${res.total}).</div>`;
+    return;
+  }
+  const pct = Math.round((res.correct/res.total)*100);
+  const passed = pct>=70;
+  el.innerHTML = `<div class="score-banner ${passed?'score-pass':'score-fail'}">Resultado: ${res.correct}/${res.total} (${pct}%) — ${passed?'¡Aprobado!':'Necesitas 70% o más. Revisa la retroalimentación e inténtalo de nuevo.'}</div>`;
+  if(modId){
+    if(passed){
+      STATE.completed[modId]=true; saveState(STATE);
+      const nextIdx = MODULES.indexOf(modId)+1;
+      if(nextIdx < MODULES.length){
+        const nextMod = MODULES[nextIdx];
+        el.innerHTML += `<div class="next-unlock">🎉 ¡Módulo completado! <button class="btn btn-gold" onclick="showPanel('${nextMod}')">Continuar a: ${MODLABELS[nextMod]} →</button></div>`;
+      } else {
+        el.innerHTML += `<div class="next-unlock">🎉 ¡Completaste los 11 módulos! <button class="btn btn-gold" onclick="showPanel('evaluacion')">Ir a la evaluación final →</button></div>`;
+      }
+      refreshSidenav(); updateProgress();
+    }
+  }
+  refreshSidenav();
+}
+
+/* ═══════════════ FINAL EXAM ═══════════════ */
+function gradeFinal(){
+  const res = gradeSet('final');
+  const el = document.getElementById('result-final');
+  if(res.answered < res.total){
+    el.innerHTML = `<div class="score-banner score-fail">Responde todas las preguntas antes de enviar (${res.answered}/${res.total}).</div>`;
+    return;
+  }
+  const pct = Math.round((res.correct/res.total)*100);
+  const passed = pct>=85;
+  STATE.examBest = Math.max(STATE.examBest||0, pct);
+  if(passed) STATE.examPassed = true;
+  saveState(STATE);
+  el.innerHTML = `<div class="score-banner ${passed?'score-pass':'score-fail'}">Resultado: ${res.correct}/${res.total} (${pct}%) — ${passed?'✅ APROBADO — ¡Felicidades, completaste el training!':'❌ NO APROBADO — se requiere 85% o más. Revisa la retroalimentación e inténtalo de nuevo.'}</div>`;
+  refreshSidenav(); updateProgress();
+}
+
+/* ═══════════════ UNLOCK / NAV ═══════════════ */
+function unlockModule(modId){
+  const item = document.querySelector(`.sn-item[data-target="${modId}"]`);
+  if(item) item.classList.remove('locked');
+}
+function unlockExam(){
+  const item = document.querySelector(`.sn-item[data-target="evaluacion"]`);
+  if(item) item.classList.remove('locked');
+  document.getElementById('examLocked').style.display='none';
+  document.getElementById('examOpen').style.display='block';
+}
+function isModuleUnlocked(modId){ return true; }
+function showPanel(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const target = document.getElementById('panel-'+id);
+  if(target) target.classList.add('active');
+  document.querySelectorAll('.sn-item').forEach(n=>n.classList.remove('active'));
+  const nav = document.querySelector(`.sn-item[data-target="${id}"]`);
+  if(nav) nav.classList.add('active');
+  document.getElementById('sidebar').classList.remove('open');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); }
+function toggleAcc(h){ h.parentElement.classList.toggle('open'); }
+
+/* ═══════════════ PROGRESS / SIDENAV ═══════════════ */
+function refreshSidenav(){
+  let unlocked = true;
+  MODULES.forEach((m,i)=>{
+    const item = document.querySelector(`.sn-item[data-target="${m}"]`);
+    if(!item) return;
+    if(STATE.completed[m]){ item.classList.add('done'); item.classList.remove('locked'); item.querySelector('.ico').textContent='✓';
+      if(!item.querySelector('.chk')){ const c=document.createElement('span'); c.className='chk'; c.textContent='●'; item.appendChild(c);} }
+    else if(unlocked){ item.classList.remove('locked'); }
+    if(!STATE.completed[m]) unlocked=false;
+  });
+  const examItem = document.querySelector('.sn-item[data-target="evaluacion"]');
+  const allDone = MODULES.every(m=>STATE.completed[m]);
+  if(allDone){ examItem.classList.remove('locked'); document.getElementById('examLocked').style.display='none'; document.getElementById('examOpen').style.display='block'; }
+  if(STATE.examPassed){ examItem.classList.add('done'); }
+  // ruta panel list
+  const rl = document.getElementById('rutaModList');
+  if(rl){
+    rl.innerHTML = MODULES.map((m,i)=>{
+      const done = !!STATE.completed[m];
+      return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(107,143,168,.12)">
+        <span style="width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:${done?'var(--green)':'rgba(107,143,168,.15)'};color:${done?'#fff':'var(--slate)'}">${done?'✓':(i+1)}</span>
+        <span style="font-size:13.5px">${MODLABELS[m]}</span>
+      </div>`;
+    }).join('') + `<div style="display:flex;align-items:center;gap:10px;padding:8px 0"><span style="width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:${STATE.examPassed?'var(--green)':'rgba(107,143,168,.15)'};color:${STATE.examPassed?'#fff':'var(--slate)'}">${STATE.examPassed?'✓':'📝'}</span><span style="font-size:13.5px">Evaluación final ${STATE.examBest?('— mejor puntaje: '+STATE.examBest+'%'):''}</span></div>`;
+  }
+}
+function updateProgress(){
+  const total = MODULES.length + 1;
+  let done = MODULES.filter(m=>STATE.completed[m]).length;
+  if(STATE.examPassed) done++;
+  document.getElementById('globalProgress').style.width = Math.round((done/total)*100)+'%';
+}
+
+/* ═══════════════ MISC ═══════════════ */
+function copyChecklist(){
+  const text = `LAS 10 PREGUNTAS ANTES DE OFRECER UN SERVICIO
+1. ¿Cómo entró a Estados Unidos: visa, parole, inspección o EWI?
+2. ¿Cuántas veces ha entrado y salido?
+3. ¿Alguna vez fue detenido, deportado o tuvo proceso en Corte de Inmigración?
+4. ¿Ha usado otro nombre, documentos falsos o un número de Seguro Social que no le pertenecía?
+5. ¿Tiene arrestos, cargos, condenas o sentencias?
+6. ¿Con quién tiene relación familiar y cuál es el estatus de esa persona?
+7. ¿Ha sido víctima de violencia, abuso, trata o algún delito?
+8. ¿Cuál es su objetivo migratorio?
+9. ¿Ha presentado solicitudes anteriormente o tiene casos pendientes o negados?
+10. ¿Qué documentos puede proporcionar para respaldar su historia?`;
+  navigator.clipboard.writeText(text).then(()=>alert('✅ Checklist copiado al portapapeles')).catch(()=>alert('No se pudo copiar automáticamente. Selecciona y copia el texto manualmente.'));
+}
+function resetProgress(){
+  if(!confirm('¿Seguro que deseas reiniciar todo tu progreso? Esta acción no se puede deshacer.')) return;
+  localStorage.removeItem('tmlf_elegadmiss_state');
+  location.reload();
+}
+
+/* ═══════════════ INIT ═══════════════ */
+function init(){
+  Object.keys(KEYMAP).forEach(mod=>renderQuiz(KEYMAP[mod], 'quiz-'+KEYMAP[mod]));
+  renderQuiz('p1','quiz-p1'); renderQuiz('p2','quiz-p2'); renderQuiz('final','quiz-final');
+  // restore selections
+  Object.keys(STATE.answers||{}).forEach(key=>{
+    Object.keys(STATE.answers[key]).forEach(qi=>{
+      const oi = STATE.answers[key][qi];
+      const block = document.getElementById(key+'_q'+qi);
+      if(block){ const opt = block.querySelectorAll('.q-opt')[oi]; if(opt){opt.classList.add('sel'); const inp=opt.querySelector('input'); if(inp) inp.checked=true;} }
+    });
+  });
+  MODULES.forEach(m=>{ if(STATE.completed[m]) unlockModule(MODULES[MODULES.indexOf(m)+1]||''); });
+  refreshSidenav(); updateProgress();
+  const allDone = MODULES.every(m=>STATE.completed[m]);
+  if(allDone) unlockExam();
+}
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
