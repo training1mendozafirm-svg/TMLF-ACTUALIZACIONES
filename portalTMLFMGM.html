@@ -909,6 +909,42 @@ input { font-family: inherit; outline: none; border: none; }
 .obs-btn:hover { background: var(--blue-500); color: var(--white); }
 .obs-btn svg { width: 12px; height: 12px; }
 
+/* ── Case Review WbW table ── */
+.cr-status {
+  display: inline-block;
+  font-size: 10px; font-weight: 700; letter-spacing: .6px;
+  padding: 3px 8px; border-radius: 99px; white-space: nowrap;
+}
+.cr-status.correcciones  { background: rgba(245,158,11,.1); color: #B45309; }
+.cr-status.sin-correcciones { background: rgba(34,197,94,.1); color: #15803D; }
+
+.cr-firmado {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  width: 32px; height: 24px; border-radius: var(--radius-sm);
+}
+.cr-firmado.si { background: rgba(34,197,94,.1); color: #15803D; }
+.cr-firmado.no { background: rgba(239,68,68,.1); color: #DC2626; }
+
+.cr-mins {
+  font-size: 11px; font-weight: 600; color: var(--gray-600);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+  background: var(--gray-50); border: 1px solid var(--gray-200);
+  padding: 3px 7px; border-radius: var(--radius-sm);
+}
+
+.cr-cat {
+  display: inline-block;
+  font-size: 10px; font-weight: 700; letter-spacing: .6px;
+  text-transform: uppercase; padding: 3px 8px; border-radius: 99px;
+  white-space: nowrap;
+}
+.cat-evidencias    { background: rgba(46,127,214,.1);  color: var(--blue-500); }
+.cat-contencion    { background: rgba(139,92,246,.1);  color: #7C3AED; }
+.cat-firma         { background: rgba(20,184,166,.1);  color: #0F766E; }
+.cat-sensibilizacion { background: rgba(245,158,11,.1); color: #B45309; }
+.cat-aclaracion    { background: rgba(239,68,68,.1);   color: #DC2626; }
+
 /* ── RFEs table ── */
 .rfe-num {
   font-size: 11px; font-weight: 600; color: var(--gray-400);
@@ -1506,214 +1542,171 @@ input { font-family: inherit; outline: none; border: none; }
 
         <div class="tab-panel active" id="cr-llamadas">
 
-          <!-- Calls table header -->
           <div class="calls-header">
             <div class="calls-header-left">
-              <div class="calls-count-badge">7 llamadas</div>
-              <span class="calls-header-label">Case Review · Word by Word</span>
+              <div class="calls-count-badge">9 llamadas</div>
+              <span class="calls-header-label">Case Review Word by Word · Llamadas</span>
             </div>
             <div class="calls-header-right">
               <div class="calls-search-wrap">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input type="text" id="callsSearchInput" placeholder="Filtrar por cliente o ID…" oninput="filterCalls(this.value)" />
+                <input type="text" placeholder="Filtrar por cliente, tipo o categoría…" oninput="filterTable('crTableBody', this.value)" />
               </div>
             </div>
           </div>
 
-          <!-- Table wrapper -->
           <div class="calls-table-wrap">
-            <table class="calls-table" id="callsTable">
+            <table class="calls-table">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Cliente</th>
-                  <th>Tipo</th>
-                  <th>Hora</th>
-                  <th class="th-center">DCL Inglés</th>
-                  <th class="th-center">DCL Español</th>
-                  <th class="th-center">Documento</th>
+                  <th style="width:7%">ID</th>
+                  <th style="width:18%">Cliente</th>
+                  <th style="width:8%">Tipo</th>
+                  <th style="width:14%">Agente</th>
+                  <th style="width:10%" class="th-center">Grabación</th>
+                  <th style="width:10%">Status</th>
+                  <th style="width:6%" class="th-center">Firmado</th>
+                  <th style="width:9%" class="th-center">Minutos</th>
+                  <th style="width:18%">Categoría / Comentarios</th>
                 </tr>
               </thead>
-              <tbody id="callsTableBody">
+              <tbody id="crTableBody">
 
                 <tr>
-                  <td><span class="call-id">29786901</span></td>
-                  <td><span class="call-name">Madelina Díaz Mares</span></td>
-                  <td><span class="call-tipo vawa">VAWA</span></td>
-                  <td><span class="call-hora">8:30</span></td>
-                  <td class="td-center">
-                    <a href="https://www.dropbox.com/scl/fi/j44shemtojfnfc57gkaac/CORRECTIONS-CR-DCL-MADELINA-DIAZ-MARES.docx?rlkey=j7ydp43nyc8oxbnnx3c7npr5e&st=lom1f771&dl=0" target="_blank" class="call-link link-dropbox" title="Abrir DCL en Inglés">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                      Dropbox
-                    </a>
-                  </td>
-                  <td class="td-center">
-                    <a href="https://docs.google.com/document/d/1tLja80jb__zKnLmbPS8WJ1mJMo2Tr_Y7urcJ6x8Q5xY/edit?usp=drivesdk" target="_blank" class="call-link link-gdocs" title="Abrir DCL en Español">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                      Docs
-                    </a>
-                  </td>
-                  <td class="td-center">
-                    <a href="https://drive.google.com/file/d/1ECAk3njNqkhOL2ZAskjHmpx98ASLuDvO/view?usp=drive_link" target="_blank" class="call-link link-drive" title="Abrir Documento">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                      Drive
-                    </a>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td><span class="call-id">29526970</span></td>
-                  <td><span class="call-name">Maria Cristina Reyes Rodríguez</span></td>
-                  <td><span class="call-tipo vawa">VAWA</span></td>
-                  <td><span class="call-hora">9:00</span></td>
-                  <td class="td-center">
-                    <a href="https://www.dropbox.com/scl/fi/d4n4d2evj5ez1swqslfrq/CORRECTIONS-CR-DCL-MARIA-CRISTINA-REYES-ROGRIGUEZ.docx?rlkey=w9ld2klt54gr10p5oxbrlch7y&st=xsnfer8q&dl=0" target="_blank" class="call-link link-dropbox" title="Abrir DCL en Inglés">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                      Dropbox
-                    </a>
-                  </td>
-                  <td class="td-center">
-                    <a href="https://docs.google.com/document/d/1P38R0FrQQmb162Y3w-xB6PbhYk8i2JtLDKSAxDSQO48/edit?usp=drivesdk" target="_blank" class="call-link link-gdocs">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                      Docs
-                    </a>
-                  </td>
-                  <td class="td-center">
-                    <a href="https://drive.google.com/file/d/1rogBoAJPmRzVHNYIBcasuW3q7TKRuaEo/view?usp=drive_link" target="_blank" class="call-link link-drive">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                      Drive
-                    </a>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td><span class="call-id">29717892</span></td>
-                  <td><span class="call-name">Jose Daniel Medina Espinoza</span></td>
-                  <td><span class="call-tipo vawa">VAWA</span></td>
-                  <td><span class="call-hora">9:30</span></td>
-                  <td class="td-center">
-                    <a href="https://www.dropbox.com/scl/fi/xq2liys0eparh25eo4y6h/EDITED-CDMX-DCL-JOSE-DANIEL-MEDINA-ESPINOZA.docx?rlkey=gerl87bs09lwybbctig3sr7d4&st=23xk1zng&dl=0" target="_blank" class="call-link link-dropbox">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                      Dropbox
-                    </a>
-                  </td>
-                  <td class="td-center">
-                    <a href="https://docs.google.com/document/d/134g9FNuxY-1PWd1RlIvNMy4zv84g0eiZdYivFfVoKxA/edit?usp=drivesdk" target="_blank" class="call-link link-gdocs">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                      Docs
-                    </a>
-                  </td>
-                  <td class="td-center">
-                    <a href="https://drive.google.com/file/d/1rMlgkQY5DVYxUywLd42f_Mjtc2O6QmhX/view?usp=drive_link" target="_blank" class="call-link link-drive">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                      Drive
-                    </a>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td><span class="call-id">29718547</span></td>
-                  <td><span class="call-name">Maria Luisa Zambrano Sigua</span></td>
+                  <td><span class="call-id">17168246</span></td>
+                  <td><span class="call-name">Laura Pérez Nava</span><div style="font-size:10px;color:var(--gray-400);margin-top:2px">12/13/2021</div></td>
                   <td><span class="call-tipo vawa-aos">VAWA AOS</span></td>
-                  <td><span class="call-hora">10:00</span></td>
-                  <td class="td-center">
-                    <a href="https://www.dropbox.com/scl/fi/m0u8u3w22r4m6mq7o0c0s/EDITED-CDMX-MARIA-LUISA-ZAMBRANO-SIGUA-DCL.docx?rlkey=6zl13brztysjcqf9x0mvie0q8&st=8jnv36zd&dl=0" target="_blank" class="call-link link-dropbox">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                      Dropbox
-                    </a>
-                  </td>
-                  <td class="td-center">
-                    <a href="https://docs.google.com/document/d/1a8NB9nfSl7Co2SGZ6Wswd3zMWjuKbXOK1VcMiWhO-IU/edit?usp=drivesdk" target="_blank" class="call-link link-gdocs">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                      Docs
-                    </a>
-                  </td>
-                  <td class="td-center">
-                    <a href="https://drive.google.com/file/d/1Lh89YH5AehruS6RPkxVKheshgSN6nbZV/view?usp=drive_link" target="_blank" class="call-link link-drive">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                      Drive
-                    </a>
+                  <td><span class="agent-name" style="font-size:11px">Diana Araceli Fernandez de Anda</span></td>
+                  <td class="td-center"><a href="https://www.dropbox.com/scl/fi/97w6so8kxtjy66fk5tn0w/DCL-RECORDING-LAURA-PEREZ-NAVA.ogg?rlkey=3554lr3jyt1e9jn3igof9ldqg&st=d28pwtjp&dl=0" target="_blank" class="call-link link-dropbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Ver</a></td>
+                  <td><span class="cr-status correcciones">Con correcciones</span></td>
+                  <td class="td-center"><span class="cr-firmado no">No</span></td>
+                  <td class="td-center"><span class="cr-mins">1:48:00</span></td>
+                  <td><span class="waiver-notas-empty">—</span></td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-id">24713972</span></td>
+                  <td><span class="call-name">Maria de Jesús García Acevedo</span><div style="font-size:10px;color:var(--gray-400);margin-top:2px">3/16/2023</div></td>
+                  <td><span class="call-tipo vawa-aos">VAWA AOS</span></td>
+                  <td><span class="agent-name" style="font-size:11px">Yarezmi Isabel Mena Alcocer</span></td>
+                  <td class="td-center"><a href="https://www.dropbox.com/work/Open%20Cases/Open%20Cases/Maria%20de%20Jesus%20Garcia%20Acevedo%20%3B%20Miguel%20Angel%20Enciso%20Rodriguez/10%20Recording/CASE%20REVIEW?quickview=id%3Ad8U66kS76XAAAAAAAFpQJQ" target="_blank" class="call-link link-dropbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Ver</a></td>
+                  <td><span class="cr-status correcciones">Con correcciones</span></td>
+                  <td class="td-center"><span class="cr-firmado si">Sí</span></td>
+                  <td class="td-center"><span class="cr-mins">15:30 → 17:05</span></td>
+                  <td>
+                    <span class="cr-cat cat-evidencias">Envío de evidencias</span>
+                    <button class="obs-btn" style="margin-top:6px" onclick="openObs('Maria de Jesús García Acevedo','VAWA AOS','Envío de evidencias','tranquilo',`Se aborda un evento en el que el abuser dañó una camioneta. La clienta confirma el evento y sugiere enviar fotografías; la agente confirma que si tiene alguna fotografía puede enviarla.`)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Ver</button>
                   </td>
                 </tr>
 
                 <tr>
-                  <td><span class="call-id">29874415</span></td>
-                  <td><span class="call-name">Gonzalo Sánchez Vázquez</span></td>
+                  <td><span class="call-id">20903511</span></td>
+                  <td><span class="call-name">Irma Cortez Aguilar</span><div style="font-size:10px;color:var(--gray-400);margin-top:2px">2/7/2023</div></td>
                   <td><span class="call-tipo vawa">VAWA</span></td>
-                  <td><span class="call-hora">10:30</span></td>
-                  <td class="td-center">
-                    <a href="https://www.dropbox.com/scl/fi/y0a1vww90szsg65erji8r/EDITED-CDMX-Gonzalo-Sanchez-Vazquez-DCL.docx?rlkey=ctxuv105ih7nsrxzcnkmujag1&st=xksejym1&dl=0" target="_blank" class="call-link link-dropbox">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                      Dropbox
-                    </a>
-                  </td>
-                  <td class="td-center">
-                    <a href="https://docs.google.com/document/d/181iP14DkOScYTcVe01XMoTlyPl0beUGBZDYKlpBtGrA/edit?usp=drivesdk" target="_blank" class="call-link link-gdocs">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                      Docs
-                    </a>
-                  </td>
-                  <td class="td-center">
-                    <a href="https://drive.google.com/file/d/1G3iB-y276WZwt4WIcXZ-4dYnLTpvJX3P/view?usp=sharing" target="_blank" class="call-link link-drive">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                      Drive
-                    </a>
+                  <td><span class="waiver-notas-empty" style="font-size:11px">—</span></td>
+                  <td class="td-center"><a href="https://www.dropbox.com/scl/fi/0m91zlzuguyz3k86j8kh6/EV-UP-WBW-Irma-Cortez-Aguilar.mp3?rlkey=p6hnj7pqes8o1wrtd59sraemt&st=dqxtopts&e=1&dl=0" target="_blank" class="call-link link-dropbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Ver</a></td>
+                  <td><span class="cr-status sin-correcciones">Sin correcciones</span></td>
+                  <td class="td-center"><span class="cr-firmado si">Sí</span></td>
+                  <td class="td-center"><span class="cr-mins">34:40 → 39:20</span></td>
+                  <td>
+                    <span class="cr-cat cat-contencion">Contención emocional</span>
+                    <button class="obs-btn" style="margin-top:6px" onclick="openObs('Irma Cortez Aguilar','VAWA','Contención emocional','tranquilo',`Se aborda un evento de abuso verbal vinculado con insultos por un arete que se puso la clienta. Al finalizar la lectura del párrafo la clienta confirma el evento; la agente indaga sobre una nueva situación que se haya presentado (esta pregunta se sitúa en la finalización de la revisión de la DCL).\n\nLa clienta menciona un evento que se sitúa en la minoría de edad. La clienta llora y se le brinda contención emocional, enfocando en la importancia que tiene la revisión de la DCL.`)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Ver</button>
                   </td>
                 </tr>
 
                 <tr>
-                  <td><span class="call-id">29327436</span></td>
-                  <td><span class="call-name">Leticia Tapia García</span></td>
-                  <td><span class="call-tipo vawa">VAWA</span></td>
-                  <td><span class="call-hora">11:00</span></td>
-                  <td class="td-center">
-                    <a href="https://www.dropbox.com/scl/fi/grlgcu5ub9or37karq454/EDITED-CDMX-Leticia-Tapia-Garcia-DCL.docx?rlkey=ifjrfwdgfyxeefabnaawxwqd0&st=y5a6wuxv&dl=0" target="_blank" class="call-link link-dropbox">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                      Dropbox
-                    </a>
-                  </td>
-                  <td class="td-center">
-                    <a href="https://docs.google.com/document/d/12uX5o1xllQAtoALxmzxbFDMJ0TQbDm2nWrU5dgmH2DI/edit?usp=drivesdk" target="_blank" class="call-link link-gdocs">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                      Docs
-                    </a>
-                  </td>
-                  <td class="td-center">
-                    <a href="https://drive.google.com/file/d/1Q0AGdCOekdGHuO2nSTNN_-NnPaqsMTv4/view?usp=sharing" target="_blank" class="call-link link-drive">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                      Drive
-                    </a>
+                  <td><span class="call-id">19810401</span></td>
+                  <td><span class="call-name">Maria del Carmen Gameros Orozco</span><div style="font-size:10px;color:var(--gray-400);margin-top:2px">7/14/2022</div></td>
+                  <td><span class="call-tipo vawa-aos">VAWA AOS</span></td>
+                  <td><span class="agent-name" style="font-size:11px">Diego Martínez Hidalgo</span></td>
+                  <td class="td-center"><a href="https://www.dropbox.com/scl/fo/moa73vhp1elxmszqergzb/AETwiVo0qR0Sdq3qiNs3nBI?rlkey=mdhcvgetsj9phsso4dh8gg9qq&st=ixg3ojr3&dl=0" target="_blank" class="call-link link-dropbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Ver</a></td>
+                  <td><span class="cr-status sin-correcciones">Sin correcciones</span></td>
+                  <td class="td-center"><span class="cr-firmado no">No</span></td>
+                  <td class="td-center"><span class="cr-mins">42:15 → 58:20</span></td>
+                  <td>
+                    <span class="cr-cat cat-firma">Ayuda con la firma</span>
+                    <button class="obs-btn" style="margin-top:6px" onclick="openObs('Maria del Carmen Gameros Orozco','VAWA AOS','Ayuda con la firma','tranquilo',`Muy buen acompañamiento del colaborador para apoyar a la clienta a firmar.`)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Ver</button>
                   </td>
                 </tr>
 
                 <tr>
-                  <td><span class="call-id">29787221</span></td>
-                  <td><span class="call-name">Oliva Nava Saucedo</span></td>
-                  <td><span class="call-tipo vawa">VAWA</span></td>
-                  <td><span class="call-hora">11:30</span></td>
-                  <td class="td-center">
-                    <a href="https://www.dropbox.com/scl/fi/jki0wzjyl26egv6ikpsxu/CORRECTIONS-CR-DCL-OLIVA-NAVA-SAUCEDO.docx?rlkey=e86dcwp0wgengp0kpfcwr0ji2&st=lxbxkdg9&dl=0" target="_blank" class="call-link link-dropbox">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                      Dropbox
-                    </a>
+                  <td><span class="call-id">20948484</span></td>
+                  <td><span class="call-name">Judith Monrroy Guerra</span><div style="font-size:10px;color:var(--gray-400);margin-top:2px">10/5/2022</div></td>
+                  <td><span class="call-tipo vawa-aos">VAWA AOS</span></td>
+                  <td><span class="waiver-notas-empty" style="font-size:11px">—</span></td>
+                  <td class="td-center"><a href="https://www.dropbox.com/work/Open%20Cases/Open%20Cases/Monroy%20Guerra%20Irma%20Judith/10.RECORDING/EV%20UP%20WBW?quickview=id%3Ad8U66kS76XAAAAAAAFp1DQ&preview=EV+UP+WBW_Irma+Judith+Monroy+Guerra2de2.mp3" target="_blank" class="call-link link-dropbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Ver</a></td>
+                  <td><span class="cr-status correcciones">Con correcciones</span></td>
+                  <td class="td-center"><span class="cr-firmado si">Sí</span></td>
+                  <td class="td-center"><span class="cr-mins">14:00 → 22:19</span></td>
+                  <td>
+                    <span class="cr-cat cat-sensibilizacion">Sensibilización del abuso</span>
+                    <button class="obs-btn" style="margin-top:6px" onclick="openObs('Judith Monrroy Guerra','VAWA AOS','Sensibilización del abuso','tranquilo',`Al finalizar la lectura de la DCL se le pregunta a la clienta si hay algo más que quisiera agregar, ya sea información o evidencias. La clienta agrega información sobre eventos recientes y menciona parte de las amenazas que recibe de llamar a migración.\n\nLa agente realiza contención emocional e indaga por detalles sobre el evento de amenaza con migración. Además de eso se indaga por abuso sexual. También indaga por posibles evidencias adicionales, realizando la solicitud cuidando que la clienta no se ponga en riesgo.`)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Ver</button>
                   </td>
-                  <td class="td-center">
-                    <a href="https://docs.google.com/document/d/1WV00VQMsut1fK4L6kN2bC720zOv4swWVz979NfScr2E/edit?usp=drivesdk" target="_blank" class="call-link link-gdocs">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                      Docs
-                    </a>
+                </tr>
+
+                <tr>
+                  <td><span class="call-id">19228758</span></td>
+                  <td><span class="call-name">Aurelia Espinoza Altamirano</span><div style="font-size:10px;color:var(--gray-400);margin-top:2px">5/15/2022</div></td>
+                  <td><span class="call-tipo vawa-aos">VAWA AOS</span></td>
+                  <td><span class="waiver-notas-empty" style="font-size:11px">—</span></td>
+                  <td class="td-center"><a href="https://www.dropbox.com/work/Open%20Cases/Open%20Cases/20772169_Claudio%20Alonso%20Morelos/10.%20Recordings?preview=Evidence+Update.+Aurelia+Espinoza+Altamirano.ogg" target="_blank" class="call-link link-dropbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Ver</a></td>
+                  <td><span class="cr-status correcciones">Con correcciones</span></td>
+                  <td class="td-center"><span class="cr-firmado si">Sí</span></td>
+                  <td class="td-center"><span class="cr-mins">17:58 → 19:39</span></td>
+                  <td>
+                    <span class="cr-cat cat-sensibilizacion">Sensibilización del abuso</span>
+                    <button class="obs-btn" style="margin-top:6px" onclick="openObs('Aurelia Espinoza Altamirano','VAWA AOS','Sensibilización del abuso','tranquilo',`En la revisión de la lectura de la DCL WBW se abordaba un evento en el que se consideran humillaciones. En el momento de confirmar con la clienta si es correcta, ella responde "unos sí correctos y otros no".\n\nLa agente solicita información sobre lo que no está correcto. La clienta refiere: "en donde uno lo humilla eso está incorrecto".\n\nCuando aclara, la clienta dice que eso no ha pasado muchas veces. La agente le vuelve a leer la declaración para señalarle que en la declaración no se menciona que pasó siempre, sino que dice "muchas veces".`)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Ver</button>
                   </td>
-                  <td class="td-center">
-                    <a href="https://drive.google.com/file/d/1Ez-vIMrbSGUHsI5l47Ee59l5DrkFrrCN/view?usp=sharing" target="_blank" class="call-link link-drive">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                      Drive
-                    </a>
+                </tr>
+
+                <tr>
+                  <td><span class="call-id">21964993</span></td>
+                  <td><span class="call-name">Dulce María Burciaga de Soto</span><div style="font-size:10px;color:var(--gray-400);margin-top:2px">11/8/2022</div></td>
+                  <td><span class="call-tipo vawa-aos">VAWA AOS</span></td>
+                  <td><span class="waiver-notas-empty" style="font-size:11px">—</span></td>
+                  <td class="td-center"><a href="https://www.dropbox.com/work/Open%20Cases/Open%20Cases/Burciaga%20de%20Soto%C2%A0Dulce%20Maria%20%3B%20Alonso%20Soto%C2%A0Jose/10%20Recordings?preview=Evidence+Update.+Dulce+Maria+Burciaga+de+Soto.mp3&quickview=id%3Ad8U66kS76XAAAAAAAFp9rg" target="_blank" class="call-link link-dropbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Ver</a></td>
+                  <td><span class="cr-status correcciones">Con correcciones</span></td>
+                  <td class="td-center"><span class="cr-firmado si">Sí</span></td>
+                  <td class="td-center"><span class="cr-mins">8:25 → 11:37</span></td>
+                  <td>
+                    <span class="cr-cat cat-sensibilizacion">Sensibilización del abuso</span>
+                    <button class="obs-btn" style="margin-top:6px" onclick="openObs('Dulce María Burciaga de Soto','VAWA AOS','Sensibilización del abuso','neutral',`Mientras se revisaba la DCL WBW se menciona un evento de abuso financiero. Al finalizar el párrafo, la clienta refiere que "le pusieron un poquito porque yo les dije que mi hija sí llegó a hacer eso, no sé si ella lo haría en serio porque ella es juguetona".\n\nLa agente le aclara: "Sra. Dulce, nada más una pequeña aclaración, recuerde que cuando estamos hablando de temas legales lo que se declara como tal son los hechos, si pasó o no pasó, es decir los hechos tangibles que nosotros vimos u observamos, a pesar de que me diga 'no sé si pasó en juego', sí pasó, por eso está descrito en su declaración. Ahora platíqueme usted a qué se refiere, si pasó o no pasó."\n\nLa clienta reafirma un evento en el que la abusadora es tosca y comenta: "yo sí dije lo que es, pero no sé si lo haga con ira o coraje pero así es su temperamento, muy brusco."\n\nSe redirige a la clienta a la lectura de la declaración y a la revisión de eventos.`)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Ver</button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-id">20002996</span></td>
+                  <td><span class="call-name">María Sandra Delgado Zavala</span><div style="font-size:10px;color:var(--gray-400);margin-top:2px">11/15/2024</div></td>
+                  <td><span class="call-tipo vawa-aos">VAWA DA</span></td>
+                  <td><span class="waiver-notas-empty" style="font-size:11px">—</span></td>
+                  <td class="td-center"><a href="https://www.dropbox.com/scl/fi/u3g7cm9vnqd526la30qv5/EV-UP-WBW_Maria-Sandra-Delgado-Zavala.mp3?rlkey=3zi21ersbcc5bm631h5tqb8ug&st=zmjuop1g&e=1&dl=0" target="_blank" class="call-link link-dropbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Ver</a></td>
+                  <td><span class="cr-status sin-correcciones">Sin correcciones</span></td>
+                  <td class="td-center"><span class="cr-firmado si">Sí</span></td>
+                  <td class="td-center"><span class="cr-mins">35:50 → 39:05</span></td>
+                  <td>
+                    <span class="cr-cat cat-firma">Firma DCL / Notarial</span>
+                    <button class="obs-btn" style="margin-top:6px" onclick="openObs('María Sandra Delgado Zavala','VAWA DA','Firma DCL y certificación notarial','tranquilo',`Usa el script sobre el tema de las firmas en la administración de Trump. Se comparte el enlace de USCIS. Lo realiza de manera fluida, revisa si la clienta tiene dudas. Brinda una explicación clara y se asegura de que la clienta vaya entendiendo.`)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Ver</button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="call-id">15639838</span></td>
+                  <td><span class="call-name">Martín López Ramos</span><div style="font-size:10px;color:var(--gray-400);margin-top:2px">7/23/2021</div></td>
+                  <td><span class="call-tipo vawa-aos">VAWA DA</span></td>
+                  <td><span class="waiver-notas-empty" style="font-size:11px">—</span></td>
+                  <td class="td-center"><a href="https://www.dropbox.com/scl/fi/wiyp6bqt676xcpq4f6e4z/Mart-n-L-pez-Ramos.mp3?rlkey=kw7gplst5vtli685hg4u8jvtr&st=sttqx70k&dl=0" target="_blank" class="call-link link-dropbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Ver</a></td>
+                  <td><span class="cr-status correcciones">Con correcciones</span></td>
+                  <td class="td-center"><span class="cr-firmado si">Sí</span></td>
+                  <td class="td-center"><span class="cr-mins">22:36 → 24:50</span></td>
+                  <td>
+                    <span class="cr-cat cat-aclaracion">Aclaración de hechos</span>
+                    <button class="obs-btn" style="margin-top:6px" onclick="openObs('Martín López Ramos','VAWA DA','Aclaración de hechos','—',`En la lectura de la DCL se menciona de manera general varios eventos, entre ellos un incidente en donde el cliente fue arrestado. Cuando se confirma con el cliente la declaración, menciona que no se le había realizado un arresto.\n\nLa situación en la declaración se encontraba clara: fue por una acusación falsa, no por el otro incidente que refería el cliente. La agente le menciona que de manera general se indagan los eventos y se ponen en conjunto. El cliente entiende y continúan con la lectura de la DCL.`)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Ver</button>
                   </td>
                 </tr>
 
               </tbody>
             </table>
-          </div><!-- /calls-table-wrap -->
+          </div>
 
         </div>
 
