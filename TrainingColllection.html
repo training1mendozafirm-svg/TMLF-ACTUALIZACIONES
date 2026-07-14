@@ -1,0 +1,2109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mendoza Learning Center — Collections</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=Raleway:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --navy:    #0d1f3c;
+    --navy2:   #142850;
+    --navy3:   #1a3460;
+    --gold:    #c9a84c;
+    --gold-lt: #e8d08a;
+    --white:   #f7f8fc;
+    --offwhite:#eef0f7;
+    --muted:   #6b7594;
+    --border:  #d4d9e8;
+    --text:    #1a2340;
+    --light-surface: #ffffff;
+    --tag-bg:  #e8edf8;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--offwhite);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  .hero-instructions {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-top: 20px;
+  }
+  .instr-title {
+    font-family: 'Raleway', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+  .instr-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 20px;
+  }
+  @media (max-width: 560px) { .instr-grid { grid-template-columns: 1fr; } }
+  .instr-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .instr-num {
+    flex-shrink: 0;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--navy);
+    font-family: 'Raleway', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .instr-text {
+    font-size: 12px;
+    color: #aab5d0;
+    line-height: 1.55;
+  }
+  .instr-text strong { color: var(--white); font-weight: 600; }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: var(--navy);
+    padding: 0 40px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .topbar-logo {
+    width: 28px; height: 28px;
+    background: var(--gold);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .topbar-logo svg { width: 16px; height: 16px; fill: var(--navy); }
+  .topbar-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: 0.02em;
+  }
+  .topbar-name span { color: var(--gold); }
+  .topbar-breadcrumb {
+    font-size: 11px;
+    color: #8898bb;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--navy2);
+    border-bottom: 3px solid var(--gold);
+    padding: 44px 40px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 860px; margin: 0 auto; }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(201,168,76,0.12);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 4px;
+    padding: 4px 12px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(26px, 3.5vw, 38px);
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .hero h1 em { font-style: normal; color: var(--gold); }
+  .hero-sub {
+    font-size: 14px;
+    color: #8898bb;
+    max-width: 500px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .hero-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .pill {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px;
+    color: #aab5d0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .pill-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  /* ── MAIN LAYOUT ── */
+  .layout { max-width: 900px; margin: 0 auto; padding: 32px 40px 80px; }
+
+  /* ── TABS ── */
+  .tab-nav {
+    display: flex;
+    gap: 2px;
+    background: var(--light-surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 5px;
+    margin-bottom: 32px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .tab-nav::-webkit-scrollbar { height: 4px; }
+  .tab-nav::-webkit-scrollbar-track { background: transparent; }
+  .tab-nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  .tab-btn {
+    flex: 0 0 auto;
+    background: none;
+    border: none;
+    border-radius: 7px;
+    padding: 9px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+    text-align: center;
+  }
+  .tab-btn:hover { background: var(--offwhite); color: var(--text); }
+  .tab-btn.active {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── SECTION HEADERS ── */
+  .s-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .s-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    line-height: 1.55;
+  }
+
+  /* ── STEP FLOW ── */
+  .flow { display: flex; flex-direction: column; }
+  .step {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 0 16px;
+  }
+  .step-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .step-num {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    border: 2px solid var(--gold);
+  }
+  .step-line {
+    width: 2px;
+    flex: 1;
+    min-height: 16px;
+    background: var(--border);
+    margin: 4px 0;
+  }
+  .step:last-child .step-line { display: none; }
+  .step-body {
+    background: var(--light-surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+  }
+  .step-body:hover { border-color: #b0bcd8; }
+  .step-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .step-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .step-tags {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px;
+  }
+  .tag {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+  .tag-navy  { background: #eef1f8; border-color: #c0cae0; color: var(--navy2); }
+  .tag-gold  { background: #fdf6e3; border-color: #e0c97a; color: #7a5c10; }
+  .tag-green { background: #eaf6f0; border-color: #a3d9bc; color: #1a6640; }
+  .tag-red   { background: #fef1f1; border-color: #f0b8b8; color: #8c1f1f; }
+  .tag-blue  { background: #edf4fd; border-color: #9ec3f0; color: #1a4a80; }
+
+  /* ── PRIORITY TABLE ── */
+  .priority-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 12px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .priority-table th {
+    background: var(--navy);
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    text-align: left;
+  }
+  .priority-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  .priority-table tr:last-child td { border-bottom: none; }
+  .priority-table tr:nth-child(even) td { background: var(--offwhite); }
+
+  /* ── CLICKUP FIELDS ── */
+  .fields-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  @media (max-width: 600px) { .fields-grid { grid-template-columns: 1fr; } }
+  .field-card {
+    background: var(--light-surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--navy);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .field-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy);
+    font-family: 'DM Sans', sans-serif;
+    margin-bottom: 4px;
+  }
+  .field-def { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── DECISION BRANCH ── */
+  .branch-block {
+    background: var(--offwhite);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 8px 0 4px;
+  }
+  .branch-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #7a5c10;
+    margin-bottom: 8px;
+  }
+  .branch-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  @media (max-width: 560px) { .branch-row { grid-template-columns: 1fr; } }
+  .branch-opt {
+    background: var(--light-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+  .branch-opt-label {
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .opt-yes .branch-opt-label { color: #1a6640; }
+  .opt-no  .branch-opt-label { color: #8c1f1f; }
+  .opt-note { color: var(--muted); }
+
+  /* ── STATUS GRID ── */
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .status-card {
+    background: var(--light-surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .status-code {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .status-def { font-size: 12px; color: var(--muted); line-height: 1.45; }
+
+  /* ── SCRIPT ── */
+  .script-wrap {
+    background: var(--light-surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .script-head {
+    background: var(--navy);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 2px solid var(--gold);
+  }
+  .script-scenario {
+    font-family: 'Raleway', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.06em;
+  }
+  .script-body { padding: 20px; }
+  .script-line {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+    font-size: 13px;
+  }
+  .script-line:last-child { margin-bottom: 0; }
+  .script-role {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding-top: 2px;
+  }
+  .role-agent { color: var(--navy2); }
+  .role-client { color: var(--muted); }
+  .script-text { color: #3a4460; line-height: 1.6; }
+  .script-note {
+    background: #fdf6e3;
+    border: 1px solid #e0c97a;
+    border-radius: 5px;
+    padding: 6px 10px;
+    font-size: 11px;
+    color: #7a5c10;
+    margin: 4px 0 8px;
+    font-style: italic;
+  }
+
+  /* ── ALERT / INFO BOXES ── */
+  .alert-box {
+    background: #fff5f5;
+    border: 1px solid #f0c0c0;
+    border-left: 3px solid #c0392b;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+  }
+  .alert-title { font-size: 13px; font-weight: 600; color: #8c1f1f; margin-bottom: 5px; }
+  .alert-body { font-size: 13px; color: #5a2a2a; line-height: 1.55; }
+
+  .info-box {
+    background: #f0f4ff;
+    border: 1px solid #c0cce8;
+    border-left: 3px solid var(--navy2);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+  }
+  .info-title { font-size: 13px; font-weight: 600; color: var(--navy2); margin-bottom: 5px; }
+  .info-body  { font-size: 13px; color: #3a4a6a; line-height: 1.55; }
+
+  .gold-box {
+    background: #fdf6e3;
+    border: 1px solid #e0c97a;
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+  }
+  .gold-title { font-size: 13px; font-weight: 600; color: #7a5c10; margin-bottom: 5px; }
+  .gold-body  { font-size: 13px; color: #5a4010; line-height: 1.55; }
+
+  /* ── TOOLS GRID (NEW) ── */
+  .htool-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .htool-row2 {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .htool-row2 .htool-card {
+    width: calc(33.333% - 11px);
+  }
+  .htool-card { width: 100%; }
+  .htool-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--light-surface);
+    transition: box-shadow 0.15s, border-color 0.15s;
+  }
+  .htool-card:hover {
+    border-color: #b0bcd8;
+    box-shadow: 0 4px 16px rgba(13,31,60,0.10);
+  }
+  .htool-header {
+    padding: 20px 20px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .htool-num {
+    font-family: 'Raleway', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: rgba(201,168,76,0.7);
+  }
+  .htool-icon { font-size: 28px; line-height: 1; }
+  .htool-body { padding: 16px 20px 20px; }
+  .htool-name {
+    font-family: 'Raleway', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 0.03em;
+    margin-bottom: 3px;
+  }
+  .htool-role {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .htool-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .htool-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 10px;
+  }
+  .hchip {
+    font-size: 10px;
+    font-weight: 600;
+    background: var(--offwhite);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 8px;
+    color: var(--navy2);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── TOOLS GRID ── */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
+    margin-top: 12px;
+  }
+  .tool-card {
+    background: var(--light-surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 16px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .tool-card:hover { border-color: #a0b0d0; box-shadow: 0 2px 8px rgba(13,31,60,0.06); }
+  .tool-icon { font-size: 22px; margin-bottom: 10px; }
+  .tool-name { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+  .tool-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── DOCS CHECKLIST ── */
+  .checklist { list-style: none; margin-top: 10px; }
+  .checklist li {
+    font-size: 13px;
+    color: var(--muted);
+    padding: 6px 0 6px 26px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    line-height: 1.5;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  /* ── FOOTER ── */
+  .footer-bar {
+    background: var(--navy);
+    border-top: 2px solid var(--gold);
+    text-align: center;
+    padding: 16px;
+    font-size: 11px;
+    color: #6070a0;
+    letter-spacing: 0.04em;
+  }
+  .footer-bar span { color: var(--gold); }
+
+  /* ── COLLAPSIBLE STEPS ── */
+  .step-toggle {
+    width: 100%;
+    background: linear-gradient(90deg, var(--navy) 0%, var(--navy2) 100%);
+    border: none;
+    border-radius: 7px;
+    padding: 11px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-align: center;
+    transition: opacity 0.15s;
+  }
+  .step-toggle:hover { opacity: 0.92; }
+  .step-toggle .step-title {
+    font-family: 'Raleway', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.06em;
+  }
+  .step-toggle.open .step-title { color: var(--gold-lt); }
+  .toggle-icon {
+    font-size: 13px;
+    color: var(--gold);
+    flex-shrink: 0;
+    transition: transform 0.25s;
+    display: inline-block;
+  }
+  .step-toggle.open .toggle-icon { transform: rotate(180deg); }
+  .step-content {
+    display: none;
+    padding-top: 14px;
+  }
+  .step-content.open { display: block; }
+
+  /* ── COLLAPSIBLE SCRIPT ── */
+  .script-toggle {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: block;
+    transition: opacity 0.15s;
+  }
+  .script-toggle:hover { opacity: 0.88; }
+  .script-head {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .script-scenario {
+    font-family: 'Raleway', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.06em;
+  }
+  .script-toggle.open .script-scenario { color: var(--gold-lt); }
+  .toggle-icon-script {
+    font-size: 13px;
+    color: var(--gold);
+    flex-shrink: 0;
+    transition: transform 0.25s;
+    display: inline-block;
+  }
+  .script-toggle.open .toggle-icon-script { transform: rotate(180deg); }
+  .script-content { display: none; }
+  .script-content.open { display: block; }
+
+  /* ── AUDIO LINK BUTTON ── */
+  .audio-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--navy2);
+    color: var(--gold);
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-family: 'Raleway', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .audio-link-btn:hover {
+    background: var(--navy3);
+    border-color: var(--gold);
+    color: var(--gold-lt);
+  }
+
+  /* ── AUDIO BLOCK ── */
+  .audio-block {
+    background: var(--navy2);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-left: 3px solid var(--gold);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-top: 28px;
+  }
+  .audio-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .audio-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+  .audio-title {
+    font-family: 'Raleway', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.02em;
+    margin-bottom: 3px;
+  }
+  .audio-sub { font-size: 12px; color: #8898bb; line-height: 1.5; }
+
+  /* ── QUIZ ── */
+  .quiz-block {
+    margin-top: 40px;
+    background: var(--light-surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--gold);
+    border-radius: 12px;
+    padding: 24px 24px 20px;
+  }
+  .quiz-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .quiz-icon { font-size: 24px; }
+  .quiz-title {
+    font-family: 'Raleway', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 0.03em;
+  }
+  .quiz-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .quiz-score-badge {
+    margin-left: auto;
+    font-family: 'Raleway', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    display: flex; align-items: center;
+  }
+  .badge-pass { background: #eaf6f0; color: #1a6640; border: 1px solid #a3d9bc; }
+  .badge-fail { background: #fef1f1; color: #8c1f1f; border: 1px solid #f0b8b8; }
+
+  .quiz-q {
+    background: var(--offwhite);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .quiz-q-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .quiz-q-text { font-size: 13px; color: var(--text); line-height: 1.6; margin-bottom: 12px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 7px; }
+  .qopt {
+    background: var(--light-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 9px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .qopt:hover:not(:disabled) { border-color: var(--navy2); background: #f0f3fa; }
+  .qopt:disabled { cursor: default; }
+  .qopt-correct { background: #eaf6f0 !important; border-color: #34d399 !important; color: #1a6640 !important; font-weight: 600; }
+  .qopt-wrong   { background: #fef1f1 !important; border-color: #f87171 !important; color: #8c1f1f !important; }
+
+  .quiz-feedback {
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 7px 12px;
+    border-radius: 5px;
+    display: none;
+  }
+  .quiz-feedback:not(:empty) { display: block; }
+  .fb-correct { background: #eaf6f0; color: #1a6640; border: 1px solid #a3d9bc; }
+  .fb-wrong   { background: #fef1f1; color: #8c1f1f; border: 1px solid #f0b8b8; }
+
+  .quiz-input {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    background: var(--light-surface);
+    width: 160px;
+  }
+  .quiz-input:focus { outline: none; border-color: var(--navy2); }
+
+  .quiz-check-btn {
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: opacity 0.15s;
+  }
+  .quiz-check-btn:hover { opacity: 0.85; }
+
+  /* Sort drag */
+  .sort-list { display: flex; flex-direction: column; gap: 7px; margin-bottom: 10px; }
+  .sort-item {
+    background: var(--light-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 9px 14px;
+    font-size: 13px;
+    color: var(--text);
+    cursor: grab;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .sort-item:hover { background: #f0f3fa; }
+  .sort-item.sort-correct { background: #eaf6f0; border-color: #34d399; color: #1a6640; font-weight: 600; }
+
+  /* Match dropdowns */
+  .match-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+  .match-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .match-term {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+    min-width: 130px;
+  }
+  .match-select {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--text);
+    background: var(--light-surface);
+    cursor: pointer;
+    flex: 1;
+    min-width: 180px;
+  }
+
+  .quiz-submit-row { margin-top: 16px; display: flex; justify-content: flex-end; align-items: center; }
+  .quiz-submit-btn {
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-family: 'Raleway', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: opacity 0.15s;
+  }
+  .quiz-submit-btn:hover { opacity: 0.85; }
+  .quiz-result-msg {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: 8px;
+    width: 100%;
+    text-align: center;
+  }
+  .msg-pass { background: #eaf6f0; color: #1a6640; border: 1px solid #a3d9bc; }
+  .msg-fail { background: #fef1f1; color: #8c1f1f; border: 1px solid #f0b8b8; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .layout { padding: 24px 16px 60px; }
+    .topbar, .hero { padding-left: 20px; padding-right: 20px; }
+    .tab-btn { min-width: 80px; font-size: 11px; padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo">
+      <svg viewBox="0 0 16 16"><path d="M8 1L10.5 6H14L11 9.5L12.5 14L8 11.5L3.5 14L5 9.5L2 6H5.5Z"/></svg>
+    </div>
+    <div class="topbar-name">Mendoza <span>Learning Center</span></div>
+  </div>
+  <div class="topbar-breadcrumb">DEPARTAMENTO DE COLLECTIONS</div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span>⚖</span> The Mendoza Law Firm
+    </div>
+    <h1>Agente de <em>Collections</em><br>— Guía Operativa</h1>
+    <p class="hero-sub">Procedimiento estándar end-to-end para la administración de cartera, seguimiento de pagos y gestión de clientes.</p>
+
+    <div class="hero-instructions">
+      <div class="instr-title">¿Cómo usar este training?</div>
+      <div class="instr-grid">
+        <div class="instr-item">
+          <div class="instr-num">1</div>
+          <div class="instr-text">Navega por cada sección usando las <strong>pestañas superiores</strong> en orden, de izquierda a derecha.</div>
+        </div>
+        <div class="instr-item">
+          <div class="instr-num">2</div>
+          <div class="instr-text">Dentro de cada sección, <strong>despliega cada paso o escenario</strong> haciendo clic en la barra para leer el contenido completo.</div>
+        </div>
+        <div class="instr-item">
+          <div class="instr-num">3</div>
+          <div class="instr-text">Al llegar al final de la sección, <strong>completa la actividad de confirmación</strong> antes de avanzar a la siguiente pestaña.</div>
+        </div>
+        <div class="instr-item">
+          <div class="instr-num">4</div>
+          <div class="instr-text">Obtén <strong>70% o más</strong> en cada actividad para confirmar que el contenido fue retenido correctamente.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="layout">
+
+  <nav class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('sop',this)">Procedimiento diario</button>
+    <button class="tab-btn" onclick="showTab('clickup',this)">ClickUp &amp; Estatus</button>
+    <button class="tab-btn" onclick="showTab('script',this)">Script oficial</button>
+    <button class="tab-btn" onclick="showTab('herramientas',this)">Herramientas</button>
+    <button class="tab-btn" onclick="showTab('escalacion',this)">Escalación</button>
+  </nav>
+
+  <!-- ── TAB: SOP ── -->
+  <div id="tab-sop" class="tab-panel active">
+    <div class="s-title">Procedimiento diario — paso a paso</div>
+    <p class="s-sub">Basado en el SOP oficial del departamento de Collections de The Mendoza Law Firm.</p>
+
+    <div class="flow">
+
+      <div class="step">
+        <div class="step-left"><div class="step-num">1</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <button class="step-toggle" onclick="toggleStep(this)">
+            <span class="step-title">Revisión de cartera en ClickUp</span>
+            <span class="toggle-icon">﹀</span>
+          </button>
+          <div class="step-content">
+            <div class="step-desc">
+              Ingresar a ClickUp, acceder a la cartera asignada, filtrar los clientes programados para el día y priorizar contactos según la fecha establecida.<br><br>
+              Es responsabilidad del agente <strong>trabajar diariamente todos los clientes programados</strong> en su cartera.
+            </div>
+            <table class="priority-table" style="margin-top:14px;">
+              <thead><tr><th>Último contacto</th><th>Frecuencia de contacto</th></tr></thead>
+              <tbody>
+                <tr><td>0 a 30 días</td><td>Una vez al mes</td></tr>
+                <tr><td>30 a 60 días</td><td>Una vez al mes</td></tr>
+                <tr><td>60 a 90 días</td><td>Contacto semanal</td></tr>
+                <tr><td>90 días +</td><td>Contacto semanal</td></tr>
+              </tbody>
+            </table>
+            <div class="step-tags" style="margin-top:12px;">
+              <span class="tag tag-navy">ClickUp</span><span class="tag tag-gold">Prioridad por antigüedad</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left"><div class="step-num">2</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <button class="step-toggle" onclick="toggleStep(this)">
+            <span class="step-title">Revisión del expediente antes de llamar</span>
+            <span class="toggle-icon">﹀</span>
+          </button>
+          <div class="step-content">
+            <div class="step-desc">Abrir la tarea en ClickUp y revisar los tres campos clave del caso:</div>
+            <div class="fields-grid" style="margin-top:10px;">
+              <div class="field-card"><div class="field-name">Atty Fees</div><div class="field-def">Valor total del caso.</div></div>
+              <div class="field-card"><div class="field-name">Atty Fees Paid</div><div class="field-def">Monto total pagado por el cliente hasta la fecha.</div></div>
+              <div class="field-card"><div class="field-name">Atty Fees Owed</div><div class="field-def">Saldo pendiente por pagar.</div></div>
+            </div>
+            <div class="gold-box" style="margin-top:14px; margin-bottom:0;">
+              <div class="gold-title">Antes de marcar, verificar siempre:</div>
+              <div class="gold-body">El acuerdo de la última llamada · Las notas existentes · El saldo pendiente actualizado.</div>
+            </div>
+            <div class="step-tags" style="margin-top:10px;">
+              <span class="tag tag-navy">ClickUp</span><span class="tag tag-navy">Tram Case</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left"><div class="step-num">3</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <button class="step-toggle" onclick="toggleStep(this)">
+            <span class="step-title">Contacto con el cliente — 8x8</span>
+            <span class="toggle-icon">﹀</span>
+          </button>
+          <div class="step-content">
+            <div class="step-desc">Llamada saliente según agenda. Durante la llamada el agente debe: verificar identidad del cliente, revisar el acuerdo de pago previo, informar el saldo pendiente cuando sea necesario y solicitar el pago según el plan.</div>
+            <div class="branch-block">
+              <div class="branch-label">Resultado de la llamada</div>
+              <div class="branch-row">
+                <div class="branch-opt opt-yes"><div class="branch-opt-label">Pago realizado</div><div class="opt-note">Procesar en Law Pay → actualizar ClickUp → enviar recibo por SMS.</div></div>
+                <div class="branch-opt opt-no"><div class="branch-opt-label">No hay pago</div><div class="opt-note">Registrar motivo, acordar fecha compromiso, actualizar Next Call.</div></div>
+              </div>
+              <div class="branch-row" style="margin-top:8px;">
+                <div class="branch-opt" style="border-left:2px solid #c0c0c0;"><div class="branch-opt-label" style="color:var(--muted);">No contesta</div><div class="opt-note">Dejar mensaje de voz / SMS cuando aplique. Estatus: No Answered.</div></div>
+                <div class="branch-opt" style="border-left:2px solid #f0b8b8;"><div class="branch-opt-label" style="color:#8c1f1f;">+60 días sin respuesta</div><div class="opt-note">Verificar múltiples intentos documentados. Estatus: Unresponsive.</div></div>
+              </div>
+            </div>
+            <div class="step-tags"><span class="tag tag-navy">8x8</span><span class="tag tag-blue">Saliente / Entrante</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left"><div class="step-num">4</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <button class="step-toggle" onclick="toggleStep(this)">
+            <span class="step-title">Procesar pago en Law Pay</span>
+            <span class="toggle-icon">﹀</span>
+          </button>
+          <div class="step-content">
+            <div class="step-desc">Si el cliente acepta pagar, ingresar todos los datos de la tarjeta:</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;">
+              <div style="background:var(--offwhite); border:1px solid var(--border); border-radius:6px; padding:8px 12px; font-size:12px; color:var(--muted);">16 dígitos de la tarjeta</div>
+              <div style="background:var(--offwhite); border:1px solid var(--border); border-radius:6px; padding:8px 12px; font-size:12px; color:var(--muted);">Nombre en tarjeta</div>
+              <div style="background:var(--offwhite); border:1px solid var(--border); border-radius:6px; padding:8px 12px; font-size:12px; color:var(--muted);">Fecha de expiración</div>
+              <div style="background:var(--offwhite); border:1px solid var(--border); border-radius:6px; padding:8px 12px; font-size:12px; color:var(--muted);">3 dígitos de seguridad (reverso)</div>
+              <div style="background:var(--offwhite); border:1px solid var(--border); border-radius:6px; padding:8px 12px; font-size:12px; color:var(--muted);">Zip code</div>
+              <div style="background:var(--offwhite); border:1px solid var(--border); border-radius:6px; padding:8px 12px; font-size:12px; color:var(--muted);">Correo electrónico</div>
+            </div>
+            <div class="info-box" style="margin-top:12px; margin-bottom:0;">
+              <div class="info-title">Confirmación verbal obligatoria</div>
+              <div class="info-body">Antes de procesar, leer la terminación de la tarjeta y solicitar autorización explícita: <em>"Procederé a realizar el cargo por $__ dólares a su tarjeta con terminación XXXX, ¿usted autoriza este cargo?"</em></div>
+            </div>
+            <div class="step-tags" style="margin-top:10px;"><span class="tag tag-gold">Law Pay</span><span class="tag tag-green">Recibo automático</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left"><div class="step-num">5</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <button class="step-toggle" onclick="toggleStep(this)">
+            <span class="step-title">Enviar recibo y confirmar</span>
+            <span class="toggle-icon">﹀</span>
+          </button>
+          <div class="step-content">
+            <div class="step-desc">El recibo llega automáticamente por correo al cliente. El agente también lo envía por <strong>mensaje de texto</strong>. Solicitar confirmación de recibido: <em>"¿Puede confirmar de recibido?"</em><br><br>
+            Comunicar el balance actualizado: monto pagado a la fecha y restante del caso.</div>
+            <div class="step-tags"><span class="tag tag-green">Correo automático</span><span class="tag tag-green">SMS manual</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left"><div class="step-num">6</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <button class="step-toggle" onclick="toggleStep(this)">
+            <span class="step-title">Actualizar ClickUp inmediatamente</span>
+            <span class="toggle-icon">﹀</span>
+          </button>
+          <div class="step-content">
+            <div class="step-desc"><strong>Si hubo pago:</strong></div>
+            <div style="background:var(--offwhite); border:1px solid var(--border); border-radius:6px; padding:12px 14px; font-size:12px; color:var(--muted); margin:8px 0; line-height:1.7;">
+              1. Dejar el recibo en los <strong style="color:var(--text);">comentarios de ClickUp</strong> — viaja automáticamente a Tram Case.<br>
+              2. Actualizar <strong style="color:var(--text);">Atty Fees Paid</strong> sumando el monto recibido.<br>
+              <em style="color:#a0a8c0;">Ej: Paid actual $2,000 + Pago $200 = Nuevo paid $2,200</em><br>
+              3. Cambiar estatus a <strong style="color:var(--text);">Charged</strong>.<br>
+              4. Actualizar <strong style="color:var(--text);">Next Call</strong> con la fecha del próximo seguimiento.
+            </div>
+            <div class="step-desc"><strong>Si no hubo pago:</strong></div>
+            <div style="background:var(--offwhite); border:1px solid var(--border); border-radius:6px; padding:12px 14px; font-size:12px; color:var(--muted); margin:8px 0; line-height:1.7;">
+              1. Registrar motivo de no pago.<br>
+              2. Establecer nueva fecha de compromiso.<br>
+              3. Cambiar estatus a <strong style="color:var(--text);">Payment FU / Contacted</strong>.<br>
+              4. Actualizar <strong style="color:var(--text);">Next Call</strong> con la fecha acordada.
+            </div>
+            <div class="step-tags"><span class="tag tag-navy">ClickUp</span><span class="tag tag-navy">Tram Case (automático)</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left"><div class="step-num">7</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <button class="step-toggle" onclick="toggleStep(this)">
+            <span class="step-title">Programar Next Call</span>
+            <span class="toggle-icon">﹀</span>
+          </button>
+          <div class="step-content">
+            <div class="step-desc">El campo <strong>Next Call siempre debe reflejar la próxima acción</strong> al caso del cliente.</div>
+            <div style="margin-top:10px; display:flex; flex-direction:column; gap:6px;">
+              <div style="background:var(--offwhite); border:1px solid var(--border); border-radius:6px; padding:8px 14px; font-size:12px; color:var(--muted);">Si prometió pagar en fecha específica → Next Call = ese mismo día.</div>
+              <div style="background:var(--offwhite); border:1px solid var(--border); border-radius:6px; padding:8px 14px; font-size:12px; color:var(--muted);">Si pide más tiempo → Next Call según acuerdo alcanzado.</div>
+              <div style="background:var(--offwhite); border:1px solid var(--border); border-radius:6px; padding:8px 14px; font-size:12px; color:var(--muted);">Si no hubo contacto → Next Call según estrategia de cobranza.</div>
+            </div>
+            <div class="step-tags" style="margin-top:10px;"><span class="tag tag-navy">ClickUp</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left"><div class="step-num">8</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <button class="step-toggle" onclick="toggleStep(this)">
+            <span class="step-title">Reporte diario de colectado</span>
+            <span class="toggle-icon">﹀</span>
+          </button>
+          <div class="step-content">
+            <div class="step-desc">Al cierre de cada día, registrar en el Excel personal: clientes cobrados, monto de cada pago y número de recibo (ID de transacción). Este reporte es individual por agente y obligatorio.</div>
+            <div class="step-tags"><span class="tag tag-gold">Excel</span><span class="tag tag-gold">ID de transacción</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /flow -->
+
+    <!-- QUIZ: PROCEDIMIENTO -->
+    <div class="quiz-block" id="quiz-sop">
+      <div class="quiz-header">
+        <span class="quiz-icon">🎯</span>
+        <div>
+          <div class="quiz-title">Verifica tu aprendizaje</div>
+          <div class="quiz-sub">Procedimiento diario — 4 preguntas</div>
+        </div>
+        <div class="quiz-score-badge" id="score-sop" style="display:none;"></div>
+      </div>
+
+      <!-- Q1: Opción múltiple -->
+      <div class="quiz-q" id="sop-q1" data-correct="b">
+        <div class="quiz-q-label">Pregunta 1 · Opción múltiple</div>
+        <div class="quiz-q-text">¿Cada cuánto tiempo se debe contactar a un cliente que lleva más de 90 días sin pagar?</div>
+        <div class="quiz-options">
+          <button class="qopt" onclick="checkOpt(this,'sop-q1','a')">A) Una vez al mes</button>
+          <button class="qopt" onclick="checkOpt(this,'sop-q1','b')">B) Semanalmente</button>
+          <button class="qopt" onclick="checkOpt(this,'sop-q1','c')">C) Cada dos semanas</button>
+          <button class="qopt" onclick="checkOpt(this,'sop-q1','d')">D) Solo si el cliente llama</button>
+        </div>
+        <div class="quiz-feedback" id="fb-sop-q1"></div>
+      </div>
+
+      <!-- Q2: Verdadero / Falso -->
+      <div class="quiz-q" id="sop-q2">
+        <div class="quiz-q-label">Pregunta 2 · Verdadero o Falso</div>
+        <div class="quiz-q-text">El recibo de pago se manda únicamente por correo electrónico automático; el agente no necesita hacer nada más.</div>
+        <div class="quiz-options">
+          <button class="qopt" onclick="checkTF(this,'sop-q2',false)">Verdadero</button>
+          <button class="qopt" onclick="checkTF(this,'sop-q2',false)">Falso</button>
+        </div>
+        <div class="quiz-feedback" id="fb-sop-q2"></div>
+      </div>
+
+      <!-- Q3: Ordenar pasos -->
+      <div class="quiz-q" id="sop-q3">
+        <div class="quiz-q-label">Pregunta 3 · Ordena los pasos</div>
+        <div class="quiz-q-text">Arrastra y acomoda estos pasos en el orden correcto del flujo diario:</div>
+        <div class="sort-list" id="sort-sop" ondragover="event.preventDefault()">
+          <div class="sort-item" draggable="true" data-order="3" ondragstart="dragStart(event)" ondrop="dragDrop(event,this)">📞 Contactar al cliente vía 8x8</div>
+          <div class="sort-item" draggable="true" data-order="1" ondragstart="dragStart(event)" ondrop="dragDrop(event,this)">📋 Revisar cartera en ClickUp</div>
+          <div class="sort-item" draggable="true" data-order="4" ondragstart="dragStart(event)" ondrop="dragDrop(event,this)">💳 Procesar pago en Law Pay</div>
+          <div class="sort-item" draggable="true" data-order="2" ondragstart="dragStart(event)" ondrop="dragDrop(event,this)">📁 Revisar expediente en Tram Case</div>
+        </div>
+        <button class="quiz-check-btn" onclick="checkSort('sort-sop','fb-sop-q3','sop-q3',[1,2,3,4])">Verificar orden</button>
+        <div class="quiz-feedback" id="fb-sop-q3"></div>
+      </div>
+
+      <!-- Q4: Completar espacio -->
+      <div class="quiz-q" id="sop-q4">
+        <div class="quiz-q-label">Pregunta 4 · Completa el espacio</div>
+        <div class="quiz-q-text">Al actualizar <strong>Atty Fees Paid</strong> de $2,000 con un pago de $350, el nuevo valor debe ser:</div>
+        <div style="display:flex; align-items:center; gap:10px; margin-top:12px; flex-wrap:wrap;">
+          <span style="font-size:13px; color:var(--muted);">Nuevo Atty Fees Paid =</span>
+          <input class="quiz-input" id="input-sop-q4" type="text" placeholder="$____" maxlength="8"/>
+          <button class="quiz-check-btn" style="margin-top:0;" onclick="checkFill('input-sop-q4','fb-sop-q4','sop-q4',['2350','$2350','2,350','$2,350'])">Verificar</button>
+        </div>
+        <div class="quiz-feedback" id="fb-sop-q4"></div>
+      </div>
+
+      <div class="quiz-submit-row">
+        <button class="quiz-submit-btn" onclick="calcScore('sop',4,['sop-q1','sop-q2','sop-q3','sop-q4'],'score-sop')">Ver resultado</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB: CLICKUP ── -->
+  <div id="tab-clickup" class="tab-panel">
+    <div class="s-title">Estatus y campos en ClickUp</div>
+    <p class="s-sub">Catálogo oficial de estatus y documentación obligatoria por gestión.</p>
+
+    <div class="status-grid">
+      <div class="status-card">
+        <div class="status-code" style="color:#1a6640;">Charged</div>
+        <div class="status-def">El cliente realizó un pago exitoso.</div>
+      </div>
+      <div class="status-card">
+        <div class="status-code" style="color:var(--navy2);">Payment FU / Contacted</div>
+        <div class="status-def">Hubo contacto pero no pago. Requiere seguimiento.</div>
+      </div>
+      <div class="status-card">
+        <div class="status-code" style="color:var(--muted);">No Answered</div>
+        <div class="status-def">El cliente no respondió la llamada.</div>
+      </div>
+      <div class="status-card">
+        <div class="status-code" style="color:#8c1f1f;">Unresponsive</div>
+        <div class="status-def">Sin respuesta a ningún intento durante más de 60 días.</div>
+      </div>
+      <div class="status-card">
+        <div class="status-code" style="color:#7a5c10;">Account Deposit</div>
+        <div class="status-def">Abono parcial a la cuenta (común en clientes deudores).</div>
+      </div>
+      <div class="status-card">
+        <div class="status-code" style="color:#1a4060;">PIF — Paid in Full</div>
+        <div class="status-def">El cliente terminó de pagar su caso por completo.</div>
+      </div>
+      <div class="status-card">
+        <div class="status-code" style="color:var(--muted);">Cancelado</div>
+        <div class="status-def">El cliente solicitó cancelar su caso.</div>
+      </div>
+      <div class="status-card">
+        <div class="status-code" style="color:var(--muted);">Duplicado</div>
+        <div class="status-def">Cliente duplicado en la base — se limpia el registro.</div>
+      </div>
+    </div>
+
+    <div style="margin-top:32px;">
+      <div class="s-title" style="font-size:17px;">Documentación obligatoria por gestión</div>
+      <p class="s-sub" style="margin-bottom:10px;">Cada nota en ClickUp / Tram Case debe incluir:</p>
+      <div style="background:var(--light-surface); border:1px solid var(--border); border-radius:10px; padding:6px 20px;">
+        <ul class="checklist">
+          <li>Fecha y hora del contacto</li>
+          <li>Resultado de la llamada</li>
+          <li>Monto pagado (si aplica)</li>
+          <li>Fecha compromiso de pago</li>
+          <li>Motivo de incumplimiento (si aplica)</li>
+          <li>Comentarios relevantes del cliente</li>
+          <li>Estatus actualizado en ClickUp</li>
+          <li>Fecha de Next Call actualizada</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top:28px;">
+      <div class="gold-box">
+        <div class="gold-title">Recibo en comentarios</div>
+        <div class="gold-body">Cuando se registra un pago, el recibo debe pegarse en el apartado de <strong>comentarios de ClickUp</strong> — esto lo envía automáticamente a Tram Case sin acción adicional del agente.</div>
+      </div>
+    </div>
+
+    <!-- QUIZ: CLICKUP -->
+    <div class="quiz-block" id="quiz-clickup">
+      <div class="quiz-header">
+        <span class="quiz-icon">🎯</span>
+        <div>
+          <div class="quiz-title">Verifica tu aprendizaje</div>
+          <div class="quiz-sub">ClickUp &amp; Estatus — 3 preguntas</div>
+        </div>
+        <div class="quiz-score-badge" id="score-clickup" style="display:none;"></div>
+      </div>
+
+      <!-- Q1: Opción múltiple -->
+      <div class="quiz-q" id="cu-q1" data-correct="b">
+        <div class="quiz-q-label">Pregunta 1 · Opción múltiple</div>
+        <div class="quiz-q-text">¿Qué estatus se asigna cuando el cliente contestó la llamada pero no realizó ningún pago?</div>
+        <div class="quiz-options">
+          <button class="qopt" onclick="checkOpt(this,'cu-q1','a')">A) No Answered</button>
+          <button class="qopt" onclick="checkOpt(this,'cu-q1','b')">B) Payment FU / Contacted</button>
+          <button class="qopt" onclick="checkOpt(this,'cu-q1','c')">C) Charged</button>
+          <button class="qopt" onclick="checkOpt(this,'cu-q1','d')">D) Unresponsive</button>
+        </div>
+        <div class="quiz-feedback" id="fb-cu-q1"></div>
+      </div>
+
+      <!-- Q2: Verdadero / Falso -->
+      <div class="quiz-q" id="cu-q2">
+        <div class="quiz-q-label">Pregunta 2 · Verdadero o Falso</div>
+        <div class="quiz-q-text">El estatus "Unresponsive" se puede asignar desde el primer intento fallido de contacto.</div>
+        <div class="quiz-options">
+          <button class="qopt" onclick="checkTF(this,'cu-q2',false)">Verdadero</button>
+          <button class="qopt" onclick="checkTF(this,'cu-q2',false)">Falso</button>
+        </div>
+        <div class="quiz-feedback" id="fb-cu-q2"></div>
+      </div>
+
+      <!-- Q3: Relacionar columnas -->
+      <div class="quiz-q" id="cu-q3">
+        <div class="quiz-q-label">Pregunta 3 · Relaciona el concepto</div>
+        <div class="quiz-q-text">Selecciona la definición correcta para cada campo de ClickUp:</div>
+        <div class="match-grid">
+          <div class="match-row">
+            <div class="match-term">Atty Fees</div>
+            <select class="match-select" id="match-cu-1">
+              <option value="">Selecciona...</option>
+              <option value="a">Valor total del caso</option>
+              <option value="b">Monto pagado hasta hoy</option>
+              <option value="c">Saldo pendiente</option>
+            </select>
+          </div>
+          <div class="match-row">
+            <div class="match-term">Atty Fees Paid</div>
+            <select class="match-select" id="match-cu-2">
+              <option value="">Selecciona...</option>
+              <option value="a">Valor total del caso</option>
+              <option value="b">Monto pagado hasta hoy</option>
+              <option value="c">Saldo pendiente</option>
+            </select>
+          </div>
+          <div class="match-row">
+            <div class="match-term">Atty Fees Owed</div>
+            <select class="match-select" id="match-cu-3">
+              <option value="">Selecciona...</option>
+              <option value="a">Valor total del caso</option>
+              <option value="b">Monto pagado hasta hoy</option>
+              <option value="c">Saldo pendiente</option>
+            </select>
+          </div>
+        </div>
+        <button class="quiz-check-btn" onclick="checkMatch('cu-q3','fb-cu-q3',['match-cu-1','match-cu-2','match-cu-3'],['a','b','c'])">Verificar</button>
+        <div class="quiz-feedback" id="fb-cu-q3"></div>
+      </div>
+
+      <div class="quiz-submit-row">
+        <button class="quiz-submit-btn" onclick="calcScore('clickup',3,['cu-q1','cu-q2','cu-q3'],'score-clickup')">Ver resultado</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB: SCRIPT ── -->
+  <div id="tab-script" class="tab-panel">
+    <div class="s-title">Script oficial de llamada</div>
+    <p class="s-sub">The Mendoza Law Firm — Departamento de Collections. Tono amable y profesional en todo momento.</p>
+
+    <div class="script-wrap">
+      <button class="script-toggle" onclick="toggleScript(this)">
+        <div class="script-head" style="pointer-events:none;">
+          <span class="tag tag-navy" style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:#e0e8f8;">Apertura</span>
+          <div class="script-scenario">Saludo e identificación</div>
+          <span class="toggle-icon-script">﹀</span>
+        </div>
+      </button>
+      <div class="script-content">
+        <div class="script-body">
+          <div class="script-line">
+            <div class="script-role role-agent">Agente</div>
+            <div class="script-text">¡Muy buenos días / buenas tardes! Hablamos desde las oficinas de The Mendoza Law Firm, mi nombre es ______, agente de finanzas. ¿Me comunico con la Sra./Sr. __________?</div>
+          </div>
+          <div class="script-line">
+            <div class="script-role role-client">Cliente</div>
+            <div class="script-text">Sí, con él/ella.</div>
+          </div>
+          <div class="script-line">
+            <div class="script-role role-agent">Agente</div>
+            <div class="script-text">Perfecto. ¿Cómo se encuentra el día de hoy? — Qué bueno, me da mucho gusto. El motivo de mi llamada es para el seguimiento de su plan de pagos de [plan de pagos]. ¿Está bien, Sra./Sr. ______?</div>
+          </div>
+          <div class="script-line">
+            <div class="script-role role-agent">Agente</div>
+            <div class="script-text">Le comento que al día de hoy llevamos $_____ recolectado y queda pendiente $_____. ¿Le gustaría hacer un abono a su cuenta o pagar únicamente la mensualidad?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="script-wrap">
+      <button class="script-toggle" onclick="toggleScript(this)">
+        <div class="script-head" style="pointer-events:none;">
+          <span class="tag tag-green" style="background:rgba(52,211,153,0.15); border-color:rgba(52,211,153,0.3); color:#a0f0d0;">Escenario A</span>
+          <div class="script-scenario">El cliente desea pagar</div>
+          <span class="toggle-icon-script">﹀</span>
+        </div>
+      </button>
+      <div class="script-content">
+        <div class="script-body">
+          <div class="script-line">
+            <div class="script-role role-agent">Agente</div>
+            <div class="script-text">Muy bien, Sra./Sr. ______, voy a preparar el pago. Para ello necesito la información de su tarjeta. ¿Puede dictarme los 16 dígitos?</div>
+          </div>
+          <div class="script-note">El cliente proporciona los 16 dígitos.</div>
+          <div class="script-line">
+            <div class="script-role role-agent">Agente</div>
+            <div class="script-text">¿Puede darme la fecha de expiración de su tarjeta?</div>
+          </div>
+          <div class="script-note">El cliente proporciona la fecha.</div>
+          <div class="script-line">
+            <div class="script-role role-agent">Agente</div>
+            <div class="script-text">¿Puede darme los 3 dígitos de seguridad que se encuentran al reverso de su tarjeta?</div>
+          </div>
+          <div class="script-note">El cliente proporciona el CVV.</div>
+          <div class="script-line">
+            <div class="script-role role-agent">Agente</div>
+            <div class="script-text">Perfecto, Sra./Sr. ______, procederé a realizar el cargo por $_____ dólares a su tarjeta con terminación XXXX. ¿Usted autoriza este pago/cargo?</div>
+          </div>
+          <div class="script-line">
+            <div class="script-role role-agent">Agente</div>
+            <div class="script-text">Muy bien, el cargo se ha efectuado exitosamente. Le estaré mandando su comprobante por email y mensaje de texto. ¿Puede confirmar de recibido?</div>
+          </div>
+          <div class="script-line">
+            <div class="script-role role-agent">Agente</div>
+            <div class="script-text">Perfecto. Al día de hoy con ese pago lleva un balance de ($____) y queda un restante de ($____). Me estaré comunicando con usted [decir fecha acordada] para darle seguimiento a sus mensualidades. Cualquier duda puede regresarme la llamada a este mismo número. ¡Excelente día!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin:16px 0;">
+      <a href="https://drive.google.com/file/d/1vNbnJH6RangUnD7J008l5Syne3hxKHTG/view?usp=sharing" target="_blank" class="audio-link-btn">
+        🎧 Escuchar llamada — Proceso completo de tarjeta
+      </a>
+    </div>
+
+    <div class="script-wrap">
+      <button class="script-toggle" onclick="toggleScript(this)">
+        <div class="script-head" style="pointer-events:none;">
+          <span class="tag tag-gold" style="background:rgba(201,168,76,0.15); border-color:rgba(201,168,76,0.4); color:#e8d08a;">Escenario B</span>
+          <div class="script-scenario">El cliente no desea pagar / no puede en este momento</div>
+          <span class="toggle-icon-script">﹀</span>
+        </div>
+      </button>
+      <div class="script-content">
+        <div class="script-body">
+          <div class="script-line">
+            <div class="script-role role-agent">Agente</div>
+            <div class="script-text">Muy bien, Sra./Sr. ______, le recuerdo que las mensualidades son del 1 al 15 del mes para no generar recargos.</div>
+          </div>
+          <div class="script-note">Si tiene adeudo pendiente:</div>
+          <div class="script-line">
+            <div class="script-role role-agent">Agente</div>
+            <div class="script-text">Actualmente tenemos un adeudo de $_____ dólares y le recomiendo hacer el abono lo más pronto posible para no generar más interés.</div>
+          </div>
+          <div class="script-note">Si va al corriente:</div>
+          <div class="script-line">
+            <div class="script-role role-agent">Agente</div>
+            <div class="script-text">Por el momento solo se debe el pago de mensualidad de $_____ dólares y le recomiendo hacer el pago lo más pronto para no atrasarse y no generar algún cargo extra.</div>
+          </div>
+          <div class="script-line">
+            <div class="script-role role-agent">Agente</div>
+            <div class="script-text">¿Tendrá alguna fecha tentativa para realizar algún abono a su cuenta?</div>
+          </div>
+          <div class="script-line">
+            <div class="script-role role-agent">Agente</div>
+            <div class="script-text">Muy bien, Sra./Sr. ______, yo me estaré comunicando con usted para el seguimiento de sus pagos. Cualquier duda puede regresarme la llamada a este mismo número. ¡Excelente día!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin:16px 0;">
+      <a href="https://drive.google.com/file/d/1QSwkHut0GdHCdGB_kMjlBJjjE5RDvjh8/view?usp=sharing" target="_blank" class="audio-link-btn">
+        🎧 Escuchar llamada — Cliente no quiere pagar · Persuasión
+      </a>
+    </div>
+
+    <div class="info-box">
+      <div class="info-title">Regla de oro: el cobro es amable, no agresivo</div>
+      <div class="info-body">No se amenaza al cliente ni se condiciona el pago al avance de su caso. El único argumento de presión permitido es mencionar los <strong>recargos contemplados en el contrato</strong>. Nunca entrar en detalles del caso legal — solo flat status.</div>
+    </div>
+
+
+    <!-- QUIZ: SCRIPT -->
+    <div class="quiz-block" id="quiz-script">
+      <div class="quiz-header">
+        <span class="quiz-icon">🎯</span>
+        <div>
+          <div class="quiz-title">Verifica tu aprendizaje</div>
+          <div class="quiz-sub">Script oficial — 3 preguntas</div>
+        </div>
+        <div class="quiz-score-badge" id="score-script" style="display:none;"></div>
+      </div>
+
+      <!-- Q1: Opción múltiple -->
+      <div class="quiz-q" id="sc-q1" data-correct="c">
+        <div class="quiz-q-label">Pregunta 1 · Opción múltiple</div>
+        <div class="quiz-q-text">¿Cuál es el único argumento de presión permitido con el cliente?</div>
+        <div class="quiz-options">
+          <button class="qopt" onclick="checkOpt(this,'sc-q1','a')">A) Que se enviará su caso a una agencia externa</button>
+          <button class="qopt" onclick="checkOpt(this,'sc-q1','b')">B) Que su caso será pausado si no paga</button>
+          <button class="qopt" onclick="checkOpt(this,'sc-q1','c')">C) Los recargos contemplados en su contrato</button>
+          <button class="qopt" onclick="checkOpt(this,'sc-q1','d')">D) Que el abogado dejará de trabajar su caso</button>
+        </div>
+        <div class="quiz-feedback" id="fb-sc-q1"></div>
+      </div>
+
+      <!-- Q2: Completar espacio -->
+      <div class="quiz-q" id="sc-q2">
+        <div class="quiz-q-label">Pregunta 2 · Completa el espacio</div>
+        <div class="quiz-q-text">Antes de procesar el cargo, el agente debe leer la terminación de la tarjeta y pedir al cliente que <strong>______</strong> el pago.</div>
+        <div style="display:flex; align-items:center; gap:10px; margin-top:12px; flex-wrap:wrap;">
+          <input class="quiz-input" id="input-sc-q2" type="text" placeholder="una palabra..." maxlength="20"/>
+          <button class="quiz-check-btn" style="margin-top:0;" onclick="checkFill('input-sc-q2','fb-sc-q2','sc-q2',['autorice','autoricé','autorice el','autoricé el','autorizar'])">Verificar</button>
+        </div>
+        <div class="quiz-feedback" id="fb-sc-q2"></div>
+      </div>
+
+      <!-- Q3: Escenario situacional -->
+      <div class="quiz-q" id="sc-q3" data-correct="b">
+        <div class="quiz-q-label">Pregunta 3 · Situación real</div>
+        <div class="quiz-q-text">Un cliente llama furioso diciendo: <em>"¡No he visto avance en mi caso y no voy a pagar hasta que me expliquen qué está pasando!"</em> ¿Cuál es la respuesta correcta del agente?</div>
+        <div class="quiz-options">
+          <button class="qopt" onclick="checkOpt(this,'sc-q3','a')">A) Explicar en detalle el proceso legal del caso para tranquilizarlo</button>
+          <button class="qopt" onclick="checkOpt(this,'sc-q3','b')">B) Dar un flat status, redirigir a Customer Service y luego intentar cerrar el pago</button>
+          <button class="qopt" onclick="checkOpt(this,'sc-q3','c')">C) Transferir la llamada directamente a Customer Service</button>
+          <button class="qopt" onclick="checkOpt(this,'sc-q3','d')">D) Ofrecer un descuento en la mensualidad para calmar al cliente</button>
+        </div>
+        <div class="quiz-feedback" id="fb-sc-q3"></div>
+      </div>
+
+      <div class="quiz-submit-row">
+        <button class="quiz-submit-btn" onclick="calcScore('script',3,['sc-q1','sc-q2','sc-q3'],'score-script')">Ver resultado</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB: HERRAMIENTAS ── -->
+  <div id="tab-herramientas" class="tab-panel">
+    <div class="s-title">Herramientas del agente</div>
+    <p class="s-sub">Cinco plataformas activas en la operación diaria.</p>
+
+    <div class="htool-grid">
+
+      <div class="htool-card">
+        <div class="htool-header" style="background:linear-gradient(135deg,#0d1f3c 60%,#1a3460);">
+          <div class="htool-icon">📋</div>
+        </div>
+        <div class="htool-body">
+          <div class="htool-name">ClickUp</div>
+          <div class="htool-role">Sistema central de trabajo</div>
+          <div class="htool-desc">Gestión de cartera, agenda y seguimiento diario. Campos clave:</div>
+          <div class="htool-chips">
+            <span class="hchip">Atty Fees</span>
+            <span class="hchip">Atty Fees Paid</span>
+            <span class="hchip">Atty Fees Owed</span>
+            <span class="hchip">Next Call</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="htool-card">
+        <div class="htool-header" style="background:linear-gradient(135deg,#142850 60%,#1e3f70);">
+          <div class="htool-icon">📁</div>
+        </div>
+        <div class="htool-body">
+          <div class="htool-name">Tram Case</div>
+          <div class="htool-role">Historial del caso legal</div>
+          <div class="htool-desc">Recibe automáticamente los comentarios de ClickUp. Indispensable para dar case status al cliente durante la llamada.</div>
+        </div>
+      </div>
+
+      <div class="htool-card">
+        <div class="htool-header" style="background:linear-gradient(135deg,#0d2a3c 60%,#0f4060);">
+          <div class="htool-icon">📞</div>
+        </div>
+        <div class="htool-body">
+          <div class="htool-name">8x8</div>
+          <div class="htool-role">Plataforma de llamadas</div>
+          <div class="htool-desc">Gestiona llamadas salientes y entrantes. <strong style="color:var(--navy);">No permite transferir llamadas</strong> — el cliente debe volver a marcar si necesita otra área.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="htool-row2">
+
+      <div class="htool-card">
+        <div class="htool-header" style="background:linear-gradient(135deg,#2a1a00 60%,#4a3010);">
+          <div class="htool-icon">💳</div>
+        </div>
+        <div class="htool-body">
+          <div class="htool-name">Law Pay</div>
+          <div class="htool-role">Procesamiento de pagos</div>
+          <div class="htool-desc">Genera recibo automático por correo al confirmar el pago. El agente complementa enviando el recibo por SMS al cliente.</div>
+        </div>
+      </div>
+
+      <div class="htool-card">
+        <div class="htool-header" style="background:linear-gradient(135deg,#0a2a1a 60%,#143d28);">
+          <div class="htool-icon">📊</div>
+        </div>
+        <div class="htool-body">
+          <div class="htool-name">Excel</div>
+          <div class="htool-role">Reporte personal diario</div>
+          <div class="htool-desc">Registro individual de cada cobro del día: cliente, monto e ID de transacción. Obligatorio al cierre de jornada.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:28px;">
+      <div class="gold-box">
+        <div class="gold-title">Llamadas entrantes — línea de pagos</div>
+        <div class="gold-body">Los clientes que llaman a la línea de pagos son atendidos por Collections según sectorización por horas. Si el cliente solo busca case status, se le da un <strong>flat status</strong> y se le indica que marque a Customer Service: <em>"Está marcando la línea de pagos, por lo cual no podemos darle más información de la que tenemos aquí."</em></div>
+      </div>
+    </div>
+
+    <!-- QUIZ: HERRAMIENTAS -->
+    <div class="quiz-block" id="quiz-herramientas">
+      <div class="quiz-header">
+        <span class="quiz-icon">🎯</span>
+        <div>
+          <div class="quiz-title">Verifica tu aprendizaje</div>
+          <div class="quiz-sub">Herramientas — 3 preguntas</div>
+        </div>
+        <div class="quiz-score-badge" id="score-herramientas" style="display:none;"></div>
+      </div>
+
+      <div class="quiz-q" id="ht-q1" data-correct="c">
+        <div class="quiz-q-label">Pregunta 1 · Opción múltiple</div>
+        <div class="quiz-q-text">¿Qué herramienta se usa exclusivamente para procesar el cobro con tarjeta?</div>
+        <div class="quiz-options">
+          <button class="qopt" onclick="checkOpt(this,'ht-q1','a')">A) ClickUp</button>
+          <button class="qopt" onclick="checkOpt(this,'ht-q1','b')">B) Tram Case</button>
+          <button class="qopt" onclick="checkOpt(this,'ht-q1','c')">C) Law Pay</button>
+          <button class="qopt" onclick="checkOpt(this,'ht-q1','d')">D) Excel</button>
+        </div>
+        <div class="quiz-feedback" id="fb-ht-q1"></div>
+      </div>
+
+      <div class="quiz-q" id="ht-q2">
+        <div class="quiz-q-label">Pregunta 2 · Verdadero o Falso</div>
+        <div class="quiz-q-text">El agente puede transferir llamadas desde 8x8 a Customer Service directamente.</div>
+        <div class="quiz-options">
+          <button class="qopt" onclick="checkTF(this,'ht-q2',false)">Verdadero</button>
+          <button class="qopt" onclick="checkTF(this,'ht-q2',false)">Falso</button>
+        </div>
+        <div class="quiz-feedback" id="fb-ht-q2"></div>
+      </div>
+
+      <div class="quiz-q" id="ht-q3" data-correct="c">
+        <div class="quiz-q-label">Pregunta 3 · Opción múltiple</div>
+        <div class="quiz-q-text">Al finalizar una gestión en ClickUp, ¿qué debe hacer el agente en Tram Case?</div>
+        <div class="quiz-options">
+          <button class="qopt" onclick="checkOpt(this,'ht-q3','a')">A) No es necesario hacer nada, ClickUp lo actualiza solo</button>
+          <button class="qopt" onclick="checkOpt(this,'ht-q3','b')">B) Copiar y pegar el mismo texto que escribió en ClickUp</button>
+          <button class="qopt" onclick="checkOpt(this,'ht-q3','c')">C) Dejar una nota de seguimiento documentando el resultado de la interacción</button>
+          <button class="qopt" onclick="checkOpt(this,'ht-q3','d')">D) Esperar a que el TL actualice Tram Case al final del día</button>
+        </div>
+        <div class="quiz-feedback" id="fb-ht-q3"></div>
+      </div>
+
+      <div class="quiz-submit-row">
+        <button class="quiz-submit-btn" onclick="calcScore('herramientas',3,['ht-q1','ht-q2','ht-q3'],'score-herramientas')">Ver resultado</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB: ESCALACIÓN ── -->
+  <div id="tab-escalacion" class="tab-panel">
+    <div class="s-title">Protocolo de escalación y casos complejos</div>
+    <p class="s-sub">Situaciones que requieren intervención del Team Leader o manejo especial.</p>
+
+    <div class="alert-box">
+      <div class="alert-title">Escalar al TL de inmediato</div>
+      <div class="alert-body">Si el cliente amenaza con demandar, usa lenguaje agresivo o hace acusaciones graves, el agente detiene la gestión y notifica al Team Leader en ese momento. Sin necesidad de registrarlo antes de escalar.</div>
+    </div>
+
+    <div style="margin-top:8px; margin-bottom:24px;">
+      <div class="info-box">
+        <div class="info-title">Case status — solo "flat status"</div>
+        <div class="info-body">El agente solo proporciona: <em>"Su caso está siendo revisado por el abogado y pronto recibirá actualizaciones."</em> Nunca se entra en detalles. Si el cliente pide más información, se redirige a Customer Service (el cliente debe marcar directamente, no se transfieren llamadas).</div>
+      </div>
+    </div>
+
+    <div class="s-title" style="font-size:17px; margin-bottom:16px;">Situaciones complejas frecuentes</div>
+
+    <div class="script-wrap" style="margin-bottom:12px;">
+      <div class="script-head">
+        <span class="tag" style="background:rgba(240,184,184,0.2); border-color:rgba(240,184,184,0.4); color:#f0b8b8;">Alta tensión</span>
+        <div class="script-scenario">Cliente amenaza con demandar o se pone agresivo</div>
+      </div>
+      <div class="script-body">
+        <div style="font-size:13px; color:var(--muted); line-height:1.6;">Acción inmediata: el agente para la llamada y escala al TL. No continúa la gestión solo bajo ninguna circunstancia.</div>
+      </div>
+    </div>
+
+    <div class="script-wrap" style="margin-bottom:12px;">
+      <div class="script-head">
+        <span class="tag" style="background:rgba(201,168,76,0.15); border-color:rgba(201,168,76,0.3); color:#e8d08a;">Negociación</span>
+        <div class="script-scenario">Cliente dice que no han trabajado en su caso y no pagará</div>
+      </div>
+      <div class="script-body">
+        <div style="font-size:13px; color:var(--muted); line-height:1.6;">Dar flat case status → redirigir a Customer Service para el tema del caso → intentar cerrar el pago de forma independiente al estatus del caso → si no cede, negociar un abono y reagendar → si escala en hostilidad, notificar al TL.</div>
+      </div>
+    </div>
+
+    <div class="script-wrap" style="margin-bottom:24px;">
+      <div class="script-head">
+        <span class="tag" style="background:rgba(120,160,220,0.15); border-color:rgba(120,160,220,0.3); color:#9ec3f0;">Sin información</span>
+        <div class="script-scenario">Hay poca información en Tram Case</div>
+      </div>
+      <div class="script-body">
+        <div style="font-size:13px; color:var(--muted); line-height:1.6;">Si Tram Case no tiene suficiente información para dar un case status coherente, el agente se acerca con el equipo de supervisión antes de continuar con el cliente. Es raro — la mayoría de los agentes aprende a identificar los stages con el tiempo.</div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <div class="info-title">Duración esperada de llamadas</div>
+      <div class="info-body">
+        <strong>Cliente cooperativo:</strong> hasta 3 minutos.<br>
+        <strong>Cliente que busca tarjeta o negocia:</strong> 3 a 5 minutos.<br>
+        <strong>Cliente difícil:</strong> hasta 10–20 minutos.
+      </div>
+    </div>
+
+    <div style="margin-top:16px;">
+      <div class="gold-box">
+        <div class="gold-title">Responsabilidades del agente — resumen</div>
+        <div class="gold-body">
+          Gestionar diariamente la cartera asignada · Mantener actualizada la información de pagos · Registrar todas las interacciones · Dar seguimiento a fechas compromiso · Actualizar estatus correctamente en ClickUp · Mantener comunicación profesional y empática · Alimentar el reporte diario de colectado.
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin:16px 0;">
+      <a href="https://drive.google.com/file/d/1r0eYJJgKEYAvtE0hLsSU78PowygcwgIC/view?usp=sharing" target="_blank" class="audio-link-btn">
+        🎧 Escuchar llamada — Cliente se complica · Pide Case Status
+      </a>
+    </div>
+
+    <!-- QUIZ: ESCALACIÓN -->
+    <div class="quiz-block" id="quiz-escalacion">
+      <div class="quiz-header">
+        <span class="quiz-icon">🎯</span>
+        <div>
+          <div class="quiz-title">Verifica tu aprendizaje</div>
+          <div class="quiz-sub">Escalación — 3 preguntas</div>
+        </div>
+        <div class="quiz-score-badge" id="score-escalacion" style="display:none;"></div>
+      </div>
+
+      <div class="quiz-q" id="es-q1">
+        <div class="quiz-q-label">Pregunta 1 · Verdadero o Falso</div>
+        <div class="quiz-q-text">El agente debe registrar la situación en ClickUp antes de escalar al Team Leader.</div>
+        <div class="quiz-options">
+          <button class="qopt" onclick="checkTF(this,'es-q1',false)">Verdadero</button>
+          <button class="qopt" onclick="checkTF(this,'es-q1',false)">Falso</button>
+        </div>
+        <div class="quiz-feedback" id="fb-es-q1"></div>
+      </div>
+
+      <div class="quiz-q" id="es-q2" data-correct="b">
+        <div class="quiz-q-label">Pregunta 2 · Situación real</div>
+        <div class="quiz-q-text">Un cliente pregunta cuánto tiempo falta para que su caso sea resuelto. ¿Qué hace el agente?</div>
+        <div class="quiz-options">
+          <button class="qopt" onclick="checkOpt(this,'es-q2','a')">A) Busca en Tram Case y le da una fecha estimada</button>
+          <button class="qopt" onclick="checkOpt(this,'es-q2','b')">B) Da un flat status y redirige a Customer Service</button>
+          <button class="qopt" onclick="checkOpt(this,'es-q2','c')">C) Le dice que no tiene esa información y termina la llamada</button>
+          <button class="qopt" onclick="checkOpt(this,'es-q2','d')">D) Escala de inmediato al TL</button>
+        </div>
+        <div class="quiz-feedback" id="fb-es-q2"></div>
+      </div>
+
+      <div class="quiz-q" id="es-q3">
+        <div class="quiz-q-label">Pregunta 3 · Completa el espacio</div>
+        <div class="quiz-q-text">Una llamada con un cliente difícil puede durar hasta <strong>______</strong> minutos.</div>
+        <div style="display:flex; align-items:center; gap:10px; margin-top:12px; flex-wrap:wrap;">
+          <input class="quiz-input" id="input-es-q3" type="text" placeholder="número..." maxlength="5"/>
+          <button class="quiz-check-btn" style="margin-top:0;" onclick="checkFill('input-es-q3','fb-es-q3','es-q3',['20','10 a 20','10-20','hasta 20'])">Verificar</button>
+        </div>
+        <div class="quiz-feedback" id="fb-es-q3"></div>
+      </div>
+
+      <div class="quiz-submit-row">
+        <button class="quiz-submit-btn" onclick="calcScore('escalacion',3,['es-q1','es-q2','es-q3'],'score-escalacion')">Ver resultado</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /layout -->
+
+<div class="footer-bar">
+  <span>Mendoza Learning Center</span> — The Mendoza Law Firm · Departamento de Collections · Uso interno
+</div>
+
+<script>
+  function showTab(id, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    var panel = document.getElementById('tab-' + id);
+    if (panel) panel.classList.add('active');
+    if (btn) btn.classList.add('active');
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Ensure first tab is active on load
+    var firstPanel = document.getElementById('tab-sop');
+    var firstBtn = document.querySelector('.tab-btn');
+    if (firstPanel) firstPanel.classList.add('active');
+    if (firstBtn) firstBtn.classList.add('active');
+  });
+
+  function toggleStep(btn) {
+    const content = btn.nextElementSibling;
+    const isOpen = content.classList.contains('open');
+    btn.classList.toggle('open', !isOpen);
+    content.classList.toggle('open', !isOpen);
+  }
+
+  function toggleScript(btn) {
+    const content = btn.nextElementSibling;
+    const isOpen = content.classList.contains('open');
+    btn.classList.toggle('open', !isOpen);
+    content.classList.toggle('open', !isOpen);
+  }
+
+  // Track correct answers per question
+  const answered = {};
+
+  // Multiple choice: correct answer key = letter that matches button index (a=0,b=1,c=2,d=3)
+  function checkOpt(btn, qId, btnKey) {
+    const q = document.getElementById(qId);
+    if (q.dataset.done) return;
+    const correctKey = q.dataset.correct;
+    const opts = q.querySelectorAll('.qopt');
+    opts.forEach(o => o.disabled = true);
+    const fb = document.getElementById('fb-' + qId);
+    if (btnKey === correctKey) {
+      btn.classList.add('qopt-correct');
+      fb.innerHTML = '✓ ¡Correcto!';
+      fb.className = 'quiz-feedback fb-correct';
+      answered[qId] = true;
+    } else {
+      btn.classList.add('qopt-wrong');
+      opts.forEach(o => {
+        if (o.getAttribute('onclick').includes("'" + correctKey + "'")) o.classList.add('qopt-correct');
+      });
+      fb.innerHTML = '✗ Incorrecto. La respuesta correcta está resaltada.';
+      fb.className = 'quiz-feedback fb-wrong';
+      answered[qId] = false;
+    }
+    q.dataset.done = '1';
+  }
+
+  // True/False: isTrue = the correct answer
+  function checkTF(btn, qId, isTrue) {
+    const q = document.getElementById(qId);
+    if (q.dataset.done) return;
+    const opts = q.querySelectorAll('.qopt');
+    const chosen = btn.textContent.trim() === 'Verdadero';
+    opts.forEach(o => o.disabled = true);
+    const fb = document.getElementById('fb-' + qId);
+    if (chosen === isTrue) {
+      btn.classList.add('qopt-correct');
+      fb.innerHTML = '✓ ¡Correcto!';
+      fb.className = 'quiz-feedback fb-correct';
+      answered[qId] = true;
+    } else {
+      btn.classList.add('qopt-wrong');
+      opts[isTrue ? 0 : 1].classList.add('qopt-correct');
+      fb.innerHTML = '✗ Incorrecto. La respuesta correcta está resaltada.';
+      fb.className = 'quiz-feedback fb-wrong';
+      answered[qId] = false;
+    }
+    q.dataset.done = '1';
+  }
+
+  // Fill in the blank
+  function checkFill(inputId, fbId, qId, accepted) {
+    const q = document.getElementById(qId);
+    if (q.dataset.done) return;
+    const val = document.getElementById(inputId).value.trim().toLowerCase();
+    const fb = document.getElementById(fbId);
+    const correct = accepted.map(a => a.toLowerCase()).includes(val);
+    document.getElementById(inputId).disabled = true;
+    if (correct) {
+      fb.innerHTML = '✓ ¡Correcto!';
+      fb.className = 'quiz-feedback fb-correct';
+      answered[qId] = true;
+    } else {
+      fb.innerHTML = '✗ Incorrecto. Respuesta esperada: <strong>' + accepted[0] + '</strong>';
+      fb.className = 'quiz-feedback fb-wrong';
+      answered[qId] = false;
+    }
+    q.dataset.done = '1';
+  }
+
+  // Sort/drag
+  let dragEl = null;
+  function dragStart(e) { dragEl = e.target; e.dataTransfer.effectAllowed = 'move'; }
+  function dragDrop(e, target) {
+    e.preventDefault();
+    if (dragEl && dragEl !== target) {
+      const list = target.parentNode;
+      const nodes = Array.from(list.children);
+      const fromIdx = nodes.indexOf(dragEl);
+      const toIdx = nodes.indexOf(target);
+      if (fromIdx < toIdx) list.insertBefore(dragEl, target.nextSibling);
+      else list.insertBefore(dragEl, target);
+    }
+  }
+  function checkSort(listId, fbId, qId, correctOrder) {
+    const q = document.getElementById(qId);
+    if (q.dataset.done) return;
+    const items = Array.from(document.getElementById(listId).children);
+    const current = items.map(i => parseInt(i.dataset.order));
+    const correct = JSON.stringify(correctOrder) === JSON.stringify(current);
+    const fb = document.getElementById(fbId);
+    if (correct) {
+      items.forEach(i => i.classList.add('sort-correct'));
+      fb.innerHTML = '✓ ¡Orden correcto!';
+      fb.className = 'quiz-feedback fb-correct';
+      answered[qId] = true;
+    } else {
+      fb.innerHTML = '✗ El orden no es correcto. El flujo es: Revisar ClickUp → Tram Case → Contactar → Procesar pago.';
+      fb.className = 'quiz-feedback fb-wrong';
+      answered[qId] = false;
+    }
+    q.dataset.done = '1';
+  }
+
+  // Match dropdowns
+  function checkMatch(qId, fbId, selectIds, correctVals) {
+    const q = document.getElementById(qId);
+    if (q.dataset.done) return;
+    let allCorrect = true;
+    selectIds.forEach((id, i) => {
+      const sel = document.getElementById(id);
+      sel.disabled = true;
+      if (sel.value !== correctVals[i]) allCorrect = false;
+    });
+    const fb = document.getElementById(fbId);
+    if (allCorrect) {
+      fb.innerHTML = '✓ ¡Todas correctas!';
+      fb.className = 'quiz-feedback fb-correct';
+      answered[qId] = true;
+    } else {
+      fb.innerHTML = '✗ Alguna no es correcta. Atty Fees = Valor total · Atty Fees Paid = Monto pagado · Atty Fees Owed = Saldo pendiente.';
+      fb.className = 'quiz-feedback fb-wrong';
+      answered[qId] = false;
+    }
+    q.dataset.done = '1';
+  }
+
+  // Score calculation
+  function calcScore(section, total, qIds, badgeId) {
+    const correct = qIds.filter(id => answered[id] === true).length;
+    const badge = document.getElementById(badgeId);
+    const pct = Math.round((correct / total) * 100);
+    badge.style.display = 'flex';
+    badge.innerHTML = correct + '/' + total;
+    badge.className = 'quiz-score-badge ' + (pct >= 70 ? 'badge-pass' : 'badge-fail');
+    const row = badge.closest('.quiz-block').querySelector('.quiz-submit-row');
+    const msg = pct === 100 ? '🏆 ¡Perfecto! Dominas esta sección.' :
+                pct >= 70  ? '✅ Bien hecho. Puedes avanzar.' :
+                             '📖 Te recomendamos repasar esta sección.';
+    row.innerHTML = '<div class="quiz-result-msg ' + (pct >= 70 ? 'msg-pass' : 'msg-fail') + '">' + msg + '</div>';
+  }
+
+  /* ── SCORM 1.2 API ── */
+  var SCORM = (function() {
+    var api = null;
+    var initialized = false;
+    var completed = false;
+
+    function findAPI(win) {
+      var attempts = 0;
+      try {
+        while (!win.API && win.parent && win.parent !== win && attempts < 10) {
+          win = win.parent;
+          attempts++;
+        }
+        return win.API || null;
+      } catch (e) {
+        // Cross-origin frame (e.g. preview sandbox) — no SCORM API available
+        return null;
+      }
+    }
+
+    function init() {
+      try {
+        api = findAPI(window);
+        if (!api && window.opener) api = findAPI(window.opener);
+        if (api) {
+          api.LMSInitialize("");
+          initialized = true;
+          api.LMSSetValue("cmi.core.lesson_status", "incomplete");
+          api.LMSCommit("");
+        }
+      } catch (e) {
+        api = null;
+        initialized = false;
+      }
+    }
+
+    function setComplete() {
+      try {
+        if (!completed && api && initialized) {
+          completed = true;
+          api.LMSSetValue("cmi.core.lesson_status", "completed");
+          api.LMSSetValue("cmi.core.exit", "");
+          api.LMSCommit("");
+        }
+      } catch (e) { /* no-op if LMS API unavailable */ }
+    }
+
+    function setScore(raw, min, max) {
+      try {
+        if (api && initialized) {
+          api.LMSSetValue("cmi.core.score.raw", raw);
+          api.LMSSetValue("cmi.core.score.min", min);
+          api.LMSSetValue("cmi.core.score.max", max);
+          api.LMSCommit("");
+        }
+      } catch (e) { /* no-op if LMS API unavailable */ }
+    }
+
+    function finish() {
+      try {
+        if (api && initialized) {
+          api.LMSFinish("");
+        }
+      } catch (e) { /* no-op if LMS API unavailable */ }
+    }
+
+    return { init: init, setComplete: setComplete, setScore: setScore, finish: finish };
+  })();
+
+  // Init on load
+  window.addEventListener('load', function() { SCORM.init(); });
+  // Finish on unload
+  window.addEventListener('beforeunload', function() { SCORM.finish(); });
+
+
+  // SCORM score reporting hook
+  var _totalCorrect = 0;
+  var _totalQuestions = 0;
+  var _quizScores = {};
+
+  var _origCalcScore = calcScore;
+  calcScore = function(section, total, qIds, badgeId) {
+    _origCalcScore(section, total, qIds, badgeId);
+    var correct = qIds.filter(id => answered[id] === true).length;
+    _quizScores[section] = { correct: correct, total: total };
+    // Recalculate global score
+    var totalC = 0, totalQ = 0;
+    Object.values(_quizScores).forEach(function(s) { totalC += s.correct; totalQ += s.total; });
+    SCORM.setScore(totalC, 0, totalQ);
+    // Mark complete once all 5 quizzes submitted
+    if (Object.keys(_quizScores).length >= 5) {
+      SCORM.setComplete();
+    }
+  };
+
+</script>
+</body>
+</html>
