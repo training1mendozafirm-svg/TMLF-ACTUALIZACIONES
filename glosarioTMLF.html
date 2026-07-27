@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glosario TMLF 2026 · Asistente</title>
+<style>
+  :root{
+    --navy-deep:#0f172a;
+    --navy:#1e293b;
+    --navy-soft:#27324a;
+    --gold:#c9a24b;
+    --gold-soft:#e8d5a3;
+    --electric:#3b82f6;
+    --bg:#f8fafc;
+    --panel:#ffffff;
+    --ink:#1e293b;
+    --ink-soft:#64748b;
+    --line:#e2e8f0;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+    background:
+      radial-gradient(1200px 600px at 100% -10%, rgba(59,130,246,0.10), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(201,162,75,0.10), transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ---------- HEADER ---------- */
+  .topbar{
+    background:linear-gradient(120deg,var(--navy-deep),var(--navy));
+    color:#fff;
+    padding:18px 24px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    box-shadow:0 2px 18px rgba(15,23,42,0.25);
+    position:relative;
+    z-index:5;
+  }
+  .brand-mark{
+    width:42px;height:42px;border-radius:10px;
+    background:linear-gradient(135deg,var(--gold),#a97f2a);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:15px;color:var(--navy-deep);
+    letter-spacing:0.5px;
+    flex-shrink:0;
+  }
+  .brand-text h1{margin:0;font-size:16px;font-weight:600;letter-spacing:0.2px;}
+  .brand-text p{margin:2px 0 0;font-size:12px;color:#b8c2d9;}
+  .status-dot{
+    margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;color:#b8c2d9;
+  }
+  .status-dot span.dot{
+    width:8px;height:8px;border-radius:50%;background:#4ade80;
+    box-shadow:0 0 0 3px rgba(74,222,128,0.2);
+  }
+
+  /* ---------- TOP NAV (Chatbot / Glosario) ---------- */
+  .top-nav{
+    display:flex;
+    gap:4px;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:10px;
+    padding:3px;
+    margin-left:22px;
+    flex-shrink:0;
+  }
+  .top-nav button{
+    border:none;
+    background:transparent;
+    color:#b8c2d9;
+    font-size:12.5px;
+    font-weight:600;
+    padding:7px 14px;
+    border-radius:7px;
+    cursor:pointer;
+    font-family:inherit;
+    transition:all .15s ease;
+  }
+  .top-nav button:hover{color:#fff;}
+  .top-nav button.active{
+    background:linear-gradient(135deg,var(--gold),#a97f2a);
+    color:var(--navy-deep);
+  }
+
+  /* ---------- LAYOUT ---------- */
+  .app{
+    flex:1;
+    display:flex;
+    max-width:1180px;
+    width:100%;
+    margin:0 auto;
+    padding:20px;
+    gap:20px;
+    min-height:0;
+  }
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{
+    width:270px;
+    flex-shrink:0;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px;
+    height:fit-content;
+    box-shadow:0 8px 24px -12px rgba(15,23,42,0.12);
+  }
+  .sidebar h2{
+    font-size:11px;text-transform:uppercase;letter-spacing:1px;
+    color:var(--ink-soft);margin:0 0 12px;font-weight:700;
+  }
+  .shortcut-group{margin-bottom:18px;}
+  .shortcut-group:last-child{margin-bottom:0;}
+  .shortcut-group h3{
+    font-size:10px;text-transform:uppercase;letter-spacing:0.8px;
+    color:var(--gold);margin:0 0 8px;font-weight:700;
+  }
+  .chip{
+    display:block;
+    width:100%;
+    text-align:left;
+    background:var(--bg);
+    border:1px solid var(--line);
+    color:var(--navy);
+    padding:9px 12px;
+    border-radius:9px;
+    font-size:12.5px;
+    margin-bottom:6px;
+    cursor:pointer;
+    transition:all .15s ease;
+    font-family:inherit;
+  }
+  .chip:hover{
+    background:var(--navy);
+    color:#fff;
+    border-color:var(--navy);
+    transform:translateX(2px);
+  }
+
+  /* ---------- CHAT PANEL ---------- */
+  .chat-panel{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:0 8px 24px -12px rgba(15,23,42,0.12);
+    min-height:600px;
+  }
+  .chat-header{
+    padding:14px 20px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .chat-header .title{font-size:13px;font-weight:700;color:var(--navy);}
+  .chat-header .sub{font-size:11px;color:var(--ink-soft);}
+
+  .messages{
+    flex:1;
+    overflow-y:auto;
+    padding:22px 22px 10px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    scroll-behavior:smooth;
+  }
+  .messages::-webkit-scrollbar{width:8px;}
+  .messages::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px;}
+
+  .msg{
+    max-width:78%;
+    display:flex;
+    gap:10px;
+    animation:rise .28s ease both;
+  }
+  @keyframes rise{
+    from{opacity:0;transform:translateY(8px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  .msg.bot{align-self:flex-start;}
+  .msg.user{align-self:flex-end;flex-direction:row-reverse;}
+
+  .avatar{
+    width:30px;height:30px;border-radius:8px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:700;
+  }
+  .msg.bot .avatar{background:linear-gradient(135deg,var(--navy-deep),var(--navy-soft));color:var(--gold-soft);}
+  .msg.user .avatar{background:var(--electric);color:#fff;}
+
+  .bubble{
+    padding:12px 15px;
+    border-radius:14px;
+    font-size:13.8px;
+    line-height:1.55;
+  }
+  .msg.bot .bubble{
+    background:var(--bg);
+    border:1px solid var(--line);
+    color:var(--ink);
+    border-top-left-radius:4px;
+  }
+  .msg.user .bubble{
+    background:linear-gradient(135deg,var(--navy-deep),var(--navy));
+    color:#fff;
+    border-top-right-radius:4px;
+  }
+  .bubble strong{color:var(--gold);}
+  .msg.user .bubble strong{color:var(--gold-soft);}
+  .bubble .term-title{
+    display:block;
+    font-weight:700;
+    color:var(--navy);
+    margin-bottom:3px;
+    font-size:14px;
+  }
+  .bubble ul{margin:6px 0 0;padding-left:18px;}
+  .bubble li{margin-bottom:3px;}
+  .match-btn{
+    display:inline-block;
+    margin:4px 6px 0 0;
+    padding:6px 11px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:12px;
+    cursor:pointer;
+    color:var(--navy);
+    font-family:inherit;
+  }
+  .match-btn:hover{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+  .typing{
+    display:flex;gap:4px;align-items:center;padding:4px 2px;
+  }
+  .typing span{
+    width:6px;height:6px;border-radius:50%;background:var(--ink-soft);
+    animation:blink 1.2s infinite ease-in-out;
+  }
+  .typing span:nth-child(2){animation-delay:.2s;}
+  .typing span:nth-child(3){animation-delay:.4s;}
+  @keyframes blink{0%,80%,100%{opacity:.25;}40%{opacity:1;}}
+
+  /* ---------- INPUT ---------- */
+  .input-bar{
+    border-top:1px solid var(--line);
+    padding:14px 18px;
+    display:flex;
+    gap:10px;
+    background:#fff;
+  }
+  .input-bar input{
+    flex:1;
+    border:1px solid var(--line);
+    background:var(--bg);
+    border-radius:10px;
+    padding:12px 14px;
+    font-size:13.5px;
+    font-family:inherit;
+    color:var(--ink);
+    outline:none;
+    transition:border-color .15s;
+  }
+  .input-bar input:focus{border-color:var(--electric);background:#fff;}
+  .input-bar button{
+    background:linear-gradient(135deg,var(--navy-deep),var(--navy));
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    padding:0 20px;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    transition:opacity .15s;
+  }
+  .input-bar button:hover{opacity:.88;}
+  .input-bar button:active{transform:scale(0.98);}
+
+  /* ---------- WELCOME SCREEN ---------- */
+  .welcome-overlay{
+    position:fixed;
+    inset:0;
+    z-index:50;
+    background:
+      radial-gradient(1200px 700px at 100% -10%, rgba(59,130,246,0.18), transparent 60%),
+      radial-gradient(900px 600px at -10% 110%, rgba(201,162,75,0.16), transparent 55%),
+      linear-gradient(160deg,var(--navy-deep),var(--navy));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .welcome-card{
+    max-width:640px;
+    width:100%;
+    background:var(--panel);
+    border-radius:20px;
+    padding:38px 40px 34px;
+    box-shadow:0 30px 70px -20px rgba(0,0,0,0.5);
+    animation:rise .4s ease both;
+  }
+  .welcome-mark{
+    width:52px;height:52px;border-radius:12px;
+    background:linear-gradient(135deg,var(--gold),#a97f2a);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:17px;color:var(--navy-deep);
+    margin-bottom:18px;
+  }
+  .welcome-card h1{
+    margin:0 0 6px;
+    font-size:22px;
+    color:var(--navy);
+    letter-spacing:0.2px;
+  }
+  .welcome-card .welcome-sub{
+    margin:0 0 22px;
+    font-size:13.5px;
+    color:var(--ink-soft);
+  }
+  .welcome-steps{
+    list-style:none;
+    margin:0 0 26px;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .welcome-steps li{
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+  }
+  .step-num{
+    flex-shrink:0;
+    width:26px;height:26px;border-radius:8px;
+    background:var(--bg);
+    border:1px solid var(--line);
+    color:var(--navy);
+    font-size:12px;
+    font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .step-text strong{display:block;font-size:13.5px;color:var(--navy);margin-bottom:1px;}
+  .step-text span{font-size:12.5px;color:var(--ink-soft);line-height:1.5;}
+  .welcome-topics{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:28px;
+  }
+  .welcome-topics .tag{
+    font-size:11px;
+    font-weight:600;
+    padding:6px 11px;
+    border-radius:999px;
+    background:var(--bg);
+    border:1px solid var(--line);
+    color:var(--navy);
+  }
+  .welcome-actions{
+    display:flex;
+    gap:12px;
+  }
+  .start-btn{
+    flex:1;
+    background:linear-gradient(135deg,var(--navy-deep),var(--navy));
+    color:#fff;
+    border:none;
+    border-radius:11px;
+    padding:14px 18px;
+    font-size:13.5px;
+    font-weight:700;
+    cursor:pointer;
+    transition:opacity .15s;
+    font-family:inherit;
+  }
+  .start-btn:hover{opacity:.9;}
+  .start-btn.secondary{
+    background:var(--bg);
+    color:var(--navy);
+    border:1px solid var(--line);
+  }
+  .start-btn.secondary:hover{background:#eef2f7;opacity:1;}
+  .app-hidden{display:none !important;}
+
+  /* ---------- HEADER ACTIONS ---------- */
+  .header-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .clear-btn{
+    background:var(--bg);
+    border:1px solid var(--line);
+    color:var(--ink-soft);
+    font-size:11.5px;
+    font-weight:600;
+    padding:7px 12px;
+    border-radius:8px;
+    cursor:pointer;
+    font-family:inherit;
+    display:flex;
+    align-items:center;
+    gap:5px;
+    transition:all .15s ease;
+  }
+  .clear-btn:hover{
+    background:#fee2e2;
+    border-color:#fecaca;
+    color:#b91c1c;
+  }
+
+  /* ---------- GLOSSARY VIEW ---------- */
+  .glossary-view{
+    flex:1;
+    max-width:1180px;
+    width:100%;
+    margin:0 auto;
+    padding:20px 20px 60px;
+  }
+  .glossary-intro{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px 24px;
+    margin-bottom:20px;
+    box-shadow:0 8px 24px -12px rgba(15,23,42,0.12);
+  }
+  .glossary-intro h2{margin:0 0 4px;font-size:17px;color:var(--navy);}
+  .glossary-intro p{margin:0 0 14px;font-size:12.5px;color:var(--ink-soft);}
+  .glossary-search{
+    width:100%;
+    border:1px solid var(--line);
+    background:var(--bg);
+    border-radius:9px;
+    padding:10px 13px;
+    font-size:13px;
+    font-family:inherit;
+    color:var(--ink);
+    outline:none;
+  }
+  .glossary-search:focus{border-color:var(--electric);background:#fff;}
+
+  .glossary-section{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px 24px;
+    margin-bottom:18px;
+    box-shadow:0 8px 24px -12px rgba(15,23,42,0.12);
+  }
+  .glossary-section h3{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--gold);
+    font-weight:700;
+    margin:0 0 4px;
+  }
+  .glossary-section .count{
+    font-size:11px;
+    color:var(--ink-soft);
+    font-weight:500;
+    margin-bottom:14px;
+    display:block;
+  }
+  .glossary-list{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px 24px;
+  }
+  @media (max-width:760px){
+    .glossary-list{grid-template-columns:1fr;}
+  }
+  .glossary-entry{
+    border-top:1px solid var(--line);
+    padding-top:10px;
+  }
+  .glossary-entry dt{
+    font-weight:700;
+    font-size:13.5px;
+    color:var(--navy);
+    margin-bottom:2px;
+  }
+  .glossary-entry dd{
+    margin:0;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    line-height:1.5;
+  }
+  .glossary-empty{
+    text-align:center;
+    padding:30px;
+    color:var(--ink-soft);
+    font-size:13px;
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:820px){
+    .app{flex-direction:column;padding:12px;gap:12px;}
+    .sidebar{
+      width:100%;
+      display:flex;
+      flex-direction:column;
+      overflow-x:auto;
+    }
+    .shortcut-group{margin-bottom:0;flex-shrink:0;}
+    .chat-panel{min-height:70vh;}
+    .msg{max-width:90%;}
+    .topbar{flex-wrap:wrap;row-gap:10px;}
+    .top-nav{margin-left:0;order:3;width:100%;}
+    .status-dot{margin-left:auto;}
+    .glossary-view{padding:12px 12px 40px;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="welcome-overlay" id="welcomeOverlay">
+    <div class="welcome-card">
+      <div class="welcome-mark">TMLF</div>
+      <h1>Asistente de Glosario TMLF 2026</h1>
+      <p class="welcome-sub">Antes de comenzar, así es como funciona este asistente.</p>
+
+      <ul class="welcome-steps">
+        <li>
+          <div class="step-num">1</div>
+          <div class="step-text">
+            <strong>Escribe tu consulta</strong>
+            <span>Ingresa una sigla, un formulario o una pregunta completa en el campo de texto, ej. "¿Qué es VAWA?" o simplemente "I-360".</span>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">2</div>
+          <div class="step-text">
+            <strong>Usa los atajos de la barra lateral</strong>
+            <span>Están organizados por tema (Visados, Formularios, Estados, Horarios…) para que no tengas que escribir si no quieres.</span>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">3</div>
+          <div class="step-text">
+            <strong>Elige entre varias coincidencias</strong>
+            <span>Si tu búsqueda es ambigua (ej. "Visa"), el asistente te mostrará botones con los términos posibles para que elijas.</span>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">4</div>
+          <div class="step-text">
+            <strong>Limpia la conversación cuando quieras</strong>
+            <span>Usa el botón "Limpiar chat" en la parte superior del chat para empezar de nuevo.</span>
+          </div>
+        </li>
+      </ul>
+
+      <div class="welcome-topics">
+        <span class="tag">Visados y procesos</span>
+        <span class="tag">Formularios USCIS</span>
+        <span class="tag">Estados de EE.UU.</span>
+        <span class="tag">Husos horarios</span>
+        <span class="tag">Siglas internas TMLF</span>
+        <span class="tag">End to end</span>
+      </div>
+
+      <div class="welcome-actions">
+        <button class="start-btn" id="startChatBtn">💬 Ir al Chatbot</button>
+        <button class="start-btn secondary" id="startGlossaryBtn">📖 Ver Glosario</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="topbar">
+    <div class="brand-mark">TMLF</div>
+    <div class="brand-text">
+      <h1>Asistente de Glosario TMLF 2026</h1>
+      <p>The Mendoza Law Firm · Mendoza Learning Center</p>
+    </div>
+    <div class="top-nav">
+      <button id="navChatBtn" class="active">Chatbot</button>
+      <button id="navGlossaryBtn">Glosario</button>
+    </div>
+    <div class="status-dot"><span class="dot"></span> En línea</div>
+  </div>
+
+  <div class="app" id="chatApp">
+    <aside class="sidebar">
+      <h2>Temas del glosario</h2>
+
+      <div class="shortcut-group">
+        <h3>Visados y procesos</h3>
+        <button class="chip" data-q="¿Qué es VAWA?">¿Qué es VAWA?</button>
+        <button class="chip" data-q="¿Qué es la Visa U?">¿Qué es la Visa U?</button>
+        <button class="chip" data-q="¿Qué es la Visa T?">¿Qué es la Visa T?</button>
+        <button class="chip" data-q="¿Qué es Naturalización?">¿Qué es Naturalización?</button>
+      </div>
+
+      <div class="shortcut-group">
+        <h3>Formularios USCIS</h3>
+        <button class="chip" data-q="Formulario I-360">Formulario I-360</button>
+        <button class="chip" data-q="Formulario I-918">Formulario I-918</button>
+        <button class="chip" data-q="Formulario I-765">Formulario I-765</button>
+        <button class="chip" data-q="Formulario I-485">Formulario I-485</button>
+      </div>
+
+      <div class="shortcut-group">
+        <h3>Estados de EE.UU.</h3>
+        <button class="chip" data-q="Buscar estado de CA">Buscar estado de CA</button>
+        <button class="chip" data-q="Buscar estado de NY">Buscar estado de NY</button>
+        <button class="chip" data-q="Buscar estado de TX">Buscar estado de TX</button>
+      </div>
+
+      <div class="shortcut-group">
+        <h3>Husos horarios</h3>
+        <button class="chip" data-q="¿Qué es EDT?">¿Qué es EDT?</button>
+        <button class="chip" data-q="¿Qué es PDT?">¿Qué es PDT?</button>
+        <button class="chip" data-q="¿Qué es HST?">¿Qué es HST?</button>
+      </div>
+
+      <div class="shortcut-group">
+        <h3>Siglas internas TMLF</h3>
+        <button class="chip" data-q="¿Qué significa EAD?">¿Qué significa EAD?</button>
+        <button class="chip" data-q="¿Qué es AOS?">¿Qué es AOS?</button>
+        <button class="chip" data-q="¿Qué es RFE?">¿Qué es RFE?</button>
+      </div>
+
+      <div class="shortcut-group">
+        <h3>End to end</h3>
+        <button class="chip" data-q="¿Qué es Openers?">¿Qué es Openers?</button>
+        <button class="chip" data-q="¿Qué es D.V. Specialist?">¿Qué es D.V. Specialist?</button>
+        <button class="chip" data-q="¿Qué es MGM Review?">¿Qué es MGM Review?</button>
+        <button class="chip" data-q="¿Qué es Incoming Mail?">¿Qué es Incoming Mail?</button>
+      </div>
+    </aside>
+
+    <main class="chat-panel">
+      <div class="chat-header">
+        <div>
+          <div class="title">Consulta el Glosario TMLF</div>
+          <div class="sub">Términos, formularios, estados y procesos migratorios</div>
+        </div>
+        <div class="header-actions">
+          <button class="clear-btn" id="clearBtn" title="Borrar la conversación y empezar de nuevo">🗑 Limpiar chat</button>
+        </div>
+      </div>
+
+      <div class="messages" id="messages"></div>
+
+      <div class="input-bar">
+        <input type="text" id="userInput" placeholder="Escribe un término, sigla o formulario… ej. VAWA, I-360, CA" autocomplete="off">
+        <button id="sendBtn">Enviar ➤</button>
+      </div>
+    </main>
+  </div>
+
+  <div class="glossary-view app-hidden" id="glossaryView">
+    <div class="glossary-intro">
+      <h2>Glosario completo TMLF 2026</h2>
+      <p>Todas las definiciones, agrupadas por apartado y ordenadas alfabéticamente.</p>
+      <input type="text" class="glossary-search" id="glossarySearch" placeholder="Filtrar dentro del glosario… ej. VAWA, I-360, CA">
+    </div>
+    <div id="glossarySections"></div>
+  </div>
+
+<script>
+/* ============================================================
+   BASE DE CONOCIMIENTO — GLOSARIO TMLF 2026
+   ============================================================ */
+const GLOSARIO = [
+  // ---- A ----
+  {term:"ABA",aliases:[],cat:"Siglas",def:"American Bar Association. Colegio de Abogados de Estados Unidos."},
+  {term:"AD",aliases:["approval date"],cat:"Siglas",def:"Approval Date. Fecha de aprobación."},
+  {term:"AER",aliases:["additional evidence request"],cat:"Siglas",def:"Additional Evidence Request. Solicitud de evidencia adicional."},
+  {term:"AOS",aliases:["adjustment of status","ajuste de estatus"],cat:"Siglas",def:"Adjustment of Status. Proceso que permite al titular de una visa de no inmigrante convertirse en residente permanente con una green card."},
+  {term:"Atty Fees",aliases:["attorney fees"],cat:"Siglas",def:"Costo total del caso."},
+  {term:"Atty Fees Owes",aliases:[],cat:"Siglas",def:"Deuda actual del caso."},
+  {term:"Atty Fees Paid",aliases:[],cat:"Siglas",def:"Lo que se ha pagado del caso en total."},
+  // ---- B ----
+  {term:"BC",aliases:["birth certificate","acta de nacimiento"],cat:"Siglas",def:"Birth Certificate. Documento expedido por un gobierno que registra el nacimiento de una persona."},
+  {term:"BMC",aliases:["bad moral character"],cat:"Siglas",def:"Bad Moral Character. En TMLF se usa para referirse a las características y cualidades negativas que deben resaltarse de un abusador."},
+  {term:"BO",aliases:["back office"],cat:"Siglas",def:"Back Office."},
+  // ---- C ----
+  {term:"CBP",aliases:["custom and border protection"],cat:"Siglas",def:"Custom and Border Protection. Servicio de Aduanas y Protección de Fronteras de EE.UU."},
+  {term:"CDL",aliases:["commercial driver's license"],cat:"Siglas",def:"Commercial Driver's License. Permiso de conducir comercial para vehículos grandes/pesados o materiales peligrosos."},
+  {term:"CFR",aliases:["code of federal regulations"],cat:"Siglas",def:"Code of Federal Regulations. Código de Reglamentos Federales, dividido en 50 títulos."},
+  {term:"CL",aliases:["cliente"],cat:"Siglas",def:"Cliente/a."},
+  {term:"COR",aliases:["cancelation of removal","cancelación de remoción"],cat:"Siglas",def:"Cancelation Of Removal. Cancelación de remoción/expulsión ante un juez de inmigración."},
+  {term:"CP",aliases:["consular process","proceso consular"],cat:"Siglas",def:"Consular Process. Trámite consular para solicitar green card desde fuera de EE.UU."},
+  {term:"CR",aliases:["compliance report"],cat:"Siglas",def:"Compliance Report. Reporte de Compliance sobre anomalías o faltas graves."},
+  {term:"CSM",aliases:["compliance specialist monitoring"],cat:"Siglas",def:"Compliance Specialist Monitoring."},
+  {term:"CVL",aliases:["cover letter"],cat:"Siglas",def:"Cover Letter. Carta de presentación del caso y argumentos ante la autoridad migratoria."},
+  // ---- D ----
+  {term:"DA",aliases:["deferred action","acción diferida"],cat:"Siglas",def:"Deferred Action. Acción diferida; discrecionalidad del fiscal para aplazar la expulsión (no otorga estatus legal)."},
+  {term:"DACA",aliases:["deferred action for childhood arrivals"],cat:"Siglas",def:"Deferred Action for Childhood Arrivals. Protege de deportación a jóvenes traídos a EE.UU. de niños y da autorización de trabajo temporal renovable."},
+  {term:"DB",aliases:["drop box","dropbox"],cat:"Siglas",def:"Drop Box. Plataforma donde se cargan documentos del expediente del cliente."},
+  {term:"DC",aliases:["divorce certificate","death certificate"],cat:"Siglas",def:"Divorce Certificate (contexto: certificado de divorcio) / Death Certificate (contexto: certificado de defunción)."},
+  {term:"DCL",aliases:["declaración"],cat:"Siglas",def:"Declaración. Documento legal donde el cliente narra los hechos que explican su elegibilidad para una visa o beneficio migratorio."},
+  {term:"DOB",aliases:["date of birth"],cat:"Siglas",def:"Date of Birth. Fecha de nacimiento."},
+  {term:"DOD",aliases:["date of death","date of divorce"],cat:"Siglas",def:"Date of Death (contexto: fecha de fallecimiento) / Date of Divorce (contexto: fecha de divorcio)."},
+  {term:"DOE",aliases:["description of evidence"],cat:"Siglas",def:"Description of Evidence. Documento que respalda la veracidad de la declaración del cliente."},
+  {term:"DOL",aliases:["department of labor"],cat:"Siglas",def:"Department of Labor. Ministerio de Trabajo de EE.UU."},
+  {term:"DOM",aliases:["date of marriage"],cat:"Siglas",def:"Date of Marriage. Fecha de matrimonio."},
+  {term:"DR",aliases:["detective report"],cat:"Siglas",def:"Detective Report. Informe de detective contratado por la Firma."},
+  {term:"DUI",aliases:["driving under the influence"],cat:"Siglas",def:"Driving Under the Influence. Conducir bajo efectos de alcohol/drogas."},
+  {term:"DV",aliases:["domestic violence","violencia doméstica"],cat:"Siglas",def:"Domestic Violence. Violencia doméstica; patrón de comportamiento abusivo para obtener/mantener poder y control."},
+  {term:"DVS",aliases:["domestic violence specialists"],cat:"Siglas",def:"Domestic Violence Specialists. Realizan entrevistas a posibles clientes de VAWA o Visa T."},
+  {term:"DWI",aliases:["driving while intoxicated"],cat:"Siglas",def:"Driving While Intoxicated. Conducir en estado de embriaguez."},
+  // ---- E ----
+  {term:"EAD",aliases:["employment authorization document","permiso de trabajo","i-766"],cat:"Siglas",def:"Employment Authorization Document. Permiso de trabajo (formulario I-766)."},
+  {term:"EMP",aliases:["ends means process"],cat:"Siglas",def:"Ends, means, process. Modelo con el que se analiza un caso de trata."},
+  {term:"EO",aliases:["expert opinion"],cat:"Siglas",def:"Expert Opinion. Opinión de un experto."},
+  {term:"EOD",aliases:["evidence opportunity detected"],cat:"Siglas",def:"Evidence Opportunity Detected. Oportunidad de evidencia detectada."},
+  {term:"ER",aliases:["expedited removal"],cat:"Siglas",def:"Expedited Removal. Remoción acelerada de no ciudadanos indocumentados o con fraude."},
+  {term:"ETA",aliases:["employment and training administration"],cat:"Siglas",def:"Employment and Training Administration. Administración de empleo y formación."},
+  {term:"EWI",aliases:["enter without inspection"],cat:"Siglas",def:"Enter Without Inspection. Ingreso a EE.UU. sin inspección/permiso legal."},
+  // ---- F ----
+  {term:"FBI",aliases:["federal bureau of investigation"],cat:"Siglas",def:"Federal Bureau of Investigation. Oficina federal de investigaciones."},
+  {term:"FF",aliases:["formato flexible"],cat:"Siglas",def:"Formato Flexible. Redistribuye la información de la entrevista en lógica basada en eventos con enfoque narrativo/persuasivo."},
+  {term:"FLSA",aliases:["fair labor standards act"],cat:"Siglas",def:"Fair Labor Standards Act. Ley de normas laborales justas."},
+  {term:"FMLA",aliases:["family and medical leave act"],cat:"Siglas",def:"Family and Medical Leave Act. Ley de licencia familiar y médica."},
+  {term:"FOIA",aliases:["freedom of information act"],cat:"Siglas",def:"Freedom Of Information Act. Ley sobre libertad de información gubernamental."},
+  // ---- G ----
+  {term:"GFM",aliases:["good faith marriage"],cat:"Siglas",def:"Good Faith Marriage. Matrimonio de buena fe, basado en amor y no solo para obtener green card."},
+  {term:"GMC",aliases:["good moral character"],cat:"Siglas",def:"Good Moral Character. Buen carácter moral, sin problemas delictivos graves."},
+  {term:"GOV FEE",aliases:["government fee"],cat:"Siglas",def:"Government Fee. Es el costo que el gobierno tiene por las visas."},
+  // ---- H ----
+  {term:"HRIFA",aliases:["haitian refugee immigration fairness act"],cat:"Siglas",def:"Haitian Refugee Immigration Fairness Act. Ley de Equidad en la Inmigración de Refugiados Haitianos."},
+  // ---- I ----
+  {term:"ICE",aliases:["immigration and customs enforcement"],cat:"Siglas",def:"Immigration and Customs Enforcement. Servicio de Inmigración y Control de Aduanas."},
+  {term:"ID",aliases:["identification document"],cat:"Siglas",def:"Identification Document. Documento de identidad."},
+  {term:"INA",aliases:["immigration and nationality act"],cat:"Siglas",def:"Immigration and Nationality Act. Ley de Inmigración y Nacionalidad (1952), ahora en el Título 8 del U.S. Code."},
+  {term:"IRS",aliases:["internal revenue services"],cat:"Siglas",def:"Internal Revenue Services. Servicio de Impuestos Internos."},
+  {term:"ITIN",aliases:["individual taxpayer identification number"],cat:"Siglas",def:"Individual Taxpayer Identification Number. Número de identificación fiscal para quienes no tienen SSN."},
+  // ---- L ----
+  {term:"LARI",aliases:["legal admissibility requirements"],cat:"Siglas",def:"Legal Admissibility Requirements. Requisitos legales de admisibilidad por visa/trámite según USCIS."},
+  {term:"LEA",aliases:["law enforcement agency"],cat:"Siglas",def:"Law Enforcement Agency. Fuerzas y cuerpos de seguridad del Estado."},
+  {term:"LPR",aliases:["lawful permanent resident"],cat:"Siglas",def:"Lawful Permanent Resident. Residente legal permanente (green card holder)."},
+  {term:"LSU",aliases:["legal strategy unit"],cat:"Siglas",def:"Legal Strategy Unit."},
+  // ---- M ----
+  {term:"MC",aliases:["marriage certificate"],cat:"Siglas",def:"Marriage Certificate. Acta de matrimonio."},
+  {term:"MGM",aliases:["maría guadalupe mendoza"],cat:"Siglas",def:"María Guadalupe Mendoza, Lead Attorney de TMLF."},
+  {term:"MISD",aliases:["misdemeanor"],cat:"Siglas",def:"Misdemeanor. Delito menor."},
+  {term:"MKT",aliases:["marketing"],cat:"Siglas",def:"Marketing."},
+  {term:"MTR",aliases:["motion to reopen"],cat:"Siglas",def:"Motion to Reopen. Petición de reapertura de un caso ante el tribunal de inmigración."},
+  // ---- N ----
+  {term:"NA",aliases:["no answer"],cat:"Siglas",def:"No Answer. No hay respuesta."},
+  {term:"NATZ",aliases:["naturalization","naturalización"],cat:"Siglas",def:"Naturalization. Naturalización; proceso para obtener ciudadanía estadounidense."},
+  {term:"NOID",aliases:["notice of intent of denial"],cat:"Siglas",def:"Notice of Intent of Denial. Notificación de intento de rechazo de USCIS."},
+  // ---- P ----
+  {term:"PA",aliases:["presence of abuse"],cat:"Siglas",def:"Presence of Abuse. Presencia de abuso; requisito de elegibilidad VAWA por lesiones/crueldad extrema."},
+  {term:"PC",aliases:["posible cliente"],cat:"Siglas",def:"Posible Cliente. Persona consultando elegibilidad para servicios de TMLF (área de Ventas)."},
+  {term:"PCL",aliases:["police clearance letter"],cat:"Siglas",def:"Police Clearance Letter. Documento con historial de arrestos de una persona."},
+  {term:"PCR",aliases:["pre case review"],cat:"Siglas",def:"Pre Case Review."},
+  {term:"PE",aliases:["psychological evaluation"],cat:"Siglas",def:"Psychological Evaluation. Evaluación psicológica del estado y salud mental."},
+  {term:"PERM",aliases:["permanent labor certification"],cat:"Siglas",def:"Permanent Labor Certification. Certificación laboral permanente emitida por el DOL."},
+  {term:"PIP",aliases:["parole in place"],cat:"Siglas",def:"Parole in Place. Permiso de permanencia temporal en EE.UU."},
+  {term:"PMO",aliases:["project management office"],cat:"Siglas",def:"Project Management Office. Oficina de Gestión de Proyectos (trackeo de procesos en TMLF)."},
+  {term:"POB",aliases:["place of birth"],cat:"Siglas",def:"Place of Birth. Lugar de nacimiento."},
+  {term:"PPE",aliases:["posibles patrones de éxito"],cat:"Siglas",def:"Posibles Patrones de Éxito. Criterios de calidad para que MGM apruebe una DCL."},
+  {term:"PPR",aliases:["posibles patrones de rechazo"],cat:"Siglas",def:"Posibles Patrones de Rechazo. Criterios por los que MGM rechaza una DCL."},
+  {term:"PUMP",aliases:["providing urgent maternal protections for nursing mothers"],cat:"Siglas",def:"Providing Urgent Maternal Protections for Nursing Mothers. Protecciones maternas urgentes para madres lactantes."},
+  {term:"PWD",aliases:["prevailing wage determination"],cat:"Siglas",def:"Prevailing Wage Determination. Determinación del salario prevaleciente."},
+  {term:"PWI",aliases:["pre welcome interview"],cat:"Siglas",def:"Pre Welcome Interview."},
+  // ---- Q ----
+  {term:"QR",aliases:["qualifying relationship"],cat:"Siglas",def:"Qualifying Relationship. Relación calificada (cónyuge, padre/madre) necesaria para elegibilidad VAWA."},
+  // ---- R ----
+  {term:"REG AOS",aliases:["regular adjustment of status"],cat:"Siglas",def:"Regular Adjustment of Status. Ajuste regular de estatus, sin salir de EE.UU."},
+  {term:"RTP",aliases:["ready to print"],cat:"Siglas",def:"Ready to Print. Listo para impresión."},
+  {term:"RFA",aliases:["ready for assembly"],cat:"Siglas",def:"Ready For Assembly. Listo para ensamblado."},
+  {term:"RFE",aliases:["request for evidence"],cat:"Siglas",def:"Request for Evidence. Solicitud de evidencia adicional por parte de USCIS."},
+  // ---- S ----
+  {term:"SGC",aliases:["sistema de gestión de calidad"],cat:"Siglas",def:"Sistema de Gestión de Calidad. Documenta procesos y responsabilidades para cumplir políticas de calidad."},
+  {term:"SSN",aliases:["social security number"],cat:"Siglas",def:"Social Security Number. Número de seguridad social."},
+  {term:"SOC",aliases:["standard occupational classification"],cat:"Siglas",def:"Standard Occupational Classification. Sistema de clasificación ocupacional del gobierno de EE.UU."},
+  // ---- T ----
+  {term:"TL",aliases:["team leader"],cat:"Siglas",def:"Team Leader. Líder de equipo que coordina y da seguimiento a un grupo de colaboradores."},
+  {term:"TMLF",aliases:["the mendoza law firm"],cat:"Siglas",def:"The Mendoza Law Firm."},
+  {term:"TPS",aliases:["temporal protection status"],cat:"Siglas",def:"Temporal Protection Status. Estatus de protección temporal para países considerados inseguros."},
+  {term:"Trust Payments",aliases:[],cat:"Siglas",def:"Saldo adicional a los honorarios."},
+  {term:"TVPA",aliases:["trafficking victims protection act"],cat:"Siglas",def:"Trafficking Victims Protection Act."},
+  // ---- U ----
+  {term:"USC",aliases:["united states citizen"],cat:"Siglas",def:"United States Citizen. Ciudadana/o estadounidense."},
+  {term:"USCIS",aliases:["united states citizen and immigration services"],cat:"Siglas",def:"United States Citizen and Immigration Services. Agencia federal que supervisa la inmigración legal."},
+  // ---- V ----
+  {term:"VAWA",aliases:["violence against women act"],cat:"Siglas",def:"Violence Against Women Act. Permite a cónyuge/hijo/progenitor maltratado solicitar estatus legal por sí mismo."},
+  {term:"VD",aliases:["voluntary departure"],cat:"Siglas",def:"Voluntary Departure. Salida voluntaria para evitar orden de deportación."},
+  {term:"VM",aliases:["voice mail"],cat:"Siglas",def:"Voice Mail. Correo de voz."},
+  // ---- W ----
+  {term:"WC",aliases:["welcome call"],cat:"Siglas",def:"Welcome Call from atty. Llamada de bienvenida al cliente."},
+  {term:"WP",aliases:["work permit","welcome packet"],cat:"Siglas",def:"Work Permit (contexto: permiso de trabajo) / Welcome Packet (contexto: paquete de bienvenida con documentos esenciales)."},
+  {term:"WS",aliases:["witness statement"],cat:"Siglas",def:"Witness Statement. Declaración escrita de un testigo."},
+
+  // ---- ESTADOS ----
+  {term:"AK",aliases:["alaska"],cat:"Estados",def:"Alaska."},
+  {term:"AKDT",aliases:[],cat:"Estados",def:"Alaska Daylight Time (Hora de verano de Alaska, UTC-8)."},
+  {term:"AL",aliases:["alabama"],cat:"Estados",def:"Alabama."},
+  {term:"AR",aliases:["arkansas"],cat:"Estados",def:"Arkansas."},
+  {term:"AZ",aliases:["arizona"],cat:"Estados",def:"Arizona."},
+  {term:"CA",aliases:["california"],cat:"Estados",def:"California."},
+  {term:"CDT",aliases:[],cat:"Estados",def:"Central Daylight Time (Hora de verano central, UTC-5)."},
+  {term:"CO",aliases:["colorado"],cat:"Estados",def:"Colorado."},
+  {term:"DC",aliases:["district of columbia","washington dc"],cat:"Estados",def:"District of Columbia (Distrito de Columbia, Washington DC)."},
+  {term:"DST",aliases:["daylight saving time"],cat:"Estados",def:"Daylight Saving Time (Horario de verano)."},
+  {term:"EDT",aliases:[],cat:"Estados",def:"Eastern Daylight Time (Hora de verano del este, UTC-4)."},
+  {term:"Eur",aliases:["europa"],cat:"Estados",def:"Europa (selector para ver mapa horario europeo)."},
+  {term:"FL",aliases:["florida"],cat:"Estados",def:"Florida."},
+  {term:"GA",aliases:["georgia"],cat:"Estados",def:"Georgia."},
+  {term:"HI",aliases:["hawái","hawaii"],cat:"Estados",def:"Hawái."},
+  {term:"HST",aliases:[],cat:"Estados",def:"Hawaii Standard Time (Hora estándar de Hawái, UTC-10)."},
+  {term:"IA",aliases:["iowa"],cat:"Estados",def:"Iowa."},
+  {term:"ID",aliases:["idaho"],cat:"Estados",def:"Idaho."},
+  {term:"IL",aliases:["illinois"],cat:"Estados",def:"Illinois."},
+  {term:"IN",aliases:["indiana"],cat:"Estados",def:"Indiana."},
+  {term:"KS",aliases:["kansas"],cat:"Estados",def:"Kansas."},
+  {term:"KY",aliases:["kentucky"],cat:"Estados",def:"Kentucky."},
+  {term:"LA",aliases:["luisiana","louisiana"],cat:"Estados",def:"Luisiana."},
+  {term:"MD",aliases:["maryland"],cat:"Estados",def:"Maryland."},
+  {term:"MI",aliases:["míchigan","michigan"],cat:"Estados",def:"Míchigan."},
+  {term:"MN",aliases:["minnesota"],cat:"Estados",def:"Minnesota."},
+  {term:"MO",aliases:["misuri","missouri"],cat:"Estados",def:"Misuri."},
+  {term:"MS",aliases:["misisipi","mississippi"],cat:"Estados",def:"Misisipi."},
+  {term:"MST",aliases:[],cat:"Estados",def:"Mountain Standard Time (Hora estándar de montaña, UTC-7)."},
+  {term:"MT",aliases:["montana"],cat:"Estados",def:"Montana."},
+  {term:"NC",aliases:["carolina del norte"],cat:"Estados",def:"Carolina del Norte."},
+  {term:"ND",aliases:["dakota del norte"],cat:"Estados",def:"Dakota del Norte."},
+  {term:"NE",aliases:["nebraska"],cat:"Estados",def:"Nebraska."},
+  {term:"NM",aliases:["nuevo méxico","new mexico"],cat:"Estados",def:"Nuevo México."},
+  {term:"NO DST",aliases:[],cat:"Estados",def:"No aplica horario de verano (esa zona no cambia de hora)."},
+  {term:"NV",aliases:["nevada"],cat:"Estados",def:"Nevada."},
+  {term:"NY",aliases:["nueva york","new york"],cat:"Estados",def:"Nueva York."},
+  {term:"OH",aliases:["ohio"],cat:"Estados",def:"Ohio."},
+  {term:"OK",aliases:["oklahoma"],cat:"Estados",def:"Oklahoma."},
+  {term:"OR",aliases:["oregón","oregon"],cat:"Estados",def:"Oregón."},
+  {term:"PA",aliases:["pensilvania","pennsylvania"],cat:"Estados",def:"Pensilvania."},
+  {term:"PDT",aliases:[],cat:"Estados",def:"Pacific Daylight Time (Hora de verano del Pacífico, UTC-7)."},
+  {term:"SC",aliases:["carolina del sur"],cat:"Estados",def:"Carolina del Sur."},
+  {term:"SD",aliases:["dakota del sur"],cat:"Estados",def:"Dakota del Sur."},
+  {term:"TN",aliases:["tennessee"],cat:"Estados",def:"Tennessee."},
+  {term:"TX",aliases:["texas"],cat:"Estados",def:"Texas."},
+  {term:"US",aliases:["united states","estados unidos"],cat:"Estados",def:"United States (Estados Unidos)."},
+  {term:"USA",aliases:["united states of america"],cat:"Estados",def:"United States of America (Estados Unidos de América)."},
+  {term:"UT",aliases:["utah"],cat:"Estados",def:"Utah."},
+  {term:"VA",aliases:["virginia"],cat:"Estados",def:"Virginia."},
+  {term:"WA",aliases:["washington"],cat:"Estados",def:"Washington (estado)."},
+  {term:"WI",aliases:["wisconsin"],cat:"Estados",def:"Wisconsin."},
+  {term:"WV",aliases:["virginia occidental"],cat:"Estados",def:"Virginia Occidental."},
+  {term:"WY",aliases:["wyoming"],cat:"Estados",def:"Wyoming."},
+
+  // ---- FORMULARIOS ----
+  {term:"I-192",aliases:["formulario i-192"],cat:"Formularios",def:"Permiso para Entrar Aunque Tengas un Problema de Inadmisibilidad. Es como un \"perdón\" que se pide cuando la persona tiene algo en su historial que normalmente le impediría entrar a EE. UU. Se usa mucho junto con la Visa U cuando el solicitante tiene antecedentes."},
+  {term:"I-360",aliases:["formulario i-360"],cat:"Formularios",def:"Petición para Autopeticionarios de VAWA. Es el formulario que usa una víctima de abuso (esposa, esposo, hijo o hijo/a) para pedir su propio caso migratorio SIN que el abusador (ciudadano o residente) tenga que enterarse o dar su consentimiento. La víctima se peticiona a sí misma."},
+  {term:"I-914",aliases:["formulario i-914"],cat:"Formularios",def:"Solicitud para la Visa T. Es el formulario principal para pedir la Visa T, para víctimas de trata de personas (trafficking). Hay que demostrar que estuvo físicamente en EE. UU., que ha cooperado (o califica para no cooperar) con las autoridades, y que si lo deportan sufriría un daño muy grave."},
+  {term:"I-914 Suplemento A",aliases:["i-914 suplemento a","suplemento a i-914"],cat:"Formularios",def:"Para derivados en la Visa T. Con este formulario, el beneficiario principal de la Visa T (el T-1) puede meter a sus familiares —esposo/a, hijos, papás o hermanos, según su edad— para que también obtengan el beneficio."},
+  {term:"I-914 Suplemento B",aliases:["i-914 suplemento b","suplemento b i-914"],cat:"Formularios",def:"Carta de la Policía o Fiscalía confirmando la cooperación de la víctima en la investigación del caso de trata de personas. No es obligatoria, pero ayuda mucho como evidencia."},
+  {term:"I-918",aliases:["formulario i-918"],cat:"Formularios",def:"Solicitud para la Visa U. El formulario principal para pedir la Visa U, para víctimas de ciertos delitos (violencia doméstica, agresión, etc.) que sufrieron abuso físico o mental fuerte, y que han ayudado, están ayudando o probablemente ayudarán en la investigación o el juicio del delito."},
+  {term:"I-918 Suplemento A",aliases:["i-918 suplemento a","suplemento a i-918"],cat:"Formularios",def:"Para meter a la familia en la Visa U. Sirve para que el peticionario principal (U-1) incluya a sus familiares calificados en su caso."},
+  {term:"I-918 Suplemento B",aliases:["i-918 suplemento b","suplemento b i-918"],cat:"Formularios",def:"La Certificación de la Policía (obligatoria). Es la pieza clave de la Visa U: una certificación firmada por policía, fiscal, juez u otra autoridad, confirmando que la víctima ayudó o está dispuesta a ayudar con el caso. Sin esto, no se puede meter la petición I-918."},
+  {term:"I-929",aliases:["formulario i-929"],cat:"Formularios",def:"Para familiares de alguien que ya tiene su residencia por Visa U. Es para cuando el beneficiario principal de la Visa U (U-1) ya se hizo residente permanente, y ahora quiere meter a más familiares al proceso."},
+  {term:"I-131",aliases:["formulario i-131","advance parole"],cat:"Formularios",def:"Permiso para Viajar (Advance Parole). Sirve para pedir permiso de viaje internacional. Incluye el Permiso de Reingreso, el Documento de Viaje para Refugiados, y el más común: el Advance Parole, que permite salir y volver a entrar a EE. UU. sin perder el proceso migratorio en curso."},
+  {term:"I-485",aliases:["formulario i-485","green card"],cat:"Formularios",def:"Solicitud para la Residencia (Green Card). Es el formulario que se usa para pedir la Residencia Permanente sin tener que salir del país. Es el \"último paso\" después de que ya se aprobó el caso base (I-360, I-914 o I-918)."},
+  {term:"I-765",aliases:["formulario i-765","permiso de trabajo"],cat:"Formularios",def:"Permiso de Trabajo (EAD). Sirve para pedir el permiso de trabajo legal en EE. UU. mientras el caso migratorio sigue en proceso. Lo usan, por ejemplo, personas con casos de VAWA, Visa T, Visa U, o Acción Diferida."},
+  {term:"I-601",aliases:["waiver i-601"],cat:"Formularios",def:"Perdón general de inadmisibilidad (por ejemplo, por fraude, ciertos delitos, o presencia ilegal), usado normalmente en procesos consulares."},
+  {term:"I-601A",aliases:["waiver i-601a"],cat:"Formularios",def:"Perdón provisional de presencia ilegal, que se puede pedir estando en EE. UU. antes de salir para el proceso consular, para reducir el tiempo separado de la familia."},
+  {term:"I-212",aliases:["waiver i-212"],cat:"Formularios",def:"Permiso para volver a pedir admisión a EE. UU. después de haber sido deportado o removido anteriormente."},
+  {term:"I-751",aliases:["formulario i-751","removal of conditions"],cat:"Formularios",def:"Removal of Conditions. Aplica para personas que obtuvieron su residencia permanente de forma \"condicional\" por estar casadas con un ciudadano hace menos de 2 años. Con el I-751 se pide remover esa condición y convertir la residencia condicional en una residencia permanente de 10 años."},
+  {term:"I-90",aliases:["formulario i-90","renovación green card"],cat:"Formularios",def:"Renovación LPR. Trámite para renovar o reemplazar la tarjeta física de residente permanente (green card) cuando se vence, se pierde, se daña, o tiene datos incorrectos."},
+  {term:"N-400",aliases:["formulario n-400"],cat:"Formularios",def:"Formulario para la Naturalización. Se pide para que un residente permanente se convierta en ciudadano estadounidense, tras cumplir el tiempo mínimo de residencia y requisitos de buena conducta y presencia física."},
+
+  // ---- PROCESOS ----
+  {term:"VAWA – AOS y Deferred Action",aliases:["proceso vawa"],cat:"Procesos",def:"Proceso para víctimas de abuso (esposo/a, hijo/a, o papá/mamá abusado por un ciudadano o residente). El paquete completo incluye la autopetición I-360, y después el Ajuste de Estatus (AOS) con el I-485 para sacar la residencia. Si el caso no puede ajustar todavía, se puede pedir Acción Diferida mientras tanto para evitar la deportación y sacar permiso de trabajo (I-765)."},
+  {term:"Visa T",aliases:["trata de personas"],cat:"Procesos",def:"Para víctimas de trata de personas (trafficking), laboral o sexual. Se pide con el I-914. Hay que demostrar que la persona fue víctima, que está físicamente en EE. UU. por razón de la trata, que ha cooperado (o califica para no hacerlo), y que si la deportan sufriría un daño muy grave."},
+  {term:"Visa U",aliases:["víctimas de delitos"],cat:"Procesos",def:"Para víctimas de ciertos delitos (violencia doméstica, asalto, secuestro, etc.) que sufrieron abuso físico o mental fuerte y que ayudaron, están ayudando o van a ayudar a la policía o fiscalía. Se pide con el I-918, y necesita obligatoriamente la certificación de la autoridad (Suplemento B)."},
+  {term:"Visa K1",aliases:["prometido","fiancé visa"],cat:"Procesos",def:"Visa para el prometido o prometida de un ciudadano estadounidense. Permite entrar a EE. UU. con el propósito de casarse dentro de los 90 días siguientes a la llegada. Una vez casados, el cónyuge puede ajustar su estatus a residencia permanente."},
+  {term:"Parole in Place",aliases:["pip familias militares"],cat:"Procesos",def:"Permiso especial para familiares (cónyuges, hijos, padres) de militares en servicio activo, veteranos o reservistas, que entraron a EE. UU. sin inspección. Da un estatus legal temporal que permite ajustar el estatus sin salir del país."},
+  {term:"Regular AOS",aliases:["ajuste de estatus regular"],cat:"Procesos",def:"Proceso normal para pedir la residencia permanente sin salir de EE. UU., cuando la persona ya tiene una base migratoria (ej. un familiar ciudadano que la peticiona). Se hace con el I-485, fuera de los procesos humanitarios especiales."},
+  {term:"Naturalización",aliases:["ciudadanía","n-400 proceso"],cat:"Procesos",def:"Proceso para que un residente permanente se convierta en ciudadano estadounidense. Se pide con el Formulario N-400, requiriendo generalmente 5 años de residencia (3 si fue por matrimonio con un ciudadano), además de buena conducta y presencia física."},
+  {term:"Removal of Conditions",aliases:["remover condición residencia"],cat:"Procesos",def:"Aplica para personas con residencia permanente \"condicional\" por matrimonio con un ciudadano hace menos de 2 años. Con el I-751 se remueve la condición y se convierte en residencia permanente de 10 años."},
+  {term:"Renovación LPR",aliases:["renovar green card"],cat:"Procesos",def:"Trámite para renovar o reemplazar la green card cuando se vence, se pierde, se daña, o tiene datos incorrectos. Se hace con el Formulario I-90."},
+  {term:"FOIA Expedientes",aliases:["solicitud foia"],cat:"Procesos",def:"Solicitud para pedir el expediente migratorio completo de una persona directamente a las agencias del gobierno (USCIS, ICE, CBP, etc.). Útil para revisar el historial migratorio, decisiones pasadas, o preparar la defensa de un caso."},
+  {term:"Procesos Consulares",aliases:["nvc","consulado"],cat:"Procesos",def:"Camino que sigue una persona que tramita su visa o residencia desde fuera de EE. UU. El caso pasa por el National Visa Center (NVC) y termina con una entrevista en el consulado o embajada de EE. UU. en el país de origen."},
+  {term:"DACA Proceso",aliases:["acción diferida daca"],cat:"Procesos",def:"Programa para personas que llegaron a EE. UU. siendo niños sin documentos. Da protección temporal contra la deportación y permiso de trabajo, aunque no da un camino directo a la residencia permanente. Se debe renovar periódicamente."},
+  {term:"Waivers",aliases:["perdones migratorios"],cat:"Procesos",def:"Perdones que se piden cuando una persona tiene algo en su historial que la hace inadmisible a EE. UU.: I-601 (perdón general), I-601A (perdón provisional de presencia ilegal) e I-212 (permiso para volver a pedir admisión tras deportación)."},
+
+  // ---- END TO END (Flujo Operativo TMLF) ----
+  {term:"Marketing & Captación",aliases:["marketing y captacion","etapa 01"],cat:"End to end",def:"Etapa 1 del flujo operativo. Contacto activo con posibles clientes en Facebook, Instagram y TikTok, a cargo de MGM y el equipo de Marketing. Su misión es recolectar datos de contacto verificados para iniciar el proceso. Entrega a: Openers."},
+  {term:"Openers",aliases:["etapa 02"],cat:"End to end",def:"Etapa 2 del flujo operativo. Primera llamada de extracción a cargo del equipo Openers. Aplica un cuestionario inicial, identifica los elementos clave del posible caso y agenda la cita con D.V. Specialist. Recibe de: Marketing & Captación. Entrega a: D.V. Specialist."},
+  {term:"D.V. Specialist",aliases:["dv specialist","domestic violence specialist","etapa 03"],cat:"End to end",def:"Etapa 3 del flujo operativo (Día 0 — cierre de venta). Aplica el cuestionario de elegibilidad y admisibilidad, define la estrategia legal, cierra el trato y selecciona el plan de pago. Aquí el \"posible cliente\" se convierte oficialmente en cliente. Recibe de: Openers. Entrega a: Pre Welcome Interview (PWI)."},
+  {term:"Pre Welcome Interview",aliases:["pwi etapa","etapa 04"],cat:"End to end",def:"Etapa 4 del flujo operativo (Día +1 / +5). Contacta al cliente para preparar la videollamada de extracción. En la entrevista aplica los I-Forms y conduce una investigación profunda del abuso: la materia prima de la futura Declaración. Recibe de: D.V. Specialist. Entrega a: Welcome Call Attorney."},
+  {term:"Welcome Call Attorney",aliases:["lsu call","etapa 05"],cat:"End to end",def:"Etapa 5 del flujo operativo (Día +15), también llamada LSU Call. El abogado asignado revisa la elegibilidad, el carácter moral, antecedentes y posibles barreras del caso. Emite el primer consejo legal formal y consolida el caso. Recibe de: Pre Welcome Interview. Entrega a: Writing & Analysis Experts."},
+  {term:"Writing & Analysis Experts",aliases:["writing and analysis","equipo de escritores","etapa 06"],cat:"End to end",def:"Etapa 6 del flujo operativo. Da estructura formal a la nota de entrevista. Redacta la Declaración (DCL), documento central del caso, y la Cover Letter que presenta el caso ante USCIS. Recibe de: Welcome Call Attorney. Entrega a: Pre Case Review (FORMAS)."},
+  {term:"Pre Case Review",aliases:["etapa 07","equipo formas"],cat:"End to end",def:"Etapa 7 del flujo operativo, a cargo del Equipo FORMAS. Revisa de forma integral el paquete que se enviará a USCIS: analiza cada componente y solicita al cliente cualquier documento faltante antes de la revisión con el abogado. Recibe de: Writing & Analysis Experts. Entrega a: Case Review Call."},
+  {term:"Case Review Call",aliases:["etapa 08"],cat:"End to end",def:"Etapa 8 del flujo operativo. Revisión legal en videollamada con el cliente y el abogado firmante, quien valida que el paquete corresponda a lo narrado. Con VoBo, el paquete se libera para firma; si hay errores, regresa a Packets. Recibe de: Pre Case Review. Entrega a: Packets."},
+  {term:"Packets",aliases:["equipo packets","etapa 09"],cat:"End to end",def:"Etapa 9 del flujo operativo, a cargo del Equipo Packets. Aplica las correcciones indicadas por el abogado firmante, integra la documentación recopilada y ensambla el paquete final, coherente y completo. Recibe de: Case Review Call. Entrega a: MGM Review."},
+  {term:"MGM Review",aliases:["etapa 10","sent to uscis"],cat:"End to end",def:"Etapa 10 del flujo operativo (Día +45 — Sent to USCIS). Revisión final por la Abogada María Guadalupe Mendoza en El Paso, TX: verifica la Declaración, la documentación y los I-Forms. Si todo es correcto, autoriza el envío a USCIS; si detecta desperfectos, regresa el caso a Operaciones. Recibe de: Packets. Entrega a: Incoming Mail."},
+  {term:"Incoming Mail",aliases:["etapa 11","eac lin ioe"],cat:"End to end",def:"Etapa 11 del flujo operativo, a cargo del área Incoming Mail. Da seguimiento a toda notificación o requerimiento emitido por USCIS tras el envío. La oficina responsable depende del prefijo del número de recibo: EAC (Vermont), LIN (Nebraska) o IOE (electrónico). Recibe de: MGM Review. Entrega a: resolución final de USCIS (Aprobación o RFE/NOID)."},
+  {term:"Aprobación (Resolución USCIS)",aliases:["aprobacion caso","resultado final aprobado"],cat:"End to end",def:"Resolución final del flujo operativo TMLF. USCIS aprueba la petición y el cliente obtiene el beneficio migratorio solicitado. Es la conclusión exitosa del proceso."},
+  {term:"RFE / NOID (Resolución)",aliases:["resolucion rfe noid"],cat:"End to end",def:"Resolución final del flujo operativo TMLF. RFE (Request for Evidence): USCIS pide información adicional y el caso regresa a Operaciones para responder. NOID (Notice of Intent to Deny): USCIS notifica intención de negar y se requiere respuesta legal urgente; una respuesta exitosa puede llevar a la Aprobación."},
+  {term:"Callbacks",aliases:["atencion al cliente","equipo callbacks"],cat:"End to end",def:"Departamento de Atención al Cliente, activo en todo momento del proceso end to end. Atiende dudas, inconformidades y consultas legales en cualquier etapa, desde la captación hasta la resolución con USCIS."},
+];
+
+/* ============================================================
+   UTILIDADES DE BÚSQUEDA
+   ============================================================ */
+function normalize(str){
+  return str
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[¿?¡!.,]/g,"")
+    .trim();
+}
+
+const STOPWORDS = new Set(["que","es","el","la","los","las","de","del","un","una","significa","como","cual","dime","dame","sobre","para","por","favor","hola","buscar","estado","formulario","q"]);
+
+function extractKeywords(q){
+  return normalize(q).split(/\s+/).filter(w=>w && !STOPWORDS.has(w));
+}
+
+function scoreEntry(entry, rawQuery, keywords){
+  const normTerm = normalize(entry.term);
+  const normAliases = entry.aliases.map(normalize);
+  const normQuery = normalize(rawQuery);
+
+  // Coincidencia exacta de término o alias
+  if(normTerm === normQuery || normAliases.includes(normQuery)) return 100;
+
+  // El query completo contiene el término/alias como palabra
+  const wordBoundaryTerm = new RegExp("\\b"+normTerm.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\b");
+  if(wordBoundaryTerm.test(normQuery)) return 90;
+  for(const a of normAliases){
+    const wb = new RegExp("\\b"+a.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\b");
+    if(wb.test(normQuery)) return 85;
+  }
+
+  // Alguna keyword coincide exactamente con el término
+  if(keywords.some(k => normTerm === k)) return 80;
+  if(keywords.some(k => normAliases.includes(k))) return 75;
+
+  // Coincidencia parcial (substring) en término
+  if(keywords.some(k => k.length>2 && normTerm.includes(k))) return 55;
+  if(keywords.some(k => k.length>2 && normAliases.some(a=>a.includes(k)))) return 50;
+
+  // Coincidencia en definición (menor peso)
+  const normDef = normalize(entry.def);
+  if(keywords.some(k => k.length>3 && normDef.includes(k))) return 25;
+
+  return 0;
+}
+
+function searchGlossary(query){
+  const keywords = extractKeywords(query);
+  const scored = GLOSARIO
+    .map(e => ({entry:e, score:scoreEntry(e, query, keywords)}))
+    .filter(r => r.score > 0)
+    .sort((a,b) => b.score - a.score);
+  return scored;
+}
+
+/* ============================================================
+   INTERFAZ DE CHAT
+   ============================================================ */
+const messagesEl = document.getElementById("messages");
+const inputEl = document.getElementById("userInput");
+const sendBtn = document.getElementById("sendBtn");
+
+function scrollToBottom(){
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function addUserBubble(text){
+  const wrap = document.createElement("div");
+  wrap.className = "msg user";
+  wrap.innerHTML = `
+    <div class="avatar">TÚ</div>
+    <div class="bubble">${escapeHtml(text)}</div>
+  `;
+  messagesEl.appendChild(wrap);
+  scrollToBottom();
+}
+
+function addBotBubble(html){
+  const wrap = document.createElement("div");
+  wrap.className = "msg bot";
+  wrap.innerHTML = `
+    <div class="avatar">TM</div>
+    <div class="bubble">${html}</div>
+  `;
+  messagesEl.appendChild(wrap);
+  scrollToBottom();
+  return wrap;
+}
+
+function showTyping(){
+  const wrap = document.createElement("div");
+  wrap.className = "msg bot";
+  wrap.id = "typingIndicator";
+  wrap.innerHTML = `
+    <div class="avatar">TM</div>
+    <div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>
+  `;
+  messagesEl.appendChild(wrap);
+  scrollToBottom();
+}
+
+function removeTyping(){
+  const t = document.getElementById("typingIndicator");
+  if(t) t.remove();
+}
+
+function escapeHtml(str){
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function renderDefinitionHtml(entry){
+  return `<span class="term-title">${escapeHtml(entry.term)}</span>${escapeHtml(entry.def)}`;
+}
+
+function renderMultipleMatches(results, rawQuery){
+  const top = results.slice(0,8);
+  let html = `Encontré varios términos relacionados con "<strong>${escapeHtml(rawQuery)}</strong>". ¿Cuál te interesa?<div>`;
+  top.forEach(r=>{
+    html += `<button class="match-btn" data-term="${escapeHtml(r.entry.term)}">${escapeHtml(r.entry.term)}</button>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function renderNoMatch(rawQuery){
+  // sugerir términos relacionados por coincidencia parcial de letras
+  const kws = extractKeywords(rawQuery);
+  let suggestions = [];
+  if(kws.length){
+    suggestions = GLOSARIO.filter(e=>{
+      const nt = normalize(e.term);
+      return kws.some(k => k.length>1 && (nt.startsWith(k[0]) ));
+    }).slice(0,5);
+  }
+  let html = `Lo siento, no encontré "<strong>${escapeHtml(rawQuery)}</strong>" en el Glosario TMLF 2026. `;
+  html += `Puede que esté escrito distinto o que no forme parte de este glosario todavía.`;
+  if(suggestions.length){
+    html += `<br><br>Quizás te refieres a:<div>`;
+    suggestions.forEach(s=>{
+      html += `<button class="match-btn" data-term="${escapeHtml(s.term)}">${escapeHtml(s.term)}</button>`;
+    });
+    html += `</div>`;
+  }
+  return html;
+}
+
+function handleQuery(rawQuery){
+  const trimmed = rawQuery.trim();
+  if(!trimmed) return;
+
+  addUserBubble(trimmed);
+  inputEl.value = "";
+  showTyping();
+
+  setTimeout(()=>{
+    removeTyping();
+    const results = searchGlossary(trimmed);
+
+    if(results.length === 0){
+      addBotBubble(renderNoMatch(trimmed));
+      return;
+    }
+
+    const best = results[0];
+    // Si hay un ganador claro (score alto y muy por encima del segundo lugar), responder directo
+    const second = results[1];
+    const clearWinner = best.score >= 75 && (!second || best.score - second.score >= 20);
+
+    if(clearWinner || results.length === 1){
+      addBotBubble(renderDefinitionHtml(best.entry));
+    } else {
+      addBotBubble(renderMultipleMatches(results, trimmed));
+    }
+  }, 420 + Math.random()*300);
+}
+
+sendBtn.addEventListener("click", ()=> handleQuery(inputEl.value));
+inputEl.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter") handleQuery(inputEl.value);
+});
+
+// Delegación de eventos para botones de coincidencias múltiples
+messagesEl.addEventListener("click",(e)=>{
+  if(e.target.classList.contains("match-btn")){
+    const term = e.target.getAttribute("data-term");
+    handleQuery(term);
+  }
+});
+
+// Atajos de la barra lateral
+document.querySelectorAll(".chip").forEach(chip=>{
+  chip.addEventListener("click", ()=>{
+    handleQuery(chip.getAttribute("data-q"));
+  });
+});
+
+/* ============================================================
+   VISTA: GLOSARIO COMPLETO (agrupado y alfabético)
+   ============================================================ */
+const CATEGORY_ORDER = ["Procesos","Formularios","Estados","Siglas","End to end"];
+const CATEGORY_LABELS = {
+  "Procesos":"Visados y Procesos Migratorios",
+  "Formularios":"Formularios de USCIS",
+  "Estados":"Estados y Husos Horarios de EE.UU.",
+  "Siglas":"Siglas y Abreviaturas Internas",
+  "End to end":"Flujo Operativo (End to End)"
+};
+
+const glossarySectionsEl = document.getElementById("glossarySections");
+const glossarySearchEl = document.getElementById("glossarySearch");
+
+function renderGlossaryView(filter){
+  const kw = normalize(filter || "");
+  glossarySectionsEl.innerHTML = "";
+
+  let totalShown = 0;
+
+  CATEGORY_ORDER.forEach(cat=>{
+    let entries = GLOSARIO.filter(e => e.cat === cat);
+    if(kw){
+      entries = entries.filter(e =>
+        normalize(e.term).includes(kw) ||
+        normalize(e.def).includes(kw) ||
+        e.aliases.some(a => normalize(a).includes(kw))
+      );
+    }
+    if(entries.length === 0) return;
+
+    entries = entries.slice().sort((a,b)=> normalize(a.term).localeCompare(normalize(b.term),"es"));
+    totalShown += entries.length;
+
+    const section = document.createElement("div");
+    section.className = "glossary-section";
+    const dl = document.createElement("dl");
+    dl.className = "glossary-list";
+    entries.forEach(e=>{
+      const div = document.createElement("div");
+      div.className = "glossary-entry";
+      div.innerHTML = `<dt>${escapeHtml(e.term)}</dt><dd>${escapeHtml(e.def)}</dd>`;
+      dl.appendChild(div);
+    });
+    section.innerHTML = `<h3>${escapeHtml(CATEGORY_LABELS[cat] || cat)}</h3><span class="count">${entries.length} término${entries.length===1?"":"s"}</span>`;
+    section.appendChild(dl);
+    glossarySectionsEl.appendChild(section);
+  });
+
+  if(totalShown === 0){
+    glossarySectionsEl.innerHTML = `<div class="glossary-empty">No se encontraron términos que coincidan con "${escapeHtml(filter)}".</div>`;
+  }
+}
+
+glossarySearchEl.addEventListener("input", ()=> renderGlossaryView(glossarySearchEl.value));
+
+/* ============================================================
+   MENSAJE DE BIENVENIDA DEL CHAT
+   ============================================================ */
+function showWelcomeBotMessage(){
+  addBotBubble(`
+    <span class="term-title">¡Hola! Soy el asistente del Glosario TMLF 2026 👋</span>
+    Puedes preguntarme por:
+    <ul>
+      <li><strong>Siglas y abreviaturas</strong> internas (ej. VAWA, RFE, EAD, AOS)</li>
+      <li><strong>Formularios de USCIS</strong> (ej. I-360, I-918, I-765)</li>
+      <li><strong>Abreviaturas de estados</strong> de EE.UU. (ej. CA, NY, TX)</li>
+      <li><strong>Procesos migratorios</strong> completos (ej. Visa U, Naturalización, Removal of Conditions)</li>
+    </ul>
+    Escribe tu consulta abajo o usa los atajos de la barra lateral. También puedes explorar el <strong>Glosario completo</strong> desde la barra superior.
+  `);
+}
+
+/* ============================================================
+   NAVEGACIÓN: CHATBOT / GLOSARIO
+   ============================================================ */
+const welcomeOverlay = document.getElementById("welcomeOverlay");
+const startChatBtn = document.getElementById("startChatBtn");
+const startGlossaryBtn = document.getElementById("startGlossaryBtn");
+const navChatBtn = document.getElementById("navChatBtn");
+const navGlossaryBtn = document.getElementById("navGlossaryBtn");
+const chatApp = document.getElementById("chatApp");
+const glossaryView = document.getElementById("glossaryView");
+
+let chatStarted = false;
+let glossaryRendered = false;
+
+function showChatView(){
+  chatApp.classList.remove("app-hidden");
+  glossaryView.classList.add("app-hidden");
+  navChatBtn.classList.add("active");
+  navGlossaryBtn.classList.remove("active");
+  if(!chatStarted){
+    chatStarted = true;
+    showWelcomeBotMessage();
+  }
+  inputEl.focus();
+}
+
+function showGlossaryView(){
+  glossaryView.classList.remove("app-hidden");
+  chatApp.classList.add("app-hidden");
+  navGlossaryBtn.classList.add("active");
+  navChatBtn.classList.remove("active");
+  if(!glossaryRendered){
+    glossaryRendered = true;
+    renderGlossaryView("");
+  }
+}
+
+startChatBtn.addEventListener("click", ()=>{
+  welcomeOverlay.classList.add("app-hidden");
+  showChatView();
+});
+
+startGlossaryBtn.addEventListener("click", ()=>{
+  welcomeOverlay.classList.add("app-hidden");
+  showGlossaryView();
+});
+
+navChatBtn.addEventListener("click", showChatView);
+navGlossaryBtn.addEventListener("click", showGlossaryView);
+
+/* ============================================================
+   LIMPIAR CHAT
+   ============================================================ */
+const clearBtn = document.getElementById("clearBtn");
+clearBtn.addEventListener("click", ()=>{
+  messagesEl.innerHTML = "";
+  showWelcomeBotMessage();
+  inputEl.focus();
+});
+</script>
+</body>
+</html>
