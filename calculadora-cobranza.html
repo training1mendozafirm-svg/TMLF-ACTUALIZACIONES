@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Adeudos — Cobranza</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1B2A4A;
+    --navy-deep:#101B33;
+    --parchment:#F6F3EC;
+    --card:#FFFFFF;
+    --brass:#A9803F;
+    --brass-soft:#EFE3CB;
+    --ink:#232A38;
+    --slate:#5C6577;
+    --line:#E3DECF;
+    --ok:#2F6F4F;
+    --ok-soft:#E4F0EA;
+    --warn:#9A4B2E;
+    --warn-soft:#F6E9E1;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--parchment);
+    font-family:'Inter',system-ui,sans-serif;
+    color:var(--ink);
+    padding:32px 20px 60px;
+  }
+  .wrap{max-width:920px;margin:0 auto;}
+
+  header.top{
+    display:flex; align-items:flex-end; justify-content:space-between; gap:16px;
+    border-bottom:2px solid var(--navy);
+    padding-bottom:18px; margin-bottom:28px;
+    flex-wrap:wrap;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--brass); font-weight:600; margin-bottom:6px;
+  }
+  h1{
+    font-family:'Fraunces',serif; font-weight:600; font-size:30px; margin:0; color:var(--navy-deep);
+    letter-spacing:-0.01em;
+  }
+  .sub{color:var(--slate); font-size:14px; max-width:420px; margin-top:6px; line-height:1.5;}
+
+  .grid{display:grid; grid-template-columns:1.1fr 1fr; gap:22px;}
+  @media (max-width:820px){.grid{grid-template-columns:1fr;}}
+
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:4px;
+    padding:26px 26px 22px;
+  }
+  .card h2{
+    font-family:'Fraunces',serif; font-size:17px; font-weight:600; margin:0 0 18px;
+    color:var(--navy); display:flex; align-items:center; gap:8px;
+  }
+  .card h2 .n{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; color:#fff; background:var(--navy);
+    width:20px;height:20px;border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
+  }
+
+  .field{margin-bottom:16px;}
+  .field:last-child{margin-bottom:0;}
+  label{
+    display:block; font-size:12.5px; font-weight:600; color:var(--navy-deep); margin-bottom:6px;
+  }
+  .hint{font-size:11.5px; color:var(--slate); margin-top:5px; line-height:1.4;}
+  input[type=date], input[type=number]{
+    width:100%; border:1px solid #CBC3AC; border-radius:3px; padding:10px 12px;
+    font-family:'Inter',sans-serif; font-size:14.5px; background:#FDFCFA; color:var(--ink);
+  }
+  input[type=date]:focus, input[type=number]:focus{
+    outline:none; border-color:var(--navy); box-shadow:0 0 0 3px rgba(27,42,74,0.12);
+  }
+  .money-wrap{position:relative;}
+  .money-wrap span{
+    position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--slate); font-size:14.5px;
+  }
+  .money-wrap input{padding-left:26px;}
+
+  .toggle-row{display:flex; gap:10px;}
+  .toggle{
+    flex:1; text-align:center; padding:10px 8px; border:1px solid #CBC3AC; border-radius:3px;
+    cursor:pointer; font-size:13.5px; font-weight:600; color:var(--slate); background:#FDFCFA;
+    transition:.12s;
+    user-select:none;
+  }
+  .toggle:hover{border-color:var(--navy);}
+  .toggle.active-yes{background:var(--warn-soft); border-color:var(--warn); color:var(--warn);}
+  .toggle.active-no{background:var(--ok-soft); border-color:var(--ok); color:var(--ok);}
+
+  .sub-field{
+    margin-top:12px; padding:14px; background:var(--brass-soft); border-radius:3px;
+    border:1px dashed var(--brass);
+    display:none;
+  }
+  .sub-field.show{display:block;}
+
+  /* Results */
+  .results-card{
+    background:var(--navy-deep); color:#fff; border-radius:4px; padding:26px;
+    position:sticky; top:20px; height:fit-content;
+  }
+  .results-card h2{color:var(--brass-soft); font-size:13px; font-family:'IBM Plex Mono',monospace; letter-spacing:.08em; text-transform:uppercase; font-weight:600; margin:0 0 4px;}
+  .status-badge{
+    display:inline-block; font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px;
+    margin-bottom:18px; letter-spacing:.02em;
+  }
+  .status-vigente{background:#2F6F4F; color:#fff;}
+  .status-completo{background:var(--brass); color:#1B2A4A;}
+  .status-futuro{background:#4A5570; color:#fff;}
+
+  .line{
+    display:flex; justify-content:space-between; align-items:baseline; padding:10px 0;
+    border-bottom:1px solid rgba(255,255,255,0.12); font-size:13.5px;
+  }
+  .line .l{color:#B9C0D4;}
+  .line .v{font-family:'IBM Plex Mono',monospace; font-weight:600; color:#fff;}
+
+  .total-block{margin-top:18px; padding-top:16px;}
+  .total-label{font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--brass-soft); font-weight:600;}
+  .total-amount{
+    font-family:'Fraunces',serif; font-size:38px; font-weight:600; margin-top:6px; color:#fff;
+    letter-spacing:-0.01em;
+  }
+  .total-note{font-size:11.5px; color:#8D97B2; margin-top:8px; line-height:1.5;}
+
+  .moratorio-box{
+    margin-top:18px; padding:14px 16px; background:rgba(154,75,46,0.25); border:1px solid #C97A52;
+    border-radius:3px; font-size:12.5px; color:#F3D9C8; line-height:1.5;
+  }
+  .moratorio-box strong{color:#fff; font-family:'IBM Plex Mono',monospace; font-size:15px;}
+
+  /* Reference table */
+  details{
+    margin-top:26px; background:var(--card); border:1px solid var(--line); border-radius:4px;
+  }
+  summary{
+    cursor:pointer; padding:16px 22px; font-family:'Fraunces',serif; font-weight:600; color:var(--navy);
+    font-size:15px; list-style:none; display:flex; align-items:center; justify-content:space-between;
+  }
+  summary::-webkit-details-marker{display:none;}
+  summary::after{content:'+'; font-family:'IBM Plex Mono',monospace; font-size:18px; color:var(--brass);}
+  details[open] summary::after{content:'–';}
+  .ref-body{padding:0 22px 20px;}
+  .ref-note{font-size:12.5px; color:var(--slate); margin-bottom:14px; line-height:1.5;}
+  input#search{
+    width:100%; padding:9px 12px; border:1px solid #CBC3AC; border-radius:3px; margin-bottom:12px;
+    font-family:'Inter',sans-serif; font-size:13.5px;
+  }
+  table{width:100%; border-collapse:collapse; font-size:13px;}
+  th{
+    text-align:left; padding:8px 10px; background:var(--brass-soft); color:var(--navy-deep);
+    font-size:11px; text-transform:uppercase; letter-spacing:.04em; font-weight:700;
+  }
+  td{padding:9px 10px; border-bottom:1px solid var(--line); color:var(--ink);}
+  tr:last-child td{border-bottom:none;}
+  .fee{font-family:'IBM Plex Mono',monospace; font-weight:600; color:var(--navy);}
+
+  footer{margin-top:30px; text-align:center; font-size:11.5px; color:var(--slate);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <div class="eyebrow">Área de Cobranza · Visados humanitarios</div>
+      <h1>Calculadora de Adeudos</h1>
+      <div class="sub">Captura los datos del esquema de pago del cliente para obtener el adeudo del plan a la fecha, sin cargos moratorios.</div>
+    </div>
+  </header>
+
+  <div class="grid">
+    <div>
+      <div class="card">
+        <h2><span class="n">1</span>Datos del caso</h2>
+
+        <div class="field">
+          <label for="fechaApertura">Fecha de apertura del caso</label>
+          <input type="date" id="fechaApertura">
+        </div>
+
+        <div class="field">
+          <label for="fechaCorte">Fecha de corte del cálculo</label>
+          <input type="date" id="fechaCorte">
+          <div class="hint">Por defecto es hoy. Cámbiala solo si necesitas calcular el adeudo a otra fecha.</div>
+        </div>
+
+        <div class="field">
+          <label for="downpayment">Costo del downpayment (pago inicial)</label>
+          <div class="money-wrap">
+            <span>$</span>
+            <input type="number" id="downpayment" min="0" step="0.01" placeholder="Ej. 4600">
+          </div>
+          <div class="hint">Pago inicial acordado al abrir el esquema. Se suma al adeudo total (a menos que ya esté cubierto en "Pagos realizados").</div>
+        </div>
+
+        <div class="field">
+          <label for="mesesEsquema">Meses que cubre el esquema de pago</label>
+          <input type="number" id="mesesEsquema" min="1" step="1" placeholder="Ej. 15">
+        </div>
+
+        <div class="field">
+          <label for="mensualidad">Cantidad de la mensualidad</label>
+          <div class="money-wrap">
+            <span>$</span>
+            <input type="number" id="mensualidad" min="0" step="0.01" placeholder="Ej. 500">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="pagado">Pagos realizados hasta el momento</label>
+          <div class="money-wrap">
+            <span>$</span>
+            <input type="number" id="pagado" min="0" step="0.01" placeholder="Ej. 1500">
+          </div>
+          <div class="hint">Suma de todo lo que el cliente ya ha pagado del esquema (mensualidades y/o Gov Fees). Se resta del adeudo total.</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:20px;">
+        <h2><span class="n">2</span>Cargos adicionales</h2>
+
+        <div class="field">
+          <label>¿Ya se cobraron los Gov Fees de este caso?</label>
+          <div class="toggle-row" id="govToggle">
+            <div class="toggle" data-val="si">Sí, ya se cobraron</div>
+            <div class="toggle" data-val="no">No, aún no</div>
+          </div>
+          <div class="sub-field" id="govSubfield">
+            <label for="govMonto">Monto de Gov Fees pendiente de cobro</label>
+            <div class="money-wrap"><span>$</span><input type="number" id="govMonto" min="0" step="0.01" placeholder="Consulta el tipo de caso abajo"></div>
+            <div class="hint">Busca el tipo de visado en la tabla de referencia al final de la página para confirmar el monto correcto.</div>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:18px;">
+          <label>¿Aplica cargo moratorio ($75 usd / mes)?</label>
+          <div class="toggle-row" id="moraToggle">
+            <div class="toggle" data-val="si">Sí aplica</div>
+            <div class="toggle" data-val="no">No aplica</div>
+          </div>
+          <div class="hint">El moratorio se muestra como referencia y no se incluye en el total; se suma manualmente.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-card">
+      <h2>Resultado del cálculo</h2>
+      <div id="statusBadge" class="status-badge status-vigente">Completa los datos</div>
+
+      <div class="line"><span class="l">Meses transcurridos desde la apertura</span><span class="v" id="rMesesTrans">—</span></div>
+      <div class="line"><span class="l">Meses cubiertos por el esquema</span><span class="v" id="rMesesEsquema">—</span></div>
+      <div class="line"><span class="l">Meses considerados en el adeudo</span><span class="v" id="rMesesAdeudo">—</span></div>
+      <div class="line"><span class="l">Downpayment (pago inicial)</span><span class="v" id="rDownpayment">$0.00</span></div>
+      <div class="line"><span class="l">Adeudo del esquema de pago</span><span class="v" id="rAdeudoEsquema">$0.00</span></div>
+      <div class="line"><span class="l">Gov Fees pendientes</span><span class="v" id="rGovFees">$0.00</span></div>
+      <div class="line"><span class="l">Pagos realizados hasta el momento</span><span class="v" id="rPagado">– $0.00</span></div>
+
+      <div class="total-block">
+        <div class="total-label">Total del adeudo (sin intereses/moratorio)</div>
+        <div class="total-amount" id="rTotal">$0.00</div>
+        <div class="total-note">Downpayment + adeudo del esquema + Gov Fees pendientes, menos lo ya pagado por el cliente. No incluye intereses ni cargos moratorios.</div>
+      </div>
+
+      <div class="moratorio-box" id="moraBox" style="display:none;">
+        Cargo moratorio / interés de referencia (no incluido en el total):<br>
+        <strong id="rMoratorio">$0.00</strong> — súmalo manualmente al total si corresponde.
+      </div>
+    </div>
+  </div>
+
+  <details>
+    <summary>Tabla de referencia — Gov Fees por tipo de caso</summary>
+    <div class="ref-body">
+      <div class="ref-note">Tomado de la pestaña "PAYMENT PLANS" del archivo de precios. Los montos han cambiado con el tiempo según la fecha de apertura del caso — si tienes duda de qué monto aplica, verifica directamente en el archivo original antes de cobrar.</div>
+      <input type="text" id="search" placeholder="Buscar tipo de caso (ej. VAWA, U Visa, AOS, K1)...">
+      <table>
+        <thead><tr><th>Tipo de caso / Visado</th><th>Gov Fee de referencia</th></tr></thead>
+        <tbody id="feeTableBody"></tbody>
+      </table>
+    </div>
+  </details>
+
+  <footer>Uso interno — Área de Cobranza. Verifica siempre los datos del esquema contra el expediente del cliente.</footer>
+</div>
+
+<script>
+const govFeesData = [
+  {tipo:"VAWA individual (vigente desde 01/09/2025)", fee:"NA"},
+  {tipo:"Visa T individual (vigente desde 01/09/2025)", fee:"NA"},
+  {tipo:"COMBO VAWA (vigente desde 17/03)", fee:"No especificado — verificar en archivo"},
+  {tipo:"COMBO Visa T (vigente desde 17/03)", fee:"No especificado — verificar en archivo"},
+  {tipo:"VAWA AOS - I-360", fee:"NA"},
+  {tipo:"VAWA AOS w I-601 - I-360", fee:"NA"},
+  {tipo:"VAWA AOS w I-212 - I-360", fee:"NA"},
+  {tipo:"VAWA COR - I-360", fee:"NA"},
+  {tipo:"VAWA COR w MTR - I-360", fee:"NA"},
+  {tipo:"VAWA DA - I-360", fee:"NA"},
+  {tipo:"Combo VAWA (cualquier tipo)", fee:"NA"},
+  {tipo:"Combo VAWA (cualquier tipo) + REG AOS", fee:"VAWA: NA · REG AOS: $3,265"},
+  {tipo:"Visa T (individual, esquema clásico)", fee:"NA"},
+  {tipo:"Combo Visa T (esquema clásico)", fee:"NA"},
+  {tipo:"Consular processing I-130", fee:"$675"},
+  {tipo:"NATZ / N-400", fee:"$760"},
+  {tipo:"Regular AOS", fee:"$3,265"},
+  {tipo:"Combo Regular AOS", fee:"$3,265 (cada uno)"},
+  {tipo:"DACA Renovation", fee:"$520"},
+  {tipo:"PIP under 21", fee:"$580"},
+  {tipo:"PIP under 21 (cuando cumple 21 años — solo residencia)", fee:"$580 inicial + $3,265 (AOS)"},
+  {tipo:"PIP older 21", fee:"$580 inicial + $3,265 (AOS)"},
+  {tipo:"PIP older 21 (combo)", fee:"$580 inicial + $3,265 (AOS)"},
+  {tipo:"Green Card renewal / replacement (I-90)", fee:"$465"},
+  {tipo:"Petition for records (FOIA)", fee:"NA"},
+  {tipo:"245 I", fee:"$3,590"},
+  {tipo:"Automatic Citizenship", fee:"$1,385"},
+  {tipo:"Residencia sin restricciones I-751 + VAWA", fee:"$750"},
+  {tipo:"Fiancé VISA K1", fee:"$675 inicial + $535 (K2) + $3,265 (AOS)"},
+  {tipo:"EAD renewal", fee:"$520"},
+  {tipo:"U VISA", fee:"NA"},
+  {tipo:"U VISA certification", fee:"NA"},
+];
+
+function renderTable(filter=""){
+  const body = document.getElementById('feeTableBody');
+  body.innerHTML = "";
+  const f = filter.trim().toLowerCase();
+  govFeesData
+    .filter(r => r.tipo.toLowerCase().includes(f))
+    .forEach(r=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${r.tipo}</td><td class="fee">${r.fee}</td>`;
+      body.appendChild(tr);
+    });
+}
+renderTable();
+document.getElementById('search').addEventListener('input', e=>renderTable(e.target.value));
+
+// Default fecha de corte = hoy
+const hoy = new Date();
+document.getElementById('fechaCorte').valueAsDate = hoy;
+
+let govCharged = null; // 'si' | 'no'
+let moraApplies = null;
+
+document.querySelectorAll('#govToggle .toggle').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    govCharged = btn.dataset.val;
+    document.querySelectorAll('#govToggle .toggle').forEach(b=>b.classList.remove('active-yes','active-no'));
+    btn.classList.add(btn.dataset.val === 'si' ? 'active-no' : 'active-yes');
+    document.getElementById('govSubfield').classList.toggle('show', govCharged === 'no');
+    calcular();
+  });
+});
+
+document.querySelectorAll('#moraToggle .toggle').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    moraApplies = btn.dataset.val;
+    document.querySelectorAll('#moraToggle .toggle').forEach(b=>b.classList.remove('active-yes','active-no'));
+    btn.classList.add(btn.dataset.val === 'si' ? 'active-yes' : 'active-no');
+    calcular();
+  });
+});
+
+function monthsBetween(start, end){
+  if(!start || !end) return null;
+  let months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+  if(end.getDate() < start.getDate()) months -= 1;
+  return months;
+}
+
+function fmt(n){
+  return '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function calcular(){
+  const aperturaStr = document.getElementById('fechaApertura').value;
+  const corteStr = document.getElementById('fechaCorte').value;
+  const mesesEsquema = parseFloat(document.getElementById('mesesEsquema').value);
+  const mensualidad = parseFloat(document.getElementById('mensualidad').value);
+  const downpayment = parseFloat(document.getElementById('downpayment').value) || 0;
+  const govMonto = parseFloat(document.getElementById('govMonto').value) || 0;
+  const pagado = parseFloat(document.getElementById('pagado').value) || 0;
+
+  const statusBadge = document.getElementById('statusBadge');
+
+  if(!aperturaStr || !corteStr || isNaN(mesesEsquema) || mesesEsquema <= 0 || isNaN(mensualidad)){
+    statusBadge.textContent = 'Completa los datos';
+    statusBadge.className = 'status-badge status-vigente';
+    document.getElementById('rMesesTrans').textContent = '—';
+    document.getElementById('rMesesEsquema').textContent = '—';
+    document.getElementById('rMesesAdeudo').textContent = '—';
+    document.getElementById('rAdeudoEsquema').textContent = '$0.00';
+    document.getElementById('rDownpayment').textContent = '$0.00';
+    document.getElementById('rGovFees').textContent = '$0.00';
+    document.getElementById('rPagado').textContent = '– $0.00';
+    document.getElementById('rTotal').textContent = '$0.00';
+    document.getElementById('moraBox').style.display = 'none';
+    return;
+  }
+
+  const apertura = new Date(aperturaStr + 'T00:00:00');
+  const corte = new Date(corteStr + 'T00:00:00');
+
+  let mesesTrans = monthsBetween(apertura, corte);
+  let futuro = false;
+  if(mesesTrans < 0){ mesesTrans = 0; futuro = true; }
+
+  const mesesAdeudo = Math.min(mesesTrans, mesesEsquema);
+  const adeudoEsquema = mesesAdeudo * mensualidad;
+  const govFeesPendientes = (govCharged === 'no') ? govMonto : 0;
+  const totalBruto = downpayment + adeudoEsquema + govFeesPendientes;
+  const total = Math.max(0, totalBruto - pagado);
+
+  document.getElementById('rMesesTrans').textContent = mesesTrans + (mesesTrans === 1 ? ' mes' : ' meses');
+  document.getElementById('rMesesEsquema').textContent = mesesEsquema + (mesesEsquema === 1 ? ' mes' : ' meses');
+  document.getElementById('rMesesAdeudo').textContent = mesesAdeudo + (mesesAdeudo === 1 ? ' mes' : ' meses');
+  document.getElementById('rDownpayment').textContent = fmt(downpayment);
+  document.getElementById('rAdeudoEsquema').textContent = fmt(adeudoEsquema);
+  document.getElementById('rGovFees').textContent = fmt(govFeesPendientes);
+  document.getElementById('rPagado').textContent = '– ' + fmt(pagado);
+  document.getElementById('rTotal').textContent = fmt(total);
+
+  if(futuro){
+    statusBadge.textContent = 'Fecha de apertura futura';
+    statusBadge.className = 'status-badge status-futuro';
+  } else if(mesesTrans >= mesesEsquema){
+    statusBadge.textContent = 'Esquema completado';
+    statusBadge.className = 'status-badge status-completo';
+  } else {
+    statusBadge.textContent = 'Esquema en curso';
+    statusBadge.className = 'status-badge status-vigente';
+  }
+
+  const moraBox = document.getElementById('moraBox');
+  if(moraApplies === 'si'){
+    const moratorio = mesesAdeudo * 75;
+    document.getElementById('rMoratorio').textContent = fmt(moratorio);
+    moraBox.style.display = 'block';
+  } else {
+    moraBox.style.display = 'none';
+  }
+}
+
+['fechaApertura','fechaCorte','downpayment','mesesEsquema','mensualidad','govMonto','pagado'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', calcular);
+});
+
+calcular();
+</script>
+</body>
+</html>
