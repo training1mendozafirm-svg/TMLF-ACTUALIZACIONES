@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>El Manual de la Experiencia del Cliente — TMLF</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=DM+Sans:wght@400;500;700&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-950:#070f24;
+    --navy-900:#0b1a3a;
+    --navy-800:#122a56;
+    --navy-700:#1b3a72;
+    --navy-line:rgba(201,162,39,0.22);
+    --gold:#c9a227;
+    --gold-soft:#e3c565;
+    --paper:#f6f3ea;
+    --ink:#151a26;
+    --muted:#93a2c4;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--navy-950);
+    color:var(--paper);
+    font-family:'DM Sans',sans-serif;
+    overflow:hidden;
+  }
+  .deck{
+    position:relative;
+    width:100vw;
+    height:100vh;
+  }
+  .slide{
+    position:absolute;
+    inset:0;
+    display:none;
+    flex-direction:column;
+    padding:6vh 8vw 8vh;
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(201,162,39,0.10), transparent 60%),
+      linear-gradient(180deg, var(--navy-950) 0%, var(--navy-900) 100%);
+  }
+  .slide.active{display:flex;}
+  .eyebrow{
+    font-family:'Barlow Condensed',sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.28em;
+    font-size:12.5px;
+    color:var(--gold-soft);
+    margin-bottom:14px;
+    font-weight:600;
+  }
+  h1{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:600;
+    font-size:clamp(34px,4.6vw,64px);
+    line-height:1.05;
+    margin:0 0 6px;
+    color:var(--paper);
+  }
+  h1 em{ color:var(--gold-soft); font-style:italic; font-weight:500;}
+  .sub{
+    font-family:'DM Sans',sans-serif;
+    font-size:16px;
+    color:var(--muted);
+    max-width:760px;
+    line-height:1.5;
+    margin-bottom:0;
+  }
+  .rule{
+    width:64px;height:2px;background:var(--gold);
+    margin:18px 0 26px;
+  }
+  .content{ flex:1; overflow:auto; padding-right:6px; }
+  .content::-webkit-scrollbar{width:6px;}
+  .content::-webkit-scrollbar-thumb{background:var(--navy-700);border-radius:4px;}
+
+  /* two-column own/not-own */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
+  .card{
+    border:1px solid var(--navy-line);
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+    border-radius:4px;
+    padding:26px 28px;
+  }
+  .card h3{
+    font-family:'Barlow Condensed',sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.14em;
+    font-size:14px;
+    color:var(--gold-soft);
+    margin:0 0 16px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .card.no h3{ color:#e08a7d; }
+  .card ul{margin:0;padding:0;list-style:none;}
+  .card li{
+    position:relative;padding-left:20px;margin-bottom:11px;
+    font-size:14.5px;line-height:1.5;color:#dfe5f2;
+  }
+  .card li::before{
+    content:'—'; position:absolute;left:0;color:var(--gold);
+  }
+  .card.no li::before{color:#e08a7d;}
+
+  /* numbered list of capabilities */
+  .steps{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+  .step{display:flex;gap:16px;align-items:flex-start;}
+  .num{
+    font-family:'Cormorant Garamond',serif;
+    font-size:34px;font-weight:600;color:var(--gold);
+    min-width:44px;
+  }
+  .step h4{margin:0 0 6px;font-size:16px;color:var(--paper);font-weight:700;}
+  .step p{margin:0;font-size:13.8px;color:var(--muted);line-height:1.5;}
+
+  /* PACCA */
+  .pacca-row{display:flex;gap:14px;margin-bottom:26px;flex-wrap:wrap;}
+  .pacca-chip{
+    display:flex;align-items:center;gap:12px;
+    border:1px solid var(--navy-line);border-radius:100px;
+    padding:10px 22px 10px 14px;
+  }
+  .pacca-chip .letter{
+    width:34px;height:34px;border-radius:50%;
+    background:var(--gold);color:var(--navy-950);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Cormorant Garamond',serif;font-weight:700;font-size:18px;
+  }
+  .pacca-chip span.label{font-size:14px;font-weight:700;color:var(--paper);}
+  .lead-line{
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:19px;color:var(--gold-soft);line-height:1.5;
+    border-left:2px solid var(--gold);padding-left:18px;max-width:820px;
+  }
+
+  /* generic table */
+  table{width:100%;border-collapse:collapse;font-size:13.6px;}
+  th{
+    text-align:left;font-family:'Barlow Condensed',sans-serif;
+    text-transform:uppercase;letter-spacing:0.1em;font-size:12px;
+    color:var(--gold-soft);padding:8px 14px 12px;
+    border-bottom:1px solid var(--navy-line);
+  }
+  td{
+    padding:13px 14px;border-bottom:1px solid rgba(255,255,255,0.06);
+    color:#dfe5f2;vertical-align:top;line-height:1.45;
+  }
+  td.key{ color:var(--gold-soft); font-weight:700; white-space:nowrap; }
+  tr:last-child td{border-bottom:none;}
+
+  /* journey */
+  .journey{display:flex;justify-content:space-between;margin-bottom:34px;position:relative;}
+  .journey::before{
+    content:'';position:absolute;top:17px;left:0;right:0;height:1px;
+    background:var(--navy-line);
+  }
+  .jstop{display:flex;flex-direction:column;align-items:center;width:13%;text-align:center;position:relative;}
+  .jdot{
+    width:34px;height:34px;border-radius:50%;
+    background:var(--navy-900);border:1px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Cormorant Garamond',serif;color:var(--gold-soft);font-weight:700;
+    margin-bottom:10px;
+  }
+  .jstop span{font-size:11.5px;color:var(--muted);line-height:1.3;}
+  .anxiety-box{
+    border:1px solid var(--navy-line);border-radius:4px;padding:20px 24px;
+    background:rgba(224,138,125,0.05);
+  }
+  .anxiety-box h4{margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:#e08a7d;font-family:'Barlow Condensed',sans-serif;}
+  .anxiety-box li{font-size:13.8px;color:#dfe5f2;margin-bottom:8px;line-height:1.5;}
+
+  /* scenarios */
+  .scenarios{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
+  .scen{
+    border:1px solid var(--navy-line);border-radius:4px;padding:22px 20px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  }
+  .scen .tag{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:11.5px;color:var(--gold-soft);margin-bottom:10px;}
+  .scen h4{font-family:'Cormorant Garamond',serif;font-size:20px;margin:0 0 10px;color:var(--paper);}
+  .scen p{font-size:13.5px;color:var(--muted);line-height:1.55;margin:0 0 10px;}
+  .scen .q{font-size:13.5px;color:#dfe5f2;font-style:italic;line-height:1.5;}
+
+  /* four things / categories cards */
+  .grid4{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .g4card{
+    border:1px solid var(--navy-line);border-radius:4px;padding:20px 22px;
+    display:flex;gap:16px;
+  }
+  .g4card .n{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--gold);font-weight:600;}
+  .g4card h4{margin:0 0 6px;font-size:15.5px;color:var(--paper);}
+  .g4card p{margin:0;font-size:13px;color:var(--muted);line-height:1.5;}
+
+  /* four questions */
+  .qlist{display:flex;flex-direction:column;gap:16px;max-width:820px;}
+  .qitem{display:flex;gap:16px;align-items:baseline;border-bottom:1px solid var(--navy-line);padding-bottom:14px;}
+  .qitem .n{font-family:'Cormorant Garamond',serif;color:var(--gold);font-size:22px;min-width:30px;}
+  .qitem p{margin:0;font-size:16px;color:var(--paper);}
+  .closer{
+    margin-top:24px;font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:20px;color:var(--gold-soft);
+  }
+
+  /* two ways wrong */
+  .wrong2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  .wrongcard{border:1px solid var(--navy-line);border-radius:4px;padding:24px 26px;}
+  .wrongcard h3{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold-soft);margin:0 0 12px;}
+  .wrongcard p{font-size:14.5px;line-height:1.6;color:#dfe5f2;margin:0;}
+
+  /* who is who */
+  .agencies{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .agency{display:flex;gap:16px;border:1px solid var(--navy-line);border-radius:4px;padding:16px 18px;align-items:flex-start;}
+  .agency .n{font-family:'Cormorant Garamond',serif;color:var(--gold);font-size:24px;min-width:28px;font-weight:700;}
+  .agency h4{margin:0 0 4px;font-size:14.5px;color:var(--paper);}
+  .agency p{margin:0;font-size:12.8px;color:var(--muted);line-height:1.45;}
+  .agency.alert{border-color:rgba(224,138,125,0.4);}
+  .agency.alert h4{color:#e08a7d;}
+
+  /* nine steps */
+  .ninegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .ninebox{border:1px solid var(--navy-line);border-radius:4px;padding:16px 18px;}
+  .ninebox .n{font-family:'Cormorant Garamond',serif;color:var(--gold);font-size:22px;font-weight:700;}
+  .ninebox h4{margin:6px 0 6px;font-size:14px;color:var(--paper);}
+  .ninebox p{margin:0;font-size:12.4px;color:var(--muted);line-height:1.45;}
+
+  /* breakdown list */
+  .breaklist{display:flex;flex-direction:column;gap:14px;}
+  .breakitem{display:grid;grid-template-columns:220px 1fr;gap:20px;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:14px;}
+  .breakitem h4{margin:0;font-size:14.5px;color:var(--gold-soft);}
+  .breakitem p{margin:0;font-size:13.6px;color:#dfe5f2;line-height:1.5;}
+  .breakitem.hot h4{color:#e08a7d;}
+
+  /* six questions stop you */
+  .stopgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .stopitem{
+    border:1px solid var(--navy-line);border-radius:4px;padding:16px 18px;
+    font-size:14.5px;color:var(--paper);line-height:1.5;
+    display:flex;gap:12px;
+  }
+  .stopitem .n{color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:20px;min-width:22px;}
+
+  /* boundary response steps */
+  .boundary{display:flex;flex-direction:column;gap:0;max-width:900px;}
+  .bstep{display:grid;grid-template-columns:180px 1fr;gap:22px;padding:16px 0;border-bottom:1px solid var(--navy-line);}
+  .bstep:last-child{border-bottom:none;}
+  .bstep h4{margin:0;font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold-soft);font-family:'Barlow Condensed',sans-serif;}
+  .bstep p{margin:0;font-size:14.5px;color:#dfe5f2;font-style:italic;line-height:1.5;}
+
+  /* red flag families */
+  .flagrow{display:flex;flex-direction:column;gap:12px;}
+  .flag{display:grid;grid-template-columns:260px 1fr;gap:18px;border-left:3px solid #e08a7d;padding:10px 0 10px 16px;}
+  .flag h4{margin:0;font-size:14.5px;color:#e08a7d;}
+  .flag p{margin:0;font-size:13.4px;color:#dfe5f2;line-height:1.5;}
+
+  /* silent flags */
+  .silent2{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
+  .silent2 h4{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:13px;color:var(--gold-soft);margin:0 0 14px;}
+  .silent2 .no h4{color:#e08a7d;}
+
+  /* footer / nav */
+  .foot{
+    position:absolute;bottom:0;left:0;right:0;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 8vw;background:linear-gradient(0deg, var(--navy-950) 40%, transparent);
+  }
+  .brand{font-family:'Barlow Condensed',sans-serif;letter-spacing:.15em;font-size:11px;color:var(--muted);text-transform:uppercase;}
+  .navctl{display:flex;align-items:center;gap:16px;}
+  .navbtn{
+    width:36px;height:36px;border-radius:50%;border:1px solid var(--navy-line);
+    background:transparent;color:var(--gold-soft);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+    transition:all .15s;
+  }
+  .navbtn:hover{border-color:var(--gold);background:rgba(201,162,39,0.08);}
+  .navbtn:disabled{opacity:0.25;cursor:default;}
+  .counter{font-family:'DM Sans',sans-serif;font-size:12.5px;color:var(--muted);min-width:56px;text-align:center;}
+  .progress{position:absolute;top:0;left:0;height:2px;background:var(--gold);transition:width .25s;z-index:5;}
+
+  @media (max-width:900px){
+    .split, .steps, .grid4, .scenarios, .agencies, .ninegrid, .stopgrid, .silent2, .wrong2{grid-template-columns:1fr;}
+    .breakitem{grid-template-columns:1fr;}
+    .bstep{grid-template-columns:1fr;}
+    .journey{flex-wrap:wrap;gap:12px 0;}
+    .jstop{width:30%;margin-bottom:14px;}
+    .journey::before{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+  <div class="progress" id="progress"></div>
+
+  <!-- 1 PORTADA -->
+  <section class="slide active">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+      <div class="eyebrow">Customer Service Excellence Academy</div>
+      <h1>El Manual de la<br><em>Experiencia del Cliente</em></h1>
+      <div class="rule"></div>
+      <p class="sub">Currículo completo de dos días · Construyendo confianza en cada interacción</p>
+      <p class="sub" style="margin-top:34px;color:var(--gold-soft);letter-spacing:.04em;">The Mendoza Law Firm LLC &nbsp;|&nbsp; Presentación para Facilitadores &nbsp;|&nbsp; Borrador de Revisión Ejecutiva</p>
+    </div>
+  </section>
+
+  <!-- 2 QUE CUBRE -->
+  <section class="slide">
+    <div class="eyebrow">Fundamentos</div>
+    <h1>Lo que cubre esta capacitación</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <div class="split">
+        <div class="card">
+          <h3>✓ Esto sí es tu trabajo</h3>
+          <ul>
+            <li>Verificar identidad antes de cualquier divulgación</li>
+            <li>Revisar el expediente por completo antes de responder</li>
+            <li>Responder lo que el registro documenta</li>
+            <li>Clasificar y enrutar todo lo demás</li>
+            <li>Establecer una expectativa en la que el cliente pueda confiar</li>
+            <li>Documentar para que un compañero pueda actuar</li>
+          </ul>
+        </div>
+        <div class="card no">
+          <h3>✕ Esto no es tu trabajo</h3>
+          <ul>
+            <li>Preparar o completar formularios</li>
+            <li>Revisar o juzgar evidencia</li>
+            <li>Decidir qué significa un aviso para este cliente</li>
+            <li>Evaluar elegibilidad, riesgo o consecuencias</li>
+            <li>Predecir lo que hará una agencia</li>
+            <li>Decirle al cliente qué debe hacer a continuación</li>
+          </ul>
+        </div>
+      </div>
+      <p class="lead-line" style="margin-top:30px;">Conocer el límite no es una limitación de tu rol. Es tu rol.</p>
+    </div>
+  </section>
+
+  <!-- 3 QUE PODRAS HACER -->
+  <section class="slide">
+    <div class="eyebrow">Fundamentos</div>
+    <h1>Lo que podrás hacer</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <div class="steps">
+        <div class="step"><div class="num">1</div><div><h4>Aplicar el Estándar</h4><p>Definir y demostrar Profesionalismo, Precisión, Compasión, Consistencia y Responsabilidad como comportamiento observable.</p></div></div>
+        <div class="step"><div class="num">2</div><div><h4>Investigar por completo</h4><p>Completar la revisión de nueve pasos y resumir solo los hechos relevantes para la próxima acción.</p></div></div>
+        <div class="step"><div class="num">3</div><div><h4>Clasificar correctamente</h4><p>Usar las Cuatro Preguntas para clasificar cualquier solicitud en respuesta rutinaria, traspaso, devolución de llamada o escalamiento.</p></div></div>
+        <div class="step"><div class="num">4</div><div><h4>Sostener el límite</h4><p>Distinguir las cuatro categorías de información y entregar la respuesta del límite sin perder la confianza.</p></div></div>
+        <div class="step"><div class="num">5</div><div><h4>Enrutar banderas rojas</h4><p>Nombrar urgencia, destino, hechos mínimos, expectativa del cliente y documentación requerida.</p></div></div>
+        <div class="step"><div class="num">6</div><div><h4>Documentar y traspasar</h4><p>Escribir una nota que responda los ocho elementos y una devolución de llamada que cumpla los seis estándares.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 PACCA -->
+  <section class="slide">
+    <div class="eyebrow">Fundamentos</div>
+    <h1>El Estándar de la Experiencia del Cliente</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <div class="pacca-row">
+        <div class="pacca-chip"><div class="letter">P</div><span class="label">Profesionalismo</span></div>
+        <div class="pacca-chip"><div class="letter">P</div><span class="label">Precisión</span></div>
+        <div class="pacca-chip"><div class="letter">C</div><span class="label">Compasión</span></div>
+        <div class="pacca-chip"><div class="letter">C</div><span class="label">Consistencia</span></div>
+        <div class="pacca-chip"><div class="letter">R</div><span class="label">Responsabilidad</span></div>
+      </div>
+      <p class="lead-line">Un problema de servicio rutinario rara vez es rutinario para el cliente. Plazos largos, separación familiar, autorización de trabajo, dinero ya gastado y, en muchos casos, daño previo por parte de un notario o representante anterior.</p>
+    </div>
+  </section>
+
+  <!-- 5 ESTANDAR COMO COMPORTAMIENTO -->
+  <section class="slide">
+    <div class="eyebrow">Fundamentos</div>
+    <h1>El Estándar, expresado como comportamiento</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <table>
+        <tr><th style="width:16%">Profesionalismo</th><td>Verificación aprobada completada antes de cualquier divulgación. Se usa el nombre del cliente y su idioma preferido. Sin conversación audible de fondo. Contacto respondido dentro de la ventana publicada.</td></tr>
+        <tr><td class="key">Precisión</td><td>Solo se afirma lo que el registro documenta — y puedes decir dónde lo encontraste. Nada se adivina. Una afirmación incorrecta se corrige en el registro y con el cliente.</td></tr>
+        <tr><td class="key">Compasión</td><td>La preocupación se reconoce antes de entregar los hechos. El lenguaje sencillo reemplaza la jerga. Se confirma la comprensión, no se asume.</td></tr>
+        <tr><td class="key">Consistencia</td><td>La misma pregunta recibe la misma respuesta sin importar quién la responda. Lenguaje aprobado en lugar de frases personales.</td></tr>
+        <tr><td class="key">Responsabilidad</td><td>Cada contacto se documenta el mismo día. Cada compromiso tiene un dueño y una fecha. Quien abre el caso lo cierra.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 6 CLIENT JOURNEY -->
+  <section class="slide">
+    <div class="eyebrow">Fundamentos</div>
+    <h1>El recorrido del cliente</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <p class="sub" style="margin-bottom:26px;">Mapea las etapas sin tratar cada caso como idéntico — los asuntos humanitarios, de corte y consulares corren en relojes distintos.</p>
+      <div class="journey">
+        <div class="jstop"><div class="jdot">1</div><span>Consulta y contrato</span></div>
+        <div class="jstop"><div class="jdot">2</div><span>Recolección de documentos</span></div>
+        <div class="jstop"><div class="jdot">3</div><span>Preparación y presentación</span></div>
+        <div class="jstop"><div class="jdot">4</div><span>Recibo y biométricos</span></div>
+        <div class="jstop"><div class="jdot">5</div><span>Solicitudes de evidencia</span></div>
+        <div class="jstop"><div class="jdot">6</div><span>Entrevista o audiencia</span></div>
+        <div class="jstop"><div class="jdot">7</div><span>Decisión y próximos pasos</span></div>
+      </div>
+      <div class="anxiety-box">
+        <h4>Dónde la ansiedad alcanza su punto máximo</h4>
+        <ul style="list-style:none;padding:0;margin:0;">
+          <li>— Después de presentar, cuando nada sucede visiblemente durante meses — el silencio se interpreta como abandono</li>
+          <li>— Cuando llega un aviso que el cliente no puede interpretar</li>
+          <li>— Cuando se fija una fecha: entrevista, biométricos o audiencia</li>
+          <li>— Cuando ya se pagó dinero por un trabajo que el cliente no puede ver</li>
+        </ul>
+      </div>
+      <p class="lead-line" style="margin-top:20px;">Misma firma, mismo expediente — pero el cliente está en un lugar emocional distinto en cada una de estas siete paradas.</p>
+    </div>
+  </section>
+
+  <!-- 7 ESCENARIOS -->
+  <section class="slide">
+    <div class="eyebrow">Fundamentos</div>
+    <h1>Escenarios de práctica</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <div class="scenarios">
+        <div class="scen">
+          <div class="tag">Escenario 1</div>
+          <h4>El silencio se interpreta como abandono</h4>
+          <p>Un cliente ha esperado meses y no ha recibido noticias.</p>
+          <p class="q">¿Cuál es la necesidad subyacente — y qué puedes decir que demuestre que el expediente sí fue revisado?</p>
+        </div>
+        <div class="scen">
+          <div class="tag">Escenario 2</div>
+          <h4>Ya contó la historia antes</h4>
+          <p>Un cliente ha repetido el mismo relato a varios representantes.</p>
+          <p class="q">¿Qué le debe el registro, y qué cuesta hacerlo empezar de nuevo?</p>
+        </div>
+        <div class="scen">
+          <div class="tag">Escenario 3</div>
+          <h4>Quiere certeza</h4>
+          <p>Un cliente quiere una garantía que Servicio al Cliente no puede dar.</p>
+          <p class="q">¿Qué puedes ofrecer en su lugar que sea honesto y aun así reconfortante?</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 QUE POSEE CS -->
+  <section class="slide">
+    <div class="eyebrow">Fundamentos</div>
+    <h1>Lo que Servicio al Cliente posee</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <table>
+        <tr><td class="key">Verificación de identidad</td><td>Completar la verificación aprobada antes de cualquier divulgación.</td></tr>
+        <tr><td class="key">Revisión del CASO</td><td>Revisar estatus, notas, tareas, documentos, citas y pendientes relevantes.</td></tr>
+        <tr><td class="key">Programación</td><td>Programar o enrutar dentro de la política de citas.</td></tr>
+        <tr><td class="key">Pagos</td><td>Explicar saldos verificados y procedimientos aprobados.</td></tr>
+        <tr><td class="key">Documentos</td><td>Confirmar recepción, estatus y el proceso de entrega — nunca la suficiencia.</td></tr>
+        <tr><td class="key">Estatus</td><td>Proporcionar actualizaciones verificadas y próximos pasos conocidos.</td></tr>
+        <tr><td class="key">Devoluciones de llamada</td><td>Crearlas solo cuando se requieran, con un resumen completo.</td></tr>
+        <tr><td class="key">Escalamientos</td><td>Reconocer y transferir banderas rojas según protocolo.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 9 CUATRO COSAS -->
+  <section class="slide">
+    <div class="eyebrow">Clasificación</div>
+    <h1>Toda solicitud es una de cuatro cosas</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <div class="grid4">
+        <div class="g4card"><div class="n">1</div><div><h4>Respuesta rutinaria</h4><p>La respuesta es un hecho documentado dentro de tu autoridad. Verifica, responde, fija la expectativa, documenta.</p></div></div>
+        <div class="g4card"><div class="n">2</div><div><h4>Traspaso operativo</h4><p>Otro equipo es dueño de la acción. No requiere juicio legal. Enruta con los hechos. Dile al cliente quién lo posee y para cuándo.</p></div></div>
+        <div class="g4card"><div class="n">3</div><div><h4>Devolución de llamada legal</h4><p>Responder implicaría aplicar la ley a los hechos de este cliente. Construye una devolución de llamada que cumpla los seis estándares. Nunca adelantes la respuesta probable.</p></div></div>
+        <div class="g4card"><div class="n">4</div><div><h4>Escalamiento urgente</h4><p>Hay presente una familia de bandera roja. Sigue la ruta de emergencia o prioridad de inmediato. No pongas en cola. No interpretes.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 CUATRO PREGUNTAS -->
+  <section class="slide">
+    <div class="eyebrow">Clasificación</div>
+    <h1>Cuatro preguntas antes de responder</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <div class="qlist">
+        <div class="qitem"><div class="n">1</div><p>¿He verificado la identidad y la autoridad para recibir información?</p></div>
+        <div class="qitem"><div class="n">2</div><p>¿He revisado lo suficiente para entender la solicitud completa?</p></div>
+        <div class="qitem"><div class="n">3</div><p>¿La respuesta está verificada y dentro de la autoridad de Servicio al Cliente?</p></div>
+        <div class="qitem"><div class="n">4</div><p>¿Qué acción, dueño, expectativa y documentación se espera?</p></div>
+      </div>
+      <p class="closer">Si no puedes responder las cuatro, no estás listo para hablar.</p>
+    </div>
+  </section>
+
+  <!-- 11 DOS FORMAS DE EQUIVOCARSE -->
+  <section class="slide">
+    <div class="eyebrow">Clasificación</div>
+    <h1>Dos maneras de equivocarse</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <div class="wrong2">
+        <div class="wrongcard">
+          <h3>Adivinar</h3>
+          <p>Una respuesta no verificada no se queda como una suposición. Se convierte en el plan del cliente — lo que le dice a su familia, lo que reserva, lo que deja de hacer.<br><br>La corrección cuesta más confianza de la que hubiera costado la espera.</p>
+        </div>
+        <div class="wrongcard">
+          <h3>Enviarlo todo al abogado</h3>
+          <p>Una cola de devoluciones de llamada llena de preguntas rutinarias no es precaución. Diluye la cola y consume tiempo del abogado.<br><br>Y hace que la devolución de llamada genuinamente urgente espere detrás de las rutinarias.</p>
+        </div>
+      </div>
+      <p class="lead-line" style="margin-top:26px;">Ambos errores parecen proteger al cliente. Ninguno lo hace.</p>
+    </div>
+  </section>
+
+  <!-- 12 QUIEN ES QUIEN -->
+  <section class="slide">
+    <div class="eyebrow">Clasificación</div>
+    <h1>Quién es quién</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <p class="sub" style="margin-bottom:22px;">Nivel general únicamente. Saber qué agencia tiene el caso te dice a dónde va la pregunta — no cuál es la respuesta.</p>
+      <div class="agencies">
+        <div class="agency"><div class="n">1</div><div><h4>USCIS</h4><p>Procesa peticiones y solicitudes. Emite recibos, avisos de biométricos, solicitudes de evidencia y decisiones.</p></div></div>
+        <div class="agency"><div class="n">2</div><div><h4>EOIR</h4><p>Las cortes de inmigración. Audiencias, avisos de corte y todo lo que esté en un calendario judicial.</p></div></div>
+        <div class="agency alert"><div class="n">3</div><div><h4>ICE</h4><p>Aplicación de la ley, detención y check-ins. Cualquier contacto aquí es una bandera roja de emergencia.</p></div></div>
+        <div class="agency alert"><div class="n">4</div><div><h4>CBP</h4><p>Puertos de entrada y la frontera. Un cliente en un aeropuerto es una bandera roja de emergencia.</p></div></div>
+        <div class="agency"><div class="n">5</div><div><h4>DOS / Consulados</h4><p>Entrevistas de visa y procesamiento en el extranjero. Los asuntos consulares corren en su propio reloj.</p></div></div>
+        <div class="agency"><div class="n">6</div><div><h4>Nuestros equipos internos</h4><p>Qué equipo posee cada etapa — para que un traspaso operativo llegue al lugar correcto la primera vez.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 DOCUMENTOS -->
+  <section class="slide">
+    <div class="eyebrow">Investigación</div>
+    <h1>Documentos que verás</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <table>
+        <tr><td class="key">Avisos de recibo</td><td>Confirman que la presentación fue recibida y cuándo. Puedes confirmar recepción y fecha. No puedes confirmar lo que predice.</td></tr>
+        <tr><td class="key">Avisos de biométricos</td><td>Una cita con fecha, hora y lugar. Puedes confirmar la logística. No puedes asesorar sobre problemas de asistencia.</td></tr>
+        <tr><td class="key">Avisos de entrevista</td><td>Una entrevista programada. Confirma fecha y lugar; cualquier cosa sobre preparación es legal.</td></tr>
+        <tr><td class="key">RFE y NOID</td><td>Solicitud de más evidencia, o aviso de intención de negar, con un plazo de respuesta. Confirma que existe y el plazo. Nunca digas qué enviar.</td></tr>
+        <tr><td class="key">Aprobaciones y negaciones</td><td>Una decisión. Confirma que se recibió una decisión. Nunca interpretes sus consecuencias — una negación es una bandera roja inmediata.</td></tr>
+        <tr><td class="key">Avisos de corte</td><td>Una fecha de audiencia de EOIR. Confirma la fecha y escala. Fechas perdidas o inminentes son banderas rojas urgentes.</td></tr>
+      </table>
+      <p class="lead-line" style="margin-top:22px;">El significado general de un documento es información de proceso. Lo que significa para este cliente es análisis legal.</p>
+    </div>
+  </section>
+
+  <!-- 14 NUEVE PASOS -->
+  <section class="slide">
+    <div class="eyebrow">Investigación</div>
+    <h1>La revisión de nueve pasos</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <div class="ninegrid">
+        <div class="ninebox"><div class="n">1</div><h4>Identidad y contacto</h4><p>¿Verificado? ¿Autorizado? ¿Información de contacto vigente según política?</p></div>
+        <div class="ninebox"><div class="n">2</div><h4>Resumen del cliente</h4><p>¿Quién es el cliente; qué asuntos y equipos asignados están documentados?</p></div>
+        <div class="ninebox"><div class="n">3</div><h4>Tipo de caso y etapa</h4><p>¿Qué proceso y etapa se reflejan?</p></div>
+        <div class="ninebox"><div class="n">4</div><h4>Plazos y avisos</h4><p>¿Alguna cita, fecha de corte, entrevista, RFE, NOID o plazo de respuesta?</p></div>
+        <div class="ninebox"><div class="n">5</div><h4>Notas y contactos recientes</h4><p>¿Qué pasó, qué se prometió, y la solicitud es repetida?</p></div>
+        <div class="ninebox"><div class="n">6</div><h4>Tareas y propiedad</h4><p>¿Qué está abierto, vencido, duplicado, sin asignar o ya enrutado?</p></div>
+        <div class="ninebox"><div class="n">7</div><h4>Documentos y cargas</h4><p>¿Qué se recibió, falta o está pendiente de revisión?</p></div>
+        <div class="ninebox"><div class="n">8</div><h4>Citas y devoluciones de llamada</h4><p>¿Qué está programado o ya solicitado?</p></div>
+        <div class="ninebox"><div class="n">9</div><h4>Síntesis</h4><p>¿Qué se puede responder, qué necesita confirmación, y qué cierra el ciclo?</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 DONDE FALLA -->
+  <section class="slide">
+    <div class="eyebrow">Investigación</div>
+    <h1>Dónde falla la revisión</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <div class="breaklist">
+        <div class="breakitem"><h4>Detenerse antes de tiempo</h4><p>Detenerse en la primera nota, o buscar solo la respuesta que el cliente quiere. Completa los nueve pasos aun cuando el paso 5 parezca resolverlo.</p></div>
+        <div class="breakitem"><h4>"Cargado" ≠ "revisado"</h4><p>Tratar un documento cargado como revisado o suficiente. Confirma solo la recepción. Nunca confirmes suficiencia.</p></div>
+        <div class="breakitem hot"><h4>Pasar por alto lo pendiente</h4><p>Ignorar una devolución de llamada existente, un plazo, un contacto repetido o una nota en conflicto. Los pasos 4, 5, 6 y 8 existen precisamente para detectar esto.</p></div>
+        <div class="breakitem"><h4>Narrar el expediente</h4><p>Leer todo en lugar de resumir lo que afecta la próxima acción. El detalle extra aumenta la confusión y el riesgo.</p></div>
+      </div>
+      <p class="lead-line" style="margin-top:22px;">El tercero es el más costoso. Una verificación de duplicados es obligatoria antes de crear algo nuevo.</p>
+    </div>
+  </section>
+
+  <!-- 16 CUATRO CATEGORIAS -->
+  <section class="slide">
+    <div class="eyebrow">Decisiones seguras y escalamiento</div>
+    <h1>Cuatro categorías de información</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <table>
+        <tr><td class="key">Información factual del caso</td><td>Un hecho actual documentado en el CRM. → Comunicar tras verificación, si está dentro de la política.</td></tr>
+        <tr><td class="key">Información general de proceso</td><td>Explicación aprobada, no específica al caso, de un paso o aviso. → Usa el contenido aprobado. No lo apliques a hechos inciertos.</td></tr>
+        <tr><td class="key">Información legal controlada</td><td>Descripción general de ley, formulario o procedimiento aprobada para uso limitado. → Úsala solo con autorización expresa.</td></tr>
+        <tr><td class="key">Asesoría y análisis legal</td><td>Aplicar la ley a los hechos, recomendar acción, evaluar elegibilidad o riesgo, interpretar consecuencias, predecir resultados. → Requiere revisión del abogado.</td></tr>
+      </table>
+      <p class="lead-line" style="margin-top:22px;">Las primeras tres son cosas que puedes decir. La cuarta es una pregunta que cargas, con los hechos ya recopilados.</p>
+    </div>
+  </section>
+
+  <!-- 17 SEIS PREGUNTAS QUE TE DETIENEN -->
+  <section class="slide">
+    <div class="eyebrow">Decisiones seguras y escalamiento</div>
+    <h1>Seis preguntas que te detienen</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <p class="sub" style="margin-bottom:20px;">Aprende a escucharlas mientras el cliente todavía está hablando.</p>
+      <div class="stopgrid">
+        <div class="stopitem"><span class="n">1</span><span>¿Soy elegible, estoy descalificado, estoy a salvo o en riesgo?</span></div>
+        <div class="stopitem"><span class="n">2</span><span>¿Qué debo presentar, firmar, decir, divulgar o elegir?</span></div>
+        <div class="stopitem"><span class="n">3</span><span>¿Debo viajar, irme, regresar, asistir, retirarme, apelar o responder?</span></div>
+        <div class="stopitem"><span class="n">4</span><span>¿Qué hará USCIS, EOIR, ICE o un consulado?</span></div>
+        <div class="stopitem"><span class="n">5</span><span>¿Cómo afectará un arresto, entrada, remoción, matrimonio, divorcio, abuso o delito al caso?</span></div>
+        <div class="stopitem"><span class="n">6</span><span>¿Puede un plazo, negación, aviso o decisión ser impugnado, ignorado, extendido o subsanado?</span></div>
+      </div>
+      <p class="closer">Ninguna de estas se puede responder desde el registro. Todas se pueden cargar.</p>
+    </div>
+  </section>
+
+  <!-- 18 BOUNDARY RESPONSE -->
+  <section class="slide">
+    <div class="eyebrow">Decisiones seguras y escalamiento</div>
+    <h1>La respuesta del límite</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <div class="boundary">
+        <div class="bstep"><h4>1. Reconocer</h4><p>Demostrar que se escuchó la preocupación. "Entiendo por qué quiere claridad antes de tomar esa decisión."</p></div>
+        <div class="bstep"><h4>2. Fijar el límite</h4><p>Nombrar la necesidad de revisión legal. "Eso requiere que el equipo legal revise cómo aplica la ley a su situación."</p></div>
+        <div class="bstep"><h4>3. Declarar hechos conocidos</h4><p>Compartir información verificada y segura. "Lo que puedo confirmar es que el expediente muestra…"</p></div>
+        <div class="bstep"><h4>4. Tomar acción</h4><p>Crear la devolución de llamada o el escalamiento correcto. "Le enviaré al abogado su pregunta específica y los hechos relevantes."</p></div>
+        <div class="bstep"><h4>5. Fijar la expectativa</h4><p>Explicar el dueño y el tiempo aprobados. "Documentaré el contacto de hoy y esto seguirá el proceso de devolución de llamada."</p></div>
+      </div>
+      <p class="lead-line" style="margin-top:22px;">Una estructura, no un guion. Siempre termina con una acción — nunca con una puerta cerrada.</p>
+    </div>
+  </section>
+
+  <!-- 19 CINCO FAMILIAS -->
+  <section class="slide">
+    <div class="eyebrow">Banderas rojas, comunicación y dominio</div>
+    <h1>Cinco familias de banderas rojas</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <div class="flagrow">
+        <div class="flag"><h4>Aplicación de la ley gubernamental</h4><p>Contacto con ICE, detención, arresto, contacto activo con la policía. → No demores. Sigue la ruta de emergencia.</p></div>
+        <div class="flag"><h4>Evento legal urgente</h4><p>Fecha de corte, entrevista, plazo de respuesta a RFE o NOID, apelación, u otro plazo inminente. → Verifica fecha y fuente. Enruta bajo reglas de prioridad.</p></div>
+        <div class="flag"><h4>Seguridad y vulnerabilidad</h4><p>Violencia doméstica, amenazas, coerción, indicios de trata, declaraciones de autolesión. → Usa el protocolo de seguridad aprobado. Evita promesas o sondeos.</p></div>
+        <div class="flag"><h4>Fraude, identidad, dinero</h4><p>Sospecha de suplantación, fraude, irregularidad de pago, preocupación por documentos. → Protege la información y enruta al dueño designado.</p></div>
+        <div class="flag"><h4>Decisión adversa o cambio</h4><p>Negación, revocación, terminación, nuevo arresto, viaje o salida, cambio de estatus familiar. → No interpretes consecuencias. Obtén revisión del abogado.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 20 BANDERAS QUE NADIE ANUNCIA -->
+  <section class="slide">
+    <div class="eyebrow">Banderas rojas, comunicación y dominio</div>
+    <h1>Banderas rojas que nadie anuncia</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <div class="silent2">
+        <div>
+          <h4>Escucha esto</h4>
+          <ul style="list-style:none;padding:0;margin:0;">
+            <li style="margin-bottom:10px;font-size:13.8px;color:#dfe5f2;">— Un tercer o cuarto contacto sobre el mismo asunto sin resolver</li>
+            <li style="margin-bottom:10px;font-size:13.8px;color:#dfe5f2;">— Mención de una demanda, del colegio de abogados, o "alguien más con quien hablé"</li>
+            <li style="margin-bottom:10px;font-size:13.8px;color:#dfe5f2;">— El cliente firmó algo, le pagó a alguien, o presentó algo por su cuenta</li>
+            <li style="margin-bottom:10px;font-size:13.8px;color:#dfe5f2;">— Mención casual de un viaje, una fecha de salida, un nuevo trabajo o pérdida de empleo</li>
+            <li style="margin-bottom:10px;font-size:13.8px;color:#dfe5f2;">— Aparece un nombre que no está documentado en el asunto</li>
+            <li style="margin-bottom:10px;font-size:13.8px;color:#dfe5f2;">— Un cambio de tono a mitad del contacto, o insistencia repentina en hablar con el abogado hoy mismo</li>
+          </ul>
+        </div>
+        <div class="no">
+          <h4>No hagas esto</h4>
+          <ul style="list-style:none;padding:0;margin:0;">
+            <li style="margin-bottom:10px;font-size:13.8px;color:#dfe5f2;">— No interpretes lo que significa para el caso, incluso si te lo preguntan directamente</li>
+            <li style="margin-bottom:10px;font-size:13.8px;color:#dfe5f2;">— No tranquilices con una predicción — "Estoy seguro de que todo saldrá bien" es una promesa</li>
+            <li style="margin-bottom:10px;font-size:13.8px;color:#dfe5f2;">— No sondees más allá de los hechos mínimos que necesita el dueño del destino</li>
+            <li style="margin-bottom:10px;font-size:13.8px;color:#dfe5f2;">— No lo dejes para mañana para evitar un traspaso incómodo</li>
+            <li style="margin-bottom:10px;font-size:13.8px;color:#dfe5f2;">— No dejes la documentación para el final del día</li>
+          </ul>
+        </div>
+      </div>
+      <p class="lead-line" style="margin-top:22px;">Las señales silenciosas son las más costosas, porque nada en la llamada se siente urgente mientras está ocurriendo.</p>
+    </div>
+  </section>
+
+  <!-- 21 ROUTING STANDARD -->
+  <section class="slide">
+    <div class="eyebrow">Banderas rojas, comunicación y dominio</div>
+    <h1>Estándar de enrutamiento</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <table>
+        <tr><th style="width:26%">Familia de bandera roja</th><th style="width:14%">Urgencia</th><th style="width:30%">Destino</th><th>Estándar de respuesta</th></tr>
+        <tr><td class="key">Aplicación de la ley gubernamental</td><td>Emergencia</td><td>Abogado directamente, traspaso en vivo</td><td>Inmediato — no poner en cola</td></tr>
+        <tr><td class="key">Seguridad y vulnerabilidad</td><td>Emergencia</td><td>Dueño designado del protocolo de seguridad</td><td>Inmediato — permanecer con el cliente</td></tr>
+        <tr><td class="key">Evento legal urgente</td><td>Prioridad</td><td>Abogado asignado vía paralegal supervisor</td><td>Dentro de la hora</td></tr>
+        <tr><td class="key">Decisión adversa o cambio</td><td>Prioridad</td><td>Abogado asignado</td><td>Dentro de la hora</td></tr>
+        <tr><td class="key">Fraude, identidad, dinero</td><td>Prioridad</td><td>Dueño designado</td><td>Mismo día hábil</td></tr>
+      </table>
+      <p class="lead-line" style="margin-top:22px;">Los dueños y tiempos de respuesta son marcadores pendientes de confirmación por liderazgo. El capstone no puede calificarse sin ellos.</p>
+    </div>
+  </section>
+
+  <!-- 22 SEIS MOVIMIENTOS -->
+  <section class="slide">
+    <div class="eyebrow">Confianza, documentación y traspasos</div>
+    <h1>De la frustración a la confianza: seis movimientos</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <div class="steps">
+        <div class="step"><div class="num">1</div><div><h4>Escuchar y aclarar</h4><p>No interrumpir. Resumir el problema y su impacto. Hacer preguntas enfocadas.</p></div></div>
+        <div class="step"><div class="num">2</div><div><h4>Reconocer</h4><p>Nombrar la frustración comprensible sin admitir culpa no verificada ni prometer un resultado.</p></div></div>
+        <div class="step"><div class="num">3</div><div><h4>Investigar y explicar</h4><p>Usar el CRM y Dropbox. Decir qué se sabe y qué no.</p></div></div>
+        <div class="step"><div class="num">4</div><div><h4>Ofrecer el próximo paso</h4><p>Una acción realista, un dueño y una expectativa. Nunca un vago "alguien llamará".</p></div></div>
+        <div class="step"><div class="num">5</div><div><h4>Establecer límites de conducta</h4><p>Mantener la calma. Usar la advertencia aprobada y el procedimiento de fin de llamada si la conducta se vuelve abusiva o insegura.</p></div></div>
+        <div class="step"><div class="num">6</div><div><h4>Cerrar y documentar</h4><p>Confirmar comprensión y registrar la interacción objetivamente, el mismo día.</p></div></div>
+      </div>
+      <p class="lead-line" style="margin-top:26px;">La mayor parte de la frustración no es sobre ti — es tiempo, costo, silencio, miedo y demora que nadie en este edificio controla.</p>
+    </div>
+  </section>
+
+  <!-- 23 DELIVERING NON-NEWS -->
+  <section class="slide">
+    <div class="eyebrow">Confianza, documentación y traspasos</div>
+    <h1>Comunicar que "no hay novedades"</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <p class="sub" style="margin-bottom:24px;">"No hay actualización" tiene que sonar como evidencia de que el expediente fue revisado — porque lo fue.</p>
+      <div class="split">
+        <div class="card no">
+          <h3>✕ Enciende la molestia</h3>
+          <ul>
+            <li>"Cálmese."</li>
+            <li>"Es simplemente nuestra política."</li>
+            <li>"No hay nada que pueda hacer."</li>
+            <li>"Usted debió haber…"</li>
+            <li>"Sin cambios, lo siento."</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>✓ Ayuda</h3>
+          <ul>
+            <li>"Tiene razón en que esto ha tomado mucho tiempo."</li>
+            <li>"Esto es exactamente lo que revisé hoy."</li>
+            <li>"La última acción en su expediente fue el día 12."</li>
+            <li>"Esto es lo que sigue, y quién lo tiene a cargo."</li>
+            <li>"Volveré a revisar el jueves de todas formas."</li>
+          </ul>
+        </div>
+      </div>
+      <p class="lead-line" style="margin-top:22px;">Nombra lo que revisaste, y cuándo volverás a revisar. Esa es toda la diferencia.</p>
+    </div>
+  </section>
+
+  <!-- 24 OCHO PREGUNTAS -->
+  <section class="slide">
+    <div class="eyebrow">Confianza, documentación y traspasos</div>
+    <h1>Ocho preguntas que toda nota debe responder</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <div class="steps">
+        <div class="step"><div class="num">1</div><div><h4>Identidad / canal</h4><p>¿Quién contactó a la firma?</p></div></div>
+        <div class="step"><div class="num">2</div><div><h4>Solicitud</h4><p>¿Qué exactamente pidió o reportó el cliente?</p></div></div>
+        <div class="step"><div class="num">3</div><div><h4>Investigación</h4><p>¿Qué registros, notas, tareas, avisos o documentos se revisaron?</p></div></div>
+        <div class="step"><div class="num">4</div><div><h4>Información verificada</h4><p>¿Qué hechos documentados se comunicaron?</p></div></div>
+        <div class="step"><div class="num">5</div><div><h4>Acción / ruta</h4><p>¿Qué se completó, creó, programó, traspasó o escaló?</p></div></div>
+        <div class="step"><div class="num">6</div><div><h4>Dueño / urgencia</h4><p>¿Quién posee la próxima acción, y bajo qué prioridad?</p></div></div>
+        <div class="step"><div class="num">7</div><div><h4>Expectativa</h4><p>¿Qué plazo o próximo paso aprobado se comunicó?</p></div></div>
+        <div class="step"><div class="num">8</div><div><h4>Seguimiento</h4><p>¿Qué queda pendiente, y cómo se cerrará el ciclo?</p></div></div>
+      </div>
+      <p class="closer">La prueba: ¿podría un compañero que nunca habló con este cliente actuar con base en tu nota?</p>
+    </div>
+  </section>
+
+  <!-- 25 SEIS ESTANDARES CALLBACK -->
+  <section class="slide">
+    <div class="eyebrow">Confianza, documentación y traspasos</div>
+    <h1>Seis estándares para cada devolución de llamada</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <table>
+        <tr><td class="key">Motivo</td><td>Una pregunta o decisión precisa que se necesita del abogado.</td></tr>
+        <tr><td class="key">Hechos relevantes</td><td>Los hechos verificados necesarios para entender la pregunta — y ninguna conclusión legal sin respaldo.</td></tr>
+        <tr><td class="key">Tiempo y riesgo</td><td>El plazo real o la bandera roja, y su fuente. No etiquetes como urgente a cada cliente molesto.</td></tr>
+        <tr><td class="key">Logística del cliente</td><td>Mejor información de contacto, mejor horario e idioma preferido.</td></tr>
+        <tr><td class="key">Acción realizada</td><td>Lo que ya se proporcionó, los pasos operativos completados y la expectativa establecida.</td></tr>
+        <tr><td class="key">Verificación de duplicados</td><td>Confirmar que no exista ya una devolución de llamada o escalamiento activo para este asunto.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <div class="foot">
+    <div class="brand">TMLF Academy · The Client Experience Playbook</div>
+    <div class="navctl">
+      <button class="navbtn" id="prevBtn" onclick="go(-1)">←</button>
+      <span class="counter" id="counter">1 / 25</span>
+      <button class="navbtn" id="nextBtn" onclick="go(1)">→</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let idx = 0;
+  const total = slides.length;
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  function render(){
+    slides.forEach((s,i)=> s.classList.toggle('active', i===idx));
+    counter.textContent = (idx+1) + ' / ' + total;
+    progress.style.width = ((idx+1)/total*100) + '%';
+    prevBtn.disabled = idx===0;
+    nextBtn.disabled = idx===total-1;
+  }
+  function go(delta){
+    const n = idx + delta;
+    if(n>=0 && n<total){ idx = n; render(); }
+  }
+  document.addEventListener('keydown', (e)=>{
+    if(e.key==='ArrowRight' || e.key===' ') go(1);
+    if(e.key==='ArrowLeft') go(-1);
+  });
+  let touchX=null;
+  document.addEventListener('touchstart', e=> touchX = e.touches[0].clientX);
+  document.addEventListener('touchend', e=>{
+    if(touchX===null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if(dx>50) go(-1); if(dx<-50) go(1);
+    touchX=null;
+  });
+  render();
+</script>
+</body>
+</html>
