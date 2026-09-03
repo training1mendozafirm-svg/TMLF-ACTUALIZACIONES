@@ -169,6 +169,32 @@ input[type=text]:focus{outline:none;border-color:var(--azul2);box-shadow:0 0 0 3
 .bloque .vacio{padding:18px 20px;font-size:13px;color:var(--gris-tx)}
 .acciones{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:26px}
 .pie{margin-top:30px;font-size:12px;color:var(--gris-tx);text-align:center}
+
+/* ADMIN */
+.nav .admin-link{margin-left:14px;background:none;border:1px solid rgba(255,255,255,.25);color:#dbe4ff;font-family:var(--sans);font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;cursor:pointer}
+.nav .admin-link:hover{background:rgba(255,255,255,.12)}
+.admin-wrap{max-width:1180px;margin:0 auto;padding:34px 22px 70px}
+.admin-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.admin-cards{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+.acard{min-width:150px;flex:1;padding:16px 18px;border-radius:12px;border:1px solid var(--gris2);background:#fff}
+.acard span{display:block;font-size:11.5px;color:var(--gris-tx);font-weight:600;margin-bottom:6px}
+.acard b{font-size:24px;font-weight:700;letter-spacing:-.02em}
+.acard.ok b{color:var(--verde)}
+.acard.no b{color:var(--rojo)}
+.admin-tools{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0 14px}
+.admin-filtro{padding:9px 12px;border:1px solid var(--gris2);border-radius:8px;font-family:var(--sans);font-size:13px;background:#fff}
+.admin-table-wrap{overflow-x:auto;border:1px solid var(--gris2);border-radius:12px;background:#fff}
+table.admin-tabla{border-collapse:collapse;width:100%;font-size:13px}
+table.admin-tabla th{text-align:left;background:var(--azul-claro);color:var(--azul);font-size:11.5px;font-weight:700;padding:10px 14px;white-space:nowrap;position:sticky;top:0}
+table.admin-tabla td{padding:10px 14px;border-top:1px solid var(--gris2);white-space:nowrap}
+table.admin-tabla tr:hover td{background:#fafbff}
+.tag-caso{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:5px}
+.tag-caso.rfe{background:#dbeafe;color:#1e40af}
+.tag-caso.noid{background:var(--rojo-bg);color:var(--rojo-tx)}
+.tag-res{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:5px}
+.tag-res.ok{background:var(--verde-bg);color:var(--verde-tx)}
+.tag-res.no{background:var(--rojo-bg);color:var(--rojo-tx)}
+.admin-vacio{padding:40px 20px;text-align:center;color:var(--gris-tx);font-size:14px}
 </style>
 </head>
 <body>
@@ -181,6 +207,7 @@ input[type=text]:focus{outline:none;border-color:var(--azul2);box-shadow:0 0 0 3
     <div class="paso" id="pa3"><b>3</b><span>Simulador</span></div>
     <div class="paso" id="pa4"><b>4</b><span>Resultados</span></div>
   </div>
+  <button class="admin-link" onclick="verAdmin()">Panel Admin</button>
 </nav>
 
 <main>
@@ -330,6 +357,57 @@ input[type=text]:focus{outline:none;border-color:var(--azul2);box-shadow:0 0 0 3
   </div>
 </section>
 
+<!-- ══════ PANTALLA ADMIN ══════ -->
+<section class="pantalla" id="pAdmin">
+  <div class="admin-wrap">
+    <div class="admin-head">
+      <div>
+        <div class="eyebrow">Panel de administración</div>
+        <h1 style="font-size:22px">Resultados del Simulador RFE / NOID</h1>
+        <p class="sub" style="margin-top:6px">Intentos registrados en este navegador. Útil para revisión rápida del equipo de capacitación.</p>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-g" onclick="ir(1)">Volver al simulador</button>
+        <button class="btn btn-g" onclick="cargarAdmin()">Actualizar</button>
+      </div>
+    </div>
+    <div class="admin-fuente" id="ad-fuente" style="font-size:12px;color:var(--gris-tx);margin-bottom:6px"></div>
+
+    <div class="admin-cards">
+      <div class="acard"><span>Intentos totales</span><b id="ad-total">0</b></div>
+      <div class="acard ok"><span>Aprobados</span><b id="ad-aprob">0</b></div>
+      <div class="acard no"><span>No aprobados</span><b id="ad-reprob">0</b></div>
+      <div class="acard"><span>Promedio general</span><b id="ad-prom">0%</b></div>
+    </div>
+
+    <div class="admin-tools">
+      <select class="admin-filtro" id="ad-filtro-caso" onchange="pintarAdmin()">
+        <option value="">Todos los casos</option>
+        <option value="rfe">Solo RFE</option>
+        <option value="noid">Solo NOID</option>
+      </select>
+      <select class="admin-filtro" id="ad-filtro-res" onchange="pintarAdmin()">
+        <option value="">Todos los resultados</option>
+        <option value="ok">Solo aprobados</option>
+        <option value="no">Solo no aprobados</option>
+      </select>
+      <input class="admin-filtro" id="ad-filtro-nombre" placeholder="Buscar colaborador..." oninput="pintarAdmin()" style="flex:1;min-width:180px">
+    </div>
+
+    <div class="admin-table-wrap">
+      <table class="admin-tabla" id="ad-tabla">
+        <thead>
+          <tr>
+            <th>Fecha</th><th>Colaborador</th><th>Caso</th><th>Expediente</th>
+            <th>Correctas</th><th>Puntaje</th><th>Resultado</th>
+          </tr>
+        </thead>
+        <tbody id="ad-tbody"></tbody>
+      </table>
+      <div class="admin-vacio" id="ad-vacio" style="display:none">Todavía no hay intentos registrados en este navegador.</div>
+    </div>
+  </div>
+</section>
 </main>
 
 <script>
@@ -379,6 +457,7 @@ function irInstrucciones(){
 
 /* ---------- Navegación ---------- */
 function ir(n){
+  document.getElementById('pAdmin').classList.remove('activa');
   for(var i=1;i<=4;i++){
     document.getElementById('p'+i).classList.toggle('activa',i===n);
     var t=document.getElementById('pa'+i);
@@ -386,6 +465,154 @@ function ir(n){
     t.classList.toggle('done',i<n);
   }
   window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ---------- Admin ---------- */
+/* Pega aquí la URL de tu Web App de Google Apps Script (termina en /exec).
+   Si la dejas vacía, el panel funciona solo con caché local del navegador. */
+var SHEET_URL = 'https://script.google.com/macros/s/AKfycbwt5udjBi_KF9zpEdZnzv5JcyLN3Covw8gbekgnUTjLh84eVqFJ197m4jmAOmz3znUyAQ/exec';
+
+var ADMIN_KEY='tmlf_rfe_noid_intentos';
+var estadoAdmin={ datos:[], cargando:false, fuente:'local' };
+
+function guardarIntentoLocal(rec){
+  var lista=[];
+  try{ lista=JSON.parse(localStorage.getItem(ADMIN_KEY))||[]; }catch(e){ lista=[]; }
+  lista.push(rec);
+  localStorage.setItem(ADMIN_KEY, JSON.stringify(lista));
+}
+
+function leerIntentosLocal(){
+  try{ return JSON.parse(localStorage.getItem(ADMIN_KEY))||[]; }catch(e){ return []; }
+}
+
+function tieneSheet(){
+  return SHEET_URL && SHEET_URL.indexOf('http')===0;
+}
+
+function guardarIntento(rec){
+  guardarIntentoLocal(rec);
+  if(!tieneSheet()) return;
+  fetch(SHEET_URL,{
+    method:'POST',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify(rec)
+  }).catch(function(){ /* si falla el envío, el intento ya quedó en caché local */ });
+}
+
+function verAdmin(){
+  for(var i=1;i<=4;i++){
+    document.getElementById('p'+i).classList.remove('activa');
+    document.getElementById('pa'+i).classList.remove('on');
+  }
+  document.getElementById('pAdmin').classList.add('activa');
+  cargarAdmin();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function cargarAdmin(){
+  var fuente=document.getElementById('ad-fuente');
+  if(!tieneSheet()){
+    estadoAdmin.datos=leerIntentosLocal();
+    estadoAdmin.fuente='local';
+    fuente.textContent='Mostrando caché de este navegador. Configura SHEET_URL para ver los resultados de todo el equipo.';
+    pintarAdmin();
+    return;
+  }
+  fuente.textContent='Cargando resultados desde Google Sheets...';
+  fetch(SHEET_URL+'?accion=listar')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      estadoAdmin.datos=data.intentos||data||[];
+      estadoAdmin.fuente='sheet';
+      fuente.textContent='Fuente: Google Sheet (equipo completo) · actualizado '+new Date().toLocaleTimeString('es-MX');
+      pintarAdmin();
+    })
+    .catch(function(){
+      estadoAdmin.datos=leerIntentosLocal();
+      estadoAdmin.fuente='local';
+      fuente.textContent='No se pudo conectar con la hoja. Mostrando caché de este navegador.';
+      pintarAdmin();
+    });
+}
+
+function pintarAdmin(){
+  var datos=estadoAdmin.datos||[];
+  var fCaso=document.getElementById('ad-filtro-caso').value;
+  var fRes=document.getElementById('ad-filtro-res').value;
+  var fNom=document.getElementById('ad-filtro-nombre').value.trim().toLowerCase();
+
+  var filtrados=datos.filter(function(d){
+    if(fCaso && d.caso!==fCaso) return false;
+    if(fRes && (fRes==='ok')!==!!d.pasa) return false;
+    if(fNom && (d.nombre||'').toLowerCase().indexOf(fNom)===-1) return false;
+    return true;
+  }).sort(function(a,b){ return b.ts-a.ts; });
+
+  document.getElementById('ad-total').textContent=datos.length;
+  document.getElementById('ad-aprob').textContent=datos.filter(function(d){return d.pasa}).length;
+  document.getElementById('ad-reprob').textContent=datos.filter(function(d){return !d.pasa}).length;
+  var prom=datos.length? Math.round(datos.reduce(function(s,d){return s+Number(d.pct);},0)/datos.length*10)/10 : 0;
+  document.getElementById('ad-prom').textContent=prom+'%';
+
+  var tbody=document.getElementById('ad-tbody');
+  var vacio=document.getElementById('ad-vacio');
+  var tabla=document.getElementById('ad-tabla');
+  if(!filtrados.length){
+    tbody.innerHTML='';
+    tabla.style.display='none';
+    vacio.style.display='block';
+    return;
+  }
+  tabla.style.display='table';
+  vacio.style.display='none';
+
+  var h='';
+  filtrados.forEach(function(d){
+    var pct=Number(d.pct);
+    var fecha=new Date(d.ts).toLocaleString('es-MX',{dateStyle:'short',timeStyle:'short'});
+    h+='<tr>'
+      +'<td>'+fecha+'</td>'
+      +'<td>'+d.nombre+'</td>'
+      +'<td><span class="tag-caso '+d.caso+'">'+d.etiqueta+'</span></td>'
+      +'<td>'+d.recibo+'</td>'
+      +'<td>'+d.ok+' de '+d.total+'</td>'
+      +'<td>'+(pct%1===0?pct.toFixed(0):pct.toFixed(1))+'%</td>'
+      +'<td><span class="tag-res '+(d.pasa?'ok':'no')+'">'+(d.pasa?'Aprobado':'No aprobado')+'</span></td>'
+      +'</tr>';
+  });
+  tbody.innerHTML=h;
+}
+
+function exportarCSV(){
+  var datos=estadoAdmin.datos||[];
+  if(!datos.length){ alert('No hay intentos registrados para exportar.'); return; }
+  var filas=[['Fecha','Colaborador','Caso','Titulo','Expediente','Correctas','Total','Puntaje %','Resultado']];
+  datos.forEach(function(d){
+    var pct=Number(d.pct);
+    filas.push([
+      new Date(d.ts).toLocaleString('es-MX'),
+      d.nombre, d.etiqueta, d.titulo, d.recibo,
+      d.ok, d.total,
+      (pct%1===0?pct.toFixed(0):pct.toFixed(1)),
+      d.pasa?'Aprobado':'No aprobado'
+    ]);
+  });
+  var csv=filas.map(function(f){
+    return f.map(function(v){ return '"'+String(v).replace(/"/g,'""')+'"'; }).join(',');
+  }).join('\n');
+  var blob=new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8;'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url; a.download='intentos_rfe_noid_'+Date.now()+'.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function limpiarRegistros(){
+  if(!confirm('¿Borrar la caché local de este navegador? Si usas Google Sheets, los datos del equipo seguirán intactos allá; esto solo limpia lo guardado en este dispositivo.')) return;
+  localStorage.removeItem(ADMIN_KEY);
+  cargarAdmin();
 }
 
 /* ---------- Pantalla 3 ---------- */
@@ -488,6 +715,12 @@ function finalizar(){
   pintarBloque('r-dom',dom,'No hubo respuestas correctas en este intento. Repasa el aviso y vuelve a ejecutar el ejercicio.');
   pintarBloque('r-ref',ref,'No hubo errores: dominaste los quince puntos estratégicos del expediente.');
   document.getElementById('btnOtro').textContent='Probar el caso '+(estado.caso==='rfe'?'NOID de Carla Yadira Perez Hernandez':'RFE de Fabiola Areli Mendoza Ruiz');
+
+  guardarIntento({
+    ts:Date.now(), nombre:estado.nombre, caso:estado.caso, etiqueta:c.etiqueta,
+    titulo:c.titulo, recibo:c.recibo, ok:ok, total:qs.length, pct:pct, pasa:pasa
+  });
+
   ir(4);
 }
 
