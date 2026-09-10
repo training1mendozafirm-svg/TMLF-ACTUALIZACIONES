@@ -143,6 +143,7 @@ body::before{
 
 .otro-reveal{margin-top:8px;overflow:hidden;max-height:0;transition:max-height .3s cubic-bezier(.4,0,.2,1),opacity .3s ease;opacity:0}
 .otro-reveal.open{max-height:70px;opacity:1}
+.otro-input::-webkit-calendar-picker-indicator{display:none}
 .otro-input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:12px 15px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--warm);transition:border-color .2s}
 .otro-input::placeholder{color:var(--slate)}
 .otro-input:focus{outline:none;border-color:var(--border-h);background:rgba(201,168,76,.04)}
@@ -520,7 +521,10 @@ body::before{
     </div>
     <input class="otro-input" id="q1-otro-txt" type="text"
       placeholder="Nombre del training…"
+      list="q1-datalist"
+      autocomplete="off"
       oninput="onTrainingManual(this.value)"/>
+    <datalist id="q1-datalist"></datalist>
     <div class="verr" id="e-q1">⚠ Selecciona o escribe el training</div>
   </div>
 
@@ -1114,21 +1118,29 @@ const TRAINERS = [
 // ── BUILD SELECTS
 function buildTrainingSelect() {
   const sel = document.getElementById('q1');
+  const dl  = document.getElementById('q1-datalist');
+
   TRAININGS.forEach(grp => {
+    // Dropdown optgroup
     const og = document.createElement('optgroup');
     og.label = grp.g;
     grp.items.forEach(t => {
       const o = document.createElement('option');
       o.textContent = t;
       og.appendChild(o);
+      // Datalist option (plain, no group)
+      const d = document.createElement('option');
+      d.value = t;
+      dl.appendChild(d);
     });
     sel.appendChild(og);
   });
-  // Opción para ingresar manualmente
-  const sep = document.createElement('optgroup');
-  sep.label = '──────────────';
+
+  // "Otro" at end of dropdown only
+  const sep  = document.createElement('optgroup');
+  sep.label  = '──────────────';
   const otro = document.createElement('option');
-  otro.value = 'Otro';
+  otro.value       = 'Otro';
   otro.textContent = '✏️ Otro — ingresar manualmente';
   sep.appendChild(otro);
   sel.appendChild(sep);
