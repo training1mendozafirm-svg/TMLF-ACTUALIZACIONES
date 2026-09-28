@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Tratómetro | Training Visa T · TMLF Academy</title>
+<style>
+:root{
+  --navy:#1a2744; --navy-2:#233258; --navy-light:#3a4a72;
+  --gold:#c9a227; --gold-light:#e6c85a;
+  --cream:#f7f5f0; --paper:#ffffff; --ink:#232323; --muted:#6b7280;
+  --r1:#d9736c; --r1-bg:#fbe6e4; /* nivel 3 rojo */
+  --r2:#e0954a; --r2-bg:#fbe9d6; /* nivel 2 frecuencia naranja */
+  --r3:#d1b23a; --r3-bg:#faf3d6; /* nivel 2 sistematicidad amarillo */
+  --r4:#c9b378; --r4-bg:#f7f0dd; /* nivel 1 camuflado beige */
+  --r5:#6f9e73; --r5-bg:#e6f1e6; /* verde no trata */
+  --radius:14px;
+  --shadow:0 4px 18px rgba(26,39,68,0.08);
+  --shadow-lg:0 12px 34px rgba(26,39,68,0.14);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Georgia',"DM Sans",-apple-system,sans-serif;
+  background:var(--cream);
+  color:var(--ink);
+  display:flex;
+  min-height:100vh;
+}
+h1,h2,h3,h4{font-family:Georgia,'Cormorant Garamond',serif; color:var(--navy); margin-top:0;}
+h3{margin-bottom:8px; font-size:19px;}
+p{line-height:1.5; margin:0 0 10px;}
+button{font-family:inherit; cursor:pointer;}
+::selection{background:var(--gold-light);}
+
+/* ===== SIDEBAR ===== */
+#sidebar{
+  width:270px; flex:0 0 270px; background:var(--navy); color:#fff;
+  display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto;
+}
+#brand{padding:26px 22px 14px; border-bottom:1px solid rgba(255,255,255,0.12);}
+#brand .eyebrow{font-family:'DM Sans',sans-serif; letter-spacing:.14em; font-size:11px; color:var(--gold-light); text-transform:uppercase;}
+#brand h1{color:#fff; font-size:26px; margin:6px 0 2px; letter-spacing:.02em;}
+#brand .sub{font-family:'DM Sans',sans-serif; font-size:12px; color:#b9c2d6;}
+#progressWrap{padding:16px 22px;}
+#progressBar{height:6px; border-radius:6px; background:rgba(255,255,255,0.14); overflow:hidden;}
+#progressFill{height:100%; width:0%; background:linear-gradient(90deg,var(--gold),var(--gold-light)); transition:width .4s ease;}
+#progressLabel{font-family:'DM Sans',sans-serif; font-size:11px; color:#b9c2d6; margin-top:6px;}
+#navList{list-style:none; margin:0; padding:8px 12px 24px; flex:1;}
+#navList li{margin-bottom:2px;}
+.navBtn{
+  width:100%; text-align:left; background:none; border:none; color:#c7cee2;
+  font-family:'DM Sans',sans-serif; font-size:13.5px; padding:9px 12px; border-radius:9px;
+  display:flex; gap:8px; align-items:center; transition:background .15s, color .15s;
+}
+.navIcon{width:16px; height:16px; flex:0 0 16px; opacity:.75;}
+.navIcon svg{width:16px; height:16px; stroke:currentColor; fill:none;}
+.navBtn .num{font-size:10.5px; color:var(--gold-light); width:16px; flex:0 0 16px;}
+.navBtn:hover{background:rgba(255,255,255,0.07); color:#fff;}
+.navBtn.active{background:var(--navy-2); color:#fff; box-shadow:inset 3px 0 0 var(--gold);}
+.navBtn.done .num::after{content:" ✓"; color:var(--gold-light);}
+
+/* ===== MAIN ===== */
+#main{flex:1; display:flex; justify-content:center; padding:30px 28px 70px;}
+#content{width:100%; max-width:960px;}
+.moduleTag{font-family:'DM Sans',sans-serif; letter-spacing:.12em; text-transform:uppercase; font-size:11.5px; color:var(--gold); font-weight:700;}
+.moduleTitle{font-size:28px; margin:4px 0 14px;}
+.card{background:var(--paper); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px 24px; margin-bottom:14px;}
+.lead{font-size:16px; color:var(--navy-2);}
+.hint{font-family:'DM Sans',sans-serif; font-size:13px; color:var(--muted);}
+
+.tag{display:inline-block; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:.03em;}
+.tag.n1{background:var(--r4-bg); color:#8a742c;}
+.tag.n2f{background:var(--r2-bg); color:#a05a1a;}
+.tag.n2s{background:var(--r3-bg); color:#8a7315;}
+.tag.n3{background:var(--r1-bg); color:#a13a33;}
+.tag.n0{background:var(--r5-bg); color:#3f6b43;}
+
+/* ===== HERO HEADER ===== */
+.hero{
+  border-radius:18px; padding:26px 30px; margin-bottom:16px; position:relative; overflow:hidden;
+  color:#fff; box-shadow:var(--shadow-lg);
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 60%,var(--hero-accent,var(--gold)) 160%);
+}
+.hero::before{
+  content:""; position:absolute; right:-40px; top:-50px; width:220px; height:220px; border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,0.10),transparent 70%);
+}
+.hero::after{
+  content:""; position:absolute; left:30%; bottom:-70px; width:180px; height:180px; border-radius:50%;
+  background:radial-gradient(circle,var(--hero-accent,var(--gold)),transparent 72%); opacity:.28;
+}
+.hero-row{display:flex; align-items:center; gap:18px; position:relative; z-index:1;}
+.hero-icon{
+  width:58px; height:58px; flex:0 0 58px; border-radius:16px; display:flex; align-items:center; justify-content:center;
+  background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.25);
+}
+.hero-icon svg{width:30px; height:30px; stroke:#fff; fill:none;}
+.hero .moduleTag{color:var(--gold-light); position:relative; z-index:1;}
+.hero .moduleTitle{color:#fff; margin:2px 0 0; position:relative; z-index:1;}
+.hero-sub{font-family:'DM Sans',sans-serif; font-size:13.5px; color:#d6dcec; margin-top:6px; max-width:560px; position:relative; z-index:1;}
+
+/* ===== ICON CHIPS / STAT CARDS ===== */
+.statGrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin:14px 0;}
+.statCard{border-radius:12px; padding:14px 16px; color:#fff; position:relative; overflow:hidden; box-shadow:var(--shadow);}
+.statCard .sc-icon{width:22px; height:22px; stroke:#fff; fill:none; opacity:.9; margin-bottom:6px;}
+.statCard b{display:block; font-size:14px; font-family:'DM Sans',sans-serif; line-height:1.25;}
+.statCard span{display:block; font-family:'DM Sans',sans-serif; font-size:11px; opacity:.85; margin-top:2px;}
+
+.iconChip{display:inline-flex; align-items:center; gap:6px; font-family:'DM Sans',sans-serif; font-size:12.5px; font-weight:700; padding:6px 12px 6px 8px; border-radius:20px; background:#eef1f8; color:var(--navy-2);}
+.iconChip svg{width:14px; height:14px; stroke:currentColor; fill:none;}
+
+.card-accent{border-left:5px solid var(--accent,var(--gold)); padding-left:23px;}
+
+.detailBox{border-radius:12px; padding:16px 18px; background:linear-gradient(135deg,#f4f2ea,#fff); border:1px solid #ece7da;}
+.detailGrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; margin-top:12px;}
+.detailGrid .di{background:#fff; border-radius:10px; padding:10px 12px; border:1px solid #ece7da;}
+.detailGrid .di label{margin:0 0 3px; font-size:10.5px; color:var(--muted);}
+.detailGrid .di div{font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700; color:var(--navy);}
+
+/* thermometer bulb */
+#thermo{position:relative; padding-bottom:34px;}
+#thermo::after{
+  content:""; position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+  width:64px; height:64px; border-radius:50%; background:var(--r1); box-shadow:var(--shadow);
+  border:4px solid #fff;
+}
+#thermo .thermo-seg:last-child{border-radius:0 0 0 0;}
+
+/* score ring */
+.ringWrap{position:relative; width:150px; height:150px; margin:0 auto 16px;}
+.ringWrap svg{transform:rotate(-90deg); width:150px; height:150px;}
+.ringWrap circle{fill:none; stroke-width:12;}
+.ringBg{stroke:#ece7da;}
+.ringVal{stroke-linecap:round; transition:stroke-dashoffset .6s ease;}
+.ringLabel{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'DM Sans',sans-serif;}
+.ringLabel b{font-size:32px; color:var(--navy);}
+.ringLabel span{font-size:11px; color:var(--muted);}
+
+.badge-critica{background:var(--r1); color:#fff; font-family:'DM Sans',sans-serif; font-weight:700; font-size:11px; padding:4px 10px; border-radius:20px;}
+
+/* Termómetro */
+#thermo-wrap{display:flex; gap:22px; align-items:flex-start; flex-wrap:wrap;}
+#thermo{width:64px; flex:0 0 64px; display:flex; flex-direction:column-reverse; border-radius:40px; overflow:hidden; box-shadow:var(--shadow); border:1px solid #e6e0d2;}
+.thermo-seg{padding:20px 0; text-align:center; font-family:'DM Sans',sans-serif; font-weight:700; font-size:12px; color:#fff; cursor:pointer; transition:filter .15s;}
+.thermo-seg:hover{filter:brightness(1.06);}
+.thermo-seg.sel{outline:3px solid var(--navy); outline-offset:-3px;}
+.thermo-seg.s0{background:var(--r5);} .thermo-seg.s1{background:var(--r4); color:#5a4c1e;}
+.thermo-seg.s2{background:var(--r3); color:#5a4c1e;} .thermo-seg.s3{background:var(--r2);}
+.thermo-seg.s4{background:var(--r1);}
+#thermo-detail{flex:1; min-width:280px;}
+
+.categoryRow{display:flex; align-items:center; gap:14px; padding:11px 16px; border-radius:10px; margin-bottom:6px; cursor:pointer; transition:transform .12s;}
+.categoryRow:hover{transform:translateX(3px);}
+.categoryRow .dot{width:14px; height:14px; border-radius:50%; flex:0 0 14px;}
+.categoryRow b{font-family:'DM Sans',sans-serif; font-size:14px;}
+.categoryRow span{font-family:'DM Sans',sans-serif; font-size:12.5px; color:var(--muted); display:block;}
+
+/* Nav buttons bottom */
+.navFooter{display:flex; justify-content:space-between; margin-top:16px;}
+.btn{font-family:'DM Sans',sans-serif; font-weight:700; font-size:13.5px; padding:11px 22px; border-radius:9px; border:none; transition:opacity .15s, transform .1s;}
+.btn:active{transform:scale(.98);}
+.btn-primary{background:var(--navy); color:#fff;}
+.btn-primary:hover{background:var(--navy-2);}
+.btn-gold{background:var(--gold); color:var(--navy);}
+.btn-gold:hover{background:var(--gold-light);}
+.btn-ghost{background:transparent; color:var(--navy); border:1.5px solid #d8d2c2;}
+.btn-ghost:hover{background:#f0ece0;}
+.btn:disabled{opacity:.4; cursor:not-allowed;}
+
+/* Activities */
+.optList{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:12px 0;}
+.optList.single{grid-template-columns:1fr;}
+.optBtn{text-align:left; padding:11px 14px; border-radius:10px; border:1.5px solid #e2ddcf; background:#fdfcf9; font-family:'DM Sans',sans-serif; font-size:13.5px; line-height:1.35;}
+.optBtn:hover{border-color:var(--gold);}
+.optBtn.correct{border-color:var(--r5); background:var(--r5-bg);}
+.optBtn.incorrect{border-color:var(--r1); background:var(--r1-bg);}
+.feedback{margin-top:12px; padding:13px 16px; border-radius:10px; background:#f1f4fb; border-left:4px solid var(--navy); font-size:14px; line-height:1.5;}
+@media(max-width:640px){.optList{grid-template-columns:1fr;}}
+.feedback.good{border-left-color:var(--r5); background:var(--r5-bg);}
+.feedback.bad{border-left-color:var(--r1); background:var(--r1-bg);}
+.quote{font-style:italic; font-size:16px; color:var(--navy-2); border-left:3px solid var(--gold); padding-left:14px; margin:10px 0;}
+
+table.dtbl{width:100%; border-collapse:collapse; font-family:'DM Sans',sans-serif; font-size:13px; margin-top:10px;}
+table.dtbl th{background:var(--navy); color:#fff; text-align:left; padding:8px 10px;}
+table.dtbl td{padding:8px 10px; border-bottom:1px solid #ece7da; vertical-align:top;}
+
+.pillGrid{display:flex; flex-wrap:wrap; gap:7px; margin-top:8px;}
+.pillGrid .pill{font-family:'DM Sans',sans-serif; font-size:12.5px; padding:6px 12px; border-radius:20px; background:#eef1f8; color:var(--navy-2);}
+
+.qStepDot{display:inline-block; width:8px; height:8px; border-radius:50%; background:#d8d2c2; margin-right:4px;}
+.qStepDot.active{background:var(--gold);}
+
+select, input[type=text]{font-family:'DM Sans',sans-serif; font-size:13.5px; padding:8px 10px; border-radius:8px; border:1.5px solid #d8d2c2; background:#fff;}
+label{font-family:'DM Sans',sans-serif; font-size:12.5px; font-weight:700; color:var(--navy-2); display:block; margin:12px 0 5px;}
+
+.progressDots{display:flex; gap:6px; margin-bottom:14px;}
+.progressDots .d{width:26px; height:5px; border-radius:4px; background:#e2ddcf;}
+.progressDots .d.on{background:var(--gold);}
+
+#scoreCircle{width:130px; height:130px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-direction:column; margin:0 auto 20px; border:8px solid var(--navy); font-family:'DM Sans',sans-serif;}
+#scoreCircle b{font-size:30px; color:var(--navy);}
+#scoreCircle span{font-size:11px; color:var(--muted);}
+
+.methodFlow{display:flex; flex-wrap:wrap; gap:6px; align-items:center; font-family:'DM Sans',sans-serif; font-weight:700; font-size:13px; color:var(--navy-2); margin:12px 0;}
+.methodFlow .step{background:#eef1f8; padding:7px 13px; border-radius:20px;}
+.methodFlow .arrow{color:var(--gold);}
+
+.centerBig{text-align:center; padding:26px 10px;}
+.centerBig h2{font-size:34px; margin-bottom:6px;}
+
+@media(max-width:900px){
+  body{flex-direction:column;}
+  #sidebar{position:relative; height:auto; width:100%; flex:none;}
+  #main{padding:26px 16px 80px;}
+}
+</style>
+</head>
+<body>
+
+<nav id="sidebar">
+  <div id="brand">
+    <div class="eyebrow">TMLF Academy · Visa T</div>
+    <h1>El Tratómetro</h1>
+    <div class="sub">Análisis de indicadores de trata de personas</div>
+  </div>
+  <div id="progressWrap">
+    <div id="progressBar"><div id="progressFill"></div></div>
+    <div id="progressLabel">0% completado</div>
+  </div>
+  <ul id="navList"></ul>
+</nav>
+
+<main id="main"><div id="content"></div></main>
+
+<script>
+/* =========================================================
+   DATOS FUENTE — extraídos íntegramente del documento
+   "Tratómetro Propuesta training"
+   ========================================================= */
+
+// Nivel 3 — Situaciones directas contundentes (alertas críticas)
+const NIVEL3 = [
+ {c:"Golpes o agresión física", d:"Se usa la violencia directa para forzar cumplimiento.", e:"Golpeó a la víctima cuando no quiso seguir trabajando.", elem:"Fuerza (violencia física)", control:"Físico", finalidad:"Laboral"},
+ {c:"Amenazas de muerte o desaparición", d:"Coacción explícita con consecuencias graves.", e:"“Si hablas, te mato” / “Te van a levantar” / “Te voy a desaparecer si hablas con alguien.”", elem:"Coacción (amenaza de daño)", control:"Emocional (miedo)", finalidad:"Laboral/Sexual"},
+ {c:"Intento de homicidio no consumado", d:"Agresión física extrema sin resultado fatal.", e:"La intentaron asfixiar con una almohada por resistirse.", elem:"Fuerza (violencia física)", control:"Físico", finalidad:"Laboral/Sexual"},
+ {c:"Privación prolongada de libertad", d:"Encierro, retención o inmovilización sin consentimiento.", e:"Cerraron con llave la puerta del cuarto donde dormía.", elem:"Fuerza (restricción física)", control:"Físico", finalidad:"Laboral/Sexual"},
+ {c:"Agresión sexual grupal", d:"Ataque sexual múltiple.", e:"Fui violada por varias personas para castigarme.", elem:"Fuerza (violencia sexual)", control:"Físico", finalidad:"Sexual"},
+ {c:"Abuso sexual como castigo o control", d:"Se usa el cuerpo de la víctima para mantener el poder.", e:"Era obligada a tener sexo cuando pedía dinero o comida.", elem:"Fuerza (violencia sexual)", control:"Físico", finalidad:"Sexual"},
+ {c:"Violación u otras agresiones sexuales", d:"Abuso sexual impuesto como castigo o forma de sumisión.", e:"Era obligada a tener sexo para “compensar la deuda”.", elem:"Fuerza (violencia sexual)", control:"Físico", finalidad:"Sexual"},
+ {c:"Exposición forzada o filmación sin consentimiento", d:"Violación directa a la integridad sexual o privacidad.", e:"Grababan escenas íntimas y amenazaban con subirlas si no obedecía.", elem:"Coacción (chantaje sexual)", control:"Emocional (miedo)", finalidad:"Sexual"},
+ {c:"Uso de armas o amenazas con objetos", d:"Exhibición o uso de armas para infundir terror.", e:"Me enseñó una pistola y dijo: “Aquí nadie escapa”.", elem:"Coacción (amenaza armada)", control:"Emocional (miedo)", finalidad:"Laboral/Sexual"},
+ {c:"Retención bajo encierro", d:"Se le impide salir físicamente (llaves, candados, encierro).", e:"Vivía en el sótano, sin posibilidad de salir sola.", elem:"Fuerza (restricción física)", control:"Físico", finalidad:"Laboral/Sexual"},
+ {c:"Amenaza con deportación inminente", d:"Coacción con acciones legales como castigo.", e:"“Ya hablé a migración, si no te callas vienen por ti hoy.”", elem:"Coacción (amenaza migratoria)", control:"Migratorio", finalidad:"Laboral/Sexual"},
+ {c:"Negación deliberada de atención médica", d:"Negar socorro ante enfermedad o lesión como castigo o control.", e:"Le negaron atención luego de una caída trabajando.", elem:"Coacción (castigo físico)", control:"Físico", finalidad:"Laboral"},
+ {c:"Forzamiento a cometer delitos", d:"Obligación a participar en actos ilegales bajo amenaza.", e:"La obligaron a transportar droga bajo amenaza.", elem:"Coacción (amenaza de daño)", control:"Emocional (miedo)", finalidad:"Criminal"},
+ {c:"Abandono en territorio desconocido", d:"La víctima es dejada sin recursos en un lugar aislado.", e:"“Si no obedeces te voy a echar de aquí, aquí no conoces a nadie.”", elem:"Coacción (amenaza de abandono)", control:"Emocional (miedo)", finalidad:"Laboral/Sexual"},
+ {c:"Tortura física o castigo extremo", d:"Castigos físicos severos para forzar la obediencia o infundir miedo.", e:"Me quemaron las manos con aceite caliente por romper un plato.", elem:"Fuerza (violencia física)", control:"Físico", finalidad:"Laboral/Sexual"},
+ {c:"Desnudez forzada", d:"Se obliga a la víctima a desvestirse como castigo o humillación.", e:"Me desnudaban si cometía un error durante el trabajo.", elem:"Fuerza (abuso físico)", control:"Físico", finalidad:"Laboral/Sexual"},
+ {c:"Obligación a presenciar actos violentos", d:"Forzar a ver cómo agreden a otros como advertencia.", e:"Me forzaron a ver cómo golpeaban a otra víctima por desobedecer.", elem:"Coacción (intimidación)", control:"Emocional (miedo)", finalidad:"Laboral/Sexual"},
+ {c:"Uso de sustancias para someter", d:"Drogar a la víctima sin su consentimiento para controlarla.", e:"Me dieron pastillas para evitar que escapara.", elem:"Fuerza (control químico)", control:"Físico", finalidad:"Laboral/Sexual"},
+ {c:"Obligada a trabajar recién salida de parto", d:"Se le impone labores cuando recién acaba de dar a luz.", e:"“No me importa que acabes de dar a luz, ya tienes que trabajar.”", elem:"Coacción (castigo físico)", control:"Físico", finalidad:"Laboral"},
+];
+
+// Nivel 2 — requieren revisar frecuencia/intensidad (naranja)
+const NIVEL2_FREC = [
+ {c:"Jornadas extensas sin descanso", d:"Más de 12 horas sin pausas, repetidas semanalmente.", e:"Trabajaba de 6am a 11pm todos los días.", elem:"Coacción (explotación laboral)", control:"Físico", finalidad:"Laboral"},
+ {c:"Retención parcial de salario", d:"Se paga “una parte” del salario para mantener la dependencia.", e:"Le daban $50 de los $300 prometidos.", elem:"Fraude (engaño económico)", control:"Económico", finalidad:"Laboral"},
+ {c:"Prohibición de hablar con vecinos", d:"Aislamiento forzado, aunque no haya encierro físico.", e:"Me prohibieron saludar o mirar a la gente en la calle.", elem:"Coacción (aislamiento)", control:"Emocional", finalidad:"Laboral/Sexual"},
+ {c:"Amenazas económicas", d:"Se atemoriza a la víctima con “pérdidas” o “costos” financieros.", e:"“Si te vas, vas a tener que pagar todo lo que he gastado en ti.”", elem:"Coacción (amenaza financiera)", control:"Económico", finalidad:"Laboral"},
+ {c:"Humillaciones o gritos frecuentes", d:"Insultos cotidianos que destruyen la autoestima.", e:"Le gritaban “inútil”, “burra” frente a otros.", elem:"Coacción (abuso verbal)", control:"Emocional", finalidad:"Laboral/Sexual"},
+ {c:"Vigilancia continua por terceros", d:"Siempre hay alguien observando, sin necesidad de encerrar.", e:"Un familiar del tratante siempre estaba “acompañándola”.", elem:"Coacción (intimidación)", control:"Emocional", finalidad:"Laboral/Sexual"},
+ {c:"Censura o destrucción de mensajes", d:"Revisión o borrado de comunicaciones personales rutinariamente.", e:"Le revisaban el teléfono al final de cada jornada.", elem:"Coacción (invasión privacidad)", control:"Emocional", finalidad:"Laboral/Sexual"},
+ {c:"Castigos físicos “leves”", d:"Empujones, jalones o tirones vistos como “normales”.", e:"La jalaban del brazo si caminaba “muy lento”.", elem:"Fuerza (violencia física menor)", control:"Físico", finalidad:"Laboral"},
+ {c:"Vigilancia disfrazada de cuidado", d:"Acompañamiento obligatorio bajo el pretexto de “seguridad”.", e:"No podía salir sola “porque podría perderse.”", elem:"Coacción (sobreprotección)", control:"Emocional", finalidad:"Laboral/Sexual"},
+];
+
+// Nivel 2 — sutiles pero contundentes por sistematicidad (amarillo)
+const NIVEL2_SIST = [
+ {c:"Culpabilización moral o religiosa", d:"Se utiliza la fe o los valores morales para mantener la sumisión.", e:"“Dios te puso aquí para servir, no puedes fallarle.”", elem:"Coacción (culpa religiosa)", control:"Simbólico", finalidad:"Laboral/Sexual"},
+ {c:"Manipulación de identidad o género", d:"Se explota la identidad personal como forma de control.", e:"“Tú no eres nadie sin mí, ni mujer de verdad.”", elem:"Coacción (ataque identidad)", control:"Emocional", finalidad:"Laboral/Sexual"},
+ {c:"Confusión constante como castigo", d:"Se alterna trato frío/cálido para desorientar y debilitar a la víctima.", e:"Un día era “la favorita”, al siguiente “una carga inútil.”", elem:"Coacción (manipulación emocional)", control:"Emocional", finalidad:"Laboral/Sexual"},
+ {c:"Condiciones laborales degradantes", d:"Trabajo en ambientes insalubres, peligrosos o humillantes.", e:"Dormía en un colchón húmedo al lado de los animales.", elem:"Coacción (abusos laborales)", control:"Físico", finalidad:"Laboral"},
+ {c:"Control de baño o higiene", d:"Restricción en la higiene personal o uso del baño.", e:"Sólo se podía bañar una vez por semana.", elem:"Coacción (privación necesidades)", control:"Físico", finalidad:"Laboral/Sexual"},
+ {c:"Desinformación sobre derechos", d:"Se hace creer a la víctima que está en situación ilegal o sin opciones de ayuda.", e:"“Aquí no puedes ir a la policía, solo a mí me puedes hablar.”", elem:"Fraude (engaño legal)", control:"Emocional", finalidad:"Laboral/Sexual"},
+ {c:"Falsas promesas de regularización migratoria", d:"Se ilusiona a la víctima con trámites de papeles que nunca llegan.", e:"“Después te doy tus papeles, pero primero trabaja unos meses más.”", elem:"Fraude (engaño migratorio)", control:"Migratorio", finalidad:"Laboral/Sexual"},
+ {c:"Sensación inducida de deuda moral", d:"Se hace creer a la víctima que le “debe” la vida al tratante.", e:"“Yo te saqué de la pobreza, esto es lo mínimo que puedes hacer.”", elem:"Coacción (deuda moral)", control:"Emocional", finalidad:"Laboral/Sexual"},
+ {c:"Presentación forzada como parte de la familia", d:"Se oculta la relación de subordinación presentando a la víctima como “de la familia”.", e:"“Ella es como mi hija” ante otros, pero la trataban como sirvienta.", elem:"Fraude (disfraz social)", control:"Simbólico", finalidad:"Laboral"},
+];
+
+// Nivel 1 — camufladas (beige)
+const NIVEL1 = [
+ {c:"Deuda emocional falsa", d:"El tratante hace creer a la víctima que le “debe” favores o incluso la vida.", e:"“Te salvé, ahora obedece.” / “Yo te traje a EE.UU., ahora haz lo que te pido.”", elem:"Fraude (creación de deuda inexistente)", control:"Emocional", finalidad:"Sexual/Laboral"},
+ {c:"Trabajo por agradecimiento", d:"Se explota la gratitud de la víctima por un favor previo.", e:"“Me cuidaste cuando llegué, por eso te ayudé con la limpieza 6 meses sin paga.”", elem:"Coacción (culpa/agradecimiento)", control:"Emocional", finalidad:"Laboral"},
+ {c:"Coqueteo manipulador", d:"Afecto o flirteo fingido utilizado como medio de control.", e:"“Yo te puedo ayudar… si te portas bien conmigo.”", elem:"Fraude (falsa promesa)", control:"Emocional", finalidad:"Sexual"},
+ {c:"Pago emocional", d:"Se ofrece afecto en lugar de remuneración económica.", e:"“Tienes casa y comida, ¿qué más quieres?”", elem:"Fraude (explotación económica)", control:"Económico", finalidad:"Laboral"},
+ {c:"Relación ambigua", d:"Mezcla de trato afectuoso con explotación laboral/sexual.", e:"“Era como de la familia, pero trabajaba 12 horas.”", elem:"Fraude (falsa familiaridad)", control:"Emocional", finalidad:"Laboral"},
+ {c:"Trabajo disfrazado de favor", d:"Las tareas laborales se presentan como favores voluntarios.", e:"“Solo le echaba la mano cuidando los niños, pero después ya no podía irme.”", elem:"Fraude (disfraz de voluntariado)", control:"Emocional", finalidad:"Laboral"},
+ {c:"Monopolio de confianza", d:"El tratante aísla a la víctima haciéndole creer que sólo él la protege.", e:"“Sólo yo te protejo.” / “No hables con nadie, sólo yo sé ayudarte.”", elem:"Coacción (aislamiento)", control:"Emocional", finalidad:"Sexual/Laboral"},
+ {c:"Cultura/religión como sumisión", d:"Uso de tradiciones o costumbres para justificar la sumisión.", e:"“Así es nuestra tradición.” / “En esta casa, la mujer no se queja.”", elem:"Coacción (justificación cultural)", control:"Simbólico", finalidad:"Laboral"},
+ {c:"Sustitución simbólica", d:"El tratante se presenta como la “única familia” o figura parental.", e:"“Eres mi única familia ahora.” / “Yo soy tu madre ahora, obedéceme.”", elem:"Coacción (rol familiar falso)", control:"Simbólico", finalidad:"Sexual/Laboral"},
+ {c:"Círculo cerrado de referencia", d:"Sólo se permite a la víctima relacionarse con personas del círculo del tratante.", e:"“Si necesitas algo, me lo pides solo a mí.”", elem:"Coacción (aislamiento social)", control:"Emocional", finalidad:"Sexual/Laboral"},
+ {c:"Prohibición indirecta de autonomía", d:"Se crea una situación donde la víctima realmente no tiene elección.", e:"“Tú decides, pero si te vas, quedas en la calle.”", elem:"Coacción (manipulación de opciones)", control:"Emocional", finalidad:"Sexual/Laboral"},
+];
+
+// Verde — situaciones abusivas que NO configuran trata
+const NIVEL0 = [
+ {c:"Pago inferior al mínimo legal (sin coacción)", d:"El empleador paga por debajo de lo legal y mantiene condiciones deficientes.", e:"Trabajadora de limpieza acepta un sueldo muy bajo, pero continúa trabajando por necesidad.", porque:"Es libre de renunciar; no existe fuerza, fraude ni coacción, solo condiciones precarias."},
+ {c:"Amenaza de despido para forzar rendimiento", d:"El empleador amenaza con despedir para exigir cargas de trabajo excesivas.", e:"El gerente exige horas extra bajo advertencia de despido si se rehúsan.", porque:"La consecuencia es perder el empleo, no la libertad personal; puede renunciar por voluntad propia."},
+ {c:"Engaño laboral sin explotación ulterior", d:"Se engaña con falsas promesas de empleo, sin intención de explotación continua.", e:"Paga a un reclutador que desaparece con el dinero; el empleo no existe.", porque:"Hubo fraude puntual en el reclutamiento, pero no hay servidumbre ni explotación sostenida."},
+ {c:"Explotación de mano de obra voluntaria", d:"Se asignan tareas de empleado regular a un voluntario o pasante sin compensación.", e:"Pasantía no remunerada donde trabaja jornadas completas sin recibir pago.", porque:"La participación es voluntaria y puede retirarse cuando lo desee; no hay fuerza, fraude ni coacción."},
+];
+
+const ALL_LEVELED = [
+  ...NIVEL3.map(x=>({...x, nivel:3, cat:"n3"})),
+  ...NIVEL2_FREC.map(x=>({...x, nivel:2, cat:"n2f"})),
+  ...NIVEL2_SIST.map(x=>({...x, nivel:2, cat:"n2s"})),
+  ...NIVEL1.map(x=>({...x, nivel:1, cat:"n1"})),
+];
+
+const CATEGORIAS = [
+ {key:"n3", color:"var(--r1)", nombre:"🔴 Situaciones Directas Contundentes", desc:"Nivel TVPA 3 · Alertas críticas · Violencia, coacción grave o explotación directa.", data:NIVEL3},
+ {key:"n2f", color:"var(--r2)", nombre:"🟠 Requieren revisar frecuencia e intensidad", desc:"Nivel TVPA 2 · Explotación y control cuya gravedad depende de repetición.", data:NIVEL2_FREC},
+ {key:"n2s", color:"var(--r3)", nombre:"🟡 Sutiles pero contundentes por sistematicidad", desc:"Nivel TVPA 2 · Manipulación psicológica que debilita la autonomía al persistir.", data:NIVEL2_SIST},
+ {key:"n1", color:"var(--r4)", nombre:"🟨 Situaciones camufladas", desc:"Nivel TVPA 1 · Disfrazadas de ayuda, amor o favores; encienden alertas preventivas.", data:NIVEL1},
+ {key:"n0", color:"var(--r5)", nombre:"🟢 Situaciones abusivas que NO configuran trata", desc:"Abuso o injusticia laboral sin fuerza, fraude o coacción sostenida.", data:NIVEL0},
+];
+
+/* ============= LABORATORIO — 12 casos (Módulo 9) ============= */
+const LAB_CASOS = [
+ {frase:"“Yo te traje a este país, lo mínimo que puedes hacer es ayudarme en la casa.”", nivel:"Nivel 1", elem:"Fraude (deuda inventada)", control:"Emocional", finalidad:"Laboral", critica:false, faltante:"Frecuencia, si existe otro tipo de control además del emocional, si hay libertad real de irse.", preguntas:"¿Puede usted salir cuando quiere? ¿Qué pasaría si dijera que no? ¿Alguien más vive con usted?"},
+ {frase:"“Si sigues así, ya no te doy de comer.”", nivel:"Nivel 2 (frecuencia/intensidad)", elem:"Coacción (amenaza básica)", control:"Económico/Físico", finalidad:"Laboral", critica:false, faltante:"¿Con qué frecuencia ocurre? ¿Se ha cumplido la amenaza antes? ¿Hay otras privaciones combinadas?", preguntas:"¿Cuántas veces se lo han dicho? ¿Alguna vez le negaron comida realmente? ¿Qué otras cosas le condicionan?"},
+ {frase:"“Me enseñó una pistola y me dijo que nadie salía de ahí.”", nivel:"Nivel 3", elem:"Coacción (amenaza armada)", control:"Emocional (miedo)", finalidad:"Laboral/Sexual", critica:true, faltante:"Cuántas veces ocurrió, si hubo agresión física adicional, quiénes más estaban presentes.", preguntas:"¿Cuándo fue la última vez que vio el arma? ¿Alguien más fue amenazado? ¿Intentó salir alguna vez?"},
+ {frase:"“Aquí se trabaja de sol a sol, nada de descanso.”", nivel:"Nivel 2 (frecuencia/intensidad)", elem:"Coacción (explotación laboral)", control:"Físico", finalidad:"Laboral", critica:false, faltante:"Duración exacta de la jornada, si hay pagas retenidas, si puede negarse sin represalia.", preguntas:"¿Cuántas horas exactamente trabaja al día? ¿Qué pasa si pide un descanso? ¿Le pagan por esas horas?"},
+ {frase:"“Solo yo te protejo, no hables con nadie más.”", nivel:"Nivel 1", elem:"Coacción (aislamiento)", control:"Emocional", finalidad:"Sexual/Laboral", critica:false, faltante:"Si existe encierro físico, si hay control migratorio o económico adicional.", preguntas:"¿Tiene su teléfono? ¿Puede hablar con su familia? ¿Qué le dicen que pasaría si hablara con alguien?"},
+ {frase:"“Una trabajadora de limpieza acepta un sueldo muy bajo porque necesita el ingreso, pero puede renunciar cuando quiera.”", nivel:"No configura trata (verde)", elem:"—", control:"—", finalidad:"—", critica:false, faltante:"Confirmar que realmente puede irse sin represalia y que no hay amenazas ocultas.", preguntas:"¿Alguna vez intentó buscar otro trabajo? ¿Alguien se lo impidió? ¿Le retienen documentos?"},
+ {frase:"“Le rompieron la foto de su hija cuando pidió comida.”", nivel:"Nivel 2 (sistematicidad)", elem:"Coacción (castigo simbólico)", control:"Simbólico", finalidad:"Laboral/Sexual", critica:false, faltante:"Si esto ocurre de forma repetida, si hay otros castigos simbólicos combinados.", preguntas:"¿Ha pasado más de una vez? ¿Qué otros objetos le han quitado o dañado? ¿Cómo se sintió después?"},
+ {frase:"“Ya hablé a migración, si no te callas vienen por ti hoy.”", nivel:"Nivel 3", elem:"Coacción (amenaza migratoria)", control:"Migratorio", finalidad:"Laboral/Sexual", critica:true, faltante:"Si la amenaza se ha cumplido antes, si hay retención de documentos, otros medios de control.", preguntas:"¿Le han quitado sus documentos? ¿Ha llamado antes a migración? ¿Qué le impide buscar ayuda?"},
+ {frase:"“Un gerente exige horas extra bajo advertencia de despido si se rehúsan.”", nivel:"No configura trata (verde)", elem:"—", control:"—", finalidad:"—", critica:false, faltante:"Confirmar que la única consecuencia es laboral (pérdida de empleo) y no hay coacción física o migratoria.", preguntas:"¿Le han amenazado con algo más que el despido? ¿Puede buscar otro empleo libremente?"},
+ {frase:"“Después te doy tus papeles, pero primero trabaja unos meses más.”", nivel:"Nivel 2 (sistematicidad)", elem:"Fraude (engaño migratorio)", control:"Migratorio", finalidad:"Laboral", critica:false, faltante:"Cuánto tiempo lleva esperando, si se combina con retención de salario o aislamiento.", preguntas:"¿Cuánto tiempo le han dicho que espere? ¿Ha visto avances reales en el trámite? ¿Qué pasa si pregunta?"},
+ {frase:"“Me quemaron las manos con aceite caliente por romper un plato.”", nivel:"Nivel 3", elem:"Fuerza (violencia física)", control:"Físico", finalidad:"Laboral/Sexual", critica:true, faltante:"Frecuencia de los castigos físicos, si hay atención médica negada, otros patrones de violencia.", preguntas:"¿Ha ocurrido más de una vez? ¿Recibió atención médica? ¿Qué otros castigos físicos ha sufrido?"},
+ {frase:"“Le prohibieron saludar o mirar a la gente en la calle.”", nivel:"Nivel 2 (frecuencia/intensidad)", elem:"Coacción (aislamiento)", control:"Emocional", finalidad:"Laboral/Sexual", critica:false, faltante:"Si el aislamiento es absoluto o parcial, si se combina con vigilancia o amenazas.", preguntas:"¿Puede salir sola en algún momento? ¿Hay alguien vigilando cuando sale? ¿Qué pasa si habla con alguien?"},
+];
+
+/* ============= MÓDULO 10 — Construye el patrón (datos progresivos) ============= */
+const PATTERN_DATA = [
+ {dato:"“Trabajaba 14 horas.”", pregunta:"¿Tenemos suficiente información para hablar de trata?", explicacion:"Una jornada extensa por sí sola es un indicador Nivel 2 que requiere revisar frecuencia. Aislada, no basta."},
+ {dato:"“Le retenían parte del salario.”", pregunta:"¿Cambia esto el análisis?", explicacion:"Sumado a la jornada extensa, empieza a verse un patrón de explotación económica y laboral — sigue siendo Nivel 2, pero se refuerza."},
+ {dato:"“Le decían que debía pagar lo que habían gastado en traerla.”", pregunta:"¿Qué tipo de control aparece ahora?", explicacion:"Aparece coacción económica (deuda inducida) — un mecanismo clásico de servidumbre por deudas, que combinado con lo anterior empieza a acercarse a un patrón sistemático."},
+ {dato:"“No podía hablar con vecinos.”", pregunta:"¿Qué añade este dato?", explicacion:"Se suma el aislamiento social, que refuerza el control y reduce las posibilidades de la víctima de pedir ayuda."},
+ {dato:"“Le dijeron que si se iba llamarían a inmigración.”", pregunta:"¿Cómo cambia el análisis con esta última pieza?", explicacion:"La amenaza migratoria es un elemento de coacción grave. Combinada con jornadas extensas, retención de salario, deuda inducida y aislamiento, el conjunto configura un patrón de control y explotación sostenido — mucho más contundente que cada dato por separado. Esto ilustra por qué el Tratómetro exige analizar el contexto acumulativo, no conductas aisladas."},
+];
+
+/* ============= MÓDULO 11 — Casos frontera ============= */
+const CASOS_FRONTERA = [
+ {titulo:"El préstamo del viaje", texto:"Una persona llega a EE.UU. después de que un familiar lejano pagó su viaje. Le dicen que debe trabajar cuidando niños hasta “pagar la deuda”, sin fecha definida. Puede salir de la casa sola los domingos y tiene su teléfono.", correcta:"amarillo", justificacion:"Existe una deuda inducida (Nivel 1-2) y ambigüedad sobre cuándo termina la obligación, pero conserva movilidad y comunicación — se requiere profundizar en si la “deuda” es real, si hay amenazas si se niega, y qué tan libre es realmente su tiempo."},
+ {titulo:"El trabajo sin papeles", texto:"Un trabajador es captado con la promesa de un buen salario en construcción. Al llegar, el salario es menor al prometido y las condiciones son duras, pero puede renunciar y buscar otro empleo si quiere.", correcta:"verde", justificacion:"Hay fraude en la oferta inicial, pero no hay coacción que le impida irse ni explotación sostenida mediante control — es un caso de engaño laboral sin trata, aunque debe documentarse el fraude para otras vías legales."},
+ {titulo:"La “ayuda” que no termina", texto:"Una mujer recibe alojamiento y comida a cambio de trabajo doméstico “mientras se acomoda”. Han pasado ocho meses. Le repiten que “no tiene a nadie más” y que “sin ellos estaría en la calle”. No la encierran, pero rara vez sale sola.", correcta:"naranja", justificacion:"El patrón de dependencia inducida, aislamiento emocional y la duración prolongada (8 meses) sin remuneración real configuran un patrón importante de control que amerita investigación profunda del elemento de coacción psicológica sostenida."},
+ {titulo:"El capataz estricto", texto:"En una fábrica, el gerente exige horas extra bajo amenaza de despido. Los empleados están cansados y presionados, pero pueden renunciar, tienen sus documentos y reciben su salario completo.", correcta:"verde", justificacion:"La única consecuencia es la pérdida del empleo — no hay restricción de libertad personal ni coacción grave que impida abandonar la situación."},
+ {titulo:"La vigilancia constante", texto:"Una trabajadora doméstica no puede salir sin que un familiar del empleador la “acompañe”. Le revisan el celular todas las noches y le dicen que “es por su seguridad”. Lleva 3 años en la casa y no tiene amigos fuera de esa familia.", correcta:"naranja", justificacion:"La vigilancia sistemática, censura de comunicaciones y aislamiento social sostenido por años son indicadores de Nivel 2 que, por su persistencia y combinación, requieren profundizar urgentemente para descartar o confirmar un patrón de control característico de trata."},
+];
+
+/* ============= MÓDULO 12 — Evaluación 20 preguntas ============= */
+const EXAM = [
+ {p:"Según el documento, ¿qué representa principalmente el Tratómetro?", o:["Una fórmula matemática que determina automáticamente si existe trata","Una herramienta de análisis que requiere revisar contexto, relación entre conductas, medios y finalidad","Un listado legal exhaustivo de delitos migratorios","Un cuestionario que el cliente debe llenar solo"], correcta:1, exp:"El documento es explícito: el resultado del Tratómetro es un indicador de análisis, no una fórmula automática."},
+ {p:"“Golpeó a la víctima cuando no quiso seguir trabajando” corresponde a:", o:["Nivel TVPA 1","Nivel TVPA 2","Nivel TVPA 3 — alerta crítica","Situación que no configura trata"], correcta:2, exp:"La violencia física directa es Nivel 3 y constituye alerta crítica según el documento."},
+ {p:"¿Cuál de las siguientes es una de las tres preguntas del análisis (Módulo 2)?", o:["¿Cuánto dinero tiene la víctima?","¿Cómo está controlando el tratante a la persona?","¿Cuántos idiomas habla la víctima?","¿De qué país es originaria la víctima?"], correcta:1, exp:"Las tres preguntas son: ¿qué hace el tratante?, ¿cómo controla?, ¿para qué lo hace?"},
+ {p:"“Le daban $50 de los $300 que prometieron” es un ejemplo de:", o:["Fuerza física","Fraude (engaño económico), Nivel TVPA 2","Alerta crítica automática","Situación que no configura trata"], correcta:1, exp:"La retención parcial de salario es un elemento de fraude económico de Nivel TVPA 2, no una alerta crítica inmediata."},
+ {p:"Una conducta de Nivel 1 (camuflada) se caracteriza principalmente por:", o:["Ser siempre una alerta crítica","Presentarse como ayuda, amor o favores, pero esconder mecanismos de control","No requerir ningún tipo de investigación","Configurar automáticamente trata de personas"], correcta:1, exp:"Las conductas Nivel 1 son indicios sutiles que requieren atención preventiva, no confirman trata por sí solas."},
+ {p:"“Yo te traje a Estados Unidos, ahora haz lo que te pido” es un ejemplo de:", o:["Deuda emocional falsa","Amenaza migratoria directa","Violencia física","Situación que no configura trata"], correcta:0, exp:"Es el ejemplo textual de deuda emocional falsa (Nivel 1, elemento de fraude)."},
+ {p:"Según el Módulo 4, ¿por qué es importante la sistematicidad?", o:["Porque una sola conducta siempre es suficiente para confirmar trata","Porque la frecuencia, duración e intensidad pueden modificar el peso del indicador","Porque solo importa la intención del entrevistador","Porque la sistematicidad no afecta el análisis legal"], correcta:1, exp:"El documento enfatiza que ciertas conductas deben analizarse por su repetición, no solo por su existencia aislada."},
+ {p:"¿Cuál de estas conductas es una alerta crítica (Nivel 3) según el documento?", o:["Prohibición de hablar con vecinos","Retención parcial de salario","Uso de armas o amenazas con objetos","Culpabilización moral o religiosa"], correcta:2, exp:"El uso de armas para infundir terror está clasificado como Nivel 3 y alerta crítica."},
+ {p:"“Salario inferior al mínimo legal sin coacción” es un ejemplo de:", o:["Nivel TVPA 3","Situación abusiva que no configura trata de personas","Alerta crítica","Nivel TVPA 1"], correcta:1, exp:"El documento indica que la persona es libre de renunciar; no hay fuerza, fraude ni coacción sostenida."},
+ {p:"La pregunta clave del Módulo 6 (“Abuso ≠ automáticamente trata”) es:", o:["¿Cuánto tiempo lleva trabajando la víctima?","¿Qué impedía realmente que esta persona dejara la situación?","¿Cuál es el salario mínimo legal?","¿La víctima habla inglés?"], correcta:1, exp:"Esta pregunta debe repetirse durante todo el entrevista para distinguir condiciones injustas de control para mantener explotación."},
+ {p:"Frente a “Me gritaba mucho”, ¿cuál es la mejor pregunta de profundización?", o:["“¿Le gritaba?”","“¿Qué pasaba si usted no obedecía?”","“¿Le caía bien esa persona?”","No es necesario profundizar más"], correcta:1, exp:"El Módulo 8 enseña a ir más allá de la conducta superficial y explorar consecuencias, frecuencia y contexto."},
+ {p:"“Amenaza de despido para forzar rendimiento” no configura trata principalmente porque:", o:["La víctima nunca sufre presión psicológica","La consecuencia es la pérdida del empleo, no la restricción de la libertad personal","El empleador nunca amenaza a los trabajadores","Es imposible de investigar"], correcta:1, exp:"El documento distingue claramente coacción laboral de coacción que restringe la libertad personal, propia de la trata."},
+ {p:"“Amenaza con deportación inminente” corresponde a un tipo de control:", o:["Físico","Migratorio","Simbólico","Económico"], correcta:1, exp:"Es clasificada explícitamente como control migratorio y Nivel TVPA 3."},
+ {p:"Según el Módulo 7, cuando varias conductas aparentemente pequeñas se observan juntas, se debe reconocer:", o:["Que ninguna es relevante","Un patrón de control","Que se debe ignorar el caso por falta de evidencia","Que automáticamente existe trata"], correcta:1, exp:"El análisis conjunto de conductas revela un patrón de control que conductas aisladas no muestran."},
+ {p:"“Prohibición de usar su idioma materno” se clasifica como:", o:["Nivel TVPA 1","Nivel TVPA 2 — control simbólico","Alerta crítica automática","No configura trata"], correcta:1, exp:"Es una conducta sutil pero sistemática de Nivel 2, con tipo de control simbólico."},
+ {p:"En el elemento TVPA, “Fuerza, Fraude o Coacción” sirve para:", o:["Determinar el salario de la víctima","Identificar el medio utilizado por el tratante para ejercer control","Decidir la nacionalidad del caso","Calcular automáticamente una calificación numérica"], correcta:1, exp:"Es una de las tres preguntas centrales del análisis: cómo controla el tratante a la persona."},
+ {p:"“Trabajaba 14 horas” (dato aislado, Módulo 10) representa inicialmente:", o:["Una alerta crítica inmediata","Un indicador aislado insuficiente por sí solo para confirmar trata","Prueba irrefutable de trata","Una situación que no configura trata"], correcta:1, exp:"Un dato aislado requiere acumularse con más contexto antes de sacar conclusiones, como muestra la actividad de construcción del patrón."},
+ {p:"¿Cuál de las siguientes NO es un tipo de control mencionado en el documento?", o:["Control migratorio","Control simbólico","Control económico","Control astrológico"], correcta:3, exp:"Los tipos de control del documento son: físico, emocional, económico, migratorio y simbólico."},
+ {p:"“Explotación de mano de obra voluntaria” (pasantía no remunerada) no configura trata porque:", o:["El pasante puede abandonarla voluntariamente cuando lo desee","Los pasantes nunca trabajan jornadas largas","Es ilegal en todos los casos","Siempre hay coacción migratoria presente"], correcta:0, exp:"La voluntariedad y libertad de retirarse son la razón central por la que no se cumplen los elementos de fuerza, fraude o coacción."},
+ {p:"El resultado del panel de análisis en la herramienta final del Tratómetro debe entenderse como:", o:["Una determinación legal definitiva de trata","Un indicador de análisis que requiere revisar el contexto completo, la relación entre conductas, medios y finalidad","Una cifra que se envía automáticamente a las autoridades","Un resultado que no necesita revisión humana"], correcta:1, exp:"El documento es explícito en que el sistema no debe determinar automáticamente que existe trata únicamente por sumar puntos."},
+];
+
+/* =========================================================
+   ICONOGRAFÍA (SVG en línea, sin dependencias externas)
+   ========================================================= */
+const ICONS = {
+ thermo:'<svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/><path d="M11.5 7h2"/></svg>',
+ questions:'<svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a2.9 2.9 0 115.8.6c0 1.9-2.9 1.7-2.9 3.4"/><path d="M12 17h.01"/></svg>',
+ mask:'<svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M3 8c3 3 15 3 18 0"/><path d="M4 8v3c0 5 3.5 8 8 8s8-3 8-8V8"/><circle cx="9" cy="12.5" r="1"/><circle cx="15" cy="12.5" r="1"/></svg>',
+ layers:'<svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/><path d="M3 17l9 5 9-5"/></svg>',
+ alert:'<svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4"/><path d="M12 17h.01"/></svg>',
+ scale:'<svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M12 3v18"/><path d="M5 8l-3 6a4 4 0 008 0l-3-6z"/><path d="M19 8l-3 6a4 4 0 008 0l-3-6z"/><path d="M5 8h14"/><path d="M8 21h8"/></svg>',
+ puzzle:'<svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M10 4h4v2.5a1.5 1.5 0 003 0V4h4v4h-2.5a1.5 1.5 0 000 3H21v4h-4v-2.5a1.5 1.5 0 00-3 0V15h-4v-4H7.5a1.5 1.5 0 000-3H10V4z"/></svg>',
+ chat:'<svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M21 12a8 8 0 01-11.5 7.2L4 20l1-4.8A8 8 0 1121 12z"/></svg>',
+ flask:'<svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M9 3h6"/><path d="M10 3v6l-6 10a2 2 0 001.8 3h12.4a2 2 0 001.8-3l-6-10V3"/></svg>',
+ route:'<svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="6" cy="19" r="2.2"/><circle cx="18" cy="5" r="2.2"/><path d="M8 19h6a4 4 0 000-8H10a4 4 0 010-8"/></svg>',
+ map:'<svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M9 5L3 7v13l6-2 6 2 6-2V5l-6 2-6-2z"/><path d="M9 5v13"/><path d="M15 7v13"/></svg>',
+ clipboard:'<svg viewBox="0 0 24 24" stroke-width="1.8"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3a1 1 0 011-1h4a1 1 0 011 1v1"/><path d="M9 12l2 2 4-4"/></svg>',
+ sliders:'<svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/><circle cx="8" cy="6" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="10" cy="18" r="2"/></svg>',
+ shield:'<svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M12 3l8 3v6c0 5-3.4 7.7-8 9-4.6-1.3-8-4-8-9V6l8-3z"/></svg>',
+ clock:'<svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>',
+ lock:'<svg viewBox="0 0 24 24" stroke-width="1.8"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>',
+ heart:'<svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M12 20s-7-4.4-9.5-8.7C.6 7.6 2.3 4 6 4c2.1 0 3.6 1.2 6 3.6C14.4 5.2 15.9 4 18 4c3.7 0 5.4 3.6 3.5 7.3C19 15.6 12 20 12 20z"/></svg>',
+};
+const MODULE_META = {
+ 1:{icon:'thermo', accent:'#5a6a92', label:'Fundamentos'},
+ 2:{icon:'questions', accent:'#7a8bb5', label:'Metodología'},
+ 3:{icon:'mask', accent:'#c9b378', label:'Nivel 1'},
+ 4:{icon:'layers', accent:'#d1b23a', label:'Nivel 2'},
+ 5:{icon:'alert', accent:'#d9736c', label:'Nivel 3'},
+ 6:{icon:'scale', accent:'#6f9e73', label:'Criterio legal'},
+ 7:{icon:'puzzle', accent:'#7a8bb5', label:'Análisis'},
+ 8:{icon:'chat', accent:'#5a6a92', label:'Entrevista'},
+ 9:{icon:'flask', accent:'#c9a227', label:'Práctica'},
+ 10:{icon:'route', accent:'#d1b23a', label:'Práctica'},
+ 11:{icon:'map', accent:'#d9736c', label:'Práctica'},
+ 12:{icon:'clipboard', accent:'#1a2744', label:'Evaluación'},
+ 13:{icon:'sliders', accent:'#c9a227', label:'Herramienta'},
+};
+function heroHeader(id, title, sub){
+  const meta = MODULE_META[id] || {icon:'thermo', accent:'var(--gold)'};
+  const label = id<=12 ? ('Módulo '+id) : 'Herramienta final';
+  return `<div class="hero" style="--hero-accent:${meta.accent}">
+    <div class="hero-row">
+      <div class="hero-icon">${ICONS[meta.icon]}</div>
+      <div>
+        <div class="moduleTag">${label} · ${meta.label}</div>
+        <h2 class="moduleTitle">${title}</h2>
+        ${sub?`<div class="hero-sub">${sub}</div>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+function statCard(icon,color,big,small){
+  return `<div class="statCard" style="background:${color}">${ICONS[icon]?`<div class="sc-icon">${ICONS[icon]}</div>`:''}<b>${big}</b><span>${small}</span></div>`;
+}
+function iconChip(icon,text){
+  return `<span class="iconChip">${ICONS[icon]||''}${text}</span>`;
+}
+
+
+const MODULES = [
+ {id:1, title:"¿Qué es el Tratómetro?"},
+ {id:2, title:"Las tres preguntas del análisis"},
+ {id:3, title:"Nivel 1: Indicadores camuflados"},
+ {id:4, title:"Nivel 2: La sistematicidad"},
+ {id:5, title:"Nivel 3: Alertas críticas"},
+ {id:6, title:"Abuso ≠ automáticamente trata"},
+ {id:7, title:"El error de conductas aisladas"},
+ {id:8, title:"Preguntas de profundización"},
+ {id:9, title:"Laboratorio del Tratómetro"},
+ {id:10, title:"Construye el patrón"},
+ {id:11, title:"Casos frontera"},
+ {id:12, title:"Evaluación final"},
+ {id:13, title:"Analizador del Tratómetro"},
+];
+
+let state = JSON.parse(localStorage.getItem('tratometro_progress') || '{}');
+if(!state.completed) state.completed = {};
+if(!state.current) state.current = 1;
+if(!state.examAnswers) state.examAnswers = {};
+if(!state.examAttempts) state.examAttempts = 0;
+
+function saveState(){ localStorage.setItem('tratometro_progress', JSON.stringify(state)); }
+function markDone(id){ state.completed[id]=true; saveState(); renderNav(); updateProgress(); }
+function goTo(id){ state.current=id; saveState(); renderNav(); render(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function renderNav(){
+  const ul = document.getElementById('navList');
+  ul.innerHTML = MODULES.map(m=>{
+    const meta = MODULE_META[m.id]||{icon:'thermo'};
+    return `<li><button class="navBtn ${state.current===m.id?'active':''} ${state.completed[m.id]?'done':''}" onclick="goTo(${m.id})">
+      <span class="navIcon">${ICONS[meta.icon]}</span><span class="num">${m.id<13?m.id:'★'}</span><span>${m.title}</span>
+    </button></li>`;
+  }).join('');
+}
+function updateProgress(){
+  const done = Object.keys(state.completed).length;
+  const pct = Math.round(done/MODULES.length*100);
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressLabel').textContent = pct+'% completado';
+}
+function footer(prevId, nextId, nextLabel){
+  return `<div class="navFooter">
+    ${prevId? `<button class="btn btn-ghost" onclick="goTo(${prevId})">← Anterior</button>`:'<span></span>'}
+    ${nextId? `<button class="btn btn-primary" onclick="finishAndGo(${state.current},${nextId})">${nextLabel||'Siguiente →'}</button>`:'<span></span>'}
+  </div>`;
+}
+function finishAndGo(cur,next){ markDone(cur); goTo(next); }
+
+function catTag(cat){
+  const map={n3:['n3','Nivel 3'],n2f:['n2f','Nivel 2 · Frecuencia'],n2s:['n2s','Nivel 2 · Sistematicidad'],n1:['n1','Nivel 1'],n0:['n0','No configura trata']};
+  const [cls,label]=map[cat]||['n1',cat];
+  return `<span class="tag ${cls}">${label}</span>`;
+}
+
+/* =========================================================
+   RENDER PRINCIPAL
+   ========================================================= */
+function render(){
+  const c = document.getElementById('content');
+  const id = state.current;
+  const fns = {1:renderM1,2:renderM2,3:renderM3,4:renderM4,5:renderM5,6:renderM6,7:renderM7,8:renderM8,9:renderM9,10:renderM10,11:renderM11,12:renderM12,13:renderTool};
+  c.innerHTML = fns[id]();
+  if(id===13) initTool();
+}
+
+/* ---------- MÓDULO 1 ---------- */
+function renderM1(){
+  return `
+  ${heroHeader(1,'¿Qué es el Tratómetro?','Una guía visual para organizar el análisis de conductas durante entrevistas de posibles casos de Visa T.')}
+  <div class="statGrid">
+    ${statCard('alert','linear-gradient(135deg,#d9736c,#c2564f)','Nivel 3','Alertas críticas — acción inmediata')}
+    ${statCard('layers','linear-gradient(135deg,#e0954a,#c97e37)','Nivel 2','Frecuencia / sistematicidad')}
+    ${statCard('mask','linear-gradient(135deg,#c9b378,#b39a5c)','Nivel 1','Indicadores camuflados')}
+    ${statCard('scale','linear-gradient(135deg,#6f9e73,#557f59)','No trata','Abuso sin fuerza, fraude o coacción')}
+  </div>
+  <div class="card card-accent" style="--accent:var(--navy)">
+    <p class="lead">El Tratómetro es una <b>herramienta de análisis</b> —no una fórmula matemática— que ayuda a organizar lo que un cliente cuenta durante una entrevista, para identificar posibles indicadores de trata de personas relacionados con Visa T.</p>
+    <p>Analiza conductas, su descripción, ejemplos, el nivel TVPA asociado, el elemento TVPA (fuerza, fraude o coacción), el tipo de control ejercido y si constituye una alerta crítica. En cada caso es clave registrar <b>frecuencia, duración y la relación con el tratante</b>.</p>
+    <div class="detailGrid">
+      <div class="di"><label>✓ Cómo debe usarse</label><div style="font-weight:400">Como guía de análisis progresivo, para ubicar cada conducta y decidir qué preguntas de seguimiento hacer.</div></div>
+      <div class="di" style="border-color:#f0d3d0"><label style="color:#a13a33">✕ Qué NO debe hacerse</label><div style="font-weight:400">Sumar indicadores mecánicamente, asumir que todo abuso es trata, o dejar de investigar el contexto.</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>${ICONS.layers.replace('viewBox="0 0 24 24"','viewBox="0 0 24 24" style="width:18px;height:18px;vertical-align:-3px;stroke:var(--navy);margin-right:6px;"')}Las cinco categorías del Tratómetro</h3>
+    <p class="hint">Selecciona cada categoría para ver su definición completa.</p>
+    <div id="cat-list"></div>
+  </div>
+  <div class="card">
+    <h3>${ICONS.thermo.replace('viewBox="0 0 24 24"','viewBox="0 0 24 24" style="width:18px;height:18px;vertical-align:-3px;stroke:var(--navy);margin-right:6px;"')}El Tratómetro vertical</h3>
+    <p class="hint">Haz clic en cada nivel para explorar sus conductas, ejemplos y elementos TVPA. Esta herramienta estará disponible durante todo el training.</p>
+    <div id="thermo-wrap">
+      <div id="thermo"></div>
+      <div id="thermo-detail"><p class="hint">Selecciona un nivel del termómetro para ver el detalle.</p></div>
+    </div>
+  </div>
+  ${footer(null,2)}
+  `;
+  }
+
+function mountModule1Extras(){
+  const catList = document.getElementById('cat-list');
+  if(catList){
+    catList.style.display='grid';
+    catList.style.gridTemplateColumns='1fr 1fr';
+    catList.style.gap='6px';
+    catList.innerHTML = CATEGORIAS.map((cat,i)=>`
+      <div class="categoryRow" style="background:${cat.color}22" onclick="showThermo(${i})">
+        <div class="dot" style="background:${cat.color}"></div>
+        <div><b style="color:var(--navy)">${cat.nombre}</b><span>${cat.desc}</span></div>
+      </div>`).join('');
+  }
+  buildThermo();
+}
+function buildThermo(){
+  const t = document.getElementById('thermo');
+  if(!t) return;
+  const order = [4,3,2,1,0]; // s0=verde bottom ... s4=rojo top when column-reverse
+  t.innerHTML = `
+   <div class="thermo-seg s4" onclick="showThermo(0)">3</div>
+   <div class="thermo-seg s3" onclick="showThermo(1)">2</div>
+   <div class="thermo-seg s2" onclick="showThermo(2)">2</div>
+   <div class="thermo-seg s1" onclick="showThermo(3)">1</div>
+   <div class="thermo-seg s0" onclick="showThermo(4)">0</div>
+  `;
+}
+function showThermo(i){
+  const cat = CATEGORIAS[i];
+  const detail = document.getElementById('thermo-detail');
+  if(!detail) return;
+  detail.innerHTML = `
+    <h4>${cat.nombre}</h4>
+    <p class="hint">${cat.desc}</p>
+    <table class="dtbl"><thead><tr><th>Conducta</th><th>Ejemplo</th><th>${cat.key==='n0'?'¿Por qué no es trata?':'Elemento TVPA'}</th></tr></thead><tbody>
+    ${cat.data.slice(0,6).map(x=>`<tr><td><b>${x.c}</b></td><td>${x.e}</td><td>${cat.key==='n0'?x.porque:x.elem}</td></tr>`).join('')}
+    </tbody></table>
+    ${cat.data.length>6?`<p class="hint">…y ${cat.data.length-6} conductas más incluidas en el documento fuente.</p>`:''}
+  `;
+}
+
+/* ---------- MÓDULO 2 ---------- */
+function renderM2(){
+  return `
+  ${heroHeader(2,'Las tres preguntas del análisis','El método base antes de clasificar cualquier conducta dentro del Tratómetro.')}
+  <div class="card">
+    <p class="lead">Antes de clasificar cualquier conducta dentro del Tratómetro, todo entrevistador debe hacerse tres preguntas:</p>
+    <ol style="font-family:'DM Sans',sans-serif; line-height:1.9;">
+      <li><b>¿Qué está haciendo el tratante?</b> — Identificar la conducta concreta.</li>
+      <li><b>¿Cómo está controlando a la persona?</b> — Buscar fuerza, fraude, coacción, y el tipo de control: físico, emocional, económico, migratorio o simbólico.</li>
+      <li><b>¿Para qué lo está haciendo?</b> — Relacionar la conducta con la finalidad: laboral, sexual o criminal.</li>
+    </ol>
+    <div class="methodFlow">
+      <span class="step">CONDUCTA</span><span class="arrow">→</span>
+      <span class="step">MEDIO DE CONTROL</span><span class="arrow">→</span>
+      <span class="step">FINALIDAD</span>
+    </div>
+    <div class="methodFlow" style="background:#f7f0dd; border-radius:10px; padding:10px 14px;">
+      <span class="step" style="background:#fff">FRECUENCIA</span><span class="arrow">+</span>
+      <span class="step" style="background:#fff">DURACIÓN</span><span class="arrow">+</span>
+      <span class="step" style="background:#fff">INTENSIDAD</span><span class="arrow">+</span>
+      <span class="step" style="background:#fff">CONTEXTO</span><span class="arrow">=</span>
+      <span class="step" style="background:var(--gold)">FUERZA DEL INDICADOR</span>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Aplica las tres preguntas</h3>
+    <p class="hint">Lee la frase y clasifica cada elemento.</p>
+    <div class="quote">"Le retenían parte del salario y le decían que si se iba, tendría que pagar todo lo que habían gastado en ella."</div>
+    <div class="pillGrid">
+      <span class="pill"><b>Conducta:</b> retención parcial de salario + amenaza económica</span>
+      <span class="pill"><b>Medio de control:</b> Fraude / Coacción económica</span>
+      <span class="pill"><b>Finalidad:</b> Laboral</span>
+    </div>
+    <div class="feedback">Este patrón corresponde a Nivel TVPA 2 — requiere revisar frecuencia e intensidad antes de concluir. La siguiente pregunta obligada sería: <i>"¿cuánto tiempo lleva ocurriendo esto y qué la detiene realmente de irse?"</i></div>
+  </div>
+  ${footer(1,3)}
+  `;
+}
+
+/* ---------- MÓDULO 3 ---------- */
+function renderM3(){
+  return `
+  ${heroHeader(3,'Nivel 1: Indicadores iniciales o camuflados','Conductas que se presentan como ayuda, amor o favores, pero pueden esconder mecanismos de control.')}
+  <div class="card">
+    <p class="lead">Las conductas de Nivel 1 pueden presentarse como ayuda, amor, protección, favores, gratitud, relaciones familiares, costumbres o religión — pero pueden esconder mecanismos de control.</p>
+    <div class="pillGrid">
+      ${NIVEL1.map(x=>`<span class="pill">${x.c}</span>`).join('')}
+    </div>
+  </div>
+  <div class="card" id="act-m3">
+    <h3>Actividad: "¿Ayuda o control?"</h3>
+    <div class="quote">"Yo te traje a Estados Unidos, ahora haz lo que te pido."</div>
+    <div class="optList" id="m3-opts"></div>
+    <div id="m3-feedback"></div>
+  </div>
+  ${footer(2,4)}
+  `;
+}
+function mountM3(){
+  const opts = [
+    {t:"A) Ayuda legítima", correct:false},
+    {t:"B) Posible manipulación / indicador Nivel 1", correct:true},
+    {t:"C) Coacción directa (Nivel 3)", correct:false},
+    {t:"D) No existe indicador", correct:false},
+  ];
+  const wrap = document.getElementById('m3-opts');
+  if(!wrap) return;
+  wrap.innerHTML = opts.map((o,i)=>`<button class="optBtn" onclick="answerM3(${i})">${o.t}</button>`).join('');
+  window.__m3opts = opts;
+}
+function answerM3(i){
+  const opts = window.__m3opts;
+  document.querySelectorAll('#m3-opts .optBtn').forEach((b,idx)=>{
+    b.classList.add(opts[idx].correct?'correct':(idx===i?'incorrect':''));
+    b.disabled=true;
+  });
+  document.getElementById('m3-feedback').innerHTML = `
+   <div class="feedback ${opts[i].correct?'good':'bad'}">
+     <b>Respuesta esperada: B) Posible manipulación.</b><br>
+     <b>Nivel:</b> 1 (camuflado) · <b>Elemento TVPA:</b> Fraude (deuda inventada) · <b>Tipo de control:</b> Emocional<br>
+     <b>Explicación:</b> Esta frase corresponde al ejemplo textual de "deuda emocional falsa" — el tratante hace creer a la víctima que le debe obediencia por haberla traído al país. No confirma trata por sí sola, pero enciende una alerta preventiva.<br>
+     <b>Pregunta que debería hacer el entrevistador:</b> "¿Qué le pide exactamente que haga a cambio? ¿Qué pasaría si usted se negara?"
+   </div>`;
+}
+
+/* ---------- MÓDULO 4 ---------- */
+function renderM4(){
+  return `
+  ${heroHeader(4,'Nivel 2: La importancia de la sistematicidad','La frecuencia, duración e intensidad pueden cambiar por completo el peso de un indicador.')}
+  <div class="card">
+    <p class="lead">Ciertas conductas no deben analizarse solo por su existencia, sino por su <b>frecuencia, duración, intensidad, repetición y combinación</b> con otras conductas.</p>
+    <div class="pillGrid">
+      ${[...NIVEL2_FREC,...NIVEL2_SIST].slice(0,14).map(x=>`<span class="pill">${x.c}</span>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <h3>Actividad: "Una vez vs. un patrón"</h3>
+    <p><b>CASO A:</b> Una compañera de trabajo le levanta la voz a la trabajadora una sola vez, tras un día difícil.</p>
+    <p><b>CASO B:</b> La misma conducta —gritos e insultos— ocurrió constantemente durante meses, y estaba relacionada con exigirle obediencia y más horas de trabajo.</p>
+    <div class="optList" id="m4-opts">
+      <button class="optBtn" onclick="answerM4(true)">Sí, mi análisis cambia entre el Caso A y el Caso B</button>
+      <button class="optBtn" onclick="answerM4(false)">No, ambos casos deberían analizarse igual</button>
+    </div>
+    <div id="m4-feedback"></div>
+  </div>
+  ${footer(3,5)}
+  `;
+}
+function answerM4(picked){
+  document.querySelectorAll('#m4-opts .optBtn').forEach(b=>b.disabled=true);
+  document.getElementById('m4-feedback').innerHTML = `
+   <div class="feedback ${picked?'good':'bad'}">
+     <b>Respuesta esperada: Sí, el análisis cambia.</b><br>
+     El Caso A es un evento aislado sin patrón — no constituye, por sí solo, un indicador fuerte. El Caso B muestra <b>sistematicidad</b>: repetición, relación con obediencia y trabajo, y efecto acumulado sobre la autonomía de la víctima. Esto lo eleva a un indicador Nivel TVPA 2 que amerita profundizar en frecuencia, duración y qué otras conductas de control lo acompañan.
+   </div>`;
+}
+
+/* ---------- MÓDULO 5 ---------- */
+function renderM5(){
+  return `
+  ${heroHeader(5,'Nivel 3: Alertas críticas','Formas directas y extremas de violencia o coacción que exigen acción inmediata.')}
+  <div class="card card-accent" style="--accent:var(--r1)">
+    <p class="lead">Estas conductas representan formas <b>directas y extremas</b> de violencia o coacción. Su sola ocurrencia suele ser indicativa de trata consolidada y constituye una <span class="badge-critica">ALERTA CRÍTICA</span> que requiere acción inmediata.</p>
+    <div class="pillGrid">
+      ${NIVEL3.slice(0,12).map(x=>`<span class="pill" style="background:var(--r1-bg); color:#a13a33">${x.c}</span>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <h3>Actividad: "Detecta la alerta"</h3>
+    <div class="quote">"Me enseñó una pistola y me dijo que nadie salía de ahí."</div>
+    <p class="hint">Identifica cada elemento y luego revela el análisis.</p>
+    <button class="btn btn-gold" onclick="document.getElementById('m5-reveal').style.display='block'; this.style.display='none';">Revelar análisis</button>
+    <div id="m5-reveal" style="display:none; margin-top:16px;">
+      <div class="feedback bad">
+        <b>Conducta:</b> Uso de armas o amenazas con objetos<br>
+        <b>Nivel:</b> 3 · <b>Elemento TVPA:</b> Coacción (amenaza armada) · <b>Tipo de control:</b> Emocional (miedo)<br>
+        <b>¿Alerta crítica?</b> <span class="badge-critica">Sí</span><br><br>
+        <b>Información adicional que investigaría:</b> Si el arma se ha usado o mostrado más de una vez, si hay otras personas amenazadas de la misma forma, si existe además restricción física de movimiento, y qué tan reciente fue el hecho.
+      </div>
+    </div>
+  </div>
+  ${footer(4,6)}
+  `;
+}
+
+/* ---------- MÓDULO 6 ---------- */
+function renderM6(){
+  return `
+  ${heroHeader(6,'Abuso ≠ automáticamente trata','No toda condición injusta configura trata de personas bajo la TVPA.')}
+  <div class="card centerBig">
+    <h2>NO TODO ABUSO ES TRATA</h2>
+    <div class="methodFlow" style="justify-content:center;">
+      <span class="step" style="background:var(--r2-bg)">CONDICIONES INJUSTAS</span>
+      <span class="arrow">≠</span>
+      <span class="step" style="background:var(--r1-bg)">CONTROL PARA MANTENER EXPLOTACIÓN</span>
+    </div>
+  </div>
+  <div class="card card-accent" style="--accent:var(--r5)">
+    <p class="lead">La sección del documento "Situaciones abusivas que no configuran trata de personas" describe ejemplos donde, pese a existir injusticia laboral, <b>no se cumplen los elementos legales de fuerza, fraude o coacción sostenida</b>.</p>
+    <table class="dtbl"><thead><tr><th>Conducta</th><th>Ejemplo</th><th>¿Por qué no es trata?</th></tr></thead><tbody>
+    ${NIVEL0.map(x=>`<tr><td><b>${x.c}</b></td><td>${x.e}</td><td>${x.porque}</td></tr>`).join('')}
+    </tbody></table>
+  </div>
+  <div class="card card-accent" style="--accent:var(--gold)">
+    <h3>La pregunta que debe repetirse siempre</h3>
+    <div class="quote">"¿Qué impedía realmente que esta persona dejara la situación?"</div>
+    <p class="hint">Esta pregunta debe formularse en cada análisis de conductas Nivel 1 y 2 antes de decidir si amerita mayor profundización.</p>
+  </div>
+  ${footer(5,7)}
+  `;
+}
+
+/* ---------- MÓDULO 7 ---------- */
+function renderM7(){
+  return `
+  ${heroHeader(7,'El error de analizar conductas aisladas','Piezas pequeñas, vistas juntas, revelan un patrón de control.')}
+  <div class="card">
+    <p class="lead">Cada conducta, vista sola, podría parecer insuficiente. Observa este tablero:</p>
+    <div class="pillGrid">
+      ${["Le revisaban el teléfono","Le decían que nadie la ayudaría","Le retenían parte del salario","No podía hablar con vecinos","Tenía jornadas extremadamente largas","Le decían que migración podía detenerla"].map(x=>`<span class="pill">${x}</span>`).join('')}
+    </div>
+    <p style="margin-top:18px;"><b>Si analizamos cada conducta individualmente, algunas podrían parecer insuficientes. ¿Qué ocurre cuando las observamos juntas?</b></p>
+    <button class="btn btn-gold" onclick="document.getElementById('m7-reveal').style.display='block'; this.style.display='none';">Ver el patrón</button>
+    <div id="m7-reveal" style="display:none; margin-top:16px;">
+      <div class="methodFlow">
+        <span class="step">Vigilancia (revisión de celular)</span><span class="arrow">→</span>
+        <span class="step">Aislamiento (vecinos, ayuda)</span><span class="arrow">→</span>
+        <span class="step">Control económico (salario)</span><span class="arrow">→</span>
+        <span class="step">Control migratorio (miedo)</span>
+      </div>
+      <div class="feedback">
+        Juntas, estas conductas forman un <b>PATRÓN DE CONTROL</b>: vigilancia + aislamiento + dependencia económica + miedo migratorio. Cada una es Nivel 1 o 2 por separado, pero combinadas y sostenidas en el tiempo constituyen un indicador mucho más fuerte que amerita profundizar en la finalidad (laboral, sexual o criminal) y si existe fuerza, fraude o coacción.
+      </div>
+    </div>
+  </div>
+  ${footer(6,8)}
+  `;
+}
+
+/* ---------- MÓDULO 8 ---------- */
+function renderM8(){
+  return `
+  ${heroHeader(8,'Preguntas de profundización','Convierte cada señal del Tratómetro en preguntas útiles de entrevista.')}
+  <div class="card">
+    <p class="lead">Convierte una señal del Tratómetro en preguntas útiles de entrevista. No te quedes en la superficie.</p>
+    <div class="quote">Cliente: "Me gritaba mucho."</div>
+    <p><b style="color:var(--r1)">✕ NO quedarse únicamente con:</b> "¿Le gritaba?"</p>
+    <p><b style="color:var(--r5)">✓ Profundizar:</b></p>
+    <div class="pillGrid">
+      ${["¿Qué le decía?","¿Cuándo ocurría?","¿Con qué frecuencia?","¿Qué pasaba después?","¿Qué quería que usted hiciera?","¿Qué ocurría si no obedecía?","¿Podía irse?","¿Intentó negarse? ¿Qué pasó?","¿Por qué sentía que tenía que obedecer?","¿Cuánto tiempo ocurrió?","¿Quién más estaba presente?","¿Esto estaba relacionado con trabajo, sexo, dinero, vivienda, documentos u otra obligación?"].map(x=>`<span class="pill">${x}</span>`).join('')}
+    </div>
+    <div class="methodFlow" style="margin-top:20px;">
+      <span class="step">SEÑAL</span><span class="arrow">→</span>
+      <span class="step">PROFUNDIZAR</span><span class="arrow">→</span>
+      <span class="step">CONTEXTO</span><span class="arrow">→</span>
+      <span class="step">CONTROL</span><span class="arrow">→</span>
+      <span class="step">FINALIDAD</span>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Practica: convierte esta señal en preguntas</h3>
+    <div class="quote">"A veces no me dejaban comer si no terminaba mi trabajo."</div>
+    <p class="hint">Piensa en al menos 3 preguntas de profundización antes de ver ejemplos sugeridos.</p>
+    <button class="btn btn-gold" onclick="document.getElementById('m8-reveal').style.display='block'; this.style.display='none';">Ver preguntas sugeridas</button>
+    <div id="m8-reveal" style="display:none; margin-top:14px;" class="feedback">
+      ¿Con qué frecuencia pasaba esto? ¿Cuánto tiempo llegó a estar sin comer? ¿Alguien más estaba en la misma situación? ¿Qué le decían cuando pedía comida? ¿Esto se combinaba con otras restricciones (agua, descanso, baño)? ¿Podía comprar su propia comida si tenía dinero?
+    </div>
+  </div>
+  ${footer(7,9)}
+  `;
+}
+
+/* ---------- MÓDULO 9 — Laboratorio ---------- */
+let labIndex = 0, labRevealed = {};
+function renderM9(){
+  labIndex = state.labIndex || 0;
+  return `
+  ${heroHeader(9,'Laboratorio del Tratómetro','12 situaciones para practicar tu criterio de clasificación.')}
+  <div class="card">
+    <p class="lead">Analiza cada situación. Determina conducta, nivel tentativo, Fuerza/Fraude/Coacción, tipo de control, finalidad, si es alerta crítica, información faltante y preguntas de seguimiento. Luego revela el análisis experto.</p>
+    <div class="progressDots" id="lab-dots"></div>
+    <div id="lab-case"></div>
+  </div>
+  ${footer(8,10)}
+  `;
+}
+function mountM9(){
+  renderLabDots(); renderLabCase();
+}
+function renderLabDots(){
+  const dots = document.getElementById('lab-dots');
+  if(!dots) return;
+  dots.innerHTML = LAB_CASOS.map((_,i)=>`<div class="d ${i<=labIndex?'on':''}"></div>`).join('');
+}
+function renderLabCase(){
+  const el = document.getElementById('lab-case');
+  if(!el) return;
+  const cs = LAB_CASOS[labIndex];
+  el.innerHTML = `
+    <p class="hint">Caso ${labIndex+1} de ${LAB_CASOS.length}</p>
+    <div class="quote">${cs.frase}</div>
+    <label>Tu clasificación</label>
+    <select id="lab-guess">
+      <option>Nivel 1</option><option>Nivel 2 (frecuencia/intensidad)</option>
+      <option>Nivel 2 (sistematicidad)</option><option>Nivel 3</option>
+      <option>No configura trata (verde)</option>
+    </select>
+    <div style="margin-top:16px;">
+      <button class="btn btn-gold" onclick="revealLab()">Revelar análisis</button>
+    </div>
+    <div id="lab-analysis" style="margin-top:16px;"></div>
+    <div class="navFooter" style="margin-top:22px;">
+      <button class="btn btn-ghost" onclick="labNav(-1)" ${labIndex===0?'disabled':''}>← Caso anterior</button>
+      <button class="btn btn-primary" onclick="labNav(1)" ${labIndex===LAB_CASOS.length-1?'disabled':''}>Siguiente caso →</button>
+    </div>
+  `;
+}
+function revealLab(){
+  const cs = LAB_CASOS[labIndex];
+  document.getElementById('lab-analysis').innerHTML = `
+    <div class="feedback ${cs.critica?'bad':'good'}">
+      <b>Nivel tentativo:</b> ${cs.nivel}<br>
+      <b>Elemento TVPA:</b> ${cs.elem}<br>
+      <b>Tipo de control:</b> ${cs.control}<br>
+      <b>Posible finalidad:</b> ${cs.finalidad}<br>
+      <b>Alerta crítica:</b> ${cs.critica?'<span class="badge-critica">Sí</span>':'No'}<br>
+      <b>Información faltante:</b> ${cs.faltante}<br>
+      <b>Preguntas al cliente:</b> ${cs.preguntas}
+    </div>`;
+}
+function labNav(dir){
+  labIndex = Math.max(0, Math.min(LAB_CASOS.length-1, labIndex+dir));
+  state.labIndex = labIndex; saveState();
+  renderLabDots(); renderLabCase();
+}
+
+/* ---------- MÓDULO 10 — Construye el patrón ---------- */
+function renderM10(){
+  state.patternStep = state.patternStep || 0;
+  return `
+  ${heroHeader(10,'Construye el patrón','El contexto acumulativo cambia la interpretación del caso.')}
+  <div class="card">
+    <p class="lead">La información llega progresivamente, como en una entrevista real. Actualiza tu análisis con cada nueva pieza.</p>
+    <div class="progressDots" id="pat-dots"></div>
+    <div id="pat-content"></div>
+  </div>
+  ${footer(9,11)}
+  `;
+}
+function mountM10(){ renderPatDots(); renderPatContent(); }
+function renderPatDots(){
+  const dots = document.getElementById('pat-dots');
+  if(!dots) return;
+  dots.innerHTML = PATTERN_DATA.map((_,i)=>`<div class="d ${i<=state.patternStep?'on':''}"></div>`).join('');
+}
+function renderPatContent(){
+  const el = document.getElementById('pat-content');
+  if(!el) return;
+  let html = '';
+  for(let i=0;i<=state.patternStep;i++){
+    html += `<div class="quote">DATO ${i+1}: ${PATTERN_DATA[i].dato}</div>
+      <div class="feedback">${PATTERN_DATA[i].pregunta}<br><br>${PATTERN_DATA[i].explicacion}</div>`;
+  }
+  html += `<div class="navFooter" style="margin-top:20px;">
+    <span></span>
+    ${state.patternStep < PATTERN_DATA.length-1
+      ? `<button class="btn btn-gold" onclick="patNext()">Agregar siguiente dato →</button>`
+      : `<span class="hint">Patrón completo — observa cómo el contexto acumulativo cambió la interpretación.</span>`}
+  </div>`;
+  el.innerHTML = html;
+}
+function patNext(){
+  state.patternStep = Math.min(PATTERN_DATA.length-1, state.patternStep+1);
+  saveState(); renderPatDots(); renderPatContent();
+}
+
+/* ---------- MÓDULO 11 — Casos frontera ---------- */
+function renderM11(){
+  return `
+  ${heroHeader(11,'Casos frontera','Ejercicios difíciles donde abuso, fraude y explotación se combinan sin certeza inmediata.')}
+  <div class="card">
+    <p class="lead">Ejercicios difíciles donde abuso, fraude y explotación se combinan sin certeza inmediata. Selecciona el nivel de riesgo y luego revisa la justificación.</p>
+  </div>
+  ${CASOS_FRONTERA.map((cf,i)=>`
+    <div class="card">
+      <h3>${cf.titulo}</h3>
+      <p>${cf.texto}</p>
+      <div class="optList" id="cf-opts-${i}">
+        <button class="optBtn" onclick="answerFrontera(${i},'verde')">🟢 No existen elementos suficientes</button>
+        <button class="optBtn" onclick="answerFrontera(${i},'amarillo')">🟡 Existen indicadores que requieren profundización</button>
+        <button class="optBtn" onclick="answerFrontera(${i},'naranja')">🟠 Existe un patrón importante de control/explotación</button>
+        <button class="optBtn" onclick="answerFrontera(${i},'rojo')">🔴 Existe una alerta crítica</button>
+      </div>
+      <div id="cf-feedback-${i}"></div>
+    </div>
+  `).join('')}
+  ${footer(10,12)}
+  `;
+}
+function answerFrontera(i, picked){
+  const cf = CASOS_FRONTERA[i];
+  const map={verde:0,amarillo:1,naranja:2,rojo:3};
+  document.querySelectorAll(`#cf-opts-${i} .optBtn`).forEach((b,idx)=>{
+    const key=['verde','amarillo','naranja','rojo'][idx];
+    b.classList.add(key===cf.correcta?'correct':(key===picked?'incorrect':''));
+    b.disabled=true;
+  });
+  document.getElementById(`cf-feedback-${i}`).innerHTML = `<div class="feedback ${picked===cf.correcta?'good':'bad'}">${cf.justificacion}</div>`;
+}
+
+/* ---------- MÓDULO 12 — Evaluación ---------- */
+function renderM12(){
+  if(state.examSubmitted){
+    return renderExamResults();
+  }
+  return `
+  ${heroHeader(12,'Evaluación final','20 preguntas de razonamiento. Calificación mínima para aprobar: 85/100.')}
+  <div class="card">
+    <p class="lead">20 preguntas de razonamiento. Calificación mínima para aprobar: <b>85/100</b>.</p>
+    <p class="hint">Responde todas las preguntas y presiona "Calificar evaluación" al final.</p>
+  </div>
+  <div id="exam-form">
+  ${(function(){
+    let html='';
+    for(let k=0;k<EXAM.length;k+=2){
+      html += '<div class="card">';
+      for(let i=k;i<Math.min(k+2,EXAM.length);i++){
+        const q = EXAM[i];
+        html += `<div style="${i===k && k+1<EXAM.length ? 'padding-bottom:14px; margin-bottom:14px; border-bottom:1px solid #ece7da;':''}">
+          <p><b>${i+1}.</b> ${q.p}</p>
+          <div class="optList" id="exam-q-${i}">
+            ${q.o.map((op,j)=>`<button class="optBtn" onclick="selectExamAnswer(${i},${j})" id="exam-q-${i}-${j}">${op}</button>`).join('')}
+          </div>
+        </div>`;
+      }
+      html += '</div>';
+    }
+    return html;
+  })()}
+  </div>
+  <div class="card" style="text-align:center;">
+    <button class="btn btn-primary" style="padding:14px 34px; font-size:15px;" onclick="submitExam()">Calificar evaluación</button>
+  </div>
+  ${footer(11,null)}
+  `;
+}
+function selectExamAnswer(qi, oi){
+  state.examAnswers[qi]=oi; saveState();
+  EXAM[qi].o.forEach((_,j)=>{
+    document.getElementById(`exam-q-${qi}-${j}`).classList.toggle('correct', false);
+    document.getElementById(`exam-q-${qi}-${j}`).style.borderColor = (j===oi)?'var(--gold)':'#e2ddcf';
+    document.getElementById(`exam-q-${qi}-${j}`).style.background = (j===oi)?'#fdf6e3':'#fdfcf9';
+  });
+}
+function submitExam(){
+  const unanswered = EXAM.filter((_,i)=>state.examAnswers[i]===undefined).length;
+  if(unanswered>0){ alert('Faltan '+unanswered+' pregunta(s) por responder.'); return; }
+  state.examSubmitted = true;
+  state.examAttempts = (state.examAttempts||0)+1;
+  saveState();
+  markDone(12);
+
+  // ---- Reportar resultado a Moodle vía SCORM ----
+  let correct=0;
+  EXAM.forEach((q,i)=>{ if(state.examAnswers[i]===q.correcta) correct++; });
+  const score = Math.round(correct/EXAM.length*100);
+  const passed = score>=85;
+  SCORM_reportScore(score, passed);
+
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function renderExamResults(){
+  let correct=0;
+  const rows = EXAM.map((q,i)=>{
+    const ok = state.examAnswers[i]===q.correcta;
+    if(ok) correct++;
+    return {q,i,ok};
+  });
+  const score = Math.round(correct/EXAM.length*100);
+  let tier, tierDesc;
+  if(score>=90){tier='90–100'; tierDesc='Dominio alto del Tratómetro.';}
+  else if(score>=85){tier='85–89'; tierDesc='Competencia adecuada.';}
+  else if(score>=70){tier='70–84'; tierDesc='Requiere reforzamiento.';}
+  else {tier='< 70'; tierDesc='Requiere repasar el training antes de continuar.';}
+  const passed = score>=85;
+  return `
+  ${heroHeader(12,'Resultado de la evaluación','')}
+  <div class="card" style="text-align:center;">
+    <div class="ringWrap">
+      <svg viewBox="0 0 150 150">
+        <circle class="ringBg" cx="75" cy="75" r="63"></circle>
+        <circle class="ringVal" cx="75" cy="75" r="63" stroke="${passed?'#6f9e73':'#d9736c'}"
+          stroke-dasharray="${2*Math.PI*63}" stroke-dashoffset="${2*Math.PI*63*(1-score/100)}"></circle>
+      </svg>
+      <div class="ringLabel"><b>${score}</b><span>de 100</span></div>
+    </div>
+    <span class="tag ${passed?'n0':'n3'}" style="font-size:13px; padding:6px 14px;">${passed?'Aprobado':'No aprobado'}</span>
+    <h3 style="margin-top:10px;">${tier} · ${tierDesc}</h3>
+    <p class="hint">${correct} de ${EXAM.length} respuestas correctas · Intento #${state.examAttempts}</p>
+    <button class="btn btn-gold" onclick="retryExam()">Reintentar evaluación</button>
+  </div>
+  <div class="card">
+    <h3>Revisión detallada</h3>
+    ${rows.map(r=>`
+      <div style="margin-bottom:16px; padding-bottom:14px; border-bottom:1px solid #ece7da;">
+        <p><b>${r.i+1}.</b> ${r.q.p} ${r.ok?'<span class="tag n0">Correcta</span>':'<span class="tag n3">Incorrecta</span>'}</p>
+        ${!r.ok?`<p class="hint">Tu respuesta: ${r.q.o[state.examAnswers[r.i]]!==undefined? r.q.o[state.examAnswers[r.i]]:'(sin responder)'} · Correcta: ${r.q.o[r.q.correcta]}</p>`:''}
+        <p class="hint"><i>${r.q.exp}</i></p>
+      </div>
+    `).join('')}
+  </div>
+  ${footer(11,13,'Ir al Analizador →')}
+  `;
+}
+function retryExam(){
+  state.examSubmitted=false; state.examAnswers={}; saveState(); render();
+}
+
+/* ---------- MÓDULO 13 — Herramienta final ---------- */
+function renderTool(){
+  return `
+  ${heroHeader(13,'Analizador del Tratómetro','Regístra conducta, frecuencia, control y finalidad para obtener un nivel tentativo de análisis.')}
+  <div class="card">
+    <p class="lead">Usa esta herramienta durante ejercicios y entrevistas futuras para organizar tu análisis.</p>
+    <label>Conducta detectada</label>
+    <input type="text" id="t-conducta" placeholder="Describe brevemente la conducta observada">
+    <label>Frecuencia</label>
+    <select id="t-frecuencia"><option>Una vez</option><option>Ocasional</option><option>Frecuente</option><option>Sistemática</option></select>
+    <label>Duración</label>
+    <select id="t-duracion"><option>Evento aislado</option><option>Días</option><option>Semanas</option><option>Meses</option><option>Años</option></select>
+    <label>Tipo de control</label>
+    <select id="t-control"><option>Físico</option><option>Emocional</option><option>Económico</option><option>Migratorio</option><option>Simbólico</option><option>Otro</option></select>
+    <label>Elemento TVPA</label>
+    <select id="t-elemento"><option>Fuerza</option><option>Fraude</option><option>Coacción</option><option>Requiere mayor investigación</option></select>
+    <label>Finalidad</label>
+    <select id="t-finalidad"><option>Laboral</option><option>Sexual</option><option>Criminal</option><option>No determinada</option></select>
+    <div style="margin-top:18px;"><button class="btn btn-primary" onclick="analyzeTool()">Analizar</button></div>
+  </div>
+  <div class="card" id="tool-result" style="display:none;"></div>
+  <div class="card" style="background:var(--navy); color:#fff;">
+    <h3 style="color:#fff;">Recuerda siempre</h3>
+    <p>El resultado representa un indicador de análisis y requiere revisar el contexto completo, la relación entre las conductas, los medios utilizados y la finalidad. El Tratómetro nunca sustituye el juicio profesional ni una investigación completa.</p>
+  </div>
+  ${footer(12,null)}
+  <div class="card" style="text-align:center; margin-top:30px;">
+    <h3>Training completado</h3>
+    <p class="hint">Metodología: DETECTAR → PROFUNDIZAR → CONTEXTUALIZAR → RELACIONAR → CLASIFICAR → JUSTIFICAR</p>
+  </div>
+  `;
+}
+function initTool(){ markDone(13); }
+function analyzeTool(){
+  const frecuencia = document.getElementById('t-frecuencia').value;
+  const duracion = document.getElementById('t-duracion').value;
+  const elemento = document.getElementById('t-elemento').value;
+  const conducta = document.getElementById('t-conducta').value || '(sin describir)';
+  const control = document.getElementById('t-control').value;
+  const finalidad = document.getElementById('t-finalidad').value;
+
+  let nivel = "Información insuficiente";
+  let tagClass = "n1";
+  const sistematico = (frecuencia==='Frecuente'||frecuencia==='Sistemática') && (duracion==='Meses'||duracion==='Años'||duracion==='Semanas');
+  if(elemento==='Fuerza' || elemento==='Coacción' && (frecuencia==='Sistemática')){
+    nivel = "Nivel 3 tentativo — posible alerta crítica"; tagClass="n3";
+  } else if(sistematico){
+    nivel = "Nivel 2 tentativo — sistematicidad relevante"; tagClass="n2s";
+  } else if(frecuencia==='Ocasional' || frecuencia==='Frecuente'){
+    nivel = "Nivel 2 tentativo — requiere revisar frecuencia/intensidad"; tagClass="n2f";
+  } else if(frecuencia==='Una vez' && duracion==='Evento aislado'){
+    nivel = "Nivel 1 tentativo — indicador inicial, requiere contexto"; tagClass="n1";
+  }
+
+  document.getElementById('tool-result').style.display='block';
+  document.getElementById('tool-result').innerHTML = `
+    <h3>Panel de análisis</h3>
+    <p><b>Conducta:</b> ${conducta}</p>
+    <div class="pillGrid">
+      <span class="pill">Frecuencia: ${frecuencia}</span>
+      <span class="pill">Duración: ${duracion}</span>
+      <span class="pill">Control: ${control}</span>
+      <span class="pill">Elemento TVPA: ${elemento}</span>
+      <span class="pill">Finalidad: ${finalidad}</span>
+    </div>
+    <h3 style="margin-top:18px;">Nivel tentativo del Tratómetro</h3>
+    <span class="tag ${tagClass}" style="font-size:14px; padding:8px 16px;">${nivel}</span>
+    <div class="feedback" style="margin-top:16px;">
+      <b>Importante:</b> este resultado representa un indicador de análisis y requiere revisar el contexto completo, la relación entre las conductas, los medios utilizados y la finalidad. No determina automáticamente que exista trata de personas.
+    </div>
+  `;
+}
+
+/* =========================================================
+   SCORM 1.2 — comunicación con Moodle (LMS)
+   ========================================================= */
+var SCORM_API = null;
+var SCORM_INITIALIZED = false;
+
+function SCORM_findAPI(win){
+  let attempts = 0;
+  while(win && attempts < 500){
+    try{
+      if(win.API) return win.API;
+    }catch(e){ /* cross-origin frame — no se puede acceder, se detiene esta cadena */ return null; }
+    try{
+      if(win.parent && win.parent !== win){ win = win.parent; attempts++; }
+      else { break; }
+    }catch(e){ return null; }
+  }
+  return null;
+}
+function SCORM_getAPI(){
+  let api = null;
+  // 1. Buscar subiendo por la cadena de ventanas padre (caso típico: contenido en un iframe de Moodle)
+  try{ api = SCORM_findAPI(window); }catch(e){ api = null; }
+  // 2. Si no se encontró, buscar en window.opener (caso: contenido abierto en ventana/pestaña nueva)
+  if(!api){
+    try{ if(window.opener) api = SCORM_findAPI(window.opener); }catch(e){ /* opener cruzado, ignorar */ }
+  }
+  // 3. Último intento: comprobar window.top directamente
+  if(!api){
+    try{ if(window.top && window.top.API) api = window.top.API; }catch(e){ /* ignorar */ }
+  }
+  return api;
+}
+function SCORM_init(){
+  try{
+    SCORM_API = SCORM_getAPI();
+  }catch(e){ SCORM_API = null; }
+  if(!SCORM_API){ return false; }
+  try{
+    const result = SCORM_API.LMSInitialize('');
+    SCORM_INITIALIZED = (result === 'true' || result === true);
+    if(SCORM_INITIALIZED){
+      // Si el curso ya se había iniciado antes, respeta el estado previo salvo que ya esté completado/aprobado.
+      const status = SCORM_API.LMSGetValue('cmi.core.lesson_status');
+      if(status === '' || status === 'not attempted'){
+        SCORM_API.LMSSetValue('cmi.core.lesson_status', 'incomplete');
+        SCORM_API.LMSCommit('');
+      }
+      console.log('SCORM: conectado al LMS correctamente.');
+    }
+    return SCORM_INITIALIZED;
+  }catch(e){ console.warn('SCORM_init error:', e); SCORM_INITIALIZED = false; return false; }
+}
+function SCORM_reportScore(score, passed){
+  // Si no se conectó al cargar la página, intenta una última vez antes de dar por perdido el reporte.
+  if(!SCORM_API || !SCORM_INITIALIZED){
+    const ok = SCORM_init();
+    if(!ok){
+      console.warn('SCORM: no se encontró un LMS activo — la calificación no se envió a Moodle (modo local).');
+      return;
+    }
+  }
+  try{
+    SCORM_API.LMSSetValue('cmi.core.score.raw', String(score));
+    SCORM_API.LMSSetValue('cmi.core.score.min', '0');
+    SCORM_API.LMSSetValue('cmi.core.score.max', '100');
+    SCORM_API.LMSSetValue('cmi.core.lesson_status', passed ? 'passed' : 'failed');
+    SCORM_API.LMSCommit('');
+    console.log('SCORM: calificación enviada al LMS ->', score, passed?'passed':'failed');
+  }catch(e){ console.warn('SCORM_reportScore error:', e); }
+}
+function SCORM_finish(){
+  if(!SCORM_API || !SCORM_INITIALIZED) return;
+  try{
+    // Si el trainee completó todos los módulos pero aún no hay estado passed/failed registrado, marca completed.
+    const status = SCORM_API.LMSGetValue('cmi.core.lesson_status');
+    if(status !== 'passed' && status !== 'failed'){
+      const doneCount = Object.keys(state.completed || {}).length;
+      if(doneCount >= MODULES.length){
+        SCORM_API.LMSSetValue('cmi.core.lesson_status', 'completed');
+      }
+    }
+    SCORM_API.LMSCommit('');
+    SCORM_API.LMSFinish('');
+  }catch(e){ console.warn('SCORM_finish error:', e); }
+  SCORM_INITIALIZED = false;
+}
+window.addEventListener('beforeunload', function(){ try{ SCORM_finish(); }catch(e){} });
+
+/* =========================================================
+   INIT
+   ========================================================= */
+function afterRenderHook(){
+  const id = state.current;
+  if(id===1) mountModule1Extras();
+  if(id===3) mountM3();
+  if(id===9) mountM9();
+  if(id===10) mountM10();
+}
+const originalRender = render;
+render = function(){
+  originalRender();
+  afterRenderHook();
+};
+
+// Intento inicial de conexión con el LMS. Si falla, reintenta una vez tras 800ms
+// (por si el reproductor SCORM del LMS aún no ha inyectado la API en ese instante).
+try{
+  const connected = SCORM_init();
+  if(!connected){
+    setTimeout(function(){
+      try{
+        const retryOk = SCORM_init();
+        if(!retryOk){
+          console.warn('SCORM API no encontrada tras reintento — modo local (sin LMS). Esto es normal si el archivo se abre fuera de Moodle (vista previa, doble clic, etc.).');
+        }
+      }catch(e){ console.warn('SCORM_init retry error:', e); }
+    }, 800);
+  }
+}catch(e){ console.warn('SCORM_init top-level error:', e); }
+renderNav();
+updateProgress();
+render();
+</script>
+</body>
+</html>
