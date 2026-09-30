@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación Diagnóstica · Formas Migratorias · TMLF</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0f2a4a; --navy2:#173a63; --blue:#1d5fa8; --blue-l:#e6effa;
+  --green:#1f8a4c; --green-l:#e3f4ea; --red:#c0392b; --red-l:#fbe9e7;
+  --amber:#b7791f; --amber-l:#fdf3e1; --gray:#5d6b7a; --gray-l:#eef1f5;
+  --ink:#1b2330; --bg:#d9dfe7; --card:#ffffff; --line:#d3dae3;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:17px;line-height:1.55;padding:28px 16px}
+.page{max-width:880px;margin:0 auto;background:var(--card);border-radius:14px;box-shadow:0 10px 40px rgba(15,42,74,.18);overflow:hidden;border:1px solid var(--line)}
+header{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:34px 40px}
+.kicker{font-size:13px;letter-spacing:.14em;text-transform:uppercase;opacity:.8;font-weight:600}
+h1{font-family:'Cormorant Garamond',serif;font-size:40px;line-height:1.1;margin:8px 0 6px}
+.sub{opacity:.88}
+main{padding:32px 40px 40px}
+.hidden{display:none!important}
+/* intro */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0}
+.stat{border:1px solid var(--line);border-radius:10px;padding:16px;text-align:center}
+.stat b{display:block;font-size:30px;color:var(--navy)}
+.stat span{font-size:14px;color:var(--gray)}
+.areas{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:18px 0 24px}
+@media (max-width:640px){.areas{grid-template-columns:1fr}}
+.area{display:flex;gap:12px;align-items:center;padding:12px 16px;border-radius:10px;border-left:5px solid}
+.area.A{background:var(--blue-l);border-color:var(--blue)}
+.area.B{background:var(--amber-l);border-color:var(--amber)}
+.area.C{background:var(--green-l);border-color:var(--green)}
+.area small{color:var(--gray)}
+.note{background:var(--gray-l);border-radius:10px;padding:14px 18px;font-size:15px;color:#3a4654}
+label.f{display:block;font-weight:600;margin:20px 0 6px}
+input[type=text]{width:100%;padding:12px 14px;font:inherit;border:1.5px solid var(--line);border-radius:8px}
+input[type=text]:focus{outline:none;border-color:var(--blue)}
+.btn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-weight:600;border:none;border-radius:8px;padding:12px 22px;cursor:pointer;background:var(--navy);color:#fff}
+.btn:hover{background:var(--blue)}
+.btn.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--line)}
+.btn.ghost:hover{border-color:var(--navy)}
+.btn.go{background:var(--green)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:26px;flex-wrap:wrap}
+/* quiz */
+.prog{height:8px;background:var(--gray-l);border-radius:99px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--blue);transition:width .3s}
+.meta{display:flex;justify-content:space-between;font-size:14px;color:var(--gray);margin:10px 0 18px}
+.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:99px;margin-bottom:12px}
+.tag.A{background:var(--blue-l);color:var(--blue)}
+.tag.B{background:var(--amber-l);color:var(--amber)}
+.tag.C{background:var(--green-l);color:var(--green)}
+.case{background:var(--gray-l);border-left:4px solid var(--green);padding:14px 18px;border-radius:8px;margin-bottom:14px;font-size:16px}
+.case b{color:var(--green)}
+.q{font-size:20px;font-weight:600;margin-bottom:18px}
+.opts{display:grid;gap:10px}
+.opt{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;background:#fff;text-align:left;font:inherit;color:inherit;width:100%}
+.opt:hover{border-color:var(--blue);background:#f7faff}
+.opt.sel{border-color:var(--blue);background:var(--blue-l)}
+.opt .l{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;background:var(--gray-l);color:var(--navy);font-size:15px}
+.opt.sel .l{background:var(--blue);color:#fff}
+.dots{display:flex;flex-wrap:wrap;gap:6px;margin-top:22px}
+.dot{width:30px;height:30px;border-radius:6px;border:1.5px solid var(--line);background:#fff;font:inherit;font-size:13px;cursor:pointer;color:var(--gray)}
+.dot.ans{background:var(--blue-l);border-color:var(--blue);color:var(--blue);font-weight:700}
+.dot.cur{outline:2px solid var(--navy);outline-offset:1px}
+/* results */
+.score{display:grid;grid-template-columns:200px 1fr;gap:26px;align-items:center;margin-bottom:26px}
+.ring{width:190px;height:190px;border-radius:50%;display:grid;place-items:center;position:relative}
+.ring .in{width:150px;height:150px;border-radius:50%;background:#fff;display:grid;place-items:center;text-align:center}
+.ring .in b{font-size:40px;display:block;line-height:1;color:var(--navy)}
+.ring .in span{font-size:14px;color:var(--gray)}
+.lvl{display:inline-block;font-weight:700;padding:6px 14px;border-radius:8px;font-size:15px;margin:6px 0 10px}
+.lvl.basico{background:var(--red-l);color:var(--red)}
+.lvl.inter{background:var(--amber-l);color:var(--amber)}
+.lvl.avanz{background:var(--green-l);color:var(--green)}
+h2{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--navy);margin:26px 0 12px}
+.bar{margin:12px 0}
+.bar .t{display:flex;justify-content:space-between;font-size:15px;font-weight:600;margin-bottom:5px}
+.bar .tr{height:12px;background:var(--gray-l);border-radius:99px;overflow:hidden}
+.bar .tr i{display:block;height:100%;border-radius:99px}
+.bar p{font-size:14px;color:var(--gray);margin-top:4px}
+.rev{border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:12px;border-left:5px solid}
+.rev.ok{border-left-color:var(--green)}
+.rev.no{border-left-color:var(--red)}
+.rev h4{font-size:16px;margin-bottom:8px}
+.rev .a{font-size:15px;margin:3px 0}
+.rev .a.ok{color:var(--green)}
+.rev .a.no{color:var(--red)}
+.rev .e{font-size:14.5px;background:var(--gray-l);border-radius:8px;padding:10px 12px;margin-top:8px;color:#3a4654}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.filters .btn{padding:8px 14px;font-size:14px}
+.filters .btn.on{background:var(--navy);color:#fff}
+footer{padding:16px 40px;font-size:13px;color:var(--gray);border-top:1px solid var(--line);background:#fafbfc}
+@media (max-width:640px){
+  body{padding:0}
+  .page{border-radius:0}
+  header,main,footer{padding-left:18px;padding-right:18px}
+  h1{font-size:31px}
+  .grid3{grid-template-columns:1fr}
+  .score{grid-template-columns:1fr;justify-items:center;text-align:center}
+  .q{font-size:18px}
+}
+@media print{
+  body{background:#fff;padding:0}
+  .page{box-shadow:none;border:none}
+  .noprint{display:none!important}
+  .rev{break-inside:avoid}
+}
+
+/* ===== Registro y vista de administrador ===== */
+header{position:relative}
+.adminBtn{position:absolute;z-index:2;top:18px;right:18px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.35);font:inherit;font-size:13px;font-weight:600;padding:7px 14px;border-radius:99px;cursor:pointer}
+@media (max-width:640px){.adminBtn{position:static;margin-bottom:12px}}
+.kicker{padding-right:0}
+@media (min-width:641px){header .kicker{padding-right:200px}}
+.adminBtn:hover{background:rgba(255,255,255,.22)}
+.adminBtn:focus-visible,.btn:focus-visible,.opt:focus-visible,.dot:focus-visible,.tab:focus-visible,.pRow:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.hint{font-size:13.5px;color:var(--gray);margin-top:6px}
+.hint.err{color:var(--red)}
+.saveNote{border-radius:10px;padding:12px 16px;font-size:14.5px;margin-bottom:22px}
+.saveNote.ok{background:var(--green-l);color:#175f36}
+.saveNote.no{background:var(--red-l);color:var(--red)}
+.saveNote.wait{background:var(--gray-l);color:var(--gray)}
+
+.page.wide{max-width:1180px}
+.tabs{display:flex;gap:6px;border-bottom:1.5px solid var(--line);margin-bottom:22px;flex-wrap:wrap}
+.tab{font:inherit;font-weight:600;font-size:15px;background:none;border:none;padding:10px 16px;cursor:pointer;color:var(--gray);border-bottom:3px solid transparent;margin-bottom:-1.5px}
+.tab.on{color:var(--navy);border-bottom-color:var(--navy)}
+.adminTop{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.adminTop h2{margin:0}
+.muted{color:var(--gray);font-size:14px}
+
+.split{display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start}
+.split>*{min-width:0}
+@media (max-width:860px){.split{grid-template-columns:1fr}}
+.plist{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.plist input{border:none;border-bottom:1px solid var(--line);border-radius:0;font-size:15px}
+.pScroll{max-height:620px;overflow-y:auto}
+.pRow{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;font:inherit;background:#fff;border:none;border-bottom:1px solid var(--gray-l);padding:12px 14px;cursor:pointer;color:inherit}
+.pRow:hover{background:#f7faff}
+.pRow.on{background:var(--blue-l)}
+.pRow b{display:block;font-size:15px}
+.pRow small{color:var(--gray);font-size:12.5px}
+.chip{flex:none;font-size:12.5px;font-weight:700;padding:3px 9px;border-radius:99px;font-variant-numeric:tabular-nums}
+.chip.basico{background:var(--red-l);color:var(--red)}
+.chip.inter{background:var(--amber-l);color:var(--amber)}
+.chip.avanz{background:var(--green-l);color:var(--green)}
+.empty{padding:28px 20px;text-align:center;color:var(--gray);font-size:15px}
+.attempts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.attempts .btn{padding:7px 12px;font-size:13.5px}
+.attempts .btn.on{background:var(--navy);color:#fff}
+.detail .score{margin-bottom:10px}
+.detail h2{font-size:24px;margin-top:20px}
+
+.filtersBar{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;background:var(--gray-l);border-radius:10px;padding:14px 16px;margin-bottom:20px}
+.filtersBar label{font-size:13px;font-weight:600;color:var(--gray);display:grid;gap:4px}
+.filtersBar input[type=date]{font:inherit;font-size:15px;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;background:#fff}
+.filtersBar .btn{padding:8px 12px;font-size:13.5px}
+.chk{display:flex!important;align-items:center;gap:8px;grid-auto-flow:column;font-size:14px!important;color:var(--ink)!important;padding-bottom:8px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:8px}
+@media (max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.kpi span{font-size:13px;color:var(--gray);font-weight:600}
+.kpi b{display:block;font-size:30px;color:var(--navy);font-variant-numeric:tabular-nums;line-height:1.2}
+.dist{display:flex;height:26px;border-radius:8px;overflow:hidden;margin:6px 0 8px;background:var(--gray-l)}
+.dist i{display:grid;place-items:center;font-style:normal;font-size:12.5px;font-weight:700;color:#fff;min-width:0}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13.5px;color:var(--gray)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;background:var(--c)}
+.tblWrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14.5px;font-variant-numeric:tabular-nums}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--gray-l);white-space:nowrap}
+th{background:#f6f8fb;font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--gray)}
+td.num,th.num{text-align:right}
+tr.click{cursor:pointer}
+tr.click:hover td{background:#f7faff}
+.qStat{display:grid;grid-template-columns:34px 1fr 150px;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--gray-l);font-size:14.5px}
+.qStat>*{min-width:0}
+.qStat .n{font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums}
+.qStat .mini{height:9px;background:var(--gray-l);border-radius:99px;overflow:hidden}
+.qStat .mini i{display:block;height:100%}
+.qStat .pc{font-size:13px;color:var(--gray);text-align:right;margin-top:3px;font-variant-numeric:tabular-nums}
+@media (max-width:640px){.qStat{grid-template-columns:28px 1fr}.qStat>div:last-child{grid-column:2}}
+.gate{max-width:420px;margin:10px auto 20px;text-align:center}
+.gate h2{margin-top:0}
+.gate form{display:flex;gap:10px;margin-top:16px}
+.gate input{flex:1;min-width:0;padding:12px 14px;font:inherit;border:1.5px solid var(--line);border-radius:8px;text-align:center;letter-spacing:.3em}
+.gate input:focus{outline:none;border-color:var(--blue)}
+@media print{.adminBtn,#admin{display:none!important}}
+/* ===== Tablero general ===== */
+.dashHead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.eyebrow{font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gray);font-weight:700}
+.dashRange{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:var(--navy);line-height:1.15}
+.hero{display:grid;grid-template-columns:230px 1fr;gap:30px;align-items:center;background:linear-gradient(135deg,#f3f6fa,#e9eff7);border-radius:14px;padding:26px 28px;margin-bottom:18px}
+.hero>*{min-width:0}
+.gauge{width:220px;height:220px;border-radius:50%;display:grid;place-items:center}
+.gauge .in{width:176px;height:176px;border-radius:50%;background:#fff;display:grid;place-content:center;text-align:center}
+.gauge .in b{font-size:56px;line-height:1;color:var(--navy);font-variant-numeric:tabular-nums}
+.gauge .in span{font-size:13.5px;color:var(--gray);margin-top:4px}
+.heroTxt p{font-size:17px;margin:4px 0 16px}
+.levelTiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.lt{background:#fff;border-radius:10px;padding:12px 14px;display:grid;grid-template-columns:auto 1fr;column-gap:10px;align-items:center}
+.lt i{grid-row:span 2;width:10px;height:42px;border-radius:4px}
+.lt b{font-size:28px;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums}
+.lt span{font-size:13px;color:var(--gray);line-height:1.35}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.cgrid>*{min-width:0}
+.card{border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px;background:#fff}
+.card h3{font-size:18px;color:var(--navy);margin-bottom:2px}
+.cap{font-size:13.5px;color:var(--gray);margin-bottom:10px}
+.chart{width:100%;height:auto;display:block;overflow:visible}
+.chart text{font-family:'DM Sans',system-ui,sans-serif}
+.chart .ax{font-size:12px;fill:var(--gray)}
+.chart .sub{font-size:11.5px;fill:var(--gray)}
+.chart .lab{font-size:14px;font-weight:600;fill:var(--ink)}
+.chart .val{font-size:13px;font-weight:700;fill:var(--ink)}
+.chart .zone{font-size:11.5px;font-weight:700;fill:var(--gray);letter-spacing:.06em;text-transform:uppercase}
+.chart .grid{stroke:var(--gray-l);stroke-width:1}
+.chart .thr{stroke:#b9c3cf;stroke-width:1;stroke-dasharray:3 4}
+.chart .sep{stroke:var(--line);stroke-width:1}
+.chart .base{stroke:#b9c3cf;stroke-width:1}
+.chart .track{fill:var(--gray-l)}
+.chart [data-tip]{cursor:default}
+.chart path[data-tip]:hover{opacity:.82}
+.scrollX{overflow-x:auto}
+.focus{display:grid;grid-template-columns:58px 1fr;gap:12px;align-items:start;padding:10px 0;border-bottom:1px solid var(--gray-l);font-size:14.5px}
+.focus:last-child{border-bottom:none}
+.focus>*{min-width:0}
+.fp{font-weight:700;font-size:16px;text-align:center;padding:6px 0;border-radius:8px;background:var(--gray-l);border-left:5px solid var(--c);font-variant-numeric:tabular-nums}
+.focus .ans{font-size:13.5px;color:var(--green);margin-top:4px}
+.tip{position:fixed;z-index:50;max-width:320px;background:var(--navy);color:#fff;font-size:13px;line-height:1.45;padding:8px 11px;border-radius:8px;pointer-events:none;box-shadow:0 6px 20px rgba(15,42,74,.25)}
+.presentOnly{display:none!important}
+body.present{padding:0;background:#fff}
+body.present .page{max-width:none;border-radius:0;box-shadow:none;border:none}
+body.present .adminOnly,body.present .tabs,body.present .filtersBar,body.present .adminTop,body.present .adminBtn,body.present footer{display:none!important}
+body.present .presentOnly{display:inline-flex!important}
+body.present main{padding:28px 48px}
+body.present .dashRange{font-size:40px}
+body.present .card h3{font-size:22px}
+body.present .cap{font-size:15px}
+@media (max-width:860px){.cgrid{grid-template-columns:1fr}.hero{grid-template-columns:1fr;justify-items:center;text-align:center}}
+@media (max-width:520px){.levelTiles{grid-template-columns:1fr}.gauge{width:180px;height:180px}.gauge .in{width:144px;height:144px}.gauge .in b{font-size:44px}}
+@media print{.card,.hero{break-inside:avoid}.tip{display:none}}
+</style>
+</head>
+<body>
+<div class="page" id="page">
+  <header>
+    <button class="adminBtn noprint" id="adminBtn">Vista de administrador</button>
+    <div class="kicker">TMLF Learning Center · Paralegales</div>
+    <h1 id="hTitle">Evaluación Diagnóstica<br>Formas Migratorias</h1>
+    <div class="sub" id="hSub">Identifica tu nivel de partida antes de la capacitación</div>
+  </header>
+
+  <main>
+    <!-- INTRO -->
+    <section id="intro">
+      <p>Esta evaluación <b>no es un examen aprobatorio</b>: sirve para conocer qué tanto dominas hoy los formularios de USCIS y en cuáles conviene reforzar. Responde con lo que sabes, sin consultar material.</p>
+      <div class="grid3">
+        <div class="stat"><b>25</b><span>preguntas</span></div>
+        <div class="stat"><b id="nTemas">5</b><span>áreas evaluadas</span></div>
+        <div class="stat"><b>~20</b><span>minutos</span></div>
+      </div>
+      <div class="areas" id="topicList"></div>
+      <div class="note">No verás si acertaste mientras respondes. Al final obtendrás tu puntaje, tu nivel por área y la revisión de cada pregunta con su explicación.</div>
+      <label class="f" for="nombre">Nombre completo del participante</label>
+      <input type="text" id="nombre" placeholder="Nombre(s) y apellido(s)" autocomplete="name">
+      <div class="hint" id="nameHint">Escribe tu nombre y al menos un apellido. Así se registrará tu resultado.</div>
+      <div class="row"><span></span><button class="btn" id="startBtn" disabled>Comenzar evaluación →</button></div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz" class="hidden">
+      <div class="prog"><i id="progBar"></i></div>
+      <div class="meta"><span id="qNum"></span><span id="answered"></span></div>
+      <div id="qBox"></div>
+      <div class="row">
+        <button class="btn ghost" id="prevBtn">← Anterior</button>
+        <button class="btn" id="nextBtn">Siguiente →</button>
+      </div>
+      <div class="dots" id="dots"></div>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="results" class="hidden">
+      <div class="saveNote wait" id="saveNote">Guardando tu resultado…</div>
+      <div class="score">
+        <div class="ring" id="ring"><div class="in"><div><b id="pct"></b><span id="frac"></span></div></div></div>
+        <div>
+          <div style="color:var(--gray);font-size:14px" id="who"></div>
+          <div class="lvl" id="lvl"></div>
+          <p id="lvlText"></p>
+        </div>
+      </div>
+
+      <h2>Resultado por área</h2>
+      <div id="areaBars"></div>
+
+      <h2>Revisión de respuestas</h2>
+      <div class="filters noprint" data-target="review">
+        <button class="btn ghost on" data-f="all">Todas</button>
+        <button class="btn ghost" data-f="no">Solo incorrectas</button>
+        <button class="btn ghost" data-f="ok">Solo correctas</button>
+      </div>
+      <div id="review"></div>
+
+      <div class="row noprint">
+        <button class="btn ghost" id="retryBtn">↺ Repetir evaluación</button>
+        <button class="btn go" onclick="window.print()">Imprimir / Guardar PDF</button>
+      </div>
+    </section>
+
+    <!-- ADMIN -->
+    <section id="admin" class="hidden">
+      <div id="adminGate" class="gate">
+        <h2>Acceso de administrador</h2>
+        <p class="muted">Ingresa el PIN del área de Capacitación para consultar los resultados.</p>
+        <form id="pinForm" autocomplete="off">
+          <input type="password" id="pinIn" inputmode="numeric" placeholder="PIN" aria-label="PIN de administrador">
+          <button class="btn" type="submit">Entrar</button>
+        </form>
+        <div class="hint" id="pinMsg"></div>
+        <button class="btn ghost" type="button" id="gateBack" style="margin-top:18px">← Volver a la evaluación</button>
+      </div>
+      <div id="adminBody" class="hidden">
+      <div class="adminTop">
+        <div>
+          <h2>Resultados de colaboradores</h2>
+          <div class="muted" id="adminCount">Cargando resultados…</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn ghost" id="reloadBtn">↻ Actualizar</button>
+          <button class="btn ghost" id="csvBtn">Exportar CSV</button>
+          <button class="btn ghost" id="closeAdmin">← Volver a la evaluación</button>
+        </div>
+      </div>
+      <div class="tabs" role="tablist">
+        <button class="tab on" data-tab="persona" role="tab">Por colaborador</button>
+        <button class="tab" data-tab="general" role="tab">General por fecha</button>
+      </div>
+
+      <!-- Vista por colaborador -->
+      <div id="tabPersona">
+        <div class="split">
+          <div class="plist">
+            <input type="text" id="pSearch" placeholder="Buscar colaborador">
+            <div class="pScroll" id="pList"></div>
+          </div>
+          <div class="detail" id="pDetail"><div class="empty">Selecciona un colaborador para ver su resultado y el detalle de sus respuestas.</div></div>
+        </div>
+      </div>
+
+      <!-- Vista general -->
+      <div id="tabGeneral" class="hidden">
+        <div class="filtersBar">
+          <label>Desde<input type="date" id="dFrom"></label>
+          <label>Hasta<input type="date" id="dTo"></label>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn ghost" data-preset="hoy">Hoy</button>
+            <button class="btn ghost" data-preset="7">Últimos 7 días</button>
+            <button class="btn ghost" data-preset="mes">Este mes</button>
+            <button class="btn ghost" data-preset="todo">Todo</button>
+          </div>
+          <label class="chk"><input type="checkbox" id="firstOnly" checked> Solo el primer intento de cada colaborador</label>
+        </div>
+        <div id="genBody"></div>
+      </div>
+      </div>
+    </section>
+  </main>
+  <footer>TMLF Learning Center · Evaluación diagnóstica de Formas Migratorias · Material de uso interno. Verifica siempre la edición vigente de cada formulario en uscis.gov/forms.</footer>
+</div>
+<script>
+const AREAS={
+  A:{n:'Identificación de formularios',d:'Para qué sirve cada forma',c:'#1d5fa8',bg:'#e6effa'},
+  B:{n:'Presentación y Properly Filed',d:'Ediciones y firmas',c:'#b7791f',bg:'#fdf3e1'},
+  C:{n:'VAWA, Visa T y Visa U',d:'Beneficios humanitarios',c:'#be185d',bg:'#fce7f1'},
+  D:{n:'Ajuste, PIP y residencia',d:'REG AOS, PIP, N-400, I-751',c:'#6b46c1',bg:'#efe9fb'},
+  E:{n:'Casos prácticos',d:'Aplicación en situaciones reales',c:'#1f8a4c',bg:'#e3f4ea'}
+};
+const Q=[
+ {a:'A',q:'¿Qué formulario se utiliza para solicitar la autorización de empleo (permiso de trabajo / EAD)?',
+  o:['I-131','I-765','I-485','I-821'],c:1,
+  e:'La I-765 (Application for Employment Authorization) solicita el permiso de trabajo. La I-131 es para documentos de viaje y parole, la I-485 para ajuste de estatus y la I-821 para TPS.'},
+ {a:'A',q:'¿Cuál es el propósito principal de la I-130 (Petition for Alien Relative)?',
+  o:['Solicitar la residencia permanente del familiar dentro de EE.UU.','Demostrar que el peticionario tiene ingresos suficientes para patrocinar','Solicitar un perdón por presencia ilegal del familiar','Establecer la relación familiar entre peticionario y beneficiario'],c:3,
+  e:'La I-130 acredita que existe una relación familiar calificada entre el peticionario (ciudadano o residente) y el beneficiario. La residencia se pide con la I-485 (o por trámite consular) y los ingresos se demuestran con la I-864.'},
+ {a:'A',q:'¿Cuál de estas NO es una función de la Forma I-131?',
+  o:['Solicitar Advance Parole para poder viajar','Solicitar un permiso de reingreso (reentry permit)','Solicitar el permiso de trabajo (EAD) del cliente','Solicitar parole in place o parole humanitario'],c:2,
+  e:'La I-131 (Application for Travel Documents, Parole Documents and Arrival/Departure Records) se usa para Advance Parole, permiso de reingreso, documento de viaje de refugiado y solicitudes de parole (incluido PIP). El permiso de trabajo se pide con la I-765.'},
+ {a:'A',q:'¿Qué demuestra el Formulario I-864 (Affidavit of Support)?',
+  o:['Que el beneficiario no tiene antecedentes penales en su país de origen','Que el matrimonio entre las partes es real y de buena fe','Que el patrocinador puede sostener económicamente al inmigrante','Que el beneficiario tiene una oferta de trabajo en EE.UU.'],c:2,
+  e:'Con la I-864 el patrocinador se compromete y demuestra que tiene los medios para sostener económicamente al inmigrante (por lo general, al menos 125% de las pautas federales de pobreza).'},
+ {a:'A',q:'¿Para qué sirve el Formulario G-28?',
+  o:['Registrar la representación legal del abogado ante USCIS','Recibir avisos de aceptación del caso por correo electrónico','Solicitar copia del expediente migratorio del cliente','Notificar a USCIS un cambio de dirección del cliente'],c:0,
+  e:'El G-28 (Notice of Entry of Appearance as Attorney) informa a USCIS que un abogado representa al cliente. Los avisos electrónicos son el G-1145, la copia del expediente es FOIA (G-639) y el cambio de dirección es AR-11.'},
+ {a:'A',q:'¿Cuál es la función del Formulario G-1145?',
+  o:['Autorizar al abogado a actuar en nombre del cliente','Solicitar una exención de la tarifa de USCIS','Solicitar el procesamiento acelerado del caso','Recibir aviso electrónico de aceptación del caso'],c:3,
+  e:'El G-1145 (e-Notification of Application/Petition Acceptance) pide que USCIS avise por correo electrónico o mensaje de texto cuando acepta el paquete. Se coloca al frente de cada solicitud.'},
+ {a:'A',q:'¿Qué formulario se usa para solicitar la ciudadanía por naturalización?',
+  o:['N-600','I-90','N-400','I-751'],c:2,
+  e:'La N-400 es la solicitud de naturalización. La N-600 pide un certificado de ciudadanía (para quien ya es ciudadano, p. ej. por padres), la I-90 reemplaza la green card y la I-751 remueve condiciones.'},
+ {a:'A',q:'Un residente permanente perdió su green card. ¿Qué formulario presenta para reemplazarla?',
+  o:['I-751','I-485','I-131','I-90'],c:3,
+  e:'La I-90 (Application to Replace Permanent Resident Card) se usa para reemplazar o renovar la tarjeta de residente permanente (de 10 años). La I-751 es para residentes condicionales.'},
+ {a:'A',q:'Cuando se presenta una I-130 para un cónyuge, ¿qué formulario adicional debe acompañarla?',
+  o:['I-129F','I-864A','I-130A','I-751'],c:2,
+  e:'La I-130A (Supplemental Information for Spouse Beneficiary) se incluye cuando el beneficiario es cónyuge. La I-129F es la petición de visa de prometido(a) y la I-864A es el contrato de un miembro del hogar del patrocinador.'},
+
+ {a:'B',tf:true,q:'Verdadero o falso: si toda la información es correcta, USCIS acepta cualquier edición anterior de un formulario.',
+  o:['Verdadero','Falso'],c:1,
+  e:'Falso. Se debe usar la edición que USCIS acepta en ese momento (Edition Date al pie de cada página). Una edición no aceptada puede causar el rechazo del paquete. Revisa uscis.gov/forms antes de imprimir.'},
+ {a:'B',q:'¿Quién puede firmar la sección del solicitante en un formulario de USCIS?',
+  o:['El paralegal, si el cliente lo autorizó por teléfono','El solicitante (o su padre/tutor cuando aplica)','El abogado, porque ya presentó el formulario G-28','Cualquier familiar del cliente que sea mayor de edad'],c:1,
+  e:'La firma del solicitante solo la hace el propio solicitante; en casos específicos (menores o personas incapacitadas) firma el padre o tutor legal. Ni el paralegal ni el abogado firman por el cliente.'},
+ {a:'B',tf:true,q:'Verdadero o falso: el Formulario G-28 debe llevar la firma tanto del cliente como del abogado.',
+  o:['Verdadero','Falso'],c:0,
+  e:'Verdadero. El G-28 tiene una sección de consentimiento que firma el cliente y otra que firma el abogado. Si falta alguna, la representación puede no reconocerse.'},
+
+ {a:'C',q:'En VAWA, ¿cuál es la diferencia entre el AOS y la acción diferida (DA)?',
+  o:['La DA otorga la residencia; el AOS solo da el permiso de trabajo','Ambas son lo mismo; solo cambia el formulario que se presenta a USCIS','La DA protege temporalmente; el AOS es la solicitud de residencia','El AOS se pide antes de la I-360; la DA se pide después del AOS'],c:2,
+  e:'Con la aprobación de la I-360 de VAWA se otorga acción diferida: protección temporal contra la deportación y posibilidad de pedir permiso de trabajo, pero no es residencia. El AOS (I-485) es la solicitud de residencia, que se presenta cuando hay visa disponible (de inmediato si el abusador es ciudadano y la víctima es familiar inmediato).'},
+ {a:'C',q:'¿Cuál es la diferencia principal entre el Suplemento B de la Visa T (I-914) y el de la Visa U (I-918)?',
+  o:['En T es obligatorio; en U es opcional para la solicitud','En T es opcional; en U es obligatorio para la solicitud','Ambos son obligatorios y los firma la propia víctima','Ambos son opcionales y solo se usan para derivados'],c:1,
+  e:'En la Visa T, el Suplemento B (declaración de la autoridad) es evidencia opcional. En la Visa U, el Suplemento B (certificación firmada por la agencia certificadora) es obligatorio. Los derivados se incluyen con el Suplemento A.'},
+ {a:'C',q:'¿Cuál de estos es un requisito de la Visa T?',
+  o:['Haber sido víctima de cualquier delito en EE.UU.','Tener un familiar ciudadano que la patrocine','Estar en EE.UU. a causa de la trata de personas','Presentar el Suplemento B firmado, obligatorio'],c:2,
+  e:'La Visa T (I-914) requiere haber sido víctima de una forma grave de trata, estar en EE.UU. a causa de esa trata, cooperar con solicitudes razonables de las autoridades (salvo excepciones) y sufrir un daño extremo si es removida. "Cualquier delito" corresponde más a la lógica de la Visa U.'},
+
+ {a:'D',q:'Para un ajuste de estatus "regular" (REG AOS) dentro de EE.UU., el beneficiario normalmente debe haber:',
+  o:['Vivido en EE.UU. al menos 10 años continuos','Entrado con inspección y admisión o parole','Entrado sin inspección y tener hijos ciudadanos','Tenido un permiso de trabajo vigente al aplicar'],c:1,
+  e:'La regla general (INA 245(a)) exige que la persona haya sido inspeccionada y admitida o recibido parole. Por eso es clave revisar entradas y salidas y el I-94 del cliente.'},
+ {a:'D',q:'¿Qué es el Parole in Place (PIP) militar?',
+  o:['Parole dentro de EE.UU. para familiares de militares sin entrada inspeccionada','Un permiso de viaje para los familiares de militares que viven fuera de EE.UU.','Una visa especial tramitada en el consulado para los familiares de militares','Un perdón automático de todas las causales de inadmisibilidad del familiar'],c:0,
+  e:'El PIP militar permite que ciertos familiares (cónyuge, padres e hijos) de militares activos, reservistas o veteranos, que están en EE.UU. sin haber sido inspeccionados, reciban parole sin salir del país. Se solicita con la I-131.'},
+ {a:'D',q:'¿Por qué un PIP aprobado permite después solicitar el ajuste de estatus (PIP AOS)?',
+  o:['Porque el PIP otorga la residencia de forma automática','Porque la persona queda "paroled", requisito del 245(a)','Porque el PIP elimina la necesidad de la petición I-130','Porque el PIP convierte la entrada en una visa de turista'],c:1,
+  e:'Con el PIP la persona cuenta como "paroled", lo que cumple el requisito de entrada de INA 245(a). El PIP no da la residencia ni sustituye la I-130; el ajuste se solicita por separado e incluye la aprobación del PIP y el I-94 como evidencia.'},
+ {a:'D',q:'Por regla general, ¿cuánto tiempo como residente permanente se necesita para solicitar la N-400?',
+  o:['3 años como residente, en todos los casos','5 años como residente permanente','10 años de presencia en EE.UU.','2 años desde la I-751 aprobada'],c:1,
+  e:'La regla general es 5 años como residente permanente. La regla de 3 años aplica a quien ha estado casado y viviendo con un ciudadano durante ese tiempo. En ambos casos puede presentarse hasta 90 días antes de cumplir el plazo.'},
+ {a:'D',caso:'<b>Laura</b>, residente condicional por matrimonio, se divorció antes de presentar su I-751.',
+  q:'¿Qué es lo correcto?',
+  o:['Pierde la residencia sin ninguna otra opción','Debe presentar una I-90 para renovar','Debe empezar de nuevo con una I-130','Puede presentarla sola pidiendo un waiver'],c:3,
+  e:'La regla general es la petición conjunta de ambos cónyuges. Si ya no es posible (por ejemplo, por divorcio), la I-751 se presenta de forma individual solicitando una exención (waiver), demostrando que el matrimonio fue de buena fe.'},
+
+ {a:'E',caso:'<b>María</b> es ciudadana estadounidense. Su esposo <b>José</b>, de Guatemala, entró con visa de turista (fue inspeccionado y admitido) y sigue viviendo en EE.UU.',
+  q:'¿Cuáles son los formularios básicos del paquete?',
+  o:['I-129F, I-485, I-864 e I-765','I-130, I-601, I-212 e I-864','I-751, I-130A, I-485 e I-864','I-130, I-130A, I-485 e I-864'],c:3,
+  e:'Para el cónyuge de un ciudadano que fue admitido se presentan juntas I-130 + I-130A + I-485 + I-864 (y opcionalmente I-765 e I-131). Nota: todo paquete con I-485 debe llevar el I-693 como parte de las evidencias.'},
+ {a:'E',caso:'<b>Carlos</b>, de México, obtuvo la residencia por matrimonio y recibió una tarjeta de 2 años (residencia condicional). La tarjeta está por vencer.',
+  q:'¿Qué formulario debe presentarse para remover las condiciones de su residencia?',
+  o:['I-90','I-485','I-751','N-400'],c:2,
+  e:'La I-751 (Petition to Remove Conditions on Residence) se presenta dentro de los 90 días antes de que venza la tarjeta condicional. La I-90 no aplica a tarjetas de 2 años por matrimonio.'},
+ {a:'E',caso:'<b>Rosa</b>, de Honduras, tiene una I-485 pendiente y necesita viajar a su país por una emergencia familiar.',
+  q:'¿Qué es lo correcto?',
+  o:['Puede viajar; la I-485 pendiente le permite regresar a EE.UU.','Debe tener Advance Parole (I-131) aprobado antes de salir','Solo necesita llevar el recibo I-797 de su I-485','Debe presentar una nueva I-485 al regresar a EE.UU.'],c:1,
+  e:'Salir de EE.UU. sin Advance Parole aprobado generalmente hace que la I-485 se considere abandonada. Cualquier viaje con un ajuste pendiente se consulta primero con el attorney.'},
+ {a:'E',caso:'Al hacer la revisión final del paquete de <b>Ana</b> antes de enviarlo, notas que firmó todas las formas excepto la I-765.',
+  q:'¿Qué haces?',
+  o:['Lo envías así; USCIS pedirá la firma en una RFE','Firmas tú en su nombre para no retrasar el caso','Quitas la I-765 del paquete y la envías sola más adelante','Detienes el envío y gestionas que la clienta firme'],c:3,
+  e:'Una forma sin firma se rechaza, no genera RFE. Nadie puede firmar por la clienta. Lo correcto es detener el envío, obtener la firma (igual a la de su identificación) y dejar registro en el CRM.'},
+ {a:'E',caso:'El acta de nacimiento de <b>Luis</b>, de El Salvador, está en español y se incluirá como evidencia.',
+  q:'¿Qué debe incluir el paquete?',
+  o:['Acta de nacimiento y un resumen en inglés de los datos principales del acta','Traducción completa y certificado de traducción, sin el acta','Acta de nacimiento, traducción completa y certificado de traducción','Acta de nacimiento y traducción completa, sin ningún certificado'],c:2,
+  e:'Todo documento en idioma extranjero se envía con: copia del documento, su traducción completa al inglés y el certificado de traducción (el traductor declara que es competente y que la traducción es exacta). Un resumen no es suficiente.'}
+];
+const L='ABCD';
+document.getElementById('topicList').innerHTML=Object.keys(AREAS).map(k=>{const A=AREAS[k],n=Q.filter(x=>x.a===k).length;return `<div class="area" style="background:${A.bg};border-color:${A.c}"><div><b>${A.n}</b> · ${A.d}<br><small>${n} pregunta${n>1?'s':''}</small></div></div>`}).join('');
+let cur=0, ans=new Array(Q.length).fill(null), nombre='';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ---------- Nombre completo obligatorio ---------- */
+function normName(s){return s.replace(/\s+/g,' ').trim()}
+function nameOk(s){const p=normName(s).split(' ').filter(w=>w.replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g,'').length>=2);return p.length>=2}
+$('nombre').addEventListener('input',e=>{
+  const v=e.target.value, ok=nameOk(v);
+  $('startBtn').disabled=!ok;
+  $('nameHint').className='hint'+(v.trim()&&!ok?' err':'');
+  $('nameHint').textContent=v.trim()&&!ok?'Falta tu apellido: escribe tu nombre completo.':'Escribe tu nombre y al menos un apellido. Así se registrará tu resultado.';
+});
+$('startBtn').onclick=()=>{nombre=normName($('nombre').value).split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');$('intro').classList.add('hidden');$('quiz').classList.remove('hidden');render();window.scrollTo(0,0)};
+
+function render(){
+  const x=Q[cur];
+  const done=ans.filter(v=>v!==null).length;
+  $('progBar').style.width=(done/Q.length*100)+'%';
+  $('qNum').textContent=`Pregunta ${cur+1} de ${Q.length}`;
+  $('answered').textContent=`${done} respondidas`;
+  const A=AREAS[x.a];let h=`<span class="tag" style="background:${A.bg};color:${A.c}">${A.n} · ${A.d}</span>`;
+  if(x.caso) h+=`<div class="case">${x.caso}</div>`;
+  h+=`<div class="q">${x.q}</div><div class="opts">`;
+  x.o.forEach((o,i)=>{h+=`<button class="opt ${ans[cur]===i?'sel':''}" data-i="${i}"><span class="l">${x.tf?(i?'F':'V'):L[i]}</span><span>${o}</span></button>`});
+  h+='</div>';
+  $('qBox').innerHTML=h;
+  document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{ans[cur]=+b.dataset.i;render()});
+  $('prevBtn').disabled=cur===0;
+  const last=cur===Q.length-1;
+  $('nextBtn').textContent=last?'Finalizar evaluación ✓':'Siguiente →';
+  $('nextBtn').className='btn'+(last?' go':'');
+  $('dots').innerHTML=Q.map((_,i)=>`<button class="dot ${ans[i]!==null?'ans':''} ${i===cur?'cur':''}" data-i="${i}">${i+1}</button>`).join('');
+  document.querySelectorAll('.dot').forEach(d=>d.onclick=()=>{cur=+d.dataset.i;render()});
+}
+$('prevBtn').onclick=()=>{if(cur>0){cur--;render()}};
+$('nextBtn').onclick=()=>{
+  if(cur<Q.length-1){cur++;render();return}
+  const faltan=ans.map((v,i)=>v===null?i+1:null).filter(Boolean);
+  if(faltan.length){
+    const ok=confirmBox(`Te faltan ${faltan.length} pregunta(s): ${faltan.join(', ')}.`);
+    if(!ok) return;
+  }
+  finish();
+};
+function confirmBox(msg){
+  let n=document.getElementById('warn');
+  if(n && n.dataset.shown==='1'){n.remove();return true}
+  if(!n){n=document.createElement('div');n.id='warn';n.className='note';n.style.cssText='margin-top:16px;border-left:4px solid var(--red);background:var(--red-l)';$('quiz').appendChild(n)}
+  n.innerHTML=msg+' Puedes volver a ellas con los números de abajo, o presiona <b>Finalizar</b> otra vez para entregar así (cuentan como incorrectas).';
+  n.dataset.shown='1';
+  return false;
+}
+
+function level(p){
+  if(p>=80) return ['avanz','Nivel avanzado'];
+  if(p>=50) return ['inter','Nivel intermedio'];
+  return ['basico','Nivel básico'];
+}
+const REC={
+  A:'el catálogo de formularios: qué solicita cada forma y cuándo se usa.',
+  B:'reglas de Properly Filed: edición vigente y firmas.',
+  C:'diferencias entre VAWA AOS y acción diferida, y requisitos de Visas T y U.',
+  D:'requisitos de entrada para AOS, PIP, tiempos de N-400 y waivers de I-751.',
+  E:'armado de paquetes y toma de decisiones en casos reales.'
+};
+const LVL_TEXT={
+  avanz:'Tienes un buen dominio general de los formularios. El training te servirá para afinar detalles y casos especiales.',
+  inter:'Conoces lo esencial, pero hay áreas que conviene reforzar. Revisa abajo en cuáles tuviste más errores.',
+  basico:'Es un buen punto de partida: el training cubrirá desde lo fundamental. Pon especial atención a las áreas marcadas en rojo.'
+};
+const lvlColor=c=>c==='avanz'?'var(--green)':c==='inter'?'var(--amber)':'var(--red)';
+
+/* Cálculos reutilizables (colaborador y administrador) */
+function scoreOf(a){
+  const ok=Q.map((x,i)=>a[i]===x.c);
+  const tot=ok.filter(Boolean).length, p=Math.round(tot/Q.length*100);
+  const areas={};
+  Object.keys(AREAS).forEach(k=>{
+    const idx=Q.map((x,i)=>x.a===k?i:-1).filter(i=>i>=0);
+    const g=idx.filter(i=>ok[i]).length;
+    areas[k]={g,n:idx.length,p:Math.round(g/idx.length*100)};
+  });
+  return {ok,tot,p,areas};
+}
+function barsHTML(S){
+  return Object.keys(AREAS).map(k=>{
+    const {g,n,p:ap}=S.areas[k], [lc]=level(ap);
+    return `<div class="bar"><div class="t"><span>${AREAS[k].n} · ${AREAS[k].d}</span><span>${g}/${n} · ${ap}%</span></div><div class="tr"><i style="width:${ap}%;background:${lvlColor(lc)}"></i></div><p>${lc==='avanz'?'Buen dominio del tema.':'Reforzar: '+REC[k]}</p></div>`;
+  }).join('');
+}
+function reviewHTML(a,S,quien){
+  const pref=quien||'Tu respuesta';
+  return Q.map((x,i)=>{
+    const lab=j=>x.tf?(j?'F':'V'):L[j];
+    const r=a[i];
+    return `<div class="rev ${S.ok[i]?'ok':'no'}" data-s="${S.ok[i]?'ok':'no'}">
+      <h4>${i+1}. ${x.caso?x.caso.replace(/<[^>]+>/g,'')+' ':''}${x.q}</h4>
+      ${S.ok[i]?`<div class="a ok">✓ ${pref}: ${lab(r)}) ${x.o[r]}</div>`:
+        `<div class="a no">✗ ${pref}: ${r===null||r===undefined?'Sin responder':lab(r)+') '+x.o[r]}</div><div class="a ok">✓ Correcta: ${lab(x.c)}) ${x.o[x.c]}</div>`}
+      <div class="e">${x.e}</div></div>`;
+  }).join('');
+}
+function fmtDate(iso,withTime){
+  const d=new Date(iso);
+  return withTime?d.toLocaleString('es-MX',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})
+                 :d.toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
+}
+function dayKey(iso){const d=new Date(iso);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+
+function finish(){
+  const w=document.getElementById('warn'); if(w) w.remove();
+  $('quiz').classList.add('hidden');$('results').classList.remove('hidden');window.scrollTo(0,0);
+  const S=scoreOf(ans);
+  const [cls,txt]=level(S.p);
+  $('ring').style.background=`conic-gradient(${lvlColor(cls)} ${S.p*3.6}deg, var(--gray-l) 0)`;
+  $('pct').textContent=S.p+'%';
+  $('frac').textContent=`${S.tot} de ${Q.length} correctas`;
+  const now=new Date().toISOString();
+  $('who').textContent=`${nombre} · ${fmtDate(now)}`;
+  $('lvl').className='lvl '+cls;$('lvl').textContent=txt;
+  $('lvlText').textContent=LVL_TEXT[cls];
+  $('areaBars').innerHTML=barsHTML(S);
+  $('review').innerHTML=reviewHTML(ans,S);
+  resetFilters($('results'));
+  saveAttempt({id:'i'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),nombre,fecha:now,ans:ans.slice(),tot:S.tot,p:S.p});
+}
+
+/* Filtros de revisión (resultados y detalle del administrador) */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.filters .btn'); if(!b) return;
+  const bar=b.parentElement, scope=bar.parentElement;
+  bar.querySelectorAll('.btn').forEach(z=>z.classList.remove('on'));b.classList.add('on');
+  const f=b.dataset.f;
+  scope.querySelectorAll('.rev').forEach(r=>r.style.display=(f==='all'||r.dataset.s===f)?'':'none');
+});
+function resetFilters(scope){scope.querySelectorAll('.filters .btn').forEach((z,i)=>z.classList.toggle('on',i===0))}
+$('retryBtn').onclick=()=>{ans.fill(null);cur=0;$('results').classList.add('hidden');$('quiz').classList.remove('hidden');render();window.scrollTo(0,0)};
+
+/* ================= Conexión con Google Sheets (Apps Script) ================= */
+// Pega aquí la URL de la aplicación web de Apps Script (termina en /exec)
+const API_URL = 'https://script.google.com/macros/s/AKfycbysWtjQ6Nm0iBG7cAeV2PqOQ7RA0Qwalh_iKoHEZJ5-4yYjUhaNXZl7lRJhMF1GjNBv/exec';
+const API_OK = /^https:\/\/script\.google(usercontent)?\.com\//.test(API_URL);
+const PENDING_KEY = 'tmlf_diag_formas_pendientes';
+
+function jsonp(params,timeout){
+  return new Promise((res,rej)=>{
+    const cb='__tmlf_cb_'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+    const s=document.createElement('script');
+    const t=setTimeout(()=>{cleanup();rej(new Error('timeout'))},timeout||20000);
+    function cleanup(){clearTimeout(t);delete window[cb];s.remove()}
+    window[cb]=d=>{cleanup();res(d)};
+    s.onerror=()=>{cleanup();rej(new Error('network'))};
+    s.src=API_URL+'?'+new URLSearchParams({...params,callback:cb,_:Date.now()}).toString();
+    document.head.appendChild(s);
+  });
+}
+function pendList(){try{return JSON.parse(localStorage.getItem(PENDING_KEY)||'[]')}catch(_){return []}}
+function pendSet(a){try{localStorage.setItem(PENDING_KEY,JSON.stringify(a))}catch(_){}}
+
+function payload(att){
+  const S=scoreOf(att.ans);
+  return {...att,nivel:level(S.p)[1],
+    areas:Object.fromEntries(Object.keys(AREAS).map(k=>[k,S.areas[k].p])),
+    letras:Q.map((x,j)=>att.ans[j]==null?'Sin responder':(x.tf?(att.ans[j]?'F':'V'):L[att.ans[j]])+(S.ok[j]?' ✓':' ✗'))};
+}
+async function postAttempt(att){
+  await fetch(API_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload(att))});
+  // no-cors no deja leer la respuesta: se confirma consultando si el ID ya existe en la hoja
+  for(let i=0;i<4;i++){
+    await new Promise(r=>setTimeout(r,1500+i*1500));
+    try{const r=await jsonp({action:'check',id:att.id},15000); if(r&&r.saved) return true}catch(_){}
+  }
+  return false;
+}
+async function saveAttempt(att){
+  const note=$('saveNote');
+  if(!API_OK){showSaveError('Esta evaluación todavía no está conectada al registro de resultados. Avisa al área de Capacitación.');return}
+  note.className='saveNote wait';note.textContent='Guardando tu resultado…';
+  const pend=pendList(); if(!pend.some(a=>a.id===att.id)){pend.push(att);pendSet(pend)}
+  let ok=false;
+  try{ok=await postAttempt(att)}catch(_){}
+  if(ok){
+    pendSet(pendList().filter(a=>a.id!==att.id));
+    note.className='saveNote ok';
+    note.textContent='Tu resultado quedó registrado. El área de Capacitación podrá consultarlo.';
+  }else{
+    showSaveError('No se pudo confirmar el registro de tu resultado (revisa tu conexión). Se reintentará automáticamente la próxima vez que abras esta evaluación en este equipo; si el problema continúa, avisa a Capacitación.');
+  }
+}
+function showSaveError(msg){const n=$('saveNote');n.className='saveNote no';n.textContent=msg}
+// Reintento de envíos pendientes al abrir la página
+(async()=>{
+  if(!API_OK) return;
+  for(const att of pendList()){
+    try{if(await postAttempt(att)) pendSet(pendList().filter(a=>a.id!==att.id))}catch(_){}
+  }
+})();
+
+/* ================= Vista de administrador ================= */
+let PEOPLE=[], selUid=null, selAtt=null, lastView='intro', PIN=null;
+const nameKey=s=>String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').trim();
+
+function buildPeople(rows){
+  const map={};
+  rows.forEach(r=>{
+    if(!r||!r.id||!Array.isArray(r.ans)) return;
+    const k=nameKey(r.nombre);
+    (map[k]=map[k]||{uid:k,nombre:r.nombre,intentos:[]}).intentos.push({id:r.id,fecha:r.fecha,ans:r.ans,p:scoreOf(r.ans).p});
+  });
+  PEOPLE=Object.values(map).map(p=>{p.intentos.sort((a,b)=>a.fecha<b.fecha?-1:1);p.nombre=p.intentos.length?p.nombre:p.nombre;return p})
+    .sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
+}
+async function loadAdmin(){
+  $('adminCount').textContent='Cargando resultados…';$('reloadBtn').disabled=true;
+  try{
+    const r=await jsonp({action:'list',pin:PIN},30000);
+    if(!r||!r.ok){
+      if(r&&r.error==='pin'){PIN=null;showGate('PIN incorrecto. Intenta de nuevo.');return}
+      throw new Error(r&&r.error);
+    }
+    buildPeople(r.rows||[]);
+    $('adminCount').dataset.sync=new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+    renderAdmin();
+  }catch(_){
+    $('adminCount').textContent='No se pudieron cargar los resultados. Revisa tu conexión y presiona Actualizar.';
+  }finally{$('reloadBtn').disabled=false}
+}
+function showGate(msg){
+  $('adminGate').classList.remove('hidden');$('adminBody').classList.add('hidden');
+  $('pinMsg').textContent=msg||'';$('pinMsg').className='hint'+(msg?' err':'');
+  $('pinIn').value='';setTimeout(()=>$('pinIn').focus(),50);
+}
+$('pinForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const v=$('pinIn').value.trim(); if(!v) return;
+  if(!API_OK){$('pinMsg').className='hint err';$('pinMsg').textContent='Falta pegar la URL de Apps Script en el código (const API_URL).';return}
+  PIN=v;$('adminGate').classList.add('hidden');$('adminBody').classList.remove('hidden');loadAdmin();
+});
+$('reloadBtn').onclick=loadAdmin;
+
+$('adminBtn').onclick=()=>{
+  lastView=['intro','quiz','results'].find(id=>!$(id).classList.contains('hidden'))||'intro';
+  ['intro','quiz','results'].forEach(id=>$(id).classList.add('hidden'));
+  $('admin').classList.remove('hidden');$('page').classList.add('wide');
+  $('adminBtn').hidden=true;
+  $('hTitle').innerHTML='Evaluación Diagnóstica<br>Panel de resultados';
+  $('hSub').textContent='Formas Migratorias · vista de administrador';
+  if(PIN){$('adminGate').classList.add('hidden');$('adminBody').classList.remove('hidden');loadAdmin()}else showGate();
+  window.scrollTo(0,0);
+};
+$('closeAdmin').onclick=()=>{
+  $('admin').classList.add('hidden');$('page').classList.remove('wide');
+  $(lastView).classList.remove('hidden');$('adminBtn').hidden=false;
+  $('hTitle').innerHTML='Evaluación Diagnóstica<br>Formas Migratorias';
+  $('hSub').textContent='Identifica tu nivel de partida antes de la capacitación';
+  window.scrollTo(0,0);
+};
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(z=>z.classList.toggle('on',z===t));
+  $('tabPersona').classList.toggle('hidden',t.dataset.tab!=='persona');
+  $('tabGeneral').classList.toggle('hidden',t.dataset.tab!=='general');
+});
+
+function renderAdmin(){
+  if($('admin').classList.contains('hidden')) return;
+  const nAtt=PEOPLE.reduce((s,p)=>s+p.intentos.length,0);
+  const sync=$('adminCount').dataset.sync?` · actualizado ${$('adminCount').dataset.sync}`:'';
+  $('adminCount').textContent=(PEOPLE.length?`${PEOPLE.length} colaborador${PEOPLE.length>1?'es':''} · ${nAtt} evaluaci${nAtt>1?'ones':'ón'} registrada${nAtt>1?'s':''}`:'Aún no hay evaluaciones registradas.')+sync;
+  renderList();renderDetail();renderGeneral();
+}
+
+/* ---- Por colaborador ---- */
+$('pSearch').addEventListener('input',renderList);
+function renderList(){
+  const q=$('pSearch').value.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  const list=PEOPLE.filter(p=>p.nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').includes(q));
+  if(!PEOPLE.length){$('pList').innerHTML='<div class="empty">Cuando un colaborador termine la evaluación, aparecerá aquí con su nombre.</div>';return}
+  if(!list.length){$('pList').innerHTML='<div class="empty">Ningún nombre coincide con la búsqueda.</div>';return}
+  $('pList').innerHTML=list.map(p=>{
+    const last=p.intentos[p.intentos.length-1],[c]=level(last.p);
+    return `<button class="pRow ${p.uid===selUid?'on':''}" data-u="${esc(p.uid)}"><div><b>${esc(p.nombre)}</b><small>${fmtDate(last.fecha)} · ${p.intentos.length} intento${p.intentos.length>1?'s':''}</small></div><span class="chip ${c}">${last.p}%</span></button>`;
+  }).join('');
+  $('pList').querySelectorAll('.pRow').forEach(b=>b.onclick=()=>{selUid=b.dataset.u;selAtt=null;renderList();renderDetail();if(window.innerWidth<860)$('pDetail').scrollIntoView({behavior:'smooth'})});
+}
+function renderDetail(){
+  const p=PEOPLE.find(x=>x.uid===selUid);
+  if(!p){$('pDetail').innerHTML='<div class="empty">Selecciona un colaborador para ver su resultado y el detalle de sus respuestas.</div>';return}
+  const att=p.intentos.find(a=>a.id===selAtt)||p.intentos[p.intentos.length-1];
+  selAtt=att.id;
+  const S=scoreOf(att.ans), [cls,txt]=level(S.p);
+  let h='';
+  if(p.intentos.length>1){
+    h+=`<div class="attempts">${p.intentos.map((a,i)=>`<button class="btn ghost ${a.id===att.id?'on':''}" data-a="${esc(a.id)}">Intento ${i+1} · ${fmtDate(a.fecha,true)} · ${a.p}%</button>`).join('')}</div>`;
+  }
+  h+=`<div class="score"><div class="ring" style="background:conic-gradient(${lvlColor(cls)} ${S.p*3.6}deg, var(--gray-l) 0)"><div class="in"><div><b>${S.p}%</b><span>${S.tot} de ${Q.length} correctas</span></div></div></div>
+      <div><div style="font-size:22px;font-weight:700;color:var(--navy)">${esc(p.nombre)}</div>
+      <div style="color:var(--gray);font-size:14px">${fmtDate(att.fecha,true)}${p.intentos.length>1?` · intento ${p.intentos.indexOf(att)+1} de ${p.intentos.length}`:''}</div>
+      <div class="lvl ${cls}">${txt}</div></div></div>
+    <h2>Resultado por área</h2>${barsHTML(S)}
+    <h2>Detalle de respuestas</h2>
+    <div class="filters"><button class="btn ghost on" data-f="all">Todas</button><button class="btn ghost" data-f="no">Solo incorrectas (${Q.length-S.tot})</button><button class="btn ghost" data-f="ok">Solo correctas (${S.tot})</button></div>
+    <div>${reviewHTML(att.ans,S,'Respondió')}</div>`;
+  $('pDetail').innerHTML=h;
+  $('pDetail').querySelectorAll('.attempts .btn').forEach(b=>b.onclick=()=>{selAtt=b.dataset.a;renderDetail()});
+}
+function openPerson(u,a){
+  selUid=u;selAtt=a;
+  document.querySelector('.tab[data-tab="persona"]').click();
+  renderList();renderDetail();window.scrollTo(0,0);
+}
+
+/* ---- General por fecha ---- */
+function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function setPreset(k){
+  const t=new Date();
+  if(k==='hoy'){$('dFrom').value=$('dTo').value=iso(t)}
+  else if(k==='7'){const f=new Date(t);f.setDate(t.getDate()-6);$('dFrom').value=iso(f);$('dTo').value=iso(t)}
+  else if(k==='mes'){$('dFrom').value=iso(new Date(t.getFullYear(),t.getMonth(),1));$('dTo').value=iso(t)}
+  else {$('dFrom').value='';$('dTo').value=''}
+  renderGeneral();
+}
+document.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>setPreset(b.dataset.preset));
+['dFrom','dTo','firstOnly'].forEach(id=>$(id).addEventListener('change',renderGeneral));
+
+function rowsInRange(){
+  const f=$('dFrom').value, t=$('dTo').value, first=$('firstOnly').checked;
+  const rows=[];
+  PEOPLE.forEach(p=>{
+    (first?p.intentos.slice(0,1):p.intentos).forEach((a,i)=>{
+      const k=dayKey(a.fecha);
+      if(f&&k<f) return; if(t&&k>t) return;
+      rows.push({p,a,k,n:first?1:i+1,S:scoreOf(a.ans)});
+    });
+  });
+  return rows.sort((x,y)=>x.a.fecha<y.a.fecha?1:-1);
+}
+/* ================= Tablero general (gráficas) ================= */
+const LV={basico:{c:'var(--red)',t:'Básico'},inter:{c:'var(--amber)',t:'Intermedio'},avanz:{c:'var(--green)',t:'Avanzado'}};
+const SVGNS='http://www.w3.org/2000/svg';
+function rangeLabel(rows){
+  const f=$('dFrom').value, t=$('dTo').value;
+  const fmt=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'})};
+  const ks=rows.map(r=>r.k).sort();
+  const a=f||ks[0], b=t||ks[ks.length-1];
+  return a===b?fmt(a):`Del ${fmt(a)} al ${fmt(b)}`;
+}
+function shortQ(x){const s=(x.caso?x.caso.replace(/<[^>]+>/g,'')+' ':'')+x.q;return s.length>150?s.slice(0,147)+'…':s}
+
+/* Histograma de puntajes por rango de 10 puntos */
+function histSVG(rows){
+  const B=Array.from({length:10},(_,i)=>({lo:i*10,hi:i===9?100:i*10+9,n:0}));
+  rows.forEach(r=>B[Math.min(9,Math.floor(r.S.p/10))].n++);
+  const max=Math.max(1,...B.map(b=>b.n)), W=540,H=270,l=34,r=8,t=24,bt=40, cw=(W-l-r)/10, bw=Math.min(40,cw-10);
+  const y=v=>t+(H-t-bt)*(1-v/max), step=max<=5?1:Math.ceil(max/5);
+  let s=`<svg viewBox="0 0 ${W} ${H}" class="chart" role="img" aria-label="Número de colaboradores por rango de puntaje">`;
+  for(let v=0;v<=max;v+=step) s+=`<line x1="${l}" x2="${W-r}" y1="${y(v)}" y2="${y(v)}" class="grid"/><text x="${l-8}" y="${y(v)+4}" class="ax" text-anchor="end">${v}</text>`;
+  // zonas de nivel
+  s+=`<text x="${l+cw*2.5}" y="${H-4}" class="zone" text-anchor="middle">Básico</text><text x="${l+cw*6.5}" y="${H-4}" class="zone" text-anchor="middle">Intermedio</text><text x="${l+cw*9}" y="${H-4}" class="zone" text-anchor="middle">Avanzado</text>`;
+  s+=`<line x1="${l+cw*5}" x2="${l+cw*5}" y1="${t-6}" y2="${H-bt+22}" class="sep"/><line x1="${l+cw*8}" x2="${l+cw*8}" y1="${t-6}" y2="${H-bt+22}" class="sep"/>`;
+  B.forEach((b,i)=>{
+    const x=l+cw*i+(cw-bw)/2, lc=b.lo>=80?'avanz':b.lo>=50?'inter':'basico', h=H-bt-y(b.n);
+    if(b.n) s+=`<path d="M${x},${H-bt} v${-(h-4)} q0,-4 4,-4 h${bw-8} q4,0 4,4 v${h-4} z" fill="${LV[lc].c}" data-tip="<b>${b.lo}–${b.hi}%</b><br>${b.n} colaborador${b.n>1?'es':''} · nivel ${LV[lc].t.toLowerCase()}"/><text x="${x+bw/2}" y="${y(b.n)-7}" class="val" text-anchor="middle">${b.n}</text>`;
+    s+=`<text x="${x+bw/2}" y="${H-bt+16}" class="ax" text-anchor="middle">${b.lo}</text>`;
+  });
+  return s+`<line x1="${l}" x2="${W-r}" y1="${H-bt}" y2="${H-bt}" class="base"/></svg>`;
+}
+
+/* Dominio por área: barras horizontales con umbrales 50% y 80% */
+function areasSVG(rows){
+  const ks=Object.keys(AREAS), W=540,rowH=56,t=24,H=t+ks.length*rowH, l=0,r=46, x=v=>l+(W-l-r)*v/100;
+  let s=`<svg viewBox="0 0 ${W} ${H}" class="chart" role="img" aria-label="Porcentaje de aciertos del grupo por área">`;
+  [0,50,80,100].forEach(v=>s+=`<line x1="${x(v)}" x2="${x(v)}" y1="${t-4}" y2="${H-4}" class="${v===50||v===80?'thr':'grid'}"/><text x="${x(v)}" y="${t-10}" class="ax" text-anchor="${v===0?'start':v===100?'end':'middle'}">${v}%</text>`);
+  ks.forEach((k,i)=>{
+    const ap=Math.round(rows.reduce((a,r)=>a+r.S.areas[k].p,0)/rows.length), [lc]=level(ap), cy=t+i*rowH+36, bh=18, w=Math.max(0,x(ap)-l);
+    s+=`<text x="0" y="${cy-15}" class="lab">${AREAS[k].n} <tspan class="sub">· ${AREAS[k].d}</tspan></text>`;
+    s+=`<rect x="${l}" y="${cy-bh/2}" width="${W-l-r}" height="${bh}" rx="4" class="track"/>`;
+    if(w>0) s+=`<path d="M${l},${cy-bh/2} h${Math.max(0,w-4)} q4,0 4,4 v${bh-8} q0,4 -4,4 h${-Math.max(0,w-4)} z" fill="${LV[lc].c}" data-tip="<b>${AREAS[k].n}</b><br>Promedio del grupo: ${ap}% · ${LV[lc].t}"/>`;
+    s+=`<text x="${x(ap)+8}" y="${cy+5}" class="val">${ap}%</text>`;
+  });
+  return s+'</svg>';
+}
+
+/* Promedio por fecha (corte diario) */
+function daysSVG(rows){
+  const days={}; rows.forEach(r=>{(days[r.k]=days[r.k]||[]).push(r)});
+  const ks=Object.keys(days).sort();
+  const D=ks.map(k=>{const d=days[k];return {k,n:d.length,avg:Math.round(d.reduce((a,r)=>a+r.S.p,0)/d.length)}});
+  const l=40,r=10,t=26,bt=48, cw=Math.max(56,Math.min(150,(820-l-r)/D.length)), W=Math.max(820,l+r+cw*D.length), H=290, bw=Math.min(28,cw-16), off=(W-l-r-cw*D.length)/2;
+  const y=v=>t+(H-t-bt)*(1-v/100);
+  let s=`<svg viewBox="0 0 ${W} ${H}" style="min-width:${W>820?W+'px':'0'}" class="chart" role="img" aria-label="Promedio del grupo por fecha">`;
+  [0,50,80,100].forEach(v=>s+=`<line x1="${l}" x2="${W-r}" y1="${y(v)}" y2="${y(v)}" class="${v===50||v===80?'thr':'grid'}"/><text x="${l-8}" y="${y(v)+4}" class="ax" text-anchor="end">${v}%</text>`);
+  D.forEach((d,i)=>{
+    const cx=l+off+cw*i+cw/2, x=cx-bw/2, [lc]=level(d.avg), h=H-bt-y(d.avg);
+    const [yy,m,dd]=d.k.split('-').map(Number), dt=new Date(yy,m-1,dd);
+    if(h>0) s+=`<path d="M${x},${H-bt} v${-Math.max(0,h-4)} q0,-4 4,-4 h${bw-8} q4,0 4,4 v${Math.max(0,h-4)} z" fill="${LV[lc].c}" data-tip="<b>${dt.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'})}</b><br>Promedio: ${d.avg}% · ${d.n} evaluaci${d.n>1?'ones':'ón'}"/>`;
+    s+=`<text x="${cx}" y="${y(d.avg)-8}" class="val" text-anchor="middle">${d.avg}%</text>`;
+    s+=`<text x="${cx}" y="${H-bt+17}" class="ax" text-anchor="middle">${dt.toLocaleDateString('es-MX',{day:'numeric',month:'short'})}</text><text x="${cx}" y="${H-bt+33}" class="sub" text-anchor="middle">${d.n} eval.</text>`;
+  });
+  return s+`<line x1="${l}" x2="${W-r}" y1="${H-bt}" y2="${H-bt}" class="base"/></svg>`;
+}
+
+/* Aciertos por pregunta */
+function questionsSVG(qs){
+  const W=820,H=280,l=38,r=8,t=20,bt=46, cw=(W-l-r)/Q.length, bw=Math.min(20,cw-8), y=v=>t+(H-t-bt)*(1-v/100);
+  let s=`<svg viewBox="0 0 ${W} ${H}" class="chart" role="img" aria-label="Porcentaje del grupo que acertó cada pregunta">`;
+  [0,50,80,100].forEach(v=>s+=`<line x1="${l}" x2="${W-r}" y1="${y(v)}" y2="${y(v)}" class="${v===50||v===80?'thr':'grid'}"/><text x="${l-8}" y="${y(v)+4}" class="ax" text-anchor="end">${v}%</text>`);
+  let prev=null;
+  qs.forEach(({i,x:q,p})=>{
+    const cx=l+cw*i+cw/2, x=cx-bw/2, [lc]=level(p), h=H-bt-y(p);
+    if(q.a!==prev){ if(prev) s+=`<line x1="${l+cw*i}" x2="${l+cw*i}" y1="${t}" y2="${H-bt+34}" class="sep"/>`; const n=Q.filter(z=>z.a===q.a).length; s+=`<text x="${l+cw*i+cw*n/2}" y="${H-6}" class="zone" text-anchor="middle">${q.a}</text>`; prev=q.a }
+    s+=`<rect x="${cx-cw/2}" y="${t}" width="${cw}" height="${H-bt-t}" fill="transparent" data-tip="<b>Pregunta ${i+1} · ${p}% acertó</b><br>${esc(shortQ(q))}"/>`;
+    if(h>0) s+=`<path pointer-events="none" d="M${x},${H-bt} v${-Math.max(0,h-4)} q0,-4 4,-4 h${bw-8} q4,0 4,4 v${Math.max(0,h-4)} z" fill="${LV[lc].c}"/>`;
+    else s+=`<rect pointer-events="none" x="${x}" y="${H-bt-2}" width="${bw}" height="2" fill="${LV.basico.c}"/>`;
+    s+=`<text x="${cx}" y="${H-bt+16}" class="ax" text-anchor="middle">${i+1}</text>`;
+  });
+  return s+`<line x1="${l}" x2="${W-r}" y1="${H-bt}" y2="${H-bt}" class="base"/></svg>`;
+}
+
+function renderGeneral(){
+  if($('admin').classList.contains('hidden')) return;
+  const rows=rowsInRange();
+  if(!rows.length){$('genBody').innerHTML=`<div class="empty">${PEOPLE.length?'No hay evaluaciones en el rango de fechas seleccionado.':'Aún no hay evaluaciones registradas.'}</div>`;return}
+  const n=rows.length, people=new Set(rows.map(r=>r.p.uid)).size;
+  const avg=Math.round(rows.reduce((s,r)=>s+r.S.p,0)/n);
+  const cnt={avanz:0,inter:0,basico:0}; rows.forEach(r=>cnt[level(r.S.p)[0]]++);
+  const [ac,at]=level(avg);
+  const areaAvg=Object.keys(AREAS).map(k=>({k,p:Math.round(rows.reduce((a,r)=>a+r.S.areas[k].p,0)/n)})).sort((a,b)=>b.p-a.p);
+  const qsIdx=Q.map((x,i)=>({i,x,p:Math.round(rows.filter(r=>r.S.ok[i]).length/n*100)}));
+  const worst=qsIdx.slice().sort((a,b)=>a.p-b.p).slice(0,5);
+  const best=qsIdx.slice().sort((a,b)=>b.p-a.p).slice(0,3);
+  const legend=`<div class="legend"><span style="--c:var(--red)">Básico (&lt;50%)</span><span style="--c:var(--amber)">Intermedio (50–79%)</span><span style="--c:var(--green)">Avanzado (≥80%)</span></div>`;
+
+  let h=`<div class="dashHead"><div><div class="eyebrow">Resultados del grupo</div><div class="dashRange">${rangeLabel(rows)}</div></div>
+    <button class="btn ghost adminOnly" id="presentBtn">Modo presentación ▸</button><button class="btn ghost presentOnly" id="exitPresent">✕ Salir de presentación</button></div>
+
+  <div class="hero">
+    <div class="gauge" style="background:conic-gradient(${LV[ac].c} ${avg*3.6}deg, var(--gray-l) 0)"><div class="in"><b>${avg}%</b><span>promedio del grupo</span></div></div>
+    <div class="heroTxt">
+      <div class="lvl ${ac}">${at}</div>
+      <p>${n} evaluaci${n>1?'ones':'ón'} de ${people} colaborador${people>1?'es':''}. Área más fuerte: <b>${AREAS[areaAvg[0].k].n}</b> (${areaAvg[0].p}%). Área a reforzar: <b>${AREAS[areaAvg[areaAvg.length-1].k].n}</b> (${areaAvg[areaAvg.length-1].p}%).</p>
+      <div class="levelTiles">
+        ${['basico','inter','avanz'].map(k=>`<div class="lt"><i style="background:${LV[k].c}"></i><b>${cnt[k]}</b><span>${LV[k].t}<br>${Math.round(cnt[k]/n*100)}% del grupo</span></div>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <div class="cgrid">
+    <div class="card"><h3>¿Cómo se distribuyen los puntajes?</h3><p class="cap">Número de colaboradores en cada rango de calificación.</p>${histSVG(rows)}</div>
+    <div class="card"><h3>Dominio por área</h3><p class="cap">Promedio de aciertos del grupo. Líneas guía en 50% y 80%.</p>${areasSVG(rows)}</div>
+  </div>
+
+  <div class="card"><h3>Promedio por fecha</h3><p class="cap">Cada columna es el promedio de quienes contestaron ese día.</p><div class="scrollX">${daysSVG(rows)}</div></div>
+
+  <div class="card"><h3>Aciertos por pregunta</h3><p class="cap">Porcentaje del grupo que respondió bien cada pregunta, agrupadas por área (A–E). Pasa el cursor sobre una columna para ver la pregunta.</p>${questionsSVG(qsIdx)}${legend}
+    <p class="cap" style="margin-top:6px">${Object.keys(AREAS).map(k=>`<b>${k}</b> ${AREAS[k].n}`).join(' · ')}</p></div>
+
+  <div class="cgrid">
+    <div class="card"><h3>Temas a reforzar</h3><p class="cap">Las 5 preguntas con menos aciertos.</p>
+      ${worst.map(({i,x,p})=>`<div class="focus"><span class="fp" style="--c:${LV[level(p)[0]].c}">${p}%</span><div><b>Pregunta ${i+1}</b> · <span class="muted">${AREAS[x.a].n}</span><br>${shortQ(x)}<div class="ans">Respuesta correcta: ${x.tf?(x.c?'Falso':'Verdadero'):x.o[x.c]}</div></div></div>`).join('')}
+    </div>
+    <div class="card"><h3>Lo que el grupo domina</h3><p class="cap">Las 3 preguntas con más aciertos.</p>
+      ${best.map(({i,x,p})=>`<div class="focus"><span class="fp" style="--c:${LV[level(p)[0]].c}">${p}%</span><div><b>Pregunta ${i+1}</b> · <span class="muted">${AREAS[x.a].n}</span><br>${shortQ(x)}</div></div>`).join('')}
+    </div>
+  </div>`;
+
+  // Detalle con nombres: solo para el administrador (se oculta en modo presentación)
+  const days={}; rows.forEach(r=>{(days[r.k]=days[r.k]||[]).push(r)});
+  h+=`<div class="adminOnly"><h2>Detalle por fecha</h2><div class="tblWrap"><table><thead><tr><th>Fecha</th><th class="num">Evaluaciones</th><th class="num">Promedio</th><th class="num">Mínimo</th><th class="num">Máximo</th><th class="num">Básico</th><th class="num">Intermedio</th><th class="num">Avanzado</th></tr></thead><tbody>`;
+  Object.keys(days).sort().reverse().forEach(k=>{
+    const d=days[k], ps=d.map(r=>r.S.p), c={avanz:0,inter:0,basico:0}; d.forEach(r=>c[level(r.S.p)[0]]++);
+    const [y,m,dd]=k.split('-').map(Number);
+    h+=`<tr><td>${new Date(y,m-1,dd).toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}</td><td class="num">${d.length}</td><td class="num"><b>${Math.round(ps.reduce((a,b)=>a+b,0)/d.length)}%</b></td><td class="num">${Math.min(...ps)}%</td><td class="num">${Math.max(...ps)}%</td><td class="num">${c.basico}</td><td class="num">${c.inter}</td><td class="num">${c.avanz}</td></tr>`;
+  });
+  h+=`</tbody></table></div>`;
+  h+=`<h2>Participantes en el rango</h2><div class="tblWrap"><table><thead><tr><th>Fecha</th><th>Colaborador</th>${$('firstOnly').checked?'':'<th class="num">Intento</th>'}<th class="num">Puntaje</th><th>Nivel</th>${Object.keys(AREAS).map(k=>`<th class="num" title="${AREAS[k].n}">${k}</th>`).join('')}</tr></thead><tbody>`;
+  rows.forEach(r=>{const [c,t]=level(r.S.p);
+    h+=`<tr class="click" data-u="${esc(r.p.uid)}" data-a="${esc(r.a.id)}"><td>${fmtDate(r.a.fecha,true)}</td><td><b>${esc(r.p.nombre)}</b></td>${$('firstOnly').checked?'':`<td class="num">${r.n}</td>`}<td class="num"><b>${r.S.p}%</b> <span class="muted">(${r.S.tot}/${Q.length})</span></td><td><span class="chip ${c}">${t.replace('Nivel ','')}</span></td>${Object.keys(AREAS).map(k=>`<td class="num">${r.S.areas[k].p}%</td>`).join('')}</tr>`});
+  h+=`</tbody></table></div><p class="muted" style="margin-top:8px">Columnas A–E: ${Object.keys(AREAS).map(k=>k+' = '+AREAS[k].n).join(' · ')}. Haz clic en una fila para ver el detalle del colaborador.</p></div>`;
+
+  $('genBody').innerHTML=h;
+  $('genBody').querySelectorAll('tr.click').forEach(tr=>tr.onclick=()=>openPerson(tr.dataset.u,tr.dataset.a));
+  $('presentBtn').onclick=()=>setPresent(true);
+  $('exitPresent').onclick=()=>setPresent(false);
+}
+
+/* Modo presentación: sin nombres ni controles, tipografía más grande */
+function setPresent(on){
+  document.body.classList.toggle('present',on);
+  try{
+    if(on&&document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{});
+    if(!on&&document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+  }catch(_){}
+  window.scrollTo(0,0);
+}
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('present'))setPresent(false)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('present'))setPresent(false)});
+
+/* Tooltip de las gráficas */
+const tip=document.createElement('div');tip.className='tip';tip.hidden=true;document.body.appendChild(tip);
+document.addEventListener('mouseover',e=>{const t=e.target.closest&&e.target.closest('[data-tip]');if(!t){tip.hidden=true;return}tip.innerHTML=t.getAttribute('data-tip');tip.hidden=false});
+document.addEventListener('mousemove',e=>{if(tip.hidden)return;const w=tip.offsetWidth,hh=tip.offsetHeight;let x=e.clientX+14,y=e.clientY+14;if(x+w>innerWidth-8)x=e.clientX-w-14;if(y+hh>innerHeight-8)y=e.clientY-hh-14;tip.style.left=x+'px';tip.style.top=y+'px'});
+document.addEventListener('scroll',()=>tip.hidden=true,true);
+
+/* ---- Exportar CSV ---- */
+$('csvBtn').onclick=async()=>{
+  const rows=[];
+  PEOPLE.forEach(p=>p.intentos.forEach((a,i)=>rows.push({p,a,i})));
+  rows.sort((x,y)=>x.a.fecha<y.a.fecha?-1:1);
+  const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const head=['Fecha','Hora','Colaborador','Intento','Correctas','Puntaje %','Nivel',...Object.keys(AREAS).map(k=>AREAS[k].n+' %'),...Q.map((_,i)=>'P'+(i+1))];
+  const lines=[head.map(q).join(',')];
+  rows.forEach(({p,a,i})=>{
+    const S=scoreOf(a.ans),d=new Date(a.fecha);
+    lines.push([dayKey(a.fecha),d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}),p.nombre,i+1,S.tot,S.p,level(S.p)[1],...Object.keys(AREAS).map(k=>S.areas[k].p),...Q.map((x,j)=>a.ans[j]==null?'Sin responder':(x.tf?(a.ans[j]?'F':'V'):L[a.ans[j]])+(S.ok[j]?' ✓':' ✗'))].map(q).join(','));
+  });
+  if(!rows.length) return;
+  const blob=new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='Evaluacion_Diagnostica_Formas_Migratorias_'+dayKey(new Date().toISOString())+'.csv';
+  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
+};
+
+$('gateBack').onclick=()=>$('closeAdmin').click();
+</script>
+</body>
+</html>
