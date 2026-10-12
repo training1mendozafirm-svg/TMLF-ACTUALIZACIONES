@@ -3295,12 +3295,8 @@ $('#v0').addEventListener('click',e=>{const a=e.target.closest('a[data-go]');if(
         ['r',`<b>${Math.round((sem('R'))/nCalls*100)}% de las llamadas terminó en rojo:</b> requieren intervención de supervisión o del Attorney antes de continuar el caso.`],
         ['y',`<b>${pct('G')}% de las calificaciones cumple</b>, ${pct('Y')}% cumple parcialmente y ${pct('R')}% no cumple.`],
         ['r',`<b>Lo que más se omite:</b> ${lowest.join(', ')}.`]])
-      +`<div class="xg2"><div class="card"><h2>Semáforo global de las llamadas</h2><p class="hint">Cada llamada recibe un semáforo según su puntaje y las omisiones graves.</p>
-        <div class="xstack">${SEM.map(x=>`<div class="xs-${x.k}" style="flex:${x.n}" data-tip="${x.l}: ${x.n} llamadas"><b>${x.n}</b><span>${x.l}</span></div>`).join('')}</div>
-        <h3 class="rrh" style="margin-top:18px">Cada llamada auditada</h3><div class="xwaf">${chron(C).map(c=>`<span class="xs-${c.sem}" data-tip="${esc(c.client)}\n${esc(c.agent)} con ${esc(c.attorney)}\n${SEMN[c.sem]}${c.ap!=null?' · paralegal '+Math.round(c.ap)+'%':''}"></span>`).join('')}</div><p class="hint" style="margin:8px 0 0">Un cuadro por llamada, en orden cronológico. Pasa el cursor para ver el detalle.</p>
-        </div>
-      <div class="card"><h2>Cumplimiento por bloque de la cédula</h2><p class="hint">Porcentaje de calificaciones en verde. La línea marca la meta de 80%.</p>
-        ${BP.map(b=>`<div class="xblk"><span>${b.bn}. ${esc(b.name)}</span>${hb(b.v,`${b.n.G} cumple · ${b.n.Y} parcial · ${b.n.R} no cumple`)}<b class="t-${band(b.v)}">${b.v}%</b></div>`).join('')}</div></div>`
+      +`<div class="card"><h2>Cumplimiento por bloque de la cédula</h2><p class="hint">Porcentaje de calificaciones en verde. La línea marca la meta de 80%.</p>
+        ${BP.map(b=>`<div class="xblk"><span>${b.bn}. ${esc(b.name)}</span>${hb(b.v,`${b.n.G} cumple · ${b.n.Y} parcial · ${b.n.R} no cumple`)}<b class="t-${band(b.v)}">${b.v}%</b></div>`).join('')}</div>`
       +`<p class="xlink"><button type="button" class="btn sm pri" data-doc>Ver la cédula completa</button> <button type="button" class="btn sm" data-raw="vc">Ver la auditoría en la información cruda</button></p>`;
 
     /* ---------- 3. Curva de aprendizaje ---------- */
@@ -3316,18 +3312,21 @@ $('#v0').addEventListener('click',e=>{const a=e.target.closest('a[data-go]');if(
     const maxN=Math.max(...agS.map(x=>x.cs.length));
     const avgBy=[...Array(maxN)].map((_,i)=>{const v=agS.filter(x=>x.cs[i]).map(x=>x.cs[i].ap);return {i,v:avg(v),n:v.length}});
     const av=avgBy.filter(a=>a.n>=2);
-    function curveSVG(){
+    function curveSVG(sel){
       const W=900,H=320,L=46,R=44,T=28,B=40,N=maxN;
       const X=i=>L+(W-L-R)*(N===1?.5:i/(N-1)), Y=v=>T+(H-T-B)*(1-(Math.max(40,v)-40)/60);
       let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Curva de aprendizaje de los paralegales">`;
       [40,60,80,100].forEach(p=>s+=`<line class="gl" x1="${L}" x2="${W-R}" y1="${Y(p)}" y2="${Y(p)}"${p===80?' stroke-dasharray="6 4" style="stroke:var(--g)"':''}/><text class="svgt" x="${L-6}" y="${Y(p)+4}" text-anchor="end">${p}%</text>`);
       s+=`<text class="svgt" x="${W-R}" y="${Y(80)-6}" text-anchor="end" style="fill:var(--g);font-weight:600">Meta 80%</text>`;
       for(let i=0;i<N;i++)s+=`<text class="svgt" x="${X(i)}" y="${H-B+20}" text-anchor="middle">Llamada ${i+1}</text>`;
-      agS.forEach((x,j)=>{const c=`var(--s${(j%8)+1})`;
-        if(x.cs.length>1)s+=`<polyline fill="none" stroke="${c}" stroke-opacity=".5" stroke-width="1.6" points="${x.cs.map((cl,i)=>X(i)+','+Y(cl.ap)).join(' ')}"/>`;
-        x.cs.forEach((cl,i)=>s+=`<circle cx="${X(i)}" cy="${Y(cl.ap)}" r="3.5" fill="${c}" fill-opacity=".7"><title>${esc(x.nm)} · ${esc(cl.client)} · ${Math.round(cl.ap)}%</title></circle>`)});
+      const one=sel!=null&&sel!=='';
+      const sx=one?agS.find(x=>x.nm===sel):null, selAt=i=>sx&&sx.cs[i]?sx.cs[i].ap:null;
+      agS.forEach((x,j)=>{if(one&&x.nm!==sel)return;const c=`var(--s${(j%8)+1})`;
+        if(x.cs.length>1)s+=`<polyline fill="none" stroke="${c}" stroke-opacity="${one?1:.5}" stroke-width="${one?3:1.6}" stroke-linejoin="round" points="${x.cs.map((cl,i)=>X(i)+','+Y(cl.ap)).join(' ')}"/>`;
+        x.cs.forEach((cl,i)=>{s+=`<circle cx="${X(i)}" cy="${Y(cl.ap)}" r="${one?5:3.5}" fill="${c}" fill-opacity="${one?1:.7}"${one?' stroke="var(--panel)" stroke-width="1.5"':''}><title>${esc(x.nm)} · ${esc(cl.client)} · ${Math.round(cl.ap)}%</title></circle>`;
+          if(one)s+=`<text class="svgt" x="${X(i)}" y="${(av.find(a=>a.i===i)&&cl.ap<av.find(a=>a.i===i).v)?Y(cl.ap)+20:Y(cl.ap)-11}" text-anchor="middle" style="font-weight:700;font-size:12px;fill:${c}">${Math.round(cl.ap)}%</text><circle cx="${X(i)}" cy="${Y(cl.ap)}" r="12" fill="transparent" data-tip="${esc(x.nm)} · Llamada ${i+1}\n${esc(cl.client)}\n${Math.round(cl.ap)}%"/>`;})});
       if(av.length>1)s+=`<polyline fill="none" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round" points="${av.map(a=>X(a.i)+','+Y(a.v)).join(' ')}"/>`;
-      av.forEach(a=>s+=`<circle cx="${X(a.i)}" cy="${Y(a.v)}" r="6" fill="var(--ink)" stroke="var(--panel)" stroke-width="2"/><text class="svgt b" x="${X(a.i)}" y="${Y(a.v)-12}" text-anchor="middle" style="font-weight:700;font-size:13px">${Math.round(a.v)}%</text><circle cx="${X(a.i)}" cy="${Y(a.v)}" r="15" fill="transparent" data-tip="Llamada ${a.i+1}\nPromedio del equipo: ${Math.round(a.v)}%\n${a.n} paralegales con esta llamada"/>`);
+      av.forEach(a=>s+=`<circle cx="${X(a.i)}" cy="${Y(a.v)}" r="6" fill="var(--ink)" stroke="var(--panel)" stroke-width="2"/><text class="svgt b" x="${X(a.i)}" y="${(selAt(a.i)!=null&&selAt(a.i)>=a.v)?Y(a.v)+22:Y(a.v)-12}" text-anchor="middle" style="font-weight:700;font-size:13px">${Math.round(a.v)}%</text><circle cx="${X(a.i)}" cy="${Y(a.v)}" r="15" fill="transparent" data-tip="Llamada ${a.i+1}\nPromedio del equipo: ${Math.round(a.v)}%\n${a.n} paralegales con esta llamada"/>`);
       return s+'</svg>';
     }
     const a0=av.length?Math.round(av[0].v):0, aN=av.length?Math.round(av[av.length-1].v):0, kN=av.length?av[av.length-1].i+1:1;
@@ -3337,8 +3336,9 @@ $('#v0').addEventListener('click',e=>{const a=e.target.closest('a[data-go]');if(
         ['g',`<b>Mayor avance:</b> ${esc(PR[0].nm)}, de ${Math.round(PR[0].a)}% a ${Math.round(PR[0].b)}% (${PR[0].b-PR[0].a>=0?'+':''}${Math.round(PR[0].b-PR[0].a)} puntos).`],
         [dnP?'r':'g',dnP?`<b>${dnP} paralegal${dnP>1?'es':''} retrocedi${dnP>1?'eron':'ó'}:</b> ${PR.filter(x=>x.b<x.a).map(x=>`${esc(x.nm)} (${Math.round(x.a)}% → ${Math.round(x.b)}%)`).join(' y ')}.`:'<b>Ningún paralegal retrocedió</b> entre su primera y su última llamada.'],
         ['y',`<b>Attorneys:</b> ${upA} de ${AR.length} con dos o más llamadas mejoraron su calificación.`]])
-      +`<div class="card"><h2>Curva del equipo de paralegales</h2><p class="hint">Calificación de cada paralegal en sus llamadas en orden cronológico (líneas de color) y promedio del equipo (línea oscura; solo donde hay dos o más paralegales). Pasa el cursor por un punto para ver el detalle.</p>
-        ${curveSVG()}<div class="xleg"><span><i style="background:var(--ink);height:5px"></i>Promedio del equipo</span>${agS.map((x,j)=>`<span><i style="background:var(--s${(j%8)+1})"></i>${esc(x.nm)}</span>`).join('')}</div></div>
+      +`<div class="card"><h2>Curva del equipo de paralegales</h2><p class="hint">Calificación de cada paralegal en sus llamadas, en orden cronológico. Elige un paralegal para ver solo sus resultados; el promedio del equipo (línea oscura) se queda fijo para comparar. Pasa el cursor por un punto para ver el detalle.</p>
+        <div class="seg xcsel" role="group" aria-label="Paralegal" style="flex-wrap:wrap;margin:4px 0 10px"><button type="button" data-cv="" aria-pressed="true">Todos</button>${agS.map((x,j)=>`<button type="button" data-cv="${esc(x.nm)}" aria-pressed="false"><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--s${(j%8)+1});margin-right:6px;vertical-align:-1px"></i>${esc(x.nm)}</button>`).join('')}</div>
+        <div id="xCurve">${curveSVG('')}</div><div class="xleg"><span><i style="background:var(--ink);height:5px"></i>Promedio del equipo (siempre visible)</span>${agS.map((x,j)=>`<span><i style="background:var(--s${(j%8)+1})"></i>${esc(x.nm)}</span>`).join('')}</div></div>
       <div class="card"><h2>Criterios por porcentaje de cumplimiento</h2><p class="hint">Criterios que ejecuta el Paralegal, solo o con el Attorney. Filtra por paralegal y por rango de porcentaje.</p><div id="cfExec"></div></div>
       <div class="xg2"><div class="card"><h2>Primera contra última llamada · Paralegales</h2><p class="hint"><span style="display:inline-block;width:10px;height:10px;border:2px solid var(--ink2);border-radius:50%;vertical-align:-1px"></span> primera llamada · <span style="display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:50%;vertical-align:-1px"></span> última llamada · cifra a la derecha: cambio en puntos.</p>${dbHTML(PR)}</div>
       <div class="card"><h2>Primera contra última llamada · Attorneys</h2><p class="hint">Mismo cálculo con la calificación del Attorney.</p>${dbHTML(AR)}</div></div>
@@ -3386,6 +3386,10 @@ $('#v0').addEventListener('click',e=>{const a=e.target.closest('a[data-go]');if(
     $('#xNav').innerHTML=SECS.map(([t],i)=>`<button type="button" role="tab" aria-selected="${i===0}" data-x="${i}"><b>${String(i+1).padStart(2,'0')}</b><span>${t}</span></button>`).join('');
     $('#xBody').innerHTML=SECS.map(([t,h],i)=>`<section class="xsec${i?'':' on'}" data-x="${i}">${h}<div class="spager">${i?`<button type="button" class="btn" data-x="${i-1}">← ${SECS[i-1][0]}</button>`:'<span></span>'}<span>${i+1} / ${SECS.length}</span>${i<SECS.length-1?`<button type="button" class="btn" data-x="${i+1}">${SECS[i+1][0]} →</button>`:'<span></span>'}</div></section>`).join('');
     drawXR();fbCritFilter('cfExec');
+    window.__xCurve=curveSVG;
+    document.getElementById('exec').addEventListener('click',e=>{const b=e.target.closest('[data-cv]');if(!b)return;
+      b.parentNode.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+      document.getElementById('xCurve').innerHTML=window.__xCurve(b.dataset.cv);});
     const xGo=i=>{document.querySelectorAll('#xNav button').forEach(b=>b.setAttribute('aria-selected',+b.dataset.x===i));document.querySelectorAll('.xsec').forEach(s=>s.classList.toggle('on',+s.dataset.x===i));scrollTo(0,0)};
     const setRaw=on=>{document.body.classList.toggle('raw',on);tipEl.style.display='none';scrollTo(0,0)};
     document.getElementById('exec').addEventListener('click',e=>{
