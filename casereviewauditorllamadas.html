@@ -669,11 +669,12 @@ button.xfs:hover{border-color:var(--accent)}
 <div id="exec">
   <header class="xhead">
     <div>
-      <p class="eyebrow">Vista ejecutiva · Dirección de Operaciones</p>
-      <h1>Case Review: lo que encontró la escucha</h1>
+      <p class="eyebrow" id="xEye">Vista ejecutiva · Dirección de Operaciones</p>
+      <h1 id="xTitle">Case Review: lo que encontró la escucha</h1>
       <p class="sub" id="xSub"></p>
     </div>
     <div class="tools">
+      <button class="btn" id="xLang" type="button" lang="en" aria-label="View the executive view in English">English</button>
       <button class="btn" id="xPres" type="button">Pantalla completa</button>
       <button class="btn" id="xTheme" type="button" aria-label="Cambiar tema claro u oscuro">Tema</button>
       <button class="btn pri" id="toRaw" type="button">Información cruda</button>
@@ -2204,7 +2205,7 @@ const VS={G:'●',Y:'◐',R:'✕',N:'–'};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pill=(v,txt)=>`<span class="pill p-${v}"><i>${VS[v]||'◇'}</i>${esc(txt||VN[v]||SEMN[v])}</span>`;
-const fmtDate=d=>{const [y,m,dd]=d.split('-');const M=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];return `${+dd} ${M[+m-1]} ${y}`};
+const fmtDate=d=>{const [y,m,dd]=d.split('-');if(XE()){const E=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return `${E[+m-1]} ${+dd}, ${y}`}const M=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];return `${+dd} ${M[+m-1]} ${y}`};
 const fmtMin=m=>m==null?'—':(m>=60?`${Math.floor(m/60)} h ${String(m%60).padStart(2,'0')} min`:`${m} min`);
 const pc=v=>v==null?'—':Math.round(v)+'%';
 const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
@@ -2216,9 +2217,27 @@ const KO=K.map((k,i)=>i).sort((a,b)=>K[a].bn-K[b].bn||(CODE[a]||'').localeCompar
 const KR=[];KO.forEach((ki,r)=>KR[ki]=r);
 const ROLE=K.map((k,ki)=>{const n={P:0,A:0,PA:0};let t=0;C.forEach(c=>{const x=c.cells[ki];if(x){n[x[4]]++;t++}});return !t?(k.block.includes('Attorney')?'A':'P'):n.P/t>=.6?'P':n.A/t>=.6?'A':'PA'});
 const RN={P:'Paralegal',A:'Attorney',PA:'Ambos'}, RNL={P:'Paralegal',A:'Attorney',PA:'Paralegal y Attorney'};
-const rb=r=>`<span class="rb rb-${r}">${RN[r]}</span>`;
+const rb=r=>`<span class="rb rb-${r}">${typeof XE==='function'?xRN(r):RN[r]}</span>`;
 const BROLE={1:'P',2:'A',3:'P',4:'P',5:'PA',6:'PA',7:'A',8:'P',9:'P',10:'P',100:'A',101:'P'};
 const klab=ki=>(K[ki].kind==='crit'?CODE[ki]+' · ':'')+K[ki].label;
+/* ---------- idioma de la vista ejecutiva (ES / EN) ---------- */
+let XLANG='es';
+const XE=()=>XLANG==='en'&&!document.body.classList.contains('raw');
+const tr=(es,en)=>XE()?en:es;
+const EN_CRIT=['Agent greets the client and introduces themself','Explains the stages of the call','States that the call is recorded/monitored','Hands over to the Attorney for the legal warnings','The Attorney speaks directly with the client','Explains the perjury warning','Explains attorney-client privilege','Confirms criminal history','Confirms immigration history','Confirms prior petitions or proceedings','Confirms criminal history (derivative/spouse)','Confirms immigration history/entries (derivative)','Confirms prior petitions (derivative)','Forms reviewed','Review outcome','Changes identified','Additional information confirmed by the client','Follow-up items','Attorney review / escalation','Internal note','Version reviewed','Final signature status','Client is asked to pay attention and stop the reading at any error','Agent reads clearly and at a steady pace','Confirms with the client every 2–3 paragraphs','Makes only the corrections authorized by the Attorney','Obtains express confirmation that everything read is true and correct','Agent stops the flow at an inconsistency (does not interpret or correct on their own)','Documents exactly what the client stated','Applies the corresponding correction traffic light','Records finding + decision + owner + next step','Explains the purpose of reviewing the documents','On a document contradiction: client confirms, Attorney validates, action is defined and documented','The Attorney expressly asks whether there is new evidence not yet provided','If there is new evidence, it is identified, the follow-up documented and the delivery method defined','The Attorney confirms: DCL fully reviewed, corrections validated, legal checkpoint done, documents reviewed, evidence confirmed, no RED change pending, authorization to move to signing','Any follow-up is defined as finding + action + owner + next step','Formal close of participation','Client is told the signing method and guided through it','If the client cannot sign, it is documented as pending','If a content issue arises during signing, the Agent stops and asks the Attorney to validate','Request for “CORRECT” confirmation','Sends/mentions the quality survey','Close with follow-ups clearly stated (or none) and thanks to TMLF','Close with thanks and a courteous goodbye','The agent confirms the outcome was properly documented','If something comes up after the Attorney leaves, it is documented and the Attorney is called back','The agent confirms the outcome was properly documented','Supervise the review and the legal checkpoint','Confirm information that could cause inadmissibility','Resolve legal questions','Validate corrections','Decide how to handle material inconsistencies','Confirm the final DCL version and authorize signing','Supervise the review','Perform the mandatory legal checkpoint','Supervise the review AND perform the legal checkpoint','Run the call','Project/read forms and DCL','Identify inconsistencies','Document changes and follow-ups','Make only authorized corrections','Review supporting documents','Manage signing','Document the outcome in the CRM','Read the DCL'];
+const EN_RESP={'Conducir la llamada':'Run the call','Proyectar y leer formularios y DCL':'Project and read forms and DCL','Identificar inconsistencias':'Identify inconsistencies','Documentar cambios y pendientes':'Document changes and follow-ups','Ejecutar solo correcciones autorizadas':'Make only authorized corrections','Revisar documentos de apoyo':'Review supporting documents','Gestionar firma':'Manage signing','Documentar resultado en ClickUp/trackers':'Document the outcome in ClickUp/trackers','Supervisar la revisión':'Supervise the review','Realizar el checkpoint legal obligatorio':'Perform the mandatory legal checkpoint','Confirmar información que pudiera generar inadmisibilidad':'Confirm information that could cause inadmissibility','Resolver dudas legales':'Resolve legal questions','Validar correcciones':'Validate corrections','Determinar tratamiento de inconsistencias materiales':'Decide how to handle material inconsistencies','Confirmar versión final de la DCL y autorizar firma':'Confirm the final DCL version and authorize signing'};
+const EN_RMEAN={'Conducir la llamada':'Lead the call from start to finish: open, explain the stages, handle the transitions and close with the client.','Proyectar y leer formularios y DCL':'Share the screen and read the forms and the declaration clearly, making sure the client sees and follows the text.','Identificar inconsistencias':'Spot data that does not match between what the client says, the file and the text, and flag it to the Attorney.','Documentar cambios y pendientes':'Record every change (previous data → updated data) and every follow-up with an owner and an action.','Ejecutar solo correcciones autorizadas':'Change the text or the forms only when the Attorney authorizes it, never on their own.','Revisar documentos de apoyo':'Show the client the evidence in the package so they confirm it is theirs, relevant and complete.','Gestionar firma':'Send the signing link, guide the client and verify the signature was recorded.','Documentar resultado en ClickUp/trackers':'Record the call outcome in the internal systems so the other areas can continue the case.','Supervisar la revisión':'Be present and attentive during the review to step in on anything with legal weight.','Realizar el checkpoint legal obligatorio':'Explain privilege and perjury and confirm criminal history, immigration history and prior petitions directly with the client.','Confirmar información que pudiera generar inadmisibilidad':'Probe and decide on records, entries or proceedings that could block the case.','Resolver dudas legales':'Answer the client’s legal questions about their case and the process clearly.','Validar correcciones':'Audibly authorize each correction before the Paralegal makes it.','Determinar tratamiento de inconsistencias materiales':'Decide what to do with a finding that could affect the case: correct it, escalate it or stop the signing.','Confirmar versión final de la DCL y autorizar firma':'Verify that what will be signed is the right version and expressly authorize signing.'};
+const EN_FLOW={1:['Opening and framing','Hands the Attorney a client who knows what to expect, and the floor for the legal warnings.'],2:['Legal checkpoint','Hands the Paralegal a confirmed baseline to review forms and the declaration.'],3:['Form review','Delivers reviewed forms, an identified version and recorded follow-ups.'],4:['DCL reading and confirmation','Every client remark moves to the handling of new information.'],5:['New or contradictory information','Delivers authorized and recorded corrections.'],6:['Supporting documents and evidence','Delivers validated evidence and defined follow-ups for submission.'],7:['Attorney close-out','Hands the Paralegal the authorization to sign.'],8:['Signing','Delivers signed documents or a pending-signature follow-up.'],9:['Close with the client','Leaves the client with clear follow-ups.'],10:['Internal close','Hands the documented case to the teams that continue it.']};
+const EN_BMEAN={1:'The start of the call. The Paralegal introduces themself, explains the stages, says the call is recorded and introduces the Attorney. It sets the client’s expectations and makes the recording back up what they confirm.',2:'The legal control before the case review. The Attorney explains attorney-client privilege and the perjury warning, and confirms with the client (and each derivative) their criminal history, immigration history and prior petitions. This is where inadmissibility issues surface.',3:'The Paralegal projects and reviews each form with the client. It must be clear what was reviewed and in which version, what changed, what is pending and what the signature status is.',4:'Word-by-word reading of the sworn declaration (DCL). The client confirms section by section and, at the end, that everything is true under penalty of perjury. Only what the Attorney authorizes is corrected.',5:'What happens when the client corrects or reveals something new. The Paralegal stops and hands it over; the Attorney classifies it with the correction traffic light and decides; the finding is recorded with an owner and a next step. An unresolved material change stops the signing.',6:'Review of the package evidence with the client. The Attorney asks whether there is new evidence and, if so, how and when it will be sent.',7:'The last legal control before signing. The Attorney confirms everything was reviewed, assigns follow-ups to owners and expressly authorizes moving to signing.',8:'The Paralegal guides the client through e-signature and verifies it was recorded. If it fails or a content question arises, it is documented and sent back to the Attorney.',9:'Goodbye with the client: summary of follow-ups, written “CORRECT” confirmation, quality survey and thanks.',10:'After the call, the Paralegal confirms the outcome was documented (corrections, follow-ups, evidence and signature) for the teams that continue the case.'};
+const EN_RR={P:['Paralegal (CR Agent)','Leads the call from start to finish and carries out what the Attorney authorizes. Does not make legal decisions.'],A:['Attorney','Supervises the review, performs the legal checkpoint and makes the legal decisions. Authorizes signing.']};
+const EN_MOD={chk:['High priority','Complete Attorney legal checkpoint','Attorneys, with paralegals supporting the prep work','60 minutes plus a 20-minute refresher two weeks later'],inc:['High priority','New or contradictory information: correction traffic light and finding log','Paralegals and Attorneys, joint session','90 minutes'],att:['High priority','Attorney close-out and signing authorization','Attorneys','45 minutes'],frm:['High priority','Form review with version control','Paralegals, with Attorneys for the escalation part','60 minutes'],cie:['Medium priority','Close with the client and internal close','Paralegals','60 minutes'],dcl:['Medium priority','DCL reading and confirmation','Paralegals','60 minutes'],evi:['Medium priority','Supporting documents and new evidence','Paralegals and Attorneys','45 minutes'],ape:['Script adjustment','Call opening and framing','Paralegals','30 minutes']};
+const EN_KW={2:['Client not informed','Recording without backing','Complaint risk'],1:['Disoriented client','Interruptions','Stages not announced'],6:['Client withholds information','Late disclosure of records','RFE or NOID risk'],9:['Contradiction with USCIS','Credibility','Legal strategy at risk'],7:['Records not analyzed','Inadmissibility','Good moral character'],8:['Entries not confirmed','Advice on assumptions','Eligibility and bars'],11:['Derivative not analyzed','Admissibility not reviewed'],12:['Derivative not asked','Record not reviewed'],48:['Incomplete checkpoint','Open legal risk','Signing without legal close'],54:['Incomplete checkpoint','Open legal risk','Signing without legal close'],55:['Incomplete checkpoint','Open legal risk','Signing without legal close'],56:['Incomplete checkpoint','Open legal risk','Signing without legal close'],49:['Inadmissibility not determined','No escalation','Incomplete strategy'],20:['Version not identified','Outdated package','Re-signing'],13:['Forms not named','G-28 omitted','No record of review'],14:['Outcome not stated','Rebuild from the recording'],16:['Ambiguous confirmation','Data not validated'],17:['No owner or date','Package on hold','Extra call'],18:['Discrepancy not escalated','No legal decision'],21:['Unclear signature status','Contradictory instructions','Re-signing'],24:['Spaced-out confirmations','Errors not caught','Signing without real review'],26:['No express sign-off','Perjury formula omitted'],25:['Unauthorized change','Sworn statement altered','Contradicts the evidence'],61:['Correction on their own','Sworn statement altered'],27:['Does not stop the flow','Interprets on their own','No legal analysis'],28:['Only in the recording','Finding not recorded','Missing from final version'],29:['Traffic light misapplied','Yellow without authorization','Red that does not stop signing'],30:['No structured log','Decisions from memory','Lost findings'],52:['Inconsistencies taken at their word','Signing without a ruling','Credibility before USCIS'],51:['No audible validation','Change without legal review'],59:['Inconsistencies not caught','Template leftovers','Relies on the client'],31:['Client without context','Review as a formality','Evidence unchecked'],32:['Rushed listing','Foreign or contradictory document','No on-screen confirmation'],33:['No open question','Evidence not delivered','Weaker case','RFE'],34:['No channel or date','No receipt','Document never arrives'],62:['Stage not performed','Evidence not validated','Errors after submission'],35:['Incomplete close','Implicit authorization','Paralegal without sign-off'],36:['Follow-ups without owner','Delayed follow-up'],37:['Leaves before signing','No formal close','Questions not validated'],53:['Signing with open issues','Version unresolved','Re-signing'],40:['Instruction on their own','Contradicts the Attorney','Confused client'],41:['No written confirmation','No backing for complaints'],42:['Experience not measured','No quality feedback'],43:['No follow-up summary','Incomplete documents','More follow-up calls'],45:['No internal close','Record not confirmed','Teams without information'],47:['Follow-ups not consolidated','Scattered records','Teams without information'],46:['Question deferred','Attorney not consulted','Client without a legal answer'],60:['No consolidated summary','Record without an owner']};
+const xCrit=ki=>XE()?(K[ki].kind==='crit'?CODE[ki]+' · ':'')+(EN_CRIT[ki]||K[ki].label):klab(ki);
+const xResp=l=>XE()?(EN_RESP[l]||l):l;
+const xBn=(bn,es)=>XE()&&EN_FLOW[bn]?EN_FLOW[bn][0]:es;
+const xRN=r=>XE()?{P:'Paralegal',A:'Attorney',PA:'Both'}[r]:RN[r];
+const xRNL=r=>XE()?{P:'Paralegal',A:'Attorney',PA:'Paralegal and Attorney'}[r]:RNL[r];
+const xName=ki=>{const k=K[ki];if(!XE())return kname(k);return k.kind==='roles'?(k.block.includes('Attorney')?'Attorney role':'Paralegal role')+': '+(EN_CRIT[ki]||k.label):xCrit(ki)};
 const kfull=ki=>K[ki].kind==='roles'?(K[ki].block.replace('Rol: ','Rol ')+': '+K[ki].label):klab(ki);
 const kn=ki=>esc(kfull(ki))+' '+rb(ROLE[ki]);
 const roleHit=(set,ki)=>!set.size||set.has(ROLE[ki])||ROLE[ki]==='PA';
@@ -2572,7 +2591,7 @@ function closeViewer(){$('#viewer').classList.remove('on');document.body.style.o
 })();
 /* --- popup --- */
 let popFocus=null;
-function openPop(title,sub,html,multi){
+function openPop(title,sub,html,multi){$('#pClose').textContent=tr('Cerrar','Close');
   popFocus=document.activeElement;
   $('#pTitle').textContent=title;$('#pSub').textContent=sub||'';
   const b=$('#pBody');b.className='pbody'+(multi?' multi':'');b.innerHTML=html;
@@ -3148,70 +3167,70 @@ $('#v0').addEventListener('click',e=>{const a=e.target.closest('a[data-go]');if(
   const fbBlocks=FLOW.map(([bn,r,name,desc,out])=>{const kis=KO.filter(ki=>K[ki].kind==='crit'&&K[ki].bn===bn&&ST[ki].t);const n={G:0,Y:0,R:0};kis.forEach(ki=>{n.G+=ST[ki].n.G;n.Y+=ST[ki].n.Y;n.R+=ST[ki].n.R});const t=n.G+n.Y+n.R;return {bn,r,name,out,kis,n,t,v:t?Math.round(n.G/t*100):0}});
   const fbResp=RR.map(([r,title,desc,allk,resp,no])=>({r,title,desc,no,a:pool(allk),items:resp.map(([lab,kis],i)=>{const p=pool(kis);const obs=[...new Set(kis.flatMap(k=>OBS[k]||[]))];return {lab,kis,p,v:p.t?Math.round(p.n.G/p.t*100):null,obs,pos:Math.min(99,...obs.map(o=>K[o].bn)),i}}).filter(x=>x.p.t)}));
   const fbCed=r=>{const v=KO.filter(ki=>K[ki].kind==='crit'&&ST[ki].t).map(ki=>ROLE[ki]);return {own:v.filter(x=>x===r).length,both:v.filter(x=>x==='PA').length,all:v.length}};
-  const fbCedHTML=r=>{const c=fbCed(r);return `<div class="cedtot"><div><b>${c.own+c.both}</b><span>criterios de la cédula evalúan al ${r==='P'?'Paralegal':'Attorney'}</span></div><div><b>${c.own}</b><span>${r==='P'?'propios del Paralegal':'propios del Attorney'}</span></div><div><b>${c.both}</b><span>en conjunto con ${r==='P'?'el Attorney':'el Paralegal'}</span></div><div><b>${c.all}</b><span>criterios en total en la cédula</span></div></div>`};
+  const fbCedHTML=r=>{const c=fbCed(r),nm=r==='P'?'Paralegal':'Attorney',ot=r==='P'?'Attorney':'Paralegal';return `<div class="cedtot"><div><b>${c.own+c.both}</b><span>${tr('criterios de la cédula evalúan al '+nm,'scorecard criteria evaluate the '+nm)}</span></div><div><b>${c.own}</b><span>${tr('propios del '+nm,nm+' only')}</span></div><div><b>${c.both}</b><span>${tr('en conjunto con el '+ot,'jointly with the '+ot)}</span></div><div><b>${c.all}</b><span>${tr('criterios en total en la cédula','criteria in total on the scorecard')}</span></div></div>`};
   const fbOwn=r=>{const ks=KO.filter(ki=>K[ki].kind==='crit'&&ROLE[ki]===r&&ST[ki].t);return {n:ks.filter(ki=>ST[ki].g>=UMBRAL).length,t:ks.length}};
   const fbSort=(arr,mode,chr)=>{const a=arr.slice();a.sort(mode==='lo'?(x,y)=>x.v-y.v:mode==='hi'?(x,y)=>y.v-x.v:chr);return a};
   const fbInBlock=bn=>fbResp.flatMap(R=>R.items.filter(it=>it.obs.some(o=>K[o].bn===bn)).map(it=>({r:R.r,lab:it.lab})));
-  const fbCritRow=ki=>{const s=ST[ki],v=Math.round(s.g);return `<div class="xli"><span>${esc(klab(ki))} ${rb(ROLE[ki])}<small>${s.n.G} de ${s.t} llamadas en verde</small></span>${fbBar(v)}<b class="t-${fbBand(v)}">${v}%</b></div>`};
-  const sortSeg=f=>`<div class="seg" data-sortfor="${f}" role="group" aria-label="Ordenar"><button type="button" data-s="chr" aria-pressed="true">Orden de la llamada</button><button type="button" data-s="lo" aria-pressed="false">Menor cumplimiento</button><button type="button" data-s="hi" aria-pressed="false">Mayor cumplimiento</button></div>`;
+  const fbCritRow=ki=>{const s=ST[ki],v=Math.round(s.g);return `<div class="xli"><span>${esc(xCrit(ki))} ${rb(ROLE[ki])}<small>${s.n.G} ${tr('de','of')} ${s.t} ${tr('llamadas en verde','calls in green')}</small></span>${fbBar(v)}<b class="t-${fbBand(v)}">${v}%</b></div>`};
+  const sortSeg=f=>`<div class="seg" data-sortfor="${f}" role="group" aria-label="${tr('Ordenar','Sort')}"><button type="button" data-s="chr" aria-pressed="true">${tr('Orden de la llamada','Call order')}</button><button type="button" data-s="lo" aria-pressed="false">${tr('Menor cumplimiento','Lowest compliance')}</button><button type="button" data-s="hi" aria-pressed="false">${tr('Mayor cumplimiento','Highest compliance')}</button></div>`;
 
   function fbRoleCard(R,mode,full){
     const own=fbOwn(R.r),v=Math.round(R.a.n.G/R.a.t*100);
     const items=fbSort(R.items,mode,(x,y)=>x.pos-y.pos||x.i-y.i);
-    return `<div class="card rrc"><div class="xrh">${rb(R.r)}<h3>${R.title} <span class="rrcnt">(cumple ${own.n} de ${own.t} criterios)</span></h3></div><p class="hint">${R.desc}</p><div class="cedtot" style="grid-template-columns:minmax(0,1fr)"><div style="display:flex;gap:10px;align-items:center"><b>${R.items.length}</b><span>responsabilidades del ${R.r==='P'?'Paralegal':'Attorney'} según la tabla de roles</span></div></div>${fbCedHTML(R.r)}
-      <div class="xrow">${pieSVG([{label:'Cumple',value:R.a.n.G,color:COL.G},{label:'Parcial',value:R.a.n.Y,color:COL.Y},{label:'No cumple',value:R.a.n.R,color:COL.R}],140,[v+'%','cumple'])}
-      <div class="xlist">${items.map(it=>`<button type="button" class="xli rli" data-resp="${R.r}|${esc(it.lab)}"><span>${esc(it.lab)}</span>${fbBar(it.v)}<b>${it.v}%</b></button>`).join('')}</div></div>
+    return `<div class="card rrc"><div class="xrh">${rb(R.r)}<h3>${XE()?EN_RR[R.r][0]:R.title} <span class="rrcnt">(${tr('cumple','meets')} ${own.n} ${tr('de','of')} ${own.t} ${tr('criterios','criteria')})</span></h3></div><p class="hint">${XE()?EN_RR[R.r][1]:R.desc}</p><div class="cedtot" style="grid-template-columns:minmax(0,1fr)"><div style="display:flex;gap:10px;align-items:center"><b>${R.items.length}</b><span>${tr('responsabilidades del '+(R.r==='P'?'Paralegal':'Attorney')+' según la tabla de roles',(R.r==='P'?'Paralegal':'Attorney')+' responsibilities according to the roles table')}</span></div></div>${fbCedHTML(R.r)}
+      <div class="xrow">${pieSVG([{label:tr('Cumple','Meets'),value:R.a.n.G,color:COL.G},{label:tr('Parcial','Partial'),value:R.a.n.Y,color:COL.Y},{label:tr('No cumple','Does not meet'),value:R.a.n.R,color:COL.R}],140,[v+'%',tr('cumple','meets')])}
+      <div class="xlist">${items.map(it=>`<button type="button" class="xli rli" data-resp="${R.r}|${esc(it.lab)}"><span>${esc(xResp(it.lab))}</span>${fbBar(it.v)}<b>${it.v}%</b></button>`).join('')}</div></div>
       ${full?`<h3 class="rrh">No hace (prohibido)</h3><ul class="rrno">${R.no.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}</div>`;
   }
   function fbTimeline(mode){
     const bl=fbSort(fbBlocks,mode,(x,y)=>x.bn-y.bn);
-    return `<div class="tl">${bl.map(b=>`<button type="button" class="tln" data-tl="${b.bn}"><span class="dot ${b.r}">${b.bn}</span><span class="tlc"><span class="tlh"><b>${esc(b.name)}</b>${rb(b.r)}<span class="tlp t-${fbBand(b.v)}">${b.v}%</span></span>${fbBar(b.v)}<span class="tlr">${fbInBlock(b.bn).map(x=>`<span class="tchip tc-${x.r}">${esc(x.lab)}</span>`).join('')}</span></span></button>`).join('')}</div>`;
+    return `<div class="tl">${bl.map(b=>`<button type="button" class="tln" data-tl="${b.bn}"><span class="dot ${b.r}">${b.bn}</span><span class="tlc"><span class="tlh"><b>${esc(xBn(b.bn,b.name))}</b>${rb(b.r)}<span class="tlp t-${fbBand(b.v)}">${b.v}%</span></span>${fbBar(b.v)}<span class="tlr">${fbInBlock(b.bn).map(x=>`<span class="tchip tc-${x.r}">${esc(xResp(x.lab))}</span>`).join('')}</span></span></button>`).join('')}</div>`;
   }
   function fbFlow(){
-    const W=1120,LC=118,PW=(W-LC-8)/10,HT=78,LH=74,LANES=[['P','Paralegal'],['PA','Ambos'],['A','Attorney']],H=HT+LH*3+14;
+    const W=1120,LC=118,PW=(W-LC-8)/10,HT=78,LH=74,LANES=[['P','Paralegal'],['PA',tr('Ambos','Both')],['A','Attorney']],H=HT+LH*3+14;
     const X=i=>LC+PW*(i+.5), LY=r=>HT+LH*LANES.findIndex(l=>l[0]===r)+LH/2;
     const wrap=t=>{const out=[];let cur='';t.split(' ').forEach(w=>{if(cur&&(cur+' '+w).length>15){out.push(cur);cur=w}else cur=cur?cur+' '+w:w});if(cur)out.push(cur);return out.slice(0,3)};
     const RC={P:'var(--rp)',A:'var(--ra)',PA:'var(--n)'},BG={P:'var(--rpbg)',A:'var(--rabg)',PA:'var(--nbg)'},BC={G:'var(--g)',Y:'var(--y)',R:'var(--r)'},BB={G:'var(--gbg)',Y:'var(--ybg)',R:'var(--rbg)'};
     const bl=fbBlocks.slice().sort((a,b)=>a.bn-b.bn);
-    let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="min-width:880px;display:block" role="img" aria-label="Línea del tiempo de la llamada por rol">`;
+    let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="min-width:880px;display:block" role="img" aria-label="${tr('Línea del tiempo de la llamada por rol','Call timeline by role')}">`;
     LANES.forEach(([r,l])=>{const y=LY(r)-LH/2+5;s+=`<rect x="0" y="${y}" width="${W}" height="${LH-10}" rx="10" fill="${BG[r]}" fill-opacity=".55"/><text x="14" y="${LY(r)+5}" style="font:700 14px var(--body);fill:${RC[r]}">${l}</text>`});
     bl.forEach((b,i)=>{
       s+=`<line x1="${X(i)}" x2="${X(i)}" y1="${HT-6}" y2="${H-10}" stroke="var(--line)" stroke-dasharray="3 4"/>`;
-      s+=`<text x="${X(i)}" y="16" text-anchor="middle" style="font:700 12px var(--body);fill:var(--accent)">FASE ${b.bn}</text>`;
-      wrap(b.name).forEach((ln,j)=>s+=`<text x="${X(i)}" y="${33+j*14}" text-anchor="middle" class="svgt b" style="font-size:12px">${esc(ln)}</text>`);
+      s+=`<text x="${X(i)}" y="16" text-anchor="middle" style="font:700 12px var(--body);fill:var(--accent)">${tr('FASE','PHASE')} ${b.bn}</text>`;
+      wrap(xBn(b.bn,b.name)).forEach((ln,j)=>s+=`<text x="${X(i)}" y="${33+j*14}" text-anchor="middle" class="svgt b" style="font-size:12px">${esc(ln)}</text>`);
     });
     s+=`<polyline fill="none" stroke="var(--ink2)" stroke-width="2.5" stroke-linejoin="round" points="${bl.map((b,i)=>X(i)+','+LY(b.r)).join(' ')}"/>`;
     bl.forEach((b,i)=>{
       const inb=fbInBlock(b.bn),by={P:[],A:[]};inb.forEach(x=>(by[x.r]||[]).push(x.lab));
       if(b.r!=='PA')['P','A'].filter(r=>r!==b.r&&by[r].length).forEach(r=>{
-        s+=`<g data-tl="${b.bn}" style="cursor:pointer" data-tip="Fase ${b.bn}: ${esc(b.name)}\nTambién interviene el ${RN[r]}:\n· ${by[r].map(esc).join('\n· ')}"><circle cx="${X(i)}" cy="${LY(r)}" r="8" fill="var(--panel)" stroke="${RC[r]}" stroke-width="2.5"/><circle cx="${X(i)}" cy="${LY(r)}" r="16" fill="transparent"/></g>`;});
-      const tip=`Fase ${b.bn}: ${esc(b.name)}\nConduce: ${RNL[b.r]} · ${b.v}% en verde`+(by.P.length?`\nParalegal: ${by.P.map(esc).join(', ')}`:'')+(by.A.length?`\nAttorney: ${by.A.map(esc).join(', ')}`:'');
+        s+=`<g data-tl="${b.bn}" style="cursor:pointer" data-tip="${tr('Fase','Phase')} ${b.bn}: ${esc(xBn(b.bn,b.name))}\n${tr('También interviene el','The '+xRN(r)+' also takes part')}${XE()?'':' '+RN[r]}:\n· ${by[r].map(l=>esc(xResp(l))).join('\n· ')}"><circle cx="${X(i)}" cy="${LY(r)}" r="8" fill="var(--panel)" stroke="${RC[r]}" stroke-width="2.5"/><circle cx="${X(i)}" cy="${LY(r)}" r="16" fill="transparent"/></g>`;});
+      const tip=`${tr('Fase','Phase')} ${b.bn}: ${esc(xBn(b.bn,b.name))}\n${tr('Conduce','Led by')}: ${xRNL(b.r)} · ${b.v}% ${tr('en verde','in green')}`+(by.P.length?`\nParalegal: ${by.P.map(l=>esc(xResp(l))).join(', ')}`:'')+(by.A.length?`\nAttorney: ${by.A.map(l=>esc(xResp(l))).join(', ')}`:'');
       const k=fbBand(b.v);
       s+=`<g data-tl="${b.bn}" style="cursor:pointer" data-tip="${tip}"><circle cx="${X(i)}" cy="${LY(b.r)}" r="25" fill="${BB[k]}" stroke="${BC[k]}" stroke-width="3"/><text x="${X(i)}" y="${LY(b.r)+5}" text-anchor="middle" style="font:700 14px var(--disp);fill:${BC[k]}">${b.v}%</text></g>`;
     });
-    return `<div class="xtline">${s}</svg></div><div class="xleg" style="margin-top:10px"><span><svg width="16" height="16" style="vertical-align:-3px;margin-right:5px"><circle cx="8" cy="8" r="6.5" fill="var(--nbg)" stroke="var(--ink2)" stroke-width="2"/></svg>Conduce la fase (porcentaje de calificaciones en verde)</span><span><svg width="14" height="14" style="vertical-align:-2px;margin-right:5px"><circle cx="7" cy="7" r="5" fill="var(--panel)" stroke="var(--ink2)" stroke-width="2"/></svg>También interviene</span><span><i class="seg-G"></i>≥ 80%</span><span><i class="seg-Y"></i>60–79%</span><span><i class="seg-R"></i>&lt; 60%</span></div>`;
+    return `<div class="xtline">${s}</svg></div><div class="xleg" style="margin-top:10px"><span><svg width="16" height="16" style="vertical-align:-3px;margin-right:5px"><circle cx="8" cy="8" r="6.5" fill="var(--nbg)" stroke="var(--ink2)" stroke-width="2"/></svg>${tr('Conduce la fase (porcentaje de calificaciones en verde)','Leads the phase (share of ratings in green)')}</span><span><svg width="14" height="14" style="vertical-align:-2px;margin-right:5px"><circle cx="7" cy="7" r="5" fill="var(--panel)" stroke="var(--ink2)" stroke-width="2"/></svg>${tr('También interviene','Also takes part')}</span><span><i class="seg-G"></i>≥ 80%</span><span><i class="seg-Y"></i>60–79%</span><span><i class="seg-R"></i>&lt; 60%</span></div>`;
   }
   function fbBlockPop(bn){
     const b=fbBlocks.find(x=>x.bn===bn),rs=fbInBlock(bn);
-    openPop(`${b.bn}. ${b.name}`,`Conduce: ${RNL[b.r]} · ${b.v}% de las calificaciones en verde`,
-      `<div class="pcard"><h4>Qué significa</h4><p class="cedp" style="margin-top:0">${BMEAN[bn]}</p>
-      <h4>Qué entrega al siguiente momento</h4><p class="cedp" style="margin-top:0">${esc(b.out)}</p>
-      <h4>Criterios del bloque</h4><div class="cfl">${b.kis.map(fbCritRow).join('')}</div>
-      ${rs.length?`<h4>Responsabilidades que intervienen</h4><div class="tlr">${rs.map(x=>`<span class="tchip tc-${x.r}">${esc(x.lab)}</span>`).join('')}</div>`:''}
-      <p style="margin:16px 0 0"><button type="button" class="btn sm" data-doc>Ver la cédula completa</button></p></div>`);
+    openPop(`${b.bn}. ${xBn(bn,b.name)}`,`${tr('Conduce','Led by')}: ${xRNL(b.r)} · ${b.v}% ${tr('de las calificaciones en verde','of ratings in green')}`,
+      `<div class="pcard"><h4>${tr('Qué significa','What it means')}</h4><p class="cedp" style="margin-top:0">${XE()?EN_BMEAN[bn]:BMEAN[bn]}</p>
+      <h4>${tr('Qué entrega al siguiente momento','What it hands over to the next step')}</h4><p class="cedp" style="margin-top:0">${esc(XE()?EN_FLOW[bn][1]:b.out)}</p>
+      <h4>${tr('Criterios del bloque','Block criteria')}</h4><div class="cfl">${b.kis.map(fbCritRow).join('')}</div>
+      ${rs.length?`<h4>${tr('Responsabilidades que intervienen','Responsibilities involved')}</h4><div class="tlr">${rs.map(x=>`<span class="tchip tc-${x.r}">${esc(xResp(x.lab))}</span>`).join('')}</div>`:''}
+      <p style="margin:16px 0 0"><button type="button" class="btn sm" data-doc>${tr('Ver la cédula completa','View the full scorecard (Spanish)')}</button></p></div>`);
   }
   function fbRespPop(r,lab){
     const R=fbResp.find(x=>x.r===r),it=R&&R.items.find(x=>x.lab===lab);if(!it)return;
     const obs=it.obs.filter(ki=>ST[ki].t).sort((a,b)=>KR[a]-KR[b]);
-    openPop(lab,`${RNL[r]} · ${it.v}% de las calificaciones en verde`,
-      `<div class="pcard"><h4>Qué significa</h4><p class="cedp" style="margin-top:0">${RMEAN[lab]||''}</p>
-      ${obs.length?`<h4>Dónde se observa en la llamada</h4><div class="cfl">${obs.map(fbCritRow).join('')}</div>`:''}</div>`);
+    openPop(xResp(lab),`${xRNL(r)} · ${it.v}% ${tr('de las calificaciones en verde','of ratings in green')}`,
+      `<div class="pcard"><h4>${tr('Qué significa','What it means')}</h4><p class="cedp" style="margin-top:0">${(XE()?EN_RMEAN:RMEAN)[lab]||''}</p>
+      ${obs.length?`<h4>${tr('Dónde se observa en la llamada','Where it shows up in the call')}</h4><div class="cfl">${obs.map(fbCritRow).join('')}</div>`:''}</div>`);
   }
   function fbMetaHTML(){
     const ds=C.map(c=>c.date).sort(),hrs=Math.round(C.reduce((a,c)=>a+(c.min||0),0)/60);
     const cnt=f=>{const m={};C.forEach(c=>{const k=f(c);m[k]=(m[k]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1]).map(([k,n])=>`${esc(k)} (${n})`).join(', ')};
-    return `<div class="kpis mkpis"><div class="kpi"><b>${fmtDate(ds[0])} – ${fmtDate(ds[ds.length-1])}</b><span>periodo de las llamadas auditadas</span></div><div class="kpi"><b>${C.length}</b><span>llamadas auditadas</span></div><div class="kpi"><b>${hrs} h</b><span>de grabación escuchada</span></div><div class="kpi"><b>${new Set(C.map(c=>c.agent)).size}</b><span>paralegales</span></div><div class="kpi"><b>${new Set(C.map(c=>c.attorney)).size}</b><span>attorneys</span></div></div>
-      <p class="mline"><b>Modalidad:</b> ${cnt(c=>c.mod)}. <b>Tipo de petición:</b> ${cnt(c=>c.pet&&c.pet!=='—'?c.pet:'sin especificar')}. <b>Método:</b> escucha de la grabación o transcripción completa de cada llamada, evaluada criterio por criterio con la cita y el minuto como evidencia.</p>`;
+    return `<div class="kpis mkpis"><div class="kpi"><b>${fmtDate(ds[0])} – ${fmtDate(ds[ds.length-1])}</b><span>${tr('periodo de las llamadas auditadas','period of the audited calls')}</span></div><div class="kpi"><b>${C.length}</b><span>${tr('llamadas auditadas','audited calls')}</span></div><div class="kpi"><b>${hrs} h</b><span>${tr('de grabación escuchada','of recordings reviewed')}</span></div><div class="kpi"><b>${new Set(C.map(c=>c.agent)).size}</b><span>${tr('paralegales','paralegals')}</span></div><div class="kpi"><b>${new Set(C.map(c=>c.attorney)).size}</b><span>attorneys</span></div></div>
+      <p class="mline"><b>${tr('Modalidad','Format')}:</b> ${cnt(c=>XE()?({'Orgánico':'Organic'}[c.mod]||c.mod):c.mod)}. <b>${tr('Tipo de petición','Petition type')}:</b> ${cnt(c=>c.pet&&c.pet!=='—'?(XE()?({'Visa T':'T visa','Visa U':'U visa'}[c.pet]||c.pet):c.pet):tr('sin especificar','not specified'))}. <b>${tr('Método','Method')}:</b> ${tr('escucha de la grabación o transcripción completa de cada llamada, evaluada criterio por criterio con la cita y el minuto como evidencia.','full listen to the recording or transcript of each call, rated criterion by criterion with the quote and timestamp as evidence.')}</p>`;
   }
   /* filtro de criterios por porcentaje */
   function fbCritFilter(id){
@@ -3222,17 +3241,17 @@ $('#v0').addEventListener('click',e=>{const a=e.target.closest('a[data-go]');if(
     const RG={all:()=>true,lo:x=>x.v<50,mid:x=>x.v>=50&&x.v<UMBRAL,hi:x=>x.v>=UMBRAL};
     const vis=rows.filter(RG[st.rng]).sort((a,b)=>a.v-b.v||KR[a.ki]-KR[b.ki]);
     const names=[...new Set(C.map(c=>c.agent))].sort();
-    el.innerHTML=`<div class="filters" style="margin-bottom:10px"><select data-cf aria-label="Paralegal"><option value="">Todos los paralegales</option>${names.map(n=>`<option${n===st.who?' selected':''}>${esc(n)}</option>`).join('')}</select>
-      <div class="seg" role="group" aria-label="Filtrar por porcentaje">${[['all','Todos'],['lo','Menos de 50%'],['mid','50% a 79%'],['hi','80% o más']].map(([k,l])=>`<button type="button" data-rg="${k}" aria-pressed="${st.rng===k}">${l} (${rows.filter(RG[k]).length})</button>`).join('')}</div></div>
-      <p class="count">${vis.length} criterio${vis.length===1?'':'s'}${st.who?` en las llamadas de ${esc(st.who)}`:' en todas las llamadas'}, del menor al mayor cumplimiento.</p>
-      <div class="cfg">${[['P','Criterios del Paralegal','Los ejecuta el Paralegal por su cuenta.'],['PA','Criterios en conjunto','Los ejecutan Paralegal y Attorney; el resultado depende de ambos.']].map(([r,t,d])=>{const g=vis.filter(x=>ROLE[x.ki]===r);return `<div class="cfcol rs-${r}"><h3>${rb(r)} ${t} <span class="dcn">(${g.length})</span></h3><p class="hint">${d}</p><div class="cfl">${g.map(x=>`<div class="xli"><span>${esc(klab(x.ki))}<small>${x.n.G} de ${x.t} llamada${x.t===1?'':'s'} en verde</small></span>${fbBar(x.v)}<b class="t-${fbBand(x.v)}">${x.v}%</b></div>`).join('')||'<div class="empty">Ningún criterio en este rango.</div>'}</div></div>`}).join('')}</div>`;
+    el.innerHTML=`<div class="filters" style="margin-bottom:10px"><select data-cf aria-label="Paralegal"><option value="">${tr('Todos los paralegales','All paralegals')}</option>${names.map(n=>`<option${n===st.who?' selected':''}>${esc(n)}</option>`).join('')}</select>
+      <div class="seg" role="group" aria-label="${tr('Filtrar por porcentaje','Filter by percentage')}">${[['all',tr('Todos','All')],['lo',tr('Menos de 50%','Under 50%')],['mid',tr('50% a 79%','50% to 79%')],['hi',tr('80% o más','80% or more')]].map(([k,l])=>`<button type="button" data-rg="${k}" aria-pressed="${st.rng===k}">${l} (${rows.filter(RG[k]).length})</button>`).join('')}</div></div>
+      <p class="count">${XE()?`${vis.length} criteri${vis.length===1?'on':'a'}${st.who?` in ${esc(st.who)}’s calls`:' across all calls'}, from lowest to highest compliance.`:`${vis.length} criterio${vis.length===1?'':'s'}${st.who?` en las llamadas de ${esc(st.who)}`:' en todas las llamadas'}, del menor al mayor cumplimiento.`}</p>
+      <div class="cfg">${[['P',tr('Criterios del Paralegal','Paralegal criteria'),tr('Los ejecuta el Paralegal por su cuenta.','Carried out by the Paralegal alone.')],['PA',tr('Criterios en conjunto','Joint criteria'),tr('Los ejecutan Paralegal y Attorney; el resultado depende de ambos.','Carried out by the Paralegal and the Attorney; the result depends on both.')]].map(([r,t,d])=>{const g=vis.filter(x=>ROLE[x.ki]===r);return `<div class="cfcol rs-${r}"><h3>${rb(r)} ${t} <span class="dcn">(${g.length})</span></h3><p class="hint">${d}</p><div class="cfl">${g.map(x=>`<div class="xli"><span>${esc(xCrit(x.ki))}<small>${x.n.G} ${tr('de','of')} ${x.t} ${tr('llamada','call')}${x.t===1?'':'s'} ${tr('en verde','in green')}</small></span>${fbBar(x.v)}<b class="t-${fbBand(x.v)}">${x.v}%</b></div>`).join('')||`<div class="empty">${tr('Ningún criterio en este rango.','No criteria in this range.')}</div>`}</div></div>`}).join('')}</div>`;
     if(!el._on){el._on=1;
       el.addEventListener('change',e=>{if(e.target.matches('[data-cf]')){st.who=e.target.value;fbCritFilter(id)}});
       el.addEventListener('click',e=>{const b=e.target.closest('[data-rg]');if(b){st.rng=b.dataset.rg;fbCritFilter(id)}});}
   }
   /* cédula cargada */
   let docFocus=null;
-  function openDoc(){
+  function openDoc(){$('#docClose').textContent=tr('Cerrar','Close');
     if($('#pop').classList.contains('on'))closePop();
     const b=$('#docBody');if(!b.dataset.ok){b.innerHTML=`<article class="docart">${$('#cedDoc').innerHTML}</article>`;b.dataset.ok=1}
     docFocus=document.activeElement;$('#docv').classList.add('on');document.body.style.overflow='hidden';b.scrollTop=0;$('#docv').focus();
@@ -3263,47 +3282,60 @@ $('#v0').addEventListener('click',e=>{const a=e.target.closest('a[data-go]');if(
     const band=v=>v>=UMBRAL?'G':v>=60?'Y':'R';
     const pctOf=p=>p.t?Math.round(p.n.G/p.t*100):null;
     const hb=(v,tip)=>`<div class="xbar"${tip?` data-tip="${esc(tip)}"`:''}><span class="seg-${band(v)}" style="width:${Math.max(v,1)}%"></span><i style="left:${UMBRAL}%"></i></div>`;
-    const donut=(n,size,cen)=>pieSVG([{label:'Cumple',value:n.G,color:COL.G},{label:'Parcial',value:n.Y,color:COL.Y},{label:'No cumple',value:n.R,color:COL.R}],size,cen);
+    const donut=(n,size,cen)=>pieSVG([{label:tr('Cumple','Meets'),value:n.G,color:COL.G},{label:tr('Parcial','Partial'),value:n.Y,color:COL.Y},{label:tr('No cumple','Does not meet'),value:n.R,color:COL.R}],size,cen);
     const hero=(i,t,m)=>`<div class="xhero"><span class="snum">${String(i).padStart(2,'0')}</span><div><p class="eyebrow">${t}</p><h2 class="xmsg">${m}</h2></div></div>`;
     const finds=a=>`<ul class="xfind">${a.map(([c,t])=>`<li class="${c}">${t}</li>`).join('')}</ul>`;
     const rawBtn=(v,t)=>`<p class="xlink"><button type="button" class="btn sm" data-raw="${v}">${t}</button></p>`;
-    const nCalls=C.length, hrs=Math.round(C.reduce((a,c)=>a+(c.min||0),0)/60);
+    const nCalls=C.length;
     const agents=[...new Set(C.map(c=>c.agent))], atts=[...new Set(C.map(c=>c.attorney))];
+    const sCol=j=>j<8?`var(--s${j+1})`:['#0f7d8c','#a3367a','#7a6a00','#5b5bd6','#b35c1e','#2e7d32'][(j-8)%6];
+    let CV={}, cur=0;
+
+    function render(){
+    const EN=XE();
+    const of=tr('de','of');
 
     /* ---------- datos base ---------- */
     const RS=RR.map(([r,title,desc,allk,resp])=>{const a=pool(allk);
       const rs=resp.map(([lab,kis])=>({lab,p:pool(kis)})).filter(x=>x.p.t).map(x=>Object.assign(x,{v:pctOf(x.p)})).sort((a,b)=>a.v-b.v);
       return {r,title,desc,a,v:pctOf(a),rs}});
-    const BP=FLOW.map(([bn,r,name])=>{const n={G:0,Y:0,R:0};ST.forEach(s=>{if(K[s.ki].kind==='crit'&&K[s.ki].bn===bn){n.G+=s.n.G;n.Y+=s.n.Y;n.R+=s.n.R}});const t=n.G+n.Y+n.R;return {bn,r,name,n,t,v:t?Math.round(n.G/t*100):0}});
+    const BP=FLOW.map(([bn,r,name])=>{const n={G:0,Y:0,R:0};ST.forEach(s=>{if(K[s.ki].kind==='crit'&&K[s.ki].bn===bn){n.G+=s.n.G;n.Y+=s.n.Y;n.R+=s.n.R}});const t=n.G+n.Y+n.R;return {bn,r,name:xBn(bn,name),n,t,v:t?Math.round(n.G/t*100):0}});
     const bLow=BP.filter(b=>b.v<UMBRAL), bWorst=BP.slice().sort((a,b)=>a.v-b.v);
     const P=RS.find(x=>x.r==='P'), A=RS.find(x=>x.r==='A');
 
     /* ---------- 1. Roles ---------- */
-    const roleCard=x=>`<div class="card"><div class="xrh">${rb(x.r)}<h3>${x.title}</h3></div><p class="hint">${x.desc}</p>
-      <div class="xrow">${donut(x.a.n,150,[x.v+'%','cumple'])}
-      <div class="xlist">${x.rs.map(s=>`<div class="xli"><span>${esc(s.lab)}</span>${hb(s.v,`${s.p.n.G} de ${s.p.t} en verde · ${s.p.n.Y} parcial · ${s.p.n.R} no cumple`)}<b>${s.v}%</b></div>`).join('')}</div></div></div>`;
-    const sec1=hero(1,'Roles y responsabilidades',`El Paralegal cumple ${P.v}% de sus responsabilidades y el Attorney ${A.v}%. ${bLow.length} de 10 momentos de la llamada están por debajo de la meta de 80%.`)
-      +finds([
+    const sec1=hero(1,tr('Roles y responsabilidades','Roles and responsibilities'),EN
+        ?`The Paralegal meets ${P.v}% of their responsibilities and the Attorney ${A.v}%. ${bLow.length} of the 10 moments of the call are below the 80% target.`
+        :`El Paralegal cumple ${P.v}% de sus responsabilidades y el Attorney ${A.v}%. ${bLow.length} de 10 momentos de la llamada están por debajo de la meta de 80%.`)
+      +finds(EN?[
+        ['r',`<b>Paralegal:</b> their weakest responsibility is “${esc(xResp(P.rs[0].lab))}” (${P.rs[0].v}% in green).`],
+        ['r',`<b>Attorney:</b> their weakest responsibility is “${esc(xResp(A.rs[0].lab))}” (${A.rs[0].v}% in green).`],
+        ['y',`<b>Most critical moment of the call:</b> ${esc(bWorst[0].name)} (${bWorst[0].v}%), followed by ${esc(bWorst[1].name)} (${bWorst[1].v}%).`]]:[
         ['r',`<b>Paralegal:</b> su responsabilidad más débil es «${esc(P.rs[0].lab)}» (${P.rs[0].v}% en verde).`],
         ['r',`<b>Attorney:</b> su responsabilidad más débil es «${esc(A.rs[0].lab)}» (${A.rs[0].v}% en verde).`],
         ['y',`<b>Momento más crítico de la llamada:</b> ${esc(bWorst[0].name)} (${bWorst[0].v}%), seguido de ${esc(bWorst[1].name)} (${bWorst[1].v}%).`]])
-      +`<div class="filters" style="margin-bottom:12px">${sortSeg('exec')}<span class="count" style="margin:0">Toca una responsabilidad o un momento para ver qué significa.</span></div>
+      +`<div class="filters" style="margin-bottom:12px">${sortSeg('exec')}<span class="count" style="margin:0">${tr('Toca una responsabilidad o un momento para ver qué significa.','Tap a responsibility or a moment to see what it means.')}</span></div>
       <div class="xg2" id="xRoles"></div>
-      <div class="card"><h2>Línea del tiempo de la llamada</h2><p class="hint">Las diez fases en el orden de la llamada. El círculo grande indica quién conduce cada fase (Paralegal, Attorney o ambos) y su porcentaje de calificaciones en verde; el círculo pequeño indica que el otro rol también interviene. El trazo muestra cómo se pasa la llamada de un rol a otro. Toca una fase para ver qué significa.</p><div id="xFlow"></div></div>`
-      +rawBtn('vr','Ver detalle de roles en la información cruda');
+      <div class="card"><h2>${tr('Línea del tiempo de la llamada','Call timeline')}</h2><p class="hint">${tr('Las diez fases en el orden de la llamada. El círculo grande indica quién conduce cada fase (Paralegal, Attorney o ambos) y su porcentaje de calificaciones en verde; el círculo pequeño indica que el otro rol también interviene. El trazo muestra cómo se pasa la llamada de un rol a otro. Toca una fase para ver qué significa.','The ten phases in call order. The large circle shows who leads each phase (Paralegal, Attorney or both) and its share of ratings in green; the small circle shows that the other role also takes part. The line shows how the call passes from one role to the other. Tap a phase to see what it means.')}</p><div id="xFlow"></div></div>`
+      +rawBtn('vr',tr('Ver detalle de roles en la información cruda','See role detail in the raw data (Spanish)'));
 
     /* ---------- 2. Cédula ---------- */
-    const SEM=[['G','Verde'],['Y','Amarillo'],['R','Rojo'],['S','Sin semáforo']].map(([k,l])=>({k,l,n:sem(k)})).filter(x=>x.n);
-    const lowest=[...new Set(crit.filter(s=>K[s.ki].kind==='crit').map(s=>K[s.ki].label.replace(/\.$/,'')))].slice(0,3).map(l=>`«${esc(l)}» (${Math.round(crit.find(s=>K[s.ki].label.replace(/\.$/,'')===l).g)}%)`);
-    const sec2=hero(2,'Cédula (Auditoría de llamadas)',`${nCalls} llamadas evaluadas con la misma cédula: ${sem('G')?sem('G')+' en verde':'ninguna alcanzó el verde'}, ${sem('Y')} en amarillo y ${sem('R')} en rojo.`)
-      +`<div class="card"><h2>Datos metodológicos</h2>${fbMetaHTML()}</div>`
-      +finds([
+    const lowest=[...new Set(crit.filter(s=>K[s.ki].kind==='crit').map(s=>s.ki))].filter((ki,i,a)=>a.findIndex(k=>K[k].label.replace(/\.$/,'')===K[ki].label.replace(/\.$/,''))===i).slice(0,3)
+      .map(ki=>{const l=EN?(EN_CRIT[ki]||K[ki].label):K[ki].label.replace(/\.$/,'');return EN?`“${esc(l)}” (${Math.round(crit.find(s=>s.ki===ki).g)}%)`:`«${esc(l)}» (${Math.round(crit.find(s=>s.ki===ki).g)}%)`});
+    const sec2=hero(2,tr('Cédula (Auditoría de llamadas)','Scorecard (Call audit)'),EN
+        ?`${nCalls} calls rated with the same scorecard: ${sem('G')?sem('G')+' in green':'none reached green'}, ${sem('Y')} in yellow and ${sem('R')} in red.`
+        :`${nCalls} llamadas evaluadas con la misma cédula: ${sem('G')?sem('G')+' en verde':'ninguna alcanzó el verde'}, ${sem('Y')} en amarillo y ${sem('R')} en rojo.`)
+      +`<div class="card"><h2>${tr('Datos metodológicos','Methodology')}</h2>${fbMetaHTML()}</div>`
+      +finds(EN?[
+        ['r',`<b>${Math.round((sem('R'))/nCalls*100)}% of calls ended in red:</b> they need supervisor or Attorney intervention before the case moves on.`],
+        ['y',`<b>${pct('G')}% of ratings meet the criterion</b>, ${pct('Y')}% partially meet it and ${pct('R')}% do not.`],
+        ['r',`<b>Most often missed:</b> ${lowest.join(', ')}.`]]:[
         ['r',`<b>${Math.round((sem('R'))/nCalls*100)}% de las llamadas terminó en rojo:</b> requieren intervención de supervisión o del Attorney antes de continuar el caso.`],
         ['y',`<b>${pct('G')}% de las calificaciones cumple</b>, ${pct('Y')}% cumple parcialmente y ${pct('R')}% no cumple.`],
         ['r',`<b>Lo que más se omite:</b> ${lowest.join(', ')}.`]])
-      +`<div class="card"><h2>Cumplimiento por bloque de la cédula</h2><p class="hint">Porcentaje de calificaciones en verde. La línea marca la meta de 80%.</p>
-        ${BP.map(b=>`<div class="xblk"><span>${b.bn}. ${esc(b.name)}</span>${hb(b.v,`${b.n.G} cumple · ${b.n.Y} parcial · ${b.n.R} no cumple`)}<b class="t-${band(b.v)}">${b.v}%</b></div>`).join('')}</div>`
-      +`<p class="xlink"><button type="button" class="btn sm pri" data-doc>Ver la cédula completa</button> <button type="button" class="btn sm" data-raw="vc">Ver la auditoría en la información cruda</button></p>`;
+      +`<div class="card"><h2>${tr('Cumplimiento por bloque de la cédula','Compliance by scorecard block')}</h2><p class="hint">${tr('Porcentaje de calificaciones en verde. La línea marca la meta de 80%.','Share of ratings in green. The line marks the 80% target.')}</p>
+        ${BP.map(b=>`<div class="xblk"><span>${b.bn}. ${esc(b.name)}</span>${hb(b.v,EN?`${b.n.G} meet · ${b.n.Y} partial · ${b.n.R} do not meet`:`${b.n.G} cumple · ${b.n.Y} parcial · ${b.n.R} no cumple`)}<b class="t-${band(b.v)}">${b.v}%</b></div>`).join('')}</div>`
+      +`<p class="xlink"><button type="button" class="btn sm pri" data-doc>${tr('Ver la cédula completa','View the full scorecard (Spanish)')}</button> <button type="button" class="btn sm" data-raw="vc">${tr('Ver la auditoría en la información cruda','See the audit in the raw data (Spanish)')}</button></p>`;
 
     /* ---------- 3. Curva de aprendizaje ---------- */
     const grp=f=>{const g={};C.forEach(c=>(g[c[f]]=g[c[f]]||[]).push(c));return g};
@@ -3312,7 +3344,8 @@ $('#v0').addEventListener('click',e=>{const a=e.target.closest('a[data-go]');if(
     const upP=PR.filter(x=>x.b>x.a).length, dnP=PR.filter(x=>x.b<x.a).length, upA=AR.filter(x=>x.b>x.a).length;
     const P40=v=>Math.max(0,Math.min(100,(v-40)/60*100));
     const dbHTML=rows=>`<div class="xdbs">${rows.map(x=>{const d=Math.round(x.b-x.a),pa=P40(x.a),pb=P40(x.b);
-      return `<div class="xdb" data-tip="${esc(x.nm)}\nPrimera llamada: ${Math.round(x.a)}%\nPromedio de las ${x.n-1} llamadas siguientes: ${Math.round(x.b)}%"><span class="xdn">${esc(x.nm)}<small>${x.n} llamadas · ${Math.round(x.a)}% → prom. ${Math.round(x.b)}%</small></span><div class="xdt"><i class="xdl" style="left:${Math.min(pa,pb)}%;width:${Math.abs(pb-pa)}%"></i><i class="xdd a" style="left:${pa}%"></i><i class="xdd b" style="left:${pb}%"></i></div><b class="xdv ${d>0?'up':d<0?'dn':''}">${d>0?'+':''}${d}</b></div>`}).join('')}
+      const tip=EN?`${x.nm}\nFirst call: ${Math.round(x.a)}%\nAverage of the next ${x.n-1} calls: ${Math.round(x.b)}%`:`${x.nm}\nPrimera llamada: ${Math.round(x.a)}%\nPromedio de las ${x.n-1} llamadas siguientes: ${Math.round(x.b)}%`;
+      return `<div class="xdb" data-tip="${esc(tip)}"><span class="xdn">${esc(x.nm)}<small>${x.n} ${tr('llamadas','calls')} · ${Math.round(x.a)}% → ${tr('prom.','avg.')} ${Math.round(x.b)}%</small></span><div class="xdt"><i class="xdl" style="left:${Math.min(pa,pb)}%;width:${Math.abs(pb-pa)}%"></i><i class="xdd a" style="left:${pa}%"></i><i class="xdd b" style="left:${pb}%"></i></div><b class="xdv ${d>0?'up':d<0?'dn':''}">${d>0?'+':''}${d}</b></div>`}).join('')}
       <div class="xdax"><span></span><div>${[40,60,80,100].map(p=>`<i style="left:${P40(p)}%">${p}%</i>`).join('')}</div><span></span></div></div>`;
     const agS=Object.keys(grp('agent')).sort().map(nm=>({nm,cs:chron(grp('agent')[nm]).filter(c=>c.ap!=null)})).filter(x=>x.cs.length);
     const maxN=Math.max(...agS.map(x=>x.cs.length));
@@ -3320,92 +3353,121 @@ $('#v0').addEventListener('click',e=>{const a=e.target.closest('a[data-go]');if(
     const av=avgBy.filter(a=>a.n>=2);
     const atS=Object.keys(grp('attorney')).sort().map(nm=>({nm,cs:chron(grp('attorney')[nm]).filter(c=>c.tp!=null)})).filter(x=>x.cs.length);
     const avA=(()=>{const N=Math.max(...atS.map(x=>x.cs.length));return [...Array(N)].map((_,i)=>{const v=atS.filter(x=>x.cs[i]).map(x=>x.cs[i].tp);return {i,v:avg(v),n:v.length}}).filter(a=>a.n>=2)})();
-    const sCol=j=>j<8?`var(--s${j+1})`:['#0f7d8c','#a3367a','#7a6a00','#5b5bd6','#b35c1e','#2e7d32'][(j-8)%6];
+    const callW=tr('Llamada','Call');
     function curveGen(S,fld,AV,who,sel){
       const W=900,H=320,L=46,R=44,T=28,B=40,N=Math.max(...S.map(x=>x.cs.length));
       const LO=Math.min(40,Math.floor(Math.min(...S.flatMap(x=>x.cs.map(c=>c[fld])))/20)*20), X=i=>L+(W-L-R)*(N===1?.5:i/(N-1)), Y=v=>T+(H-T-B)*(1-(Math.max(LO,v)-LO)/(100-LO));
-      let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Curva de aprendizaje de ${who}">`;
+      let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${tr('Curva de aprendizaje de','Learning curve of')} ${who}">`;
       [...new Set([LO,40,60,80,100].filter(p=>p>=LO))].forEach(p=>s+=`<line class="gl" x1="${L}" x2="${W-R}" y1="${Y(p)}" y2="${Y(p)}"${p===80?' stroke-dasharray="6 4" style="stroke:var(--g)"':''}/><text class="svgt" x="${L-6}" y="${Y(p)+4}" text-anchor="end">${p}%</text>`);
-      s+=`<text class="svgt" x="${W-R}" y="${Y(80)-6}" text-anchor="end" style="fill:var(--g);font-weight:600">Meta 80%</text>`;
-      for(let i=0;i<N;i++)s+=`<text class="svgt" x="${X(i)}" y="${H-B+20}" text-anchor="middle">${N>10?'':'Llamada '}${i+1}</text>`;
+      s+=`<text class="svgt" x="${W-R}" y="${Y(80)-6}" text-anchor="end" style="fill:var(--g);font-weight:600">${tr('Meta 80%','80% target')}</text>`;
+      for(let i=0;i<N;i++)s+=`<text class="svgt" x="${X(i)}" y="${H-B+20}" text-anchor="middle">${N>10?'':callW+' '}${i+1}</text>`;
       const one=sel!=null&&sel!=='';
       const sx=one?S.find(x=>x.nm===sel):null, selAt=i=>sx&&sx.cs[i]?sx.cs[i][fld]:null;
       S.forEach((x,j)=>{if(one&&x.nm!==sel)return;const c=sCol(j),dash='';
         if(x.cs.length>1)s+=`<polyline fill="none" stroke="${c}" stroke-opacity="${one?1:.5}" stroke-width="${one?3:1.6}"${dash} stroke-linejoin="round" points="${x.cs.map((cl,i)=>X(i)+','+Y(cl[fld])).join(' ')}"/>`;
         x.cs.forEach((cl,i)=>{const v=cl[fld];s+=`<circle cx="${X(i)}" cy="${Y(v)}" r="${one?5:3.5}" fill="${c}" fill-opacity="${one?1:.7}"${one?' stroke="var(--panel)" stroke-width="1.5"':''}><title>${esc(x.nm)} · ${esc(cl.client)} · ${Math.round(v)}%</title></circle>`;
-          if(one){const a=AV.find(a=>a.i===i);s+=`<text class="svgt" x="${X(i)}" y="${(a&&v<a.v)?Y(v)+20:Y(v)-11}" text-anchor="middle" style="font-weight:700;font-size:12px;fill:${c}">${Math.round(v)}%</text><circle cx="${X(i)}" cy="${Y(v)}" r="12" fill="transparent" data-tip="${esc(x.nm)} · Llamada ${i+1}\n${esc(cl.client)}\n${Math.round(v)}%"/>`;}})});
+          if(one){const a=AV.find(a=>a.i===i);s+=`<text class="svgt" x="${X(i)}" y="${(a&&v<a.v)?Y(v)+20:Y(v)-11}" text-anchor="middle" style="font-weight:700;font-size:12px;fill:${c}">${Math.round(v)}%</text><circle cx="${X(i)}" cy="${Y(v)}" r="12" fill="transparent" data-tip="${esc(x.nm)} · ${callW} ${i+1}\n${esc(cl.client)}\n${Math.round(v)}%"/>`;}})});
       if(AV.length>1)s+=`<polyline fill="none" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round" points="${AV.map(a=>X(a.i)+','+Y(a.v)).join(' ')}"/>`;
-      AV.forEach(a=>s+=`<circle cx="${X(a.i)}" cy="${Y(a.v)}" r="6" fill="var(--ink)" stroke="var(--panel)" stroke-width="2"/><text class="svgt b" x="${X(a.i)}" y="${(selAt(a.i)!=null&&selAt(a.i)>=a.v)?Y(a.v)+22:Y(a.v)-12}" text-anchor="middle" style="font-weight:700;font-size:13px">${Math.round(a.v)}%</text><circle cx="${X(a.i)}" cy="${Y(a.v)}" r="15" fill="transparent" data-tip="Llamada ${a.i+1}\nPromedio del equipo: ${Math.round(a.v)}%\n${a.n} ${who} con esta llamada"/>`);
+      AV.forEach(a=>s+=`<circle cx="${X(a.i)}" cy="${Y(a.v)}" r="6" fill="var(--ink)" stroke="var(--panel)" stroke-width="2"/><text class="svgt b" x="${X(a.i)}" y="${(selAt(a.i)!=null&&selAt(a.i)>=a.v)?Y(a.v)+22:Y(a.v)-12}" text-anchor="middle" style="font-weight:700;font-size:13px">${Math.round(a.v)}%</text><circle cx="${X(a.i)}" cy="${Y(a.v)}" r="15" fill="transparent" data-tip="${callW} ${a.i+1}\n${tr('Promedio del equipo','Team average')}: ${Math.round(a.v)}%\n${a.n} ${who} ${tr('con esta llamada','with this call')}"/>`);
       return s+'</svg>';
     }
-    const curveSVG=sel=>curveGen(agS,'ap',av,'paralegales',sel), curveSVGA=sel=>curveGen(atS,'tp',avA,'attorneys',sel);
+    const curveSVG=sel=>curveGen(agS,'ap',av,tr('paralegales','paralegals'),sel), curveSVGA=sel=>curveGen(atS,'tp',avA,'attorneys',sel);
+    CV={xCurve:curveSVG,xCurveA:curveSVGA};
     const curveCard=(title,hint,S,gid,svg)=>`<div class="card"><h2>${title}</h2><p class="hint">${hint}</p>
-        <div class="seg xcsel" role="group" style="flex-wrap:wrap;margin:4px 0 10px"><button type="button" data-cv="" data-cvg="${gid}" aria-pressed="true">Todos</button>${S.map((x,j)=>`<button type="button" data-cv="${esc(x.nm)}" data-cvg="${gid}" aria-pressed="false"><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${sCol(j)};margin-right:6px;vertical-align:-1px"></i>${esc(x.nm)}</button>`).join('')}</div>
-        <div id="${gid}">${svg('')}</div><div class="xleg"><span><i style="background:var(--ink);height:5px"></i>Promedio del equipo (siempre visible)</span>${S.map((x,j)=>`<span><i style="background:${sCol(j)}"></i>${esc(x.nm)}</span>`).join('')}</div></div>`;
+        <div class="seg xcsel" role="group" style="flex-wrap:wrap;margin:4px 0 10px"><button type="button" data-cv="" data-cvg="${gid}" aria-pressed="true">${tr('Todos','All')}</button>${S.map((x,j)=>`<button type="button" data-cv="${esc(x.nm)}" data-cvg="${gid}" aria-pressed="false"><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${sCol(j)};margin-right:6px;vertical-align:-1px"></i>${esc(x.nm)}</button>`).join('')}</div>
+        <div id="${gid}">${svg('')}</div><div class="xleg"><span><i style="background:var(--ink);height:5px"></i>${tr('Promedio del equipo (siempre visible)','Team average (always shown)')}</span>${S.map((x,j)=>`<span><i style="background:${sCol(j)}"></i>${esc(x.nm)}</span>`).join('')}</div></div>`;
     const a0=av.length?Math.round(av[0].v):0, aN=av.length?Math.round(av[av.length-1].v):0, kN=av.length?av[av.length-1].i+1:1;
     const fP=Math.round(avg(PR.map(x=>x.a))), lP=Math.round(avg(PR.map(x=>x.b)));
-    const sec3=hero(3,'Curva de aprendizaje',`${upP} de ${PR.length} paralegales con dos o más llamadas mejoraron después de su primera llamada. En promedio pasaron de ${fP}% en la primera llamada a ${lP}% en el promedio de las siguientes.`)
-      +finds([
-        ['g',`<b>Mayor avance:</b> ${esc(PR[0].nm)}, de ${Math.round(PR[0].a)}% en su primera llamada a un promedio de ${Math.round(PR[0].b)}% después (${PR[0].b-PR[0].a>=0?'+':''}${Math.round(PR[0].b-PR[0].a)} puntos).`],
+    const dPts=x=>`${x.b-x.a>=0?'+':''}${Math.round(x.b-x.a)}`;
+    const ns=agS.map(x=>x.cs.length);
+    const sec3=hero(3,tr('Curva de aprendizaje','Learning curve'),EN
+        ?`${upP} of ${PR.length} paralegals with two or more calls improved after their first call. On average they went from ${fP}% on the first call to ${lP}% on the average of the following ones.`
+        :`${upP} de ${PR.length} paralegales con dos o más llamadas mejoraron después de su primera llamada. En promedio pasaron de ${fP}% en la primera llamada a ${lP}% en el promedio de las siguientes.`)
+      +finds(EN?[
+        ['g',`<b>Biggest improvement:</b> ${esc(PR[0].nm)}, from ${Math.round(PR[0].a)}% on their first call to an average of ${Math.round(PR[0].b)}% afterwards (${dPts(PR[0])} points).`],
+        [dnP?'r':'g',dnP?`<b>${dnP} paralegal${dnP>1?'s':''} dropped compared with their first call:</b> ${PR.filter(x=>x.b<x.a).map(x=>`${esc(x.nm)} (${Math.round(x.a)}% → avg. ${Math.round(x.b)}%)`).join(' and ')}.`:'<b>No paralegal dropped</b> compared with their first call.'],
+        ['y',`<b>Attorneys:</b> ${upA} of ${AR.length} with two or more calls improved after their first call.`]]:[
+        ['g',`<b>Mayor avance:</b> ${esc(PR[0].nm)}, de ${Math.round(PR[0].a)}% en su primera llamada a un promedio de ${Math.round(PR[0].b)}% después (${dPts(PR[0])} puntos).`],
         [dnP?'r':'g',dnP?`<b>${dnP} paralegal${dnP>1?'es':''} bajaron respecto de su primera llamada:</b> ${PR.filter(x=>x.b<x.a).map(x=>`${esc(x.nm)} (${Math.round(x.a)}% → prom. ${Math.round(x.b)}%)`).join(' y ')}.`:'<b>Ningún paralegal bajó</b> respecto de su primera llamada.'],
         ['y',`<b>Attorneys:</b> ${upA} de ${AR.length} con dos o más llamadas mejoraron después de su primera llamada.`]])
-      +curveCard('Curva del equipo de paralegales','Calificación de cada paralegal en sus llamadas, en orden cronológico. Elige un paralegal para ver solo sus resultados; el promedio del equipo (línea oscura) se queda fijo para comparar. Pasa el cursor por un punto para ver el detalle.',agS,'xCurve',curveSVG)
-      +curveCard('Curva del equipo de attorneys','Calificación de cada Attorney en sus llamadas, en orden cronológico. Elige un Attorney para ver solo sus resultados; el promedio del equipo (línea oscura) se queda fijo para comparar.',atS,'xCurveA',curveSVGA)
-      +`      <div class="card"><h2>Criterios por porcentaje de cumplimiento</h2><p class="hint">Criterios que ejecuta el Paralegal, solo o con el Attorney. Filtra por paralegal y por rango de porcentaje.</p><div id="cfExec"></div></div>
-      <div class="xg2"><div class="card"><h2>Primera llamada contra promedio posterior · Paralegales</h2><p class="hint"><span style="display:inline-block;width:10px;height:10px;border:2px solid var(--ink2);border-radius:50%;vertical-align:-1px"></span> primera llamada · <span style="display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:50%;vertical-align:-1px"></span> promedio de todas sus llamadas a partir de la segunda · cifra a la derecha: diferencia en puntos.</p>${dbHTML(PR)}</div>
-      <div class="card"><h2>Primera llamada contra promedio posterior · Attorneys</h2><p class="hint">Mismo cálculo con la calificación del Attorney.</p>${dbHTML(AR)}</div></div>
-      <p class="foot" style="margin-top:0">${(()=>{const ns=agS.map(x=>x.cs.length);return `Cada paralegal tiene entre ${Math.min(...ns)} y ${Math.max(...ns)} llamadas evaluadas; los tramos finales de la curva se apoyan en menos personas, así que indican tendencia, no una conclusión definitiva.`})()} ${a0&&aN?`Promedio del equipo: ${a0}% en la llamada 1 y ${aN}% en la llamada ${kN}.`:''}</p>`
-      +rawBtn('v4','Ver seguimiento por persona en la información cruda');
+      +curveCard(tr('Curva del equipo de paralegales','Paralegal team curve'),tr('Calificación de cada paralegal en sus llamadas, en orden cronológico. Elige un paralegal para ver solo sus resultados; el promedio del equipo (línea oscura) se queda fijo para comparar. Pasa el cursor por un punto para ver el detalle.','Each paralegal’s score on their calls, in chronological order. Pick a paralegal to see only their results; the team average (dark line) stays fixed for comparison. Hover over a point to see the detail.'),agS,'xCurve',curveSVG)
+      +curveCard(tr('Curva del equipo de attorneys','Attorney team curve'),tr('Calificación de cada Attorney en sus llamadas, en orden cronológico. Elige un Attorney para ver solo sus resultados; el promedio del equipo (línea oscura) se queda fijo para comparar.','Each Attorney’s score on their calls, in chronological order. Pick an Attorney to see only their results; the team average (dark line) stays fixed for comparison.'),atS,'xCurveA',curveSVGA)
+      +`      <div class="card"><h2>${tr('Criterios por porcentaje de cumplimiento','Criteria by compliance percentage')}</h2><p class="hint">${tr('Criterios que ejecuta el Paralegal, solo o con el Attorney. Filtra por paralegal y por rango de porcentaje.','Criteria the Paralegal carries out, alone or with the Attorney. Filter by paralegal and by percentage range.')}</p><div id="cfExec"></div></div>
+      <div class="xg2"><div class="card"><h2>${tr('Primera llamada contra promedio posterior · Paralegales','First call vs. later average · Paralegals')}</h2><p class="hint"><span style="display:inline-block;width:10px;height:10px;border:2px solid var(--ink2);border-radius:50%;vertical-align:-1px"></span> ${tr('primera llamada','first call')} · <span style="display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:50%;vertical-align:-1px"></span> ${tr('promedio de todas sus llamadas a partir de la segunda · cifra a la derecha: diferencia en puntos.','average of all their calls from the second one on · figure on the right: difference in points.')}</p>${dbHTML(PR)}</div>
+      <div class="card"><h2>${tr('Primera llamada contra promedio posterior · Attorneys','First call vs. later average · Attorneys')}</h2><p class="hint">${tr('Mismo cálculo con la calificación del Attorney.','Same calculation using the Attorney’s score.')}</p>${dbHTML(AR)}</div></div>
+      <p class="foot" style="margin-top:0">${EN
+        ?`Each paralegal has between ${Math.min(...ns)} and ${Math.max(...ns)} rated calls; the last stretches of the curve rest on fewer people, so they show a trend, not a final conclusion. ${a0&&aN?`Team average: ${a0}% on call 1 and ${aN}% on call ${kN}.`:''}`
+        :`Cada paralegal tiene entre ${Math.min(...ns)} y ${Math.max(...ns)} llamadas evaluadas; los tramos finales de la curva se apoyan en menos personas, así que indican tendencia, no una conclusión definitiva. ${a0&&aN?`Promedio del equipo: ${a0}% en la llamada 1 y ${aN}% en la llamada ${kN}.`:''}`}</p>`
+      +rawBtn('v4',tr('Ver seguimiento por persona en la información cruda','See per-person tracking in the raw data (Spanish)'));
 
     /* ---------- 4. Datos críticos ---------- */
     const rc={P:0,A:0,PA:0};crit.forEach(s=>rc[ROLE[s.ki]]++);
-    const cb={};crit.forEach(s=>{const k=K[s.ki];const nm=k.kind==='roles'?'Roles y responsabilidades':k.block.replace(/^\d+\.\s*/,'');cb[nm]=(cb[nm]||0)+1});
+    const cb={};crit.forEach(s=>{const k=K[s.ki];const nm=k.kind==='roles'?tr('Roles y responsabilidades','Roles and responsibilities'):xBn(k.bn,k.block.replace(/^\d+\.\s*/,''));cb[nm]=(cb[nm]||0)+1});
     const topB=Object.entries(cb).sort((a,b)=>b[1]-a[1]).slice(0,3);
     const top=crit.slice(0,10);
-    const sec4=hero(4,'Datos críticos',`${crit.length} de ${evald.length} criterios evaluados no llegan a 80% de cumplimiento; ${low} ni siquiera se cumplen en la mitad de las llamadas.`)
-      +finds([
-        ['r',`<b>El más bajo:</b> «${esc(K[crit[0].ki].label)}», en verde solo en ${Math.round(crit[0].g)}% de las llamadas.`],
+    const c0=EN?(EN_CRIT[crit[0].ki]||K[crit[0].ki].label):K[crit[0].ki].label;
+    const sec4=hero(4,tr('Datos críticos','Critical findings'),EN
+        ?`${crit.length} of ${evald.length} rated criteria fall short of 80% compliance; ${low} are not met even in half of the calls.`
+        :`${crit.length} de ${evald.length} criterios evaluados no llegan a 80% de cumplimiento; ${low} ni siquiera se cumplen en la mitad de las llamadas.`)
+      +finds(EN?[
+        ['r',`<b>The lowest:</b> “${esc(c0)}”, in green in only ${Math.round(crit[0].g)}% of calls.`],
+        ['y',`<b>Owners:</b> ${rc.A} critical criteria belong to the Attorney, ${rc.P} to the Paralegal and ${rc.PA} are carried out jointly.`],
+        ['y',`<b>Where they cluster:</b> ${topB.map(([n,c])=>`${esc(n)} (${c})`).join(', ')}.`]]:[
+        ['r',`<b>El más bajo:</b> «${esc(c0)}», en verde solo en ${Math.round(crit[0].g)}% de las llamadas.`],
         ['y',`<b>Responsables:</b> ${rc.A} criterios críticos son del Attorney, ${rc.P} del Paralegal y ${rc.PA} se ejecutan en conjunto.`],
         ['y',`<b>Dónde se concentran:</b> ${topB.map(([n,c])=>`${esc(n)} (${c})`).join(', ')}.`]])
-      +`<div class="xg2" style="grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)"><div class="card"><h2>Los 10 criterios con menor cumplimiento</h2><p class="hint">Porcentaje de llamadas en verde, responsable y principal impacto en el caso. La línea marca la meta de 80%.</p>
-        ${top.map(s=>`<div class="xcr"><b class="xcp t-${band(s.g)}">${Math.round(s.g)}%</b><div><div class="xcn">${esc(kname(K[s.ki]))} ${rb(ROLE[s.ki])} <span class="dcn">· ${s.n.G} de ${s.t} llamadas</span></div>${hb(s.g,`${s.n.G} de ${s.t} llamadas en verde · ${s.n.Y} parcial · ${s.n.R} no cumple`)}<div class="kws">${(KW[s.ki]||[]).slice(0,3).map(w=>`<span>${esc(w)}</span>`).join('')}</div></div></div>`).join('')}</div>
-      <div class="card"><h2>¿De quién son los criterios críticos?</h2><p class="hint">${crit.length} criterios por debajo del 80%, según el rol que los ejecuta.</p>
-        <div style="display:grid;justify-items:center;gap:12px">${pieSVG([{label:'Attorney',value:rc.A,color:'var(--ra)'},{label:'Paralegal',value:rc.P,color:'var(--rp)'},{label:'Ambos',value:rc.PA,color:'var(--n)'}],200,[String(crit.length),'críticos'])}
-        <div class="xleg" style="justify-content:center"><span><i style="background:var(--ra);height:10px;width:10px"></i>Attorney ${rc.A}</span><span><i style="background:var(--rp);height:10px;width:10px"></i>Paralegal ${rc.P}</span><span><i style="background:var(--n);height:10px;width:10px"></i>Ambos ${rc.PA}</span></div></div>
-        <h2 style="margin-top:18px">Profundidad de la brecha</h2>
+      +`<div class="xg2" style="grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)"><div class="card"><h2>${tr('Los 10 criterios con menor cumplimiento','The 10 criteria with the lowest compliance')}</h2><p class="hint">${tr('Porcentaje de llamadas en verde, responsable y principal impacto en el caso. La línea marca la meta de 80%.','Share of calls in green, owner and main impact on the case. The line marks the 80% target.')}</p>
+        ${top.map(s=>`<div class="xcr"><b class="xcp t-${band(s.g)}">${Math.round(s.g)}%</b><div><div class="xcn">${esc(xName(s.ki))} ${rb(ROLE[s.ki])} <span class="dcn">· ${s.n.G} ${of} ${s.t} ${s.t===1?tr('llamada','call'):tr('llamadas','calls')}</span></div>${hb(s.g,EN?`${s.n.G} of ${s.t} calls in green · ${s.n.Y} partial · ${s.n.R} do not meet`:`${s.n.G} de ${s.t} llamadas en verde · ${s.n.Y} parcial · ${s.n.R} no cumple`)}<div class="kws">${((EN?EN_KW[s.ki]:KW[s.ki])||[]).slice(0,3).map(w=>`<span>${esc(w)}</span>`).join('')}</div></div></div>`).join('')}</div>
+      <div class="card"><h2>${tr('¿De quién son los criterios críticos?','Who owns the critical criteria?')}</h2><p class="hint">${EN?`${crit.length} criteria below 80%, by the role that carries them out.`:`${crit.length} criterios por debajo del 80%, según el rol que los ejecuta.`}</p>
+        <div style="display:grid;justify-items:center;gap:12px">${pieSVG([{label:'Attorney',value:rc.A,color:'var(--ra)'},{label:'Paralegal',value:rc.P,color:'var(--rp)'},{label:xRN('PA'),value:rc.PA,color:'var(--n)'}],200,[String(crit.length),tr('críticos','critical')])}
+        <div class="xleg" style="justify-content:center"><span><i style="background:var(--ra);height:10px;width:10px"></i>Attorney ${rc.A}</span><span><i style="background:var(--rp);height:10px;width:10px"></i>Paralegal ${rc.P}</span><span><i style="background:var(--n);height:10px;width:10px"></i>${xRN('PA')} ${rc.PA}</span></div></div>
+        <h2 style="margin-top:18px">${tr('Profundidad de la brecha','Depth of the gap')}</h2>
         ${[['< 50%',crit.filter(s=>s.g<50).length,'R'],['50–69%',crit.filter(s=>s.g>=50&&s.g<70).length,'Y'],['70–79%',crit.filter(s=>s.g>=70).length,'Y']].map(([l,n,c])=>`<div class="xli" style="grid-template-columns:70px minmax(0,1fr) 34px;margin-top:8px"><span>${l}</span><div class="xbar"><span class="seg-${c}" style="width:${n/crit.length*100}%"></span></div><b>${n}</b></div>`).join('')}</div></div>`
-      +rawBtn('v5',`Ver los ${crit.length} criterios críticos con su detalle`);
+      +rawBtn('v5',EN?`See the ${crit.length} critical criteria in detail (Spanish)`:`Ver los ${crit.length} criterios críticos con su detalle`);
 
     /* ---------- 5. Propuesta ---------- */
     const MS=MOD.map(m=>{const cs=modCrit(m);return {m,cs,v:cs.length?Math.round(avg(cs.map(s=>s.g))):null}});
     const nAlta=MOD.filter(m=>m.pri==='R').length;
     const covered=new Set(MS.flatMap(x=>x.cs.map(s=>s.ki))).size;
-    const phase=(pri,t,d)=>`<div class="xst"><span class="pill p-${pri==='N'?'N':pri}">${t}</span><h4>${d}</h4><ul>${MOD.filter(m=>m.pri===pri).map(m=>`<li>M${m.n}. ${esc(m.name)}</li>`).join('')}</ul></div>`;
-    const sec5=hero(5,'Propuesta de capacitación',`${MOD.length} módulos para llevar ${covered} criterios críticos a la meta de 80%. ${nAlta} son de prioridad alta y atienden el riesgo legal del caso.`)
-      +`<div class="kpis"><div class="kpi"><b>${MOD.length}</b><span>módulos</span></div><div class="kpi"><b>7 h 30</b><span>de capacitación + refuerzo de 20 min</span></div><div class="kpi"><b>${covered}</b><span>criterios críticos atendidos</span></div><div class="kpi"><b>80%</b><span>meta por criterio en la siguiente escucha</span></div></div>
-      <div class="card"><h2>Ruta de implementación</h2><p class="hint">Tres fases: se ajusta el script, se implementa con supervisión en las llamadas y después se mide con la misma cédula.</p>
+    const mT=(m,i,f)=>EN&&EN_MOD[m.id]?EN_MOD[m.id][i]:m[f];
+    const sec5=hero(5,tr('Propuesta de capacitación','Training proposal'),EN
+        ?`${MOD.length} modules to bring ${covered} critical criteria up to the 80% target. ${nAlta} are high priority and address the legal risk to the case.`
+        :`${MOD.length} módulos para llevar ${covered} criterios críticos a la meta de 80%. ${nAlta} son de prioridad alta y atienden el riesgo legal del caso.`)
+      +`<div class="kpis"><div class="kpi"><b>${MOD.length}</b><span>${tr('módulos','modules')}</span></div><div class="kpi"><b>7 h 30</b><span>${tr('de capacitación + refuerzo de 20 min','of training + 20-min refresher')}</span></div><div class="kpi"><b>${covered}</b><span>${tr('criterios críticos atendidos','critical criteria addressed')}</span></div><div class="kpi"><b>80%</b><span>${tr('meta por criterio en la siguiente escucha','target per criterion in the next audit')}</span></div></div>
+      <div class="card"><h2>${tr('Ruta de implementación','Implementation roadmap')}</h2><p class="hint">${tr('Tres fases: se ajusta el script, se implementa con supervisión en las llamadas y después se mide con la misma cédula.','Three phases: the script is adjusted, rolled out with supervision on calls, and then measured with the same scorecard.')}</p>
         <div class="xroad" style="grid-template-columns:repeat(3,minmax(0,1fr))">
-          <div class="xst"><span class="pill p-N">Fase 1</span><h4>Adaptación de script y espera de feedback</h4><p>Script adaptado enviado el <b>martes 6 de octubre</b>; en espera de feedback.</p></div>
-          <div class="xst"><span class="pill p-Y">Fase 2</span><h4>Implementación y supervisión</h4><p>Implementación del script y supervisión de su aplicación en las llamadas. <b>Duración: dos semanas.</b></p></div>
-          <div class="xst"><span class="pill p-G">Fase 3</span><h4>Medición y evaluación</h4><p>Medición y evaluación de llamadas con los resultados del nuevo script, <b>a partir de la tercera semana</b>.</p></div>
+          <div class="xst"><span class="pill p-N">${tr('Fase','Phase')} 1</span><h4>${tr('Adaptación de script y espera de feedback','Script adaptation and awaiting feedback')}</h4><p>${tr('Script adaptado enviado el <b>martes 6 de octubre</b>; en espera de feedback.','Adapted script sent on <b>Tuesday, October 6</b>; awaiting feedback.')}</p></div>
+          <div class="xst"><span class="pill p-Y">${tr('Fase','Phase')} 2</span><h4>${tr('Implementación y supervisión','Rollout and supervision')}</h4><p>${tr('Implementación del script y supervisión de su aplicación en las llamadas. <b>Duración: dos semanas.</b>','Rollout of the script and supervision of how it is applied on calls. <b>Duration: two weeks.</b>')}</p></div>
+          <div class="xst"><span class="pill p-G">${tr('Fase','Phase')} 3</span><h4>${tr('Medición y evaluación','Measurement and evaluation')}</h4><p>${tr('Medición y evaluación de llamadas con los resultados del nuevo script, <b>a partir de la tercera semana</b>.','Measurement and evaluation of calls with the new script’s results, <b>starting in week three</b>.')}</p></div>
         </div></div>
-      <div class="card"><h2>Módulos: cumplimiento actual contra la meta</h2><p class="hint">Promedio de llamadas en verde de los criterios que atiende cada módulo. La línea marca la meta de 80%.</p>
-        <div class="xmods">${MS.map(({m,cs,v})=>`<div class="xmod pri-${m.pri}"><div class="mh"><b>M${m.n}</b><span class="pill p-${m.pri}">${m.pt}</span></div><h4>${esc(m.name)}</h4><small>${esc(m.aud)} · ${esc(m.dur)}</small>
-          ${v!=null?`${hb(v)}<div class="gap"><span>Hoy <b>${v}%</b> → meta <b>80%</b></span><span>${v<UMBRAL?`brecha <b>${UMBRAL-v} pts</b>`:'en meta'}</span></div>`:''}<small>${cs.length} criterio${cs.length===1?'':'s'} crítico${cs.length===1?'':'s'}</small></div>`).join('')}</div></div>`
-      +rawBtn('v7','Ver la propuesta completa por módulo');
+      <div class="card"><h2>${tr('Módulos: cumplimiento actual contra la meta','Modules: current compliance vs. target')}</h2><p class="hint">${tr('Promedio de llamadas en verde de los criterios que atiende cada módulo. La línea marca la meta de 80%.','Average share of calls in green for the criteria each module addresses. The line marks the 80% target.')}</p>
+        <div class="xmods">${MS.map(({m,cs,v})=>`<div class="xmod pri-${m.pri}"><div class="mh"><b>M${m.n}</b><span class="pill p-${m.pri}">${esc(mT(m,0,'pt'))}</span></div><h4>${esc(mT(m,1,'name'))}</h4><small>${esc(mT(m,2,'aud'))} · ${esc(mT(m,3,'dur'))}</small>
+          ${v!=null?`${hb(v)}<div class="gap"><span>${tr('Hoy','Today')} <b>${v}%</b> → ${tr('meta','target')} <b>80%</b></span><span>${v<UMBRAL?`${tr('brecha','gap')} <b>${UMBRAL-v} pts</b>`:tr('en meta','on target')}</span></div>`:''}<small>${EN?`${cs.length} critical criteri${cs.length===1?'on':'a'}`:`${cs.length} criterio${cs.length===1?'':'s'} crítico${cs.length===1?'':'s'}`}</small></div>`).join('')}</div></div>`
+      +rawBtn('v7',tr('Ver la propuesta completa por módulo','See the full proposal by module (Spanish)'));
 
     /* ---------- montaje ---------- */
-    const SECS=[['Roles y responsabilidades',sec1],['Cédula (Auditoría de llamadas)',sec2],['Curva de aprendizaje',sec3],['Datos críticos',sec4],['Propuesta',sec5]];
+    const SECS=[[tr('Roles y responsabilidades','Roles and responsibilities'),sec1],[tr('Cédula (Auditoría de llamadas)','Scorecard (Call audit)'),sec2],[tr('Curva de aprendizaje','Learning curve'),sec3],[tr('Datos críticos','Critical findings'),sec4],[tr('Propuesta','Proposal'),sec5]];
     const ds=C.map(c=>c.date).sort();
-    $('#xSub').textContent=`${nCalls} llamadas de ${agents.length} paralegales y ${atts.length} attorneys, del ${fmtDate(ds[0])} al ${fmtDate(ds[ds.length-1])}.`;
-    $('#xNav').innerHTML=SECS.map(([t],i)=>`<button type="button" role="tab" aria-selected="${i===0}" data-x="${i}"><b>${String(i+1).padStart(2,'0')}</b><span>${t}</span></button>`).join('');
-    $('#xBody').innerHTML=SECS.map(([t,h],i)=>`<section class="xsec${i?'':' on'}" data-x="${i}">${h}<div class="spager">${i?`<button type="button" class="btn" data-x="${i-1}">← ${SECS[i-1][0]}</button>`:'<span></span>'}<span>${i+1} / ${SECS.length}</span>${i<SECS.length-1?`<button type="button" class="btn" data-x="${i+1}">${SECS[i+1][0]} →</button>`:'<span></span>'}</div></section>`).join('');
-    drawXR();fbCritFilter('cfExec');
+    $('#xSub').textContent=EN?`${nCalls} calls from ${agents.length} paralegals and ${atts.length} attorneys, ${fmtDate(ds[0])} to ${fmtDate(ds[ds.length-1])}.`:`${nCalls} llamadas de ${agents.length} paralegales y ${atts.length} attorneys, del ${fmtDate(ds[0])} al ${fmtDate(ds[ds.length-1])}.`;
+    $('#xEye').textContent=tr('Vista ejecutiva · Dirección de Operaciones','Executive view · Operations');
+    $('#xTitle').textContent=tr('Case Review: lo que encontró la escucha','Case Review: what the call audit found');
+    $('#xTheme').textContent=tr('Tema','Theme');$('#xTheme').setAttribute('aria-label',tr('Cambiar tema claro u oscuro','Switch light or dark theme'));
+    $('#toRaw').textContent=tr('Información cruda','Raw data (Spanish)');
+    $('#xPres').textContent=document.fullscreenElement?tr('Salir de pantalla completa','Exit full screen'):tr('Pantalla completa','Full screen');
+    $('#xLang').textContent=EN?'Español':'English';$('#xLang').lang=EN?'es':'en';$('#xLang').setAttribute('aria-label',EN?'Ver la vista ejecutiva en español':'View the executive view in English');
+    $('#xNav').setAttribute('aria-label',tr('Secciones ejecutivas','Executive sections'));
+    document.documentElement.lang=EN?'en':'es';
+    $('#xNav').innerHTML=SECS.map(([t],i)=>`<button type="button" role="tab" aria-selected="${i===cur}" data-x="${i}"><b>${String(i+1).padStart(2,'0')}</b><span>${t}</span></button>`).join('');
+    $('#xBody').innerHTML=SECS.map(([t,h],i)=>`<section class="xsec${i===cur?' on':''}" data-x="${i}">${h}<div class="spager">${i?`<button type="button" class="btn" data-x="${i-1}">← ${SECS[i-1][0]}</button>`:'<span></span>'}<span>${i+1} / ${SECS.length}</span>${i<SECS.length-1?`<button type="button" class="btn" data-x="${i+1}">${SECS[i+1][0]} →</button>`:'<span></span>'}</div></section>`).join('');
+    xrMode='chr';drawXR();fbCritFilter('cfExec');
+    }
+    render();
+
     document.getElementById('exec').addEventListener('click',e=>{const b=e.target.closest('[data-cv]');if(!b)return;
       b.parentNode.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));
-      const g=b.dataset.cvg;document.getElementById(g).innerHTML=(g==='xCurveA'?curveSVGA:curveSVG)(b.dataset.cv);});
-    const xGo=i=>{document.querySelectorAll('#xNav button').forEach(b=>b.setAttribute('aria-selected',+b.dataset.x===i));document.querySelectorAll('.xsec').forEach(s=>s.classList.toggle('on',+s.dataset.x===i));scrollTo(0,0)};
-    const setRaw=on=>{document.body.classList.toggle('raw',on);tipEl.style.display='none';scrollTo(0,0)};
+      const g=b.dataset.cvg;document.getElementById(g).innerHTML=CV[g](b.dataset.cv);});
+    const xGo=i=>{cur=i;document.querySelectorAll('#xNav button').forEach(b=>b.setAttribute('aria-selected',+b.dataset.x===i));document.querySelectorAll('.xsec').forEach(s=>s.classList.toggle('on',+s.dataset.x===i));scrollTo(0,0)};
+    const setRaw=on=>{document.body.classList.toggle('raw',on);document.documentElement.lang=on||XLANG==='es'?'es':'en';tipEl.style.display='none';scrollTo(0,0)};
     document.getElementById('exec').addEventListener('click',e=>{
       const r=e.target.closest('[data-raw]'); if(r){setRaw(true);goTab(r.dataset.raw);scrollTo(0,0);return}
       const x=e.target.closest('[data-x]'); if(x&&x.tagName==='BUTTON')xGo(+x.dataset.x);
@@ -3413,10 +3475,11 @@ $('#v0').addEventListener('click',e=>{const a=e.target.closest('a[data-go]');if(
     $('#toRaw').onclick=()=>setRaw(true);
     $('#toExec').onclick=()=>setRaw(false);
     $('#xTheme').onclick=()=>$('#themeBtn').click();
+    $('#xLang').onclick=()=>{XLANG=XLANG==='es'?'en':'es';tipEl.style.display='none';const y=scrollY;render();scrollTo(0,y)};
     const xp=$('#xPres');
     if(!document.fullscreenEnabled)xp.style.display='none';
     xp.onclick=()=>$('#presBtn').click();
-    document.addEventListener('fullscreenchange',()=>{xp.textContent=document.fullscreenElement?'Salir de pantalla completa':'Pantalla completa'});
+    document.addEventListener('fullscreenchange',()=>{xp.textContent=document.fullscreenElement?tr('Salir de pantalla completa','Exit full screen'):tr('Pantalla completa','Full screen')});
   })();
 })();
 })();
