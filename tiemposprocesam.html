@@ -1,0 +1,1251 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Tiempos de Procesamiento TMLF</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: navy masthead + persistent process rail on the left, working panel on the right (call-desk console). */
+:root{
+  --bg:#F3F5F8; --surface:#FFFFFF; --surface-2:#F7F8FB; --ink:#101B2E; --muted:#5A6577; --line:#DCE1E9;
+  --navy:#13284A; --navy-2:#1D3A66; --pri:#13284A; --pri-h:#1D3A66; --on-navy:#F2F4F8; --gold:#A6823F; --gold-soft:#F4ECDC;
+  --int:#3B5B8C; --usc:#2F7A6B; --oth:#8A5A2B;
+  --ok:#2E7D4F; --ok-bg:#E8F4EC; --warn:#A65A12; --warn-bg:#FCF1E4; --info:#2F5E9E; --info-bg:#E9F0FA; --crit:#A33A2E;
+  --esc-bg:#FBF6EC; --esc-line:#D9C49A;
+  --f-display:"Newsreader", Georgia, "Times New Roman", serif;
+  --f-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0D1420; --surface:#141D2C; --surface-2:#18233414; --ink:#E6EAF1; --muted:#9AA6B8; --line:#26344A;
+  --navy:#0A1424; --navy-2:#1A2C48; --pri:#2B4A7E; --pri-h:#355892; --on-navy:#E9EDF4; --gold:#CDA862; --gold-soft:#2A2516;
+  --int:#86A6D8; --usc:#6CC2AE; --oth:#D7A06B;
+  --ok:#6BC58E; --ok-bg:#15291E; --warn:#E3A35C; --warn-bg:#2C2113; --info:#86AEE6; --info-bg:#162338; --crit:#E4847A;
+  --esc-bg:#221E14; --esc-line:#5B4D2C; color-scheme:dark; } }
+:root[data-theme="dark"]{
+  --bg:#0D1420; --surface:#141D2C; --surface-2:#18233414; --ink:#E6EAF1; --muted:#9AA6B8; --line:#26344A;
+  --navy:#0A1424; --navy-2:#1A2C48; --pri:#2B4A7E; --pri-h:#355892; --on-navy:#E9EDF4; --gold:#CDA862; --gold-soft:#2A2516;
+  --int:#86A6D8; --usc:#6CC2AE; --oth:#D7A06B;
+  --ok:#6BC58E; --ok-bg:#15291E; --warn:#E3A35C; --warn-bg:#2C2113; --info:#86AEE6; --info-bg:#162338; --crit:#E4847A;
+  --esc-bg:#221E14; --esc-line:#5B4D2C; color-scheme:dark; }
+
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--navy)}
+*{box-sizing:border-box}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)} .small{font-size:12.5px} .grow{flex:1}
+.lbl{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:4px}
+.pg{font-family:var(--f-mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+.pad{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* masthead */
+.top{background:var(--navy);color:var(--on-navy);position:relative}
+.top-in,.tabs-in,.disc-in,.body,.foot{max-width:1360px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.top-in{display:flex;gap:28px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;padding-block:22px 18px}
+.wordmark{font-size:11.5px;letter-spacing:.32em;color:var(--gold);font-weight:600;padding-bottom:8px;margin-bottom:10px;border-bottom:1px solid color-mix(in srgb,var(--gold) 45%,transparent);display:inline-block}
+.brand h1{font-family:var(--f-display);font-weight:600;font-size:clamp(24px,3vw,32px);line-height:1.15;margin:0;text-wrap:balance;letter-spacing:-.005em}
+.subtitle{color:color-mix(in srgb,var(--on-navy) 72%,transparent);font-size:14px;margin-top:4px}
+.tabs-in{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tab{background:none;border:0;color:color-mix(in srgb,var(--on-navy) 70%,transparent);padding:11px 14px 12px;font-weight:500;font-size:14px;border-bottom:2px solid transparent;white-space:nowrap}
+.tab:hover{color:var(--on-navy)}
+.tab.on{color:var(--on-navy);border-bottom-color:var(--gold)}
+.tab-home{margin-left:auto}
+
+/* search */
+.search{position:relative;flex:1 1 380px;max-width:560px;min-width:0}
+.search input{width:100%;padding:12px 40px 12px 40px;border-radius:8px;border:1px solid color-mix(in srgb,var(--on-navy) 22%,transparent);background:color-mix(in srgb,var(--on-navy) 9%,transparent);color:var(--on-navy)}
+.search input::placeholder{color:color-mix(in srgb,var(--on-navy) 55%,transparent)}
+.search input:focus{background:var(--surface);color:var(--ink);outline:2px solid var(--gold);outline-offset:0}
+.search-ic{position:absolute;left:13px;top:50%;width:17px;height:17px;transform:translateY(-50%);color:color-mix(in srgb,var(--on-navy) 60%,transparent);pointer-events:none}
+.search input:focus ~ .kbd{display:none}
+.search:focus-within .search-ic{color:var(--muted)}
+.kbd{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-family:var(--f-mono);font-size:11px;border:1px solid color-mix(in srgb,var(--on-navy) 30%,transparent);border-radius:4px;padding:0 6px;color:color-mix(in srgb,var(--on-navy) 60%,transparent)}
+.results{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:20;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 18px 40px -12px rgba(10,20,40,.35);max-height:62vh;overflow:auto}
+.results-head{font-size:12px;color:var(--muted);padding:9px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface)}
+.results-empty{padding:16px 14px;color:var(--muted)}
+.result{display:grid;grid-template-columns:96px 1fr auto 10px;gap:12px;align-items:center;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:9px 14px}
+.result:hover,.result:focus-visible{background:var(--gold-soft)}
+.result-proc{font-size:11.5px;font-weight:600;color:var(--navy-2);letter-spacing:.02em}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .result-proc{color:var(--gold)}}
+:root[data-theme="dark"] .result-proc{color:var(--gold)}
+.result-main{min-width:0;overflow-wrap:anywhere}
+.result-time{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-align:right}
+
+.disclaimer{background:var(--gold-soft);border-bottom:1px solid var(--line)}
+.disc-in{font-size:12.5px;color:var(--muted);padding-block:8px}
+
+/* body */
+.body{display:grid;grid-template-columns:232px minmax(0,1fr);gap:28px;padding-block:24px 40px;align-items:start}
+.body.norail{grid-template-columns:minmax(0,1fr)}
+.rail-wrap{position:sticky;top:14px}
+.step-lbl{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.step-n{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--pri);color:var(--on-navy);font-size:11px;letter-spacing:0}
+.rail{display:flex;flex-direction:column;gap:2px}
+.rail-home{background:none;border:0;text-align:left;padding:8px 12px;font-size:13px;color:var(--muted);border-radius:6px}
+.rail-home.on,.rail-home:hover{color:var(--ink);background:var(--surface)}
+.rail-item{display:flex;flex-direction:column;align-items:flex-start;background:none;border:0;border-left:2px solid transparent;text-align:left;padding:7px 12px;border-radius:0 6px 6px 0}
+.rail-item:hover{background:var(--surface)}
+.rail-item.on{background:var(--surface);border-left-color:var(--gold);box-shadow:0 1px 0 var(--line)}
+.rail-name{font-weight:600;font-size:14.5px}
+.rail-meta{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.main{min-width:0}
+
+/* home */
+.home-intro h2,.sec-head h2,.kwres h2{font-family:var(--f-display);font-weight:600;font-size:26px;margin:0 0 6px;text-wrap:balance}
+.home-intro p,.sec-head p{color:var(--muted);margin:0 0 14px;max-width:70ch}
+.kw{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px}
+.kw-btn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13px}
+.kw-btn:hover{border-color:var(--gold)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.pcard{display:flex;flex-direction:column;gap:8px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0;transition:border-color .15s,transform .15s}
+.pcard:hover{border-color:var(--gold);transform:translateY(-1px)}
+.pcard-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pcard-name{font-family:var(--f-display);font-size:21px;font-weight:600;color:var(--ink)}
+.pcard-full{font-size:12px;color:var(--muted);margin-top:-6px}
+.pcard-pg{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.pcard-desc{font-size:13px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:3.9em}
+.pcard-forms{display:flex;flex-wrap:wrap;gap:4px;min-height:22px}
+.pcard-stats{display:flex;gap:12px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px;margin-top:auto;font-variant-numeric:tabular-nums}
+.form{font-family:var(--f-mono);font-size:11.5px;border:1px solid var(--line);border-radius:4px;padding:1px 6px;background:var(--surface-2);color:var(--ink)}
+
+.kwres-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.kwres-list{display:grid;gap:14px}
+.kwres-proc{font-weight:600;font-size:13px;color:var(--gold);letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px}
+.kwres-item{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin-bottom:4px}
+.kwres-item:hover{border-color:var(--gold)}
+
+/* process head */
+.phead{margin-bottom:18px}
+.phead-row{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.phead-title{font-family:var(--f-display);font-weight:600;font-size:30px;line-height:1.1;margin:2px 0 0}
+.phead-full{font-size:16px;color:var(--muted);font-family:var(--f-body);font-weight:400}
+.phead-body{margin-top:12px;display:grid;gap:12px;max-width:90ch}
+.phead-desc{margin:0;color:var(--ink)}
+.variants,.notes{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px;display:grid;gap:4px;font-size:14px}
+.note{display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:6px}
+.note:first-of-type{border-top:0;padding-top:0}
+.note>span:first-child{flex:1 1 300px;min-width:0}
+.forms-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.forms-row .lbl{margin:0 6px 0 0}
+
+/* picker */
+.picker{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:22px}
+.picker-group+.picker-group{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.picker-sub{font-size:12.5px;font-weight:600;color:var(--gold);margin-bottom:6px}
+.picker-chips{display:flex;flex-wrap:wrap;gap:6px}
+.schip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:6px 10px 6px 9px;font-size:13px;text-align:left;border-left:3px solid var(--c)}
+.schip:hover{background:var(--surface-2);border-color:var(--c)}
+.schip.on{background:var(--pri);color:var(--on-navy);border-color:var(--pri);border-left-color:var(--gold)}
+.k-int{--c:var(--int)} .k-usc{--c:var(--usc)} .k-oth{--c:var(--oth)}
+.dot-esc{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--gold);flex:none}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted);margin-top:14px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.lg{display:inline-block;width:3px;height:12px;background:var(--c)}
+
+/* result */
+.result-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px 24px;display:grid;gap:16px;box-shadow:0 1px 2px rgba(16,27,46,.05)}
+.rc-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+.rc-tags{display:flex;gap:6px;flex-wrap:wrap}
+.rc-name{font-family:var(--f-display);font-weight:600;font-size:28px;margin:-4px 0 0;line-height:1.15;text-wrap:balance;overflow-wrap:anywhere}
+.rc-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:12px}
+.rc-cell{min-width:0}
+.rc-time{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.rc-grid>.rc-cell:not(.rc-time){padding:12px 14px;border:1px solid var(--line);border-radius:8px}
+.rc-big{font-family:var(--f-mono);font-size:24px;font-weight:500;line-height:1.25;font-variant-numeric:tabular-nums;color:var(--ink)}
+.rc-big.muted{font-family:var(--f-body);font-size:16px;color:var(--muted)}
+.rc-orig{font-size:12.5px;color:var(--muted);margin-top:6px}
+.rc-unit{font-size:12px;color:var(--muted);margin-top:2px}
+.rc-start{font-size:17px;font-weight:500}
+.rc-start.muted{font-size:14px;font-weight:400}
+.conc{margin-top:8px;font-size:13px;color:var(--info);background:var(--info-bg);border-radius:6px;padding:6px 9px}
+.obs{margin:0;padding-left:18px;display:grid;gap:3px}
+.escbox{background:var(--esc-bg);border:1px solid var(--esc-line);border-radius:8px;padding:14px 16px;display:grid;gap:8px}
+.escbox.none{background:var(--surface-2);border-color:var(--line);color:var(--muted)}
+.escbox-head{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}
+.escbox-head .lbl{margin:0;color:var(--gold)}
+.escbox-text{font-family:var(--f-display);font-size:19px;line-height:1.35}
+.escbox-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0}
+.escbox-meta dt{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.escbox-meta dd{margin:0;font-size:13.5px}
+.escbox-note{font-size:12.5px;color:var(--muted);border-top:1px dashed var(--esc-line);padding-top:8px}
+.warn{background:var(--warn-bg);border:1px solid color-mix(in srgb,var(--warn) 35%,transparent);color:var(--ink);border-radius:8px;padding:10px 14px;font-size:13.5px}
+.warn b{color:var(--warn)}
+.warn ul{margin:6px 0 0;padding-left:18px}
+.warn.small{font-size:12.5px;padding:6px 10px;margin-top:6px}
+.rc-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-top:1px solid var(--line);padding-top:14px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:8px 13px;font-size:13.5px;font-weight:500}
+.btn:hover:not(:disabled){border-color:var(--navy-2)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn-pri{background:var(--pri);color:var(--on-navy);border-color:var(--pri)}
+.btn-pri:hover:not(:disabled){background:var(--pri-h)}
+.btn-ghost{background:none;border:1px solid var(--line);border-radius:7px;padding:6px 11px;font-size:13px;color:var(--muted)}
+.btn-ghost:hover{color:var(--ink);border-color:var(--gold)}
+.toast{font-size:12.5px;color:var(--ok);font-weight:500}
+.chip{display:inline-flex;align-items:center;font-size:11.5px;font-weight:500;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:var(--surface);white-space:nowrap}
+.chip-int{color:var(--int);border-color:color-mix(in srgb,var(--int) 40%,transparent)}
+.chip-usc{color:var(--usc);border-color:color-mix(in srgb,var(--usc) 40%,transparent)}
+.chip-oth{color:var(--oth);border-color:color-mix(in srgb,var(--oth) 40%,transparent)}
+.chip-esc{color:var(--gold);border-color:var(--esc-line);background:var(--esc-bg)}
+.chip-warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,transparent);background:var(--warn-bg)}
+.chip-form{font-family:var(--f-mono);white-space:normal;color:var(--ink)}
+
+/* tools */
+.tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.tool{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:12px;align-content:start;min-width:0}
+.tool-head h4{margin:0;font-family:var(--f-display);font-size:19px;font-weight:600}
+.tool-sub{font-size:12.5px;color:var(--muted)}
+.ct{width:100%;border:1px solid var(--line);border-radius:8px;padding:12px;background:var(--surface-2);resize:vertical;line-height:1.55;font-size:14.5px}
+.tool-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.fine{font-size:12px;color:var(--muted);margin:0;max-width:85ch}
+.calc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.field{display:grid;gap:4px;min-width:0}
+.field label{font-size:12px;color:var(--muted);font-weight:500}
+.field input,.field select,.sel select,.ftxt{border:1px solid var(--line);border-radius:7px;padding:8px 10px;background:var(--surface);min-width:0;width:100%}
+.field input[readonly]{background:var(--surface-2);color:var(--muted)}
+.calc-ref{font-size:13px;line-height:1.55;border-left:2px solid var(--gold);padding-left:10px}
+.calc-out{border-radius:8px;padding:12px 14px;display:grid;gap:6px;border:1px solid var(--line)}
+.calc-status{font-weight:600;font-size:16px}
+.tone-ok{background:var(--ok-bg);border-color:color-mix(in srgb,var(--ok) 35%,transparent)} .tone-ok .calc-status{color:var(--ok)}
+.tone-warn{background:var(--warn-bg);border-color:color-mix(in srgb,var(--warn) 35%,transparent)} .tone-warn .calc-status{color:var(--warn)}
+.tone-info{background:var(--info-bg);border-color:color-mix(in srgb,var(--info) 30%,transparent)} .tone-info .calc-status{color:var(--info)}
+.tone-muted{background:var(--surface-2)} .tone-muted .calc-status{color:var(--muted)}
+.calc-why,.calc-el{font-size:13.5px}
+.calc-el{font-variant-numeric:tabular-nums}
+.calc-esc{font-size:13.5px;background:var(--esc-bg);border:1px solid var(--esc-line);border-radius:6px;padding:8px 10px}
+.calc-esc b{color:var(--gold)}
+.calc-escno{font-size:12.5px;color:var(--muted)}
+.placeholder{border:1px dashed var(--line);border-radius:var(--r);padding:28px;color:var(--muted);text-align:center;background:var(--surface)}
+.placeholder.big{padding:56px 28px}
+
+/* ficha */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:4px 0 10px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:none;padding:7px 12px;font-size:13px;color:var(--muted)}
+.seg button.on{background:var(--pri);color:var(--on-navy)}
+.sel{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+.sel select{width:auto}
+.check{display:inline-flex;align-items:center;gap:6px;font-size:13px}
+.ftxt{width:200px;max-width:100%;font-size:13px}
+.count{font-size:13px;color:var(--muted);margin-left:auto}
+.tl{list-style:none;margin:14px 0 0;padding:0 0 0 4px;position:relative}
+.tl::before{content:"";position:absolute;left:10px;top:6px;bottom:6px;width:1px;background:var(--line)}
+.tl-sub{font-weight:600;color:var(--gold);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:14px 0 6px 28px}
+.tl-item{position:relative;padding:0 0 12px 28px}
+.tl-dot{position:absolute;left:2px;top:12px;width:17px;height:17px;border-radius:50%;background:var(--surface);border:3px solid var(--c)}
+.tl-body{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px;display:grid;gap:6px;min-width:0}
+.tl-row{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline}
+.tl-name{background:none;border:0;padding:0;font-weight:600;font-size:15px;text-align:left}
+.tl-name::after{content:" ▾";color:var(--muted);font-size:11px}
+.tl-name[aria-expanded="true"]::after{content:" ▴"}
+.tl-time{font-size:13.5px}
+.tl-time.muted{font-family:var(--f-body);font-size:13px}
+.tl-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.anchor{font-size:12px;padding:1px 8px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);color:var(--muted)}
+.conc-a{color:var(--info);background:var(--info-bg);border-color:transparent}
+.esc-a{color:var(--gold);background:var(--esc-bg);border-color:var(--esc-line)}
+.warn-a{color:var(--warn);background:var(--warn-bg);border-color:transparent}
+.tl-detail{font-size:13.5px;display:grid;gap:3px}
+.tl-esc{font-family:var(--f-display);font-size:15px;color:var(--ink);border-left:2px solid var(--gold);padding-left:8px;margin-top:4px}
+.link{background:none;border:0;padding:0;color:var(--navy-2);font-size:12.5px;font-weight:600;justify-self:start}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .link{color:var(--gold)}}
+:root[data-theme="dark"] .link{color:var(--gold)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:8px}
+.tbl{border-collapse:collapse;width:100%;font-size:13.5px;min-width:820px}
+.tbl th{text-align:left;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:10px 12px;border-bottom:1px solid var(--line);background:var(--surface-2);position:sticky;top:0}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl tr:last-child td{border-bottom:0}
+.clickrow{cursor:pointer}
+.clickrow:hover td{background:var(--gold-soft)}
+.badge-warn{display:inline-block;margin-top:4px;font-size:11px;color:var(--warn);background:var(--warn-bg);padding:0 6px;border-radius:4px}
+
+/* audit */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:8px 0 18px}
+.stats div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid}
+.stats b{font-family:var(--f-display);font-size:28px;font-weight:600;font-variant-numeric:tabular-nums}
+.stats span{font-size:12.5px;color:var(--muted)}
+.h3{font-family:var(--f-display);font-size:20px;font-weight:600;margin:20px 0 8px}
+.audit-list{display:grid;gap:6px}
+.audit-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:13.5px;text-align:left;width:100%}
+.audit-item ul{margin:4px 0 0;padding-left:18px}
+.btnlike:hover{border-color:var(--gold)}
+.rules{font-size:13.5px;color:var(--muted);padding-left:18px;display:grid;gap:4px}
+.foot{font-size:12px;color:var(--muted);padding-block:0 28px}
+
+/* responsive */
+@media (max-width:1100px){ .tools{grid-template-columns:1fr} }
+@media (max-width:860px){
+  .body{grid-template-columns:minmax(0,1fr);gap:14px}
+  .rail-wrap{position:static}
+  .rail{flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:6px;scrollbar-width:thin}
+  .rail-item,.rail-home{flex:none;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+  .rail-item.on{border-color:var(--gold);box-shadow:inset 0 -2px 0 var(--gold)}
+  .rail-meta{display:none}
+  .rc-grid{grid-template-columns:1fr}
+  .escbox-meta{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  .top-in,.tabs-in,.disc-in,.body,.foot{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .result-card{padding:16px}
+  .rc-name{font-size:23px}
+  .calc-grid{grid-template-columns:1fr}
+  .result{grid-template-columns:1fr auto;}
+  .result-proc{grid-column:1/-1}
+  .result .dot-esc{display:none}
+  .audit-item{grid-template-columns:1fr}
+  .kbd{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
+<script>
+/* ==========================================================================
+   DATOS — extraídos exclusivamente de "CS Tiempos de Procesamiento.pdf"
+   Página = página física del PDF (24 páginas; las páginas pares contienen
+   notas laterales de la página anterior). Textos de tiempo: copia literal.
+   ========================================================================== */
+const MR = "Pasando los 180 días naturales se puede solicitar un Missing Receipts (Tier2)";
+const BIO_OBS = "Queda a consideración de USCIS, puede que no nos den una cita";
+const CORRER = "Correr números de recibo en la página de USCIS";
+const BONA_TXT = "Documento que dice que enviaran un EAD de buena Fe, mietras el caso es aprobado, (no quiere decir que se haya aprobado, siemplemente que se cuenta con los requerimientos minimos para comenzar con su analizis y saber si es aprobado) por ello se le enviara un EAD";
+const SSN_ESC = "Pasando 4 meses el Cl puede acercarse a las oficinas del social.";
+const REC_START = "No especificado en el documento (la fila aparece después de Send to USCIS)";
+const FLAG_REC = "El documento no indica desde qué evento se cuentan los 120 días hábiles; validar el punto de partida.";
+
+/* Bloques comunes ------------------------------------------------------- */
+function pre(page, o = {}) {
+  return [
+    { name: "COLLECTING DOCUMENTS", t: "Tiempo indefinido (tardará cuánto tiempo el cliente envíe los documentos)", unit: "indef",
+      desc: o.collDesc || "FOLLOW UP reúne los documentos hasta estar Fully (ya están completos).", kind: "interno", page },
+    { name: "RFA (Ready For Assembly)", desc: "Esta listo para iniciar el ensamblado del paquete. (first draf)", kind: "interno", page },
+  ];
+}
+function packet(page, t, o = {}) {
+  return { name: o.name || "PACKET ASSAMBLED", t, ts: t, unit: "meses", min: o.min ?? 1, max: o.max ?? 3, start: o.start,
+    desc: o.desc || "Se junta el First Draft y la declaración para generar un paquete para el case review.",
+    esc: o.esc, escN: o.escN, escU: o.escU, resp: o.resp, kind: "interno", page, flags: o.flags, conc: o.conc };
+}
+function rev(page, sendPage, o = {}) {
+  const sp = sendPage || page;
+  return [
+    { name: "CASE REVIEW", t: "6 a 12 semanas aproximadamente", ts: "6 a 12 semanas aproximadamente", unit: "semanas", min: 6, max: 12,
+      desc: "Se realiza una revisión de la declaración con el cliente", esc: "Despues de 5 meses de Ready for Case Review", escN: 5, escU: "meses",
+      escFrom: "Ready for Case Review", kind: "interno", page, flags: o.crFlags },
+    { name: "Attorney Review", t: "6 a 12 semanas aproximadamente", ts: "6 a 12 semanas aproximadamente", unit: "semanas", min: 6, max: 12,
+      desc: "Los abogados asistente revisan el caso y se genera las correcciones", esc: "Después de 4 meses se escala", escN: 4, escU: "meses", kind: "interno", page },
+    { name: "Final Review", t: "6 a 12 semanas aproximadamente", ts: "6 a 12 semanas aproximadamente", unit: "semanas", min: 6, max: 12,
+      desc: "Revisión de la abogada.", esc: "Después de 4 meses se escala.", escN: 4, escU: "meses", kind: "interno", page },
+    { name: "Ready to print", t: "1 mes aproximadamente", ts: "1 mes aproximadamente", unit: "meses", min: 1, max: 1,
+      desc: "Se imprime el paquete.", esc: "Después de 2 meses se escala.", escN: 2, escU: "meses", kind: "interno", page,
+      obs: ["La abogada puede enviarlo a declaración para correcciones"] },
+    { name: "Send to USCIS", desc: "Envío a immigración", obs: ["Despues de Ready to Print se envia a USCIS"], kind: "uscis", page: sp },
+  ];
+}
+function rec(page, name, forms, o = {}) {
+  return { name, forms, t: o.t || "120 días habiles aproximadamente", ts: o.t || "120 días habiles aproximadamente",
+    unit: "dias_habiles", min: 120, max: 120, start: REC_START, desc: o.desc || "Primeros recibos que nos da USCIS",
+    esc: o.noMR ? undefined : MR, escN: o.noMR ? undefined : 180, escU: o.noMR ? undefined : "dias_naturales",
+    kind: "uscis", page, flags: [FLAG_REC].concat(o.flags || []) };
+}
+function bio(page, t, min, max, o = {}) {
+  return { name: o.name || "BIOMÉTRICOS", t, ts: `${o.tsRange || (min + "-" + max)} meses aproximadamente`, unit: "meses", min, max,
+    start: o.start === undefined ? "Recibos iniciales" : o.start, obs: [BIO_OBS].concat(o.obs || []), kind: "uscis", page, flags: o.flags };
+}
+
+/* Procesos --------------------------------------------------------------- */
+const PROCESSES = [
+  {
+    key: "vawa", name: "VAWA", short: "VAWA", pages: "1–3",
+    desc: null,
+    forms: ["I-360", "I-765", "I-131", "I-485"],
+    notes: [],
+    stages: [
+      { name: "INICIO DEL CASO", desc: "Se paga Retainer (Enganche)", kind: "interno", page: 1 },
+      ...pre(1),
+      { name: "VAWA INTERVIEW (ENTREVISTA VAWA)", t: "1-2 meses aproximadamente.", ts: "1-2 meses aproximadamente", unit: "meses", min: 1, max: 2,
+        desc: "La entrevista con psicólogos se hace simultáneamente a la recolección de documentos.", conc: "Se realiza simultáneamente a COLLECTING DOCUMENTS", kind: "interno", page: 1 },
+      { name: "DECLARACIÓN", t: "1-3 meses aproximadamente", ts: "1-3 meses aproximadamente", unit: "meses", min: 1, max: 3,
+        desc: "Se trabaja en la declaración", esc: "Después de 4 meses se escala", escN: 4, escU: "meses", kind: "interno", page: 1 },
+      packet(1, "1-3 meses aproximadamente", { esc: "Después de 4 meses se escala", escN: 4, escU: "meses" }),
+      ...rev(1),
+      rec(1, "Recibos Iniciales", "AOS y COR I-360/ I-765/ I-131 / I-485 · DA I-360"),
+      { name: "Prima Facie", t: "3-4 meses aproximadamente después de recibos iniciales", ts: "3-4 meses aproximadamente", unit: "meses", min: 3, max: 4,
+        start: "Recibos iniciales", obs: ["Puede demorar más tiempo de lo aproximado o no nos puede llegar."], kind: "uscis", page: 1 },
+      bio(1, "3-4 meses aproximadamente después de recibos iniciales", 3, 4, { name: "Biométricos" }),
+      { name: "Permiso de Trabajo", t: "8-14 meses aproximadamente después de recibos iniciales", ts: "8-14 meses aproximadamente", unit: "meses", min: 8, max: 14,
+        start: "Recibos iniciales", desc: CORRER, esc: "Pasando los 15 meses se puede solicitar un E-Request (Tier2)", escN: 15, escU: "meses", kind: "uscis", page: 1, tags: "EAD" },
+      { name: "SSN (número de seguro social)", t: "4 meses después del EAD", ts: "4 meses", unit: "meses", min: 4, max: 4, start: "EAD (permiso de trabajo)",
+        desc: "Puede llegar al mismo tiempo", esc: SSN_ESC, escN: 4, escU: "meses", kind: "otra", page: 1,
+        flags: ["El tiempo indica «4 meses después del EAD» y la descripción indica «Puede llegar al mismo tiempo». Ambas referencias se conservan."] },
+      { name: "Permiso de Viaje", t: "8-14 meses aproximadamente después de recibos iniciales", ts: "8-14 meses aproximadamente", unit: "meses", min: 8, max: 14,
+        start: "Recibos iniciales", desc: CORRER, esc: "Pasando los 15 meses se puede solicitar un E-Request (Tier2", escN: 15, escU: "meses", kind: "uscis", page: 1 },
+      { name: "Información acerca de la visa VAWA", t: "36-47.5 meses aproximadamente después de recibos iniciales (este tiempo se le brinda al CL)", ts: "36-47.5 meses aproximadamente",
+        unit: "meses", min: 36, max: 47.5, start: "Recibos iniciales", desc: CORRER, kind: "uscis", page: 1 },
+      { name: "Se solicita examenes medicos, (RFE)", desc: CORRER, esc: "Puede haber una diferencia de 4 meses de la visa VAWA (se escala al area de RFE)",
+        resp: "Área de RFE", kind: "uscis", page: 1,
+        flags: ["La fila no tiene tiempo propio. El texto «47.5 en adelante» aparece al inicio de la página 3, junto a la fila siguiente; validar a qué etapa corresponde.",
+                "La condición «diferencia de 4 meses de la visa VAWA» no indica el evento de referencia exacto."] },
+      { name: "Información acerca de la entrevista para la residencia.", t: "47.5 en adelante", ts: "47.5 en adelante", unit: null, min: 47.5, max: null,
+        start: "No especificado en el documento", desc: CORRER, obs: ["Puede haber una diferencia de 5 meses de la visa VAWA"], kind: "uscis", page: 3,
+        flags: ["El tiempo «47.5 en adelante» no indica unidad ni punto de partida. La calculadora no lo evalúa."] },
+    ],
+  },
+  {
+    key: "visat", name: "Visa T", short: "Visa T", pages: "3–5",
+    desc: "Visa humanitaria para victimas de trata humana, se necesita ayudar ha agencias del orden publico en una investigacion o procesamiento de trata de personas. *Coyote * Cónyuge * Trato de mano de Obra",
+    forms: ["I-914", "I-914A", "I-192", "I-765", "I-485"],
+    notes: [],
+    stages: [
+      ...pre(3),
+      { name: "VASA T INTERVIEW (ENTREVISTA VISA T)", t: "1-2 meses aproximadamente.", ts: "1-2 meses aproximadamente", unit: "meses", min: 1, max: 2,
+        desc: "La entrevista con psicólogos se hace simultáneamente a la recolección de documentos.", conc: "Se realiza simultáneamente a COLLECTING DOCUMENTS", kind: "interno", page: 3 },
+      { name: "DECLARACIÓN", t: "1-3 meses.", ts: "1-3 meses", unit: "meses", min: 1, max: 3, desc: "Se trabaja en la declaración",
+        esc: "Después de 4 meses se escala", escN: 4, escU: "meses", kind: "interno", page: 3 },
+      { name: "LEA", t: "1 mes desde que esta Fully.", ts: "1 mes", unit: "meses", min: 1, max: 1, start: "Expediente Fully (documentos completos)",
+        desc: "Dan Tapia se comunica para preguntar si el Cl va a cooperar con las autoridades correspondientes.", kind: "interno", page: 3 },
+      packet(3, "1 mess desde que llega a Fully", { min: 1, max: 1, start: "Expediente Fully (documentos completos)",
+        desc: "Se realiza en paquete mientras se trabaja, la entrevista, declaración y LEA", conc: "Se trabaja en paralelo a la entrevista, la declaración y LEA" }),
+      ...rev(3),
+      rec(3, "RECIBOS INICIALES", "I-914 / I-192 / I-765 (Derivado I-914A / I-192/ I-765)", { noMR: true,
+        flags: ["A diferencia de otros procesos, esta fila no incluye criterio de Missing Receipts. No se agrega."] }),
+      bio(3, "3-4 meses aproximadamente después de recibos iniciales", 3, 4),
+      { name: "llegada del BONA FIDE", t: "12 a 14 meses despues reciboc iniciales", ts: "12 a 14 meses", unit: "meses", min: 12, max: 14, start: "Recibos iniciales",
+        desc: "Esta es la respuesta de la I-765", obs: [BONA_TXT], kind: "uscis", page: 5, tags: "bona fide bonafide" },
+      { name: "PERMISO DE TRABAJO", t: "16-18 meses aproximadamente después de recibir el bonafide", ts: "16-18 meses aproximadamente", unit: "meses", min: 16, max: 18,
+        start: "Recepción del Bona Fide", desc: "Respuesta de la I-914 · " + CORRER, obs: ["(llega de 4 años)"],
+        esc: "Pasando los 18 meses se puede solicitar un E-Request (Tier2", escN: 18, escU: "meses", kind: "uscis", page: 5, tags: "EAD",
+        flags: ["El umbral de E-Request (18 meses) coincide con el máximo del rango; el documento no aclara si se cuenta desde el Bona Fide."] },
+      { name: "SSN (número de seguro social)", esc: SSN_ESC, escN: 4, escU: "meses", kind: "otra", page: 5,
+        flags: ["La condición «Pasando 4 meses» no indica desde qué evento se cuenta."] },
+      { name: "Residencia", desc: "Abrir Reg. AOS después de 3 años que se apruebe la visa para llegar a la residencia, y se mete solo la I-485", kind: "uscis", page: 5 },
+    ],
+  },
+  {
+    key: "regaos", name: "REG AOS", short: "REG AOS", pages: "5–7",
+    desc: "El Ajuste de estatus, es la forma de arreglar papeles sin tener que salir de los Estados Unidos, para personas que entraron de manera legal o ilegal.",
+    variants: ["*245-I: Personas que entraron de manera ilegal al país y tienen una petición aprobada antes del 30 de Abril 2001",
+               "*245-A Personas que entraron de manera legal al país y conservan los papeles."],
+    forms: ["I-130", "I-765", "I-131", "I-485"],
+    notes: [],
+    stages: [
+      ...pre(5),
+      packet(5, "1 mes desde que llega a Fully", { name: "PACKET ASSEMBLY", min: 1, max: 1, start: "Expediente Fully (documentos completos)", desc: "Se realiza en paquete",
+        esc: "Si hay nota de Missing Info 1st draft, (forms) pasarlo a Diego Lara", resp: "Diego Lara" }),
+      ...rev(5),
+      rec(5, "RECIBOS INICIALES", "I-130/ I-765/ I-131/ I-485"),
+      bio(5, "3-4 meses aproximadamente después de recibos iniciales", 3, 4),
+      { name: "PERMISO DE TRABAJO", t: "13.5-14 meses aproximadamente después de los recibos iniciales.", ts: "13.5-14 meses aproximadamente", unit: "meses", min: 13.5, max: 14,
+        start: "Recibos iniciales", desc: CORRER, obs: ["Si no se sometió la 765, debemos notificar que hay que trabajar el paquete para el EAD. (nota lateral, p. 6)"],
+        esc: "Pasando los 14 meses se puede solicitar un E-Request (Tier2)", escN: 14, escU: "meses", kind: "uscis", page: 5, tags: "EAD" },
+      { name: "PERMISO DE VIAJE", t: "13.5-14 meses aproximadamente después de los recibos iniciales.", ts: "13.5-14 meses aproximadamente", unit: "meses", min: 13.5, max: 14,
+        start: "Recibos iniciales", desc: CORRER, kind: "uscis", page: 7 },
+      { name: "SSN (número de seguro social", esc: SSN_ESC, escN: 4, escU: "meses", kind: "otra", page: 7,
+        flags: ["La condición «Pasando 4 meses» no indica desde qué evento se cuenta."] },
+      { name: "PETICIÓN APROBADA (I-130)", t: "14 meses aproximadamente después de los recibos iniciales.", ts: "14 meses aproximadamente", unit: "meses", min: 14, max: 14,
+        start: "Recibos iniciales", desc: "Esta petición es solo para él Reg. 245-A", kind: "uscis", page: 7, sub245: "245-A" },
+      { name: "RESIDENCIA", t: "Al rededor de 24 meses aproximadamente después de los recibos iniciales.", ts: "24 meses aproximadamente", unit: "meses", min: 24, max: 24,
+        start: "Recibos iniciales", desc: CORRER, kind: "uscis", page: 7 },
+    ],
+  },
+  {
+    key: "visau", name: "Visa U", short: "Visa U", pages: "7–9",
+    desc: "Visa humanitaria para víctimas que han sufrido crímenes mentales o físicas por parte de un ciudadano o residente. Tiene que tener reporte policial.",
+    forms: ["I-918B (Sup B)", "I-918", "I-918A", "I-192", "I-765", "I-485"],
+    notes: ["(Verificar el Deadline)"],
+    stages: [
+      { sub: "Certificación Sup B", name: "COLLECTING DOCUMENTS", desc: "FOLLOW UP reúne los documentos necesarios para la certificación.", kind: "interno", page: 7 },
+      { sub: "Certificación Sup B", name: "ENVÍO DEL SUPB B", desc: "Se envía el Sup B (I-918B) al departamento de policía en donde se levantó el reporte.",
+        obs: ["Para recibir respuesta puede pasar hasta 1 mes"], kind: "otra", page: 7,
+        flags: ["«Para recibir respuesta puede pasar hasta 1 mes» y la etapa siguiente «90-180 días hábiles» describen la respuesta del departamento con tiempos distintos."] },
+      { sub: "Certificación Sup B", name: "RESPUESTA DE DPT.", t: "90-180 días hábiles.", ts: "90-180 días hábiles", unit: "dias_habiles", min: 90, max: 180,
+        start: "No especificado en el documento (sigue al envío del Sup B)", desc: "El DPT responde con la firma del Sup B.",
+        esc: "Después de los 90 días se escala con Denisse Olivera.", escN: 90, escU: "dias_sin_tipo", resp: "Denisse Olivera", kind: "otra", page: 7,
+        flags: ["El criterio dice «90 días» sin indicar si son hábiles o naturales; la calculadora no evalúa ese umbral."] },
+      { sub: "Certificación Sup B", name: "CITA CON DVS", t: "1 semana.", ts: "1 semana", unit: "semanas", min: 1, max: 1, start: "Respuesta del Sup B",
+        desc: "Ya con la respuesta del Sup B. Se genera un cita con DVS para iniciar el caso de Visa U.", kind: "interno", page: 7 },
+      { sub: "Caso de Visa U", name: "COLLECTING DOCUMENTS", t: "Tiempo indefinido (tardará cuánto tiempo el cliente envíe los documentos)", unit: "indef",
+        desc: "FOLLOW UP reúne los documentos hasta estar Fully (ya están completos) y RFA, ya está listo para hacer un paquete.", kind: "interno", page: 7 },
+      { sub: "Caso de Visa U", name: "VISA U INTERVIEW (ENTREVISTA VISA U)", t: "1 mes", ts: "1 mes", unit: "meses", min: 1, max: 1,
+        desc: "Los psicólogos le marcan para una entrevista y generar la declaración.", kind: "interno", page: 7 },
+      { sub: "Caso de Visa U", name: "DECLARACIÓN", t: "2-3 semanas después de la Visa U interview", ts: "2-3 semanas", unit: "semanas", min: 2, max: 3, start: "Visa U interview",
+        desc: "Se trabaja en la declaración.", esc: "Después de 4 semanas se escala.", escN: 4, escU: "semanas", kind: "interno", page: 7 },
+      { sub: "Caso de Visa U", ...packet(7, "1-3 meses") },
+      ...rev(7, 9).map(s => ({ sub: "Caso de Visa U", ...s })),
+      { sub: "Caso de Visa U", ...rec(9, "RECIBOS INICIALES", "I-918 / I-192 (Derivado I-918A / I-192 / I-765)") },
+      { sub: "Caso de Visa U", ...bio(9, "3-12 meses aproximadamente después de recibos iniciales", 3, 12) },
+      { sub: "Caso de Visa U", name: "Recepción del BONA FIDE", t: "Varia segun el caso.", unit: "indef", obs: [BONA_TXT], kind: "uscis", page: 9, tags: "bona fide bonafide" },
+      { sub: "Caso de Visa U", name: "PERMISO DE TRABAJO", t: "30 meses aproximadamente después de recibos iniciales", ts: "30 meses aproximadamente", unit: "meses", min: 30, max: 30,
+        start: "Recibos iniciales", desc: CORRER, esc: "Pasando los 30 meses se puede solicitar un E-Request (Tier2", escN: 30, escU: "meses", kind: "uscis", page: 9, tags: "EAD" },
+      { sub: "Caso de Visa U", name: "SSN (número de seguro social)", esc: SSN_ESC, escN: 4, escU: "meses", kind: "otra", page: 9,
+        flags: ["La condición «Pasando 4 meses» no indica desde qué evento se cuenta."] },
+      { sub: "Caso de Visa U", name: "APROBACIÓN DE VISA U", t: "60-63 meses aproximadamente después de recibos iniciales.", ts: "60-63 meses aproximadamente", unit: "meses", min: 60, max: 63,
+        start: "Recibos iniciales", desc: CORRER, esc: "Pasando los 63 meses se puede solicitar un E-Request (Tier2)", escN: 63, escU: "meses", kind: "uscis", page: 9 },
+      { sub: "Caso de Visa U", name: "Sobre su RESIDENCIA", desc: "Abrir Reg. AOS después de 3 años que se apruebe la visa solo la I-485", kind: "uscis", page: 9 },
+    ],
+  },
+  {
+    key: "consular", name: "Proceso Consular", short: "Consular", pages: "9–12",
+    desc: "El proceso consular permite a una persona en el extranjero ( tendria que salir de USA si esta en el país) obtener una visa de inmigrante para residir en EE. UU. A través de una entrevista en la embajada o consuladoSi es aprobado, recibe una visa para ingresar y convertirse en residente permanente.",
+    forms: ["I-130", "I-601", "I-601A", "DS-260", "I-824"],
+    notes: [
+      { text: "I-130 es la petición", page: 10 },
+      { text: "Si es necesario se porcedera a solicitar el perdon I-601 o I-601A en caso que no se procede a pasar a la NVC", page: 11 },
+      { text: "I-824 — En caso que USCIS no notifique a la NVC que se tiene una I-130 aprobada o que ya se cuenta con una I-130 y I-601 (Si se tiene un perdon) aprobada se le dice a USCIS que notifique a la NVC por medio de un formulario I-824 ( nos deben responder de 30 a 45 días, sin embargo no es un recibo inicial) cuando tengamos la respuesta notificaremos al CL. I-601 Es el Perdon", page: 12 },
+    ],
+    stages: [
+      ...pre(9).map(s => ({ sub: "Solicitud de la I-130", ...s })),
+      { sub: "Solicitud de la I-130", ...packet(9, "1-3 meses") },
+      ...rev(9).map(s => ({ sub: "Solicitud de la I-130", ...s })),
+      { sub: "Solicitud de la I-130", ...rec(9, "RECIBO INICIAL", "I-130", { t: "120 días habiles madamente" }) },
+      { sub: "Solicitud de la I-130", ...bio(9, "de 3 a 4 meses aproximadamente", 3, 4, { start: "No especificado en el documento",
+        flags: ["El tiempo de biométricos no indica punto de partida en este proceso."] }) },
+      { sub: "Solicitud de la I-130", name: "APROBACIÓN I-130", t: "16 meses aproximadamente despues de los Recibos Iniciales", ts: "16 meses aproximadamente", unit: "meses", min: 16, max: 16,
+        start: "Recibos iniciales", esc: "Si pasa los 16 meses se puede solicitar a BO", escN: 16, escU: "meses", kind: "uscis", page: 11,
+        flags: ["El documento no define la sigla «BO»."] },
+      ...pre(11).map(s => ({ sub: "Solicitud de la I-601 o I-601A", ...s })),
+      { sub: "Solicitud de la I-601 o I-601A", name: "Entrevista con los Psycologos", t: "1-2 meses aproximadamente.", ts: "1-2 meses aproximadamente", unit: "meses", min: 1, max: 2,
+        desc: "La entrevista con psicólogos se hace simultáneamente a la recolección de documentos.", conc: "Se realiza simultáneamente a COLLECTING DOCUMENTS", kind: "interno", page: 11 },
+      { sub: "Solicitud de la I-601 o I-601A", name: "DECLARACIÓN", t: "1-3 meses.", ts: "1-3 meses", unit: "meses", min: 1, max: 3, desc: "Se trabaja en la declaración",
+        esc: "Después de 4 meses se escala", escN: 4, escU: "meses", kind: "interno", page: 11 },
+      { sub: "Solicitud de la I-601 o I-601A", ...packet(11, "1-3 meses") },
+      ...rev(11).map(s => ({ sub: "Solicitud de la I-601 o I-601A", ...s })),
+      { sub: "Solicitud de la I-601 o I-601A", ...rec(11, "RECIBO INICIAL", "I-601A", { desc: "Segundos Recibos iniciales que nos envia USCIS",
+        flags: ["El subproceso se titula «I-601 o I-601A», pero el recibo solo menciona I-601A."] }) },
+      { sub: "Solicitud de la I-601 o I-601A", name: "APROBACIÓN del perdon I-601A", t: "42.5 meses aproximadamente despues de los Recibos Iniciales", ts: "42.5 meses aproximadamente",
+        unit: "meses", min: 42.5, max: 42.5, start: "Recibos iniciales (de la I-601A)",
+        desc: "Nos deben enviar un correo electronico donde nos dan información para darle seguimiento en la pagina de la NVC",
+        esc: "Se puede turnar despues de de los 43 meses", escN: 43, escU: "meses", kind: "uscis", page: 11 },
+      { sub: "NVC (Centro Nacional de Visas)", name: "Comienza la NVC (Centro Nacional de Visas)", desc: "Se le notifica a la NVC que se tiene una I-130 aprobada y I-601 ( si aplica)",
+        obs: ["Llenar formulario DS-260"], kind: "otra", page: 11 },
+      { sub: "NVC (Centro Nacional de Visas)", name: "Información acerca de su cita en la embajada", t: "17 meses despues de enviado a la NVC", ts: "17 meses", unit: "meses", min: 17, max: 17,
+        start: "Envío a la NVC", obs: ["Si pasa despues de los 17 meses el CL debe esperar"], kind: "otra", page: 11,
+        flags: ["La nota indica que el cliente debe esperar al superar 17 meses; no es un criterio de escalamiento."] },
+      { sub: "NVC (Centro Nacional de Visas)", name: "RESIDENCIA", t: "90 días despues de aprobada su entrada y haber regresado a USA", ts: "90 días", unit: "dias_sin_tipo", min: 90, max: 90,
+        start: "Aprobación de su entrada y regreso a USA", esc: "Si paso de los 90 días se puede turnar", escN: 90, escU: "dias_sin_tipo", kind: "otra", page: 11,
+        flags: ["«90 días» no indica si son hábiles o naturales; la calculadora no lo evalúa."] },
+    ],
+  },
+  {
+    key: "piparmy", name: "PIP Army", short: "PIP Army", pages: "11–13",
+    fullName: "Parole in Place Army",
+    desc: "El proceso consular permite a una persona ilegal que tiene un vinculo con un militar regularizar su estatus",
+    forms: ["I-131", "I-94"],
+    notes: [{ text: "Inicia un REG. AOS( ajuste de Status a traves de una 245A)", page: 13 }],
+    stages: [
+      ...pre(11), packet(11, "1-3 meses"), ...rev(13),
+      rec(13, "RECIBO INICIAL", "I-131"),
+      bio(13, "3-12 meses aproximadamente después de recibos iniciales", 3, 12),
+      { name: "Aprobación a traves de I-94 (entrada legal)", t: "14.5 meses aproximadamente despues de los Recibos Iniciales", ts: "14.5 meses aproximadamente", unit: "meses", min: 14.5, max: 14.5,
+        start: "Recibos iniciales", esc: "Si pasa los 15 meses se puede solicitar a BO", escN: 15, escU: "meses", kind: "uscis", page: 13,
+        flags: ["El documento no define la sigla «BO»."] },
+    ],
+  },
+  {
+    key: "pipbiden", name: "PIP Biden", short: "PIP Biden", pages: "13",
+    fullName: "Parole in Place Biden",
+    desc: "Permite a una persona ilegal obtener una residencia por tener un vinculo con un USC antes del 17/06/24 y poder comprobar 10 años de estancia en USA",
+    forms: ["I-131F", "I-94"],
+    notes: [{ text: "Inicia un REG. OAS( ajuste de Status a traves de una 245A) \"La I-94 funge como entrada legal\"", page: 13 }],
+    stages: [
+      ...pre(13), packet(13, "1-3 meses"), ...rev(13),
+      rec(13, "RECIBO INICIAL", "I-131F"),
+      bio(13, "3-12 meses aproximadamente después de recibos iniciales", 3, 12),
+      { name: "DECISION JUNTO CON LA I-94 (entrada legal)", t: "14.5 meses aproximadamente despues de los Recibos Iniciales", ts: "14.5 meses aproximadamente", unit: "meses", min: 14.5, max: 14.5,
+        start: "Recibos iniciales", esc: "Si pasa los 15 meses se puede solicitar a BO", escN: 15, escU: "meses", kind: "uscis", page: 13,
+        flags: ["El documento no define la sigla «BO»."] },
+    ],
+  },
+  {
+    key: "k1", name: "Visa K-1", short: "K-1", pages: "15",
+    desc: "Permite que un(a) prometido(a) extranjero(a) de un ciudadano estadounidense ingrese a EE. UU. para casarse dentro de los 90 días posteriores a su llegada.",
+    forms: ["I-129F", "DS-160", "I-130", "I-765", "I-131"],
+    notes: [{ text: "Inicia un REG. OAS despues del matrimonio se mete el ajuste, se meten el ajuste con I-130, I-765, I-131 y I-458", page: 15 }],
+    stages: [
+      ...pre(15),
+      { name: "ENTREVISTA K1", t: "1-2 meses aproximadamente.", ts: "1-2 meses aproximadamente", unit: "meses", min: 1, max: 2,
+        desc: "La entrevista con psicólogos se hace simultáneamente a la recolección de documentos.", conc: "Se realiza simultáneamente a COLLECTING DOCUMENTS", kind: "interno", page: 15 },
+      { name: "DECLARACIÓN", t: "1-3 meses.", ts: "1-3 meses", unit: "meses", min: 1, max: 3, desc: "Se trabaja en la declaración",
+        esc: "Después de 4 meses se escala", escN: 4, escU: "meses", kind: "interno", page: 15 },
+      packet(15, "1-3 meses"), ...rev(15),
+      rec(15, "RECIBO INICIAL", "I-129F"),
+      { name: "Aprobación I-129F", t: "9 a 26.5 meses aproximadamente despues de los Recibos Iniciales", ts: "9 a 26.5 meses aproximadamente", unit: "meses", min: 9, max: 26.5,
+        start: "Recibos iniciales", esc: "Si pasa los 27 meses se puede solicitar a BO", escN: 27, escU: "meses", kind: "uscis", page: 15,
+        flags: ["El documento no define la sigla «BO»."] },
+      { name: "Notificacion de la NVC", t: "No se cuanto tiempo", unit: "indef", desc: "Enviara numero de caso para seguimiento online", kind: "otra", page: 15 },
+      { name: "Llamada para completar DS-160", t: "1 mes aproximadamente", ts: "1 mes aproximadamente", unit: "meses", min: 1, max: 1,
+        esc: "Despues de 2 meses se puede turnar", escN: 2, escU: "meses", kind: "otra", page: 15 },
+      { name: "Notificacion de cita en el Consulado", kind: "otra", page: 15 },
+      { name: "Ingreso a USA para casarse", kind: "otra", page: 15 },
+    ],
+  },
+  {
+    key: "daca", name: "DACA", short: "DACA", pages: "15–17",
+    desc: "Su objetivo es proteger temporalmente de la deportación a ciertos inmigrantes indocumentados que llegaron al país siendo menores de edad, conocidos comúnmente como \"Dreamers\"",
+    forms: ["I-821D", "I-765WS"],
+    notes: [{ text: "De ahi debemos esperar que este por vencer para poder iniciar la renovación", page: 17 }],
+    stages: [
+      ...pre(15), packet(17, "1-3 meses"), ...rev(17),
+      rec(17, "RECIBO INICIAL", "I-821D / I-765WS"),
+      bio(17, "3-4 meses aproximadamente después de recibos iniciales, si USCIS asi lo quiere ( si paso un año despues del vencimiento)", 3, 4,
+        { obs: ["Condición documentada: si USCIS así lo quiere (si pasó un año después del vencimiento)."] }),
+      { name: "Aprobación", t: "5 meses aproximadamente despues de los Recibos Iniciales", ts: "5 meses aproximadamente", unit: "meses", min: 5, max: 5,
+        start: "Recibos iniciales", esc: "Si pasa los 6 meses se puede solicitar a BO", escN: 6, escU: "meses", kind: "uscis", page: 17,
+        flags: ["El documento no define la sigla «BO»."] },
+    ],
+  },
+  {
+    key: "foia", name: "FOIA", short: "FOIA", pages: "17–18",
+    desc: "Investigación que se realiza para conocer el Historial criminal y las entradas y salidas en los Estados Unidos",
+    forms: [],
+    notes: [{ text: "CONSEJO LEGAL", page: 17 }, { text: "Verificar los tiempos", page: 18 }],
+    stages: [
+      ...pre(17, { collDesc: "reúne los documentos hasta estar Fully (ya están completos)." }), packet(17, "1-3 meses"), ...rev(17),
+      { name: "FOIA SERULT", t: "de 3 a 12 meses aproximadamente", ts: "de 3 a 12 meses aproximadamente", unit: "meses", min: 3, max: 12,
+        start: "No especificado en el documento", desc: "Se le dice al Cl que debe esperar respuesta",
+        esc: "Si pasaon los 12 meses se escala con TL pra resometer el FOIA", escN: 12, escU: "meses", resp: "TL (Team Leader)", kind: "uscis", page: 17,
+        flags: ["El documento no indica desde qué evento se cuentan los 3 a 12 meses.", "Este proceso no incluye etapa de recibo inicial en el documento."] },
+    ],
+  },
+  {
+    key: "i751", name: "I-751", short: "I-751", pages: "19–20",
+    desc: "Remoción de las condiciones de una Recidencia condicionada",
+    forms: ["I-751"],
+    notes: [
+      { text: "No se puede renovar la LPR condicionada y tenemos 90 días antes del vencimiento para meter la solicitud", page: 19 },
+      { text: "En el supuesto que la pareja fallezca o que exista algun detalle en el matrimonio se habilitaria la entrevista I-751 VAWA PLUS con su respectiva DCL. Entrevista donde se analiza porque razon se continua con el proceso si ya no se tiene el vinculo", page: 20,
+        flag: "Nota lateral de la p. 20; la p. 19 contiene I-751 e I-90. Se asigna a I-751 por su contenido; validar." },
+    ],
+    stages: [
+      ...pre(19), packet(19, "1-3 meses"), ...rev(19),
+      rec(19, "RECIBO INICIAL", "I-751"),
+      { name: "INFORMACION SOBRE I-751", t: "30.5 Meses aproximadamente deberiamos tener respuesta", ts: "30.5 meses aproximadamente", unit: "meses", min: 30.5, max: 30.5,
+        start: "No especificado en el documento", kind: "uscis", page: 19,
+        flags: ["No indica desde qué evento se cuentan los 30.5 meses.", "Este proceso no incluye etapa de biométricos en el documento."] },
+    ],
+  },
+  {
+    key: "i90", name: "I-90", short: "I-90", pages: "19–21",
+    desc: "Este proceso es para poder renovar una LPR no condicionada",
+    forms: ["I-90"],
+    notes: [],
+    stages: [
+      ...pre(19), packet(19, "1-3 meses"), ...rev(19),
+      rec(19, "RECIBO INICIAL", "I-90"),
+      bio(21, "3-4 meses aproximadamente después de recibos iniciales, si USCIS asi lo quiere", 3, 4, { obs: ["Condición documentada: si USCIS así lo quiere."] }),
+      { name: "Recibimos información sobre su Renovación", t: "26 meses aproximadamente deberiamos tener respuesta", ts: "26 meses aproximadamente", unit: "meses", min: 26, max: 26,
+        start: "No especificado en el documento", esc: "Pasando los 26 meses se puede turnar", escN: 26, escU: "meses", kind: "uscis", page: 21,
+        flags: ["No indica desde qué evento se cuentan los 26 meses."] },
+    ],
+  },
+  {
+    key: "n400", name: "N-400", short: "N-400", pages: "21",
+    desc: "Los residentes permanentes legales de Estados Unidos pueden presentar una solicitud de naturalización y convertirse en ciudadanos estadounidenses.",
+    forms: ["N-400"],
+    notes: [],
+    stages: [
+      ...pre(21), packet(21, "1-3 meses"), ...rev(21),
+      rec(21, "RECIBO INICIAL", "N-400"),
+      bio(21, "3-4 meses aproximadamente después de recibos iniciales, si USCIS asi lo quiere", 3, 4, { obs: ["Condición documentada: si USCIS así lo quiere."] }),
+      { name: "Recibimos información sobre su Renovación", t: "5 a 10.5 meses aproximadamente deberiamos tener respuesta", ts: "5 a 10.5 meses aproximadamente", unit: "meses", min: 5, max: 10.5,
+        start: "No especificado en el documento", desc: "Para ser mas preciso verifica el tiempo en USCIS",
+        esc: "Pasando los 10.5 meses se puede turnar", escN: 10.5, escU: "meses", kind: "uscis", page: 21,
+        flags: ["La etapa se titula «Renovación» en un proceso de naturalización.", "No indica desde qué evento se cuentan los meses."] },
+    ],
+  },
+  {
+    key: "n600", name: "N-600", short: "N-600", pages: "21–23",
+    desc: "Los residentes permanentes legales de Estados Unidos pueden presentar una solicitud de naturalización y convertirse en ciudadanos estadounidenses.",
+    descFlag: "El encabezado de la sección es N-600, pero el título interno dice «N-400» y la descripción es idéntica a la de N-400.",
+    forms: ["N-600"],
+    notes: [],
+    stages: [
+      ...pre(21), packet(21, "1-3 meses"), ...rev(23),
+      rec(23, "RECIBO INICIAL", "N-600"),
+      bio(23, "3-4 meses aproximadamente después de recibos iniciales, si USCIS asi lo quiere", 3, 4, { obs: ["Condición documentada: si USCIS así lo quiere."] }),
+      { name: "Recibimos información sobre su Narualización", t: "3 a 15.5 meses aproximadamente deberiamos tener respuesta", ts: "3 a 15.5 meses aproximadamente", unit: "meses", min: 3, max: 15.5,
+        start: "No especificado en el documento", desc: "Para ser mas preciso verifica el tiempo en USCIS",
+        esc: "Pasando los 10.5 meses se puede turnar", escN: 10.5, escU: "meses", kind: "uscis", page: 23,
+        flags: ["El umbral para turnar (10.5 meses) es menor que el máximo del rango (15.5 meses) y coincide con el de N-400; validar.", "No indica desde qué evento se cuentan los meses."] },
+    ],
+  },
+];
+
+/* Auditoría general (además de las banderas por etapa) ------------------- */
+const AUDIT_GENERAL = [
+  { type: "Texto repetido", page: "Varias", text: "La descripción de PACKET ASSAMBLED («Se junta el First Draft y la declaración…») y de CASE REVIEW («revisión de la declaración con el cliente») se repite en procesos que no tienen etapa de declaración documentada (REG AOS, I-130 consular, PIP Army, PIP Biden, DACA, FOIA, I-751, I-90, N-400, N-600)." },
+  { type: "Punto de partida", page: "Varias", text: "Los tiempos internos (Declaración, Packet, Attorney Review, Final Review, Ready to print) no indican desde qué evento se cuentan. Los criterios «Después de N meses se escala» tampoco lo indican." },
+  { type: "Término sin definir", page: "11, 13, 15, 17", text: "La sigla «BO» se usa en «se puede solicitar a BO» y no se define en el documento." },
+  { type: "Término sin definir", page: "Varias", text: "«Turnar», «Tier2», «TL», «Cl/CL» y «DCL» se usan sin definición en el documento." },
+  { type: "Posible error tipográfico", page: "1–23", text: "Se conservan sin corregir: «ASSAMBLED», «first draf», «VASA T», «1 mess», «reciboc», «madamente», «Psycologos», «REG. OAS», «SERULT», «pasaon», «pra resometer», «Narualización», «Recidencia», «I-458» (lista de formularios de K-1)." },
+  { type: "Notas laterales", page: "6, 10, 12, 18, 20", text: "Las páginas pares contienen notas laterales. Se asignaron al proceso de la página anterior según su contenido; la nota I-824 (p. 12) habla de NVC y se ubicó en Proceso Consular aunque la p. 11 también inicia PIP Army." },
+  { type: "Descripción", page: "11", text: "PIP Army se describe como «El proceso consular permite…», aunque es un Parole in Place." },
+  { type: "Unidades", page: "1, 3, 7, 11", text: "Conviven días hábiles (recibos iniciales, respuesta del DPT), días naturales (Missing Receipts) y días sin tipo (respuesta DPT 90 días, residencia consular 90 días). No se convierten entre sí." },
+];
+
+const KIND_LABEL = { interno: "Proceso interno", uscis: "Trámite ante USCIS", otra: "Otra instancia" };
+
+/* Normalización ---------------------------------------------------------- */
+const DATA = [];
+PROCESSES.forEach(p => {
+  p.stages = p.stages.map((s, i) => {
+    const st = { obs: [], flags: [], ...s };
+    st.obs = st.obs || []; st.flags = (st.flags || []).filter(Boolean);
+    st.id = `${p.key}-${String(i + 1).padStart(2, "0")}`;
+    st.order = i + 1; st.proc = p.key; st.procName = p.name;
+    if (!st.t) { st.t = null; st.unit = st.unit || null; }
+    if (!st.start) st.start = st.t ? (st.unit === "indef" ? "No aplica" : "No especificado en el documento") : "No aplica";
+    st.escFrom = st.escFrom || null;
+    DATA.push(st);
+    return st;
+  });
+});
+
+const { useState, useMemo, useEffect, useRef } = React;
+const html = htm.bind(React.createElement);
+
+/* ---------- utilidades ---------- */
+const norm = s => (s || "").toString().normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const PBY = Object.fromEntries(PROCESSES.map(p => [p.key, p]));
+const UNIT_LABEL = { meses: "meses", semanas: "semanas", dias_habiles: "días hábiles", dias_naturales: "días naturales", dias_sin_tipo: "días (tipo no especificado)", indef: "indefinido" };
+const NO_TIME = "Tiempo no especificado en el documento fuente";
+const NO_ESC = "Sin criterio de escalamiento especificado";
+
+function escInfo(s) {
+  const e = s.esc || "";
+  let type = "Referencia de escalamiento";
+  if (/Missing Receipts/i.test(e)) type = "Missing Receipts (Tier 2)";
+  else if (/E-Request/i.test(e)) type = "E-Request (Tier 2)";
+  else if (/\bBO\b/.test(e)) type = "Solicitud a BO";
+  else if (/oficinas del social/i.test(e)) type = "Orientación al cliente";
+  else if (/pasarlo a/i.test(e)) type = "Turnar a responsable";
+  else if (/turnar/i.test(e)) type = "Turnar";
+  else if (/se escala (con|al)/i.test(e)) type = "Escalamiento a responsable";
+  else if (/se escala/i.test(e)) type = "Escalamiento interno";
+  let modal = "Sin acción explícita en el texto";
+  if (/se puede|puede/i.test(e)) modal = "Opcional · el documento dice «se puede»";
+  else if (/se escala|pasarlo/i.test(e)) modal = "Indicado · el documento dice «se escala»";
+  let cond = "Ver texto original";
+  if (s.escN != null) cond = `Al superar ${s.escN} ${UNIT_LABEL[s.escU] || ""}` + (s.escFrom ? ` desde ${s.escFrom}` : "");
+  if (/Missing Info/.test(e)) cond = "Si hay nota de Missing Info 1st draft (forms)";
+  return { type, modal, cond };
+}
+
+const ACR = new Set(["vawa", "uscis", "ead", "ssn", "nvc", "lea", "rfa", "rfe", "foia", "dpt", "dvs", "aos", "reg", "usa", "lpr", "bo", "k1", "ds-160", "ds-260"]);
+function clientName(name) {
+  let s = name.toLowerCase().replace(/\s+/g, " ").trim();
+  s = s.split(" ").map((w, i, arr) => {
+    const bare = w.replace(/[().,]/g, "");
+    if (ACR.has(bare) || /^[in]-\d/.test(bare)) return w.toUpperCase();
+    if (i > 0 && /^visa$/.test(arr[i - 1].replace(/[()]/g, "")) && bare.length === 1) return w.toUpperCase();
+    return w;
+  }).join(" ");
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+const START_CLIENT = {
+  "Recibos iniciales": "la emisión de los recibos iniciales",
+  "Recibos iniciales (de la I-601A)": "la emisión de los recibos iniciales de la I-601A",
+  "EAD (permiso de trabajo)": "la llegada del permiso de trabajo (EAD)",
+  "Recepción del Bona Fide": "la recepción del Bona Fide",
+  "Expediente Fully (documentos completos)": "que su expediente quedó completo",
+  "Visa U interview": "la entrevista de Visa U",
+  "Respuesta del Sup B": "la respuesta del Sup B",
+  "Envío a la NVC": "el envío a la NVC",
+  "Aprobación de su entrada y regreso a USA": "la aprobación de su entrada y su regreso a USA",
+};
+const startKnown = s => s.start && !/^No /.test(s.start);
+function explanation(s) {
+  const n = clientName(s.name);
+  const tail = " Este tiempo es estimado y puede variar. Para conocer el estado específico de su expediente es necesario revisar la información registrada en su caso.";
+  if (!s.t) return `De acuerdo con nuestros tiempos de referencia internos, no contamos con un tiempo documentado para la etapa de ${n}. Para conocer el estado específico de su expediente es necesario revisar la información registrada en su caso.`;
+  if (s.unit === "indef") return `De acuerdo con nuestros tiempos de referencia internos, la etapa de ${n} no tiene un tiempo fijo: ${s.t.charAt(0).toLowerCase() + s.t.slice(1).replace(/\.$/, "")}. Para conocer el estado específico de su expediente es necesario revisar la información registrada en su caso.`;
+  const st = startKnown(s) ? `, contada a partir de ${START_CLIENT[s.start] || s.start.toLowerCase()}` : "";
+  return `De acuerdo con nuestros tiempos de referencia internos, la etapa de ${n} tiene una duración aproximada de ${(s.ts || s.t).replace(/\.$/, "").replace(/\s+aproximadamente$/i, "")}${st}.${tail}`;
+}
+
+function stageSummary(s) {
+  const e = s.esc ? escInfo(s) : null;
+  return [
+    `${PBY[s.proc].name}${s.sub ? " · " + s.sub : ""} — ${s.name}`,
+    `Tiempo aproximado: ${s.t || NO_TIME}`,
+    `Se cuenta desde: ${s.start}`,
+    s.desc ? `Descripción: ${s.desc}` : null,
+    ...s.obs.map(o => `Observación: ${o}`),
+    `Escalamiento: ${s.esc ? s.esc + (s.resp ? ` (Responsable: ${s.resp})` : "") + ` [${e.modal}]` : NO_ESC}`,
+    `Fuente: CS Tiempos de Procesamiento, p. ${s.page}`,
+  ].filter(Boolean).join("\n");
+}
+
+async function copyText(text, fallbackEl) {
+  try { await navigator.clipboard.writeText(text); return true; }
+  catch (e) {
+    if (fallbackEl) { fallbackEl.focus(); fallbackEl.select(); }
+    return false;
+  }
+}
+
+/* ---------- fechas ---------- */
+const parseD = v => { if (!v) return null; const [y, m, d] = v.split("-").map(Number); return Date.UTC(y, m - 1, d); };
+const DAY = 86400000;
+function addMonthsUTC(t, k) {
+  const d = new Date(t); const y = d.getUTCFullYear(), m = d.getUTCMonth() + k, day = d.getUTCDate();
+  const last = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+  return Date.UTC(y, m, Math.min(day, last));
+}
+function monthsBetween(a, b) {
+  const da = new Date(a), db = new Date(b);
+  let m = (db.getUTCFullYear() - da.getUTCFullYear()) * 12 + (db.getUTCMonth() - da.getUTCMonth());
+  let anchor = addMonthsUTC(a, m);
+  if (anchor > b) { m--; anchor = addMonthsUTC(a, m); }
+  const next = addMonthsUTC(a, m + 1);
+  return { months: m + (b - anchor) / (next - anchor), whole: m, rem: Math.round((b - anchor) / DAY) };
+}
+function businessDays(a, b) {
+  let n = 0; for (let t = a + DAY; t <= b; t += DAY) { const w = new Date(t).getUTCDay(); if (w !== 0 && w !== 6) n++; } return n;
+}
+function elapsedIn(unit, a, b) {
+  if (unit === "meses") return monthsBetween(a, b).months;
+  if (unit === "semanas") return (b - a) / DAY / 7;
+  if (unit === "dias_naturales") return (b - a) / DAY;
+  if (unit === "dias_habiles") return businessDays(a, b);
+  return null;
+}
+const fmt = n => (Math.round(n * 10) / 10).toLocaleString("es-MX", { maximumFractionDigits: 1 });
+const todayStr = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+
+function calc(s, startV, endV) {
+  const a = parseD(startV), b = parseD(endV);
+  if (!a || !b) return { state: "insuf", label: "Información insuficiente para determinar", why: "Ingresa la fecha de inicio de la etapa y la fecha de consulta." };
+  if (b < a) return { state: "insuf", label: "Información insuficiente para determinar", why: "La fecha de consulta es anterior a la fecha de inicio." };
+  const dNat = Math.round((b - a) / DAY), mb = monthsBetween(a, b);
+  const base = { dNat, mb };
+  if (!s.t) return { ...base, state: "insuf", label: "Información insuficiente para determinar", why: NO_TIME + "." };
+  if (s.unit === "indef") return { ...base, state: "insuf", label: "Información insuficiente para determinar", why: "El documento no establece un tiempo definido para esta etapa." };
+  if (!s.unit || s.unit === "dias_sin_tipo" || s.min == null)
+    return { ...base, state: "insuf", label: "Información insuficiente para determinar", why: s.unit === "dias_sin_tipo" ? "El documento no indica si los días son hábiles o naturales." : "El documento no indica la unidad de tiempo." };
+  const el = elapsedIn(s.unit, a, b);
+  let state, label;
+  if (el < s.min) { state = "before"; label = s.min === s.max ? "Aún no alcanza la referencia interna" : "Aún no alcanza el rango de referencia interno"; }
+  else if (s.max == null || el <= s.max) { state = "in"; label = "En el rango de referencia interno"; }
+  else { state = "over"; label = "Supera el rango de referencia interno"; }
+  let esc = null;
+  if (s.esc) {
+    if (s.escN != null && s.escU && s.escU !== "dias_sin_tipo") {
+      const ee = elapsedIn(s.escU, a, b);
+      esc = { evaluable: true, reached: ee > s.escN, val: ee };
+    } else esc = { evaluable: false };
+  }
+  return { ...base, state, label, el, esc };
+}
+
+/* ---------- búsqueda ---------- */
+const INDEX = DATA.map(s => ({ s, hay: norm([s.procName, PBY[s.proc].fullName, s.sub, s.name, s.forms, s.desc, ...(s.obs || []), s.esc, s.resp, s.t, s.tags, s.esc ? "escalamiento escala escalar" : "", KIND_LABEL[s.kind]].join(" ")) }));
+function search(q) {
+  const terms = norm(q).split(/\s+/).filter(Boolean);
+  if (!terms.length) return [];
+  return INDEX.filter(x => terms.every(t => x.hay.includes(t))).map(x => x.s);
+}
+
+/* ---------- componentes ---------- */
+function Chip({ children, tone = "plain", title }) { return html`<span className=${"chip chip-" + tone} title=${title}>${children}</span>`; }
+const kindTone = k => (k === "interno" ? "int" : k === "uscis" ? "usc" : "oth");
+
+function SearchBox({ onPick }) {
+  const [q, setQ] = useState(""); const [open, setOpen] = useState(false); const ref = useRef(null);
+  const res = useMemo(() => search(q), [q]);
+  useEffect(() => {
+    const h = e => { if (e.key === "/" && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA") { e.preventDefault(); ref.current?.focus(); } };
+    window.addEventListener("keydown", h); return () => window.removeEventListener("keydown", h);
+  }, []);
+  const pick = s => { onPick(s); setOpen(false); setQ(""); };
+  const shown = res.slice(0, 40);
+  return html`<div className="search">
+    <label htmlFor="q" className="sr">Buscar</label>
+    <svg viewBox="0 0 20 20" className="search-ic" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M13 13l4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    <input id="q" ref=${ref} value=${q} autoComplete="off" placeholder="Buscar proceso, formulario o etapa (I-130, Bona Fide…)"
+      onChange=${e => { setQ(e.target.value); setOpen(true); }} onFocus=${() => setOpen(true)}
+      onKeyDown=${e => { if (e.key === "Enter" && shown[0]) pick(shown[0]); if (e.key === "Escape") setOpen(false); }} />
+    <kbd className="kbd">/</kbd>
+    ${open && q.trim() && html`<div className="results" role="listbox">
+      <div className="results-head">${res.length} coincidencia${res.length === 1 ? "" : "s"}${res.length > 40 ? " · mostrando 40" : ""}</div>
+      ${shown.length === 0 && html`<div className="results-empty">Sin coincidencias en el documento fuente.</div>`}
+      ${shown.map(s => html`<button key=${s.id} className="result" onMouseDown=${e => e.preventDefault()} onClick=${() => pick(s)}>
+        <span className="result-proc">${s.procName}</span>
+        <span className="result-main"><b>${s.name}</b>${s.sub ? html`<small> · ${s.sub}</small>` : null}</span>
+        <span className="result-time">${s.ts || s.t || "—"}</span>
+        ${s.esc && html`<span className="dot-esc" title="Con criterio de escalamiento"></span>`}
+      </button>`)}
+    </div>`}
+  </div>`;
+}
+
+function Rail({ proc, setProc, goHome }) {
+  return html`<nav className="rail" aria-label="Procesos">
+    <button className=${"rail-home" + (!proc ? " on" : "")} onClick=${goHome}>Todos los procesos</button>
+    ${PROCESSES.map(p => {
+      const n = p.stages.filter(s => s.esc).length;
+      return html`<button key=${p.key} className=${"rail-item" + (proc === p.key ? " on" : "")} onClick=${() => setProc(p.key)} aria-current=${proc === p.key ? "true" : undefined}>
+        <span className="rail-name">${p.name}</span>
+        <span className="rail-meta">${p.stages.length} etapas · ${n} criterios</span>
+      </button>`;
+    })}
+  </nav>`;
+}
+
+function Home({ setProc, onKeyword }) {
+  const kw = ["recibos", "permiso de trabajo", "biométricos", "residencia", "Bona Fide", "declaración", "Case Review", "NVC", "escalamiento"];
+  return html`<section className="home">
+    <div className="home-intro">
+      <h2>¿Qué proceso tiene el cliente?</h2>
+      <p>Selecciona el proceso y después la etapa actual del expediente. También puedes buscar por formulario o palabra clave.</p>
+      <div className="kw">${kw.map(k => html`<button key=${k} className="kw-btn" onClick=${() => onKeyword(k)}>${k}</button>`)}</div>
+    </div>
+    <div className="cards">
+      ${PROCESSES.map(p => html`<button key=${p.key} className="pcard" onClick=${() => setProc(p.key)}>
+        <span className="pcard-top"><span className="pcard-name">${p.name}</span><span className="pcard-pg">p. ${p.pages}</span></span>
+        ${p.fullName && html`<span className="pcard-full">${p.fullName}</span>`}
+        <span className="pcard-desc">${p.desc || "Sin descripción en el documento fuente."}</span>
+        <span className="pcard-forms">${p.forms.slice(0, 5).map(f => html`<span key=${f} className="form">${f}</span>`)}</span>
+        <span className="pcard-stats"><span>${p.stages.length} etapas</span><span>${p.stages.filter(s => s.esc).length} criterios de escalamiento</span></span>
+      </button>`)}
+    </div>
+  </section>`;
+}
+
+function KwResults({ q, onPick, clear }) {
+  const res = search(q);
+  return html`<section className="kwres">
+    <div className="kwres-head"><h2>Resultados para «${q}»</h2><button className="btn-ghost" onClick=${clear}>Cerrar</button></div>
+    <div className="kwres-list">
+      ${PROCESSES.map(p => { const rs = res.filter(s => s.proc === p.key); if (!rs.length) return null;
+        return html`<div key=${p.key} className="kwres-group"><div className="kwres-proc">${p.name}</div>
+          ${rs.map(s => html`<button key=${s.id} className="kwres-item" onClick=${() => onPick(s)}>
+            <span>${s.name}${s.sub ? html`<small> · ${s.sub}</small>` : null}</span><span className="mono">${s.ts || s.t || "—"}</span></button>`)}</div>`; })}
+    </div>
+  </section>`;
+}
+
+function ProcHead({ p, compact }) {
+  const [open, setOpen] = useState(false);
+  return html`<header className="phead">
+    <div className="phead-row">
+      <div>
+        <div className="eyebrow">Proceso · p. ${p.pages}</div>
+        <h2 className="phead-title">${p.name}${p.fullName ? html`<span className="phead-full"> ${p.fullName}</span>` : null}</h2>
+      </div>
+      ${compact && (p.desc || p.notes.length || p.variants) && html`<button className="btn-ghost" onClick=${() => setOpen(!open)} aria-expanded=${open}>${open ? "Ocultar contexto" : "Ver descripción y notas"}</button>`}
+    </div>
+    ${(!compact || open) && html`<div className="phead-body">
+      <p className="phead-desc">${p.desc || "Descripción no incluida en el documento fuente."}</p>
+      ${p.descFlag && html`<div className="warn"><b>Pendiente de validación.</b> ${p.descFlag}</div>`}
+      ${p.variants && html`<div className="variants"><div className="lbl">Variantes documentadas</div>${p.variants.map(v => html`<div key=${v}>${v}</div>`)}</div>`}
+      ${p.notes.length > 0 && html`<div className="notes"><div className="lbl">Notas del documento</div>
+        ${p.notes.map((n, i) => html`<div key=${i} className="note"><span>${n.text}</span><span className="pg">p. ${n.page}</span>${n.flag && html`<div className="warn small">${n.flag}</div>`}</div>`)}</div>`}
+      ${p.forms.length > 0 && html`<div className="forms-row"><span className="lbl">Formularios mencionados</span>${p.forms.map(f => html`<span key=${f} className="form">${f}</span>`)}</div>`}
+    </div>`}
+  </header>`;
+}
+
+function StagePicker({ p, stageId, setStage }) {
+  const groups = [];
+  p.stages.forEach(s => { const g = s.sub || ""; let G = groups.find(x => x.g === g); if (!G) groups.push(G = { g, items: [] }); G.items.push(s); });
+  return html`<div className="picker">
+    <div className="step-lbl"><span className="step-n">2</span> Etapa actual del expediente</div>
+    ${groups.map(G => html`<div key=${G.g} className="picker-group">
+      ${G.g && html`<div className="picker-sub">${G.g}</div>`}
+      <div className="picker-chips">${G.items.map(s => html`<button key=${s.id} className=${"schip k-" + kindTone(s.kind) + (s.id === stageId ? " on" : "")} onClick=${() => setStage(s.id)} aria-pressed=${s.id === stageId}>
+        <span className="schip-name">${s.name}</span>${s.esc && html`<span className="dot-esc" title="Con criterio de escalamiento"></span>`}
+      </button>`)}</div>
+    </div>`)}
+    <div className="legend"><span><i className="lg k-int"></i>Proceso interno</span><span><i className="lg k-usc"></i>Trámite ante USCIS</span><span><i className="lg k-oth"></i>Otra instancia</span><span><i className="dot-esc"></i>Con criterio de escalamiento</span></div>
+  </div>`;
+}
+
+function EscBox({ s }) {
+  if (!s.esc) return html`<div className="escbox none"><div className="lbl">Criterio de escalamiento</div><div>${NO_ESC}</div></div>`;
+  const e = escInfo(s);
+  return html`<div className="escbox">
+    <div className="escbox-head"><span className="lbl">Criterio de escalamiento documentado</span><${Chip} tone="esc">${e.type}<//></div>
+    <div className="escbox-text">“${s.esc}”</div>
+    <dl className="escbox-meta">
+      <div><dt>Condición</dt><dd>${e.cond}</dd></div>
+      <div><dt>Carácter</dt><dd>${e.modal}</dd></div>
+      <div><dt>Responsable</dt><dd>${s.resp || "No especificado"}</dd></div>
+    </dl>
+    <div className="escbox-note">Este es el momento en que puede solicitarse una revisión o escalamiento. No equivale al tiempo de procesamiento.</div>
+  </div>`;
+}
+
+function Result({ s, p, onNav }) {
+  const [copied, setCopied] = useState(""); const idx = p.stages.findIndex(x => x.id === s.id);
+  const ta = useRef(null);
+  const doCopy = async () => { const ok = await copyText(stageSummary(s), ta.current); setCopied(ok ? "Ficha copiada" : "Selecciona y copia el texto"); setTimeout(() => setCopied(""), 2200); };
+  return html`<article className="result-card" aria-live="polite">
+    <div className="rc-top">
+      <div className="rc-tags">
+        <${Chip} tone=${kindTone(s.kind)}>${KIND_LABEL[s.kind]}<//>
+        ${s.sub && html`<${Chip}>${s.sub}<//>`}
+        ${s.forms && html`<${Chip} tone="form">${s.forms}<//>`}
+      </div>
+      <span className="pg">Fuente: p. ${s.page}</span>
+    </div>
+    <h3 className="rc-name">${s.name}</h3>
+    <div className="rc-grid">
+      <div className="rc-cell rc-time">
+        <div className="lbl">Tiempo aproximado</div>
+        <div className=${"rc-big" + (s.t ? "" : " muted")}>${s.ts || s.t || NO_TIME}</div>
+        ${s.t && s.ts && s.ts !== s.t && html`<div className="rc-orig">Texto original: “${s.t}”</div>`}
+        ${s.unit && s.unit !== "indef" && html`<div className="rc-unit">Unidad: ${UNIT_LABEL[s.unit]}</div>`}
+      </div>
+      <div className="rc-cell">
+        <div className="lbl">Se cuenta desde</div>
+        <div className=${"rc-start" + (startKnown(s) ? "" : " muted")}>${s.start}</div>
+        ${s.conc && html`<div className="conc">↔ ${s.conc}</div>`}
+      </div>
+    </div>
+    <div className="rc-cell"><div className="lbl">Qué sucede en esta etapa</div><div>${s.desc || "Descripción no incluida en el documento fuente."}</div></div>
+    ${s.obs.length > 0 && html`<div className="rc-cell"><div className="lbl">Observaciones documentadas</div><ul className="obs">${s.obs.map((o, i) => html`<li key=${i}>${o}</li>`)}</ul></div>`}
+    <${EscBox} s=${s} />
+    ${s.flags.length > 0 && html`<div className="warn"><b>Pendiente de validación interna · p. ${s.page}</b><ul>${s.flags.map((f, i) => html`<li key=${i}>${f}</li>`)}</ul></div>`}
+    <div className="rc-actions">
+      <button className="btn" onClick=${() => onNav(-1)} disabled=${idx <= 0}>← Etapa anterior</button>
+      <button className="btn" onClick=${() => onNav(1)} disabled=${idx >= p.stages.length - 1}>Etapa siguiente →</button>
+      <span className="grow"></span>
+      <button className="btn btn-pri" onClick=${doCopy}>Copiar ficha de la etapa</button>
+      ${copied && html`<span className="toast">${copied}</span>`}
+      <textarea ref=${ta} className="sr" readOnly value=${stageSummary(s)} tabIndex="-1" aria-hidden="true"></textarea>
+    </div>
+  </article>`;
+}
+
+function ClientText({ s }) {
+  const [txt, setTxt] = useState(explanation(s)); const [msg, setMsg] = useState(""); const ref = useRef(null);
+  useEffect(() => setTxt(explanation(s)), [s.id]);
+  const copy = async () => { const ok = await copyText(txt, ref.current); setMsg(ok ? "Explicación copiada" : "Texto seleccionado: copia con Ctrl+C"); setTimeout(() => setMsg(""), 2400); };
+  return html`<section className="tool">
+    <div className="tool-head"><h4>Explicación para el cliente</h4><span className="tool-sub">Editable antes de copiar. Se genera solo con datos del documento.</span></div>
+    <label htmlFor="ct" className="sr">Explicación para el cliente</label>
+    <textarea id="ct" ref=${ref} className="ct" value=${txt} onChange=${e => setTxt(e.target.value)} rows="6"></textarea>
+    <div className="tool-actions">
+      <button className="btn btn-pri" onClick=${copy}>Copiar explicación</button>
+      <button className="btn" onClick=${() => setTxt(explanation(s))}>Restablecer</button>
+      ${msg && html`<span className="toast">${msg}</span>`}
+    </div>
+    <p className="fine">No promete fechas ni resultados, y no menciona escalamientos internos.</p>
+  </section>`;
+}
+
+function Calculator({ p, s, setStage }) {
+  const [a, setA] = useState(""); const [b, setB] = useState(todayStr());
+  const r = useMemo(() => calc(s, a, b), [s.id, a, b]);
+  const tone = { in: "ok", before: "info", over: "warn", insuf: "muted" }[r.state];
+  return html`<section className="tool">
+    <div className="tool-head"><h4>Calculadora de tiempo transcurrido</h4><span className="tool-sub">Compara contra la referencia interna. No calcula fechas de aprobación.</span></div>
+    <div className="calc-grid">
+      <div className="field"><label htmlFor="c-proc">Proceso</label><input id="c-proc" value=${p.name} readOnly /></div>
+      <div className="field"><label htmlFor="c-stage">Etapa</label>
+        <select id="c-stage" value=${s.id} onChange=${e => setStage(e.target.value)}>
+          ${p.stages.map(x => html`<option key=${x.id} value=${x.id}>${x.sub ? x.sub + " · " : ""}${x.name}</option>`)}
+        </select></div>
+      <div className="field"><label htmlFor="c-a">Fecha de inicio de la etapa</label><input id="c-a" type="date" value=${a} onChange=${e => setA(e.target.value)} /></div>
+      <div className="field"><label htmlFor="c-b">Fecha de consulta</label><input id="c-b" type="date" value=${b} onChange=${e => setB(e.target.value)} /></div>
+    </div>
+    <div className="calc-ref">Referencia documentada: <b>${s.t || NO_TIME}</b>${s.unit && s.unit !== "indef" ? html` · unidad: ${UNIT_LABEL[s.unit]}` : null}<br/>
+      Fecha a ingresar como inicio: <b>${s.start}</b>${!startKnown(s) && s.t && s.unit !== "indef" ? html`<span className="muted"> — el documento no fija el evento de inicio; el resultado depende de la fecha que elijas.</span>` : null}</div>
+    <div className=${"calc-out tone-" + tone}>
+      <div className="calc-status">${r.label}</div>
+      ${r.why && html`<div className="calc-why">${r.why}</div>`}
+      ${r.dNat != null && html`<div className="calc-el">Transcurrido: ${r.el != null && s.unit !== "meses" ? html`<b>${fmt(r.el)} ${UNIT_LABEL[s.unit]}</b> · ` : null}<b>${r.mb.whole} ${r.mb.whole === 1 ? "mes" : "meses"} y ${r.mb.rem} días</b> (${r.dNat} días naturales)</div>`}
+      ${r.esc && r.esc.evaluable && r.esc.reached && html`<div className="calc-esc"><b>Revisar criterio de escalamiento documentado.</b> “${s.esc}”${s.resp ? ` · Responsable: ${s.resp}` : ""}</div>`}
+      ${r.esc && r.esc.evaluable && !r.esc.reached && r.state !== "insuf" && html`<div className="calc-escno">Aún no se cumple la condición del criterio documentado (${escInfo(s).cond}).</div>`}
+      ${r.esc && !r.esc.evaluable && html`<div className="calc-escno">El criterio documentado no se puede evaluar automáticamente: “${s.esc}”.</div>`}
+    </div>
+    <p className="fine">Superar la referencia interna no significa que el expediente esté oficialmente retrasado. Días hábiles = lunes a viernes; no se descuentan festivos porque el documento no define un calendario. Los meses se cuentan por calendario.</p>
+  </section>`;
+}
+
+function Consult({ p, stageId, setStage }) {
+  const s = p.stages.find(x => x.id === stageId);
+  const nav = d => { const i = p.stages.findIndex(x => x.id === stageId); const n = p.stages[i + d]; if (n) setStage(n.id); };
+  return html`<div className="consult">
+    <${ProcHead} p=${p} compact=${true} />
+    <${StagePicker} p=${p} stageId=${stageId} setStage=${setStage} />
+    ${s ? html`<div className="step-lbl"><span className="step-n">3</span> Resultado</div>
+      <${Result} s=${s} p=${p} onNav=${nav} />
+      <div className="tools"><${ClientText} s=${s} /><${Calculator} p=${p} s=${s} setStage=${setStage} /></div>`
+    : html`<div className="placeholder">Selecciona la etapa en la que se encuentra el expediente para ver el tiempo, el punto de partida y el criterio de escalamiento.</div>`}
+  </div>`;
+}
+
+function Ficha({ p, openStage }) {
+  const [mode, setMode] = useState("timeline"); const [detail, setDetail] = useState(true);
+  const [kind, setKind] = useState("all"); const [onlyEsc, setOnlyEsc] = useState(false); const [f, setF] = useState("");
+  const [open, setOpen] = useState({});
+  const list = p.stages.filter(s => (kind === "all" || s.kind === kind) && (!onlyEsc || s.esc) && (!f || norm(s.name + " " + (s.desc || "")).includes(norm(f))));
+  let lastSub = null;
+  return html`<div className="ficha">
+    <${ProcHead} p=${p} compact=${false} />
+    <div className="toolbar">
+      <div className="seg" role="group" aria-label="Vista">
+        <button className=${mode === "timeline" ? "on" : ""} onClick=${() => setMode("timeline")}>Línea de tiempo</button>
+        <button className=${mode === "table" ? "on" : ""} onClick=${() => setMode("table")}>Tabla</button>
+      </div>
+      <div className="seg" role="group" aria-label="Detalle">
+        <button className=${!detail ? "on" : ""} onClick=${() => setDetail(false)}>Resumida</button>
+        <button className=${detail ? "on" : ""} onClick=${() => setDetail(true)}>Detallada</button>
+      </div>
+      <label className="sel"><span>Tipo</span><select id="f-kind" value=${kind} onChange=${e => setKind(e.target.value)}>
+        <option value="all">Todas</option><option value="interno">Procesos internos</option><option value="uscis">Trámites ante USCIS</option><option value="otra">Otra instancia</option></select></label>
+      <label className="check"><input id="f-esc" type="checkbox" checked=${onlyEsc} onChange=${e => setOnlyEsc(e.target.checked)} /> Solo con escalamiento</label>
+      <input id="f-txt" className="ftxt" placeholder="Filtrar etapa…" value=${f} onChange=${e => setF(e.target.value)} />
+    </div>
+    <p className="fine">Las etapas se muestran en el orden del documento. Las que se cuentan desde el mismo evento pueden avanzar en paralelo: los tiempos no se suman y no hay un total del caso en el documento.</p>
+    ${list.length === 0 && html`<div className="placeholder">Ninguna etapa coincide con los filtros.</div>`}
+    ${mode === "timeline" ? html`<ol className="tl">
+      ${list.map(s => { const head = s.sub && s.sub !== lastSub; lastSub = s.sub;
+        const isOpen = open[s.id];
+        return html`<${React.Fragment} key=${s.id}>
+          ${head && html`<li className="tl-sub">${s.sub}</li>`}
+          <li className=${"tl-item k-" + kindTone(s.kind)}>
+            <span className="tl-dot"></span>
+            <div className="tl-body">
+              <div className="tl-row">
+                <button className="tl-name" onClick=${() => setOpen({ ...open, [s.id]: !isOpen })} aria-expanded=${!!isOpen}>${s.name}</button>
+                <span className=${"tl-time mono" + (s.t ? "" : " muted")}>${s.ts || s.t || NO_TIME}</span>
+              </div>
+              <div className="tl-meta">
+                ${startKnown(s) && html`<span className="anchor">desde ${s.start}</span>`}
+                ${s.conc && html`<span className="anchor conc-a">↔ ${s.conc}</span>`}
+                ${s.esc && html`<span className="anchor esc-a">Escalamiento: ${escInfo(s).cond}</span>`}
+                ${s.flags.length > 0 && html`<span className="anchor warn-a">Validar</span>`}
+                <span className="pg">p. ${s.page}</span>
+              </div>
+              ${(detail || isOpen) && html`<div className="tl-detail">
+                ${s.desc && html`<div>${s.desc}</div>`}
+                ${s.obs.map((o, i) => html`<div key=${i} className="muted">· ${o}</div>`)}
+                ${s.esc && html`<div className="tl-esc">“${s.esc}”${s.resp ? ` — ${s.resp}` : ""}</div>`}
+                ${isOpen && s.flags.map((x, i) => html`<div key=${"f" + i} className="warn small">${x}</div>`)}
+              </div>`}
+              <button className="link" onClick=${() => openStage(s)}>Consultar esta etapa →</button>
+            </div>
+          </li>
+        <//>`; })}
+    </ol>` : html`<div className="tablewrap"><table className="tbl">
+      <thead><tr><th>Etapa</th><th>Tiempo aproximado</th><th>Desde cuándo se cuenta</th>${detail && html`<th>Descripción</th>`}<th>Escalamiento</th><th>Pág.</th></tr></thead>
+      <tbody>${list.map(s => html`<tr key=${s.id} onClick=${() => openStage(s)} className="clickrow">
+        <td><b>${s.name}</b>${s.sub ? html`<div className="muted small">${s.sub}</div>` : null}${s.flags.length ? html`<div className="badge-warn">Validar</div>` : null}</td>
+        <td className="mono">${s.t || html`<span className="muted">${NO_TIME}</span>`}</td>
+        <td>${s.start}</td>
+        ${detail && html`<td>${s.desc || "—"}${s.obs.map((o, i) => html`<div key=${i} className="muted small">· ${o}</div>`)}</td>`}
+        <td>${s.esc ? html`<span>${s.esc}</span>${s.resp ? html`<div className="muted small">Resp.: ${s.resp}</div>` : null}` : html`<span className="muted">${NO_ESC}</span>`}</td>
+        <td className="mono">${s.page}</td>
+      </tr>`)}</tbody>
+    </table></div>`}
+  </div>`;
+}
+
+function Alerts({ openStage }) {
+  const [pf, setPf] = useState("all"); const [tf, setTf] = useState("all");
+  const rows = DATA.filter(s => s.esc).map(s => ({ s, e: escInfo(s) }));
+  const types = [...new Set(rows.map(r => r.e.type))];
+  const list = rows.filter(r => (pf === "all" || r.s.proc === pf) && (tf === "all" || r.e.type === tf));
+  return html`<section className="alerts">
+    <div className="sec-head"><h2>Alertas y criterios de escalamiento</h2>
+      <p>Momento en el que el documento permite o indica solicitar una revisión. No equivale al tiempo aproximado de procesamiento. «Se puede solicitar» se muestra como opcional.</p></div>
+    <div className="toolbar">
+      <label className="sel"><span>Proceso</span><select id="a-proc" value=${pf} onChange=${e => setPf(e.target.value)}><option value="all">Todos</option>${PROCESSES.map(p => html`<option key=${p.key} value=${p.key}>${p.name}</option>`)}</select></label>
+      <label className="sel"><span>Tipo</span><select id="a-type" value=${tf} onChange=${e => setTf(e.target.value)}><option value="all">Todos</option>${types.map(t => html`<option key=${t}>${t}</option>`)}</select></label>
+      <span className="count">${list.length} criterios</span>
+    </div>
+    <div className="tablewrap"><table className="tbl">
+      <thead><tr><th>Proceso</th><th>Etapa</th><th>Tiempo de la etapa</th><th>Condición</th><th>Acción indicada en el documento</th><th>Carácter</th><th>Responsable</th><th>Pág.</th></tr></thead>
+      <tbody>${list.map(({ s, e }) => html`<tr key=${s.id} className="clickrow" onClick=${() => openStage(s)}>
+        <td><b>${s.procName}</b>${s.sub ? html`<div className="muted small">${s.sub}</div>` : null}</td>
+        <td>${s.name}</td><td className="mono">${s.t || html`<span className="muted">${NO_TIME}</span>`}</td>
+        <td>${e.cond}</td><td>“${s.esc}”<div><${Chip} tone="esc">${e.type}<//></div></td><td className="small">${e.modal}</td><td>${s.resp || html`<span className="muted">No especificado</span>`}</td><td className="mono">${s.page}</td>
+      </tr>`)}</tbody>
+    </table></div>
+  </section>`;
+}
+
+function Audit({ openStage }) {
+  const flagged = DATA.filter(s => s.flags.length);
+  const pnotes = PROCESSES.flatMap(p => [...(p.descFlag ? [{ p, text: p.descFlag, page: p.pages }] : []), ...p.notes.filter(n => n.flag).map(n => ({ p, text: n.flag, page: n.page }))]);
+  const noTime = DATA.filter(s => !s.t).length;
+  return html`<section className="audit">
+    <div className="sec-head"><h2>Auditoría de datos</h2>
+      <p>Información ambigua, incompleta o contradictoria detectada al estructurar el documento. Ningún dato fue corregido: el texto original se conserva y se marca para validación interna.</p></div>
+    <div className="stats">
+      <div><b>${PROCESSES.length}</b><span>procesos</span></div>
+      <div><b>${DATA.length}</b><span>etapas</span></div>
+      <div><b>${DATA.filter(s => s.esc).length}</b><span>criterios de escalamiento</span></div>
+      <div><b>${noTime}</b><span>etapas sin tiempo</span></div>
+      <div><b>${flagged.length + pnotes.length + AUDIT_GENERAL.length}</b><span>puntos a validar</span></div>
+    </div>
+    <h3 className="h3">Observaciones generales</h3>
+    <div className="audit-list">${AUDIT_GENERAL.map((a, i) => html`<div key=${i} className="audit-item"><${Chip} tone="warn">${a.type}<//><div>${a.text}</div><span className="pg">p. ${a.page}</span></div>`)}
+      ${pnotes.map((a, i) => html`<div key=${"n" + i} className="audit-item"><${Chip} tone="warn">${a.p.name}<//><div>${a.text}</div><span className="pg">p. ${a.page}</span></div>`)}</div>
+    <h3 className="h3">Por etapa</h3>
+    <div className="audit-list">${flagged.map(s => html`<button key=${s.id} className="audit-item btnlike" onClick=${() => openStage(s)}>
+      <${Chip}>${s.procName}<//><div><b>${s.name}</b>${s.sub ? ` · ${s.sub}` : ""}<ul>${s.flags.map((f, i) => html`<li key=${i}>${f}</li>`)}</ul></div><span className="pg">p. ${s.page}</span></button>`)}</div>
+    <h3 className="h3">Reglas aplicadas</h3>
+    <ul className="rules">
+      <li>Cuando el documento no indica tiempo se muestra «${NO_TIME}».</li>
+      <li>Los tiempos de cada etapa no se suman; el documento no da un total del caso.</li>
+      <li>Días hábiles, días naturales y días sin tipo se mantienen separados; no se convierten entre sí.</li>
+      <li>«Se puede solicitar» se presenta como opcional, nunca como obligatorio.</li>
+      <li>La herramienta no guarda nombres, números de recibo ni datos personales.</li>
+    </ul>
+  </section>`;
+}
+
+function App() {
+  const [view, setView] = useState("consulta");
+  const [proc, setProcRaw] = useState(null);
+  const [stageId, setStageId] = useState(null);
+  const [kw, setKw] = useState("");
+  const setProc = k => { setProcRaw(k); setStageId(null); setKw(""); if (view !== "ficha") setView("consulta"); };
+  const openStage = s => { setProcRaw(s.proc); setStageId(s.id); setKw(""); setView("consulta"); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const goHome = () => { setProcRaw(null); setStageId(null); setKw(""); setView("consulta"); };
+  const p = proc ? PBY[proc] : null;
+  const tabs = [["consulta", "Consultar etapa del cliente"], ["ficha", "Ficha del proceso"], ["alertas", "Alertas y escalamiento"], ["auditoria", "Auditoría de datos"]];
+  let main;
+  if (view === "alertas") main = html`<${Alerts} openStage=${openStage} />`;
+  else if (view === "auditoria") main = html`<${Audit} openStage=${openStage} />`;
+  else if (kw) main = html`<${KwResults} q=${kw} onPick=${openStage} clear=${() => setKw("")} />`;
+  else if (!p) main = html`<${Home} setProc=${setProc} onKeyword=${setKw} />`;
+  else if (view === "ficha") main = html`<${Ficha} key=${p.key} p=${p} openStage=${openStage} />`;
+  else main = html`<${Consult} key=${p.key} p=${p} stageId=${stageId} setStage=${setStageId} />`;
+  const showRail = view === "consulta" || view === "ficha";
+  return html`<div className="app">
+    <header className="top"><div className="top-in">
+      <div className="brand">
+        <div className="wordmark">THE MENDOZA LAW FIRM</div>
+        <h1>Centro de Consulta de Tiempos de Procesamiento</h1>
+        <div className="subtitle">Herramienta de consulta operativa para atención al cliente</div>
+      </div>
+      <${SearchBox} onPick=${openStage} />
+    </div>
+    <nav className="tabs-in" aria-label="Secciones">${tabs.map(([k, l]) => html`<button key=${k} className=${"tab" + (view === k ? " on" : "")} onClick=${() => { setView(k); setKw(""); }}>${l}</button>`)}
+      <button className="tab tab-home" onClick=${goHome}>Inicio</button></nav>
+    </header>
+    <div className="disclaimer"><div className="disc-in">Los tiempos mostrados son referencias internas extraídas del documento CS Tiempos de Procesamiento. No representan garantías de aprobación ni sustituyen la revisión del expediente, la información oficial vigente o el criterio del equipo legal autorizado.</div></div>
+    <div className=${"body" + (showRail ? "" : " norail")}>
+      ${showRail && html`<aside className="rail-wrap"><div className="step-lbl"><span className="step-n">1</span> Proceso</div><${Rail} proc=${proc} setProc=${setProc} goHome=${goHome} /></aside>`}
+      <main className="main">${view === "ficha" && !p && !kw ? html`<div className="placeholder big">Selecciona un proceso a la izquierda para ver su ficha completa: línea de tiempo, tabla de etapas, notas y formularios.</div>` : main}</main>
+    </div>
+    <footer className="foot">Fuente única: CS Tiempos de Procesamiento (PDF, 24 páginas). Las referencias «p.» indican la página del PDF.</footer>
+  </div>`;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(html`<${App} />`);
+
+</script>
+
+</body></html>
