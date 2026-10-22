@@ -301,6 +301,27 @@ button{cursor:pointer}
 .rules{font-size:13.5px;color:var(--muted);padding-left:18px;display:grid;gap:4px}
 .foot{font-size:12px;color:var(--muted);padding-block:0 28px}
 
+
+/* calculadora fija a la izquierda */
+.body.withcalc{grid-template-columns:400px minmax(0,1fr)}
+.calc-wrap{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow-y:auto;overscroll-behavior:contain;border-radius:12px;scrollbar-width:thin}
+.calc-wrap .tool{padding:16px}
+.calc-wrap .calc-cols{grid-template-columns:1fr;gap:16px}
+.calc-wrap .us-col{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:14px}
+.calc-wrap .sumtbl th{width:46%}
+.calc-wrap .field.timef{grid-column:1/-1}
+.elapsed{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;font-size:14px;font-variant-numeric:tabular-nums}
+.elapsed .lbl{width:100%;margin:0}
+.calc .us-steps{margin-bottom:2px}
+.procbar{margin-bottom:18px}
+.procbar-chips{display:flex;flex-wrap:wrap;gap:6px}
+.pchip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 13px;font-size:13.5px;font-weight:500}
+.pchip:hover{border-color:var(--gold)}
+.pchip.on{background:var(--pri);border-color:var(--pri);color:var(--on-navy)}
+@media (max-width:1100px){
+  .body.withcalc{grid-template-columns:minmax(0,1fr)}
+  .calc-wrap{position:static;max-height:none;overflow:visible;order:2}
+}
 /* responsive */
 @media (max-width:860px){
   .body{grid-template-columns:minmax(0,1fr);gap:14px}
@@ -1122,7 +1143,7 @@ function ClientText({ s, usNote }) {
   const [inc, setInc] = useState(false);
   const build = () => {
     let t = explanation(s);
-    if (inc && usNote) t += ` Como referencia adicional, la página oficial de tiempos de procesamiento de USCIS, consultada el ${fmtDate(usNote.checked)}, indica ${fmt(parseFloat(usNote.time))} ${US_UNIT[usNote.unit]} para el formulario ${usNote.form}${usNote.cat ? ` (${usNote.cat})` : ""}. USCIS señala que este tiempo corresponde a la mayoría de los casos y no es una fecha garantizada.`;
+    if (inc && usNote) t += ` Como referencia adicional, la página oficial de tiempos de procesamiento de USCIS, consultada el ${fmtDate(usNote.checked)}, indica ${fmt(parseFloat(usNote.time))} ${US_UNIT[usNote.unit]} para el formulario ${usNote.form}. USCIS señala que este tiempo corresponde a la mayoría de los casos y no es una fecha garantizada.`;
     return t;
   };
   const [txt, setTxt] = useState(build()); const [msg, setMsg] = useState(""); const ref = useRef(null);
@@ -1151,127 +1172,96 @@ function Verdict({ tone, label, detail, src }) {
   </div>`;
 }
 
-function Calculator({ p, s, setStage, setUsNote }) {
-  const [a, setA] = useState(""); const [b, setB] = useState(todayStr());
+function Calculator({ s, setUsNote }) {
+  const [b, setB] = useState(todayStr());
   const [store, setStore] = useState(loadUs);
-  const [us, setUs] = useState({ form: "", cat: "", office: "", time: "", unit: "meses", checked: todayStr(), receipt: "", inquiry: "" });
-  const sf = suggestedForm(s);
+  const sf = s ? suggestedForm(s) : "";
+  const blank = { time: "", unit: "meses", checked: todayStr() };
+  const fromStore = f => (f && store[f]) ? { time: store[f].time, unit: store[f].unit, checked: store[f].checked } : blank;
+  const [us, setUs] = useState(() => ({ form: sf, ...fromStore(sf), receipt: "", inquiry: "" }));
 
-  /* Al cambiar de etapa: formulario sugerido y valores ya capturados para ese formulario */
-  useEffect(() => {
-    const f = sf || "";
-    const saved = f ? store[f] : null;
-    setUs(u => ({ ...u, form: f, cat: saved ? saved.cat : "", office: saved ? saved.office : "", time: saved ? saved.time : "", unit: saved ? saved.unit : "meses",
-      checked: saved ? saved.checked : todayStr(), receipt: receiptBased(s) && a ? a : u.receipt, inquiry: "" }));
-  }, [s.id]);
-  useEffect(() => { if (receiptBased(s) && a) setUs(u => ({ ...u, receipt: a })); }, [a]);
+  /* Al elegir otra etapa con formulario asociado: se sugiere ese formulario (las fechas del cliente se conservan) */
+  useEffect(() => { if (sf && sf !== us.form) setUs(u => ({ ...u, form: sf, ...fromStore(sf), inquiry: "" })); }, [s && s.id]);
 
   const setU = (k, v) => setUs(u => {
     const n = { ...u, [k]: v };
-    if (k === "form") { const sv = store[v]; Object.assign(n, sv ? { cat: sv.cat, office: sv.office, time: sv.time, unit: sv.unit, checked: sv.checked } : { cat: "", office: "", time: "", unit: "meses", checked: todayStr() }); n.inquiry = ""; }
+    if (k === "form") { Object.assign(n, fromStore(v)); n.inquiry = ""; }
     return n;
   });
-  /* Recordar en este navegador los valores publicados (no datos del cliente) */
+  /* Recordar en este navegador los tiempos publicados por formulario (no datos del cliente) */
   useEffect(() => {
     if (!us.form || !us.time) return;
-    const next = { ...store, [us.form]: { cat: us.cat, office: us.office, time: us.time, unit: us.unit, checked: us.checked } };
+    const next = { ...store, [us.form]: { time: us.time, unit: us.unit, checked: us.checked } };
     setStore(next); saveUs(next);
-  }, [us.form, us.cat, us.office, us.time, us.unit, us.checked]);
+  }, [us.form, us.time, us.unit, us.checked]);
   useEffect(() => {
     const n = parseFloat(String(us.time).replace(",", "."));
-    setUsNote(us.form && n > 0 ? { form: us.form, cat: us.cat, time: String(n), unit: us.unit, checked: us.checked } : null);
-  }, [us.form, us.cat, us.time, us.unit, us.checked]);
+    setUsNote(us.form && n > 0 ? { form: us.form, time: String(n), unit: us.unit, checked: us.checked } : null);
+  }, [us.form, us.time, us.unit, us.checked]);
 
-  const r = useMemo(() => calc(s, a, b), [s.id, a, b]);
   const u = useMemo(() => usCalc(us, b), [us, b]);
   const stale = staleCheck(us.checked, b);
-  const tone = { in: "ok", before: "info", over: "warn", insuf: "muted" }[r.state];
-  const hasUs = !!(us.form && (us.time || us.inquiry));
+  const hasUs = !!(us.time || us.inquiry);
+  const clear = () => setUs(x => ({ ...x, receipt: "", inquiry: "" }));
 
   return html`<section className="tool calc">
-    <div className="tool-head"><h4>Calculadora de tiempo transcurrido</h4><span className="tool-sub">Compara la referencia interna del documento con los datos publicados por USCIS. No calcula fechas de aprobación.</span></div>
-
-    <div className="calc-cols">
-      <div className="calc-col">
-        <div className="col-title"><span className="col-n">A</span> Referencia interna (documento CS)</div>
-        <div className="calc-grid">
-          <div className="field"><label htmlFor="c-proc">Proceso</label><input id="c-proc" value=${p.name} readOnly /></div>
-          <div className="field"><label htmlFor="c-stage">Etapa</label>
-            <select id="c-stage" value=${s.id} onChange=${e => setStage(e.target.value)}>
-              ${p.stages.map(x => html`<option key=${x.id} value=${x.id}>${x.sub ? x.sub + " · " : ""}${x.name}</option>`)}
-            </select></div>
-          <div className="field"><label htmlFor="c-a">Fecha de inicio de la etapa</label><input id="c-a" type="date" value=${a} onChange=${e => setA(e.target.value)} /></div>
-          <div className="field"><label htmlFor="c-b">Fecha de consulta</label><input id="c-b" type="date" value=${b} onChange=${e => setB(e.target.value)} /></div>
-        </div>
-        <div className="calc-ref">Referencia documentada: <b>${s.t || NO_TIME}</b>${s.unit && s.unit !== "indef" ? html` · unidad: ${UNIT_LABEL[s.unit]}` : null}<br/>
-          Fecha a ingresar como inicio: <b>${s.start}</b>${!startKnown(s) && s.t && s.unit !== "indef" ? html`<span className="muted"> — el documento no fija el evento de inicio; el resultado depende de la fecha que elijas.</span>` : null}</div>
-        <div className=${"calc-out tone-" + tone}>
-          <div className="calc-status">${r.label}</div>
-          ${r.why && html`<div className="calc-why">${r.why}</div>`}
-          ${r.dNat != null && html`<div className="calc-el">Transcurrido: ${r.el != null && s.unit !== "meses" ? html`<b>${fmt(r.el)} ${UNIT_LABEL[s.unit]}</b> · ` : null}<b>${r.mb.whole} ${r.mb.whole === 1 ? "mes" : "meses"} y ${r.mb.rem} días</b> (${r.dNat} días naturales)</div>`}
-          ${r.esc && r.esc.evaluable && r.esc.reached && html`<div className="calc-esc"><b>Revisar criterio de escalamiento documentado.</b> “${s.esc}”${s.resp ? ` · Responsable: ${s.resp}` : ""}</div>`}
-          ${r.esc && r.esc.evaluable && !r.esc.reached && r.state !== "insuf" && html`<div className="calc-escno">Aún no se cumple la condición del criterio documentado (${escInfo(s).cond}).</div>`}
-          ${r.esc && !r.esc.evaluable && html`<div className="calc-escno">El criterio documentado no se puede evaluar automáticamente: “${s.esc}”.</div>`}
-        </div>
-      </div>
-
-      <div className="calc-col us-col">
-        <div className="col-title"><span className="col-n us">B</span> Tiempos publicados por USCIS</div>
-        <ol className="us-steps">
-          <li>Abre <a href=${USCIS_TIMES_URL} target="_blank" rel="noopener">Tiempos de procesamiento de USCIS ↗</a>, elige el formulario, la categoría y la oficina que aparecen en el aviso de recibo.</li>
-          <li>Copia aquí el tiempo que muestra USCIS. En «¿Cuándo puedo preguntar sobre mi caso?», ingresa la fecha de recibo y copia la fecha de consulta que devuelve.</li>
-          <li>Para el estatus del expediente usa <a href=${USCIS_STATUS_URL} target="_blank" rel="noopener">Verifique el Estatus de su Caso ↗</a> con el número de recibo. Esta herramienta no guarda números de recibo.</li>
-        </ol>
-        <div className="calc-grid">
-          <div className="field"><label htmlFor="u-form">Formulario</label>
-            <select id="u-form" value=${us.form} onChange=${e => setU("form", e.target.value)}>
-              <option value="">Selecciona…</option>${US_FORMS.map(f => html`<option key=${f} value=${f}>${f}${f === sf ? " · sugerido" : ""}</option>`)}
-            </select></div>
-          <div className="field"><label htmlFor="u-cat">Categoría (como aparece en USCIS)</label><input id="u-cat" value=${us.cat} placeholder="Opcional" onChange=${e => setU("cat", e.target.value)} /></div>
-          <div className="field"><label htmlFor="u-office">Oficina o centro de servicio</label><input id="u-office" value=${us.office} placeholder="Opcional" onChange=${e => setU("office", e.target.value)} /></div>
-          <div className="field"><label htmlFor="u-checked">Fecha en que consultaste USCIS</label><input id="u-checked" type="date" value=${us.checked} onChange=${e => setU("checked", e.target.value)} /></div>
-          <div className="field"><label htmlFor="u-time">Tiempo publicado por USCIS</label>
-            <div className="inline"><input id="u-time" inputMode="decimal" value=${us.time} placeholder="Ej. 14.5" onChange=${e => setU("time", e.target.value)} />
-              <select id="u-unit" aria-label="Unidad del tiempo publicado" value=${us.unit} onChange=${e => setU("unit", e.target.value)}>${Object.entries(US_UNIT).map(([k, l]) => html`<option key=${k} value=${k}>${l}</option>`)}</select></div></div>
-          <div className="field"><label htmlFor="u-receipt">Fecha de recibo (Received Date, I-797C)</label><input id="u-receipt" type="date" value=${us.receipt} onChange=${e => setU("receipt", e.target.value)} /></div>
-          <div className="field span2"><label htmlFor="u-inq">Fecha de consulta de caso que devuelve USCIS</label><input id="u-inq" type="date" value=${us.inquiry} onChange=${e => setU("inquiry", e.target.value)} /></div>
-        </div>
-        ${!sf && html`<div className="calc-escno">El documento no asocia esta etapa con un formulario que tenga tiempo publicado en USCIS (por ejemplo, etapas internas, biométricos, SSN o NVC). Puedes elegir un formulario si aplica al caso.</div>`}
-        ${receiptBased(s) && html`<div className="calc-escno">Esta etapa se cuenta desde recibos iniciales: la fecha de inicio de la columna A se copia como fecha de recibo.</div>`}
-        ${hasUs && stale && html`<div className="warn small">USCIS actualiza los tiempos alrededor del día 15 de cada mes. Los datos capturados el ${fmtDate(us.checked)} son anteriores a la última actualización: vuelve a consultarlos.</div>`}
-        ${!hasUs && html`<div className="calc-out tone-muted"><div className="calc-status">Sin datos de USCIS</div><div className="calc-why">Captura el tiempo publicado o la fecha de consulta de caso para comparar.</div></div>`}
-        ${hasUs && u.missing && html`<div className="calc-out tone-muted"><div className="calc-status">Información insuficiente para determinar</div><div className="calc-why">${u.missing}</div></div>`}
-        ${hasUs && !u.missing && html`<div className="us-results">
-          ${u.time && html`<${Verdict} src=${`Tiempo publicado · ${us.form}${us.cat ? " · " + us.cat : ""}`} tone=${u.time.state === "in" ? "ok" : "warn"} label=${u.time.label} detail=${u.time.detail} />`}
-          ${u.inquiry && html`<${Verdict} src="Consulta de caso ante USCIS" tone=${u.inquiry.state === "ready" ? "gold" : "info"} label=${u.inquiry.label} detail=${u.inquiry.detail} />`}
-        </div>`}
-      </div>
+    <div className="tool-head"><h4>Tiempos publicados por USCIS</h4><span className="tool-sub">Calcula el tiempo transcurrido desde la fecha de recibo y lo compara con lo que publica USCIS. No calcula fechas de aprobación.</span></div>
+    <ol className="us-steps">
+      <li>Abre <a href=${USCIS_TIMES_URL} target="_blank" rel="noopener">Tiempos de procesamiento de USCIS ↗</a> y elige el formulario, la categoría y la oficina del aviso de recibo.</li>
+      <li>Copia aquí el tiempo que muestra USCIS. En «¿Cuándo puedo preguntar sobre mi caso?», ingresa la fecha de recibo y copia la fecha de consulta que devuelve.</li>
+      <li>Para el estatus del expediente usa <a href=${USCIS_STATUS_URL} target="_blank" rel="noopener">Verifique el Estatus de su Caso ↗</a> con el número de recibo. Esta herramienta no guarda números de recibo.</li>
+    </ol>
+    <div className="calc-grid">
+      <div className="field span2"><label htmlFor="u-form">Formulario</label>
+        <select id="u-form" value=${us.form} onChange=${e => setU("form", e.target.value)}>
+          <option value="">Selecciona…</option>${US_FORMS.map(f => html`<option key=${f} value=${f}>${f}${f === sf ? " · sugerido por la etapa" : ""}</option>`)}
+        </select></div>
+      <div className="field span2"><label htmlFor="u-time">Tiempo publicado por USCIS</label>
+        <div className="inline"><input id="u-time" inputMode="decimal" value=${us.time} placeholder="Ej. 14.5" onChange=${e => setU("time", e.target.value)} />
+          <select id="u-unit" aria-label="Unidad del tiempo publicado" value=${us.unit} onChange=${e => setU("unit", e.target.value)}>${Object.entries(US_UNIT).map(([k, l]) => html`<option key=${k} value=${k}>${l}</option>`)}</select></div></div>
+      <div className="field"><label htmlFor="u-checked">Consultaste USCIS el</label><input id="u-checked" type="date" value=${us.checked} onChange=${e => setU("checked", e.target.value)} /></div>
+      <div className="field"><label htmlFor="u-today">Fecha de hoy</label><input id="u-today" type="date" value=${b} onChange=${e => setB(e.target.value)} /></div>
+      <div className="field"><label htmlFor="u-receipt">Fecha de recibo (I-797C)</label><input id="u-receipt" type="date" value=${us.receipt} onChange=${e => setU("receipt", e.target.value)} /></div>
+      <div className="field"><label htmlFor="u-inq">Fecha de consulta de caso</label><input id="u-inq" type="date" value=${us.inquiry} onChange=${e => setU("inquiry", e.target.value)} /></div>
     </div>
-
-    <div className="summary">
-      <div className="lbl">Resumen para la llamada</div>
-      <table className="sumtbl"><tbody>
-        <tr><th>Referencia interna (PDF, p. ${s.page})</th><td>${s.t ? html`<b>${r.label}</b>` : html`<span className="muted">${NO_TIME}</span>`}</td></tr>
-        <tr><th>Criterio interno de escalamiento</th><td>${!s.esc ? html`<span className="muted">${NO_ESC}</span>` : r.esc && r.esc.evaluable ? (r.esc.reached ? html`<b>Condición cumplida</b> · “${s.esc}”` : html`Condición no cumplida · ${escInfo(s).cond}`) : html`No evaluable · “${s.esc}”`}</td></tr>
-        <tr><th>Tiempo publicado por USCIS</th><td>${u.time ? html`<b>${u.time.label}</b>` : html`<span className="muted">Sin capturar</span>`}</td></tr>
-        <tr><th>Consulta de caso ante USCIS</th><td>${u.inquiry ? html`<b>${u.inquiry.label}</b>` : html`<span className="muted">Sin capturar</span>`}</td></tr>
-      </tbody></table>
-      ${r.esc && r.esc.evaluable && r.esc.reached && u.inquiry && u.inquiry.state === "wait" && html`<div className="warn small">El criterio interno ya se cumple, pero USCIS todavía no habilita la consulta de caso. Revisa con tu Team Leader antes de solicitar un E-Request.</div>`}
-    </div>
-    <p className="fine">El tiempo publicado por USCIS corresponde al plazo en que USCIS completa la mayoría de los casos de ese formulario, categoría y oficina; no es una garantía y superarlo no significa que el caso esté retrasado oficialmente. Los valores de USCIS se recuerdan solo en este navegador, por formulario; las fechas del cliente no se guardan. Días hábiles = lunes a viernes, sin descontar festivos.</p>
+    ${s && !sf && html`<div className="calc-escno">La etapa seleccionada no tiene un formulario asociado en el documento. Elige el formulario que aplique al caso.</div>`}
+    ${us.form && us.time && stale && html`<div className="warn small">USCIS actualiza los tiempos alrededor del día 15 de cada mes. El tiempo de ${us.form} se capturó el ${fmtDate(us.checked)}, antes de la última actualización: vuelve a consultarlo.</div>`}
+    ${!hasUs && html`<div className="calc-out tone-muted"><div className="calc-status">Sin datos de USCIS</div><div className="calc-why">Captura el tiempo publicado o la fecha de consulta de caso para comparar.</div></div>`}
+    ${hasUs && u.missing && html`<div className="calc-out tone-muted"><div className="calc-status">Información insuficiente para determinar</div><div className="calc-why">${u.missing}</div></div>`}
+    ${hasUs && !u.missing && html`<div className="us-results">
+      ${(() => { const r = parseD(us.receipt), q = parseD(b); if (!r || !q || q < r) return null; const mb = monthsBetween(r, q);
+        return html`<div className="elapsed"><span className="lbl">Transcurrido desde la fecha de recibo</span><b>${mb.whole} ${mb.whole === 1 ? "mes" : "meses"} y ${mb.rem} días</b><span className="muted"> · ${Math.round((q - r) / DAY)} días naturales</span></div>`; })()}
+      ${u.time && html`<${Verdict} src=${`Tiempo publicado · ${us.form || "sin formulario"}`} tone=${u.time.state === "in" ? "ok" : "warn"} label=${u.time.label} detail=${u.time.detail} />`}
+      ${u.inquiry && html`<${Verdict} src="Consulta de caso ante USCIS" tone=${u.inquiry.state === "ready" ? "gold" : "info"} label=${u.inquiry.label} detail=${u.inquiry.detail} />`}
+    </div>`}
+    <div className="tool-actions"><button className="btn" onClick=${clear}>Limpiar fechas del cliente</button></div>
+    <p className="fine">El tiempo publicado por USCIS es el plazo en que USCIS completa la mayoría de los casos de ese formulario, categoría y oficina; no es una garantía y superarlo no significa que el caso esté retrasado oficialmente. Los tiempos se recuerdan solo en este navegador, por formulario; las fechas del cliente no se guardan.</p>
   </section>`;
 }
 
-function Consult({ p, stageId, setStage }) {
+function ProcBar({ proc, setProc, goHome }) {
+  return html`<div className="procbar">
+    <div className="step-lbl"><span className="step-n">1</span> Proceso</div>
+    <div className="procbar-chips">
+      <button className=${"pchip" + (!proc ? " on" : "")} onClick=${goHome}>Todos</button>
+      ${PROCESSES.map(p => html`<button key=${p.key} className=${"pchip" + (proc === p.key ? " on" : "")} onClick=${() => setProc(p.key)} aria-pressed=${proc === p.key}>${p.name}</button>`)}
+    </div>
+  </div>`;
+}
+
+function CalcPanel({ s, setUsNote }) {
+  return html`<${Calculator} s=${s} setUsNote=${setUsNote} />`;
+}
+
+function Consult({ p, stageId, setStage, usNote }) {
   const s = p.stages.find(x => x.id === stageId);
-  const [usNote, setUsNote] = useState(null);
   const nav = d => { const i = p.stages.findIndex(x => x.id === stageId); const n = p.stages[i + d]; if (n) setStage(n.id); };
   return html`<div className="consult">
     <${ProcHead} p=${p} compact=${true} />
     <${StagePicker} p=${p} stageId=${stageId} setStage=${setStage} />
     ${s ? html`<div className="step-lbl"><span className="step-n">3</span> Resultado</div>
       <${Result} s=${s} p=${p} onNav=${nav} />
-      <div className="tools"><${Calculator} p=${p} s=${s} setStage=${setStage} setUsNote=${setUsNote} /><${ClientText} s=${s} usNote=${usNote} /></div>`
+      <div className="tools"><${ClientText} s=${s} usNote=${usNote} /></div>`
     : html`<div className="placeholder">Selecciona la etapa en la que se encuentra el expediente para ver el tiempo, el punto de partida y el criterio de escalamiento.</div>`}
   </div>`;
 }
@@ -1404,6 +1394,7 @@ function App() {
   const [proc, setProcRaw] = useState(null);
   const [stageId, setStageId] = useState(null);
   const [kw, setKw] = useState("");
+  const [usNote, setUsNote] = useState(null);
   const setProc = k => { setProcRaw(k); setStageId(null); setKw(""); if (view !== "ficha") setView("consulta"); };
   const openStage = s => { setProcRaw(s.proc); setStageId(s.id); setKw(""); setView("consulta"); window.scrollTo({ top: 0, behavior: "smooth" }); };
   const goHome = () => { setProcRaw(null); setStageId(null); setKw(""); setView("consulta"); };
@@ -1415,8 +1406,9 @@ function App() {
   else if (kw) main = html`<${KwResults} q=${kw} onPick=${openStage} clear=${() => setKw("")} />`;
   else if (!p) main = html`<${Home} setProc=${setProc} onKeyword=${setKw} />`;
   else if (view === "ficha") main = html`<${Ficha} key=${p.key} p=${p} openStage=${openStage} />`;
-  else main = html`<${Consult} key=${p.key} p=${p} stageId=${stageId} setStage=${setStageId} />`;
-  const showRail = view === "consulta" || view === "ficha";
+  else main = html`<${Consult} key=${p.key} p=${p} stageId=${stageId} setStage=${setStageId} usNote=${usNote} />`;
+  const showRail = view === "ficha"; const showCalc = view === "consulta";
+  const sCur = p && stageId ? p.stages.find(x => x.id === stageId) : null;
   return html`<div className="app">
     <header className="top"><div className="top-in">
       <div className="brand">
@@ -1430,9 +1422,10 @@ function App() {
       <button className="tab tab-home" onClick=${goHome}>Inicio</button></nav>
     </header>
     <div className="disclaimer"><div className="disc-in">Los tiempos mostrados son referencias internas extraídas del documento CS Tiempos de Procesamiento. No representan garantías de aprobación ni sustituyen la revisión del expediente, la información oficial vigente o el criterio del equipo legal autorizado.</div></div>
-    <div className=${"body" + (showRail ? "" : " norail")}>
+    <div className=${"body" + (showCalc ? " withcalc" : showRail ? "" : " norail")}>
       ${showRail && html`<aside className="rail-wrap"><div className="step-lbl"><span className="step-n">1</span> Proceso</div><${Rail} proc=${proc} setProc=${setProc} goHome=${goHome} /></aside>`}
-      <main className="main">${view === "ficha" && !p && !kw ? html`<div className="placeholder big">Selecciona un proceso a la izquierda para ver su ficha completa: línea de tiempo, tabla de etapas, notas y formularios.</div>` : main}</main>
+      ${showCalc && html`<aside className="calc-wrap" aria-label="Tiempos publicados por USCIS"><${CalcPanel} s=${sCur} setUsNote=${setUsNote} /></aside>`}
+      <main className="main">${showCalc && html`<${ProcBar} proc=${proc} setProc=${setProc} goHome=${goHome} />`}${view === "ficha" && !p && !kw ? html`<div className="placeholder big">Selecciona un proceso a la izquierda para ver su ficha completa: línea de tiempo, tabla de etapas, notas y formularios.</div>` : main}</main>
     </div>
     <footer className="foot">Fuente única: CS Tiempos de Procesamiento (PDF, 24 páginas). Las referencias «p.» indican la página del PDF.</footer>
   </div>`;
