@@ -306,6 +306,17 @@ table.cmp{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
   .ess-i{font-size:16px}
 }
 .gate-p{max-width:90ch}
+
+/* Enlaces */
+.lkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.lk{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.lk-n{font-weight:700;font-size:16px}
+.lk-d{font-size:14px;color:var(--tx2);line-height:1.5}
+.lk-u{font-size:12px;color:var(--tx3);overflow-wrap:anywhere}
+.lk-use{font-size:13px;color:var(--tx3);margin-top:2px}
+.lk-use .pc{background:none;border:none;padding:0;color:var(--gold);font-size:13px;cursor:pointer;text-decoration:underline}
+.lk-open{display:inline-block;margin-top:10px;background:var(--gold);color:var(--ongold);border-radius:8px;padding:4px 12px;font-size:13px;font-weight:700;text-decoration:none}
+.lk-gate{border-color:var(--tbd);background:var(--td)}
 .toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(20px);background:var(--tx);color:var(--bg);padding:8px 16px;border-radius:20px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:all .2s;z-index:99}
 .toast.show{opacity:1;transform:translateX(-50%)}
 
@@ -617,6 +628,7 @@ n_emg:{label:"Emergencia",step:"Acción inmediata",q:"¿Qué tipo de emergencia 
 ]},
 n_tools:{label:"Consultar",step:"Paso 2",q:"¿Qué necesitas consultar?",h:"Herramientas y referencias del día a día.",opts:[
   {go:"lib",i:"❝",c:"gold",t:"Qué decir en cada momento",d:"Biblioteca de speeches."},
+  {go:"enlaces",i:"↗",c:"teal",t:"Enlaces rápidos",d:"Agendas, LawPay, USCIS, tiempos y redes oficiales."},
   {go:"t_notas",i:"≣",c:"gold",t:"Cómo escribir la nota",d:"Estructura de notas en CRM."},
   {go:"t_esc",i:"⊥",c:"gold",t:"A dónde escalar",d:"Slack Tier 1, TL o CRM."},
   {go:"t_esc_tl",i:"⇪",c:"red",t:"Escalaciones interdepartamentales y emergencias",d:"Qué hace el asesor, qué hace el TL y el reporte TL CS."},
@@ -649,7 +661,7 @@ function renderChip(){
 /* ───── Navegación ───── */
 let stack=['home'];
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function labelOf(id){if(id==='gate')return'Selecciona área';if(id==='areas')return'Las 4 áreas';if(id==='lib')return'Biblioteca de speeches';if(id==='guia')return'Guía de inicio';if(id==='glosario')return'Glosario';if(id.startsWith('area_'))return AREAS[id.slice(5)].n;return NODES[id]?NODES[id].label:(ITEMS[id]?ITEMS[id].label:id)}
+function labelOf(id){if(id==='gate')return'Selecciona área';if(id==='areas')return'Las 4 áreas';if(id==='lib')return'Biblioteca de speeches';if(id==='guia')return'Guía de inicio';if(id==='glosario')return'Glosario';if(id==='enlaces')return'Enlaces rápidos';if(id.startsWith('area_'))return AREAS[id.slice(5)].n;return NODES[id]?NODES[id].label:(ITEMS[id]?ITEMS[id].label:id)}
 function iconOf(id){return NODES[id]?'→':(ITEMS[id].icon||'•')}
 function colorOf(id){if(NODES[id])return NODES[id].emg?'red':'gold';const it=ITEMS[id];return it.emg||it.content.emg?'red':(COL[it.color]||'gold')}
 function go(id){const k=stack.indexOf(id);if(k>=0)stack=stack.slice(0,k+1);else stack.push(id);render()}
@@ -663,9 +675,10 @@ function pathHTML(){
 function render(){
   const mn=document.getElementById('mn');
   let id=stack[stack.length-1],body;
-  if(!AREA&&!['areas','guia','glosario'].includes(id)&&!id.startsWith('area_')){body=renderGate(true)}
+  if(!AREA&&!['areas','guia','glosario','enlaces'].includes(id)&&!id.startsWith('area_')){body=renderGate(true)}
   else if(id==='guia')body=renderGuia();
   else if(id==='glosario')body=renderGlos();
+  else if(id==='enlaces')body=renderLinks();
   else if(id==='gate')body=renderGate(false);
   else if(id==='areas')body=renderOverview();
   else if(id==='lib')body=renderLib();
@@ -687,6 +700,7 @@ function renderGate(first){
   <div class="newbie"><div><b>¿Eres de nuevo ingreso o vienes de consultoría?</b><span>Empieza por la guía: cómo usar el portal, las reglas que aplican siempre y las herramientas. Si no conoces un término, búscalo en el glosario.</span></div><div class="nb-acts"><button class="nb-main" onclick="go('guia')">Guía de inicio →</button><button class="nb-sec" onclick="glQ='';go('glosario')">Glosario</button></div></div>
   <div class="agrid">${AK.map(k=>{const A=AREAS[k];return`<button class="acard c-${A.c}" onclick="setArea('${k}')"><div class="ai">${A.i}</div><div class="at">${A.tag}</div><div class="an">${A.n}</div><div class="aw">${A.what}</div><div class="ago">Entrar como ${A.n} →</div></button>`}).join('')}</div>
   <div class="gate-alt">
+    <button class="ghost lk-gate" onclick="go('enlaces')">↗ Enlaces rápidos <small>Agendas, LawPay, USCIS, tiempos…</small></button>
     <button class="ghost" onclick="go('areas')">⊞ Conocer las 4 áreas <small>Comparativa y cómo se conectan</small></button>
     <button class="ghost" onclick="setArea('all')">∗ Ver todo el portal <small>TL, Training y supervisión</small></button>
   </div>
@@ -1072,6 +1086,39 @@ function renderGuia(){
   <div class="gate-alt"><button class="ghost" onclick="go('glosario')">Aa Abrir el glosario <small>${GLOS.length} términos</small></button><button class="ghost" onclick="go('areas')">⊞ Conocer las 4 áreas <small>Cómo se conectan</small></button><button class="ghost" onclick="home()">→ Selecciona área <small>Empezar a usar el portal</small></button></div>`;
 }
 
+
+/* ───── Enlaces rápidos ───── */
+const LINKS=[
+ {g:'Atención y escalación',items:[
+  {n:'Portal de agendas (Callbacks)',u:'https://ecosystem-customer-service.vercel.app/callbacks/agendado',d:'Agendar una callback con un abogado. Inicia sesión con la cuenta support.'},
+  {n:'Formulario de Callbacks',u:'https://ecosystem-customer-service.vercel.app/escalar',d:'Escalar callbacks que CS no agenda directamente, como decisiones o rejections con Atty. Susana o Jesús.'},
+  {n:'LawPay — pago de mensualidad',u:'https://secure.lawpay.com/pages/mendozafirm/trust%2Fattyfees',d:'Procesar el pago mensual del cliente. Confirma el monto con el cliente antes de cobrar.'}]},
+ {g:'Consulta del caso',items:[
+  {n:'Portal de USCIS',u:'https://egov.uscis.gov/es',d:'Consultar el estatus del caso con el número de recibo.'},
+  {n:'Calculadora de tiempos / End to End',u:'https://training1mendozafirm-svg.github.io/TMLF-ACTUALIZACIONES/tiemposprocesam.html',d:'Tiempos de procesamiento y proceso interno general del caso.'}]},
+ {g:'Zona horaria',items:[
+  {n:'Zonas horarias de EE. UU.',u:'https://cambiohorario.com/zonas/usa/',d:'Revisar en qué zona horaria está el cliente.'},
+  {n:'Convertidor Puerto Rico – EE. UU.',u:'https://24timezones.com/es/difference/puerto_rico/us',d:'Calcular la diferencia de horario entre Puerto Rico (abogados) y el cliente.'}]},
+ {g:'Para enviar al cliente',items:[
+  {n:'Red Card',u:'https://drive.google.com/file/d/1OqJiWlDnvCobBC8s0rotPk5uOXrTsrV4/view',d:'Tarjeta con sus derechos frente a ICE (protocolo de redadas).'},
+  {n:'Facebook oficial',u:'https://facebook.com/abogadamariamendoza',d:'Red oficial de la firma (protocolo de posible estafa).'},
+  {n:'Instagram oficial',u:'https://instagram.com/abogadamariamendoza/',d:'Red oficial de la firma.'},
+  {n:'TikTok oficial',u:'https://tiktok.com/@abogadamaria',d:'Red oficial de la firma.'},
+  {n:'Página web de la firma',u:'https://mendozafirm.com',d:'Sitio oficial de The Mendoza Law Firm.'}]}
+];
+function linkUses(u){const key=u.replace(/^https?:\/\//,'').replace(/\/$/,'').split('%2F')[0];return Object.keys(ITEMS).filter(id=>(!AREA||vis(id))&&JSON.stringify(ITEMS[id].content).includes(key))}
+function copyLink(u){const ok=()=>toast('Enlace copiado');const fb=()=>{const a=document.createElement('textarea');a.value=u;document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}a.remove();ok()};try{navigator.clipboard.writeText(u).then(ok,fb)}catch(e){fb()}}
+function renderLinks(){
+  const total=LINKS.reduce((n,g)=>n+g.items.length,0);
+  return`<div class="gate-k">Acceso rápido</div><h1 class="gate-h">Enlaces rápidos</h1>
+  <p class="gate-p">Todos los enlaces que aparecen en los protocolos del portal, en un solo lugar. Cada enlace se abre en una pestaña nueva.</p>
+  ${LINKS.map(g=>`<section class="lib-sec"><div class="lib-sh"><h2>${g.g}</h2><span>${g.items.length}</span></div><div class="lkgrid">${g.items.map(l=>{const uses=linkUses(l.u);const dom=l.u.replace(/^https?:\/\//,'').split('/')[0];
+    return`<div class="lk"><div class="lk-n">${esc(l.n)}</div><div class="lk-d">${esc(l.d)}</div><div class="lk-u">${esc(dom)}</div>
+    ${uses.length?`<div class="lk-use">Se usa en: ${uses.map(id=>`<button class="pc" onclick="if(!AREA){AREA='all';renderChip()}stack=['home'];go('${id}')">${esc(ITEMS[id].label)}</button>`).join(' · ')}</div>`:''}
+    <div class="lib-acts"><a class="lk-open" href="${l.u}" target="_blank" rel="noopener">Abrir →</a><button class="copy" onclick="copyLink('${l.u}')">Copiar enlace</button></div></div>`}).join('')}</div></section>`).join('')}
+  <p style="font-size:14px;color:var(--tx3)">${total} enlaces.</p>`;
+}
+
 /* ───── Búsqueda ───── */
 function pathTo(id){
   for(const nid in NODES){const n=NODES[nid];if(!vis(nid))continue;
@@ -1110,7 +1157,7 @@ document.addEventListener('keydown',e=>{
 try{const t=localStorage.getItem('cs_portal_theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}
 syncThemeBtn();
 try{const h=decodeURIComponent(location.hash.slice(1));
-  if(h==='areas'||h==='lib'||h==='guia'||h==='glosario'||(h.startsWith('area_')&&AREAS[h.slice(5)]))stack=['home',h];
+  if(h==='areas'||h==='lib'||h==='guia'||h==='glosario'||h==='enlaces'||(h.startsWith('area_')&&AREAS[h.slice(5)]))stack=['home',h];
   else if(NODES[h]&&h!=='home'){AREA='all';stack=pathTo(h).concat(h)}
   else if(ITEMS[h]){AREA='all';stack=pathTo(h).concat(h)}
 }catch(e){}
