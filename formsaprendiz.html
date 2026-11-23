@@ -206,6 +206,24 @@ select{width:100%;padding:11px 12px;border-radius:10px;background:var(--panel2);
 
 .modal .wide{width:min(560px,92vw);max-width:none}textarea{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px;font:12px/1.4 ui-monospace,Consolas,monospace;resize:vertical}
 
+.dsvg{width:100%;max-width:420px;height:auto;display:block}
+.dsvg .pg{fill:#232833;stroke:#3B4352;stroke-width:1.5}.dsvg .ph0{fill:#3A4150}.dsvg .ln{fill:#2E3441}
+.dsvg .zn{fill:rgba(146,188,234,.22);stroke:#92BCEA;stroke-width:1.5}.dsvg .pin{fill:#AFB3F7;stroke:#171A21;stroke-width:1.5}
+.dsvg .pn2{fill:#171A21;font-weight:800;font-size:11px;text-anchor:middle}
+.anat{display:grid;grid-template-columns:minmax(240px,420px) 1fr;gap:22px;align-items:start}
+.flds{list-style:none;margin:0;padding:0;display:grid;gap:12px}.flds li{display:flex;gap:12px}.flds p{margin:2px 0 0;color:var(--muted);font-size:.92rem}
+.pinb{flex:none;width:26px;height:26px;border-radius:99px;background:var(--b);color:#171A21;font-weight:800;display:grid;place-items:center;font-size:.85rem}
+.where{display:block;color:var(--a);font-size:.82rem}
+.dcalc label{display:grid;gap:6px;color:var(--muted);font-size:.9rem;max-width:340px}
+.dcalc input{padding:10px 12px;border-radius:10px;background:var(--panel2);color:var(--text);border:1px solid var(--line);font:inherit;min-height:44px;color-scheme:dark}
+.dres{margin-top:12px;padding:12px 14px;border-radius:10px;border-left:4px solid var(--dim)}
+.dres.ok{border-color:var(--ok);background:rgba(143,211,176,.09);color:var(--text)}.dres.warn{border-color:var(--warn);background:rgba(235,203,139,.09);color:var(--text)}.dres.bad{border-color:var(--bad);background:rgba(242,160,160,.09);color:var(--text)}
+.esc-c{border-left:4px solid var(--warn)}
+.shot img{max-width:100%;border-radius:10px;border:1px solid var(--line);display:block;margin-bottom:6px}.shot{margin:0 0 10px}
+.slot p{margin:8px 0 0}
+.shortcuts{margin-top:18px}
+@media(max-width:700px){.anat{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -650,7 +668,7 @@ DATA.forms = [
   what: 'Es la solicitud para convertirse en ciudadano estadounidense por naturalización. En general se necesita ser residente permanente por 5 años (o 3 si se está casado con un ciudadano y se cumplen las demás condiciones), tener residencia continua y presencia física, buen carácter moral, inglés y educación cívica. Puede presentarse hasta 90 días antes de cumplir el tiempo requerido.',
   who: 'El residente permanente de 18 años o más que cumple los requisitos. Hay reglas especiales (p. ej., servicio militar).',
   uses: ['n400'],
-  related: [],
+  related: ['N-600'],
   example: 'Un residente permanente lleva 6 años con su Green Card, ha vivido en EE. UU. de forma continua y quiere ser ciudadano. Después de revisar viajes, antecedentes e impuestos, presenta el N-400.',
   errors: [
     'Creer que todo residente puede aplicar por el solo hecho de serlo: hay requisitos de tiempo, residencia continua, presencia física y buen carácter.',
@@ -662,6 +680,33 @@ DATA.forms = [
   kw: ['ciudadania', 'naturalizacion', 'ser ciudadano', 'citizenship', 'naturalization', 'n-648'],
   q: { p: 'Un residente permanente lleva 6 años con su Green Card y quiere ser ciudadano. ¿Qué formulario inicia la naturalización?', o: ['N-400', 'I-90', 'I-751', 'I-589'], a: 0,
        e: 'El N-400 es la solicitud de naturalización (ciudadanía), sujeta a los requisitos de elegibilidad.' }
+},
+{
+  id: 'N-600', cat: 'F', role: 'principal',
+  en: 'Application for Certificate of Citizenship',
+  es: 'Solicitud de certificado de ciudadanía',
+  mnemo: 'Ya soy ciudadano por mis papás y quiero el certificado',
+  short: 'Pide el certificado que comprueba una ciudadanía que ya se tiene, adquirida o derivada de un padre o madre ciudadano.',
+  what: 'Es la solicitud del Certificado de Ciudadanía: un documento que comprueba que la persona ya es ciudadana estadounidense. Se usa cuando la ciudadanía se adquirió o se derivó a través de un padre o madre ciudadano (según las reglas aplicables a la fecha de nacimiento y a la situación familiar). A diferencia del N-400, no convierte a la persona en ciudadana: documenta una ciudadanía que ya existe.',
+  who: 'Una persona que cree tener ciudadanía por la vía de su padre o madre (o un padre, madre o tutor que presenta por un hijo menor). Si se llena a nombre de un menor de 14 años, un padre o tutor firma la solicitud. En la Parte 1 se marca una sola opción de elegibilidad.',
+  uses: [],
+  related: ['N-400', 'I-90'],
+  example: 'Un adulto nació fuera de EE. UU. de madre ciudadana y quiere un documento que pruebe su ciudadanía. El equipo legal evalúa si adquirió o derivó la ciudadanía y, si procede, prepara el N-600 con el acta de nacimiento, la prueba de ciudadanía del padre o madre y la evidencia de la relación familiar.',
+  errors: [
+    'Confundir el N-600 con el N-400: el N-400 es para residentes que quieren naturalizarse; el N-600 es para quien ya es ciudadano por sus padres y necesita el certificado.',
+    'Suponer que cualquier persona con un padre ciudadano ya es ciudadana: depende de la fecha de nacimiento, del estatus de los padres y de otros requisitos.',
+    'Marcar más de una opción en la Parte 1 o dejar campos en blanco: USCIS puede rechazar la solicitud.',
+    'Olvidar la firma de la persona (o del padre, madre o tutor si es menor de 14 años).'
+  ],
+  lawyer: 'Siempre: determinar si una persona adquirió o derivó la ciudadanía es una evaluación legal. Escala de inmediato si hay adopción, padres no casados, nacimiento en el extranjero, cambios en el estatus de los padres o información incompleta.',
+  src: 'https://www.uscis.gov/n-600',
+  pending: [
+    'La cuota vigente y la edición aceptada del formulario deben confirmarse en uscis.gov/n-600 y en la tabla G-1055 antes de preparar el caso; al verificar, USCIS indicaba la edición 02/13/17 y una cuota de $1,170 (las cuotas cambian).',
+    'Los requisitos de elegibilidad (adquirida vs. derivada, por fecha de nacimiento y relación familiar) no se detallan aquí: validar con el abogado responsable.'
+  ],
+  kw: ['certificado de ciudadania', 'ciudadania por mis padres', 'ciudadano por nacimiento', 'derivada', 'adquirida', 'certificate of citizenship', 'n-600', 'ciudadania derivada', 'ciudadania adquirida', 'hijo de ciudadano', 'padre ciudadano', 'madre ciudadana'],
+  q: { p: 'Una persona nació en el extranjero de una madre ciudadana y quiere un documento que pruebe que YA es ciudadana. ¿Qué formulario se evalúa?', o: ['N-400', 'N-600', 'I-90', 'I-130'], a: 1,
+       e: 'El N-600 solicita el Certificado de Ciudadanía para quien ya tiene la ciudadanía por la vía de sus padres. El N-400 es para residentes que desean naturalizarse. Si la persona califica debe evaluarlo un abogado.' }
 },
 {
   id: 'I-589', cat: 'F', role: 'principal',
@@ -1188,10 +1233,11 @@ DATA.topics = {
   delito:    { name: 'Visa U',                              forms: ['I-918', 'I-918A', 'I-918B'],         procs: ['visa-u'] },
   consular:  { name: 'Proceso consular (DS-160 / DS-260)',  forms: ['DS-260', 'DS-160'],                  procs: ['consular', 'k1'] },
   perdones:  { name: 'Perdones (I-192 / I-601 / I-601A)',   forms: ['I-192', 'I-601', 'I-601A'],          procs: ['waivers'] },
-  residente: { name: 'Residente: I-90, I-751 y N-400',      forms: ['I-90', 'I-751', 'N-400'],            procs: ['i90', 'i751', 'n400'] },
+  residente: { name: 'Residente: I-90, I-751 y N-400',      forms: ['I-90', 'I-751', 'N-400', 'N-600'],            procs: ['i90', 'i751', 'n400'] },
   permisos:  { name: 'Permisos de trabajo y viaje (I-765 / I-131)', forms: ['I-765', 'I-131'],            procs: ['aos', 'pip'] },
   patrocinio:{ name: 'Patrocinio económico (I-864 / I-864A)', forms: ['I-864', 'I-864A'],                 procs: ['consular'] },
   proteccion:{ name: 'Asilo, FOIA y exención de cuota',     forms: ['I-589', 'G-639', 'I-912'],           procs: ['foia'] },
+  docs:      { name: 'Leer avisos, fechas y documentos del cliente', forms: [], procs: [], link: '#/docs' },
   escalar:   { name: 'Cuándo escalar a un abogado',         forms: [],                                    procs: [] }
 };
 
@@ -1200,7 +1246,7 @@ DATA.formTopic = {
   'I-914': 'trata', 'I-914A': 'trata', 'I-914B': 'trata',
   'I-918': 'delito', 'I-918A': 'delito', 'I-918B': 'delito',
   'I-485': 'ajuste', 'I-693': 'ajuste',
-  'I-90': 'residente', 'I-751': 'residente', 'N-400': 'residente',
+  'I-90': 'residente', 'I-751': 'residente', 'N-400': 'residente', 'N-600': 'residente',
   'I-765': 'permisos', 'I-131': 'permisos',
   'I-864': 'patrocinio', 'I-864A': 'patrocinio',
   'I-192': 'perdones', 'I-601': 'perdones', 'I-601A': 'perdones',
@@ -1259,6 +1305,12 @@ DATA.cases = [
   o: ['I-693', 'I-864', 'I-912', 'DS-260'], a: 0,
   e: 'El I-693 es el informe del examen médico migratorio y registro de vacunas. El sobre debe entregarse cerrado.' },
 
+{ id: 'B9', level: 'basico', topics: ['docs'], forms: [],
+  s: 'Un cliente llama porque le llegó una carta de USCIS con una cita en un Application Support Center (ASC).',
+  p: '¿Qué debes revisar primero en el aviso?',
+  o: ['La fecha, la hora y la dirección de la cita', 'Solo el número de recibo', 'El tipo de Green Card del cliente', 'Nada: puede ir cuando le convenga'], a: 0,
+  e: 'El aviso de biométricos indica fecha, hora y lugar del ASC. Esos tres datos se confirman con el cliente y se registran. La asistencia es en la fecha y hora indicadas.' },
+
 /* ===== INTERMEDIO ===== */
 { id: 'I1', level: 'intermedio', topics: ['ajuste'], forms: ['I-130', 'I-485', 'I-864', 'I-765', 'I-693'],
   s: 'Una ciudadana presentó un I-130 para su esposo, que está en EE. UU. y podría ajustar estatus.',
@@ -1311,6 +1363,22 @@ DATA.cases = [
   o: ['I-601', 'I-601A', 'I-192', 'I-90'], a: 1,
   e: 'El I-601A es el perdón provisional por presencia ilegal, solicitado antes de salir. La elegibilidad (familiar calificante, otras causales, procesos en corte) debe revisarla un abogado.' },
 
+{ id: 'I11', level: 'intermedio', topics: ['docs', 'escalar'], forms: [], esc: true,
+  s: 'Un cliente dice que su cita de biométricos es mañana a las 9:00 y que no podrá asistir por trabajo.',
+  p: '¿Qué haces como agente de Customer Service?',
+  o: ['Le dices que no pasa nada si falta', 'Esperas a que pase la cita para ver qué ocurre', 'Escalas hoy mismo al equipo legal para valorar reprogramar antes de la cita', 'Le dices que vaya otro día sin cita'], a: 2,
+  e: 'Reprogramar debe solicitarse antes de la fecha y hora de la cita y con causa justificada; faltar puede llevar a que el trámite se considere abandonado. Por eso se escala el mismo día.' },
+{ id: 'I13', level: 'intermedio', topics: ['residente'], forms: ['N-400', 'N-600'], esc: true,
+  s: 'Un cliente nació fuera de EE. UU. de una madre ciudadana. Quiere «sacar su ciudadanía» y pregunta si debe presentar el N-400.',
+  p: '¿Cuál es la orientación más adecuada?',
+  o: ['Presentar el N-400 de inmediato', 'Puede existir la vía del N-600 (certificado de ciudadanía) si ya es ciudadano por su madre; requiere revisión legal', 'Presentar el I-90', 'Decirle que no tiene ninguna opción'], a: 1,
+  e: 'El N-600 documenta una ciudadanía adquirida o derivada de un padre o madre ciudadano; el N-400 es para residentes que se naturalizan. Si corresponde una u otra lo determina el abogado.' },
+{ id: 'I12', level: 'intermedio', topics: ['docs'], forms: [],
+  s: 'Un cliente muestra un aviso I-797C que dice «Receipt Notice» y pregunta si ya le aprobaron su caso.',
+  p: '¿Cuál es la respuesta adecuada?',
+  o: ['Sí, ya está aprobado', 'Es un comprobante de que USCIS recibió el trámite; no es una aprobación', 'Significa que será negado', 'Significa que ya puede trabajar'], a: 1,
+  e: 'El aviso de recibo confirma la recepción del trámite. Una aprobación llega en otro aviso, que debe decir «Approval Notice».' },
+
 /* ===== AVANZADO ===== */
 { id: 'A1', level: 'avanzado', topics: ['escalar', 'ajuste'], forms: ['I-130', 'I-485'], esc: true,
   s: 'Una clienta dice: «Mi esposo es ciudadano y quiero arreglar mis papeles». No sabemos cómo entró a EE. UU., si tuvo procesos con inmigración ni si tiene antecedentes.',
@@ -1347,6 +1415,11 @@ DATA.cases = [
   p: '¿Qué afirmación es más precisa?',
   o: ['No puede solicitar estatus T sin Supplement B', 'El Supplement B es evidencia opcional; puede haber otra evidencia y excepciones de cooperación; requiere revisión legal', 'Debe presentar un I-918', 'Debe presentar obligatoriamente un I-589'], a: 1,
   e: 'El Supplement B del I-914 es evidencia opcional. La cooperación tiene excepciones (p. ej., menores o trauma). Cada caso requiere revisión legal.' },
+{ id: 'A9', level: 'avanzado', topics: ['docs', 'escalar'], forms: ['I-765'], esc: true,
+  s: 'Un cliente tiene un permiso de trabajo cuya fecha «Card Expires» ya pasó y dice que renovó hace poco. Pregunta si puede seguir trabajando.',
+  p: '¿Cuál es la mejor respuesta?',
+  o: ['Sí, puede trabajar sin problema mientras espera', 'No, debe dejar de trabajar de inmediato', 'No confirmar ni negar: anotar categoría, fecha y aviso de recibo, y escalar al equipo legal el mismo día', 'Decirle que presente otro formulario'], a: 2,
+  e: 'Las reglas de extensión automática dependen de la categoría y cambiaron recientemente, y el agente de Customer Service no determina autorización de empleo. Se registran los datos y se escala.' },
 { id: 'A8', level: 'avanzado', topics: ['escalar', 'ajuste'], forms: ['I-485', 'I-90', 'I-751'], esc: true,
   s: 'Un cliente dice solamente: «Necesito la Green Card».',
   p: '¿Cuál es el mejor primer paso?',
@@ -1356,6 +1429,13 @@ DATA.cases = [
 
 /* ---------- Comparador: comparaciones sugeridas ---------- */
 DATA.compare = [
+{ a: 'N-400', b: 'N-600',
+  purpose: ['Convierte a un residente permanente en ciudadano (naturalización).', 'Emite el certificado que comprueba una ciudadanía que la persona ya tiene por sus padres.'],
+  diff: 'El N-400 CREA la ciudadanía por naturalización; el N-600 DOCUMENTA una ciudadanía ya existente (adquirida o derivada de un padre o madre ciudadano).',
+  who: ['Residente permanente que cumple los requisitos de naturalización.', 'Persona (o su padre, madre o tutor si es menor) que cree tener ciudadanía por sus padres.'],
+  when: ['Cuando se cumplen tiempo de residencia, presencia física y demás requisitos.', 'Cuando se necesita comprobar la ciudadanía que ya se tiene; la evaluación es legal.'],
+  related: 'Son vías distintas hacia la prueba de ciudadanía; cuál corresponde depende del caso y lo decide el abogado.',
+  avoid: 'Presentar el N-400 cuando la persona ya podría ser ciudadana por sus padres, o asumir que todo hijo de un ciudadano ya tiene ciudadanía.' },
 { a: 'I-130', b: 'I-485',
   purpose: ['Establece la relación familiar entre peticionario y beneficiario.', 'Pide la residencia permanente dentro de EE. UU.'],
   diff: 'El I-130 es una PETICIÓN que demuestra la relación; el I-485 es una SOLICITUD de residencia. Aprobar el primero no equivale a poder presentar el segundo.',
@@ -1410,6 +1490,18 @@ DATA.compare = [
 /* ---------- Buscador: necesidades del cliente ----------
    k: frases clave (sin acentos). forms: ids relacionados. explain: función de cada uno. */
 DATA.needs = [
+{ title: 'Cita de biométricos / toma de huellas', k: ['biometricos', 'huellas', 'cita de biometricos', 'toma de huellas', 'asc', 'cita para huellas', 'cita'],
+  forms: [], docs: ['bio'], note: 'Revisa fecha, hora y dirección del ASC en el aviso. Si el cliente no puede asistir, escala el mismo día.' },
+{ title: 'Fecha de vencimiento (tarjeta o permiso)', k: ['fecha de vencimiento', 'vencimiento', 'cuando vence', 'vence mi tarjeta', 'expira', 'expiracion', 'card expires', 'vencida', 'se vencio'],
+  forms: ['I-765', 'I-90'], docs: ['ead', 'greencard', 'i94', 'parole'], explain: { 'I-765': 'Renovación o reemplazo del permiso de trabajo.', 'I-90': 'Renovación o reemplazo de la Green Card.' }, note: 'No confirmes al cliente su autorización de trabajo ni su estatus con una tarjeta vencida: escala.' },
+{ title: 'Plazo para responder una carta de USCIS', k: ['rfe', 'fecha limite', 'plazo', 'carta de uscis', 'piden documentos', 'noid', 'evidencia', 'me pidieron documentos'],
+  forms: [], docs: ['rfe'], note: 'La fecha límite está impresa en el aviso. Escala el mismo día.' },
+{ title: 'Número de recibo o de caso', k: ['numero de recibo', 'numero de caso', 'receipt number', 'recibo', 'case number'],
+  forms: [], docs: ['receipt', 'nvc'], note: 'El número de recibo está arriba en el aviso I-797C.' },
+{ title: 'Cita de entrevista', k: ['entrevista', 'cita de entrevista', 'entrevista migratoria', 'entrevista en el consulado'],
+  forms: [], docs: ['interview', 'nvc'], note: 'Toda entrevista nueva se informa al equipo legal el mismo día.' },
+{ title: 'Me aprobaron / aprobación', k: ['me aprobaron', 'aprobaron', 'aprobacion', 'aprobado', 'approval'],
+  forms: [], docs: ['approval', 'receipt'], note: 'Confirma que el aviso diga «Approval Notice» y no «Receipt Notice».' },
 { title: 'Permiso de trabajo', k: ['permiso de trabajo', 'autorizacion de empleo', 'trabajar', 'work permit', 'ead', 'empleo'],
   forms: ['I-765'], explain: { 'I-765': 'Solicita la autorización de empleo (EAD). No es un estatus migratorio.' },
   note: 'Depende de una categoría de elegibilidad: no todas las personas pueden pedirlo.' },
@@ -1441,11 +1533,11 @@ DATA.needs = [
   explain: { 'I-360': 'Autopetición de la víctima.', 'I-485': 'Residencia posterior (puede presentarse junto).', 'I-765': 'Permiso de trabajo según el caso.' },
   note: 'Todo caso VAWA requiere revisión legal y manejo confidencial.' },
 { title: 'Viajar con un trámite pendiente', k: ['viajar', 'viaje', 'salir del pais', 'advance parole', 'parole', 'documento de viaje'],
-  forms: ['I-131'],
+  forms: ['I-131'], docs: ['parole'],
   explain: { 'I-131': 'Advance parole y otros documentos de viaje o parole.' },
   note: 'Salir sin advance parole con un I-485 pendiente puede considerarse abandono. Revisión legal antes de viajar.' },
 { title: 'Ciudadanía', k: ['ciudadania', 'ser ciudadano', 'naturalizacion', 'citizenship'],
-  forms: ['N-400'], explain: { 'N-400': 'Solicitud de naturalización para residentes permanentes.' },
+  forms: ['N-400', 'N-600'], explain: { 'N-400': 'Solicitud de naturalización para residentes permanentes.', 'N-600': 'Certificado de ciudadanía para quien ya es ciudadano por sus padres.' },
   note: 'Requiere cumplir tiempo de residencia, presencia física y otros requisitos.' },
 { title: 'Asilo / persecución', k: ['asilo', 'persecucion', 'miedo de regresar', 'tortura', 'asylum'],
   forms: ['I-589'], explain: { 'I-589': 'Asilo y suspensión de remoción.' },
@@ -1545,6 +1637,230 @@ DATA.sources = [
   { t: 'Departamento de Estado — Formularios en línea', url: 'https://travel.state.gov/content/travel/en/us-visas/visa-information-resources/forms.html' }
 ];
 
+})();
+
+})();
+(function(){
+/* =====================================================================
+   DATOS · DOCUMENTOS QUE RECIBE EL CLIENTE (avisos, tarjetas, cartas)
+   Pensado para el agente de Customer Service: qué revisar y dónde.
+   PARA AGREGAR UN DOCUMENTO: copia un objeto de DATA.docs.
+   Campos: id, name, en, ico, issuer, what, kind ('appt'|'deadline'|'expiry'|null),
+   dateLabel, zones[{n,x,y,w,h}] (esquema en un lienzo de 320×230),
+   fields[{n,label,where,why}], agent[], escalate[], pending[], src, kw[]
+   Los esquemas son ILUSTRATIVOS: la posición exacta puede variar según la edición.
+   ===================================================================== */
+(function () {
+const DATA = window.DATA;
+
+DATA.docs = [
+{ id: 'receipt', ico: '🧾', name: 'Aviso de recibo (I-797C)', en: 'Notice of Action · Receipt Notice', issuer: 'USCIS',
+  what: 'Confirma que USCIS recibió el trámite. Es comprobante de presentación, NO una aprobación.',
+  kind: null, kw: ['recibo', 'receipt', 'i-797c', 'numero de recibo', 'aviso de accion', 'notice of action', 'comprobante'],
+  zones: [{ n: 1, x: 30, y: 40, w: 110, h: 18 }, { n: 2, x: 30, y: 64, w: 110, h: 18 }, { n: 3, x: 180, y: 40, w: 110, h: 18 }, { n: 4, x: 180, y: 64, w: 110, h: 18 }, { n: 5, x: 30, y: 100, w: 120, h: 40 }, { n: 6, x: 180, y: 100, w: 110, h: 18 }],
+  fields: [
+    { n: 1, label: 'Número de recibo', where: 'Parte superior del aviso.', why: 'Es la llave del caso: 3 letras + 10 dígitos (ej. EAC…). Con él se consulta el estatus del caso y se identifica ante USCIS.' },
+    { n: 2, label: 'Tipo de caso (Case Type)', where: 'Cerca del número de recibo.', why: 'Confirma qué formulario se presentó (I-130, I-485…). Verifica que coincida con lo que el cliente cree que presentó.' },
+    { n: 3, label: 'Fecha de recibo (Received Date)', where: 'Bloque de fechas, arriba.', why: 'Fecha en que USCIS recibió el trámite. Sirve para ubicar el caso en los tiempos de procesamiento.' },
+    { n: 4, label: 'Fecha del aviso (Notice Date)', where: 'Bloque de fechas, arriba.', why: 'Fecha en que se emitió el aviso (suele ser posterior al recibo). Úsala para saber qué tan reciente es la comunicación.' },
+    { n: 5, label: 'Nombre y dirección del solicitante', where: 'Bloque de la izquierda.', why: 'Revisa ortografía del nombre y la dirección. Un error puede causar que lleguen mal los avisos futuros.' },
+    { n: 6, label: 'Tipo de aviso (Notice Type)', where: 'Esquina superior derecha o encabezado.', why: 'Debe decir «Receipt Notice». Si dice Approval, Appointment, Request for Evidence, etc., es otro documento.' }
+  ],
+  agent: ['Registra el número de recibo, el tipo de caso y las dos fechas.', 'Compara nombre y dirección con el expediente; reporta cualquier diferencia.', 'Explica al cliente que es un comprobante de que USCIS recibió el trámite, no una aprobación.', 'Si el tipo de caso no es el esperado, no lo comentes como error del cliente: pásalo al equipo legal.'],
+  escalate: ['El tipo de caso no coincide con lo contratado.', 'Hay errores en el nombre, fecha de nacimiento o dirección.', 'El cliente dice que nunca recibió el aviso o lo perdió.'],
+  pending: ['El formato del número de recibo (3 letras + 10 dígitos) se confirmó en fuentes secundarias; validar contra una fuente oficial de USCIS.'],
+  src: 'https://egov.uscis.gov/casestatus/landing.do' },
+
+{ id: 'bio', ico: '🖐️', name: 'Cita de biométricos (ASC)', en: 'ASC Appointment Notice (I-797C)', issuer: 'USCIS',
+  what: 'Cita para toma de huellas, foto y firma en un Application Support Center (ASC). Es el aviso que más urge leer bien.',
+  kind: 'appt', dateLabel: 'Fecha de la cita de biométricos', kw: ['biometricos', 'huellas', 'cita', 'asc', 'application support center', 'appointment', 'toma de huellas', 'reprogramar', 'fingerprints'],
+  zones: [{ n: 1, x: 30, y: 40, w: 120, h: 18 }, { n: 2, x: 30, y: 78, w: 130, h: 18 }, { n: 3, x: 30, y: 100, w: 130, h: 18 }, { n: 4, x: 30, y: 122, w: 150, h: 34 }, { n: 5, x: 200, y: 40, w: 90, h: 18 }, { n: 6, x: 30, y: 166, w: 260, h: 38 }],
+  fields: [
+    { n: 1, label: 'Número de recibo y tipo de caso', where: 'Parte superior.', why: 'Identifica a qué trámite pertenece la cita. Un cliente puede tener varias citas de varios trámites.' },
+    { n: 2, label: 'FECHA de la cita', where: 'Cuerpo del aviso, junto a «Date and Time».', why: 'Es el dato más importante. Confírmala dos veces con el cliente y calcula cuántos días faltan.' },
+    { n: 3, label: 'HORA de la cita', where: 'Misma línea o la siguiente.', why: 'USCIS indica que debe asistirse en la fecha y hora indicadas; no se asume que se aceptan sin cita.' },
+    { n: 4, label: 'LUGAR: dirección del ASC', where: 'Bloque «Place» o «Location».', why: 'Dirección exacta del centro asignado. Verifica ciudad y estado, y que el cliente pueda llegar.' },
+    { n: 5, label: 'Código de tipo de biométricos', where: 'Esquina superior derecha (en algunas ediciones).', why: 'Indica qué datos se tomarán. Anótalo, pero no lo interpretes para el cliente.' },
+    { n: 6, label: 'Qué llevar e instrucciones de reprogramación', where: 'Cuerpo y parte inferior del aviso.', why: 'El aviso indica qué llevar (el propio aviso y una identificación, según instrucciones) y cómo reprogramar. Léelo completo.' }
+  ],
+  agent: ['Lee al cliente la fecha, la hora y la dirección tal como aparecen en el aviso y pídele que las repita.', 'Recuérdale llevar el aviso (todos los avisos si recibió varios) y la identificación que pida el aviso.', 'Calcula con la herramienta de fechas cuántos días faltan y deja la cita registrada en el expediente.', 'Si el cliente no puede asistir, no esperes: escala el mismo día. Reprogramar debe pedirse antes de la fecha y hora de la cita, con causa justificada.', 'Si cambió de domicilio o no recibió el aviso, escálalo de inmediato.'],
+  escalate: ['El cliente no puede asistir o llega tarde.', 'La cita ya pasó o es en los próximos 3 días.', 'No recibió el aviso, lo perdió o la dirección del aviso no es la actual.', 'Hay datos personales incorrectos en el aviso (el ASC no puede corregir nombre ni datos personales).'],
+  pending: ['Plazos y canales de reprogramación (en línea, al menos 12 horas antes, o por el Contact Center) cambian: confirma el procedimiento vigente con el equipo legal antes de dar instrucciones.', 'Qué ocurre si falta a la cita depende del caso; USCIS puede considerar abandonada y negada la solicitud. No prometas resultados.'],
+  src: 'https://www.uscis.gov/forms/filing-guidance/preparing-for-your-biometric-services-appointment' },
+
+{ id: 'interview', ico: '🎤', name: 'Aviso de entrevista', en: 'Interview Notice (I-797C)', issuer: 'USCIS',
+  what: 'Cita con un oficial de USCIS en una oficina local. También aplica a N-400 y a otros trámites.',
+  kind: 'appt', dateLabel: 'Fecha de la entrevista', kw: ['entrevista', 'interview', 'oficina de campo', 'field office', 'cita de entrevista'],
+  zones: [{ n: 1, x: 30, y: 40, w: 120, h: 18 }, { n: 2, x: 30, y: 78, w: 130, h: 18 }, { n: 3, x: 30, y: 100, w: 130, h: 18 }, { n: 4, x: 30, y: 122, w: 150, h: 34 }, { n: 5, x: 30, y: 166, w: 260, h: 38 }],
+  fields: [
+    { n: 1, label: 'Número de recibo y tipo de caso', where: 'Parte superior.', why: 'Confirma para qué trámite es la entrevista.' },
+    { n: 2, label: 'FECHA de la entrevista', where: 'Cuerpo del aviso.', why: 'Dato crítico. Registra y calcula días restantes.' },
+    { n: 3, label: 'HORA', where: 'Junto a la fecha.', why: 'Debe llegarse con anticipación; sigue lo que diga el aviso.' },
+    { n: 4, label: 'LUGAR: oficina y dirección', where: 'Bloque «Place» o «Location».', why: 'Oficina local de USCIS asignada. Verifica dirección y accesos.' },
+    { n: 5, label: 'Documentos a llevar', where: 'Cuerpo del aviso, lista de requisitos.', why: 'El aviso enumera lo que debe presentarse. No inventes requisitos: lee la lista tal cual.' }
+  ],
+  agent: ['Lee fecha, hora y dirección y confirma que el cliente las anotó.', 'Revisa la lista «qué llevar» y compárala con lo que el cliente tiene; reporta lo que falte al equipo legal.', 'Avisa al equipo legal de inmediato: la preparación para la entrevista la dirige el abogado.', 'Si el cliente no puede asistir, escala el mismo día.'],
+  escalate: ['Toda entrevista nueva: informar al equipo legal el mismo día.', 'El cliente no puede asistir, o no recibió el aviso.', 'Faltan documentos de la lista.'],
+  pending: ['Los requisitos para reprogramar una entrevista dependen del aviso y del caso: confirmar con el abogado.'],
+  src: 'https://www.uscis.gov/' },
+
+{ id: 'approval', ico: '✅', name: 'Aviso de aprobación (I-797)', en: 'Approval Notice (I-797 / I-797A)', issuer: 'USCIS',
+  what: 'Comunica que USCIS aprobó una petición o solicitud. Una I-797 sin la letra C suele indicar una decisión o aprobación, a diferencia de la I-797C.',
+  kind: 'expiry', dateLabel: 'Fecha de vencimiento del aviso (si aparece)', kw: ['aprobacion', 'approval', 'aprobado', 'i-797', 'validez', 'valid from', 'valid to'],
+  zones: [{ n: 1, x: 30, y: 40, w: 120, h: 18 }, { n: 2, x: 180, y: 40, w: 110, h: 18 }, { n: 3, x: 180, y: 64, w: 110, h: 18 }, { n: 4, x: 30, y: 100, w: 120, h: 34 }, { n: 5, x: 30, y: 150, w: 260, h: 54 }],
+  fields: [
+    { n: 1, label: 'Número de recibo', where: 'Parte superior.', why: 'Debe coincidir con el recibo que ya se tiene del mismo caso.' },
+    { n: 2, label: 'Tipo de aviso: «Approval Notice»', where: 'Encabezado o esquina superior derecha.', why: 'Confirma que es una aprobación y no un recibo.' },
+    { n: 3, label: 'Fecha del aviso y fecha de aprobación', where: 'Bloque de fechas.', why: 'Registra la fecha de decisión.' },
+    { n: 4, label: 'Beneficiario y tipo de caso', where: 'Bloque central.', why: 'Verifica nombre, país y qué se aprobó.' },
+    { n: 5, label: 'Vigencia (Valid from / to) e instrucciones', where: 'Cuerpo del aviso.', why: 'Algunas aprobaciones tienen vigencia limitada. Léela y registra el siguiente paso que indique el aviso.' }
+  ],
+  agent: ['Confirma que dice Approval Notice y que el nombre y el tipo de caso son correctos.', 'Registra la fecha de aprobación y cualquier vigencia (desde / hasta).', 'No expliques por tu cuenta qué sigue: pásalo al equipo legal (una aprobación puede no equivaler a tener Green Card ni permiso de trabajo).'],
+  escalate: ['Cualquier aprobación nueva: informar al equipo legal el mismo día.', 'Errores en nombre, fechas o datos personales.', 'El aviso trae una vigencia que está por vencer.'],
+  pending: ['Cada tipo de aprobación (I-130, I-129F, I-601A…) tiene reglas distintas de vigencia y siguiente paso: validar con el abogado.'],
+  src: 'https://www.uscis.gov/' },
+
+{ id: 'rfe', ico: '📩', name: 'RFE / NOID (solicitud de evidencia)', en: 'Request for Evidence / Notice of Intent to Deny', issuer: 'USCIS',
+  what: 'USCIS pide documentos adicionales o avisa que podría negar. Tiene una fecha límite de respuesta.',
+  kind: 'deadline', dateLabel: 'Fecha límite de respuesta', kw: ['rfe', 'request for evidence', 'noid', 'evidencia', 'fecha limite', 'plazo', 'respuesta', 'intent to deny', 'negar'],
+  zones: [{ n: 1, x: 30, y: 40, w: 120, h: 18 }, { n: 2, x: 180, y: 40, w: 110, h: 18 }, { n: 3, x: 180, y: 64, w: 110, h: 18 }, { n: 4, x: 30, y: 100, w: 260, h: 54 }, { n: 5, x: 30, y: 166, w: 260, h: 38 }],
+  fields: [
+    { n: 1, label: 'Número de recibo y trámite afectado', where: 'Parte superior.', why: 'Si el cliente tiene varios trámites, el aviso dice a cuál se refiere.' },
+    { n: 2, label: 'Tipo de aviso: RFE o NOID', where: 'Encabezado o esquina superior derecha.', why: 'Un NOID es más grave que un RFE: avisa que USCIS podría negar.' },
+    { n: 3, label: 'FECHA LÍMITE de respuesta', where: 'Bloque de fechas o cerca del inicio del texto.', why: 'Dato crítico. El plazo corre aunque el cliente tarde en entregar el aviso. USCIS generalmente no concede prórrogas.' },
+    { n: 4, label: 'Evidencia solicitada', where: 'Cuerpo del aviso.', why: 'Lista de lo que se pide. No resumas ni interpretes: envía el aviso completo al abogado.' },
+    { n: 5, label: 'Cómo y dónde responder', where: 'Parte inferior o última página.', why: 'Indica la dirección de envío y cómo responder. Lo prepara el equipo legal.' }
+  ],
+  agent: ['Pide una foto o escaneo completo del aviso (todas las páginas) y confírmalo con el cliente.', 'Registra la fecha límite y calcula los días restantes con la herramienta.', 'Escala al abogado el mismo día, sin importar cuánto falte.', 'No des opinión sobre qué evidencia conviene ni prometas resultados.'],
+  escalate: ['Siempre: todo RFE o NOID se escala el mismo día.', 'La fecha límite está a 14 días o menos, o ya pasó.', 'Faltan páginas del aviso.'],
+  pending: ['Los plazos de respuesta de USCIS cambiaron en agosto de 2026 (reportes de prensa): no menciones un número de días; usa siempre la fecha impresa en el aviso.'],
+  src: 'https://www.uscis.gov/' },
+
+{ id: 'ead', ico: '💼', name: 'Permiso de trabajo (EAD)', en: 'Employment Authorization Document (I-766)', issuer: 'USCIS',
+  what: 'Tarjeta que acredita autorización para trabajar. No es un estatus migratorio ni una Green Card.',
+  kind: 'expiry', dateLabel: 'Fecha «Card Expires» de la tarjeta', kw: ['ead', 'permiso de trabajo', 'tarjeta de trabajo', 'i-766', 'card expires', 'categoria', 'vencimiento', 'vence', 'work permit'],
+  zones: [{ n: 1, x: 100, y: 52, w: 120, h: 18 }, { n: 2, x: 100, y: 76, w: 90, h: 18 }, { n: 3, x: 100, y: 100, w: 120, h: 18 }, { n: 4, x: 200, y: 76, w: 90, h: 18 }, { n: 5, x: 100, y: 128, w: 120, h: 18 }],
+  fields: [
+    { n: 1, label: 'Nombre del titular', where: 'Frente de la tarjeta.', why: 'Debe coincidir con los demás documentos.' },
+    { n: 2, label: 'Categoría (Category)', where: 'Frente, campo «Category».', why: 'Código de elegibilidad (ej. C09, A05). Anótalo: indica por qué se autorizó el trabajo.' },
+    { n: 3, label: 'Número USCIS (USCIS#)', where: 'Frente de la tarjeta.', why: 'Identificador del titular; no lo compartas por canales inseguros.' },
+    { n: 4, label: 'FECHA DE VENCIMIENTO (Card Expires)', where: 'Frente, a la derecha de «Card Expires».', why: 'Dato crítico. La fecha de vencimiento de la tarjeta no es lo mismo que la vigencia de su estatus.' },
+    { n: 5, label: 'Fecha de inicio de validez', where: 'Frente de la tarjeta (varía según el diseño).', why: 'No se puede trabajar antes de que empiece la validez.' }
+  ],
+  agent: ['Pide foto del frente y reverso y registra: categoría, USCIS# y fecha «Card Expires».', 'Calcula días restantes. Si faltan 180 días o menos, avisa al equipo legal para revisar la renovación.', 'No afirmes al cliente que puede seguir trabajando después de la fecha de vencimiento: escala.', 'Si hay errores de nombre o fecha, escala: puede requerir reemplazo.'],
+  escalate: ['La tarjeta venció o vence en menos de 180 días.', 'El cliente pregunta si puede seguir trabajando con una tarjeta vencida.', 'Hay errores de datos, o la tarjeta se perdió o fue robada.'],
+  pending: ['Las extensiones automáticas de EAD para ciertas categorías cambiaron en 2025: valida con el abogado antes de informar a un cliente con tarjeta vencida o renovación pendiente.', 'USCIS recomienda presentar la renovación hasta 180 días antes del vencimiento: confirma en las instrucciones vigentes del I-765.'],
+  src: 'https://www.uscis.gov/i-765' },
+
+{ id: 'greencard', ico: '🟩', name: 'Tarjeta de residente (Green Card)', en: 'Permanent Resident Card (I-551)', issuer: 'USCIS',
+  what: 'Comprueba la residencia permanente (o condicional). Muestra fecha de vencimiento y fecha desde la que es residente.',
+  kind: 'expiry', dateLabel: 'Fecha «Card Expires» de la tarjeta', kw: ['green card', 'tarjeta de residente', 'i-551', 'residencia', 'card expires', 'resident since', 'vencimiento', 'condicional', 'vence'],
+  zones: [{ n: 1, x: 100, y: 52, w: 120, h: 18 }, { n: 2, x: 100, y: 76, w: 110, h: 18 }, { n: 3, x: 100, y: 100, w: 110, h: 18 }, { n: 4, x: 100, y: 128, w: 90, h: 18 }, { n: 5, x: 200, y: 128, w: 90, h: 18 }],
+  fields: [
+    { n: 1, label: 'Nombre del titular', where: 'Frente de la tarjeta.', why: 'Debe coincidir con pasaporte y demás documentos.' },
+    { n: 2, label: 'Número USCIS (USCIS#)', where: 'Frente de la tarjeta.', why: 'Identificador del titular.' },
+    { n: 3, label: 'Categoría / clase de admisión', where: 'Frente de la tarjeta.', why: 'Indica la base de la residencia y si es condicional (ej. CR1). Identifica si el cliente necesita I-751 o I-90.' },
+    { n: 4, label: 'Residente desde (Resident Since)', where: 'Frente de la tarjeta.', why: 'Fecha de inicio de la residencia; útil para ciudadanía.' },
+    { n: 5, label: 'FECHA DE VENCIMIENTO (Card Expires)', where: 'Frente de la tarjeta.', why: 'Dato crítico. Las tarjetas antiguas sin fecha siguen siendo válidas según USCIS.' }
+  ],
+  agent: ['Registra categoría, «Resident Since» y «Card Expires».', 'Si la categoría indica residencia condicional, avisa al equipo legal de la fecha de vencimiento (I-751).', 'Si la tarjeta vence pronto, está perdida, dañada o tiene errores, remite al equipo legal (posible I-90).', 'No digas que una tarjeta vencida significa perder la residencia: la residencia y la tarjeta son cosas distintas; escala.'],
+  escalate: ['Tarjeta condicional por vencer (hay ventana de 90 días para el I-751).', 'Tarjeta vencida, perdida, robada o con errores.', 'El cliente planea viajar con una tarjeta vencida.'],
+  pending: ['La clase de admisión y su significado se leen mejor con apoyo del equipo legal; no interpretes códigos por tu cuenta.'],
+  src: 'https://www.uscis.gov/green-card' },
+
+{ id: 'i94', ico: '🛂', name: 'Registro de entrada (I-94)', en: 'Arrival/Departure Record', issuer: 'CBP',
+  what: 'Registro de la admisión a EE. UU. Indica hasta cuándo puede permanecer la persona autorizada.',
+  kind: 'expiry', dateLabel: 'Fecha «Admit Until Date»', kw: ['i-94', 'i94', 'admit until', 'admitido hasta', 'entrada', 'clase de admision', 'cbp', 'fecha de salida', 'd/s'],
+  zones: [{ n: 1, x: 100, y: 52, w: 120, h: 18 }, { n: 2, x: 100, y: 76, w: 120, h: 18 }, { n: 3, x: 100, y: 100, w: 110, h: 18 }, { n: 4, x: 100, y: 128, w: 120, h: 18 }],
+  fields: [
+    { n: 1, label: 'Número de I-94', where: 'Parte superior del registro.', why: 'Identifica el registro de entrada.' },
+    { n: 2, label: 'Fecha de admisión', where: 'Cuerpo del registro.', why: 'Fecha en que fue admitido.' },
+    { n: 3, label: 'Clase de admisión', where: 'Cuerpo del registro.', why: 'Indica con qué estatus o categoría entró (ej. visitante, parole). Es clave para saber si puede ajustar estatus.' },
+    { n: 4, label: 'FECHA «Admit Until»', where: 'Cuerpo del registro.', why: 'Hasta cuándo puede permanecer. Una indicación distinta de fecha (como D/S) tiene su propio significado: pásala al equipo legal.' }
+  ],
+  agent: ['Pide el I-94 más reciente (se descarga del sitio de CBP).', 'Registra clase de admisión y «Admit Until Date».', 'No concluyas si el cliente «tiene estatus»: pásalo al equipo legal.'],
+  escalate: ['La fecha «Admit Until» pasó o está próxima.', 'La clase de admisión no está clara o hay errores.'],
+  pending: ['Los campos exactos del registro pueden variar; validar con el I-94 oficial más reciente.'],
+  src: 'https://i94.cbp.dhs.gov/' },
+
+{ id: 'parole', ico: '✈️', name: 'Advance parole / documento de viaje', en: 'Advance Parole (I-512L) / combo card', issuer: 'USCIS',
+  what: 'Documento para salir y volver a EE. UU. con ciertos trámites pendientes. Puede venir como tarjeta combinada con el permiso de trabajo.',
+  kind: 'expiry', dateLabel: 'Fecha de vencimiento del documento', kw: ['advance parole', 'i-512l', 'parole', 'viajar', 'viaje', 'combo', 'documento de viaje', 'regresar', 'salir del pais'],
+  zones: [{ n: 1, x: 100, y: 52, w: 120, h: 18 }, { n: 2, x: 100, y: 76, w: 120, h: 18 }, { n: 3, x: 100, y: 100, w: 120, h: 18 }],
+  fields: [
+    { n: 1, label: 'Nombre y número del documento', where: 'Frente.', why: 'Debe coincidir con el pasaporte.' },
+    { n: 2, label: 'FECHA DE VENCIMIENTO', where: 'Frente (campo de vencimiento).', why: 'Dato crítico. El viaje debe terminar dentro de la vigencia.' },
+    { n: 3, label: 'Leyendas o categoría', where: 'Frente o reverso.', why: 'Indica el tipo de documento o si es tarjeta combinada.' }
+  ],
+  agent: ['Registra la fecha de vencimiento.', 'Si el cliente quiere viajar, NO le des luz verde: escala antes. Cada caso tiene riesgos distintos.', 'Pregunta cuándo tiene planeado el viaje y avísalo al equipo legal.'],
+  escalate: ['Siempre antes de cualquier viaje.', 'Viaje fuera de la vigencia o con trámite aún pendiente de este documento.'],
+  pending: ['Los riesgos de viajar (incluso con advance parole) dependen del caso. Toda decisión es del abogado.'],
+  src: 'https://www.uscis.gov/i-131' },
+
+{ id: 'nvc', ico: '🏛️', name: 'Cartas del NVC y del consulado', en: 'NVC / Embassy interview letter', issuer: 'Departamento de Estado',
+  what: 'Comunicaciones del Centro Nacional de Visas y del consulado: número de caso, pagos, documentos y cita de entrevista.',
+  kind: 'appt', dateLabel: 'Fecha de la entrevista consular', kw: ['nvc', 'consulado', 'embajada', 'entrevista consular', 'numero de caso', 'cita consular', 'ds-260', 'ds-261', 'carta de entrevista', 'department of state', 'cita en el consulado'],
+  zones: [{ n: 1, x: 30, y: 40, w: 130, h: 18 }, { n: 2, x: 30, y: 78, w: 130, h: 18 }, { n: 3, x: 30, y: 100, w: 130, h: 18 }, { n: 4, x: 30, y: 122, w: 150, h: 34 }, { n: 5, x: 30, y: 166, w: 260, h: 38 }],
+  fields: [
+    { n: 1, label: 'Número de caso del NVC', where: 'Parte superior de la carta o correo.', why: 'Se usa para todas las gestiones del caso con NVC y consulado.' },
+    { n: 2, label: 'FECHA de la entrevista', where: 'Cuerpo de la carta de cita.', why: 'Dato crítico. Registra y calcula días restantes.' },
+    { n: 3, label: 'HORA', where: 'Junto a la fecha.', why: 'Indica el horario asignado.' },
+    { n: 4, label: 'LUGAR: embajada o consulado', where: 'Bloque de ubicación.', why: 'Ciudad y dirección del consulado. Confirma que el cliente pueda llegar.' },
+    { n: 5, label: 'Instrucciones: documentos y examen médico', where: 'Cuerpo de la carta.', why: 'La carta lista lo que debe llevar y si debe hacer antes el examen médico con un médico autorizado.' }
+  ],
+  agent: ['Registra número de caso, fecha, hora y consulado.', 'Revisa la lista de documentos y pregunta cuáles ya tiene.', 'Avisa al equipo legal de inmediato: la preparación de la entrevista la dirige el abogado.', 'Si el cliente no puede asistir o hay cambio de fecha, escala el mismo día.'],
+  escalate: ['Toda cita consular nueva.', 'Faltan documentos o no se hizo el examen médico.', 'El cliente no puede asistir.'],
+  pending: ['El formato y el contenido de las cartas varían por consulado y etapa; revisa siempre el documento tal como llegó.'],
+  src: 'https://travel.state.gov/content/travel/en/us-visas/immigrate.html' },
+
+{ id: 'ds160', ico: '🧷', name: 'Confirmación del DS-160', en: 'DS-160 Confirmation Page', issuer: 'Departamento de Estado',
+  what: 'Página de confirmación (con código de barras) que se genera al enviar el DS-160. Se necesita para agendar y asistir a la cita de visa.',
+  kind: null, kw: ['ds-160', 'confirmacion', 'codigo de barras', 'barcode', 'application id', 'visa k', 'no inmigrante'],
+  zones: [{ n: 1, x: 30, y: 40, w: 120, h: 18 }, { n: 2, x: 30, y: 78, w: 130, h: 18 }, { n: 3, x: 180, y: 100, w: 110, h: 60 }],
+  fields: [
+    { n: 1, label: 'Nombre del solicitante', where: 'Parte superior.', why: 'Debe coincidir con el pasaporte.' },
+    { n: 2, label: 'Identificador de la solicitud (Application ID)', where: 'Cerca del código de barras.', why: 'Sirve para recuperar la solicitud.' },
+    { n: 3, label: 'Código de barras', where: 'Lado derecho.', why: 'Se escanea en el consulado; se debe imprimir completo y sin alterar.' }
+  ],
+  agent: ['Confirma que la página corresponde a la persona correcta.', 'Guarda copia en el expediente y recuerda al cliente llevarla impresa.', 'Si hay error de datos, escálalo: puede requerir una nueva solicitud.'],
+  escalate: ['Errores en nombre, fechas o pasaporte.', 'El cliente perdió la confirmación o el código no se lee.'],
+  pending: ['Detalles del formato dependen del consulado: validar en travel.state.gov.'],
+  src: 'https://travel.state.gov/content/travel/en/us-visas/visa-information-resources/forms.html' }
+];
+
+/* ---------- Qué revisar por formulario (para Customer Service) ----------
+   docs: ids de DATA.docs que el cliente puede recibir con este trámite.
+   watch: qué revisar y qué fechas buscar. */
+const G = ['receipt', 'rfe'];
+DATA.formDocs = {
+  'I-130':  { docs: ['receipt', 'approval', 'rfe', 'nvc'], watch: ['En el aviso de recibo, confirma que el tipo de caso sea I-130 y anota número de recibo y fechas.', 'Una aprobación del I-130 no es una Green Card: pregunta al equipo legal cuál es el siguiente paso (NVC o ajuste).', 'Si llega un RFE, la fecha límite está impresa en el aviso: escalar el mismo día.'] },
+  'I-129F': { docs: ['receipt', 'approval', 'rfe', 'nvc', 'ds160'], watch: ['Revisa la vigencia (fechas «Valid from / to») del aviso de aprobación.', 'Anota número de recibo y fechas del recibo.', 'Después de la aprobación hay cartas del consulado: fecha, hora y lugar de la entrevista.'] },
+  'I-360':  { docs: ['receipt', 'approval', 'rfe'], watch: ['Caso VAWA: usa solo el domicilio y los medios de contacto seguros indicados por el cliente y el equipo legal; no hables de detalles por canales no seguros.', 'Anota número de recibo y fechas; cualquier RFE se escala el mismo día.', 'No comentes los detalles del caso con terceros.'] },
+  'I-914':  { docs: ['receipt', 'bio', 'rfe', 'approval', 'ead'], watch: ['Si llega una cita de biométricos: fecha, hora y lugar del ASC (ver «Cita de biométricos»).', 'Caso sensible: usa los medios de contacto seguros que indique el equipo legal.', 'Si llega RFE o NOID, la fecha límite está en el aviso: escalar el mismo día.'] },
+  'I-918':  { docs: ['receipt', 'bio', 'rfe', 'approval', 'ead'], watch: ['Si llega una cita de biométricos: fecha, hora y lugar del ASC.', 'Caso sensible: usa los medios de contacto seguros que indique el equipo legal.', 'Si llega RFE o NOID, la fecha límite está en el aviso: escalar el mismo día.'] },
+  'I-485':  { docs: ['receipt', 'bio', 'interview', 'rfe', 'ead', 'parole', 'approval'], watch: ['Cita de biométricos: revisa FECHA, HORA y LUGAR (dirección del ASC) y que el cliente lleve el aviso.', 'Aviso de entrevista: revisa fecha, hora, oficina y lista de documentos.', 'Permiso de trabajo / advance parole que lleguen durante el trámite: categoría y «Card Expires».', 'RFE: fecha límite impresa en el aviso; escalar el mismo día.'] },
+  'I-90':   { docs: ['receipt', 'bio', 'greencard'], watch: ['Revisa en el aviso de recibo el tipo de caso (I-90) y las fechas.', 'Si hay cita de biométricos: fecha, hora y lugar.', 'El aviso de recibo puede incluir una nota sobre la vigencia de la tarjeta; léela tal cual y confirma con el abogado antes de explicarla al cliente.'] },
+  'I-751':  { docs: ['receipt', 'bio', 'interview', 'rfe', 'approval', 'greencard'], watch: ['Fecha «Card Expires» de la tarjeta condicional: es la que marca la ventana para presentar el I-751.', 'El aviso de recibo puede traer una nota sobre la extensión de la vigencia: léela tal cual y confirma con el abogado.', 'Si hay cita de biométricos: fecha, hora y lugar del ASC.'] },
+  'I-765':  { docs: ['receipt', 'ead', 'rfe', 'bio'], watch: ['En la tarjeta EAD: categoría (Category), USCIS# y «Card Expires».', 'No afirmes al cliente que puede trabajar: revisa que la tarjeta esté vigente y escala cualquier duda.', 'Si el trámite es una renovación, calcula días restantes al vencimiento.'] },
+  'I-131':  { docs: ['receipt', 'parole', 'bio', 'rfe'], watch: ['Vigencia del documento de viaje: fecha de vencimiento.', 'Antes de cualquier viaje, escala al equipo legal.', 'Si hay cita de biométricos: fecha, hora y lugar.'] },
+  'I-864':  { docs: [], watch: ['Este formulario lo presenta el patrocinador junto con el trámite principal; no genera avisos propios.', 'Confirma que las firmas y los anexos estén completos antes de que lo envíe el equipo legal.', 'Si USCIS o el NVC piden documentos de ingresos, pasa la solicitud al equipo legal.'] },
+  'I-864A': { docs: [], watch: ['Se presenta junto con el I-864; no genera avisos propios.', 'Confirma que el miembro del hogar tenga todas las firmas y anexos.', 'Usa la edición vigente del formulario: confirmar con el equipo legal.'] },
+  'I-192':  { docs: ['receipt', 'rfe', 'approval', 'bio'], watch: ['Anota el número de recibo y las fechas.', 'Si llega RFE, la fecha límite está en el aviso: escalar el mismo día.', 'Una aprobación del perdón se revisa con el abogado antes de explicar al cliente.'] },
+  'I-601':  { docs: ['receipt', 'rfe', 'approval'], watch: ['Anota el número de recibo y las fechas.', 'RFE: fecha límite impresa; escalar el mismo día.', 'Resultado del perdón: no lo interpretes; pásalo al equipo legal.'] },
+  'I-601A': { docs: ['receipt', 'bio', 'rfe', 'approval', 'nvc'], watch: ['Cita de biométricos: fecha, hora y lugar del ASC.', 'La decisión del I-601A no equivale a una visa: pregunta al equipo legal cuál es el siguiente paso.', 'No permitas que el cliente salga del país sin autorización del abogado.'] },
+  'I-693':  { docs: [], watch: ['El sobre debe entregarse sellado: el cliente no debe abrirlo.', 'Revisa la fecha en que firmó el cirujano civil (ver novedades verificadas sobre su vigencia).', 'Confirma con el equipo legal si el I-693 debe ir con el I-485 o enviarse después.'] },
+  'N-600':  { docs: ['receipt', 'bio', 'interview', 'rfe', 'approval'], watch: ['Anota número de recibo y fechas del aviso de recibo.', 'Si llega cita de biométricos o de entrevista, revisa fecha, hora y lugar y escala al equipo legal.', 'Si hay RFE, la fecha límite está en el aviso: escalar el mismo día.', 'Recuerda: el N-600 solicita un certificado de una ciudadanía que ya se tiene; no uses el lenguaje de «hacerse ciudadano».'] },
+  'N-400':  { docs: ['receipt', 'bio', 'interview', 'rfe', 'approval'], watch: ['Cita de biométricos: fecha, hora y lugar.', 'Aviso de entrevista: fecha, hora, oficina y qué llevar.', 'Si hay ceremonia de juramento, el aviso trae fecha, hora y lugar: confirma que el cliente los anote.'] },
+  'I-589':  { docs: ['receipt', 'bio', 'interview', 'rfe'], watch: ['Caso sensible: usa los medios de contacto seguros que indique el equipo legal.', 'Cita de biométricos y de entrevista: fecha, hora y lugar.', 'Plazos del asilo: no los comentes; son responsabilidad del abogado.'] },
+  'DS-160': { docs: ['ds160', 'nvc'], watch: ['La página de confirmación debe tener el código de barras legible y el nombre correcto.', 'Revisa la cita en el consulado: fecha, hora y lugar.', 'No des detalles de requisitos de visa por tu cuenta: consulta con el equipo legal.'] },
+  'DS-260': { docs: ['nvc'], watch: ['Anota el número de caso del NVC.', 'Cartas de cita: fecha, hora y consulado.', 'Pregunta qué documentos aún faltan según la carta.'] },
+  'I-918B': { docs: [], watch: ['Lo completa la autoridad certificadora: revisa que esté firmado y fechado.', 'Verifica que el nombre de la víctima coincida con el resto de los documentos.', 'No lo corrijas ni lo cambies tú: pásalo al equipo legal.'] },
+  'I-914B': { docs: [], watch: ['Documento opcional de una autoridad: revisa que esté firmado y fechado.', 'Verifica que los datos coincidan con el resto del expediente.'] },
+  'I-914A': { docs: ['receipt', 'rfe', 'approval'], watch: ['Va a nombre del familiar: revisa que cada persona tenga su aviso de recibo.', 'Anota número de recibo y fechas de cada familiar.'] },
+  'I-918A': { docs: ['receipt', 'rfe', 'approval'], watch: ['Va a nombre del familiar: revisa que cada persona tenga su aviso de recibo.', 'Anota número de recibo y fechas de cada familiar.'] },
+  'I-912':  { docs: ['receipt', 'rfe'], watch: ['Si USCIS rechaza la exención de cuota, el aviso lo indica: escalar el mismo día.', 'No todos los formularios aceptan exención: confirmar con el equipo legal.'] },
+  'G-639':  { docs: [], watch: ['Anota el número de control que reciba el cliente.', 'La respuesta puede tardar; no prometas plazos.'] }
+};
 })();
 
 })();
@@ -1650,15 +1966,16 @@ function buildIndex() {
   INDEX = {
     forms: DATA.forms.map(f => ({ f, id: App.norm(f.id), name: App.norm(f.en + ' ' + f.es), kw: App.norm((f.kw || []).join(' ')), mn: App.norm(f.mnemo), tx: App.norm(f.short + ' ' + f.what + ' ' + f.who) })),
     procs: DATA.processes.map(p => ({ p, name: App.norm(p.name), sub: App.norm(p.sub || ''), tx: App.norm(p.goal + ' ' + (p.example || '')), main: App.norm(p.main), rel: p.related.filter(r => r.f).map(r => App.norm(r.f)) })),
-    needs: DATA.needs.map(n => ({ n, title: App.norm(n.title), ks: n.k.map(App.norm) }))
+    needs: DATA.needs.map(n => ({ n, title: App.norm(n.title), ks: n.k.map(App.norm) })),
+    docs: DATA.docs.map(d => ({ d, name: App.norm(d.name + ' ' + d.en), kw: App.norm(d.kw.join(' ')), tx: App.norm(d.what) }))
   };
 }
 App.search = raw => {
   if (!INDEX) buildIndex();
   const q = App.normQuery(raw);
-  if (!q) return { needs: [], forms: [], procs: [], q };
+  if (!q) return { needs: [], forms: [], procs: [], docs: [], q };
   const toks = q.split(' ').filter(t => t && !STOP.has(t));
-  if (!toks.length) return { needs: [], forms: [], procs: [], q };
+  if (!toks.length) return { needs: [], forms: [], procs: [], docs: [], q };
   const need = Math.ceil(toks.length / 2);
 
   const needs = INDEX.needs.map(x => {
@@ -1669,7 +1986,8 @@ App.search = raw => {
   }).filter(x => x.score).sort((a, b) => b.score - a.score).slice(0, 4);
 
   const bonus = {};
-  needs.forEach(x => x.n.forms.forEach(id => (bonus[id] = Math.max(bonus[id] || 0, 25 + x.score / 5))));
+  const dbonus = {};
+  needs.forEach(x => { (x.n.forms || []).forEach(id => (bonus[id] = Math.max(bonus[id] || 0, 25 + x.score / 5))); (x.n.docs || []).forEach(id => (dbonus[id] = Math.max(dbonus[id] || 0, 25 + x.score / 5))); });
 
   const forms = INDEX.forms.map(x => {
     let s = 0, hit = 0;
@@ -1697,7 +2015,14 @@ App.search = raw => {
     return { p: x.p, score: s };
   }).filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, 8);
 
-  return { needs, forms, procs, q };
+  const docs = INDEX.docs.map(x => {
+    let s = 0, hit = 0;
+    toks.forEach(t => { let v = 0; if (x.name.includes(t)) v = 40; else if (x.kw.includes(t)) v = 30; else if (x.tx.includes(t)) v = 8; if (v) { hit++; s += v; } });
+    if (hit < need) s = 0;
+    return { d: x.d, score: s + (dbonus[x.d.id] || 0) };
+  }).filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, 6);
+
+  return { needs, forms, procs, docs, q };
 };
 })();
 
@@ -1722,6 +2047,7 @@ const NAV = [
   { k: 'sim', ico: '🧩', t: '4 · Simulador de casos', h: '#/sim' },
   { k: 'search', ico: '🔎', t: '5 · Búsqueda inteligente', h: '#/search' },
   { k: 'progress', ico: '📈', t: '6 · Mi progreso y examen', h: '#/progress' },
+  { k: 'docs', ico: '🗂️', t: '7 · Documentos del cliente', h: '#/docs' },
   { k: 'help', ico: '💬', t: 'Centro de respuestas', h: '#/help' }
 ];
 
@@ -1768,6 +2094,7 @@ VIEWS.home = () => {
   </section>
   <section><h2 class="h2">Ruta de aprendizaje</h2>
     <ol class="steps">${steps.map((s, i) => `<li><a class="card step" href="${s[2]}"><span class="n">${i + 1}</span><span class="ico">${s[3]}</span><b>${s[0]}</b><span>${s[1]}</span></a></li>`).join('')}</ol></section>
+  <section class="card pad shortcuts"><h2 class="h3">🎧 Cliente en la línea: ¿qué dato busco?</h2><div class="chips">${[['Cita de biométricos', 'bio'], ['Fecha de vencimiento del EAD', 'ead'], ['Vencimiento de la Green Card', 'greencard'], ['Plazo de un RFE', 'rfe'], ['Número de recibo', 'receipt'], ['Entrevista', 'interview'], ['Cita en el consulado', 'nvc']].map(([t, id]) => `<a class="chip pair" href="#/doc/${id}">${t}</a>`).join('')}<a class="chip alt" href="#/docs">Ver todos los documentos →</a></div></section>
   <section class="grid2">
     <div class="card pad"><h2 class="h3">Mi avance general</h2><div class="big-n">${st.overall}%</div>${bar(st.overall)}
       <ul class="kv"><li><span>Formularios estudiados</span><b>${st.studied}/${st.nForms}</b></li><li><span>Formularios entendidos</span><b>${st.understood}/${st.nForms}</b></li>
@@ -1816,6 +2143,8 @@ VIEWS.form = r => {
     ${sec('¿En qué procesos aparece?', `<div class="chips">${uses}</div>`)}
     ${sec('Formularios relacionados', `<div class="chips">${rel}</div><p class="muted sm">Relacionado no significa que siempre se presenten juntos: depende del caso.</p>`)}
     ${sec('Ejemplo práctico', `<p>${esc(f.example)}</p>`)}
+    ${sec('🎧 Qué revisar para atender al cliente', (() => { const fd = DATA.formDocs[f.id] || { docs: ['receipt'], watch: ['Anota el número de recibo y las fechas del aviso de recibo.'] }; return `<ul class="list">${fd.watch.map(x => `<li>${esc(x)}</li>`).join('')}</ul>${fd.docs.length ? `<p class="muted sm">Documentos que el cliente puede recibir con este trámite (toca uno para ver dónde están las fechas):</p><div class="chips">${fd.docs.map(docChip).join('')}</div>` : ''}`; })())}
+    ${sec('🖼️ Imagen del formato', imgSlot('form:' + f.id, 'Imagen del formulario ' + f.id), false)}
     ${sec('Errores frecuentes', `<ul class="list warn-l">${f.errors.map(e => `<li>${esc(e)}</li>`).join('')}</ul>`)}
     ${f.lawyer ? sec('⚖️ Cuándo escalar al abogado', `<p>${esc(f.lawyer)}</p>`) : ''}
     ${f.pending && f.pending.length ? sec('Pendiente de validación', pending(f.pending)) : ''}
@@ -1916,9 +2245,10 @@ VIEWS.search = r => {
   const q = r.rest || '', res = App.search(q);
   let out = '';
   if (!q) out = `<div class="card pad"><h2 class="h3">Prueba buscando…</h2><div class="chips">${['I-485', 'permiso de trabajo', 'perdón', 'visa U', 'VAWA', 'quitar condiciones', 'novio', 'ciudadanía'].map(x => `<a class="chip pair" href="#/search/${encodeURIComponent(x)}">${esc(x)}</a>`).join('')}</div><p class="muted">Puedes buscar por número (I-130, DS-260), nombre, proceso, palabra clave o por lo que necesita el cliente.</p></div>`;
-  else if (!res.needs.length && !res.forms.length && !res.procs.length) out = `<p class="empty">Sin resultados para «${esc(q)}». Prueba con el número del formulario o con otra palabra.</p>`;
+  else if (!res.needs.length && !res.forms.length && !res.procs.length && !res.docs.length) out = `<p class="empty">Sin resultados para «${esc(q)}». Prueba con el número del formulario o con otra palabra.</p>`;
   else {
-    if (res.needs.length) out += `<h2 class="h2">Necesidad del cliente</h2>` + res.needs.map(({ n }) => `<div class="card pad need"><h3>${esc(n.title)}</h3><ul class="nl">${n.forms.map(id => `<li>${chipF(id)} <span>${esc((n.explain || {})[id] || (FID(id) || {}).short || '')}</span></li>`).join('')}</ul>${n.note ? `<p class="note">⚠️ ${esc(n.note)}</p>` : ''}</div>`).join('');
+    if (res.needs.length) out += `<h2 class="h2">Necesidad del cliente</h2>` + res.needs.map(({ n }) => `<div class="card pad need"><h3>${esc(n.title)}</h3><ul class="nl">${(n.docs || []).map(id => { const d = DATA.docs.find(x => x.id === id); return `<li>${docChip(id)} <span>${esc(d.what)}</span></li>`; }).join('')}${(n.forms || []).map(id => `<li>${chipF(id)} <span>${esc((n.explain || {})[id] || (FID(id) || {}).short || '')}</span></li>`).join('')}</ul>${n.note ? `<p class="note">⚠️ ${esc(n.note)}</p>` : ''}</div>`).join('');
+    if (res.docs.length) out += `<h2 class="h2">Documentos del cliente</h2><div class="cards">${res.docs.map(x => `<a class="card pcard" href="#/doc/${x.d.id}"><b class="pname">${x.d.ico} ${esc(x.d.name)}</b><p class="fshort">${esc(x.d.what)}</p></a>`).join('')}</div>`;
     if (res.forms.length) out += `<h2 class="h2">Formularios</h2><div class="cards">${res.forms.map(x => formCard(x.f)).join('')}</div>`;
     if (res.procs.length) out += `<h2 class="h2">Procesos</h2><div class="cards">${res.procs.map(x => `<a class="card pcard" href="#/process/${x.p.id}"><b class="pname">${esc(x.p.name)}</b><div class="muted">${esc(x.p.sub || '')}</div><p class="fshort">${esc(x.p.goal)}</p></a>`).join('')}</div>`;
   }
@@ -1953,6 +2283,58 @@ VIEWS.progress = () => {
       ${weak.length ? `<p class="muted sm">Temas a reforzar (último examen): ${weak.map(([k, p]) => `<a href="#/progress" class="chip dim">${esc(DATA.topics[k].name)} · ${p}%</a>`).join(' ')}</p>` : ''}</div>
     <div class="card pad"><h2 class="h3">Datos de progreso</h2><div class="btns"><button class="btn ghost" data-act="export">⬇ Exportar progreso</button><button class="btn ghost" data-act="import">⬆ Importar progreso</button><button class="btn danger" data-act="reset">Reiniciar progreso</button></div></div>`;
 };
+
+
+/* ---------- Imágenes (esquemas y capturas) ---------- */
+const CARD_DOCS = ['ead', 'greencard', 'parole'];
+function docSvg(d) {
+  const card = CARD_DOCS.includes(d.id);
+  let s = `<svg viewBox="0 0 320 230" class="dsvg" role="img" aria-label="Esquema ilustrativo de ${esc(d.name)} con los campos numerados">`;
+  if (card) s += `<rect x="14" y="26" width="292" height="150" rx="14" class="pg"/><rect x="28" y="52" width="58" height="80" rx="6" class="ph0"/><rect x="100" y="36" width="120" height="9" rx="3" class="ph0"/>`;
+  else { s += `<rect x="14" y="8" width="292" height="214" rx="8" class="pg"/><rect x="30" y="18" width="150" height="9" rx="3" class="ph0"/>`; for (let y = 36, i = 0; y < 212; y += 14, i++) s += `<rect x="30" y="${y}" width="${[250, 210, 240, 180, 230][i % 5]}" height="5" rx="2" class="ln"/>`; }
+  d.zones.forEach(z => { s += `<rect x="${z.x}" y="${z.y}" width="${z.w}" height="${z.h}" rx="4" class="zn"/><circle cx="${z.x}" cy="${z.y + z.h / 2}" r="9" class="pin"/><text x="${z.x}" y="${z.y + z.h / 2 + 4}" class="pn2">${z.n}</text>`; });
+  return s + '</svg>';
+}
+function imgSlot(key, label) {
+  const emb = (DATA.images || {})[key], loc = (S().imgs || {})[key], im = emb || loc;
+  if (im) return `<figure class="shot"><img src="${im}" alt="${esc(label)}"><figcaption class="muted sm">${emb ? 'Imagen incluida en la herramienta.' : 'Imagen guardada solo en este navegador.'}</figcaption></figure>${emb ? '' : `<button class="btn ghost small" data-act="imgdel" data-k="${esc(key)}">Quitar imagen</button>`}`;
+  return `<div class="slot"><label class="btn ghost small">📷 Agregar imagen<input type="file" accept="image/*" data-change="img" data-k="${esc(key)}" hidden></label><p class="muted sm">Sube una captura de un formato o aviso <b>en blanco o de ejemplo</b>. No subas documentos con datos reales de clientes. Se guarda solo en este navegador.</p></div>`;
+}
+const docChip = id => { const d = DATA.docs.find(x => x.id === id); return d ? `<a class="chip alt" href="#/doc/${d.id}">${d.ico} ${esc(d.name)}</a>` : ''; };
+
+/* ---------- 7 · DOCUMENTOS DEL CLIENTE ---------- */
+VIEWS.docs = () => {
+  const quick = [['Cita de biométricos: fecha, hora y lugar', 'bio'], ['Fecha de vencimiento del permiso de trabajo', 'ead'], ['Fecha de vencimiento de la Green Card', 'greencard'], ['Plazo para responder un RFE o NOID', 'rfe'], ['Número de recibo del caso', 'receipt'], ['Fecha y lugar de la entrevista', 'interview'], ['Cita en el consulado', 'nvc'], ['Hasta cuándo puede permanecer (I-94)', 'i94']];
+  return head('Documentos que recibe el cliente', 'Cuando un cliente llama con una carta o tarjeta en la mano, aquí ves qué dato buscar, en qué parte del documento está y cuándo escalar.') +
+    `<div class="card pad"><h2 class="h3">¿Qué dato necesitas encontrar?</h2><ul class="nl">${quick.map(([t, id]) => `<li><a class="chip alt" href="#/doc/${id}">${esc(t)}</a></li>`).join('')}</ul></div>
+    <div class="cards">${DATA.docs.map(d => `<a class="card pcard" href="#/doc/${d.id}"><div class="fc-top"><b class="pname">${d.ico} ${esc(d.name)}</b>${d.kind ? '<span class="badge esc">Fecha crítica</span>' : ''}</div><div class="muted sm">${esc(d.en)} · ${esc(d.issuer)}</div><p class="fshort">${esc(d.what)}</p></a>`).join('')}</div>
+    <p class="note">Los esquemas son ilustrativos: la posición exacta de los datos puede variar según la edición del documento. Ante cualquier duda, escala al equipo legal.</p>`;
+};
+VIEWS.doc = r => {
+  const d = DATA.docs.find(x => x.id === r.a);
+  if (!d) return head('Documento no encontrado', '<a href="#/docs">Volver</a>');
+  const rel = Object.keys(DATA.formDocs).filter(id => DATA.formDocs[id].docs.includes(d.id)).map(chipF).join('');
+  const calc = d.kind ? `<div class="card pad dcalc"><h2 class="h3">📅 Calculadora de fechas</h2><label>${esc(d.dateLabel)}<input type="date" data-dcalc="${d.kind}"></label><div class="dres muted" aria-live="polite">Escribe o elige la fecha que aparece en el documento.</div><p class="muted sm">Orientación operativa para priorizar; no determina plazos legales.</p></div>` : '';
+  return `<nav class="crumbs"><a href="#/docs">Documentos del cliente</a> › ${esc(d.name)}</nav>
+  ${head(d.ico + ' ' + esc(d.name), esc(d.en) + ' · ' + esc(d.issuer))}
+  <div class="callout"><b>¿Qué es?</b><p>${esc(d.what)}</p></div>
+  <div class="card pad"><h2 class="h3">Dónde mirar</h2><div class="anat"><div class="anat-i">${docSvg(d)}<p class="muted sm">Esquema ilustrativo; no es el documento oficial.</p></div>
+    <ol class="flds">${d.fields.map(f => `<li><span class="pinb">${f.n}</span><div><b>${esc(f.label)}</b><span class="where">${esc(f.where)}</span><p>${esc(f.why)}</p></div></li>`).join('')}</ol></div></div>
+  ${calc}
+  <div class="grid2"><div class="card pad"><h2 class="h3">🎧 Qué hacer como agente</h2><ul class="list">${d.agent.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+  <div class="card pad esc-c"><h2 class="h3">⚖️ Cuándo escalar</h2><ul class="list warn-l">${d.escalate.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div></div>
+  ${pending(d.pending)}
+  <div class="card pad"><h2 class="h3">Imagen del documento</h2>${imgSlot('doc:' + d.id, 'Imagen de ' + d.name)}</div>
+  ${rel ? `<div class="card pad"><h2 class="h3">Formularios con los que puede llegar</h2><div class="chips">${rel}</div></div>` : ''}
+  <p class="muted sm">Fuente: ${link(d.src, d.src.replace(/^https?:\/\//, ''))} · Última verificación: ${esc(DATA.meta.verifiedLabel)}</p>${disclaimer}`;
+};
+function dateMsg(kind, v) {
+  const t = new Date(); t.setHours(0, 0, 0, 0); const p = v.split('-').map(Number); if (p.length < 3 || !p[0]) return null;
+  const n = Math.round((new Date(p[0], p[1] - 1, p[2]) - t) / 864e5), f = x => (x === 1 ? '1 día' : x + ' días');
+  if (kind === 'appt') return n < 0 ? ['bad', `La fecha pasó hace ${f(-n)}. Escala de inmediato al equipo legal.`] : n <= 1 ? ['bad', n === 0 ? 'Es HOY. Confirma que el cliente asiste; si no puede, escala ya.' : 'Es MAÑANA. Confirma asistencia; si no puede, escala hoy.'] : n <= 7 ? ['warn', `Faltan ${f(n)}. Recuerda qué debe llevar y confirma asistencia.`] : ['ok', `Faltan ${f(n)}. Regístrala en el expediente y recuérdala unos días antes.`];
+  if (kind === 'deadline') return n < 0 ? ['bad', `El plazo venció hace ${f(-n)}. Escala hoy mismo.`] : n <= 14 ? ['bad', `Quedan ${f(n)}. Urgente: envía el aviso completo al abogado hoy.`] : ['warn', `Quedan ${f(n)}. Aun así, envía el aviso completo al abogado el mismo día que llega.`];
+  return n < 0 ? ['bad', `Venció hace ${f(-n)}. No confirmes autorización ni estatus al cliente: escala.`] : n <= 180 ? ['warn', `Vence en ${f(n)} (180 días o menos). Avisa al equipo legal para revisar renovación o reemplazo.`] : ['ok', `Faltan ${f(n)} para el vencimiento. Regístralo en el expediente.`];
+}
 
 /* ---------- CENTRO DE RESPUESTAS ---------- */
 VIEWS.help = () => head('Centro de respuestas', 'Preguntas frecuentes, información que hay que reunir antes de decidir, novedades verificadas y fuentes oficiales.') +
@@ -2015,7 +2397,7 @@ VIEWS.run = () => {
     const r = s.result, ts = Object.entries(r.topics).map(([k, v]) => ({ k, pct: Math.round(v.ok / v.n * 100), v })).sort((a, b) => a.pct - b.pct);
     verdict = `<div class="callout ${r.pass ? 'okk' : 'warn'}"><b>${r.pass ? '🎉 Aprobado' : 'Aún no aprobado'}</b><p>${r.score} de ${r.total} (${r.pct}%). Se requiere ${App.EXAM.pass}% (${Math.ceil(r.total * App.EXAM.pass / 100)} aciertos).</p></div>
     <div class="card pad"><h2 class="h3">Resultado por tema</h2>${ts.map(t => `<div class="prow"><span>${esc(DATA.topics[t.k].name)}</span><div>${bar(t.pct, t.pct >= App.EXAM.pass ? '' : 'bad')}<small>${t.v.ok}/${t.v.n} · ${t.pct}%</small></div></div>`).join('')}</div>
-    ${ts.filter(t => t.pct < App.EXAM.pass).length ? `<div class="card pad"><h2 class="h3">Temas a reforzar</h2>${ts.filter(t => t.pct < App.EXAM.pass).map(t => { const T = DATA.topics[t.k]; return `<div class="reinf"><b>${esc(T.name)}</b> <span class="muted">(${t.pct}%)</span><div class="chips">${T.forms.map(chipF).join('')}${T.procs.map(chipP).join('')}${!T.forms.length ? '<a class="chip alt" href="#/help">Información necesaria antes de decidir</a>' : ''}</div></div>`; }).join('')}</div>` : ''}`;
+    ${ts.filter(t => t.pct < App.EXAM.pass).length ? `<div class="card pad"><h2 class="h3">Temas a reforzar</h2>${ts.filter(t => t.pct < App.EXAM.pass).map(t => { const T = DATA.topics[t.k]; return `<div class="reinf"><b>${esc(T.name)}</b> <span class="muted">(${t.pct}%)</span><div class="chips">${T.forms.map(chipF).join('')}${T.procs.map(chipP).join('')}${T.link ? `<a class="chip alt" href="${T.link}">Repasar documentos del cliente</a>` : !T.forms.length ? '<a class="chip alt" href="#/help">Información necesaria antes de decidir</a>' : ''}</div></div>`; }).join('')}</div>` : ''}`;
   } else verdict = `<div class="callout ${pct >= 85 ? 'okk' : ''}"><b>${s.score} de ${n} correctas (${pct}%)</b><p>${pct >= 85 ? 'Muy bien. Sigue con el repaso espaciado para fijar lo aprendido.' : 'Repite las incorrectas: el repaso activo es la forma más rápida de fijar los formularios.'}</p></div>`;
   return `<nav class="crumbs"><a href="#/${s.from}">← Salir</a> · ${esc(s.title)}</nav>${head('Resultado')}${verdict}
     ${wrongQ.length ? `<div class="card pad"><h2 class="h3">Para revisar (${wrongQ.length})</h2>${wrongQ.map(q => `<div class="rev"><p class="muted sm">${esc(q.tag)}</p>${q.s ? `<p>${esc(q.s)}</p>` : ''}<p><b>${esc(q.p)}</b></p><p class="badc">Tu respuesta: ${s.ans[s.qs.indexOf(q)] == null ? 'sin responder' : esc(q.o[s.ans[s.qs.indexOf(q)]])}</p><p class="okc">Correcta: ${esc(q.o[q.a])}</p><p class="muted">${esc(q.e)}</p></div>`).join('')}</div>` : ''}
@@ -2043,6 +2425,7 @@ const ACT = {
   next() { const s = RUN; s.i++; s.i >= s.qs.length ? finishRun() : render(true); window.scrollTo(0, 0); },
   prev() { RUN.i = Math.max(0, RUN.i - 1); render(true); },
   retry() { const w = RUN.qs.filter((q, i) => RUN.ans[i] !== q.a); RUN = { mode: 'retry', title: 'Repetir incorrectas', from: RUN.from, qs: App.shuffle(w).map(q => App.prepare(Object.assign({}, q, { o: q.o, a: q.a }))), i: 0, ans: [], done: false }; render(true); window.scrollTo(0, 0); },
+  imgdel(el) { if (S().imgs) delete S().imgs[el.dataset.k]; App.save(); render(true); },
   menu() { document.body.classList.toggle('menu-open'); },
   export() { dataDlg('export'); },
   import() { dataDlg('import'); },
@@ -2053,6 +2436,7 @@ const ACT = {
 };
 const CHG = {
   cmp(el) { const sel = [...document.querySelectorAll('[data-change=cmp]')], a = sel.find(x => x.dataset.side === 'a').value, b = sel.find(x => x.dataset.side === 'b').value; navigate('#/compare' + (a || b ? '/' + (a || '_') + '/' + (b || '_') : '')); },
+  img(el) { const f = el.files[0]; if (!f) return; const rd = new FileReader(); rd.onload = () => { const im = new Image(); im.onload = () => { const k = Math.min(1, 900 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); S().imgs = S().imgs || {}; S().imgs[el.dataset.k] = c.toDataURL('image/jpeg', 0.8); App.save(); if (!App.storageOK) toast('No se pudo guardar: el navegador no permite almacenamiento'); render(true); }; im.onerror = () => toast('No se pudo leer la imagen'); im.src = rd.result; }; rd.readAsDataURL(f); },
   importfile(el) { const f = el.files[0]; if (!f) return; const rd = new FileReader(); rd.onload = () => { $('#data-ta').value = rd.result; ACT.doimport(); }; rd.readAsText(f); }
 };
 
@@ -2063,6 +2447,7 @@ function liveSearch(inp) {
   const r = App.search(v), items = [];
   r.needs.slice(0, 2).forEach(x => items.push(`<a href="#/search/${encodeURIComponent(x.n.title)}"><span class="k">Necesidad</span>${esc(x.n.title)}</a>`));
   r.forms.slice(0, 5).forEach(x => items.push(`<a href="#/form/${x.f.id}"><span class="k">${esc(x.f.id)}</span>${esc(x.f.es)}</a>`));
+  r.docs.slice(0, 2).forEach(x => items.push(`<a href="#/doc/${x.d.id}"><span class="k">Documento</span>${esc(x.d.name)}</a>`));
   r.procs.slice(0, 3).forEach(x => items.push(`<a href="#/process/${x.p.id}"><span class="k">Proceso</span>${esc(x.p.name)}</a>`));
   box.innerHTML = items.length ? items.join('') + `<a class="all" href="#/search/${encodeURIComponent(v)}">Ver todos los resultados →</a>` : '<div class="none">Sin resultados</div>';
   box.hidden = false;
@@ -2089,7 +2474,7 @@ function buildNav(active) {
 }
 function render(keep) {
   const r = parse(), V = VIEWS[r.v] || VIEWS.home;
-  let act = { form: 'catalog', process: 'processes', run: RUN && RUN.from ? RUN.from.split('/')[0] : 'progress' }[r.v] || r.v;
+  let act = { form: 'catalog', process: 'processes', doc: 'docs', run: RUN && RUN.from ? RUN.from.split('/')[0] : 'progress' }[r.v] || r.v;
   if (act === 'form') act = 'catalog';
   $('#main').innerHTML = V(r);
   buildNav(act);
@@ -2111,6 +2496,7 @@ document.addEventListener('click', e => {
 document.addEventListener('change', e => { const t = e.target.closest('[data-change]'); if (t && CHG[t.dataset.change]) CHG[t.dataset.change](t); });
 document.addEventListener('input', e => {
   if (e.target.matches('[data-search]')) liveSearch(e.target);
+  else if (e.target.matches('[data-dcalc]')) { const m = dateMsg(e.target.dataset.dcalc, e.target.value), o = e.target.closest('.dcalc').querySelector('.dres'); o.className = 'dres ' + (m ? m[0] : 'muted'); o.textContent = m ? m[1] : 'Escribe o elige la fecha que aparece en el documento.'; }
   else if (e.target.matches('[data-filter]')) {
     const q = App.norm(e.target.value); let any = false;
     document.querySelectorAll('#catlist .fcard').forEach(c => { const m = !q || App.norm(c.textContent).includes(q); c.hidden = !m; if (m) any = true; });
