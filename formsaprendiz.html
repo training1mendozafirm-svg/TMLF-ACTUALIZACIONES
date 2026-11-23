@@ -224,6 +224,9 @@ select{width:100%;padding:11px 12px;border-radius:10px;background:var(--panel2);
 .shortcuts{margin-top:18px}
 @media(max-width:700px){.anat{grid-template-columns:1fr}}
 
+.mxb{padding:2px 10px;border-radius:7px;font-weight:700;font-size:.8rem;white-space:nowrap}.mx-si{background:rgba(143,211,176,.16);color:var(--ok)}.mx-dep{background:rgba(235,203,139,.16);color:var(--warn)}.mx-no{background:rgba(242,160,160,.16);color:var(--bad)}
+.tblw{overflow-x:auto}
+
 </style>
 </head>
 <body>
@@ -231,7 +234,7 @@ select{width:100%;padding:11px 12px;border-radius:10px;background:var(--panel2);
   <aside class="side" id="side" aria-label="Menú principal">
     <div class="brand"><div class="logo">TM</div><div><b>Formularios Migratorios</b><span>TMLF Academy · Training</span></div></div>
     <nav id="nav"></nav>
-    <div class="side-f">Última verificación de fuentes:<br><b>21 de noviembre de 2026</b><br>USCIS y Departamento de Estado</div>
+    <div class="side-f">Última verificación de fuentes:<br><b>23 de noviembre de 2026</b><br>USCIS y Departamento de Estado</div>
   </aside>
   <div class="scrim" data-act="menu"></div>
   <div class="main-wrap">
@@ -265,7 +268,7 @@ const DATA = window.DATA;
 
 DATA.meta = {
   verified: '2026-11-21',
-  verifiedLabel: '21 de noviembre de 2026',
+  verifiedLabel: '23 de noviembre de 2026',
   version: '1.0',
   storageKey: 'tmlf_formularios_migratorios_v1'
 };
@@ -512,7 +515,24 @@ DATA.forms = [
     'Confundir el I-131 (documento de viaje/parole) con el I-765 (permiso de trabajo): se pueden pedir juntos («combo»), pero son beneficios distintos.'
   ],
   lawyer: 'Antes de cualquier viaje con un trámite pendiente, y en cualquier caso con presencia ilegal acumulada, órdenes de remoción o T/U.',
-  pending: ['Nueva edición del formulario (04/22/26): USCIS solo aceptará esa edición desde el 21-dic-2026; usar siempre la edición vigente.'],
+  matrix: [
+    { s: 'Ajuste de estatus (I-485) pendiente', r: 'si', n: 'Advance parole para viajar mientras se tramita el ajuste. Debe aprobarse ANTES de salir.' },
+    { s: 'Residente permanente que viajará por mucho tiempo', r: 'si', n: 'Permiso de reingreso (reentry permit).' },
+    { s: 'Refugiado o asilado', r: 'si', n: 'Documento de viaje para refugiados (refugee travel document).' },
+    { s: 'TPS', r: 'si', n: 'Autorización de viaje de TPS; USCIS indica seguir usando el I-131.' },
+    { s: 'DACA', r: 'dep', n: 'Advance parole bajo la política DACA anterior al 5-sep-2017, según una orden judicial. Validar con el equipo legal.' },
+    { s: 'Parole humanitario o de beneficio público significativo', r: 'dep', n: 'Se solicita con I-131 y, según el caso, I-134. Depende de la categoría.' },
+    { s: 'VAWA con I-485 pendiente', r: 'dep', n: 'Advance parole por el I-485 pendiente, si se cumplen los requisitos. El I-360 no se tramita con I-131.' },
+    { s: 'Visa T: solicitud inicial', r: 'no', n: 'Se usa el I-914, no el I-131.' },
+    { s: 'Visa T: familiar derivado (solicitud)', r: 'no', n: 'Se usa el I-914 Supplement A.' },
+    { s: 'Visa T pendiente, aún sin aprobar', r: 'no', n: 'El formulario del I-131 menciona la T aprobada; tenerla pendiente no basta por sí solo. Escalar.' },
+    { s: 'Visa T aprobada (I-914) o derivado T aprobado (Supplement A)', r: 'si', n: 'Puede solicitar advance parole con el I-131. Para algunos derivados puede existir la alternativa de una visa T en el consulado.' },
+    { s: 'Ajuste de estatus de T a residencia', r: 'dep', n: 'Puede usarse para autorización de viaje, pero salir puede afectar requisitos como la presencia física. Escalar antes de viajar.' },
+    { s: 'Visa U: petición inicial', r: 'no', n: 'Se usa el I-918, no el I-131.' },
+    { s: 'Visa U aprobada (I-918 o Supplement A)', r: 'si', n: 'El formulario lista la U aprobada como base para solicitar documento de viaje.' },
+    { s: 'Visa U pendiente o en lista de espera', r: 'dep', n: 'USCIS no ha publicado una guía clara de viaje para esos casos. Siempre escalar.' }
+  ],
+  pending: ['Nueva edición del formulario (04/22/26): USCIS solo aceptará esa edición desde el 21-dic-2026; usar siempre la edición vigente.', 'La tabla «¿Cuándo se usa según el caso?» resume las categorías de la Parte 1 del formulario y la página oficial; el uso real depende de cada caso y de la edición vigente. Validar con el abogado, sobre todo para DACA, parole y casos T/U.'],
   src: 'https://www.uscis.gov/i-131',
   kw: ['viajar', 'viaje', 'advance parole', 'permiso de reingreso', 'travel document', 'parole', 'documento de viaje', 'reentry permit', 'pip'],
   q: { p: 'Una persona con un I-485 pendiente necesita viajar por una emergencia familiar. ¿Qué formulario debe considerarse ANTES de salir?', o: ['I-131 (advance parole)', 'I-765', 'I-90', 'I-192'], a: 0,
@@ -631,6 +651,7 @@ DATA.forms = [
   ],
   lawyer: 'Siempre: elegibilidad, familiar calificante, procesos en corte, otras causales y riesgos de salir del país.',
   src: 'https://www.uscis.gov/i-601a',
+  pending: ['La página de USCIS del I-601A describe la elegibilidad de forma más breve (pariente inmediato de ciudadano con petición aprobada); el texto aquí sigue la regulación vigente (cónyuge o padre/madre ciudadano o residente). Validar con el equipo legal.'],
   kw: ['perdon provisional', 'presencia ilegal', 'unlawful presence', 'provisional waiver', 'salir a la entrevista', '3 anos', '10 anos'],
   q: { p: 'Una persona en EE. UU. con un I-130 aprobado necesita perdón SOLO por presencia ilegal y aún no ha salido a su entrevista consular. ¿Qué formulario podría corresponder (si es elegible)?', o: ['I-601A', 'I-601', 'I-192', 'I-90'], a: 0,
        e: 'El I-601A es el perdón provisional por presencia ilegal, solicitado antes de salir. La elegibilidad debe revisarse con un abogado.' }
@@ -793,6 +814,7 @@ DATA.forms = [
   ],
   lawyer: 'Siempre que la agencia dude, niegue o tarde en firmar, o si el delito o la firma pueden no ser válidos.',
   src: 'https://www.uscis.gov/i-918',
+  pending: ['La regla de firma dentro de los 6 meses previos viene de la regulación (8 CFR 214.14); la página I-918 de USCIS no la menciona. Validar con el equipo legal.'],
   kw: ['certificacion', 'supplement b', 'i-918b', 'certifying agency', 'autoridad certificadora', 'policia'],
   q: { p: 'En una Visa U, ¿qué documento debe completar y firmar la autoridad certificadora?', o: ['I-918, Supplement B', 'I-914, Supplement B', 'I-864', 'I-192'], a: 0,
        e: 'El Supplement B del I-918 es la certificación de la autoridad. El I-914 Supplement B es de Visa T.' }
@@ -880,7 +902,7 @@ DATA.forms = [
     'Confundir exención (waiver) de cuota con perdón migratorio (waiver de inadmisibilidad): son cosas distintas.'
   ],
   lawyer: 'Cuando se dude de la elegibilidad de la exención, o cuando una decisión de pagar o no pagar pueda afectar un plazo del caso.',
-  pending: ['Lista exacta de formularios elegibles y criterios vigentes: consultar las instrucciones del I-912 y la tabla de cuotas G-1055 al preparar el caso.'],
+  pending: ['USCIS indica que el I-912 es solo en papel, se presenta junto con la solicitud (no después) y no aplica a DACA. Lista exacta de formularios elegibles y criterios vigentes: consultar las instrucciones del I-912 y la tabla de cuotas G-1055 al preparar el caso.'],
   src: 'https://www.uscis.gov/i-912',
   kw: ['exencion de cuota', 'fee waiver', 'no puedo pagar', 'cuota', 'costo', 'tarifa', 'g-1055'],
   q: { p: '¿Qué formulario solicita a USCIS que exima la cuota de ciertos formularios por incapacidad de pago?', o: ['I-912', 'I-864', 'I-601', 'I-693'], a: 0,
@@ -1373,6 +1395,11 @@ DATA.cases = [
   p: '¿Cuál es la orientación más adecuada?',
   o: ['Presentar el N-400 de inmediato', 'Puede existir la vía del N-600 (certificado de ciudadanía) si ya es ciudadano por su madre; requiere revisión legal', 'Presentar el I-90', 'Decirle que no tiene ninguna opción'], a: 1,
   e: 'El N-600 documenta una ciudadanía adquirida o derivada de un padre o madre ciudadano; el N-400 es para residentes que se naturalizan. Si corresponde una u otra lo determina el abogado.' },
+{ id: 'I14', level: 'intermedio', topics: ['permisos', 'trata'], forms: ['I-131', 'I-914'], esc: true,
+  s: 'Una clienta tiene la Visa T aprobada y quiere viajar a su país por una emergencia familiar.',
+  p: '¿Qué formulario puede solicitarse para el permiso de viaje y qué debe hacer el agente?',
+  o: ['I-914 de nuevo; el agente la deja viajar', 'I-131 (advance parole); el agente no autoriza el viaje y escala al equipo legal', 'I-765; el agente la deja viajar con su permiso de trabajo', 'No se necesita nada: la T aprobada permite viajar libremente'], a: 1,
+  e: 'Con una T aprobada, el advance parole se solicita con el I-131. Los viajes pueden afectar requisitos como la presencia física para el ajuste, por lo que el agente escala antes de cualquier viaje.' },
 { id: 'I12', level: 'intermedio', topics: ['docs'], forms: [],
   s: 'Un cliente muestra un aviso I-797C que dice «Receipt Notice» y pregunta si ya le aprobaron su caso.',
   p: '¿Cuál es la respuesta adecuada?',
@@ -1656,7 +1683,7 @@ const DATA = window.DATA;
 DATA.docs = [
 { id: 'receipt', ico: '🧾', name: 'Aviso de recibo (I-797C)', en: 'Notice of Action · Receipt Notice', issuer: 'USCIS',
   what: 'Confirma que USCIS recibió el trámite. Es comprobante de presentación, NO una aprobación.',
-  kind: null, kw: ['recibo', 'receipt', 'i-797c', 'numero de recibo', 'aviso de accion', 'notice of action', 'comprobante'],
+  kind: null, kw: ['recibo', 'tipos de i-797', 'i-797a', 'i-797b', 'i-797d', 'i-797e', 'i-797f', 'primeros avisos', 'primer aviso', 'receipt', 'i-797c', 'numero de recibo', 'aviso de accion', 'notice of action', 'comprobante'],
   zones: [{ n: 1, x: 30, y: 40, w: 110, h: 18 }, { n: 2, x: 30, y: 64, w: 110, h: 18 }, { n: 3, x: 180, y: 40, w: 110, h: 18 }, { n: 4, x: 180, y: 64, w: 110, h: 18 }, { n: 5, x: 30, y: 100, w: 120, h: 40 }, { n: 6, x: 180, y: 100, w: 110, h: 18 }],
   fields: [
     { n: 1, label: 'Número de recibo', where: 'Parte superior del aviso.', why: 'Es la llave del caso: 3 letras + 10 dígitos (ej. EAC…). Con él se consulta el estatus del caso y se identifica ante USCIS.' },
@@ -1668,7 +1695,7 @@ DATA.docs = [
   ],
   agent: ['Registra el número de recibo, el tipo de caso y las dos fechas.', 'Compara nombre y dirección con el expediente; reporta cualquier diferencia.', 'Explica al cliente que es un comprobante de que USCIS recibió el trámite, no una aprobación.', 'Si el tipo de caso no es el esperado, no lo comentes como error del cliente: pásalo al equipo legal.'],
   escalate: ['El tipo de caso no coincide con lo contratado.', 'Hay errores en el nombre, fecha de nacimiento o dirección.', 'El cliente dice que nunca recibió el aviso o lo perdió.'],
-  pending: ['El formato del número de recibo (3 letras + 10 dígitos) se confirmó en fuentes secundarias; validar contra una fuente oficial de USCIS.'],
+  pending: ['Formato del número de recibo (3 letras + 10 dígitos; prefijos como EAC, WAC, LIN, SRC, NBC, MSC, IOE) confirmado en la página de USCIS «Checking Your Case Status Online».'],
   src: 'https://egov.uscis.gov/casestatus/landing.do' },
 
 { id: 'bio', ico: '🖐️', name: 'Cita de biométricos (ASC)', en: 'ASC Appointment Notice (I-797C)', issuer: 'USCIS',
@@ -1685,7 +1712,7 @@ DATA.docs = [
   ],
   agent: ['Lee al cliente la fecha, la hora y la dirección tal como aparecen en el aviso y pídele que las repita.', 'Recuérdale llevar el aviso (todos los avisos si recibió varios) y la identificación que pida el aviso.', 'Calcula con la herramienta de fechas cuántos días faltan y deja la cita registrada en el expediente.', 'Si el cliente no puede asistir, no esperes: escala el mismo día. Reprogramar debe pedirse antes de la fecha y hora de la cita, con causa justificada.', 'Si cambió de domicilio o no recibió el aviso, escálalo de inmediato.'],
   escalate: ['El cliente no puede asistir o llega tarde.', 'La cita ya pasó o es en los próximos 3 días.', 'No recibió el aviso, lo perdió o la dirección del aviso no es la actual.', 'Hay datos personales incorrectos en el aviso (el ASC no puede corregir nombre ni datos personales).'],
-  pending: ['Plazos y canales de reprogramación (en línea, al menos 12 horas antes, o por el Contact Center) cambian: confirma el procedimiento vigente con el equipo legal antes de dar instrucciones.', 'Qué ocurre si falta a la cita depende del caso; USCIS puede considerar abandonada y negada la solicitud. No prometas resultados.'],
+  pending: ['USCIS indica reprogramar en línea al menos 12 horas antes de la cita; si faltan menos de 12 horas o ya la perdió, llamar al Contact Center (800-375-5283). Los canales pueden cambiar: confirma el procedimiento vigente con el equipo legal antes de dar instrucciones.', 'Qué ocurre si falta a la cita depende del caso; USCIS puede considerar abandonada y negada la solicitud. No prometas resultados.'],
   src: 'https://www.uscis.gov/forms/filing-guidance/preparing-for-your-biometric-services-appointment' },
 
 { id: 'interview', ico: '🎤', name: 'Aviso de entrevista', en: 'Interview Notice (I-797C)', issuer: 'USCIS',
@@ -1840,9 +1867,9 @@ DATA.formDocs = {
   'I-918':  { docs: ['receipt', 'bio', 'rfe', 'approval', 'ead'], watch: ['Si llega una cita de biométricos: fecha, hora y lugar del ASC.', 'Caso sensible: usa los medios de contacto seguros que indique el equipo legal.', 'Si llega RFE o NOID, la fecha límite está en el aviso: escalar el mismo día.'] },
   'I-485':  { docs: ['receipt', 'bio', 'interview', 'rfe', 'ead', 'parole', 'approval'], watch: ['Cita de biométricos: revisa FECHA, HORA y LUGAR (dirección del ASC) y que el cliente lleve el aviso.', 'Aviso de entrevista: revisa fecha, hora, oficina y lista de documentos.', 'Permiso de trabajo / advance parole que lleguen durante el trámite: categoría y «Card Expires».', 'RFE: fecha límite impresa en el aviso; escalar el mismo día.'] },
   'I-90':   { docs: ['receipt', 'bio', 'greencard'], watch: ['Revisa en el aviso de recibo el tipo de caso (I-90) y las fechas.', 'Si hay cita de biométricos: fecha, hora y lugar.', 'El aviso de recibo puede incluir una nota sobre la vigencia de la tarjeta; léela tal cual y confirma con el abogado antes de explicarla al cliente.'] },
-  'I-751':  { docs: ['receipt', 'bio', 'interview', 'rfe', 'approval', 'greencard'], watch: ['Fecha «Card Expires» de la tarjeta condicional: es la que marca la ventana para presentar el I-751.', 'El aviso de recibo puede traer una nota sobre la extensión de la vigencia: léela tal cual y confirma con el abogado.', 'Si hay cita de biométricos: fecha, hora y lugar del ASC.'] },
+  'I-751':  { docs: ['receipt', 'bio', 'interview', 'rfe', 'approval', 'greencard'], watch: ['Fecha «Card Expires» de la tarjeta condicional: es la que marca la ventana para presentar el I-751.', 'El aviso de recibo de un I-751 presentado a tiempo extiende la vigencia de la tarjeta condicional; USCIS informó 48 meses desde el vencimiento (alerta de enero de 2023). Lee la nota del aviso tal cual y confirma con el abogado.', 'Si hay cita de biométricos: fecha, hora y lugar del ASC.'] },
   'I-765':  { docs: ['receipt', 'ead', 'rfe', 'bio'], watch: ['En la tarjeta EAD: categoría (Category), USCIS# y «Card Expires».', 'No afirmes al cliente que puede trabajar: revisa que la tarjeta esté vigente y escala cualquier duda.', 'Si el trámite es una renovación, calcula días restantes al vencimiento.'] },
-  'I-131':  { docs: ['receipt', 'parole', 'bio', 'rfe'], watch: ['Vigencia del documento de viaje: fecha de vencimiento.', 'Antes de cualquier viaje, escala al equipo legal.', 'Si hay cita de biométricos: fecha, hora y lugar.'] },
+  'I-131':  { docs: ['receipt', 'parole', 'bio', 'rfe'], watch: ['Antes de nada, identifica el tipo de caso del cliente (ajuste, T, U, TPS, refugio…) en la tabla «¿Cuándo se usa según el caso?» de la ficha.', 'Vigencia del documento de viaje: fecha de vencimiento.', 'Antes de cualquier viaje, escala al equipo legal.', 'Si hay cita de biométricos: fecha, hora y lugar.'] },
   'I-864':  { docs: [], watch: ['Este formulario lo presenta el patrocinador junto con el trámite principal; no genera avisos propios.', 'Confirma que las firmas y los anexos estén completos antes de que lo envíe el equipo legal.', 'Si USCIS o el NVC piden documentos de ingresos, pasa la solicitud al equipo legal.'] },
   'I-864A': { docs: [], watch: ['Se presenta junto con el I-864; no genera avisos propios.', 'Confirma que el miembro del hogar tenga todas las firmas y anexos.', 'Usa la edición vigente del formulario: confirmar con el equipo legal.'] },
   'I-192':  { docs: ['receipt', 'rfe', 'approval', 'bio'], watch: ['Anota el número de recibo y las fechas.', 'Si llega RFE, la fecha límite está en el aviso: escalar el mismo día.', 'Una aprobación del perdón se revisa con el abogado antes de explicar al cliente.'] },
@@ -1861,6 +1888,35 @@ DATA.formDocs = {
   'I-912':  { docs: ['receipt', 'rfe'], watch: ['Si USCIS rechaza la exención de cuota, el aviso lo indica: escalar el mismo día.', 'No todos los formularios aceptan exención: confirmar con el equipo legal.'] },
   'G-639':  { docs: [], watch: ['Anota el número de control que reciba el cliente.', 'La respuesta puede tardar; no prometas plazos.'] }
 };
+})();
+
+/* ---- Tipos de I-797 y primeros avisos tras enviar el caso ---- */
+(function () {
+const DATA = window.DATA;
+DATA.i797 = [
+  { f: 'I-797', n: 'Notice of Action', u: 'Comunica determinadas aprobaciones de solicitudes o peticiones migratorias.' },
+  { f: 'I-797A', n: 'Notice of Action', u: 'Notificación de aprobación que incluye un registro I-94 de llegada/salida.' },
+  { f: 'I-797B', n: 'Notice of Action', u: 'Notificación de aprobación de una petición de trabajador extranjero, generalmente sin I-94.' },
+  { f: 'I-797C', n: 'Notice of Action', u: 'Comunica recepción, rechazo, transferencia, citas y otras acciones administrativas.' },
+  { f: 'I-797D', n: 'Notice of Action', u: 'Acompaña el envío de determinados documentos o tarjetas de beneficios migratorios.' },
+  { f: 'I-797E', n: 'Request for Evidence (RFE)', u: 'Solicita evidencia o documentación adicional para continuar evaluando el caso.' },
+  { f: 'I-797F', n: 'Transportation Letter', u: 'Documento de transporte emitido en determinadas circunstancias para facilitar el viaje a Estados Unidos.' }
+];
+DATA.i797Key = [
+  ['I-797C', 'USCIS recibió el caso o está notificando una acción administrativa. No significa que esté aprobado.'],
+  ['I-797E', 'USCIS necesita más evidencia (RFE). Es necesario revisar la fecha límite de respuesta.'],
+  ['I-797 de aprobación', 'USCIS aprobó una petición o solicitud específica. Debe verificarse exactamente qué beneficio fue aprobado.']
+];
+DATA.i797Rule = 'No basta con identificar el número I-797: siempre hay que leer el título de la notificación, el tipo de caso y la acción que USCIS está comunicando.';
+DATA.firstNotices = [
+  { t: '1 · Aviso de recibo (I-797C)', d: 'Es el primer documento. Confirma que USCIS aceptó el caso y trae el número de recibo (3 letras + 10 dígitos). Es comprobante de presentación, no una aprobación.', doc: 'receipt' },
+  { t: '1 · Un recibo por cada formulario', d: 'Si el paquete incluye varios formularios (p. ej., I-485 con I-765 o I-131), normalmente llega un aviso de recibo por cada uno, cada uno con su propio número. Verifica que lleguen todos.', doc: 'receipt' },
+  { t: '1 · Rechazo o devolución (alternativa)', d: 'Si el envío tiene errores (firma, cuota, edición, etc.), USCIS puede rechazarlo y devolver el paquete con un aviso en lugar de un recibo. Escala de inmediato.', doc: 'receipt' },
+  { t: '2 · Aviso de cita de biométricos (I-797C)', d: 'Después del recibo, si el trámite requiere huellas, foto y firma, llega el aviso con fecha, hora y lugar del ASC.', doc: 'bio' },
+  { t: 'Más adelante', d: 'Según el caso pueden llegar un RFE/NOID (I-797E), aviso de entrevista, y finalmente el aviso de aprobación y el documento (tarjeta, EAD).', doc: 'rfe' }
+];
+DATA.firstNoticesPending = ['El tiempo de llegada del aviso de recibo y de la cita de biométricos varía por formulario y centro de servicio, y no se fija aquí: consulta los tiempos de procesamiento vigentes de USCIS. Si el cliente presentó en línea, el aviso también aparece en su cuenta de USCIS.', 'No todos los trámites requieren biométricos ni llegan en este orden: validar con el equipo legal para cada caso.'];
+DATA.i797Src = 'https://www.uscis.gov/forms/all-forms';
 })();
 
 })();
@@ -2142,6 +2198,7 @@ VIEWS.form = r => {
     ${sec('¿Quién lo presenta?', `<p>${esc(f.who)}</p>`)}
     ${sec('¿En qué procesos aparece?', `<div class="chips">${uses}</div>`)}
     ${sec('Formularios relacionados', `<div class="chips">${rel}</div><p class="muted sm">Relacionado no significa que siempre se presenten juntos: depende del caso.</p>`)}
+    ${f.matrix ? sec('🧭 ¿Cuándo se usa según el caso?', `<div class="tscroll"><table class="tbl mx"><thead><tr><th>Situación</th><th>¿I-131?</th><th>Para qué / nota</th></tr></thead><tbody>${f.matrix.map(m => `<tr><td>${esc(m.s)}</td><td><span class="mxb mx-${m.r}">${{ si: 'Sí', dep: 'Depende', no: 'No' }[m.r]}</span></td><td>${esc(m.n)}</td></tr>`).join('')}</tbody></table></div><p class="muted sm">Solo orientación operativa: para viajar, escala siempre al equipo legal.</p>`) : ''}
     ${sec('Ejemplo práctico', `<p>${esc(f.example)}</p>`)}
     ${sec('🎧 Qué revisar para atender al cliente', (() => { const fd = DATA.formDocs[f.id] || { docs: ['receipt'], watch: ['Anota el número de recibo y las fechas del aviso de recibo.'] }; return `<ul class="list">${fd.watch.map(x => `<li>${esc(x)}</li>`).join('')}</ul>${fd.docs.length ? `<p class="muted sm">Documentos que el cliente puede recibir con este trámite (toca uno para ver dónde están las fechas):</p><div class="chips">${fd.docs.map(docChip).join('')}</div>` : ''}`; })())}
     ${sec('🖼️ Imagen del formato', imgSlot('form:' + f.id, 'Imagen del formulario ' + f.id), false)}
@@ -2307,6 +2364,9 @@ VIEWS.docs = () => {
   const quick = [['Cita de biométricos: fecha, hora y lugar', 'bio'], ['Fecha de vencimiento del permiso de trabajo', 'ead'], ['Fecha de vencimiento de la Green Card', 'greencard'], ['Plazo para responder un RFE o NOID', 'rfe'], ['Número de recibo del caso', 'receipt'], ['Fecha y lugar de la entrevista', 'interview'], ['Cita en el consulado', 'nvc'], ['Hasta cuándo puede permanecer (I-94)', 'i94']];
   return head('Documentos que recibe el cliente', 'Cuando un cliente llama con una carta o tarjeta en la mano, aquí ves qué dato buscar, en qué parte del documento está y cuándo escalar.') +
     `<div class="card pad"><h2 class="h3">¿Qué dato necesitas encontrar?</h2><ul class="nl">${quick.map(([t, id]) => `<li><a class="chip alt" href="#/doc/${id}">${esc(t)}</a></li>`).join('')}</ul></div>
+    <div class="card pad"><h2 class="h3">📬 Primeros avisos después de enviar el caso a USCIS</h2><ol class="list">${DATA.firstNotices.map(x => `<li><a href="#/doc/${x.doc}"><b>${esc(x.t)}</b></a>: ${esc(x.d)}</li>`).join('')}</ol>${pending(DATA.firstNoticesPending)}</div>
+    <div class="card pad"><h2 class="h3">Los 7 tipos de I-797</h2><div class="tblw"><table class="tbl"><thead><tr><th>Formulario</th><th>Nombre</th><th>¿Para qué sirve?</th></tr></thead><tbody>${DATA.i797.map(x => `<tr><td><b>${esc(x.f)}</b></td><td>${esc(x.n)}</td><td>${esc(x.u)}</td></tr>`).join('')}</tbody></table></div>
+    <h3 class="h3">¿Cuáles son los más importantes para identificar en un expediente?</h3><p>En procesos como Visa T, Visa U, VAWA y Ajuste de Estatus, es especialmente útil reconocer:</p><ul class="list">${DATA.i797Key.map(([k, v]) => `<li><b>${esc(k)}:</b> ${esc(v)}</li>`).join('')}</ul><div class="callout"><b>Regla fundamental</b><p>${esc(DATA.i797Rule)}</p></div></div>
     <div class="cards">${DATA.docs.map(d => `<a class="card pcard" href="#/doc/${d.id}"><div class="fc-top"><b class="pname">${d.ico} ${esc(d.name)}</b>${d.kind ? '<span class="badge esc">Fecha crítica</span>' : ''}</div><div class="muted sm">${esc(d.en)} · ${esc(d.issuer)}</div><p class="fshort">${esc(d.what)}</p></a>`).join('')}</div>
     <p class="note">Los esquemas son ilustrativos: la posición exacta de los datos puede variar según la edición del documento. Ante cualquier duda, escala al equipo legal.</p>`;
 };
