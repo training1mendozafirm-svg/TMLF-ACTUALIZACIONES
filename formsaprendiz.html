@@ -926,11 +926,34 @@ DATA.forms = [
     'Creer que USCIS entrega registros de otras agencias: otras agencias tienen sus propios procesos.'
   ],
   lawyer: 'Siempre que el cliente pida registros ajenos o haya riesgos de seguridad, y antes de usar el contenido del expediente para decidir una estrategia.',
-  pending: ['Solicitudes de registros a otras agencias (CBP, ICE, EOIR, Departamento de Estado): validar procedimiento y formulario vigentes.'],
+  pending: ['Solicitudes de registros a otras agencias (CBP, ICE, EOIR, Departamento de Estado): validar procedimiento y formulario vigentes. El G-639 es el formulario de USCIS; el detalle por agencia (qué entrega CBP, ICE y EOIR) viene del material de capacitación interno y debe validarse.'],
   src: 'https://www.uscis.gov/g-639',
   kw: ['foia', 'expediente', 'copia de mi expediente', 'registros', 'a-file', 'privacy act', 'first', 'g-639', 'historial migratorio'],
   q: { p: 'Una persona quiere obtener copia de su expediente en USCIS para conocer su historial migratorio. ¿Qué trámite corresponde?', o: ['Una solicitud FOIA (G-639 / sistema FIRST)', 'Un I-485', 'Un I-90', 'Un I-765'], a: 0,
        e: 'FOIA solicita copias de registros; no es un trámite migratorio. USCIS recomienda el sistema en línea FIRST.' }
+},
+{
+  id: 'G-28', cat: 'F', role: 'complementario',
+  en: 'Notice of Entry of Appearance as Attorney or Accredited Representative',
+  es: 'Notificación de representación (abogado o representante acreditado)',
+  mnemo: 'Aviso a USCIS de que ya tengo quien me represente',
+  short: 'Informa a USCIS que un abogado o representante acreditado representa al cliente en un trámite.',
+  what: 'Es la notificación mediante la cual un abogado o representante acreditado informa oficialmente a USCIS que representa legalmente a un cliente en un trámite migratorio. En palabras sencillas, es el documento que permite a la firma acreditar ante USCIS que está autorizada para representar al cliente. Sirve para: acreditar la representación; permitir que el abogado se comunique con USCIS sobre el caso; recibir notificaciones y comunicaciones oficiales, según las opciones seleccionadas; hacer consultas sobre el expediente; y presentar solicitudes y documentación en nombre del cliente, conforme a las reglas aplicables.',
+  who: 'La firman dos partes: el cliente (autoriza la representación legal) y el abogado o representante acreditado (acepta formalmente la representación).',
+  uses: ['aos', 'vawa-aos', 'vawa-da', 'visa-t', 'visa-u', 'consular', 'waivers', 'n400', 'i90', 'i751', 'foia'],
+  related: ['I-130', 'I-485', 'I-765'],
+  example: 'Un cliente contrata a la firma para su I-751. Junto con el formulario se presenta la G-28 firmada por el cliente y por el abogado, para que USCIS envíe las comunicaciones del caso también a la firma.',
+  errors: [
+    'Enviar la G-28 sin la firma del cliente o sin la del abogado: deben firmar ambos.',
+    'Suponer que la G-28 de un abogado anterior sigue vigente: si cambia el abogado, generalmente el nuevo debe presentar una G-28 nueva.',
+    'Olvidar que las notificaciones llegan según las opciones seleccionadas en la G-28: revisa qué marcó el equipo legal.'
+  ],
+  lawyer: 'Siempre: la G-28 es el acto formal de representación. Escala cualquier cambio de abogado, duda sobre quién representa al cliente o aviso que no llegó a la firma.',
+  pending: ['Pendiente de validar contra la página y las instrucciones vigentes de USCIS para la G-28 (edición, opciones de notificación y cuándo debe acompañar cada formulario).', 'La tabla de procesos donde se usa proviene del material de capacitación interno; validar con el equipo legal. En FOIA, solo cuando corresponda.'],
+  src: 'https://www.uscis.gov/g-28',
+  kw: ['g-28', 'g28', 'representacion', 'abogado', 'representante acreditado', 'entry of appearance', 'cambio de abogado', 'nuevo abogado', 'poder', 'notificaciones al abogado'],
+  q: { p: '¿Qué formulario informa a USCIS que un abogado o representante acreditado representa al cliente?', o: ['G-28', 'I-912', 'G-639', 'I-864'], a: 0,
+       e: 'La G-28 acredita la representación y la firman el cliente y el abogado. El I-912 es exención de cuota y el G-639 es solicitud de expediente.' }
 }
 ];
 
@@ -961,6 +984,7 @@ DATA.processes = [
   goal: 'Que una persona que ya está en EE. UU. y es elegible obtenga la residencia permanente (Green Card) sin hacer el trámite consular de visa de inmigrante.',
   main: 'I-485',
   related: [
+    { f: 'G-28', when: 'habitual', note: 'Acredita ante USCIS que la firma representa al cliente; la firman el cliente y el abogado.' },
     { f: 'I-130', when: 'habitual', note: 'Establece la relación familiar. Puede presentarse antes o junto con el I-485.' },
     { f: 'I-864', when: 'habitual', note: 'Patrocinio económico en la mayoría de casos familiares; hay exenciones.' },
     { f: 'I-693', when: 'habitual', note: 'Cuando es requerido, debe enviarse junto con el I-485.' },
@@ -982,6 +1006,7 @@ DATA.processes = [
   goal: 'Que una persona que sufrió abuso de un familiar ciudadano o residente permanente pueda obtener residencia por su cuenta, sin depender del abusador.',
   main: 'I-360',
   related: [
+    { f: 'G-28', when: 'habitual', note: 'Acredita ante USCIS que la firma representa al cliente; la firman el cliente y el abogado.' },
     { f: 'I-485', when: 'segun', note: 'Puede presentarse junto con el I-360 o después, según el caso.' },
     { f: 'I-693', when: 'habitual', note: 'Con el I-485, cuando es requerido.' },
     { f: 'I-765', when: 'segun', note: 'Permiso de trabajo, según la categoría y el momento del caso.' },
@@ -1005,6 +1030,7 @@ DATA.processes = [
   goal: 'Que una persona con un I-360 VAWA aprobado pueda recibir, a discreción de USCIS, acción diferida: una protección temporal contra la remoción, normalmente con posibilidad de permiso de trabajo.',
   main: 'I-360',
   related: [
+    { f: 'G-28', when: 'habitual', note: 'Acredita ante USCIS que la firma representa al cliente; la firman el cliente y el abogado.' },
     { doc: 'Aprobación del I-360 (aviso I-797)', when: 'habitual', note: 'Es el punto de partida: la acción diferida se considera cuando el I-360 está aprobado.' },
     { f: 'I-765', when: 'segun', note: 'Permiso de trabajo asociado, según el caso y la categoría.' },
     { f: 'I-485', when: 'cuando', note: 'Si más adelante hay visa disponible y la persona puede ajustar.' }
@@ -1024,6 +1050,7 @@ DATA.processes = [
   goal: 'Que una víctima de una forma grave de trata de personas reciba protección temporal en EE. UU. y, en su caso, pueda pedir residencia más adelante.',
   main: 'I-914',
   related: [
+    { f: 'G-28', when: 'habitual', note: 'Acredita ante USCIS que la firma representa al cliente; la firman el cliente y el abogado.' },
     { f: 'I-914A', when: 'cuando', note: 'Si se incluyen familiares elegibles (derivados).' },
     { f: 'I-914B', when: 'segun', note: 'Declaración opcional de una autoridad. Puede usarse otra evidencia.' },
     { f: 'I-192', when: 'cuando', note: 'Si hay inadmisibilidad y se pide perdón. Sin cuota para T.' },
@@ -1045,6 +1072,7 @@ DATA.processes = [
   goal: 'Que una víctima de ciertos delitos que sufrió abuso sustancial y ayuda a las autoridades reciba protección temporal en EE. UU. y, en su caso, pueda pedir residencia más adelante.',
   main: 'I-918',
   related: [
+    { f: 'G-28', when: 'habitual', note: 'Acredita ante USCIS que la firma representa al cliente; la firman el cliente y el abogado.' },
     { f: 'I-918B', when: 'habitual', note: 'Certificación de la autoridad: evidencia inicial requerida.' },
     { f: 'I-918A', when: 'cuando', note: 'Si se incluyen familiares calificados.' },
     { f: 'I-192', when: 'cuando', note: 'Si hay inadmisibilidad y se pide perdón. Sin cuota para U.' },
@@ -1066,6 +1094,7 @@ DATA.processes = [
   goal: 'Que la persona beneficiaria obtenga una visa de inmigrante en un consulado de EE. UU. y entre al país como residente.',
   main: 'I-130',
   related: [
+    { f: 'G-28', when: 'habitual', note: 'Acredita ante USCIS que la firma representa al cliente; la firman el cliente y el abogado.' },
     { doc: 'I-130A (si es cónyuge)', when: 'segun', note: 'Información complementaria del cónyuge beneficiario.' },
     { f: 'I-864', when: 'habitual', note: 'Declaración de patrocinio económico (hay exenciones).' },
     { f: 'I-864A', when: 'cuando', note: 'Si se suman ingresos de un miembro del hogar.' },
@@ -1096,6 +1125,7 @@ DATA.processes = [
   goal: 'Pedir perdón (waiver) de ciertas causales que impedirían una visa de inmigrante o la residencia.',
   main: 'I-601', mainLabel: 'I-601 / I-601A',
   related: [
+    { f: 'G-28', when: 'habitual', note: 'Acredita ante USCIS que la firma representa al cliente; la firman el cliente y el abogado.' },
     { f: 'I-601A', when: 'segun', note: 'Solo presencia ilegal; se presenta en EE. UU. antes de salir a la entrevista consular.' },
     { f: 'I-130', when: 'habitual', note: 'La base del caso: el I-601A requiere una petición aprobada, entre otros requisitos.' },
     { f: 'DS-260', when: 'habitual', note: 'El caso de visa de inmigrante con el Departamento de Estado.' },
@@ -1146,6 +1176,7 @@ DATA.processes = [
   goal: 'Que un residente permanente se convierta en ciudadano estadounidense.',
   main: 'N-400',
   related: [
+    { f: 'G-28', when: 'habitual', note: 'Acredita ante USCIS que la firma representa al cliente; la firman el cliente y el abogado.' },
     { doc: 'Copia del Green Card (ambos lados)', when: 'habitual', note: 'Evidencia del estatus de residente permanente.' },
     { doc: 'Evidencia de residencia continua y viajes', when: 'habitual', note: 'Fechas de viajes, impuestos y documentos de elegibilidad.' },
     { doc: 'N-648 (excepción médica)', when: 'cuando', note: 'Si una discapacidad o impedimento afecta el requisito de inglés/educación cívica.' },
@@ -1165,6 +1196,7 @@ DATA.processes = [
   goal: 'Renovar o reemplazar la tarjeta de residente permanente (Green Card).',
   main: 'I-90',
   related: [
+    { f: 'G-28', when: 'habitual', note: 'Acredita ante USCIS que la firma representa al cliente; la firman el cliente y el abogado.' },
     { doc: 'Tarjeta actual y evidencia de identidad', when: 'habitual', note: 'Según la razón del reemplazo (pérdida, daño, datos incorrectos, vencimiento).' },
     { doc: 'Prueba del cambio legal de nombre', when: 'cuando', note: 'Si la razón es un cambio de nombre u otros datos biográficos.' },
     { f: 'I-751', when: 'cuando', note: 'Si es residente condicional con vencimiento en menos de 90 días: se usa el I-751, no el I-90.' }
@@ -1183,6 +1215,7 @@ DATA.processes = [
   goal: 'Que un residente condicional por matrimonio pueda eliminar las condiciones y obtener la residencia permanente sin condiciones.',
   main: 'I-751',
   related: [
+    { f: 'G-28', when: 'habitual', note: 'Acredita ante USCIS que la firma representa al cliente; la firman el cliente y el abogado.' },
     { doc: 'Evidencia de matrimonio de buena fe', when: 'habitual', note: 'Documentos que muestran la vida en común (cuentas, hijos, domicilio, etc.).' },
     { doc: 'Evidencia de exención (waiver)', when: 'cuando', note: 'Si no puede presentarse conjuntamente: divorcio, fallecimiento, abuso o dificultades extremas.' },
     { f: 'I-90', when: 'cuando', note: 'No sirve para eliminar condiciones; solo para ciertos reemplazos de tarjeta condicional que no esté por vencer.' }
@@ -1201,6 +1234,7 @@ DATA.processes = [
   goal: 'Obtener copia de los registros que USCIS tiene sobre una persona, para conocer su historial antes de decidir una estrategia.',
   main: 'G-639',
   related: [
+    { f: 'G-28', when: 'cuando', note: 'Cuando corresponda: acredita ante USCIS la representación del abogado.' },
     { doc: 'Sistema en línea FIRST', when: 'habitual', note: 'USCIS recomienda hacer la solicitud en línea.' },
     { doc: 'Verificación de identidad', when: 'habitual', note: 'Nombre completo, dirección actual, fecha y lugar de nacimiento de la persona titular.' },
     { doc: 'Consentimiento del titular', when: 'cuando', note: 'Si se piden registros de otra persona.' },
@@ -1212,6 +1246,16 @@ DATA.processes = [
     'Los registros de otras agencias requieren solicitudes distintas.',
     'Los tiempos de respuesta varían según la complejidad.'
   ],
+  extra: {
+    title: 'Qué es FOIA y qué se puede obtener',
+    intro: 'FOIA (Freedom of Information Act) significa Ley de Libertad de Información. Es una ley estadounidense que permite solicitar acceso a documentos y registros que están en poder de las agencias federales del Gobierno de EE. UU. En materia migratoria se usa para obtener información sobre el historial migratorio de un cliente y ayudar al abogado a determinar una estrategia legal.',
+    listTitle: '¿Qué información se puede obtener?',
+    list: ['Entradas y salidas de Estados Unidos.', 'Detenciones migratorias.', 'Órdenes de deportación.', 'Solicitudes migratorias anteriores.', 'Resoluciones y notificaciones migratorias.', 'Registros de encuentros con autoridades fronterizas.', 'Documentos del expediente migratorio (A-File).'],
+    listNote: 'La información disponible dependerá de la agencia a la que se solicite.',
+    tableTitle: 'Tipos de FOIA según la agencia',
+    cols: ['Agencia', 'Información que se puede solicitar'],
+    rows: [['USCIS', 'Expediente migratorio, solicitudes anteriores y resoluciones.'], ['CBP', 'Registros fronterizos, entradas, salidas y detenciones en frontera.'], ['ICE', 'Detenciones migratorias, investigaciones y registros de deportación.'], ['EOIR', 'Expedientes y antecedentes de procedimientos ante la Corte de Inmigración.']]
+  },
   warn: 'No uses el contenido del expediente para concluir elegibilidad sin revisión del abogado.',
   pending: ['Procedimiento para solicitar registros a otras agencias.'],
   lawyer: 'Al usar el expediente para decidir una estrategia o cuando el cliente pida registros de terceros.'
@@ -1259,7 +1303,7 @@ DATA.topics = {
   residente: { name: 'Residente: I-90, I-751 y N-400',      forms: ['I-90', 'I-751', 'N-400', 'N-600'],            procs: ['i90', 'i751', 'n400'] },
   permisos:  { name: 'Permisos de trabajo y viaje (I-765 / I-131)', forms: ['I-765', 'I-131'],            procs: ['aos', 'pip'] },
   patrocinio:{ name: 'Patrocinio económico (I-864 / I-864A)', forms: ['I-864', 'I-864A'],                 procs: ['consular'] },
-  proteccion:{ name: 'Asilo, FOIA y exención de cuota',     forms: ['I-589', 'G-639', 'I-912'],           procs: ['foia'] },
+  proteccion:{ name: 'Asilo, FOIA, representación y cuota',     forms: ['I-589', 'G-639', 'I-912', 'G-28'],           procs: ['foia'] },
   docs:      { name: 'Leer avisos, fechas y documentos del cliente', forms: [], procs: [], link: '#/docs' },
   escalar:   { name: 'Cuándo escalar a un abogado',         forms: [],                                    procs: [] }
 };
@@ -1274,7 +1318,7 @@ DATA.formTopic = {
   'I-864': 'patrocinio', 'I-864A': 'patrocinio',
   'I-192': 'perdones', 'I-601': 'perdones', 'I-601A': 'perdones',
   'DS-160': 'consular', 'DS-260': 'consular',
-  'I-589': 'proteccion', 'G-639': 'proteccion', 'I-912': 'proteccion'
+  'I-589': 'proteccion', 'G-639': 'proteccion', 'I-912': 'proteccion', 'G-28': 'proteccion'
 };
 
 DATA.levels = {
@@ -1602,7 +1646,10 @@ DATA.needs = [
   note: 'DS-260 es de inmigrante y DS-160 de no inmigrante: no los confundas.' },
 { title: 'Exención de cuota', k: ['no puedo pagar', 'exencion de cuota', 'fee waiver', 'cuota', 'costo', 'tarifa'],
   forms: ['I-912'], explain: { 'I-912': 'Pide exención de cuota en formularios elegibles.' },
-  note: 'No todos los formularios aceptan exención. Consultar instrucciones y tabla de cuotas.' }
+  note: 'No todos los formularios aceptan exención. Consultar instrucciones y tabla de cuotas.' },
+{ title: 'Acreditar al abogado ante USCIS / cambio de abogado', k: ['g-28', 'representacion', 'abogado', 'cambio de abogado', 'nuevo abogado', 'representante acreditado', 'notificaciones al abogado'],
+  forms: ['G-28'], explain: { 'G-28': 'Notifica a USCIS la representación del abogado; la firman cliente y abogado.' },
+  note: 'Si cambia el abogado, generalmente el nuevo debe presentar una G-28 nueva.' }
 ];
 
 /* ---------- Centro de respuestas (sección 9 del prompt) ---------- */
@@ -1887,6 +1934,7 @@ DATA.formDocs = {
   'I-914A': { docs: ['receipt', 'rfe', 'approval'], watch: ['Va a nombre del familiar: revisa que cada persona tenga su aviso de recibo.', 'Anota número de recibo y fechas de cada familiar.'] },
   'I-918A': { docs: ['receipt', 'rfe', 'approval'], watch: ['Va a nombre del familiar: revisa que cada persona tenga su aviso de recibo.', 'Anota número de recibo y fechas de cada familiar.'] },
   'I-912':  { docs: ['receipt', 'rfe'], watch: ['Si USCIS rechaza la exención de cuota, el aviso lo indica: escalar el mismo día.', 'No todos los formularios aceptan exención: confirmar con el equipo legal.'] },
+  'G-28':   { docs: ['receipt'], watch: ['Confirma que la G-28 vaya firmada por el cliente y por el abogado.', 'Si cambió el abogado, recuerda que el nuevo generalmente debe presentar una G-28 nueva.', 'Si las comunicaciones de USCIS no llegan a la firma, escala al equipo legal.'] },
   'G-639':  { docs: [], watch: ['Anota el número de control que reciba el cliente.', 'La respuesta puede tardar; no prometas plazos.'] }
 };
 })();
@@ -2248,6 +2296,7 @@ VIEWS.process = r => {
   ${p.route && p.route.length ? `<div class="card pad"><h2 class="h3">Ruta orientativa <span class="muted sm">(no obligatoria; varía según el caso)</span></h2><ol class="route">${p.route.map(x => `<li>${esc(x)}</li>`).join('')}</ol></div>` : ''}
   <div class="card pad"><h2 class="h3">Formularios relacionados</h2><div class="tscroll"><table class="tbl"><thead><tr><th>Formulario</th><th>Relación</th><th>Qué aporta</th></tr></thead><tbody>${rows}</tbody></table></div></div>
   <div class="card pad"><h2 class="h3">Ejemplo con un cliente</h2><p>${esc(p.example)}</p></div>
+  ${p.extra ? `<div class="card pad"><h2 class="h3">${esc(p.extra.title)}</h2><p>${esc(p.extra.intro)}</p><h3 class="h3">${esc(p.extra.listTitle)}</h3><ul class="list">${p.extra.list.map(x => `<li>${esc(x)}</li>`).join('')}</ul><p class="muted sm">${esc(p.extra.listNote)}</p><h3 class="h3">${esc(p.extra.tableTitle)}</h3><div class="tblw"><table class="tbl"><thead><tr>${p.extra.cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${p.extra.rows.map(r => `<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td></tr>`).join('')}</tbody></table></div></div>` : ''}
   <div class="card pad"><h2 class="h3">3 ideas para recordar</h2><ol class="list num">${p.remember.map(x => `<li>${esc(x)}</li>`).join('')}</ol></div>
   <div class="callout warn"><b>⚠️ Advertencia</b><p>${esc(p.warn)}</p></div>
   ${pending(p.pending)}
