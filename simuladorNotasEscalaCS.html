@@ -886,7 +886,7 @@ const pad=n=>String(n).padStart(2,'0');
 const MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 const toD=d=>new Date(typeof d==='string'?d.replace(' ','T'):d);
 const fmtDT=d=>{d=toD(d);return `${d.getDate()} ${MES[d.getMonth()]} ${d.getFullYear()} · ${pad(d.getHours())}:${pad(d.getMinutes())}`};
-const fmtD=d=>{d=toD(d);return `${d.getDate()} ${MES[d.getMonth()]} ${d.getFullYear()}`};
+const fmtD=d=>{if(!d)return "—";d=toD(d);return `${d.getDate()} ${MES[d.getMonth()]} ${d.getFullYear()}`};
 const clock=d=>{d=toD(d);return pad(d.getHours())+':'+pad(d.getMinutes())};
 const dur=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':':'')+pad(m)+':'+pad(s%60)};
 const clone=o=>JSON.parse(JSON.stringify(o));
@@ -1052,6 +1052,7 @@ window.addEventListener('beforeunload',()=>{if(S&&!S.finished){DB.session=S;save
 
 /* ---------------- ARRANQUE ---------------- */
 function init(){load();ensureScreens();renderHome();if(window.speechSynthesis){try{speechSynthesis.getVoices()}catch(e){}}}
+const cidShow=id=>/^[A-Za-z]+-/.test(id)?id:'MC-'+id,myCase=id=>String(id).replace(/^[A-Za-z]+-/,'');
 /* ============================ MÓDULO 1 · CRM ============================ */
 const crmUI={team:'all',asc:false,q:'',hideLeft:false,hideComm:false};
 let noteIO=null;
@@ -1080,10 +1081,10 @@ function buildCRM(){const host=$('#crmHost'),ex=EX,c=ex.client||{};const isCall=
 
 function renderCRMHead(){const c=EX.client,h=$('#crmHead');
  h.innerHTML=`<div class="crm-top"><span class="ib" data-na="Volver">${ic('back')}</span><h2>${esc(c.name)}</h2><button class="b2 cbtn" id="commBtn">${ic('msg')} Mensajes</button><div class="crm-search">${ic('search')}<input id="crmQ" placeholder="Buscar en notas, mensajes, llamadas." value="${esc(crmUI.q)}"></div><span class="ib" data-na="Más opciones" style="padding:4px 8px;border:1px solid #d5d8de;border-radius:7px">${ic('more')}</span></div>
- <div class="crm-chips"><span class="st open">${esc(c.status||'Abierto')} ⌄</span>${(c.flags||[]).map(f=>`<span class="st ${f==='Vencido'?'due':'ina'}">${f==='Vencido'?'● ':'◔ '}${esc(f)}</span>`).join('')}<span style="color:#666">Sin asignar</span><span class="b2 ghost" style="border:1px solid #d5d8de;padding:2px 8px;border-radius:7px" data-na="Etiquetas">${ic('hash')} ${(c.tags||[]).length} ⌃</span><span class="ib" data-na="Agregar etiqueta">${ic('plus')}</span><span class="cid" id="cpCid" title="Copiar">MC-${esc(c.caseId)} ${ic('file')}</span><span style="color:#555" id="cpMy" title="Copiar">MyCase ID: ${esc(c.caseId)} ${ic('file')}</span></div>
+ <div class="crm-chips"><span class="st open">${esc(c.status||'Abierto')} ⌄</span>${(c.flags||[]).map(f=>`<span class="st ${f==='Vencido'?'due':'ina'}">${f==='Vencido'?'● ':'◔ '}${esc(f)}</span>`).join('')}<span style="color:#666">Sin asignar</span><span class="b2 ghost" style="border:1px solid #d5d8de;padding:2px 8px;border-radius:7px" data-na="Etiquetas">${ic('hash')} ${(c.tags||[]).length} ⌃</span><span class="ib" data-na="Agregar etiqueta">${ic('plus')}</span><span class="cid" id="cpCid" title="Copiar">${esc(cidShow(c.caseId))} ${ic('file')}</span><span style="color:#555" id="cpMy" title="Copiar">MyCase ID: ${esc(myCase(c.caseId))} ${ic('file')}</span></div>
  <div class="tagrow">${(c.tags||[]).map((t,i)=>`<span class="tg ${i%2?'y':''}">${esc(t)}</span>`).join('')}</div>`;
  $$('[data-na]',h).forEach(e=>e.onclick=()=>na(e.dataset.na));
- const cp=(id,t)=>{$(id).onclick=()=>{try{navigator.clipboard.writeText(t)}catch(e){}toast('Copiado: '+t)}};cp('#cpCid','MC-'+c.caseId);cp('#cpMy',c.caseId);
+ const cp=(id,t)=>{$(id).onclick=()=>{try{navigator.clipboard.writeText(t)}catch(e){}toast('Copiado: '+t)}};cp('#cpCid',cidShow(c.caseId));cp('#cpMy',myCase(c.caseId));
  $('#commBtn').onclick=()=>$('#crm').classList.toggle('copen');
  $('#crmQ').oninput=e=>{crmUI.q=e.target.value;if(crmUI.q.length>2)S.consulted.search=(S.consulted.search||0)+1;renderNotes();renderComm()}}
 
@@ -1531,7 +1532,9 @@ function iProg(){const b=$('#iBody');const users=[...new Set(DB.results.map(r=>r
 window.addEventListener('DOMContentLoaded',init);
 
 /* ---------------- MODO PRÁCTICA LIBRE: solo CRM + Slack ---------------- */
-const CASES=()=>DB.exercises.filter(e=>e.client&&e.client.name);
+const PRACTICE=[['MLF-50069053','Rogelio Gonzalez Pacheco'],['35151086','MIRIAM GABRIELA MORENO FLORES'],['47534830','Rafael Estrada Ramírez'],['19847736','Maura Paz Santiago'],['MLF-50069355','JUAN ALVARADO VALDEZ'],['24841180','Julio Cesar Villanueva Mendez'],['48422603','Maria Eugenia Santos Martinez'],['MC-49433322','49433322']]
+ .map((c,i)=>({id:'P'+String(i+1).padStart(2,'0'),type:'call',client:CLI({name:c[1],caseId:c[0],tags:[],open:'',crm:'',tipo:'',area:'',areaMC:'',etapa:'',phone:'',phone2:'',email:'',addr:''}),notes:[],sms:[]}));
+const CASES=()=>PRACTICE;
 function startFree(id,nm){const name=(nm||DB.lastUser||'').trim();if(!name)return;
  const ex=CASES().find(e=>e.id===id)||CASES()[0];DB.lastUser=name;EX=ex;
  const notes=(ex.notes||[]).map(n=>({id:uid(),author:n.a,team:n.team,dt:toD(n.d).getTime(),title:n.title,text:n.b,html:null,own:false,pinned:false}));
@@ -1541,7 +1544,7 @@ function startFree(id,nm){const name=(nm||DB.lastUser||'').trim();if(!name)retur
  DB.session=S;save();renderWork()}
 function renderWork(){screen('screenWork');const el=$('#screenWork');
  el.innerHTML=`<header id="topbar"><span class="brand">CRM + SLACK — PRÁCTICA DE NOTAS Y ESCALACIONES</span><span class="chip">Usuario: <b>${esc(S.user)}</b></span>
- <select id="tbCase" title="Caso de práctica (datos ficticios)">${CASES().map(e=>`<option value="${esc(e.id)}" ${e.id===EX.id?'selected':''}>${esc(e.client.name)}</option>`).join('')}</select><span class="sp"></span>
+ <select id="tbCase" title="Caso de práctica (datos ficticios)">${CASES().map(e=>`<option value="${esc(e.id)}" ${e.id===EX.id?'selected':''}>${esc(e.client.caseId)} · ${esc(e.client.name)}</option>`).join('')}</select><span class="sp"></span>
  <span class="seg"><button data-v="split">Dividida</button><button data-v="crm">CRM</button><button data-v="slack">Slack</button></span>
  <button id="tbUser" title="Cambiar de usuario">${ic('home')} Usuario</button><button id="tbReset" title="Borra las notas y mensajes escritos en este caso">Reiniciar caso</button></header>
  <main id="workspace"><div class="plat" id="pCRM"><div class="ptab"><span>ESPACIO 1 · MENDOZA LAW FIRM CRM</span><button data-max="crm">${ic('max')} Maximizar</button></div><div class="body" id="crmHost"></div></div>
@@ -1555,7 +1558,7 @@ function renderWork(){screen('screenWork');const el=$('#screenWork');
  $('#tbUser').onclick=()=>askText('Usuario','Tu nombre',S.user).then(v=>{if(v&&v.trim()){S.user=v.trim();DB.lastUser=S.user;persist();startFree(EX.id,S.user)}});
  setView(S.view,true)}
 function init(){load();ensureScreens();
- const go=()=>{if(DB.session&&DB.session.free){S=DB.session;EX=CASES().find(e=>e.id===S.exId)||CASES()[0];renderWork()}else startFree(CASES()[0].id,DB.lastUser)};
+ const go=()=>{if(DB.session&&DB.session.free){S=DB.session;EX=CASES().find(e=>e.id===S.exId);if(!EX)return startFree(CASES()[0].id,S.user||DB.lastUser);renderWork()}else startFree(CASES()[0].id,DB.lastUser)};
  if(DB.session&&DB.session.free||DB.lastUser)return go();
  askText('Bienvenido','Escribe tu nombre para firmar tus notas y mensajes','').then(v=>{DB.lastUser=(v&&v.trim())||'Colaborador';go()})}
 
